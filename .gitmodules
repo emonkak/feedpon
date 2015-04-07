@@ -1,0 +1,6 @@
+[submodule "src/--force"]
+	path = src/DefinitelyTyped
+	url = https://github.com/borisyankov/DefinitelyTyped.git
+[submodule "src/DefinitelyTyped"]
+	path = src/DefinitelyTyped
+	url = https://github.com/borisyankov/DefinitelyTyped.git
