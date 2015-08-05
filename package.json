@@ -2,26 +2,29 @@
   "name": "feedpon",
   "version": "0.0.0",
   "description": "The feed reader to change the world",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/emonkak/feedpon.git"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "gulp"
+    "build": "npm run-script browserify && npm run-script uglify",
+    "browserify": "browserify src/js/app.js --ignore crypto --transform [ babelify --extensions .js,.ts ] --plugin [ tsify --target ES6 --experimentalDecorators --emitDecoratorMetadata ] --outfile public/app.js",
+    "watchify": "watchify src/js/app.js --verbose --ignore crypto --transform [ babelify --extensions .js,.ts ] --plugin [ tsify  --target ES6 --experimentalDecorators --emitDecoratorMetadata ] --outfile public/app.js",
+    "uglify": "uglifyjs public/app.js --compress --mangle --output public/app.min.js",
+    "livereload": "live-reload public/",
+    "start": "http-server public/"
   },
   "author": "Shota Nozaki",
   "license": "MIT",
   "dependencies": {
+    "babelify": "^6.0.1",
     "browserify": "^9.0.7",
-    "connect": "^3.3.5",
-    "del": "^1.1.1",
-    "gulp": "^3.8.11",
-    "gulp-typescript": "^2.6.0",
-    "gulp-util": "^3.0.4",
-    "serve-static": "^1.9.2",
-    "typescript": "^1.5.0-alpha",
-    "vinyl-buffer": "^1.0.0",
-    "vinyl-source-stream": "^1.1.0",
+    "http-server": "^0.8.0",
+    "reflect-metadata": "^0.1.0",
+    "tsify": "^0.11.4",
+    "typescript": "^1.6.0-dev.20150731",
+    "uglify-js": "^2.4.23",
     "watchify": "^3.1.0"
-  },
-  "devDependencies": {
-    "babelify": "^6.0.1"
   }
 }
