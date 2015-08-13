@@ -8,6 +8,8 @@ export interface IContainer {
      * Gets a value indicating whether can get the instance from a given class.
      */
     has<T>(key: IInjectableClass<T>): boolean
+
+    inject<T>(fn: IInjectableFunction<T>, context?: any): T
 }
 
 export interface IDefinition<T> {
@@ -19,7 +21,7 @@ export interface IDependency<T> {
 }
 
 export interface IInjectable<T> extends Function {
-    $inject?: IInjectableClass<T>[]
+    $inject?: IInjectableClass<any>[]
     $scope?: IScope<T>
 }
 
@@ -27,7 +29,7 @@ export interface IInjectableClass<T> extends IInjectable<T> {
     new(...args: any[]): T
 }
 
-export interface IInjectableProvider<T> extends IInjectable<T> {
+export interface IInjectableFunction<T> extends IInjectable<T> {
     (...args: any[]): T
 }
 

@@ -1,4 +1,4 @@
-import { IContainer, IDefinition, IDependency, IResolver, IInjectableClass, IInjectableProvider, IInjectionPolicy } from './interfaces'
+import { IContainer, IDefinition, IDependency, IResolver, IInjectableClass, IInjectableFunction, IInjectionPolicy } from './interfaces'
 import { AliasDefinition, ClassDefinition, ValueDefinition, ProviderDefinition } from './definitions'
 
 export default class Container implements IContainer, IResolver {
@@ -23,7 +23,7 @@ export default class Container implements IContainer, IResolver {
         return definition
     }
 
-    provider<T>(key: IInjectableClass<T>, provider: IInjectableProvider<T>): ProviderDefinition<T> {
+    provider<T>(key: IInjectableClass<T>, provider: IInjectableFunction<T>): ProviderDefinition<T> {
         const definition = new ProviderDefinition<T>(provider)
 
         this._definitions.set(key, definition)
@@ -55,5 +55,11 @@ export default class Container implements IContainer, IResolver {
 
     has<T>(key: IInjectableClass<T>): boolean {
         return this._definitions.has(key) || this._injectionPolicy.isInjectable(key)
+    }
+
+    inject<T>(fn: IInjectableFunction<T>, context: any = null): T {
+        const injectables = this._injectionPolicy.getInjectables(fn)
+        const args = injectables.map(injectable => this.get(injectable))
+        return fn.apply(context, args)
     }
 }

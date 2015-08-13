@@ -1,4 +1,4 @@
-import { IDefinition, IDependency, IInjectableClass, IInjectableProvider, IInjectionPolicy, IResolver, IScope } from './interfaces'
+import { IDefinition, IDependency, IInjectableClass, IInjectableFunction, IInjectionPolicy, IResolver, IScope } from './interfaces'
 import { ClassDependency, ProviderDependency } from './dependencies'
 import { prototypeScope } from './scopes'
 
@@ -51,7 +51,7 @@ export class ClassDefinition<T> extends BaseDefinition<T> implements IDefinition
 }
 
 export class ProviderDefinition<T> extends BaseDefinition<T> implements IDefinition<T> {
-    constructor(private _provider: IInjectableProvider<T>) {
+    constructor(private _provider: IInjectableFunction<T>) {
         super()
     }
 

@@ -1,4 +1,4 @@
-import { IInjectableClass, IInjectableProvider, IInstantiable, IDependency, IScope } from './interfaces'
+import { IInjectableClass, IInjectableFunction, IInstantiable, IDependency, IScope } from './interfaces'
 
 export class ClassDependency<T> implements IDependency<T>, IInstantiable<T> {
     constructor(private _target: IInjectableClass<T>,
@@ -24,7 +24,7 @@ export class ClassDependency<T> implements IDependency<T>, IInstantiable<T> {
 }
 
 export class ProviderDependency<T> implements IDependency<T>, IInstantiable<T> {
-    constructor(private _provider: IInjectableProvider<T>,
+    constructor(private _provider: IInjectableFunction<T>,
                 private _dependencies: IDependency<any>[],
                 private _scope: IScope<T>) {
         if (typeof _provider !== 'function') {
