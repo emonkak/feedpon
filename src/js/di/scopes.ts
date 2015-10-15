@@ -9,9 +9,13 @@ export function prototypeScope<T>(instantiable: IInstantiable<T>): T {
 export function singletonScope<T>(instantiable: IInstantiable<T>): T {
     const injectable = instantiable.injectable
 
-    if (!singletons.has(injectable)) {
-        singletons.set(injectable, instantiable.instantiate())
+    if (singletons.has(injectable)) {
+        return singletons.get(injectable)
     }
 
-    return singletons.get(injectable)
+    const instance = instantiable.instantiate()
+
+    singletons.set(injectable, instance)
+
+    return instance
 }

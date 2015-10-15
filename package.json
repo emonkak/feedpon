@@ -9,11 +9,11 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npm run-script browserify && npm run-script uglify",
-    "browserify": "browserify src/js/app.js --ignore crypto --transform [ babelify --extensions .js,.ts ] --plugin [ tsify --target ES6 --experimentalDecorators --emitDecoratorMetadata ] --outfile public/app.js",
-    "watchify": "watchify src/js/app.js --verbose --ignore crypto --transform [ babelify --extensions .js,.ts ] --plugin [ tsify  --target ES6 --experimentalDecorators --emitDecoratorMetadata ] --outfile public/app.js",
+    "browserify": "browserify src/js/app.js --ignore crypto --transform [ babelify --extensions .js,.ts,.tsx ] --plugin [ tsify --target ES6 --jsx react --experimentalDecorators --emitDecoratorMetadata ] --outfile public/app.js",
+    "watchify": "watchify src/js/app.js --verbose --ignore crypto --transform [ babelify --extensions .js,.ts,.tsx ] --plugin [ tsify --target ES6 --jsx react --experimentalDecorators --emitDecoratorMetadata ] --outfile public/app.js",
     "uglify": "uglifyjs public/app.js --compress --mangle --output public/app.min.js",
     "livereload": "live-reload public/",
-    "start": "http-server public/"
+    "httpserver": "http-server public/"
   },
   "author": "Shota Nozaki",
   "license": "MIT",
@@ -21,9 +21,11 @@
     "babelify": "^6.0.1",
     "browserify": "^9.0.7",
     "http-server": "^0.8.0",
+    "react": "^0.14.0",
+    "react-dom": "^0.14.0",
     "reflect-metadata": "^0.1.0",
-    "tsify": "^0.11.4",
-    "typescript": "^1.6.0-dev.20150731",
+    "tsify": "^0.12.1",
+    "typescript": "^1.6.0",
     "uglify-js": "^2.4.23",
     "watchify": "^3.1.0"
   }

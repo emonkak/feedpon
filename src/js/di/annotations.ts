@@ -1,6 +1,6 @@
-/// <reference path="../../../../node_modules/reflect-metadata/reflect-metadata.d.ts" />
+/// <reference path="../../../node_modules/reflect-metadata/reflect-metadata.d.ts" />
 
-import "reflect-metadata";
+import "reflect-metadata"
 import { singletonScope, prototypeScope } from './scopes'
 
 export function Inject(target: any, key?: any, desc?: any): any {

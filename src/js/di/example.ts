@@ -23,13 +23,13 @@ interface IQux {}
 
 @Inject
 class Foo {
-    private qux: IQux
+    public qux: IQux
 
     constructor(public bar: IBar) {
     }
 
     @Inject
-    inject(qux: IQux) {
+    setQux(qux: IQux) {
         this.qux = qux
     }
 }
@@ -60,7 +60,7 @@ container.bind(IBaz).to(Baz)
 container.bind(IQux).to(Qux)
 
 const foo = container.get(Foo)
-container.inject(foo.inject, foo)
+container.inject(foo.setQux, foo)
 
 console.log(foo)
 console.log(foo.bar.qux === foo.bar.baz.qux)
