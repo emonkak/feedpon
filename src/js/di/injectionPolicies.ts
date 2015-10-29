@@ -1,8 +1,8 @@
-import { IInjectable, IInjectableClass, IInjectionPolicy, IScope } from './interfaces'
+import { IInjectable, IInjectableKey, IInjectionPolicy, IScope } from './interfaces'
 import { prototypeScope } from './scopes'
 
 export class DefaultInjectionPolicy implements IInjectionPolicy {
-    getInjectables<T>(target: IInjectable<T>): IInjectableClass<any>[] {
+    getInjectables<T>(target: IInjectable<T>): IInjectableKey<any>[] {
         return target.$inject
     }
 

@@ -1,24 +1,24 @@
 import Container from './container'
-import { DefaultInjectionPolicy } from './injection-policies'
+import { DefaultInjectionPolicy } from './injectionPolicies'
 import { Inject, Singleton } from './annotations'
 
-var IFoo: any = "IFoo"
+var IFoo = class {}
 interface IFoo {
     bar: IBar
 }
 
-var IBar: any = "IBar"
+var IBar = class {}
 interface IBar {
     baz: IBaz
     qux: IQux
 }
 
-var IBaz: any = "IBaz"
+var IBaz = class {}
 interface IBaz {
     qux: IQux
 }
 
-var IQux: any = "IQux"
+var IQux = class {}
 interface IQux {}
 
 @Inject

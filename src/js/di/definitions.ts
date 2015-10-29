@@ -1,4 +1,4 @@
-import { IDefinition, IDependency, IInjectableClass, IInjectableFunction, IInjectionPolicy, IResolver, IScope } from './interfaces'
+import { IDefinition, IDependency, IInjectableClass, IInjectableKey, IInjectableFunction, IInjectionPolicy, IResolver, IScope } from './interfaces'
 import { ClassDependency, ProviderDependency } from './dependencies'
 import { prototypeScope } from './scopes'
 
@@ -19,7 +19,7 @@ class BaseDefinition<T> {
 }
 
 export class AliasDefinition<T> implements IDefinition<T> {
-    constructor(private _target: IInjectableClass<T>) {
+    constructor(private _target: IInjectableKey<T>) {
     }
 
     resolveBy(resolver: IResolver, injectionPolicy: IInjectionPolicy): IDependency<T> {
@@ -42,11 +42,15 @@ export class ClassDefinition<T> extends BaseDefinition<T> implements IDefinition
             throw `"${this._target}" is not injectable.`
         }
 
-        const injectables = this._injectables || injectionPolicy.getInjectables(this._target)
-        const dependencies = injectables.map(injectable => resolver.resolve(injectable))
-        const scope = this._scope || injectionPolicy.getScope(this._target)
-
-        return new ClassDependency<T>(this._target, dependencies, scope)
+        try {
+            const injectables = this._injectables || injectionPolicy.getInjectables(this._target)
+            const dependencies = injectables.map(injectable => resolver.resolve(injectable))
+            const scope = this._scope || injectionPolicy.getScope(this._target)
+            return new ClassDependency<T>(this._target, dependencies, scope)
+        } catch (e) {
+            console.error(this._target.$inject)
+            throw (e + ' Caused by ' + this._target)
+        }
     }
 }
 
@@ -60,11 +64,15 @@ export class ProviderDefinition<T> extends BaseDefinition<T> implements IDefinit
             throw `"${this._provider}" is not injectable.`
         }
 
-        const injectables = this._injectables || injectionPolicy.getInjectables(this._provider)
-        const dependencies = injectables.map(injectable => resolver.resolve(injectable))
-        const scope = this._scope || injectionPolicy.getScope(this._provider)
+        try {
+            const injectables = this._injectables || injectionPolicy.getInjectables(this._provider)
+            const dependencies = injectables.map(injectable => resolver.resolve(injectable))
+            const scope = this._scope || injectionPolicy.getScope(this._provider)
+            return new ProviderDependency<T>(this._provider, dependencies, scope)
+        } catch (e) {
+            throw (e + ' Caused by ' + this._provider)
+        }
 
-        return new ProviderDependency<T>(this._provider, dependencies, scope)
     }
 }
 

@@ -1,25 +1,21 @@
-import ActionDispatcher from './actions/actionDispatcher'
 import App from './components/app'
 import AppContainer from './components/appContainer'
-import AuthActionHandler from './actions/authActionHandler'
-import Container from './di/container'
+import ClientActionDispatcher from './actions/clientActionDispatcher'
+import EmittableActionDispatcher from './actions/emittableActionDispatcher'
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { DefaultInjectionPolicy } from './di/injection-policies'
+import actionTypes from './constants/actionTypes'
+import channelsFactory from './channelsFactory'
 import { EventEmitter } from 'events'
 
+const worker = new Worker('worker.js')
 const eventEmitter = new EventEmitter()
-eventEmitter.on('count', console.log.bind(console))
-
-const container = new Container(new DefaultInjectionPolicy())
-container.set(EventEmitter, eventEmitter)
-
-const dispatcher = new ActionDispatcher(container, eventEmitter)
-    .mount('count', AuthActionHandler)
+const dispatcher = new EmittableActionDispatcher(new ClientActionDispatcher(worker), eventEmitter)
+const channels = channelsFactory(eventEmitter)
 
 ReactDOM.render(
-    <AppContainer dispatcher={dispatcher} eventEmitter={eventEmitter}>
-        <App name="Yui Kaori" />
+    <AppContainer dispatcher={dispatcher} channels={channels}>
+        <App />
     </AppContainer>,
     document.getElementById('app')
 )

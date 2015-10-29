@@ -1,13 +1,13 @@
-import { IContainer, IDefinition, IDependency, IResolver, IInjectableClass, IInjectableFunction, IInjectionPolicy } from './interfaces'
+import { IContainer, IDefinition, IDependency, IResolver, IInjectableClass, IInjectableKey, IInjectableFunction, IInjectionPolicy } from './interfaces'
 import { AliasDefinition, ClassDefinition, ValueDefinition, ProviderDefinition } from './definitions'
 
 export default class Container implements IContainer, IResolver {
-    private _definitions: Map<IInjectableClass<any>, IDefinition<any>> = new Map<IInjectableClass<any>, IDefinition<any>>()
+    private _definitions: Map<IInjectableKey<any>, IDefinition<any>> = new Map<IInjectableKey<any>, IDefinition<any>>()
 
     constructor(private _injectionPolicy: IInjectionPolicy) {
     }
 
-    alias<T>(key: IInjectableClass<T>, target: IInjectableClass<T>): AliasDefinition<T> {
+    alias<T>(key: IInjectableKey<T>, target: IInjectableKey<T>): AliasDefinition<T> {
         const definition = new AliasDefinition<T>(target)
 
         this._definitions.set(key, definition)
@@ -23,7 +23,7 @@ export default class Container implements IContainer, IResolver {
         return definition
     }
 
-    provider<T>(key: IInjectableClass<T>, provider: IInjectableFunction<T>): ProviderDefinition<T> {
+    provider<T>(key: IInjectableKey<T>, provider: IInjectableFunction<T>): ProviderDefinition<T> {
         const definition = new ProviderDefinition<T>(provider)
 
         this._definitions.set(key, definition)
@@ -31,7 +31,7 @@ export default class Container implements IContainer, IResolver {
         return definition
     }
 
-    set<T>(key: IInjectableClass<T>, value: T): ValueDefinition<T> {
+    set<T>(key: IInjectableKey<T>, value: T): ValueDefinition<T> {
         const definition = new ValueDefinition<T>(value)
 
         this._definitions.set(key, definition)
@@ -39,22 +39,26 @@ export default class Container implements IContainer, IResolver {
         return definition
     }
 
-    resolve<T>(key: IInjectableClass<T>): IDependency<T> {
-        if (key == null) throw "Can't resolve the dependencies for null"
+    resolve<T>(key: IInjectableKey<T>): IDependency<T> {
+        let definition
 
-        const definition = this._definitions.has(key)
-            ? this._definitions.get(key)
-            : new ClassDefinition(key)
+        if (this._definitions.has(key)) {
+            definition = this._definitions.get(key)
+        } else if (typeof key === 'function') {
+            definition = new ClassDefinition(key)
+        } else {
+            throw `Can't resolve the dependencies for "${key}"`
+        }
 
         return definition.resolveBy(this, this._injectionPolicy)
     }
 
-    get<T>(key: IInjectableClass<T>): T {
+    get<T>(key: IInjectableKey<T>): T {
         return this.resolve(key).get()
     }
 
-    has<T>(key: IInjectableClass<T>): boolean {
-        return this._definitions.has(key) || this._injectionPolicy.isInjectable(key)
+    has<T>(key: IInjectableKey<T>): boolean {
+        return this._definitions.has(key) || (typeof key === 'function' && this._injectionPolicy.isInjectable(key))
     }
 
     inject<T>(fn: IInjectableFunction<T>, context: any = null): T {

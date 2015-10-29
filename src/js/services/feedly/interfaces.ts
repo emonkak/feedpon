@@ -10,6 +10,7 @@ export interface AuthenticateInput {
 export interface AuthenticateResponse {
     code: string;
     state?: string;
+    error?: string;
 }
 
 export interface ExchangeTokenInput {
@@ -31,14 +32,14 @@ export interface ExchangeTokenResponse {
     state?: string;
 }
 
-interface RefreshTokenInput {
+export interface RefreshTokenInput {
     refresh_token: string;
     client_id: string;
     client_secret: string;
     grant_type: string;
 }
 
-interface RefreshTokenResponse {
+export interface RefreshTokenResponse {
     id: string;
     plan: string;
     access_token: string;
@@ -46,41 +47,26 @@ interface RefreshTokenResponse {
     token_type: string;
 }
 
-interface RevokeTokenInput {
+export interface RevokeTokenInput {
     refresh_token: string;
     client_id: string;
     client_secret: string;
     grant_type: string;
 }
 
-interface RevokeTokenResponse {
+export interface RevokeTokenResponse {
     id: string;
     expires_in: string;
 }
 
-export interface Credential {
-    authorized: number;
-    body: ExchangeTokenResponse;
-}
-
 // Categories API:
-interface ICategoriesApi {
-    allCategories(): Promise<Category[]>;
-
-    deleteCategory(categoryId: string): Promise<string>;
-}
-
-interface Category {
+export interface Category {
     id: string;
     label: string;
 }
 
 // Feeds API:
-interface IFeedsApi {
-    getFeed(feedId: string): Promise<Feed>;
-}
-
-interface Feed {
+export interface Feed {
     id: string;
     subscribers: number;
     title: string;
@@ -93,7 +79,7 @@ interface Feed {
 }
 
 // Markers API:
-interface IMarkersApi {
+export interface IMarkersApi {
     allUnreadCounts(input?: UnreadCountsInput): Promise<UnreadCountsResponce>;
 
     markAsReadForEntries(entryId: string): Promise<void>;
@@ -115,24 +101,24 @@ interface IMarkersApi {
     keepUnreadForCetegories(categoryIds: string[]): Promise<void>;
 }
 
-interface UnreadCountsInput {
+export interface UnreadCountsInput {
     autorefresh?: boolean;
     newerThan?: number;
     streamId?: string;
 }
 
-interface UnreadCountsResponce {
+export interface UnreadCountsResponce {
     unreadcounts: UnreadCount[];
 }
 
-interface UnreadCount {
+export interface UnreadCount {
     count: number;
     updated: number;
     id: string;
 }
 
 // Streams API:
-interface GetStreamInput {
+export interface GetStreamInput {
     streamId: string;
     count?: number;
     ranked?: string;
@@ -141,12 +127,12 @@ interface GetStreamInput {
     continuation?: string;
 }
 
-interface GetEntryIdsResponse {
+export interface GetEntryIdsResponse {
     ids: string[];
     continuation: string;
 }
 
-interface Contents {
+export interface Contents {
     continuation: string;
     updated: number;
     alternate: LinkObject[];
@@ -156,7 +142,7 @@ interface Contents {
     items: ContentItem[];
 }
 
-interface ContentItem {
+export interface ContentItem {
     published: number;
     tags?: ContentItemTag[];
     alternate: LinkObject[];
@@ -172,29 +158,29 @@ interface ContentItem {
     crawled: number;
 }
 
-interface LinkObject {
+export interface LinkObject {
     type: string;
     href: string;
 }
 
-interface ContentItemTag {
+export interface ContentItemTag {
     id: string;
     label: string;
 }
 
-interface ContentItemOrigin {
+export interface ContentItemOrigin {
     htmlUrl: string;
     title: string;
     streamId: string;
 }
 
-interface ContentItemContent {
+export interface ContentItemContent {
     direction: string;
     content: string;
 }
 
 // Subscriptions API:
-interface Subscription {
+export interface Subscription {
     id: string;
     title: string;
     website: string;
@@ -203,4 +189,18 @@ interface Subscription {
     velocity: number;
     topics: string[];
     visualUrl: string;
+}
+
+// Ohters:
+export const IEnvironment = class {}
+export interface IEnvironment {
+    endpoint: string
+    client_id: string
+    client_secret: string
+    scope: string
+    redirect_uri: string
+}
+
+export interface Credential extends ExchangeTokenResponse {
+    authorized: number;
 }

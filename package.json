@@ -9,9 +9,12 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npm run-script browserify && npm run-script uglify",
-    "browserify": "browserify src/js/app.js --ignore crypto --transform [ babelify --extensions .js,.ts,.tsx ] --plugin [ tsify --target ES6 --jsx react --experimentalDecorators --emitDecoratorMetadata ] --outfile public/app.js",
-    "watchify": "watchify src/js/app.js --verbose --ignore crypto --transform [ babelify --extensions .js,.ts,.tsx ] --plugin [ tsify --target ES6 --jsx react --experimentalDecorators --emitDecoratorMetadata ] --outfile public/app.js",
-    "uglify": "uglifyjs public/app.js --compress --mangle --output public/app.min.js",
+    "app-browserify": "browserify src/js/app.js --ignore crypto --transform [ babelify --extensions .js,.ts,.tsx ] --plugin [ tsify --target ES6 --jsx react --experimentalDecorators --emitDecoratorMetadata ] --outfile public/app.js",
+    "app-watchify": "watchify src/js/app.js --verbose --ignore crypto --transform [ babelify --extensions .js,.ts,.tsx ] --plugin [ tsify --target ES6 --jsx react --experimentalDecorators --emitDecoratorMetadata ] --outfile public/app.js",
+    "app-uglify": "uglifyjs public/app.js --compress --mangle --output public/app.min.js",
+    "worker-browserify": "browserify src/js/worker.ts --ignore crypto --transform [ babelify --extensions .js,.ts,.tsx ] --plugin [ tsify --target ES6 --jsx react --experimentalDecorators --emitDecoratorMetadata ] --outfile public/worker.js",
+    "worker-watchify": "watchify src/js/worker.ts --verbose --ignore crypto --transform [ babelify --extensions .js,.ts,.tsx ] --plugin [ tsify --target ES6 --jsx react --experimentalDecorators --emitDecoratorMetadata ] --outfile public/worker.js",
+    "worker-uglify": "uglifyjs public/worker.js --compress --mangle --output public/worker.min.js",
     "livereload": "live-reload public/",
     "httpserver": "http-server public/"
   },
@@ -19,14 +22,19 @@
   "license": "MIT",
   "dependencies": {
     "babelify": "^6.0.1",
+    "baconjs": "^0.7.77",
     "browserify": "^9.0.7",
     "http-server": "^0.8.0",
+    "localforage": "^1.3.0",
+    "node-uuid": "^1.4.3",
     "react": "^0.14.0",
     "react-dom": "^0.14.0",
     "reflect-metadata": "^0.1.0",
+    "rx": "^4.0.6",
     "tsify": "^0.12.1",
-    "typescript": "^1.6.0",
-    "uglify-js": "^2.4.23",
-    "watchify": "^3.1.0"
+    "typescript": "^1.6.2",
+    "uglify-js": "^2.5.0",
+    "watchify": "^3.1.0",
+    "whatwg-fetch": "^0.10.0"
   }
 }

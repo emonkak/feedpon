@@ -1,8 +1,5 @@
-/// <reference path="../../DefinitelyTyped/node/node-0.11.d.ts" />
-
 import AuthService from '../services/authService'
 import { AuthAction, IActionHandler } from './interfaces'
-import { EventEmitter } from 'events'
 import { Inject } from '../di/annotations'
 
 @Inject

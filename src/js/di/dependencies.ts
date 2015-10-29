@@ -5,7 +5,7 @@ export class ClassDependency<T> implements IDependency<T>, IInstantiable<T> {
                 private _dependencies: IDependency<any>[],
                 private _scope: IScope<T>) {
         if (typeof _target !== 'function') {
-            throw `"${_target}" is not the class constructor.`
+            throw `"${_target}" is not a class constructor.`
         }
     }
 
@@ -28,7 +28,7 @@ export class ProviderDependency<T> implements IDependency<T>, IInstantiable<T> {
                 private _dependencies: IDependency<any>[],
                 private _scope: IScope<T>) {
         if (typeof _provider !== 'function') {
-            throw `"${_provider}" is not the instance provider.`
+            throw `"${_provider}" is not a instance provider.`
         }
     }
 
