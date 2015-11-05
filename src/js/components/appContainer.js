@@ -1,14 +1,15 @@
 import React from 'react'
+import Rx from 'rx'
 
-export default class AppContainer extends React.Component<Props, State> {
+class AppContainer extends React.Component {
     static propTypes = {
         dispatcher: React.PropTypes.object.isRequired,
-        channels: React.PropTypes.object.isRequired
+        eventEmitter: React.PropTypes.object.isRequired
     }
 
     static childContextTypes = {
-        dispatcher: React.PropTypes.object.isRequired,
-        channels: React.PropTypes.object.isRequired
+        dispatch: React.PropTypes.func.isRequired,
+        getObservable: React.PropTypes.func.isRequired
     }
 
     render() {
@@ -16,9 +17,17 @@ export default class AppContainer extends React.Component<Props, State> {
     }
 
     getChildContext() {
+        const { dispatcher, eventEmitter } = this.props
+
         return {
-            dispatcher: this.props.dispatcher,
-            channels: this.props.channels
+            dispatch(action) {
+                return dispatcher.dispatch(action)
+            },
+            getObservable(event) {
+                return Rx.Observable.fromEvent(eventEmitter, event)
+            }
         }
     }
 }
+
+export default AppContainer

@@ -10,11 +10,8 @@ export default class ClientActionDispatcher implements IActionDispatcher {
     }
 
     dispatch<A extends Action<string>>(action: A): Promise<any> {
-        const id = uuid.v1()
-
-        this._worker.postMessage({ id, action })
-
         return new Promise((resolve, reject) => {
+            const id = uuid.v1()
             const handler = ({ data }) => {
                 if (data.id === id) {
                     this._worker.removeEventListener('message', handler as any)
@@ -24,6 +21,7 @@ export default class ClientActionDispatcher implements IActionDispatcher {
             }
 
             this._worker.addEventListener('message', handler)
+            this._worker.postMessage({ id, action })
         })
     }
 }

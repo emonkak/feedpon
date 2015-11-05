@@ -1,6 +1,7 @@
 /// <reference path="../../typings/whatwg-fetch.d.ts" />
 /// <reference path="./interfaces.ts" />
 
+import { getRequest, postRequest, deleteRequest } from './requestFactories'
 import { IHttpClient } from '../http/interfaces'
 import { Inject } from 'di'
 
@@ -99,38 +100,19 @@ export default class Gateway {
 
     private doGet<T>(path: string, data?: { [key: string]: any }): Promise<T> {
         const url = this.environment.endpoint + path
-        const body = data ? Object.keys(data).reduce((acc, key) => {
-            acc.append(key, data[key])
-            return acc
-        }, new FormData()) : null
-        const request = new Request(url, {
-            method: 'GET',
-            body
-        })
+        const request = getRequest(url, data)
         return this.httpClient.send(request).then(response => response.json<T>())
     }
 
     private doPost<T>(path: string, data?: { [key: string]: any }): Promise<T> {
         const url = this.environment.endpoint + path
-        const request = new Request(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: data ? JSON.stringify(data) : null
-        })
+        const request = postRequest(url, data)
         return this.httpClient.send(request).then(response => response.json<T>())
     }
 
     private doDelete<T>(path: string, data?: { [key: string]: any }): Promise<T> {
         const url = this.environment.endpoint + path
-        const request = new Request(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: data ? JSON.stringify(data) : null
-        })
+        const request = deleteRequest(url, data)
         return this.httpClient.send(request).then(response => response.json<T>())
     }
 }

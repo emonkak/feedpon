@@ -2,10 +2,10 @@ import Counter from './counter'
 import React from 'react'
 import actionTypes from '../constants/actionTypes'
 
-export default class App extends React.Component {
+class App extends React.Component {
     static contextTypes = {
-        dispatcher: React.PropTypes.object.isRequired,
-        channels: React.PropTypes.object.isRequired
+        dispatch: React.PropTypes.func.isRequired,
+        getObservable: React.PropTypes.func.isRequired
     }
 
     constructor(props) {
@@ -15,16 +15,9 @@ export default class App extends React.Component {
     }
 
     componentDidMount() {
-        this.subscriber = this.context.channels.count
-            .subscribe(count => this.setState({ count }))
     }
 
     componentWillUnmount() {
-        this.subscriber.dispose()
-    }
-
-    handleCountChanged({ delta }) {
-        this.context.dispatcher.dispatch({ type: actionTypes.COUNT, delta })
     }
 
     render() {
@@ -33,3 +26,5 @@ export default class App extends React.Component {
         )
     }
 }
+
+export default App

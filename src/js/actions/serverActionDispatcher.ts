@@ -14,13 +14,13 @@ export default class ServerActionDispatcher implements IActionDispatcher {
         return this
     }
 
-    dispatch<A extends Action<string>>(action: A): Promise<any> {
+    dispatch<A extends Action<string>>(action: A): Promise<Object> {
         const actionType = action.type
         const handlerClass = this._handlerClasses.get(actionType)
         if (handlerClass) {
             const handler = this._container.get(handlerClass)
             return handler.handle(action)
         }
-        return Promise.reject(`Can not dispatch "${actionType}" action because the action dispatcher is not found.`)
+        return Promise.reject<Object>(`Can not dispatch "${actionType}" action because the action dispatcher is not found.`)
     }
 }

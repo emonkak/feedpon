@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default class Counter extends React.Component {
+class Counter extends React.Component {
     static propTypes = {
         count: React.PropTypes.number,
         onChanged: React.PropTypes.func
@@ -28,3 +28,5 @@ export default class Counter extends React.Component {
         )
     }
 }
+
+export default Counter

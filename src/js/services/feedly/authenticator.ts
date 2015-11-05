@@ -6,6 +6,7 @@ import { IClock } from '../clock/interfaces'
 import { IHttpClient } from '../http/interfaces'
 import { IWindowOpener } from '../window/interfaces'
 import { Inject } from '../../di/annotations'
+import { postRequest } from './requestFactories'
 
 @Inject
 export default class Authenticator {
@@ -42,9 +43,10 @@ export default class Authenticator {
             .then<any>(credential => {
                 if (credential) {
                     const { client_id, client_secret, redirect_uri } = this.environment
+                    const { refresh_token } = credential
                     return Promise.all<any>([
                         this.doRevokeToken({
-                            refresh_token: credential.refresh_token,
+                            refresh_token,
                             client_id,
                             client_secret,
                             grant_type: 'revoke_token'
@@ -55,7 +57,7 @@ export default class Authenticator {
             })
     }
 
-    isAuthorized(): Promise<boolean> {
+    authorized(): Promise<boolean> {
         return this.credentialRepository.get()
             .then(credential => !(credential == null || this.expiresToken(credential)))
     }
@@ -75,7 +77,7 @@ export default class Authenticator {
 
                 const matchesForCode = url.match(/[?&]code=([^&]*)/)
                 const matchesForState = url.match(/[?&]state=([^&]*)/)
-                const matchesForError = url.match(/[?&]error=([^&]+)/)
+                const matchesForError = url.match(/[?&]error=([^&]*)/)
 
                 if (matchesForCode) {
                     resolve({
@@ -117,8 +119,9 @@ export default class Authenticator {
 
     private doRefreshToken(credential: feedly.Credential): Promise<feedly.Credential> {
         const { client_id, client_secret } = this.environment
+        const { refresh_token } = credential
         return this.doPost('v3/auth/token', {
-                refresh_token: credential.refresh_token,
+                refresh_token,
                 client_id,
                 client_secret,
                 grant_type: 'refresh_token',
@@ -138,13 +141,7 @@ export default class Authenticator {
 
     private doPost<T>(path: string, data?: { [key: string]: any }): Promise<T> {
         const url = this.environment.endpoint + path
-        const request = new Request(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: data ? JSON.stringify(data) : null
-        })
+        const request = postRequest(url, data)
         return this.httpClient.send(request).then(response => response.json<T>())
     }
 
