@@ -14,6 +14,3 @@ export interface IActionDispatcher {
     dispatch<A extends Action<string>>(action: A): Promise<Object>
 }
 
-export interface CountAction extends Action<string> {
-    delta: number
-}

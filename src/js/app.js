@@ -1,19 +1,36 @@
+import ActionDispatcher from './dispatchers/actionDispatcher'
 import App from './components/app'
 import AppContainer from './components/appContainer'
-import ClientActionDispatcher from './actions/clientActionDispatcher'
-import EmittableActionDispatcher from './actions/emittableActionDispatcher'
+import AuthActionHandler from './handlers/authActionHandler'
+import EmittableActionDispatcher from './dispatchers/emittableActionDispatcher'
+import LoggedActionDispatcher from './dispatchers/loggedActionDispatcher'
 import React from 'react'
 import ReactDOM from 'react-dom'
+import WorkerActionDispatcher from './dispatchers/workerActionDispatcher'
 import actionTypes from './constants/actionTypes'
+import container from './container'
 import { EventEmitter } from 'events'
 
-const worker = new Worker('worker.js')
-const eventEmitter = new EventEmitter()
-const dispatcher = new EmittableActionDispatcher(new ClientActionDispatcher(worker), eventEmitter)
+function bootstrap() {
+    const worker = new Worker('assets/worker.js')
+    const eventEmitter = new EventEmitter()
+    const dispatcher = new LoggedActionDispatcher(
+        new EmittableActionDispatcher(
+            new ActionDispatcher(new WorkerActionDispatcher(worker), container)
+                .mount(actionTypes.AUTH, AuthActionHandler),
+            eventEmitter
+        )
+    )
+    ReactDOM.render(
+        <AppContainer dispatcher={dispatcher} eventEmitter={eventEmitter}>
+            <App />
+        </AppContainer>,
+        document.getElementById('app')
+    )
+}
 
-ReactDOM.render(
-    <AppContainer dispatcher={dispatcher} eventEmitter={eventEmitter}>
-        <App />
-    </AppContainer>,
-    document.getElementById('app')
-)
+if ('cordova' in window) {
+    document.addEventListener('deviceready', bootstrap, false);
+} else {
+    bootstrap()
+}

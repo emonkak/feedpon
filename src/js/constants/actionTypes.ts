@@ -1,4 +1,5 @@
 export default {
     COUNT: 'COUNT',
-    ERROR: 'ERROR'
+    ERROR: 'ERROR',
+    AUTH: 'AUTH'
 }

@@ -4,7 +4,7 @@
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 
 interface LocalForageOptions {
-    driver?: LocalForageDriver | LocalForageDriver[];
+    driver?: string | LocalForageDriver | LocalForageDriver[];
 
     name?: string;
 
@@ -20,7 +20,7 @@ interface LocalForageOptions {
 interface LocalForageDriver {
     _driver: string;
 
-    _initStorage(options: LocalForageOptions): void;
+    _initStorage(options?: LocalForageOptions): Promise<void>;
 
     _support: boolean | Promise<boolean>;
 

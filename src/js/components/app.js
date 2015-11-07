@@ -20,9 +20,31 @@ class App extends React.Component {
     componentWillUnmount() {
     }
 
+    handleAuthorize() {
+        this.context.dispatch({ type: actionTypes.AUTH })
+    }
+
     render() {
         return (
-            <Counter count={this.state.count} onChanged={this.handleCountChanged.bind(this)} />
+            <div>
+                <header className="l-header">
+                    <div className="notification"></div>
+                    <nav className="nav">
+                        <ul>
+                        </ul>
+                    </nav>
+                </header>
+                <main>
+                    <div className="l-sidebar">
+                        <ul className="subscrition-list">
+                            <li><a href="#">Subscription Title</a></li>
+                        </ul>
+                    </div>
+                    <div className="l-content">
+                        <button onClick={this.handleAuthorize.bind(this)}>Authorize</button>
+                    </div>
+                </main>
+            </div>
         )
     }
 }
