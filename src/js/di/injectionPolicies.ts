@@ -1,13 +1,15 @@
 import { IInjectable, IInjectableKey, IInjectionPolicy, IScope } from './interfaces'
-import { prototypeScope } from './scopes'
 
-export class DefaultInjectionPolicy implements IInjectionPolicy {
+export class InjectionPolicy implements IInjectionPolicy {
+    constructor(private _defaultScope: IScope<any>) {
+    }
+
     getInjectables<T>(target: IInjectable<T>): IInjectableKey<any>[] {
         return target.$inject
     }
 
     getScope<T>(target: IInjectable<T>): IScope<T> {
-        return target.$scope || prototypeScope
+        return target.$scope || this._defaultScope
     }
 
     isInjectable<T>(target: IInjectable<T>): boolean {

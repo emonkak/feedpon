@@ -1,5 +1,5 @@
 import Container from './container'
-import { DefaultInjectionPolicy } from './injectionPolicies'
+import { InjectionPolicy } from './injectionPolicies'
 import { Inject, Singleton } from './annotations'
 
 var IFoo = class {}

@@ -20,8 +20,12 @@ class App extends React.Component {
     componentWillUnmount() {
     }
 
-    handleAuthorize() {
-        this.context.dispatch({ type: actionTypes.AUTH })
+    handleAuthenticate() {
+        this.context.dispatch({ type: actionTypes.AUTHENTICATE })
+    }
+
+    handleGetSubscriptions() {
+        this.context.dispatch({ type: actionTypes.GET_SUBSCRIPTIONS })
     }
 
     render() {
@@ -41,7 +45,8 @@ class App extends React.Component {
                         </ul>
                     </div>
                     <div className="l-content">
-                        <button onClick={this.handleAuthorize.bind(this)}>Authorize</button>
+                        <button onClick={this.handleAuthenticate.bind(this)}>Authenticate</button>
+                        <button onClick={this.handleGetSubscriptions.bind(this)}>Get Subscriptions</button>
                     </div>
                 </main>
             </div>

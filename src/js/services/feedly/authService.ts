@@ -131,6 +131,6 @@ export default class AuthService {
     }
 
     private expiresToken(credential: feedly.Credential): boolean {
-        return credential.authorized + (credential.expires_in * 1000) < this.clock.now()
+        return credential.authorized + (credential.expires_in * 1000) < this.clock.now() + 1000 * 60
     }
 }

@@ -6,6 +6,6 @@ import { Inject } from '../../di/annotations'
 @Inject
 export default class HttpClient implements IHttpClient {
     send(request: Request): Promise<Response> {
-        return window.fetch(request)
+        return fetch(request)
     }
 }

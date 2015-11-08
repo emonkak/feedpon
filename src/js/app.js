@@ -1,7 +1,7 @@
 import ActionDispatcher from './dispatchers/actionDispatcher'
 import App from './components/app'
 import AppContainer from './components/appContainer'
-import AuthActionHandler from './handlers/authActionHandler'
+import AuthenticateHandler from './handlers/authenticateHandler'
 import EmittableActionDispatcher from './dispatchers/emittableActionDispatcher'
 import LoggedActionDispatcher from './dispatchers/loggedActionDispatcher'
 import React from 'react'
@@ -17,7 +17,7 @@ function bootstrap() {
     const dispatcher = new LoggedActionDispatcher(
         new EmittableActionDispatcher(
             new ActionDispatcher(new WorkerActionDispatcher(worker), container)
-                .mount(actionTypes.AUTH, AuthActionHandler),
+                .mount(actionTypes.AUTHENTICATE, AuthenticateHandler),
             eventEmitter
         )
     )

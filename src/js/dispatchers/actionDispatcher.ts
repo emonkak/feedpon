@@ -1,4 +1,5 @@
 import { Action, IActionDispatcher, IActionHandler, IActionHandlerClass } from './interfaces'
+import { IContainer } from '../di/interfaces'
 
 export default class ActionDispatcher implements IActionDispatcher {
     private handlerClasses: Map<string, IActionHandlerClass<Action<string>, any>> = new Map()

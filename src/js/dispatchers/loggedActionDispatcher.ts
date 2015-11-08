@@ -5,15 +5,15 @@ export default class LoggedActionDispatcher implements IActionDispatcher {
     }
 
     dispatch<A extends Action<string>>(action: A): Promise<Object> {
-        console.log('Dispatching action...', action)
+        console.log(`${action.type}: Dispatching`, action)
 
         return this.dispatcher.dispatch(action)
             .then(result => {
-                console.log('Dispatched action is successful', result)
+                console.log(`${action.type}: Done`, result)
                 return result
             })
             .catch(error => {
-                console.error('Dispatched action is failure', error)
+                console.error(`${action.type} Failed`, error)
                 return Promise.reject(error)
             })
     }

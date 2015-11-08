@@ -1,5 +1,6 @@
 export default {
+    AUTHENTICATE: 'AUTHENTICATE',
     COUNT: 'COUNT',
     ERROR: 'ERROR',
-    AUTH: 'AUTH'
+    GET_SUBSCRIPTIONS: 'GET_SUBSCRIPTIONS'
 }
