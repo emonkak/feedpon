@@ -1,5 +1,5 @@
 import { IContainer, IDefinition, IDependency, IResolver, IInjectableClass, IInjectableKey, IInjectableFunction, IInjectionPolicy } from './interfaces'
-import { AliasDefinition, ClassDefinition, ValueDefinition, ProviderDefinition } from './definitions'
+import { AliasDefinition, ClassDefinition, ValueDefinition, FactoryDefinition } from './definitions'
 
 export default class Container implements IContainer, IResolver {
     private _definitions: Map<IInjectableKey<any>, IDefinition<any>> = new Map<IInjectableKey<any>, IDefinition<any>>()
@@ -23,8 +23,8 @@ export default class Container implements IContainer, IResolver {
         return definition
     }
 
-    provider<T>(key: IInjectableKey<T>, provider: IInjectableFunction<T>): ProviderDefinition<T> {
-        const definition = new ProviderDefinition<T>(provider)
+    factory<T>(key: IInjectableKey<T>, factory: IInjectableFunction<T>): FactoryDefinition<T> {
+        const definition = new FactoryDefinition<T>(factory)
 
         this._definitions.set(key, definition)
 

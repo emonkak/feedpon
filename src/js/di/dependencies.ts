@@ -1,4 +1,4 @@
-import { IInjectableClass, IInjectableFunction, IInstantiable, IDependency, IScope } from './interfaces'
+import { IInjectable, IInjectableClass, IInjectableFunction, IInstantiable, IDependency, IScope } from './interfaces'
 
 export class ClassDependency<T> implements IDependency<T>, IInstantiable<T> {
     constructor(private _target: IInjectableClass<T>,
@@ -9,7 +9,7 @@ export class ClassDependency<T> implements IDependency<T>, IInstantiable<T> {
         }
     }
 
-    get injectable() {
+    get injectable(): IInjectable<T> {
         return this._target
     }
 
@@ -18,22 +18,22 @@ export class ClassDependency<T> implements IDependency<T>, IInstantiable<T> {
     }
 
     instantiate(): T {
-        const args = this._dependencies.map((dependency) => dependency.get())
+        const args = this._dependencies.map(dependency => dependency.get())
         return new this._target(...args)
     }
 }
 
-export class ProviderDependency<T> implements IDependency<T>, IInstantiable<T> {
-    constructor(private _provider: IInjectableFunction<T>,
+export class FactoryDependency<T> implements IDependency<T>, IInstantiable<T> {
+    constructor(private _factory: IInjectableFunction<T>,
                 private _dependencies: IDependency<any>[],
                 private _scope: IScope<T>) {
-        if (typeof _provider !== 'function') {
-            throw `"${_provider}" is not a instance provider.`
+        if (typeof _factory !== 'function') {
+            throw `"${_factory}" is not a factory function.`
         }
     }
 
-    get injectable() {
-        return this._provider
+    get injectable(): IInjectable<T> {
+        return this._factory
     }
 
     get(): T {
@@ -41,7 +41,7 @@ export class ProviderDependency<T> implements IDependency<T>, IInstantiable<T> {
     }
 
     instantiate(): T {
-        const args = this._dependencies.map((dependency) => dependency.get())
-        return this._provider(...args)
+        const args = this._dependencies.map(dependency => dependency.get())
+        return this._factory(...args)
     }
 }

@@ -1,21 +1,22 @@
 import { IDefinition, IDependency, IInjectableClass, IInjectableKey, IInjectableFunction, IInjectionPolicy, IResolver, IScope } from './interfaces'
-import { ClassDependency, ProviderDependency } from './dependencies'
-import { prototypeScope } from './scopes'
+import { ClassDependency, FactoryDependency } from './dependencies'
 
-class BaseDefinition<T> {
+abstract class BaseDefinition<T> implements IDefinition<T> {
     protected _injectables: IInjectableClass<any>[]
 
     protected _scope: IScope<T>
 
-    in(scope: IScope<T>): any {
+    in(scope: IScope<T>) {
         this._scope = scope
         return this
     }
 
-    with(injectables: IInjectableClass<any>[]): any {
+    with(injectables: IInjectableClass<any>[]) {
         this._injectables = injectables
         return this
     }
+
+    abstract resolveBy(resolver: IResolver, injectionPolicy: IInjectionPolicy): IDependency<T>;
 }
 
 export class AliasDefinition<T> implements IDefinition<T> {
@@ -27,7 +28,7 @@ export class AliasDefinition<T> implements IDefinition<T> {
     }
 }
 
-export class ClassDefinition<T> extends BaseDefinition<T> implements IDefinition<T> {
+export class ClassDefinition<T> extends BaseDefinition<T> {
     constructor(private _target: IInjectableClass<T>) {
         super()
     }
@@ -54,23 +55,23 @@ export class ClassDefinition<T> extends BaseDefinition<T> implements IDefinition
     }
 }
 
-export class ProviderDefinition<T> extends BaseDefinition<T> implements IDefinition<T> {
-    constructor(private _provider: IInjectableFunction<T>) {
+export class FactoryDefinition<T> extends BaseDefinition<T> {
+    constructor(private _factory: IInjectableFunction<T>) {
         super()
     }
 
     resolveBy(resolver: IResolver, injectionPolicy: IInjectionPolicy): IDependency<T> {
-        if (!injectionPolicy.isInjectable(this._provider)) {
-            throw `"${this._provider}" is not injectable.`
+        if (!injectionPolicy.isInjectable(this._factory)) {
+            throw `"${this._factory}" is not injectable.`
         }
 
         try {
-            const injectables = this._injectables || injectionPolicy.getInjectables(this._provider)
+            const injectables = this._injectables || injectionPolicy.getInjectables(this._factory)
             const dependencies = injectables.map(injectable => resolver.resolve(injectable))
-            const scope = this._scope || injectionPolicy.getScope(this._provider)
-            return new ProviderDependency<T>(this._provider, dependencies, scope)
+            const scope = this._scope || injectionPolicy.getScope(this._factory)
+            return new FactoryDependency<T>(this._factory, dependencies, scope)
         } catch (e) {
-            throw (e + ' Caused by ' + this._provider)
+            throw (e + ' Caused by ' + this._factory)
         }
 
     }

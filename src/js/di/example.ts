@@ -1,6 +1,7 @@
 import Container from './container'
-import { InjectionPolicy } from './injectionPolicies'
 import { Inject, Singleton } from './annotations'
+import { InjectionPolicy } from './injectionPolicies'
+import { prototypeScope } from './scopes'
 
 var IFoo = class {}
 interface IFoo {
@@ -53,7 +54,7 @@ class Qux {
     }
 }
 
-const container = new Container(new DefaultInjectionPolicy())
+const container = new Container(new InjectionPolicy(prototypeScope))
 container.bind(IFoo).to(Foo)
 container.bind(IBar).to(Bar)
 container.bind(IBaz).to(Baz)
