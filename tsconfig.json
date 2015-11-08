@@ -3,6 +3,7 @@
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "moduleResolution": "node",
+        "noImplicitAny": true,
         "target": "ES6"
     }
 }

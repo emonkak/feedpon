@@ -12,8 +12,8 @@ export default class ChromeWindowOpener implements IWindowOpener {
             webview.parentNode && webview.parentNode.removeChild(webview)
         }
 
-        webview.addEventListener('loadredirect', (event) => {
-            urlChanged((event as any).newUrl, close)
+        webview.addEventListener('loadredirect', (event: any) => {
+            urlChanged(event.newUrl, close)
         })
 
         document.body.appendChild(webview)

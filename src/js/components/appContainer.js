@@ -3,7 +3,7 @@ import Rx from 'rx'
 
 class AppContainer extends React.Component {
     static propTypes = {
-        dispatcher: React.PropTypes.object.isRequired,
+        actionDispatcher: React.PropTypes.object.isRequired,
         eventEmitter: React.PropTypes.object.isRequired
     }
 
@@ -17,11 +17,11 @@ class AppContainer extends React.Component {
     }
 
     getChildContext() {
-        const { dispatcher, eventEmitter } = this.props
+        const { actionDispatcher, eventEmitter } = this.props
 
         return {
             dispatch(action) {
-                return dispatcher.dispatch(action)
+                return actionDispatcher.dispatch(action)
             },
             getObservable(event) {
                 return Rx.Observable.fromEvent(eventEmitter, event)

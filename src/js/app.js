@@ -1,28 +1,39 @@
-import ActionDispatcher from './dispatchers/actionDispatcher'
+import ActionDispatcher from './actionDispatchers/actionDispatcher'
 import App from './components/app'
 import AppContainer from './components/appContainer'
-import AuthenticateHandler from './handlers/authenticateHandler'
-import EmittableActionDispatcher from './dispatchers/emittableActionDispatcher'
-import LoggedActionDispatcher from './dispatchers/loggedActionDispatcher'
+import AuthenticateHandler from './actionHandlers/authenticateHandler'
+import EventDispatcher from './eventDispatchers/eventDispatcher'
+import LoggedActionDispatcher from './actionDispatchers/loggedActionDispatcher'
+import LoggedEventDispatcher from './eventDispatchers/loggedEventDispatcher'
+import ObservableActionDispatcher from './actionDispatchers/observableActionDispatcher'
 import React from 'react'
 import ReactDOM from 'react-dom'
-import WorkerActionDispatcher from './dispatchers/workerActionDispatcher'
+import RemoteActionDispatcher from './actionDispatchers/remoteActionDispatcher'
 import actionTypes from './constants/actionTypes'
 import container from './container'
 import { EventEmitter } from 'events'
+import { IEventDispatcher } from './eventDispatchers/interfaces'
 
 function bootstrap() {
     const worker = new Worker('assets/worker.js')
     const eventEmitter = new EventEmitter()
-    const dispatcher = new LoggedActionDispatcher(
-        new EmittableActionDispatcher(
-            new ActionDispatcher(new WorkerActionDispatcher(worker), container)
+    const eventDispatcher = new LoggedEventDispatcher(new EventDispatcher(eventEmitter))
+    const actionDispatcher = new LoggedActionDispatcher(
+        new ObservableActionDispatcher(
+            new ActionDispatcher(container, new RemoteActionDispatcher(worker))
                 .mount(actionTypes.AUTHENTICATE, AuthenticateHandler),
-            eventEmitter
+            eventDispatcher
         )
     )
+
+    container.set(IEventDispatcher, eventDispatcher)
+
+    worker.addEventListener('message', ({ data }) => {
+        eventDispatcher.dispatch(data)
+    })
+
     ReactDOM.render(
-        <AppContainer dispatcher={dispatcher} eventEmitter={eventEmitter}>
+        <AppContainer actionDispatcher={actionDispatcher} eventEmitter={eventEmitter}>
             <App />
         </AppContainer>,
         document.getElementById('app')

@@ -40,7 +40,7 @@ export default class Container implements IContainer, IResolver {
     }
 
     resolve<T>(key: IInjectableKey<T>): IDependency<T> {
-        let definition
+        let definition: IDefinition<T>
 
         if (this._definitions.has(key)) {
             definition = this._definitions.get(key)
