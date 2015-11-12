@@ -1,6 +1,6 @@
 import ActionDispatcher from './actionDispatchers/actionDispatcher'
-import App from './components/app'
 import AppContainer from './components/appContainer'
+import AppRoot from './components/appRoot'
 import AuthenticateHandler from './actionHandlers/authenticateHandler'
 import EventDispatcher from './eventDispatchers/eventDispatcher'
 import LoggedActionDispatcher from './actionDispatchers/loggedActionDispatcher'
@@ -34,7 +34,7 @@ function bootstrap() {
 
     ReactDOM.render(
         <AppContainer actionDispatcher={actionDispatcher} eventEmitter={eventEmitter}>
-            <App />
+            <AppRoot />
         </AppContainer>,
         document.getElementById('app')
     )

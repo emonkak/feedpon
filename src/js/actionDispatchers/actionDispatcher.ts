@@ -8,7 +8,7 @@ export default class ActionDispatcher implements IActionDispatcher {
                 private fallback: IActionDispatcher) {
     }
 
-    mount<A extends Action<any>, R>(actionType: string, handlerClass: IActionHandlerClass<A, R>): IActionDispatcher {
+    mount<A extends Action<any>, R>(actionType: string, handlerClass: IActionHandlerClass<A, R>): ActionDispatcher {
         this.handlerClasses.set(actionType, handlerClass)
         return this
     }

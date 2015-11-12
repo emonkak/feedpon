@@ -8,5 +8,10 @@
       "scripts": ["background.js"]
     }
   },
-  "permissions": ["webview", "storage", "unlimitedStorage", "<all_urls>"]
+  "permissions": [
+      "webview",
+      "storage",
+      "unlimitedStorage",
+      "<all_urls>"
+  ]
 }

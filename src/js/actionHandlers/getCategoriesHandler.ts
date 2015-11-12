@@ -6,20 +6,20 @@ import { IEventDispatcher } from '../eventDispatchers/interfaces'
 import { Inject } from '../di/annotations'
 import eventTypes from '../constants/eventTypes'
 
-type GetSubscriptionsAction = Action<string>
+type GetCategories = Action<string>
 
 @Inject
-export default class GetSubscriptionsHandler implements IActionHandler<GetSubscriptionsAction, void> {
+export default class GetCategoriesHandler implements IActionHandler<GetCategories, void> {
     constructor(private authenticator: Authenticator,
                 private eventDispatcher: IEventDispatcher,
                 private gateway: Gateway) {
     }
 
-    handle(action: GetSubscriptionsAction): Promise<void> {
+    handle(action: GetCategories): Promise<void> {
         return this.authenticator.getCredential()
-            .then(({ access_token }) => this.gateway.allSubscriptions(access_token))
-            .then(subscriptions => {
-                this.eventDispatcher.dispatch({ eventType: eventTypes.SUBSCRIPTIONS_RECEIVED, subscriptions })
+            .then(({ access_token }) => this.gateway.allCategories(access_token))
+            .then(categories => {
+                this.eventDispatcher.dispatch({ eventType: eventTypes.CATEGORIES_RECEIVED, categories })
             })
     }
 }

@@ -8,7 +8,7 @@ import { IWindowOpener } from '../window/interfaces'
 import { Inject } from '../../di/annotations'
 
 @Inject
-export default class AuthService {
+export default class Authenticator {
     constructor(private credentialRepository: ICredentialRepository,
                 private clock: IClock,
                 private environment: feedly.IEnvironment,
