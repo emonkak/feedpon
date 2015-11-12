@@ -1,17 +1,17 @@
 {
-  "name": "Feedpon",
-  "description": "The feed reader to change the world",
-  "version": "0.0.0",
-  "manifest_version": 2,
-  "app": {
+    "name": "Feedpon",
+    "description": "The feed reader to change the world",
+    "version": "0.0.0",
+    "manifest_version": 2,
     "background": {
-      "scripts": ["background.js"]
-    }
-  },
-  "permissions": [
-      "webview",
-      "storage",
-      "unlimitedStorage",
-      "<all_urls>"
-  ]
+        "scripts": ["assets/background.js"],
+        "persistent": false
+    },
+    "browser_action": {},
+    "permissions": [
+        "storage",
+        "tabs",
+        "unlimitedStorage",
+        "<all_urls>"
+    ]
 }

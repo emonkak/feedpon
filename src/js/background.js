@@ -3,14 +3,14 @@ import GetCategoriesHandler from './actionHandlers/getCategoriesHandler'
 import GetSubscriptionsHandler from './actionHandlers/getSubscriptionsHandler'
 import GetUnreadCountsHandler from './actionHandlers/getUnreadCountsHandler'
 import NullActionDispatcher from './actionDispatchers/nullActionDispatcher'
-import WorkerEventDispatcher from './eventDispatchers/workerEventDispatcher'
+import MessagePortEventDispatcher from './eventDispatchers/messagePortEventDispatcher'
 import actionTypes from './constants/actionTypes'
 import container from './container'
 import eventTypes from './constants/eventTypes'
 import { IEventDispatcher } from './eventDispatchers/interfaces'
 
-function bootstrap(worker: Worker) {
-    const eventDispatcher = new WorkerEventDispatcher(worker)
+function handleConnect(port) {
+    const eventDispatcher = new MessagePortEventDispatcher(port)
     const actionDispatcher = new ActionDispatcher(container, new NullActionDispatcher())
         .mount(actionTypes.GET_CATEGORIES, GetCategoriesHandler)
         .mount(actionTypes.GET_SUBSCRIPTIONS, GetSubscriptionsHandler)
@@ -18,13 +18,23 @@ function bootstrap(worker: Worker) {
 
     container.set(IEventDispatcher, eventDispatcher)
 
-    worker.onmessage = ({ data }) => {
-        const { id, action } = data
+    chrome.extension.onMessage.addListener(handleMessage)
 
-        actionDispatcher.dispatch(action)
-            .then(result => eventDispatcher.dispatch({ eventType: eventTypes.ACTION_DONE, id, action, result }))
-            .catch(error => eventDispatcher.dispatch({ eventType: eventTypes.ACTION_FAILED, id, action, error }))
+    port.onDisconnect.addListener(handleDisconnect)
+
+    function handleMessage(request, sender, sendResponse) {
+        const response = actionDispatcher.dispatch(request)
+            .then(result => sendResponse({ result }))
+            .catch(error => sendResponse({ error }))
+    }
+
+    function handleDisconnect(port) {
+        port.onDisconnect.removeListener(disconnect)
+        chrome.extension.onRequest.removeListener(handleMessage)
     }
 }
 
-bootstrap(self as any)
+chrome.extension.onConnect.addListener(handleConnect)
+chrome.browserAction.onClicked.addListener(() => {
+    chrome.tabs.create({ url: 'index.html' })
+})

@@ -34,6 +34,7 @@ class Sidebar extends React.Component {
                 ({ category }) => category.id,
                 (category, subscriptions) => ({ category, subscriptions })
             )
+            .where(({ subscriptions }) => subscriptions.count() > 0)
 
         return (
             <div className="l-sidebar">
