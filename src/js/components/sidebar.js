@@ -5,7 +5,7 @@ import SubscriptionCategory from './subscriptionCategory'
 class Sidebar extends React.Component {
     static propTypes = {
         subscriptions: React.PropTypes.array.isRequired,
-        unreadcounts: React.PropTypes.array.isRequired,
+        unreadCounts: React.PropTypes.array.isRequired,
         categories: React.PropTypes.array.isRequired,
         selectedStreamId: React.PropTypes.string
     }
@@ -27,15 +27,15 @@ class Sidebar extends React.Component {
         const subscriptions = Enumerable.from(this.props.subscriptions)
             .where(subscription => (subscription.title && subscription.title.indexOf(filter) !== -1) || (subscription.website && subscription.website.indexOf(filter) !== -1))
             .join(
-                Enumerable.from(this.props.unreadcounts),
+                Enumerable.from(this.props.unreadCounts),
                 subscription => subscription.id,
-                unreadcount => unreadcount.id,
-                (subscription, unreadcount) => ({ subscription, unreadcount })
+                unreadCount => unreadCount.id,
+                (subscription, unreadCount) => ({ subscription, unreadCount })
             )
-            .selectMany(({ subscription, unreadcount }) => {
+            .selectMany(({ subscription, unreadCount }) => {
                 return Enumerable.from(subscription.categories)
                     .defaultIfEmpty(uncategorized)
-                    .select(category => ({ category, subscription, unreadcount }));
+                    .select(category => ({ category, subscription, unreadCount }));
             })
         const categories = Enumerable.from(this.props.categories)
             .concat(Enumerable.make(uncategorized))

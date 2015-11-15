@@ -8,3 +8,30 @@ export interface ICredentialRepository {
 
     delete(): Promise<void>
 }
+
+export const ISubscriptionRepository = class {}
+export interface ISubscriptionRepository {
+    getAll(): Promise<feedly.Subscription[]>
+
+    putAll(subscriptions: feedly.Subscription[]): Promise<void>
+
+    deleteAll(): Promise<void>
+}
+
+export const IUnreadCountRepository = class {}
+export interface IUnreadCountRepository {
+    getAll(): Promise<feedly.UnreadCount[]>
+
+    putAll(unreadCounts: feedly.UnreadCount[]): Promise<void>
+
+    deleteAll(): Promise<void>
+}
+
+export const ICategoryRepository = class {}
+export interface ICategoryRepository {
+    getAll(): Promise<feedly.Category[]>
+
+    putAll(categories: feedly.Category[]): Promise<void>
+
+    deleteAll(): Promise<void>
+}

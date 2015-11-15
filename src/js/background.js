@@ -1,7 +1,10 @@
 import ActionDispatcher from './actionDispatchers/actionDispatcher'
 import GetCategoriesHandler from './actionHandlers/getCategoriesHandler'
+import GetCategoriesCacheHandler from './actionHandlers/getCategoriesCacheHandler'
 import GetSubscriptionsHandler from './actionHandlers/getSubscriptionsHandler'
+import GetSubscriptionsCacheHandler from './actionHandlers/getSubscriptionsCacheHandler'
 import GetUnreadCountsHandler from './actionHandlers/getUnreadCountsHandler'
+import GetUnreadCountsCacheHandler from './actionHandlers/getUnreadCountsCacheHandler'
 import LoggedActionDispatcher from './actionDispatchers/loggedActionDispatcher'
 import LoggedEventDispatcher from './eventDispatchers/loggedEventDispatcher'
 import MessagePortEventDispatcher from './eventDispatchers/messagePortEventDispatcher'
@@ -18,8 +21,11 @@ function handleConnect(port) {
     const actionDispatcher = new LoggedActionDispatcher(
         new ActionDispatcher(container, eventDispatcher, new NullActionDispatcher())
             .mount(actionTypes.GET_CATEGORIES, GetCategoriesHandler)
+            .mount(actionTypes.GET_CATEGORIES_CACHE, GetCategoriesCacheHandler)
             .mount(actionTypes.GET_SUBSCRIPTIONS, GetSubscriptionsHandler)
+            .mount(actionTypes.GET_SUBSCRIPTIONS_CACHE, GetSubscriptionsCacheHandler)
             .mount(actionTypes.GET_UNREAD_COUNTS, GetUnreadCountsHandler)
+            .mount(actionTypes.GET_UNREAD_COUNTS_CACHE, GetUnreadCountsCacheHandler)
     )
 
     chrome.runtime.onMessage.addListener(handleMessage)

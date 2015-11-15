@@ -16,7 +16,7 @@ class AppRoot extends React.Component {
         this.state = {
             subscriptions: [],
             categories: [],
-            unreadcounts: [],
+            unreadCounts: [],
             selectedStreamId: null
         }
     }
@@ -24,8 +24,8 @@ class AppRoot extends React.Component {
     componentDidMount() {
         const subscriptions = this.context.getObservable(eventTypes.SUBSCRIPTIONS_RECEIVED)
             .select(({ subscriptions }) => subscriptions)
-        const unreadcounts = this.context.getObservable(eventTypes.UNREAD_COUNTS_RECEIVED)
-            .select(({ unreadcounts }) => unreadcounts)
+        const unreadCounts = this.context.getObservable(eventTypes.UNREAD_COUNTS_RECEIVED)
+            .select(({ unreadCounts }) => unreadCounts)
         const categories = this.context.getObservable(eventTypes.CATEGORIES_RECEIVED)
             .select(({ categories }) => categories)
         const selectedStreamId = this.context.getObservable(eventTypes.STREAM_SELECTED)
@@ -34,13 +34,17 @@ class AppRoot extends React.Component {
 
         const state = Rx.Observable.zip(
                 subscriptions,
-                unreadcounts,
+                unreadCounts,
                 categories,
-                (subscriptions, unreadcounts, categories) => ({ subscriptions, unreadcounts, categories })
+                (subscriptions, unreadCounts, categories) => ({ subscriptions, unreadCounts, categories })
             )
             .combineLatest(selectedStreamId, (state, selectedStreamId) => ({ ...state, selectedStreamId }))
 
         this.disposable = state.subscribe(newState => this.setState(newState))
+
+        this.context.dispatch({ actionType: actionTypes.GET_SUBSCRIPTIONS_CACHE })
+        this.context.dispatch({ actionType: actionTypes.GET_UNREAD_COUNTS_CACHE })
+        this.context.dispatch({ actionType: actionTypes.GET_CATEGORIES_CACHE })
     }
 
     componentWillUnmount() {
@@ -58,6 +62,8 @@ class AppRoot extends React.Component {
     }
 
     render() {
+        const { subscriptions, unreadCounts, categories, selectedStreamId } = this.state
+
         return (
             <div>
                 <header className="l-header">
@@ -68,7 +74,7 @@ class AppRoot extends React.Component {
                     </nav>
                 </header>
                 <main>
-                    <Sidebar subscriptions={this.state.subscriptions} unreadcounts={this.state.unreadcounts} categories={this.state.categories} selectedStreamId={this.state.selectedStreamId} />
+                    <Sidebar subscriptions={subscriptions} unreadCounts={unreadCounts} categories={categories} selectedStreamId={selectedStreamId} />
                     <div className="l-content">
                         <button onClick={::this.handleAuthenticate}>Authenticate</button>
                         <button onClick={::this.handleUpdate}>Update</button>

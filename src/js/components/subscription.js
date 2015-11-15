@@ -5,7 +5,7 @@ import classnames from 'classnames'
 class Subscription extends React.Component {
     static propTypes = {
         subscription: React.PropTypes.object.isRequired,
-        unreadcount: React.PropTypes.object.isRequired,
+        unreadCount: React.PropTypes.object.isRequired,
         selected: React.PropTypes.bool.isRequired
     }
 
@@ -16,7 +16,7 @@ class Subscription extends React.Component {
 
     shouldComponentUpdate(nextProps, nextState) {
         return this.props.subscription !== nextProps.subscription
-            || this.props.unreadcount !== nextProps.unreadcount
+            || this.props.unreadCount !== nextProps.unreadCount
             || this.props.selected !== nextProps.selected
     }
 
@@ -32,7 +32,7 @@ class Subscription extends React.Component {
     }
 
     render() {
-        const { subscription, unreadcount, selected } = this.props
+        const { subscription, unreadCount, selected } = this.props
 
         const icon = subscription.iconUrl != null
             ? <img className="subscription-icon" src={subscription.iconUrl} alt={subscription.title} width="16" height="16" />
@@ -43,7 +43,7 @@ class Subscription extends React.Component {
                 <a className="subscription-link" href="#" onClick={::this.handleSelect}>
                     {icon}
                     <span className="subscription-title">{subscription.title}</span>
-                    <span className="subscription-unreadcount">{unreadcount.count}</span>
+                    <span className="subscription-unread-count">{unreadCount.count}</span>
                 </a>
             </li>
         )

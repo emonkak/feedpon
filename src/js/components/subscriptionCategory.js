@@ -57,8 +57,8 @@ class SubscriptionCategory extends React.Component {
         const { category, subscriptions, selected } = this.props
         const { expanded } = this.state
 
-        const unreadcount = Enumerable.from(subscriptions)
-            .select(({ unreadcount }) => unreadcount.count)
+        const unreadCount = Enumerable.from(subscriptions)
+            .select(({ unreadCount }) => unreadCount.count)
             .sum()
 
         return (
@@ -67,7 +67,7 @@ class SubscriptionCategory extends React.Component {
                     <a className={classnames('subscription-category-expand-arrow', { 'is-expanded': expanded })} onClick={::this.handleExpand}></a>
                     <a className="subscription-category-link" href="#" onClick={::this.handleSelect}>
                         <span className="subscription-category-label">{category.label}</span>
-                        <span className="subscription-category-unreadcount">{unreadcount}</span>
+                        <span className="subscription-category-unread-count">{unreadCount}</span>
                     </a>
                 </div>
                 <ul className={classnames('subscription-list', { 'is-expanded': expanded })}>
@@ -77,13 +77,13 @@ class SubscriptionCategory extends React.Component {
         )
     }
 
-    renderSubscription({ subscription, unreadcount }) {
+    renderSubscription({ subscription, unreadCount }) {
         const { selectedStreamId } = this.props
 
         return (
             <Subscription key={subscription.id}
                           subscription={subscription}
-                          unreadcount={unreadcount}
+                          unreadCount={unreadCount}
                           selected={subscription.id === selectedStreamId} />
         )
     }
