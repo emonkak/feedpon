@@ -16,7 +16,8 @@ class AppRoot extends React.Component {
         this.state = {
             subscriptions: [],
             categories: [],
-            unreadcounts: []
+            unreadcounts: [],
+            selectedStreamId: null
         }
     }
 
@@ -27,13 +28,17 @@ class AppRoot extends React.Component {
             .select(({ unreadcounts }) => unreadcounts)
         const categories = this.context.getObservable(eventTypes.CATEGORIES_RECEIVED)
             .select(({ categories }) => categories)
+        const selectedStreamId = this.context.getObservable(eventTypes.STREAM_SELECTED)
+            .select(({ streamId }) => streamId)
+            .startWith(null)
 
         const state = Rx.Observable.zip(
-            subscriptions,
-            unreadcounts,
-            categories,
-            (subscriptions, unreadcounts, categories) => ({ subscriptions, unreadcounts, categories })
-        )
+                subscriptions,
+                unreadcounts,
+                categories,
+                (subscriptions, unreadcounts, categories) => ({ subscriptions, unreadcounts, categories })
+            )
+            .combineLatest(selectedStreamId, (state, selectedStreamId) => ({ ...state, selectedStreamId }))
 
         this.disposable = state.subscribe(newState => this.setState(newState))
     }
@@ -63,7 +68,7 @@ class AppRoot extends React.Component {
                     </nav>
                 </header>
                 <main>
-                    <Sidebar subscriptions={this.state.subscriptions} unreadcounts={this.state.unreadcounts} categories={this.state.categories} />
+                    <Sidebar subscriptions={this.state.subscriptions} unreadcounts={this.state.unreadcounts} categories={this.state.categories} selectedStreamId={this.state.selectedStreamId} />
                     <div className="l-content">
                         <button onClick={::this.handleAuthenticate}>Authenticate</button>
                         <button onClick={::this.handleUpdate}>Update</button>

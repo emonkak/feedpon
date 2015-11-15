@@ -11,15 +11,14 @@ type AuthenticateAction = Action<string>
 @Inject
 export default class AuthenticateHandler implements IActionHandler<AuthenticateAction, void> {
     constructor(private authenticator: Authenticator,
-                private eventDispatcher: IEventDispatcher,
                 private windowOpener: IWindowOpener) {
     }
 
-    handle(action: AuthenticateAction): Promise<void> {
+    handle(action: AuthenticateAction, eventDispatcher: IEventDispatcher): Promise<void> {
         return this.authenticator.getCredential()
             .catch(() => this.authenticator.authenticate(this.windowOpener))
             .then(credential => {
-                this.eventDispatcher.dispatch({ eventType: eventTypes.AUTHENTICATED, credential })
+                eventDispatcher.dispatch({ eventType: eventTypes.AUTHENTICATED, credential })
             })
     }
 }

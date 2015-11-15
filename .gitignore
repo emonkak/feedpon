@@ -1,5 +1,7 @@
 .DS_Store
-/app/chrome/assets/
+/app/chrome/css/
+/app/chrome/fonts/
+/app/chrome/js/
 /build/
 /dist/
 /node_modules/

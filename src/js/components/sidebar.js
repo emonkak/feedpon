@@ -1,22 +1,33 @@
 import Enumerable from 'linq'
 import React from 'react'
-import actionTypes from '../constants/actionTypes'
-import eventTypes from '../constants/eventTypes'
+import SubscriptionCategory from './subscriptionCategory'
 
 class Sidebar extends React.Component {
     static propTypes = {
         subscriptions: React.PropTypes.array.isRequired,
         unreadcounts: React.PropTypes.array.isRequired,
-        categories: React.PropTypes.array.isRequired
+        categories: React.PropTypes.array.isRequired,
+        selectedStreamId: React.PropTypes.string
+    }
+
+    constructor(props) {
+        super(props)
+
+        this.state = { filter: '' }
+    }
+
+    handleFilterChanged(event) {
+        this.setState({ filter: event.target.value })
     }
 
     render() {
-        const { subscriptions, unreadcounts, categories } = this.props
+        const { filter } = this.state
 
-        const uncategorized = { label: 'Uncategorized', id: null }
-        const subscriptionItems = Enumerable.from(subscriptions)
+        const uncategorized = { label: 'Uncategorized', id: 'global.uncategorized' }
+        const subscriptions = Enumerable.from(this.props.subscriptions)
+            .where(subscription => (subscription.title && subscription.title.indexOf(filter) !== -1) || (subscription.website && subscription.website.indexOf(filter) !== -1))
             .join(
-                Enumerable.from(unreadcounts),
+                Enumerable.from(this.props.unreadcounts),
                 subscription => subscription.id,
                 unreadcount => unreadcount.id,
                 (subscription, unreadcount) => ({ subscription, unreadcount })
@@ -26,42 +37,35 @@ class Sidebar extends React.Component {
                     .defaultIfEmpty(uncategorized)
                     .select(category => ({ category, subscription, unreadcount }));
             })
-        const categoryItems = Enumerable.from(categories)
+        const categories = Enumerable.from(this.props.categories)
             .concat(Enumerable.make(uncategorized))
             .groupJoin(
-                subscriptionItems,
+                subscriptions,
                 category => category.id,
                 ({ category }) => category.id,
-                (category, subscriptions) => ({ category, subscriptions })
+                (category, subscriptions) => ({ category, subscriptions: subscriptions.toArray() })
             )
-            .where(({ subscriptions }) => subscriptions.count() > 0)
+            .where(({ subscriptions }) => subscriptions.length > 0)
 
         return (
             <div className="l-sidebar">
-                <ul className="subscription-list">
-                    {categoryItems.select(::this.renderCategory).toArray()}
+                <input className="subscription-filter" type="text" onChange={::this.handleFilterChanged} />
+                <ul className="subscription-category-list">
+                    {categories.select(::this.renderCategory).toArray()}
                 </ul>
             </div>
         )
     }
 
     renderCategory({ category, subscriptions }) {
-        return (
-            <li key={category.id}>
-                <a href="#">{category.label}</a>
-                <ul>{subscriptions.select(::this.renderSubscription).toArray()}</ul>
-            </li>
-        )
-    }
+        const { selectedStreamId } = this.props
 
-    renderSubscription({ subscription, unreadcount }) {
         return (
-            <li key={subscription.id}>
-                <a href="#">
-                    <img src={subscription.iconUrl} alt={subscription.title} width="16" height="16" />
-                    <span className="subscription-title">{subscription.title}</span>
-                </a>
-            </li>
+            <SubscriptionCategory key={category.id}
+                                  category={category}
+                                  subscriptions={subscriptions}
+                                  selected={category.id === selectedStreamId}
+                                  selectedStreamId={selectedStreamId} />
         )
     }
 }

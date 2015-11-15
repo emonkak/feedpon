@@ -11,15 +11,14 @@ type GetUnreadCounts = Action<string> & feedly.UnreadCountsInput
 @Inject
 export default class GetUnreadCountsHandler implements IActionHandler<GetUnreadCounts, void> {
     constructor(private authenticator: Authenticator,
-                private eventDispatcher: IEventDispatcher,
                 private gateway: Gateway) {
     }
 
-    handle(action: GetUnreadCounts): Promise<void> {
+    handle(action: GetUnreadCounts, eventDispatcher: IEventDispatcher): Promise<void> {
         return this.authenticator.getCredential()
             .then(({ access_token }) => this.gateway.allUnreadCounts(access_token))
             .then(({ unreadcounts }) => {
-                this.eventDispatcher.dispatch({ eventType: eventTypes.UNREAD_COUNTS_RECEIVED, unreadcounts })
+                eventDispatcher.dispatch({ eventType: eventTypes.UNREAD_COUNTS_RECEIVED, unreadcounts })
             })
     }
 }

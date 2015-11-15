@@ -9,6 +9,7 @@ import LoggedEventDispatcher from './eventDispatchers/loggedEventDispatcher'
 import ObservableActionDispatcher from './actionDispatchers/observableActionDispatcher'
 import React from 'react'
 import ReactDOM from 'react-dom'
+import SelectStreamHandler from './actionHandlers/selectStreamHandler'
 import actionTypes from './constants/actionTypes'
 import container from './container'
 import { EventEmitter } from 'events'
@@ -19,15 +20,14 @@ function bootstrap() {
     const eventDispatcher = new LoggedEventDispatcher(new EventDispatcher(eventEmitter))
     const actionDispatcher = new LoggedActionDispatcher(
         new ObservableActionDispatcher(
-            new ActionDispatcher(container, new ChromeBackgroundActionDispatcher())
-                .mount(actionTypes.AUTHENTICATE, AuthenticateHandler),
+            new ActionDispatcher(container, eventDispatcher, new ChromeBackgroundActionDispatcher())
+                .mount(actionTypes.AUTHENTICATE, AuthenticateHandler)
+                .mount(actionTypes.SELECT_STREAM, SelectStreamHandler),
             eventDispatcher
         )
     )
 
-    container.set(IEventDispatcher, eventDispatcher)
-
-    const port = chrome.extension.connect()
+    const port = chrome.runtime.connect()
     port.onMessage.addListener(::eventDispatcher.dispatch)
 
     ReactDOM.render(

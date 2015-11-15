@@ -49,7 +49,6 @@ export class ClassDefinition<T> extends BaseDefinition<T> {
             const scope = this._scope || injectionPolicy.getScope(this._target)
             return new ClassDependency<T>(this._target, dependencies, scope)
         } catch (e) {
-            console.error(this._target.$inject)
             throw (e + ' Caused by ' + this._target)
         }
     }

@@ -1,10 +1,12 @@
 import { Action, IActionDispatcher, IActionHandler, IActionHandlerClass } from './interfaces'
 import { IContainer } from '../di/interfaces'
+import { IEventDispatcher } from '../eventDispatchers/interfaces'
 
 export default class ActionDispatcher implements IActionDispatcher {
     private handlerClasses: { [key: string]: IActionHandlerClass<Action<any>, any> } = {}
 
     constructor(private container: IContainer,
+                private eventDispatcher: IEventDispatcher,
                 private fallback: IActionDispatcher) {
     }
 
@@ -18,7 +20,7 @@ export default class ActionDispatcher implements IActionDispatcher {
         const handlerClass = this.handlerClasses[actionType]
         if (handlerClass) {
             const handler = this.container.get(handlerClass)
-            return handler.handle(action)
+            return handler.handle(action, this.eventDispatcher)
         }
         return this.fallback.dispatch(action)
     }

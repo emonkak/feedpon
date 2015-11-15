@@ -11,15 +11,14 @@ type GetCategories = Action<string>
 @Inject
 export default class GetCategoriesHandler implements IActionHandler<GetCategories, void> {
     constructor(private authenticator: Authenticator,
-                private eventDispatcher: IEventDispatcher,
                 private gateway: Gateway) {
     }
 
-    handle(action: GetCategories): Promise<void> {
+    handle(action: GetCategories, eventDispatcher: IEventDispatcher): Promise<void> {
         return this.authenticator.getCredential()
             .then(({ access_token }) => this.gateway.allCategories(access_token))
             .then(categories => {
-                this.eventDispatcher.dispatch({ eventType: eventTypes.CATEGORIES_RECEIVED, categories })
+                eventDispatcher.dispatch({ eventType: eventTypes.CATEGORIES_RECEIVED, categories })
             })
     }
 }

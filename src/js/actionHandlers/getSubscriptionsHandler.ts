@@ -11,15 +11,14 @@ type GetSubscriptionsAction = Action<string>
 @Inject
 export default class GetSubscriptionsHandler implements IActionHandler<GetSubscriptionsAction, void> {
     constructor(private authenticator: Authenticator,
-                private eventDispatcher: IEventDispatcher,
                 private gateway: Gateway) {
     }
 
-    handle(action: GetSubscriptionsAction): Promise<void> {
+    handle(action: GetSubscriptionsAction, eventDispatcher: IEventDispatcher): Promise<void> {
         return this.authenticator.getCredential()
             .then(({ access_token }) => this.gateway.allSubscriptions(access_token))
             .then(subscriptions => {
-                this.eventDispatcher.dispatch({ eventType: eventTypes.SUBSCRIPTIONS_RECEIVED, subscriptions })
+                eventDispatcher.dispatch({ eventType: eventTypes.SUBSCRIPTIONS_RECEIVED, subscriptions })
             })
     }
 }

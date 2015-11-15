@@ -5,11 +5,11 @@ import { Action, IActionDispatcher } from './interfaces'
 export default class ChromeBackgroundActionDispatcher implements IActionDispatcher {
     dispatch<A extends Action<string>>(action: A): Promise<any> {
         return new Promise((resolve, reject) => {
-            chrome.extension.sendMessage(action, response => {
+            chrome.runtime.sendMessage(action, response => {
                 if ('error' in response) {
-                    resolve(response.error)
+                    reject(response.error)
                 } else {
-                    reject(response.result)
+                    resolve(response.result)
                 }
             })
         })

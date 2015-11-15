@@ -1,9 +1,11 @@
+import { IEventDispatcher } from '../eventDispatchers/interfaces'
+
 export interface Action<T> {
     actionType: T
 }
 
 export interface IActionHandler<T extends Action<any>, U> {
-    handle(action: T): Promise<U>
+    handle(action: T, eventDispatcher: IEventDispatcher): Promise<U>
 }
 
 export interface IActionHandlerClass<T extends Action<any>, U> {
