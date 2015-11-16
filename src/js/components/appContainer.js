@@ -1,7 +1,7 @@
 import React from 'react'
 import Rx from 'rx'
 
-class AppContainer extends React.Component {
+export default class AppContainer extends React.Component {
     static propTypes = {
         actionDispatcher: React.PropTypes.object.isRequired,
         eventEmitter: React.PropTypes.object.isRequired
@@ -29,5 +29,3 @@ class AppContainer extends React.Component {
         }
     }
 }
-
-export default AppContainer

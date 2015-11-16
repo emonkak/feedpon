@@ -16,12 +16,15 @@ export default class GetCategoriesHandler implements IActionHandler<GetCategorie
                 private gateway: Gateway) {
     }
 
-    handle(action: GetCategories, eventDispatcher: IEventDispatcher): Promise<void> {
-        return this.authenticator.getCredential()
-            .then(({ access_token }) => this.gateway.allCategories(access_token))
-            .then(categories => this.categoryRepository.putAll(categories).then(() => categories))
-            .then(categories => {
-                eventDispatcher.dispatch({ eventType: eventTypes.CATEGORIES_RECEIVED, categories })
-            })
+    async handle(action: GetCategories, eventDispatcher: IEventDispatcher): Promise<void> {
+        const { access_token } = await this.authenticator.getCredential()
+        const categories = await this.gateway.allCategories(access_token)
+
+        await this.categoryRepository.putAll(categories)
+
+        eventDispatcher.dispatch({
+            eventType: eventTypes.CATEGORIES_RECEIVED,
+            categories
+        })
     }
 }

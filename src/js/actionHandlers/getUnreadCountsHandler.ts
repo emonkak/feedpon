@@ -16,12 +16,15 @@ export default class GetUnreadCountsHandler implements IActionHandler<GetUnreadC
                 private unreadCountRepository: IUnreadCountRepository) {
     }
 
-    handle(action: GetUnreadCounts, eventDispatcher: IEventDispatcher): Promise<void> {
-        return this.authenticator.getCredential()
-            .then(({ access_token }) => this.gateway.allUnreadCounts(access_token))
-            .then(({ unreadcounts }) => this.unreadCountRepository.putAll(unreadcounts).then(() => unreadcounts))
-            .then(unreadCounts => {
-                eventDispatcher.dispatch({ eventType: eventTypes.UNREAD_COUNTS_RECEIVED, unreadCounts })
-            })
+    async handle(action: GetUnreadCounts, eventDispatcher: IEventDispatcher): Promise<void> {
+        const { access_token } = await this.authenticator.getCredential()
+        const { unreadcounts } = await this.gateway.allUnreadCounts(access_token)
+
+        await this.unreadCountRepository.putAll(unreadcounts)
+
+        eventDispatcher.dispatch({
+            eventType: eventTypes.UNREAD_COUNTS_RECEIVED,
+            unreadCounts: unreadcounts
+        })
     }
 }

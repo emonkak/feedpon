@@ -11,12 +11,13 @@ export default class GetCategoriesCacheHandler implements IActionHandler<GetCate
     constructor(private categoryRepository: ICategoryRepository) {
     }
 
-    handle(action: GetCategoriesCacheAction, eventDispatcher: IEventDispatcher): Promise<void> {
-        return this.categoryRepository.getAll()
-            .then(categories => {
-                if (categories) {
-                    eventDispatcher.dispatch({ eventType: eventTypes.CATEGORIES_RECEIVED, categories })
-                }
+    async handle(action: GetCategoriesCacheAction, eventDispatcher: IEventDispatcher): Promise<void> {
+        const categories = await this.categoryRepository.getAll()
+        if (categories) {
+            eventDispatcher.dispatch({
+                eventType: eventTypes.CATEGORIES_RECEIVED,
+                categories
             })
+        }
     }
 }

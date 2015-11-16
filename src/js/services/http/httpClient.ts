@@ -7,5 +7,6 @@ import { Inject } from '../../di/annotations'
 export default class HttpClient implements IHttpClient {
     send(request: Request): Promise<Response> {
         return fetch(request)
+            .then(response => response.ok ? response as any : Promise.reject(response))
     }
 }

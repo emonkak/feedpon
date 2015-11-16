@@ -11,12 +11,13 @@ export default class GetSubscriptionsHandler implements IActionHandler<GetSubscr
     constructor(private subscriptionsRepository: ISubscriptionRepository) {
     }
 
-    handle(action: GetSubscriptionsCacheAction, eventDispatcher: IEventDispatcher): Promise<void> {
-        return this.subscriptionsRepository.getAll()
-            .then(subscriptions => {
-                if (subscriptions) {
-                    eventDispatcher.dispatch({ eventType: eventTypes.SUBSCRIPTIONS_RECEIVED, subscriptions })
-                }
+    async handle(action: GetSubscriptionsCacheAction, eventDispatcher: IEventDispatcher): Promise<void> {
+        const subscriptions = await this.subscriptionsRepository.getAll()
+        if (subscriptions) {
+            eventDispatcher.dispatch({
+                eventType: eventTypes.SUBSCRIPTIONS_RECEIVED,
+                subscriptions
             })
+        }
     }
 }

@@ -1,9 +1,11 @@
 import Enumerable from 'linq'
+import PureRenderMixin from 'react-addons-pure-render-mixin'
 import React from 'react'
 import SubscriptionCategory from './subscriptionCategory'
 
-class Sidebar extends React.Component {
+export default class Sidebar extends React.Component {
     static propTypes = {
+        credential: React.PropTypes.object.isRequired,
         subscriptions: React.PropTypes.array.isRequired,
         unreadCounts: React.PropTypes.array.isRequired,
         categories: React.PropTypes.array.isRequired,
@@ -21,13 +23,14 @@ class Sidebar extends React.Component {
     }
 
     render() {
+        const { credential, unreadCounts } = this.props
         const { filter } = this.state
 
-        const uncategorized = { label: 'Uncategorized', id: 'global.uncategorized' }
+        const uncategorized = { label: 'Uncategorized', id: `user/${credential.id}/category/global.uncategorized` }
         const subscriptions = Enumerable.from(this.props.subscriptions)
             .where(subscription => (subscription.title && subscription.title.indexOf(filter) !== -1) || (subscription.website && subscription.website.indexOf(filter) !== -1))
             .join(
-                Enumerable.from(this.props.unreadCounts),
+                Enumerable.from(unreadCounts),
                 subscription => subscription.id,
                 unreadCount => unreadCount.id,
                 (subscription, unreadCount) => ({ subscription, unreadCount })
@@ -70,4 +73,4 @@ class Sidebar extends React.Component {
     }
 }
 
-export default Sidebar
+Object.assign(Sidebar.prototype, PureRenderMixin)

@@ -1,3 +1,5 @@
+import 'regenerator/runtime'
+
 import ActionDispatcher from './actionDispatchers/actionDispatcher'
 import AppContainer from './components/appContainer'
 import AppRoot from './components/appRoot'

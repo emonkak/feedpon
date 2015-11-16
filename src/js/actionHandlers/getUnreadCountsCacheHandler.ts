@@ -11,13 +11,13 @@ export default class GetUnreadCountsCacheHandler implements IActionHandler<GetUn
     constructor(private unreadCountRepository: IUnreadCountRepository) {
     }
 
-    handle(action: GetUnreadCountsCacheAction, eventDispatcher: IEventDispatcher): Promise<void> {
-        return this.unreadCountRepository.getAll()
-            .then(unreadCounts => {
-                if (unreadCounts) {
-                    eventDispatcher.dispatch({ eventType: eventTypes.UNREAD_COUNTS_RECEIVED, unreadCounts })
-                }
+    async handle(action: GetUnreadCountsCacheAction, eventDispatcher: IEventDispatcher): Promise<void> {
+        const unreadCounts = await this.unreadCountRepository.getAll()
+        if (unreadCounts) {
+            eventDispatcher.dispatch({
+                eventType: eventTypes.UNREAD_COUNTS_RECEIVED,
+                unreadCounts
             })
+        }
     }
 }
-

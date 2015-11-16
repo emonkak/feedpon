@@ -1,8 +1,9 @@
+import PureRenderMixin from 'react-addons-pure-render-mixin'
 import React from 'react'
 import actionTypes from '../constants/actionTypes'
 import classnames from 'classnames'
 
-class Subscription extends React.Component {
+export default class Subscription extends React.Component {
     static propTypes = {
         subscription: React.PropTypes.object.isRequired,
         unreadCount: React.PropTypes.object.isRequired,
@@ -12,12 +13,6 @@ class Subscription extends React.Component {
     static contextTypes = {
         dispatch: React.PropTypes.func.isRequired,
         getObservable: React.PropTypes.func.isRequired
-    }
-
-    shouldComponentUpdate(nextProps, nextState) {
-        return this.props.subscription !== nextProps.subscription
-            || this.props.unreadCount !== nextProps.unreadCount
-            || this.props.selected !== nextProps.selected
     }
 
     handleSelect(event) {
@@ -50,4 +45,4 @@ class Subscription extends React.Component {
     }
 }
 
-export default Subscription
+Object.assign(Subscription.prototype, PureRenderMixin)

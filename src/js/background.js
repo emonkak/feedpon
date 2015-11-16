@@ -1,10 +1,12 @@
+import 'regenerator/runtime'
+
 import ActionDispatcher from './actionDispatchers/actionDispatcher'
-import GetCategoriesHandler from './actionHandlers/getCategoriesHandler'
 import GetCategoriesCacheHandler from './actionHandlers/getCategoriesCacheHandler'
-import GetSubscriptionsHandler from './actionHandlers/getSubscriptionsHandler'
+import GetCategoriesHandler from './actionHandlers/getCategoriesHandler'
 import GetSubscriptionsCacheHandler from './actionHandlers/getSubscriptionsCacheHandler'
-import GetUnreadCountsHandler from './actionHandlers/getUnreadCountsHandler'
+import GetSubscriptionsHandler from './actionHandlers/getSubscriptionsHandler'
 import GetUnreadCountsCacheHandler from './actionHandlers/getUnreadCountsCacheHandler'
+import GetUnreadCountsHandler from './actionHandlers/getUnreadCountsHandler'
 import LoggedActionDispatcher from './actionDispatchers/loggedActionDispatcher'
 import LoggedEventDispatcher from './eventDispatchers/loggedEventDispatcher'
 import MessagePortEventDispatcher from './eventDispatchers/messagePortEventDispatcher'
@@ -33,12 +35,8 @@ function handleConnect(port) {
 
     function handleMessage(request, sender, sendResponse) {
         actionDispatcher.dispatch(request)
-            .then(result => {
-                sendResponse({ result })
-            })
-            .catch(error => {
-                sendResponse({ error })
-            })
+            .then(result => sendResponse({ result }))
+            .catch(error => sendResponse({ error }))
         return true
     }
 

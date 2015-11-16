@@ -1,10 +1,11 @@
 import Enumerable from 'linq'
+import PureRenderMixin from 'react-addons-pure-render-mixin'
 import React from 'react'
 import Subscription from './subscription'
 import actionTypes from '../constants/actionTypes'
 import classnames from 'classnames'
 
-class SubscriptionCategory extends React.Component {
+export default class SubscriptionCategory extends React.Component {
     static propTypes = {
         category: React.PropTypes.object.isRequired,
         subscriptions: React.PropTypes.array.isRequired,
@@ -21,14 +22,6 @@ class SubscriptionCategory extends React.Component {
         super(props)
 
         this.state = { expanded: false }
-    }
-
-    shouldComponentUpdate(nextProps, nextState) {
-        return this.props.category !== nextProps.category
-            || this.props.subscriptions !== nextProps.subscriptions
-            || this.props.selected !== nextProps.selected
-            || this.props.selectedStreamId !== nextProps.selectedStreamId
-            || this.state.expanded !== nextState
     }
 
     handleExpand(event) {
@@ -89,4 +82,4 @@ class SubscriptionCategory extends React.Component {
     }
 }
 
-export default SubscriptionCategory
+Object.assign(SubscriptionCategory.prototype, PureRenderMixin)

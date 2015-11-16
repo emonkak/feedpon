@@ -16,12 +16,15 @@ export default class GetSubscriptionsHandler implements IActionHandler<GetSubscr
                 private subscriptionRepository: ISubscriptionRepository) {
     }
 
-    handle(action: GetSubscriptionsAction, eventDispatcher: IEventDispatcher): Promise<void> {
-        return this.authenticator.getCredential()
-            .then(({ access_token }) => this.gateway.allSubscriptions(access_token))
-            .then(subscriptions => this.subscriptionRepository.putAll(subscriptions).then(() => subscriptions))
-            .then(subscriptions => {
-                eventDispatcher.dispatch({ eventType: eventTypes.SUBSCRIPTIONS_RECEIVED, subscriptions })
-            })
+    async handle(action: GetSubscriptionsAction, eventDispatcher: IEventDispatcher): Promise<void> {
+        const { access_token } = await this.authenticator.getCredential()
+        const subscriptions = await this.gateway.allSubscriptions(access_token)
+
+        await this.subscriptionRepository.putAll(subscriptions)
+
+        eventDispatcher.dispatch({
+            eventType: eventTypes.SUBSCRIPTIONS_RECEIVED,
+            subscriptions
+        })
     }
 }
