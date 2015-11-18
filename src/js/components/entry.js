@@ -1,41 +1,43 @@
 import EntryContent from './entryContent'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 import React from 'react'
+import actionTypes from '../constants/actionTypes'
 
 export default class Entry extends React.Component {
     static propTypes = {
         entry: React.PropTypes.object.isRequired
     }
 
+    static contextTypes = {
+        dispatch: React.PropTypes.func.isRequired,
+        getObservable: React.PropTypes.func.isRequired
+    }
+
     constructor(props) {
         super(props)
 
-        this.state = { contentHeight: 0 }
-    }
+        const { content } = this.props.entry
 
-    componentDidMount() {
-        this.windowResizeListener = ::this.handleContentHeightChanged
-        window.addEventListener('resize', this.windowResizeListener)
-    }
-
-    componentWillUnmount() {
-        window.removeEventListener('resize', this.windowResizeListener)
-    }
-
-    handleContentHeightChanged() {
-        const target = this.refs.entryContent
-        if (target) {
-            const { contentDocument } = target
-            const html = contentDocument.documentElement
-            const body = contentDocument.body
-            const contentHeight = html.offsetHeight
-            this.setState({ contentHeight })
+        this.state = {
+            content: content ? content.content : null
         }
+    }
+
+    handleGetFullContent() {
+        this.context.dispatch({
+                actionType: actionTypes.GET_FULL_CONTENT,
+                url: this.props.entry.alternate[0].href
+            })
+            .then(content => {
+                if (content) {
+                    this.setState({ content })
+                }
+            })
     }
 
     render() {
         const { entry } = this.props
-        const { contentHeight } = this.state
+        const { content } = this.state
 
         return (
             <li className="entry">
@@ -47,10 +49,11 @@ export default class Entry extends React.Component {
                     <a href={entry.alternate[0].href} target="_blank">{entry.alternate[0].href}</a>
                 </p>
 
-                {entry.content ? <EntryContent content={entry.content.content} /> : null}
+                {content ? <EntryContent content={content} /> : null}
 
                 <footer className="entry-footer">
                     <time className="entry-timestamp">{new Date(entry.published).toLocaleString()}</time>
+                    <button className="button button-default button-fill" onClick={::this.handleGetFullContent}>Get Full Content</button>
                 </footer>
             </li>
         )

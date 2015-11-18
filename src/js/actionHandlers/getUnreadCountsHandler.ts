@@ -6,7 +6,7 @@ import { IEventDispatcher } from '../eventDispatchers/interfaces'
 import { Inject } from '../di/annotations'
 import { GetUnreadCountsInput, IUnreadCountRepository } from '../services/feedly/interfaces'
 
-type GetUnreadCounts = Action<string> & UnreadCountsInput
+type GetUnreadCounts = Action<string> & GetUnreadCountsInput
 
 @Inject
 export default class GetUnreadCountsHandler implements IActionHandler<GetUnreadCounts, void> {

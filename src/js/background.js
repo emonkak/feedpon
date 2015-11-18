@@ -4,6 +4,7 @@ import ActionDispatcher from './actionDispatchers/actionDispatcher'
 import GetCategoriesCacheHandler from './actionHandlers/getCategoriesCacheHandler'
 import GetCategoriesHandler from './actionHandlers/getCategoriesHandler'
 import GetCredentialHandler from './actionHandlers/getCredentialHandler'
+import GetFullContentHandler from './actionHandlers/getFullContentHandler'
 import GetSubscriptionsCacheHandler from './actionHandlers/getSubscriptionsCacheHandler'
 import GetSubscriptionsHandler from './actionHandlers/getSubscriptionsHandler'
 import GetUnreadCountsCacheHandler from './actionHandlers/getUnreadCountsCacheHandler'
@@ -23,9 +24,10 @@ function handleConnect(port) {
     )
     const actionDispatcher = new LoggedActionDispatcher(
         new ActionDispatcher(container, eventDispatcher, new NullActionDispatcher())
-            .mount(actionTypes.GET_CREDENTIAL, GetCredentialHandler)
             .mount(actionTypes.GET_CATEGORIES, GetCategoriesHandler)
             .mount(actionTypes.GET_CATEGORIES_CACHE, GetCategoriesCacheHandler)
+            .mount(actionTypes.GET_CREDENTIAL, GetCredentialHandler)
+            .mount(actionTypes.GET_FULL_CONTENT, GetFullContentHandler)
             .mount(actionTypes.GET_SUBSCRIPTIONS, GetSubscriptionsHandler)
             .mount(actionTypes.GET_SUBSCRIPTIONS_CACHE, GetSubscriptionsCacheHandler)
             .mount(actionTypes.GET_UNREAD_COUNTS, GetUnreadCountsHandler)
