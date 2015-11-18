@@ -42,7 +42,7 @@ export default class Gateway {
         return this.doGet('v3/feeds/' + feedId, null, authHeader(accessToken))
     }
 
-    allUnreadCounts(accessToken: string, input: feedly.UnreadCountsInput = {}): Promise<feedly.UnreadCountsResponce> {
+    allUnreadCounts(accessToken: string, input: feedly.GetUnreadCountsInput = {}): Promise<feedly.GetUnreadCountsResponce> {
         return this.doGet('v3/markers/counts', input, authHeader(accessToken))
     }
 

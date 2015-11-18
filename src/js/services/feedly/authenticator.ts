@@ -3,13 +3,12 @@
 import * as feedly from './interfaces'
 import Gateway from './gateway'
 import { IClock } from '../clock/interfaces'
-import { ICredentialRepository } from '../../repositories/interfaces'
 import { IWindowOpener } from '../window/interfaces'
 import { Inject } from '../../di/annotations'
 
 @Inject
 export default class Authenticator {
-    constructor(private credentialRepository: ICredentialRepository,
+    constructor(private credentialRepository: feedly.ICredentialRepository,
                 private clock: IClock,
                 private environment: feedly.IEnvironment,
                 private gateway: Gateway) {
@@ -23,7 +22,7 @@ export default class Authenticator {
                         ? this.refresh(credential.refresh_token)
                         : credential
                 } else {
-                    return Promise.reject<feedly.Credential>('Not authenticated yet')
+                    return null
                 }
             })
     }

@@ -15,11 +15,10 @@ export default class AuthenticateHandler implements IActionHandler<AuthenticateA
     }
 
     async handle(action: AuthenticateAction, eventDispatcher: IEventDispatcher): Promise<void> {
-        const credential = await this.authenticator.getCredential()
-            .catch(() => this.authenticator.authenticate(this.windowOpener))
+        const credential = await this.authenticator.authenticate(this.windowOpener)
 
         eventDispatcher.dispatch({
-            eventType: eventTypes.AUTHENTICATED,
+            eventType: eventTypes.CREDENTIAL_RECEIVED,
             credential
         })
     }

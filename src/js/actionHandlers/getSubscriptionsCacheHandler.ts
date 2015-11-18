@@ -1,7 +1,7 @@
 import eventTypes from '../constants/eventTypes'
 import { Action, IActionHandler } from '../actionDispatchers/interfaces'
 import { IEventDispatcher } from '../eventDispatchers/interfaces'
-import { ISubscriptionRepository } from '../repositories/interfaces'
+import { ISubscriptionRepository } from '../services/feedly/interfaces'
 import { Inject } from '../di/annotations'
 
 type GetSubscriptionsCacheAction = Action<string>

@@ -34,7 +34,7 @@ export default class AppRoot extends React.Component {
         const contents = this.context.getObservable(eventTypes.CONTENTS_RECEIVED)
             .select(({ contents }) => contents)
             .startWith(null)
-        const credential = this.context.getObservable(eventTypes.AUTHENTICATED)
+        const credential = this.context.getObservable(eventTypes.CREDENTIAL_RECEIVED)
             .select(({ credential }) => credential)
             .startWith(null)
         const selectedStreamId = this.context.getObservable(eventTypes.STREAM_SELECTED)
@@ -56,14 +56,18 @@ export default class AppRoot extends React.Component {
 
         this.disposable = state.subscribe(newState => this.setState(newState))
 
-        this.context.dispatch({ actionType: actionTypes.AUTHENTICATE })
+        this.context.dispatch({ actionType: actionTypes.GET_CREDENTIAL })
+        this.context.dispatch({ actionType: actionTypes.GET_CATEGORIES_CACHE })
         this.context.dispatch({ actionType: actionTypes.GET_SUBSCRIPTIONS_CACHE })
         this.context.dispatch({ actionType: actionTypes.GET_UNREAD_COUNTS_CACHE })
-        this.context.dispatch({ actionType: actionTypes.GET_CATEGORIES_CACHE })
     }
 
     componentWillUnmount() {
         this.disposable.dispose()
+    }
+
+    handleAuthenticate() {
+        this.context.dispatch({ actionType: actionTypes.AUTHENTICATE })
     }
 
     render() {
@@ -92,7 +96,11 @@ export default class AppRoot extends React.Component {
                 </main>
             )
         } else {
-            return (<main></main>)
+            return (
+                <main>
+                    <button className="button button-default button-fill" onClick={::this.handleAuthenticate}>Authenticate</button>
+                </main>
+            )
         }
     }
 }

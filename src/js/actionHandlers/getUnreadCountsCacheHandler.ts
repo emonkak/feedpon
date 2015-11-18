@@ -1,7 +1,7 @@
 import eventTypes from '../constants/eventTypes'
 import { Action, IActionHandler } from '../actionDispatchers/interfaces'
 import { IEventDispatcher } from '../eventDispatchers/interfaces'
-import { IUnreadCountRepository } from '../repositories/interfaces'
+import { IUnreadCountRepository } from '../services/feedly/interfaces'
 import { Inject } from '../di/annotations'
 
 type GetUnreadCountsCacheAction = Action<string>

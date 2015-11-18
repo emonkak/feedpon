@@ -1,20 +1,19 @@
-/// <reference path="../typings/localForage.d.ts" />
+/// <reference path="../../typings/localForage.d.ts" />
 
-import * as feedly from '../services/feedly/interfaces'
-import storageKeys from '../constants/storageKeys'
-import { ICredentialRepository } from './interfaces'
-import { Inject, Named } from '../di/annotations'
+import storageKeys from '../../constants/storageKeys'
+import { Credential, ICredentialRepository } from './interfaces'
+import { Inject, Named } from '../../di/annotations'
 
 @Inject
 export default class LocalForageCredentialRepository implements ICredentialRepository {
     constructor(@Named('LocalForage') private localForage: LocalForage) {
     }
 
-    get(): Promise<feedly.Credential> {
+    get(): Promise<Credential> {
         return this.localForage.getItem(storageKeys.CREDENTIAL)
     }
 
-    put(credential: feedly.Credential): Promise<void> {
+    put(credential: Credential): Promise<void> {
         return this.localForage.setItem(storageKeys.CREDENTIAL, credential as any)
     }
 

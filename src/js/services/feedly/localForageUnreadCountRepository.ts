@@ -1,20 +1,19 @@
-/// <reference path="../typings/localForage.d.ts" />
+/// <reference path="../../typings/localForage.d.ts" />
 
-import * as feedly from '../services/feedly/interfaces'
-import storageKeys from '../constants/storageKeys'
-import { IUnreadCountRepository } from './interfaces'
-import { Inject, Named } from '../di/annotations'
+import storageKeys from '../../constants/storageKeys'
+import { Inject, Named } from '../../di/annotations'
+import { UnreadCount, IUnreadCountRepository } from './interfaces'
 
 @Inject
 export default class LocalForageUnreadCountRepository implements IUnreadCountRepository {
     constructor(@Named('LocalForage') private localForage: LocalForage) {
     }
 
-    getAll(): Promise<feedly.UnreadCount[]> {
+    getAll(): Promise<UnreadCount[]> {
         return this.localForage.getItem(storageKeys.UNREADCOUNTS)
     }
 
-    putAll(unreadcounts: feedly.UnreadCount[]): Promise<void> {
+    putAll(unreadcounts: UnreadCount[]): Promise<void> {
         return this.localForage.setItem(storageKeys.UNREADCOUNTS, unreadcounts as any)
     }
 

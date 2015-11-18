@@ -1,9 +1,8 @@
-import * as feedly from '../services/feedly/interfaces'
 import Authenticator from '../services/feedly/authenticator'
 import Gateway from '../services/feedly/gateway'
 import eventTypes from '../constants/eventTypes'
 import { Action, IActionHandler } from '../actionDispatchers/interfaces'
-import { ICategoryRepository } from '../repositories/interfaces'
+import { ICategoryRepository } from '../services/feedly/interfaces'
 import { IEventDispatcher } from '../eventDispatchers/interfaces'
 import { Inject } from '../di/annotations'
 

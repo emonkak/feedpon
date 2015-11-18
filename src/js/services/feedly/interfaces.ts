@@ -80,7 +80,7 @@ export interface Feed {
 
 // Markers API:
 export interface IMarkersApi {
-    allUnreadCounts(input?: UnreadCountsInput): Promise<UnreadCountsResponce>;
+    allUnreadCounts(input?: GetUnreadCountsInput): Promise<GetUnreadCountsResponce>;
 
     markAsReadForEntries(entryId: string): Promise<void>;
     markAsReadForEntries(entryIds: string[]): Promise<void>;
@@ -101,13 +101,13 @@ export interface IMarkersApi {
     keepUnreadForCetegories(categoryIds: string[]): Promise<void>;
 }
 
-export interface UnreadCountsInput {
+export interface GetUnreadCountsInput {
     autorefresh?: boolean;
     newerThan?: number;
     streamId?: string;
 }
 
-export interface UnreadCountsResponce {
+export interface GetUnreadCountsResponce {
     unreadcounts: UnreadCount[];
 }
 
@@ -192,6 +192,10 @@ export interface Subscription {
 }
 
 // Ohters:
+export interface Credential extends ExchangeTokenResponse {
+    authorized: number;
+}
+
 export const IEnvironment = class {}
 export interface IEnvironment {
     endpoint: string
@@ -201,6 +205,38 @@ export interface IEnvironment {
     redirect_uri: string
 }
 
-export interface Credential extends ExchangeTokenResponse {
-    authorized: number;
+export const ICredentialRepository = class {}
+export interface ICredentialRepository {
+    get(): Promise<Credential>
+
+    put(credential: Credential): Promise<void>
+
+    delete(): Promise<void>
+}
+
+export const ISubscriptionRepository = class {}
+export interface ISubscriptionRepository {
+    getAll(): Promise<Subscription[]>
+
+    putAll(subscriptions: Subscription[]): Promise<void>
+
+    deleteAll(): Promise<void>
+}
+
+export const IUnreadCountRepository = class {}
+export interface IUnreadCountRepository {
+    getAll(): Promise<UnreadCount[]>
+
+    putAll(unreadCounts: UnreadCount[]): Promise<void>
+
+    deleteAll(): Promise<void>
+}
+
+export const ICategoryRepository = class {}
+export interface ICategoryRepository {
+    getAll(): Promise<Category[]>
+
+    putAll(categories: Category[]): Promise<void>
+
+    deleteAll(): Promise<void>
 }

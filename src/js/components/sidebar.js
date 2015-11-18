@@ -2,6 +2,7 @@ import Enumerable from 'linq'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 import React from 'react'
 import SubscriptionCategory from './subscriptionCategory'
+import actionTypes from '../constants/actionTypes'
 
 export default class Sidebar extends React.Component {
     static propTypes = {
@@ -12,6 +13,11 @@ export default class Sidebar extends React.Component {
         selectedStreamId: React.PropTypes.string
     }
 
+    static contextTypes = {
+        dispatch: React.PropTypes.func.isRequired,
+        getObservable: React.PropTypes.func.isRequired
+    }
+
     constructor(props) {
         super(props)
 
@@ -20,6 +26,12 @@ export default class Sidebar extends React.Component {
 
     handleFilterChanged(event) {
         this.setState({ filter: event.target.value })
+    }
+
+    handleUpdate() {
+        this.context.dispatch({ actionType: actionTypes.GET_SUBSCRIPTIONS })
+        this.context.dispatch({ actionType: actionTypes.GET_UNREAD_COUNTS })
+        this.context.dispatch({ actionType: actionTypes.GET_CATEGORIES })
     }
 
     render() {
@@ -56,6 +68,7 @@ export default class Sidebar extends React.Component {
                 <ul className="subscription-category-list">
                     {categories.select(::this.renderCategory).toArray()}
                 </ul>
+                <button className="button button-default button-fill" onClick={::this.handleUpdate}>Update</button>
             </div>
         )
     }

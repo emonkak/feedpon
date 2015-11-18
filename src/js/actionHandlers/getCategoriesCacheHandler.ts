@@ -1,6 +1,6 @@
 import eventTypes from '../constants/eventTypes'
 import { Action, IActionHandler } from '../actionDispatchers/interfaces'
-import { ICategoryRepository } from '../repositories/interfaces'
+import { ICategoryRepository } from '../services/feedly/interfaces'
 import { IEventDispatcher } from '../eventDispatchers/interfaces'
 import { Inject } from '../di/annotations'
 
