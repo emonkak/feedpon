@@ -39,7 +39,7 @@ export class ClassDefinition<T> extends BaseDefinition<T> {
     }
 
     resolveBy(resolver: IResolver, injectionPolicy: IInjectionPolicy): IDependency<T> {
-        if (!injectionPolicy.isInjectable(this._target)) {
+        if (!(this._injectables || injectionPolicy.isInjectable(this._target))) {
             throw `"${this._target}" is not injectable.`
         }
 
@@ -60,7 +60,7 @@ export class FactoryDefinition<T> extends BaseDefinition<T> {
     }
 
     resolveBy(resolver: IResolver, injectionPolicy: IInjectionPolicy): IDependency<T> {
-        if (!injectionPolicy.isInjectable(this._factory)) {
+        if (!(this._injectables || injectionPolicy.isInjectable(this._factory))) {
             throw `"${this._factory}" is not injectable.`
         }
 

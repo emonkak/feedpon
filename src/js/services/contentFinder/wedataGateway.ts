@@ -1,13 +1,13 @@
-import { IWedataLoader, WedataItem } from './interfaces.ts'
-import { IHttpClient } from '../http/interfaces.ts'
+import { IHttpClient } from '../http/interfaces'
+import { IWedataGateway, WedataItem } from './interfaces'
 import { Inject } from '../../di/annotations'
 
 @Inject
-export default class WedataLoader implements IWedataLoader {
+export default class WedataGateway implements IWedataGateway {
     constructor(private httpClient: IHttpClient) {
     }
 
-    loadItems<T>(resourceUrl: string): Promise<WedataItem<T>[]> {
+    allItems<T>(resourceUrl: string): Promise<WedataItem<T>[]> {
         const request = new Request(resourceUrl + '/items_all.json', {
             method: 'GET'
         })

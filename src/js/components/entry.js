@@ -19,18 +19,19 @@ export default class Entry extends React.Component {
         const { content } = this.props.entry
 
         this.state = {
-            content: content ? content.content : null
+            content: content ? content.content : null,
+            nextLink: null
         }
     }
 
     handleGetFullContent() {
         this.context.dispatch({
                 actionType: actionTypes.GET_FULL_CONTENT,
-                url: this.props.entry.alternate[0].href
+                url: this.state.nextLink || this.props.entry.alternate[0].href
             })
-            .then(content => {
+            .then(({ content, nextLink }) => {
                 if (content) {
-                    this.setState({ content })
+                    this.setState({ content, nextLink })
                 }
             })
     }
