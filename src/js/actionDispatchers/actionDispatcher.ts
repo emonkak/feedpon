@@ -1,4 +1,6 @@
-import { Action, IActionDispatcher, IActionHandler, IActionHandlerClass } from './interfaces'
+import { Action } from '../constants/actionTypes'
+import { IActionDispatcher } from './interfaces'
+import { IActionHandler, IActionHandlerClass } from '../actionHandlers/interfaces'
 import { IContainer } from '../di/interfaces'
 import { IEventDispatcher } from '../eventDispatchers/interfaces'
 

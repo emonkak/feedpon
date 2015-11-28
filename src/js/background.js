@@ -13,9 +13,8 @@ import LoggedActionDispatcher from './actionDispatchers/loggedActionDispatcher'
 import LoggedEventDispatcher from './eventDispatchers/loggedEventDispatcher'
 import MessagePortEventDispatcher from './eventDispatchers/messagePortEventDispatcher'
 import NullActionDispatcher from './actionDispatchers/nullActionDispatcher'
-import actionTypes from './constants/actionTypes'
+import { GetCategories, GetCategoriesCache, GetCredential, GetFullContent, GetSubscriptions, GetSubscriptionsCache, GetUnreadCounts, GetUnreadCountsCache } from './constants/actionTypes'
 import container from './container'
-import eventTypes from './constants/eventTypes'
 import { IEventDispatcher } from './eventDispatchers/interfaces'
 
 function handleConnect(port) {
@@ -24,14 +23,14 @@ function handleConnect(port) {
     )
     const actionDispatcher = new LoggedActionDispatcher(
         new ActionDispatcher(container, eventDispatcher, new NullActionDispatcher())
-            .mount(actionTypes.GET_CATEGORIES, GetCategoriesHandler)
-            .mount(actionTypes.GET_CATEGORIES_CACHE, GetCategoriesCacheHandler)
-            .mount(actionTypes.GET_CREDENTIAL, GetCredentialHandler)
-            .mount(actionTypes.GET_FULL_CONTENT, GetFullContentHandler)
-            .mount(actionTypes.GET_SUBSCRIPTIONS, GetSubscriptionsHandler)
-            .mount(actionTypes.GET_SUBSCRIPTIONS_CACHE, GetSubscriptionsCacheHandler)
-            .mount(actionTypes.GET_UNREAD_COUNTS, GetUnreadCountsHandler)
-            .mount(actionTypes.GET_UNREAD_COUNTS_CACHE, GetUnreadCountsCacheHandler)
+            .mount(GetCategories, GetCategoriesHandler)
+            .mount(GetCategoriesCache, GetCategoriesCacheHandler)
+            .mount(GetCredential, GetCredentialHandler)
+            .mount(GetFullContent, GetFullContentHandler)
+            .mount(GetSubscriptions, GetSubscriptionsHandler)
+            .mount(GetSubscriptionsCache, GetSubscriptionsCacheHandler)
+            .mount(GetUnreadCounts, GetUnreadCountsHandler)
+            .mount(GetUnreadCountsCache, GetUnreadCountsCacheHandler)
     )
 
     chrome.runtime.onMessage.addListener(handleMessage)

@@ -2,7 +2,7 @@ import Entry from './entry'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 import React from 'react'
 
-export default class Content extends React.Component {
+export default class Main extends React.Component {
     static propTypes = {
         contents: React.PropTypes.object
     }
@@ -10,11 +10,11 @@ export default class Content extends React.Component {
     render() {
         const { contents } = this.props
 
+        const entries = contents ? contents.items.map(::this.renderEntry) : []
+
         return (
             <div>
-                <ul className="entry-list">
-                    {contents ? contents.items.map(::this.renderEntry) : []}
-                </ul>
+                <ul className="entry-list">{entries}</ul>
             </div>
         )
     }
@@ -26,4 +26,4 @@ export default class Content extends React.Component {
     }
 }
 
-Object.assign(Content.prototype, PureRenderMixin)
+Object.assign(Main.prototype, PureRenderMixin)

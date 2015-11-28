@@ -1,28 +1,29 @@
-import * as feedly from '../services/feedly/interfaces'
 import Authenticator from '../services/feedly/authenticator'
 import Gateway from '../services/feedly/gateway'
-import eventTypes from '../constants/eventTypes'
-import { Action, IActionHandler } from '../actionDispatchers/interfaces'
+import { IActionHandler } from './interfaces'
+import { ContentsReceived, StreamSelected } from '../constants/eventTypes'
 import { IEventDispatcher } from '../eventDispatchers/interfaces'
 import { Inject } from '../di/annotations'
-
-type SelectStreamAction = Action<string> & feedly.GetStreamInput
+import { SelectStream } from '../constants/actionTypes'
 
 @Inject
-export default class SelectStreamHandler implements IActionHandler<SelectStreamAction, void> {
+export default class SelectStreamHandler implements IActionHandler<SelectStream, void> {
     constructor(private authenticator: Authenticator,
                 private gateway: Gateway) {
     }
 
-    async handle(action: SelectStreamAction, eventDispatcher: IEventDispatcher): Promise<void> {
-        eventDispatcher.dispatch({
-            eventType: eventTypes.STREAM_SELECTED,
+    async handle(action: SelectStream, eventDispatcher: IEventDispatcher): Promise<void> {
+        eventDispatcher.dispatch<StreamSelected>({
+            eventType: StreamSelected,
             streamId: action.streamId
         })
 
         const { access_token } = await this.authenticator.getCredential()
         const contents = await this.gateway.getContents(access_token, action)
 
-        eventDispatcher.dispatch({ eventType: eventTypes.CONTENTS_RECEIVED, contents })
+        eventDispatcher.dispatch<ContentsReceived>({
+            eventType: ContentsReceived,
+            contents
+        })
     }
 }

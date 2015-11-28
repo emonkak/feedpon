@@ -1,5 +1,3 @@
-/// <reference path="../../typings/linq.d.ts" />
-
 import { IWedataGateway, IWedataRepository, WedataItem, WedataResource } from './interfaces'
 import { Inject } from '../../di/annotations'
 

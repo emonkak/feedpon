@@ -1,4 +1,5 @@
-import { Action, IActionDispatcher } from './interfaces'
+import { Action } from '../constants/actionTypes'
+import { IActionDispatcher } from './interfaces'
 
 export default class NullActionDispatcher implements IActionDispatcher {
     dispatch<A extends Action<string>>(action: A): Promise<Object> {

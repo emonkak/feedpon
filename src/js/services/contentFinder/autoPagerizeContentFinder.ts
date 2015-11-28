@@ -1,6 +1,6 @@
 /// <reference path="../../typings/linq.d.ts" />
 
-import * as Enumerable from 'linq'
+import Enumerable from 'linq'
 import WedataLoader from './wedataLoader'
 import { AutoPagerizeData, autoPagerize } from './wedataResources'
 import { IContentFinder, FoundContent , WedataItem } from './interfaces'

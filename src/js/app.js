@@ -13,8 +13,9 @@ import ObservableActionDispatcher from './actionDispatchers/observableActionDisp
 import React from 'react'
 import ReactDOM from 'react-dom'
 import SelectStreamHandler from './actionHandlers/selectStreamHandler'
-import actionTypes from './constants/actionTypes'
+import appState from './appState'
 import container from './container'
+import { Authenticate, SelectStream } from './constants/actionTypes'
 import { EventEmitter } from 'events'
 import { IEventDispatcher } from './eventDispatchers/interfaces'
 
@@ -24,8 +25,8 @@ function bootstrap() {
     const actionDispatcher = new LoggedActionDispatcher(
         new ObservableActionDispatcher(
             new ActionDispatcher(container, eventDispatcher, new ChromeBackgroundActionDispatcher())
-                .mount(actionTypes.AUTHENTICATE, AuthenticateHandler)
-                .mount(actionTypes.SELECT_STREAM, SelectStreamHandler),
+                .mount(Authenticate, AuthenticateHandler)
+                .mount(SelectStream, SelectStreamHandler),
             eventDispatcher
         )
     )
@@ -33,12 +34,16 @@ function bootstrap() {
     const port = chrome.runtime.connect()
     port.onMessage.addListener(::eventDispatcher.dispatch)
 
-    ReactDOM.render(
-        <AppContainer actionDispatcher={actionDispatcher} eventEmitter={eventEmitter}>
-            <AppRoot />
-        </AppContainer>,
-        document.getElementById('app')
-    )
+    const appEl = document.getElementById('app')
+
+    appState(eventEmitter).subscribe(state => {
+        ReactDOM.render(
+            <AppContainer actionDispatcher={actionDispatcher}>
+                <AppRoot {...state} />
+            </AppContainer>,
+            appEl
+        )
+    })
 }
 
 bootstrap()

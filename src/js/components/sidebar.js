@@ -2,7 +2,7 @@ import Enumerable from 'linq'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 import React from 'react'
 import SubscriptionCategory from './subscriptionCategory'
-import actionTypes from '../constants/actionTypes'
+import { GetSubscriptions, GetUnreadCounts, GetCategories } from '../constants/actionTypes'
 
 export default class Sidebar extends React.Component {
     static propTypes = {
@@ -14,8 +14,7 @@ export default class Sidebar extends React.Component {
     }
 
     static contextTypes = {
-        dispatch: React.PropTypes.func.isRequired,
-        getObservable: React.PropTypes.func.isRequired
+        dispatch: React.PropTypes.func.isRequired
     }
 
     constructor(props) {
@@ -29,9 +28,9 @@ export default class Sidebar extends React.Component {
     }
 
     handleUpdate() {
-        this.context.dispatch({ actionType: actionTypes.GET_SUBSCRIPTIONS })
-        this.context.dispatch({ actionType: actionTypes.GET_UNREAD_COUNTS })
-        this.context.dispatch({ actionType: actionTypes.GET_CATEGORIES })
+        this.context.dispatch({ actionType: GetSubscriptions })
+        this.context.dispatch({ actionType: GetUnreadCounts })
+        this.context.dispatch({ actionType: GetCategories })
     }
 
     render() {

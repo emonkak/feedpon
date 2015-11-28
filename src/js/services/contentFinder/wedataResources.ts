@@ -1,6 +1,6 @@
 /// <reference path="../../typings/linq.d.ts" />
 
-import * as Enumerable from 'linq'
+import Enumerable from 'linq'
 import { WedataResource } from './interfaces'
 
 export interface AutoPagerizeData {

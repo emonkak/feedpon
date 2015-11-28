@@ -1,5 +1,5 @@
-import eventTypes from '../constants/eventTypes'
-import { Action, IActionDispatcher } from './interfaces'
+import { Action } from '../constants/actionTypes'
+import { IActionDispatcher } from './interfaces'
 
 export default class WorkerActionDispatcher implements IActionDispatcher {
     constructor(private worker: Worker) {

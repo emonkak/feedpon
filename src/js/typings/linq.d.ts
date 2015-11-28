@@ -233,9 +233,7 @@ declare namespace linq {
     }
 }
 
-// export definition
-declare var Enumerable: linq.Enumerable;
-
 declare module "linq" {
-    export = Enumerable;
+    var Enumerable: linq.Enumerable;
+    export default Enumerable;
 }

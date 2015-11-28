@@ -1,21 +1,20 @@
-import eventTypes from '../constants/eventTypes'
-import { Action, IActionHandler } from '../actionDispatchers/interfaces'
+import { IActionHandler } from './interfaces'
+import { GetUnreadCountsCache } from '../constants/actionTypes'
 import { IEventDispatcher } from '../eventDispatchers/interfaces'
 import { IUnreadCountRepository } from '../services/feedly/interfaces'
 import { Inject } from '../di/annotations'
-
-type GetUnreadCountsCacheAction = Action<string>
+import { UnreadCountsReceived } from '../constants/eventTypes'
 
 @Inject
-export default class GetUnreadCountsCacheHandler implements IActionHandler<GetUnreadCountsCacheAction, void> {
+export default class GetUnreadCountsCacheHandler implements IActionHandler<GetUnreadCountsCache, void> {
     constructor(private unreadCountRepository: IUnreadCountRepository) {
     }
 
-    async handle(action: GetUnreadCountsCacheAction, eventDispatcher: IEventDispatcher): Promise<void> {
+    async handle(action: GetUnreadCountsCache, eventDispatcher: IEventDispatcher): Promise<void> {
         const unreadCounts = await this.unreadCountRepository.getAll()
         if (unreadCounts) {
-            eventDispatcher.dispatch({
-                eventType: eventTypes.UNREAD_COUNTS_RECEIVED,
+            eventDispatcher.dispatch<UnreadCountsReceived>({
+                eventType: UnreadCountsReceived,
                 unreadCounts
             })
         }

@@ -12,4 +12,3 @@ export default class ChainedContentFinder implements IContentFinder {
         }, Promise.resolve(null))
     }
 }
-

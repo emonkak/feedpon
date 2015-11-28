@@ -52,7 +52,7 @@ export default class EntryContent extends React.Component {
         window.removeEventListener('resize', this.windowResizeListener)
     }
 
-    handleHeightChanged() {
+    handleHeightChanged(event) {
         const target = this.refs.entryContent
         const html = target.contentDocument.documentElement
         this.setState({ height: html.offsetHeight })

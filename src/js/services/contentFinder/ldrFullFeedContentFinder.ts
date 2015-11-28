@@ -1,6 +1,6 @@
 /// <reference path="../../typings/linq.d.ts" />
 
-import * as Enumerable from 'linq'
+import Enumerable from 'linq'
 import WedataLoader from './wedataLoader'
 import { IContentFinder, FoundContent , WedataItem } from './interfaces'
 import { Inject } from '../../di/annotations'

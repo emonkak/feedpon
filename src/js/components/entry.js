@@ -1,7 +1,7 @@
 import EntryContent from './entryContent'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 import React from 'react'
-import actionTypes from '../constants/actionTypes'
+import { GetFullContent } from '../constants/actionTypes'
 
 export default class Entry extends React.Component {
     static propTypes = {
@@ -9,36 +9,33 @@ export default class Entry extends React.Component {
     }
 
     static contextTypes = {
-        dispatch: React.PropTypes.func.isRequired,
-        getObservable: React.PropTypes.func.isRequired
-    }
-
-    constructor(props) {
-        super(props)
-
-        const { content } = this.props.entry
-
-        this.state = {
-            content: content ? content.content : null,
-            nextLink: null
-        }
+        dispatch: React.PropTypes.func.isRequired
     }
 
     handleGetFullContent() {
-        this.context.dispatch({
-                actionType: actionTypes.GET_FULL_CONTENT,
-                url: this.state.nextLink || this.props.entry.alternate[0].href
+        const { entry } = this.props
+        const fullContents = entry._fullContents || []
+
+        const url = fullContents.length > 0
+            ? fullContents[fullContents.length - 1].nextLink
+            : entry.alternate[0].href
+
+        if (url != null) {
+            this.context.dispatch({
+                actionType: GetFullContent,
+                streamId: entry.id,
+                url
             })
-            .then(({ content, nextLink }) => {
-                if (content) {
-                    this.setState({ content, nextLink })
-                }
-            })
+        }
     }
 
     render() {
         const { entry } = this.props
-        const { content } = this.state
+        const fullContents = entry._fullContents || []
+
+        const body = fullContents.length > 0
+            ? fullContents.map(({ content }, i) => <EntryContent key={i} content={content} />)
+            : entry.content ? <EntryContent content={entry.content.content} /> : null
 
         return (
             <li className="entry">
@@ -50,7 +47,7 @@ export default class Entry extends React.Component {
                     <a href={entry.alternate[0].href} target="_blank">{entry.alternate[0].href}</a>
                 </p>
 
-                {content ? <EntryContent content={content} /> : null}
+                <div className="entry-body">{body}</div>
 
                 <footer className="entry-footer">
                     <time className="entry-timestamp">{new Date(entry.published).toLocaleString()}</time>

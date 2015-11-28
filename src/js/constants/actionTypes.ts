@@ -1,13 +1,47 @@
-export default {
-    AUTHENTICATE: 'AUTHENTICATE',
-    GET_CATEGORIES: 'GET_CATEGORIES',
-    GET_CATEGORIES_CACHE: 'GET_CATEGORIES_CACHE',
-    GET_CONTENTS: 'GET_CONTENTS',
-    GET_CREDENTIAL: 'GET_CREDENTIAL',
-    GET_FULL_CONTENT: 'GET_FULL_CONTENT',
-    GET_SUBSCRIPTIONS: 'GET_SUBSCRIPTIONS',
-    GET_SUBSCRIPTIONS_CACHE: 'GET_SUBSCRIPTIONS_CACHE',
-    GET_UNREAD_COUNTS: 'GET_UNREAD_COUNTS',
-    GET_UNREAD_COUNTS_CACHE: 'GET_UNREAD_COUNTS_CACHE',
-    SELECT_STREAM: 'SELECT_STREAM'
+import * as feedly from '../services/feedly/interfaces'
+
+export interface Action<T> {
+    actionType: T
+}
+
+export const Authenticate = 'Authenticate'
+export interface Authenticate extends Action<string> {
+}
+
+export const GetCategories = 'GetCategories'
+export interface GetCategories extends Action<string> {
+}
+
+export const GetCategoriesCache = 'GetCategoriesCache'
+export interface GetCategoriesCache extends Action<string> {
+}
+
+export const GetCredential = 'GetCredential'
+export interface GetCredential extends Action<string> {
+}
+
+export const GetFullContent = 'GetFullContent'
+export interface GetFullContent extends Action<string> {
+    streamId: string
+    url: string
+}
+
+export const GetSubscriptions = 'GetSubscriptions'
+export interface GetSubscriptions extends Action<string> {
+}
+
+export const GetSubscriptionsCache = 'GetSubscriptionsCache'
+export interface GetSubscriptionsCache extends Action<string> {
+}
+
+export const GetUnreadCounts = 'GetUnreadCounts'
+export interface GetUnreadCounts extends Action<string>, feedly.GetUnreadCountsInput {
+}
+
+export const GetUnreadCountsCache = 'GetUnreadCountsCache'
+export interface GetUnreadCountsCache extends Action<string> {
+}
+
+export const SelectStream = 'SelectStream'
+export interface SelectStream extends Action<string>, feedly.GetStreamInput {
 }

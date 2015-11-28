@@ -139,12 +139,12 @@ export interface Contents {
     title: string;
     id: string;
     direction: string;
-    items: ContentItem[];
+    items: Entry[];
 }
 
-export interface ContentItem {
+export interface Entry {
     published: number;
-    tags?: ContentItemTag[];
+    tags?: EntryTag[];
     alternate: LinkObject[];
     updated?: number;
     title: string;
@@ -152,8 +152,8 @@ export interface ContentItem {
     categories: Category[];
     id: string;
     author?: string;
-    origin: ContentItemOrigin;
-    content?: ContentItemContent;
+    origin: EntryOrigin;
+    content?: EntryContent;
     unread: boolean;
     crawled: number;
 }
@@ -163,18 +163,18 @@ export interface LinkObject {
     href: string;
 }
 
-export interface ContentItemTag {
+export interface EntryTag {
     id: string;
     label: string;
 }
 
-export interface ContentItemOrigin {
+export interface EntryOrigin {
     htmlUrl: string;
     title: string;
     streamId: string;
 }
 
-export interface ContentItemContent {
+export interface EntryContent {
     direction: string;
     content: string;
 }

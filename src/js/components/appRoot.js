@@ -1,73 +1,32 @@
-import Content from './content'
+import Main from './main'
 import React from 'react'
 import Rx from 'rx'
 import Sidebar from './sidebar'
-import actionTypes from '../constants/actionTypes'
-import eventTypes from '../constants/eventTypes'
+import { GetCredential, GetCategoriesCache, GetSubscriptionsCache, GetUnreadCountsCache } from '../constants/actionTypes'
 
 export default class AppRoot extends React.Component {
-    static contextTypes = {
-        dispatch: React.PropTypes.func.isRequired,
-        getObservable: React.PropTypes.func.isRequired
+    static propTypes = {
+        subscriptions: React.PropTypes.array.isRequired,
+        categories: React.PropTypes.array.isRequired,
+        unreadCounts: React.PropTypes.array.isRequired,
+        contents: React.PropTypes.object,
+        selectedStreamId: React.PropTypes.string,
+        credential: React.PropTypes.object,
     }
 
-    constructor(props) {
-        super(props)
-
-        this.state = {
-            subscriptions: [],
-            categories: [],
-            unreadCounts: [],
-            selectedStreamId: null,
-            contents: null,
-            credential: null
-        }
+    static contextTypes = {
+        dispatch: React.PropTypes.func.isRequired
     }
 
     componentDidMount() {
-        const subscriptions = this.context.getObservable(eventTypes.SUBSCRIPTIONS_RECEIVED)
-            .select(({ subscriptions }) => subscriptions)
-        const unreadCounts = this.context.getObservable(eventTypes.UNREAD_COUNTS_RECEIVED)
-            .select(({ unreadCounts }) => unreadCounts)
-        const categories = this.context.getObservable(eventTypes.CATEGORIES_RECEIVED)
-            .select(({ categories }) => categories)
-        const contents = this.context.getObservable(eventTypes.CONTENTS_RECEIVED)
-            .select(({ contents }) => contents)
-            .startWith(null)
-        const credential = this.context.getObservable(eventTypes.CREDENTIAL_RECEIVED)
-            .select(({ credential }) => credential)
-            .startWith(null)
-        const selectedStreamId = this.context.getObservable(eventTypes.STREAM_SELECTED)
-            .select(({ streamId }) => streamId)
-            .startWith(null)
-
-        const state = Rx.Observable.zip(
-                subscriptions,
-                unreadCounts,
-                categories,
-                (subscriptions, unreadCounts, categories) => ({ subscriptions, unreadCounts, categories })
-            )
-            .combineLatest(
-                contents,
-                credential,
-                selectedStreamId,
-                (state, contents, credential, selectedStreamId) => ({ ...state, contents, credential, selectedStreamId })
-            )
-
-        this.disposable = state.subscribe(newState => this.setState(newState))
-
-        this.context.dispatch({ actionType: actionTypes.GET_CREDENTIAL })
-        this.context.dispatch({ actionType: actionTypes.GET_CATEGORIES_CACHE })
-        this.context.dispatch({ actionType: actionTypes.GET_SUBSCRIPTIONS_CACHE })
-        this.context.dispatch({ actionType: actionTypes.GET_UNREAD_COUNTS_CACHE })
-    }
-
-    componentWillUnmount() {
-        this.disposable.dispose()
+        this.context.dispatch({ actionType: GetCredential })
+        this.context.dispatch({ actionType: GetCategoriesCache })
+        this.context.dispatch({ actionType: GetSubscriptionsCache })
+        this.context.dispatch({ actionType: GetUnreadCountsCache })
     }
 
     handleAuthenticate() {
-        this.context.dispatch({ actionType: actionTypes.AUTHENTICATE })
+        this.context.dispatch({ actionType: Authenticate })
     }
 
     render() {
@@ -86,20 +45,20 @@ export default class AppRoot extends React.Component {
     }
 
     renderMain() {
-        const { subscriptions, unreadCounts, categories, contents, credential, selectedStreamId } = this.state
+        const { subscriptions, unreadCounts, categories, contents, credential, selectedStreamId } = this.props
 
         if (credential) {
             return (
-                <main>
+                <div>
                     <Sidebar subscriptions={subscriptions} unreadCounts={unreadCounts} categories={categories} credential={credential} selectedStreamId={selectedStreamId} />
-                    <Content contents={contents} />
-                </main>
+                    <Main contents={contents} />
+                </div>
             )
         } else {
             return (
-                <main>
+                <div>
                     <button className="button button-default button-fill" onClick={::this.handleAuthenticate}>Authenticate</button>
-                </main>
+                </div>
             )
         }
     }

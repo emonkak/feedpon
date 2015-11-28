@@ -1,12 +1,11 @@
 import Authenticator from '../services/feedly/authenticator'
 import Gateway from '../services/feedly/gateway'
-import eventTypes from '../constants/eventTypes'
-import { Action, IActionHandler } from '../actionDispatchers/interfaces'
+import { IActionHandler } from './interfaces'
+import { GetUnreadCounts } from '../constants/actionTypes'
 import { IEventDispatcher } from '../eventDispatchers/interfaces'
+import { IUnreadCountRepository } from '../services/feedly/interfaces'
 import { Inject } from '../di/annotations'
-import { GetUnreadCountsInput, IUnreadCountRepository } from '../services/feedly/interfaces'
-
-type GetUnreadCounts = Action<string> & GetUnreadCountsInput
+import { UnreadCountsReceived } from '../constants/eventTypes'
 
 @Inject
 export default class GetUnreadCountsHandler implements IActionHandler<GetUnreadCounts, void> {
@@ -21,8 +20,8 @@ export default class GetUnreadCountsHandler implements IActionHandler<GetUnreadC
 
         await this.unreadCountRepository.putAll(unreadcounts)
 
-        eventDispatcher.dispatch({
-            eventType: eventTypes.UNREAD_COUNTS_RECEIVED,
+        eventDispatcher.dispatch<UnreadCountsReceived>({
+            eventType: UnreadCountsReceived,
             unreadCounts: unreadcounts
         })
     }

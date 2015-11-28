@@ -2,8 +2,8 @@ import Enumerable from 'linq'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 import React from 'react'
 import Subscription from './subscription'
-import actionTypes from '../constants/actionTypes'
 import classnames from 'classnames'
+import { SelectStream } from '../constants/actionTypes'
 
 export default class SubscriptionCategory extends React.Component {
     static propTypes = {
@@ -14,8 +14,7 @@ export default class SubscriptionCategory extends React.Component {
     }
 
     static contextTypes = {
-        dispatch: React.PropTypes.func.isRequired,
-        getObservable: React.PropTypes.func.isRequired
+        dispatch: React.PropTypes.func.isRequired
     }
 
     constructor(props) {
@@ -39,7 +38,7 @@ export default class SubscriptionCategory extends React.Component {
         event.preventDefault()
 
         this.context.dispatch({
-            actionType: actionTypes.SELECT_STREAM,
+            actionType: SelectStream,
             streamId: this.props.category.id
         })
 

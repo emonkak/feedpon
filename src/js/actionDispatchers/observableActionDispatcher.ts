@@ -1,5 +1,6 @@
-import eventTypes from '../constants/eventTypes'
-import { Action, IActionDispatcher } from './interfaces'
+import { Action } from '../constants/actionTypes'
+import { ActionDone, ActionFailed } from '../constants/eventTypes'
+import { IActionDispatcher } from './interfaces'
 import { IEventDispatcher } from '../eventDispatchers/interfaces'
 
 export default class ObservableActionDispatcher implements IActionDispatcher {
@@ -10,11 +11,11 @@ export default class ObservableActionDispatcher implements IActionDispatcher {
     dispatch<A extends Action<string>>(action: A): Promise<Object> {
         return this.dispatcher.dispatch(action)
             .then(result => {
-                this.eventDispatcher.dispatch({ eventType: eventTypes.ACTION_DONE, action, result })
+                this.eventDispatcher.dispatch<ActionDone>({ eventType: ActionDone, action, result })
                 return result
             })
             .catch(error => {
-                this.eventDispatcher.dispatch({ eventType: eventTypes.ACTION_FAILED, action, error })
+                this.eventDispatcher.dispatch<ActionFailed>({ eventType: ActionFailed, action, error })
                 return Promise.reject(error)
             })
     }

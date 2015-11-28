@@ -1,41 +1,37 @@
 /// <reference path="../typings/whatwg-fetch.d.ts" />
 
-import eventTypes from '../constants/eventTypes'
 import htmlParser from '../utils/htmlParser'
-import { Action, IActionHandler } from '../actionDispatchers/interfaces'
+import { FullContentReceived } from '../constants/eventTypes'
+import { GetFullContent } from '../constants/actionTypes'
+import { IActionHandler } from './interfaces'
 import { IContentFinder } from '../services/contentFinder/interfaces'
 import { IEventDispatcher } from '../eventDispatchers/interfaces'
 import { IHttpClient } from '../services/http/interfaces'
 import { Inject } from '../di/annotations'
 
-interface GetFullContentAction extends Action<string> {
-    url: string
-}
-
-interface GetFullContentResult {
-    content: string
-    nextLink?: string
-}
-
 @Inject
-export default class GetFullContentHandler implements IActionHandler<GetFullContentAction, GetFullContentResult> {
+export default class GetFullContentHandler implements IActionHandler<GetFullContent, void> {
     constructor(private contentFinder: IContentFinder,
                 private httpClient: IHttpClient) {
     }
 
-    async handle(action: GetFullContentAction, eventDispatcher: IEventDispatcher): Promise<GetFullContentResult> {
-        const response = await this.httpClient.send(new Request(action.url))
+    async handle(action: GetFullContent, eventDispatcher: IEventDispatcher): Promise<void> {
+        const { url, streamId } = action
+        const response = await this.httpClient.send(new Request(url))
         const htmlText = await response.text()
 
         const doc = htmlParser(htmlText)
-        const foundContent = await this.contentFinder.find(action.url, doc)
-        if (foundContent == null) return Promise.resolve(null)
+        const foundContent = await this.contentFinder.find(url, doc)
 
-        const { content, nextLink } = foundContent
+        if (foundContent) {
+            const { content, nextLink } = foundContent
 
-        return {
-            content: content.outerHTML,
-            nextLink: nextLink ? nextLink.getAttribute('href') : null
+            eventDispatcher.dispatch<FullContentReceived>({
+                eventType: FullContentReceived,
+                streamId,
+                content: content.outerHTML,
+                nextLink: nextLink ? nextLink.getAttribute('href') : null
+            })
         }
     }
 }

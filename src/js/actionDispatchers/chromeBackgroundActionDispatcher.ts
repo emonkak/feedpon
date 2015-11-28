@@ -1,6 +1,7 @@
 /// <reference path="../typings/chrome.d.ts" />
 
-import { Action, IActionDispatcher } from './interfaces'
+import { Action } from '../constants/actionTypes'
+import { IActionDispatcher } from './interfaces'
 
 export default class ChromeBackgroundActionDispatcher implements IActionDispatcher {
     dispatch<A extends Action<string>>(action: A): Promise<any> {
