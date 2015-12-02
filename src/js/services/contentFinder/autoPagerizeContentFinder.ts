@@ -28,7 +28,7 @@ export default class AutoPagerizeContentFinder implements IContentFinder {
 
                     return {
                         content: content.singleNodeValue as HTMLElement,
-                        nextLink: nextLink.singleNodeValue as HTMLElement,
+                        nextLink: nextLink.singleNodeValue as HTMLElement
                     }
                 })
                 .firstOrDefault(({ content }) => !!content, null)

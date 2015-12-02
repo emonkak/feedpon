@@ -3,6 +3,14 @@ import PureRenderMixin from 'react-addons-pure-render-mixin'
 import React from 'react'
 import { GetFullContent } from '../constants/actionTypes'
 
+function nextLink(entry) {
+    const fullContents = entry._fullContents
+
+    return fullContents && fullContents.length > 0
+        ? fullContents[fullContents.length - 1].nextLink
+        : entry.alternate[0].href
+}
+
 export default class Entry extends React.Component {
     static propTypes = {
         entry: React.PropTypes.object.isRequired
@@ -16,10 +24,7 @@ export default class Entry extends React.Component {
         const { entry } = this.props
         const fullContents = entry._fullContents || []
 
-        const url = fullContents.length > 0
-            ? fullContents[fullContents.length - 1].nextLink
-            : entry.alternate[0].href
-
+        const url = nextLink(entry)
         if (url != null) {
             this.context.dispatch({
                 actionType: GetFullContent,
@@ -33,9 +38,13 @@ export default class Entry extends React.Component {
         const { entry } = this.props
         const fullContents = entry._fullContents || []
 
-        const body = fullContents.length > 0
+        const contents = fullContents.length > 0
             ? fullContents.map(({ content }, i) => <EntryContent key={i} content={content} />)
             : entry.content ? <EntryContent content={entry.content.content} /> : null
+
+        const actions = nextLink(entry)
+            ? <button className="button button-default button-fill" onClick={::this.handleGetFullContent}>Get Full Content</button>
+            : null
 
         return (
             <li className="entry">
@@ -47,11 +56,11 @@ export default class Entry extends React.Component {
                     <a href={entry.alternate[0].href} target="_blank">{entry.alternate[0].href}</a>
                 </p>
 
-                <div className="entry-body">{body}</div>
+                <div className="entry-contents">{contents}</div>
 
                 <footer className="entry-footer">
                     <time className="entry-timestamp">{new Date(entry.published).toLocaleString()}</time>
-                    <button className="button button-default button-fill" onClick={::this.handleGetFullContent}>Get Full Content</button>
+                    <div className="entry-actions">{actions}</div>
                 </footer>
             </li>
         )
