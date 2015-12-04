@@ -6,13 +6,11 @@ import AppRoot from './components/appRoot'
 import AuthenticateHandler from './actionHandlers/authenticateHandler'
 import ChromeBackgroundActionDispatcher from './actionDispatchers/chromeBackgroundActionDispatcher'
 import EventDispatcher from './eventDispatchers/eventDispatcher'
-import GetFullContentHandler from './actionHandlers/getFullContentHandler'
 import LoggedActionDispatcher from './actionDispatchers/loggedActionDispatcher'
 import LoggedEventDispatcher from './eventDispatchers/loggedEventDispatcher'
 import ObservableActionDispatcher from './actionDispatchers/observableActionDispatcher'
 import React from 'react'
 import ReactDOM from 'react-dom'
-import SelectStreamHandler from './actionHandlers/selectStreamHandler'
 import appState from './appState'
 import container from './container'
 import { Authenticate, SelectStream } from './constants/actionTypes'
@@ -25,8 +23,7 @@ function bootstrap() {
     const actionDispatcher = new LoggedActionDispatcher(
         new ObservableActionDispatcher(
             new ActionDispatcher(container, eventDispatcher, new ChromeBackgroundActionDispatcher())
-                .mount(Authenticate, AuthenticateHandler)
-                .mount(SelectStream, SelectStreamHandler),
+                .mount(Authenticate, AuthenticateHandler),
             eventDispatcher
         )
     )

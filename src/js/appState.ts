@@ -1,4 +1,4 @@
-/// <reference path="../DefinitelyTyped/node/node-0.11.d.ts" />
+/// <reference path="../DefinitelyTyped/node/node-0.12.d.ts" />
 /// <reference path="./typings/rx.d.ts" />
 
 import * as Rx from 'rx'

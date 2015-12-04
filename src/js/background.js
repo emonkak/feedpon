@@ -13,8 +13,9 @@ import LoggedActionDispatcher from './actionDispatchers/loggedActionDispatcher'
 import LoggedEventDispatcher from './eventDispatchers/loggedEventDispatcher'
 import MessagePortEventDispatcher from './eventDispatchers/messagePortEventDispatcher'
 import NullActionDispatcher from './actionDispatchers/nullActionDispatcher'
-import { GetCategories, GetCategoriesCache, GetCredential, GetFullContent, GetSubscriptions, GetSubscriptionsCache, GetUnreadCounts, GetUnreadCountsCache } from './constants/actionTypes'
+import SelectStreamHandler from './actionHandlers/selectStreamHandler'
 import container from './container'
+import { GetCategories, GetCategoriesCache, GetCredential, GetFullContent, GetSubscriptions, GetSubscriptionsCache, GetUnreadCounts, GetUnreadCountsCache, SelectStream } from './constants/actionTypes'
 import { IEventDispatcher } from './eventDispatchers/interfaces'
 
 function handleConnect(port) {
@@ -31,6 +32,7 @@ function handleConnect(port) {
             .mount(GetSubscriptionsCache, GetSubscriptionsCacheHandler)
             .mount(GetUnreadCounts, GetUnreadCountsHandler)
             .mount(GetUnreadCountsCache, GetUnreadCountsCacheHandler)
+            .mount(SelectStream, SelectStreamHandler),
     )
 
     chrome.runtime.onMessage.addListener(handleMessage)

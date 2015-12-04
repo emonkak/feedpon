@@ -1,4 +1,4 @@
-/// <reference path="../../DefinitelyTyped/node/node-0.11.d.ts" />
+/// <reference path="../../DefinitelyTyped/node/node-0.12.d.ts" />
 
 import { Event, IEventDispatcher } from './interfaces'
 import { EventEmitter } from 'events'

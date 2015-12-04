@@ -9,6 +9,7 @@ html, body {
 }
 
 body {
+  -webkit-font-smoothing: antialiased;
   font-family: 'Optima', 'YuMincho', serif;
   font-size: 16px;
   line-height: 1.5;

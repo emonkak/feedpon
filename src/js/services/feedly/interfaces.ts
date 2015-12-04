@@ -43,7 +43,7 @@ export interface RefreshTokenResponse {
     id: string;
     plan: string;
     access_token: string;
-    expires_in: string;
+    expires_in: number;
     token_type: string;
 }
 
@@ -56,7 +56,7 @@ export interface RevokeTokenInput {
 
 export interface RevokeTokenResponse {
     id: string;
-    expires_in: string;
+    expires_in: number;
 }
 
 // Categories API:

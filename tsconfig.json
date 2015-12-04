@@ -1,10 +1,13 @@
 {
     "compilerOptions": {
         "emitDecoratorMetadata": true,
-        "experimentalAsyncFunctions": true,
         "experimentalDecorators": true,
         "moduleResolution": "node",
         "noImplicitAny": true,
         "target": "ES6"
-    }
+    },
+    "exclude": [
+        "node_modules",
+        "src/DefinitelyTyped"
+    ]
 }

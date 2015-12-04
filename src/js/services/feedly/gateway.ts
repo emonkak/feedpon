@@ -1,7 +1,7 @@
 /// <reference path="../../typings/whatwg-fetch.d.ts" />
-/// <reference path="../../../DefinitelyTyped/qs/qs.d.ts" />
+/// <reference path="../../../DefinitelyTyped/node/node-0.12.d.ts" />
 
-import * as Qs from 'qs'
+import * as querystring from 'querystring'
 import * as feedly from './interfaces'
 import { IHttpClient } from '../http/interfaces'
 import { Inject } from '../../di/annotations'
@@ -107,7 +107,7 @@ export default class Gateway {
     }
 
     private doGet<T>(path: string, params?: { [key: string]: any }, headers?: { [key: string]: string }): Promise<T> {
-        const url = this.environment.endpoint + path + (params ? '?' + Qs.stringify(params) : '')
+        const url = this.environment.endpoint + path + (params ? '?' + querystring.stringify(params) : '')
         const request = new Request(url, {
             method: 'GET',
             headers

@@ -41,12 +41,10 @@ export default class Authenticator {
 
     refresh(refreshToken: string): Promise<feedly.Credential> {
         return this.doRefreshToken(refreshToken)
-            .then(response =>
-                Object.assign({
-                    authorized: this.clock.now(),
-                    refresh_token: refreshToken
-                }, response)
-            )
+            .then(response => Object.assign({
+                authorized: this.clock.now(),
+                refresh_token: refreshToken
+            }, response))
             .then(credential => this.credentialRepository.put(credential).then(() => credential))
     }
 

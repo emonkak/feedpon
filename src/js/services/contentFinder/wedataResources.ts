@@ -1,6 +1,3 @@
-/// <reference path="../../typings/linq.d.ts" />
-
-import Enumerable from 'linq'
 import { WedataResource } from './interfaces'
 
 export interface AutoPagerizeData {
@@ -30,24 +27,21 @@ export const autoPagerize: WedataResource<AutoPagerizeData> = {
 export const ldrFullFeed: WedataResource<LDRFullFeedData> = {
     url: 'http://wedata.net/databases/LDRFullFeed',
     transformer(items) {
-        return Enumerable.from(items)
-            .groupBy(item => {
-                switch (item.data.type) {
-                case 'SBM':
-                    return 0;
-                case 'IND':
-                case 'INDIVIDUAL':
-                    return 1;
-                case 'SUB':
-                case 'SUBGENERAL':
-                    return 2;
-                case 'GEN':
-                case 'GENERAL':
-                    return 3;
-                }
-            })
-            .orderBy(items => items.key())
-            .selectMany(items => items)
-            .toArray()
+        const TYPE_PRIORITIES: { [key: string]: number } = {
+            SBM: 0,
+            IND: 1,
+            INDIVIDUAL: 1,
+            SUB: 2,
+            SUBGENERAL: 2,
+            GEN: 3,
+            GENERAL: 3
+        }
+
+        return items.sort((x, y) => {
+            const p1 = TYPE_PRIORITIES[x.data.type]
+            const p2 = TYPE_PRIORITIES[y.data.type]
+            if (p1 === p2) return 0
+            return p1 < p2 ? -1 : 1
+        })
     }
 }

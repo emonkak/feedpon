@@ -7,10 +7,10 @@ export default class ChromeBackgroundActionDispatcher implements IActionDispatch
     dispatch<A extends Action<string>>(action: A): Promise<any> {
         return new Promise((resolve, reject) => {
             chrome.runtime.sendMessage(action, response => {
-                if ('error' in response) {
-                    reject(response.error)
-                } else {
+                if (response && !('error' in response)) {
                     resolve(response.result)
+                } else {
+                    reject(response ? response.error : null)
                 }
             })
         })
