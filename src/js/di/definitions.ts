@@ -6,12 +6,12 @@ abstract class BaseDefinition<T> implements IDefinition<T> {
 
     protected _scope: IScope<T>
 
-    in(scope: IScope<T>) {
+    in(scope: IScope<T>): this {
         this._scope = scope
         return this
     }
 
-    with(injectables: IInjectableClass<any>[]) {
+    with(injectables: IInjectableClass<any>[]): this {
         this._injectables = injectables
         return this
     }
@@ -72,7 +72,6 @@ export class FactoryDefinition<T> extends BaseDefinition<T> {
         } catch (e) {
             throw (e + ' Caused by ' + this._factory)
         }
-
     }
 }
 

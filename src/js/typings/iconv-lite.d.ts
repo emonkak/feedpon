@@ -8,9 +8,9 @@ declare module "iconv-lite" {
 
         var defaultCharSingleByte: string
 
-        function encode(str: string, encoding: string, options?: any): Buffer|Uint8Array
+        function encode(str: string, encoding: string, options?: any): Buffer
 
-        function decode(buffer: Buffer|Uint8Array, encoding: string, options?: any): string
+        function decode(buffer: Buffer, encoding: string, options?: any): string
 
         function encodingExists(enconding: string): boolean
     }
