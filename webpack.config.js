@@ -23,6 +23,10 @@ module.exports = {
                 loader: 'json-loader'
             },
             {
+                test: /\.less$/,
+                loaders: ['css-loader', 'less-loader']
+            },
+            {
                 test: /\.ts$/,
                 loaders: ['babel-loader', 'ts-loader']
             },

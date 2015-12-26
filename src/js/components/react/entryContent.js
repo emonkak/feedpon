@@ -1,37 +1,10 @@
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 import React from 'react'
+import baseStyle from '../../../less/base.less'
 
-const STYLE = `
-<style>
-html, body {
-  padding: 0;
-  margin: 0;
+function wrapContent(body) {
+    return `<html><head><base target="_blank"><style>${baseStyle}</style></head><body>${body}</body></html>`
 }
-
-body {
-  -webkit-font-smoothing: antialiased;
-  font-family: 'Optima', 'YuMincho', serif;
-  font-size: 16px;
-  line-height: 1.5;
-}
-
-a {
-  text-decoration: underline;
-  color: black;
-}
-
-a:visited {
-color: inherit;
-}
-
-h1, h2, h3, h4, h5, h6, b, em, strong {
-  font-family: 'Gill Sans', 'YuGothic', sans-serif;
-}
-
-pre, code, var, samp, kbd, tt {
-  font-family: 'Consolas', 'YuGothic', monospace;
-}
-</style>`
 
 export default class EntryContent extends React.Component {
     static propTypes = {
@@ -66,7 +39,7 @@ export default class EntryContent extends React.Component {
         return (
             <iframe ref="entryContent"
                     className="entry-content"
-                    srcDoc={STYLE + content}
+                    srcDoc={wrapContent(content)}
                     height={height}
                     seamless="seamless"
                     sandbox="allow-same-origin"
