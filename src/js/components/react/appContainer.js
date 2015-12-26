@@ -1,5 +1,4 @@
 import React from 'react'
-import Rx from 'rx'
 
 export default class AppContainer extends React.Component {
     static propTypes = {

@@ -2,7 +2,7 @@ import Enumerable from 'linq'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 import React from 'react'
 import SubscriptionCategory from './subscriptionCategory'
-import { GetSubscriptions, GetUnreadCounts, GetCategories } from '../constants/actionTypes'
+import { GetSubscriptions, GetUnreadCounts, GetCategories } from '../../constants/actionTypes'
 
 export default class Sidebar extends React.Component {
     static propTypes = {

@@ -3,7 +3,7 @@ import PureRenderMixin from 'react-addons-pure-render-mixin'
 import React from 'react'
 import Subscription from './subscription'
 import classnames from 'classnames'
-import { SelectStream } from '../constants/actionTypes'
+import { SelectStream } from '../../constants/actionTypes'
 
 export default class SubscriptionCategory extends React.Component {
     static propTypes = {

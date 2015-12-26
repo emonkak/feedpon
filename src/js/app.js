@@ -1,8 +1,8 @@
 import 'regenerator/runtime'
 
 import ActionDispatcher from './actionDispatchers/actionDispatcher'
-import AppContainer from './components/appContainer'
-import AppRoot from './components/appRoot'
+import AppContainer from './components/react/appContainer'
+import AppRoot from './components/react/appRoot'
 import AuthenticateHandler from './actionHandlers/authenticateHandler'
 import ChromeBackgroundActionDispatcher from './actionDispatchers/chromeBackgroundActionDispatcher'
 import EventDispatcher from './eventDispatchers/eventDispatcher'

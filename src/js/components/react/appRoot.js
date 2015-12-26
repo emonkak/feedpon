@@ -1,8 +1,7 @@
 import Main from './main'
 import React from 'react'
-import Rx from 'rx'
 import Sidebar from './sidebar'
-import { GetCredential, GetCategoriesCache, GetSubscriptionsCache, GetUnreadCountsCache } from '../constants/actionTypes'
+import { GetCredential, GetCategoriesCache, GetSubscriptionsCache, GetUnreadCountsCache } from '../../constants/actionTypes'
 
 export default class AppRoot extends React.Component {
     static propTypes = {

@@ -1,7 +1,7 @@
 import EntryContent from './entryContent'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 import React from 'react'
-import { GetFullContent } from '../constants/actionTypes'
+import { GetFullContent } from '../../constants/actionTypes'
 
 function nextLink(entry) {
     const fullContents = entry._fullContents
