@@ -1,4 +1,4 @@
-import Enumerable from 'linq'
+import Ix from 'ix'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 import React from 'react'
 import Subscription from './subscription'
@@ -49,7 +49,7 @@ export default class SubscriptionCategory extends React.Component {
         const { category, subscriptions, selected } = this.props
         const { expanded } = this.state
 
-        const unreadCount = Enumerable.from(subscriptions)
+        const unreadCount = Ix.Enumerable.fromArray(subscriptions)
             .select(({ unreadCount }) => unreadCount.count)
             .sum()
 

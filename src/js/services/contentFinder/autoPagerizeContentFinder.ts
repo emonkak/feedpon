@@ -1,6 +1,6 @@
-/// <reference path="../../typings/linq.d.ts" />
+/// <reference path="../../typings/ix.d.ts" />
 
-import Enumerable from 'linq'
+import Ix from 'ix'
 import WedataLoader from './wedataLoader'
 import { AutoPagerizeData, autoPagerize } from './wedataResources'
 import { IContentFinder, FoundContent , WedataItem } from './interfaces'
@@ -13,7 +13,7 @@ export default class AutoPagerizeContentFinder implements IContentFinder {
 
     find(url: string, doc: HTMLDocument): Promise<FoundContent> {
         return this.wedataLoader.getItems<AutoPagerizeData>(autoPagerize)
-            .then(items => Enumerable.from(items)
+            .then(items => Ix.Enumerable.fromArray(items)
                 .select(item => item.data)
                 .where(entry => {
                     try {
@@ -31,7 +31,7 @@ export default class AutoPagerizeContentFinder implements IContentFinder {
                         nextLink: nextLink.singleNodeValue as HTMLElement
                     }
                 })
-                .firstOrDefault(({ content }) => !!content, null)
+                .firstOrDefault(({ content }) => !!content)
             )
     }
 }

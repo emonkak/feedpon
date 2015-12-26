@@ -1,4 +1,4 @@
-import Enumerable from 'linq'
+import Ix from 'ix'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 import React from 'react'
 import SubscriptionCategory from './subscriptionCategory'
@@ -38,21 +38,21 @@ export default class Sidebar extends React.Component {
         const { filter } = this.state
 
         const uncategorized = { label: 'Uncategorized', id: `user/${credential.id}/category/global.uncategorized` }
-        const subscriptions = Enumerable.from(this.props.subscriptions)
+        const subscriptions = Ix.Enumerable.fromArray(this.props.subscriptions)
             .where(subscription => (subscription.title && subscription.title.indexOf(filter) !== -1) || (subscription.website && subscription.website.indexOf(filter) !== -1))
             .join(
-                Enumerable.from(unreadCounts),
+                Ix.Enumerable.fromArray(unreadCounts),
                 subscription => subscription.id,
                 unreadCount => unreadCount.id,
                 (subscription, unreadCount) => ({ subscription, unreadCount })
             )
             .selectMany(({ subscription, unreadCount }) => {
-                return Enumerable.from(subscription.categories)
+                return Ix.Enumerable.fromArray(subscription.categories)
                     .defaultIfEmpty(uncategorized)
                     .select(category => ({ category, subscription, unreadCount }));
             })
-        const categories = Enumerable.from(this.props.categories)
-            .concat(Enumerable.make(uncategorized))
+        const categories = Ix.Enumerable.fromArray(this.props.categories)
+            .concat(Ix.Enumerable.return(uncategorized))
             .groupJoin(
                 subscriptions,
                 category => category.id,

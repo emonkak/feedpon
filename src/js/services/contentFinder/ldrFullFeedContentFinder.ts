@@ -1,6 +1,6 @@
-/// <reference path="../../typings/linq.d.ts" />
+/// <reference path="../../typings/ix.d.ts" />
 
-import Enumerable from 'linq'
+import Ix from 'ix'
 import WedataLoader from './wedataLoader'
 import { IContentFinder, FoundContent , WedataItem } from './interfaces'
 import { Inject } from '../../di/annotations'
@@ -13,7 +13,7 @@ export default class LdrFullFeedContentFinder implements IContentFinder {
 
     find(url: string, doc: HTMLDocument): Promise<FoundContent> {
         return this.wedataLoader.getItems<LDRFullFeedData>(ldrFullFeed)
-            .then(items => Enumerable.from(items)
+            .then(items => Ix.Enumerable.fromArray(items)
                 .select(item => item.data)
                 .where(entry => {
                     try {
@@ -29,7 +29,7 @@ export default class LdrFullFeedContentFinder implements IContentFinder {
                         content: content.singleNodeValue as HTMLElement
                     }
                 })
-                .firstOrDefault(({ content }) => !!content, null)
+                .firstOrDefault(({ content }) => !!content)
             )
     }
 }
