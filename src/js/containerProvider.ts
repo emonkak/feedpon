@@ -34,19 +34,23 @@ class Factries {
     }
 }
 
-const container = new Container(new InjectionPolicy(singletonScope))
+export default function containerProvider() {
+    const container = new Container(new InjectionPolicy(singletonScope))
 
-container.bind(ICategoryRepository).to(LocalForageCategoryRepository)
-container.bind(IClock).to(SystemClock)
-container.bind(ICredentialRepository).to(LocalForageCredentialRepository)
-container.bind(IHttpClient).to(HttpClient)
-container.bind(ISubscriptionRepository).to(LocalForageSubscriptionRepository)
-container.bind(IUnreadCountRepository).to(LocalForageUnreadCountRepository)
-container.bind(IWedataGateway).to(WedataGateway)
-container.bind(IWedataRepository).to(LocalForageWedataRepository)
-container.bind(IWindowOpener).to(ChromeWindowOpener)
-container.factory(IContentFinder, Factries.contentFinder)
-container.set('LocalForage', localforage)
-container.set(IEnvironment, Environment)
+    container.bind(ICategoryRepository).to(LocalForageCategoryRepository)
+    container.bind(IClock).to(SystemClock)
+    container.bind(ICredentialRepository).to(LocalForageCredentialRepository)
+    container.bind(IHttpClient).to(HttpClient)
+    container.bind(ISubscriptionRepository).to(LocalForageSubscriptionRepository)
+    container.bind(IUnreadCountRepository).to(LocalForageUnreadCountRepository)
+    container.bind(IWedataGateway).to(WedataGateway)
+    container.bind(IWedataRepository).to(LocalForageWedataRepository)
+    container.bind(IWindowOpener).to(ChromeWindowOpener)
 
-export default container
+    container.factory(IContentFinder, Factries.contentFinder)
+
+    container.set('LocalForage', localforage)
+    container.set(IEnvironment, Environment)
+
+    return container
+}

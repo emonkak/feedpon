@@ -1,25 +1,23 @@
 import 'regenerator/runtime'
 
 import ActionDispatcher from './actionDispatchers/actionDispatcher'
-import AppContainer from './components/react/appContainer'
-import AppRoot from './components/react/appRoot'
 import AuthenticateHandler from './actionHandlers/authenticateHandler'
 import ChromeBackgroundActionDispatcher from './actionDispatchers/chromeBackgroundActionDispatcher'
-import EventDispatcher from './eventDispatchers/eventDispatcher'
 import LoggedActionDispatcher from './actionDispatchers/loggedActionDispatcher'
 import LoggedEventDispatcher from './eventDispatchers/loggedEventDispatcher'
 import ObservableActionDispatcher from './actionDispatchers/observableActionDispatcher'
-import React from 'react'
-import ReactDOM from 'react-dom'
-import appState from './appState'
-import container from './container'
+import ReactRenderer from './renderers/reactRenderer'
+import containerProvider from './containerProvider'
+import mainLoop from './mainLoop'
+import storeProvider from './storeProvider'
 import { Authenticate, SelectStream } from './constants/actionTypes'
-import { EventEmitter } from 'events'
 import { IEventDispatcher } from './eventDispatchers/interfaces'
 
 function bootstrap() {
-    const eventEmitter = new EventEmitter()
-    const eventDispatcher = new LoggedEventDispatcher(new EventDispatcher(eventEmitter))
+    const container = containerProvider()
+    const store = storeProvider()
+
+    const eventDispatcher = new LoggedEventDispatcher(store)
     const actionDispatcher = new LoggedActionDispatcher(
         new ObservableActionDispatcher(
             new ActionDispatcher(container, eventDispatcher, new ChromeBackgroundActionDispatcher())
@@ -27,20 +25,13 @@ function bootstrap() {
             eventDispatcher
         )
     )
+    const renderer = new ReactRenderer(actionDispatcher)
 
     const port = chrome.runtime.connect()
     port.onMessage.addListener(::eventDispatcher.dispatch)
 
-    const appEl = document.getElementById('app')
-
-    appState(eventEmitter).subscribe(state => {
-        ReactDOM.render(
-            <AppContainer actionDispatcher={actionDispatcher}>
-                <AppRoot {...state} />
-            </AppContainer>,
-            appEl
-        )
-    })
+    const element = document.getElementById('app')
+    mainLoop(element, store, ::renderer.render)
 }
 
 bootstrap()

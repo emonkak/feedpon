@@ -14,11 +14,13 @@ import LoggedEventDispatcher from './eventDispatchers/loggedEventDispatcher'
 import MessagePortEventDispatcher from './eventDispatchers/messagePortEventDispatcher'
 import NullActionDispatcher from './actionDispatchers/nullActionDispatcher'
 import SelectStreamHandler from './actionHandlers/selectStreamHandler'
-import container from './container'
+import containerProvider from './containerProvider'
 import { GetCategories, GetCategoriesCache, GetCredential, GetFullContent, GetSubscriptions, GetSubscriptionsCache, GetUnreadCounts, GetUnreadCountsCache, SelectStream } from './constants/actionTypes'
 import { IEventDispatcher } from './eventDispatchers/interfaces'
 
 function handleConnect(port) {
+    const container = containerProvider()
+
     const eventDispatcher = new LoggedEventDispatcher(
         new MessagePortEventDispatcher(port)
     )

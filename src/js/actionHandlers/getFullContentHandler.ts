@@ -52,9 +52,11 @@ export default class GetFullContentHandler implements IActionHandler<GetFullCont
 
             eventDispatcher.dispatch<FullContentReceived>({
                 eventType: FullContentReceived,
-                streamId,
-                content: content.outerHTML,
-                nextLink: nextLink ? nextLink.getAttribute('href') : null
+                fullContent: {
+                    streamId,
+                    content: content.outerHTML,
+                    nextLink: nextLink ? nextLink.getAttribute('href') : null
+                }
             })
         }
     }

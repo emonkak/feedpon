@@ -34,6 +34,9 @@ export interface CredentialReceived extends Event<string> {
 
 export const FullContentReceived = 'FullContentReceived'
 export interface FullContentReceived extends Event<string> {
+    fullContent: FullContent
+}
+interface FullContent {
     streamId: string
     content: string
     nextLink?: string
