@@ -7,7 +7,7 @@
     "url": "https://github.com/emonkak/feedpon.git"
   },
   "scripts": {
-    "build": "npm-run-all -p build:css build:fonts build:js",
+    "build": "NODE_ENV=production npm-run-all -p build:css build:fonts build:js",
     "build:css": "lessc --clean-css src/less/index.less app/chrome/css/index.css",
     "build:fonts": "ncp node_modules/font-awesome/fonts app/chrome/fonts",
     "build:js": "webpack --optimize-dedupe --optimize-minimize",
