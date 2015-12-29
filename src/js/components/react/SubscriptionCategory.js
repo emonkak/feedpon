@@ -1,7 +1,7 @@
 import Ix from 'ix'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 import React from 'react'
-import Subscription from './subscription'
+import Subscription from './Subscription'
 import classnames from 'classnames'
 import { SelectStream } from '../../constants/actionTypes'
 

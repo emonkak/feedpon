@@ -1,7 +1,7 @@
 import Ix from 'ix'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 import React from 'react'
-import SubscriptionCategory from './subscriptionCategory'
+import SubscriptionCategory from './SubscriptionCategory'
 import { GetSubscriptions, GetUnreadCounts, GetCategories } from '../../constants/actionTypes'
 
 export default class Sidebar extends React.Component {

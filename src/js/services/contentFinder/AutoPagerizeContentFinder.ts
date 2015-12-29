@@ -1,7 +1,7 @@
 /// <reference path="../../typings/ix.d.ts" />
 
 import Ix from 'ix'
-import WedataLoader from './wedataLoader'
+import WedataLoader from './WedataLoader'
 import { AutoPagerizeData, autoPagerize } from './wedataResources'
 import { IContentFinder, FoundContent , WedataItem } from './interfaces'
 import { Inject } from '../../di/annotations'

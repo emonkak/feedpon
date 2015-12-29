@@ -1,6 +1,6 @@
-import Main from './main'
+import Main from './Main'
 import React from 'react'
-import Sidebar from './sidebar'
+import Sidebar from './Sidebar'
 import { GetCredential, GetCategoriesCache, GetSubscriptionsCache, GetUnreadCountsCache } from '../../constants/actionTypes'
 
 export default class AppRoot extends React.Component {

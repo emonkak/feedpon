@@ -1,4 +1,4 @@
-import Entry from './entry'
+import Entry from './Entry'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 import React from 'react'
 

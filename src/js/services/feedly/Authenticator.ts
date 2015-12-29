@@ -1,7 +1,7 @@
 /// <reference path="../../typings/whatwg-fetch.d.ts" />
 
 import * as feedly from './interfaces'
-import Gateway from './gateway'
+import Gateway from './Gateway'
 import { IClock } from '../clock/interfaces'
 import { IWindowOpener } from '../window/interfaces'
 import { Inject } from '../../di/annotations'

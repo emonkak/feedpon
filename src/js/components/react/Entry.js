@@ -1,4 +1,4 @@
-import EntryContent from './entryContent'
+import EntryContent from './EntryContent'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 import React from 'react'
 import { GetFullContent } from '../../constants/actionTypes'

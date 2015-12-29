@@ -3,7 +3,14 @@
 import 'reflect-metadata'
 import { IInjectableKey } from './interfaces'
 import { singletonScope, prototypeScope } from './scopes'
-import { merge } from './utils'
+
+function merge<T>(xs: T[], ys: T[]): T[] {
+    const zs = [].concat(xs)
+    ys.forEach((y, i) => {
+        zs[i] = y
+    })
+    return zs
+}
 
 export function Inject(target: any, key?: any, desc?: any): any {
     if (typeof key !== 'undefined') {

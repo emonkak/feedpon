@@ -1,4 +1,4 @@
-import Authenticator from '../services/feedly/authenticator'
+import Authenticator from '../services/feedly/Authenticator'
 import { IActionHandler } from './interfaces'
 import { CredentialReceived } from '../constants/eventTypes'
 import { GetCredential } from '../constants/actionTypes'

@@ -1,5 +1,5 @@
-import AppContainer from '../components/react/appContainer'
-import AppRoot from '../components/react/appRoot'
+import AppContainer from '../components/react/AppContainer'
+import AppRoot from '../components/react/AppRoot'
 import React from 'react'
 import ReactDOM from 'react-dom'
 

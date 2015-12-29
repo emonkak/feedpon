@@ -1,6 +1,6 @@
 /// <reference path="../../typings/localForage.d.ts" />
 
-import storageKeys from '../../constants/storageKeys'
+import * as storageKeys from '../../constants/storageKeys'
 import { Inject, Named } from '../../di/annotations'
 import { WedataItem, IWedataRepository } from './interfaces'
 

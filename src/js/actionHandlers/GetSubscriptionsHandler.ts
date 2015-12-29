@@ -1,5 +1,5 @@
-import Authenticator from '../services/feedly/authenticator'
-import Gateway from '../services/feedly/gateway'
+import Authenticator from '../services/feedly/Authenticator'
+import Gateway from '../services/feedly/Gateway'
 import { IActionHandler } from './interfaces'
 import { GetSubscriptions } from '../constants/actionTypes'
 import { IEventDispatcher } from '../eventDispatchers/interfaces'
