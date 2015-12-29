@@ -1,5 +1,6 @@
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 import React from 'react'
+import appContextTypes from './appContextTypes'
 import baseStyle from '../../../less/base.less'
 
 function wrapContent(body) {
@@ -10,6 +11,8 @@ export default class EntryContent extends React.Component {
     static propTypes = {
         content: React.PropTypes.string.isRequired
     }
+
+    static contextTypes = appContextTypes
 
     constructor(props) {
         super(props)

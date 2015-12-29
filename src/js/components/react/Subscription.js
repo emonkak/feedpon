@@ -1,5 +1,6 @@
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 import React from 'react'
+import appContextTypes from './appContextTypes'
 import classnames from 'classnames'
 import { SelectStream } from '../../constants/actionTypes'
 
@@ -10,9 +11,7 @@ export default class Subscription extends React.Component {
         selected: React.PropTypes.bool.isRequired
     }
 
-    static contextTypes = {
-        dispatch: React.PropTypes.func.isRequired
-    }
+    static contextTypes = appContextTypes
 
     handleSelect(event) {
         event.preventDefault()

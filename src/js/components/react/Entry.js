@@ -1,6 +1,7 @@
 import EntryContent from './EntryContent'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 import React from 'react'
+import appContextTypes from './appContextTypes'
 import { GetFullContent } from '../../constants/actionTypes'
 
 function nextLink(entry) {
@@ -16,9 +17,7 @@ export default class Entry extends React.Component {
         entry: React.PropTypes.object.isRequired
     }
 
-    static contextTypes = {
-        dispatch: React.PropTypes.func.isRequired
-    }
+    static contextTypes = appContextTypes
 
     handleGetFullContent() {
         const { entry } = this.props

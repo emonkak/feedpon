@@ -34,7 +34,7 @@ class Factries {
     }
 }
 
-export default function containerProvider() {
+export default function createContainer() {
     const container = new Container(new InjectionPolicy(singletonScope))
 
     container.bind(ICategoryRepository).to(LocalForageCategoryRepository)

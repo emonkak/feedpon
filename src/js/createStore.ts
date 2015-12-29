@@ -1,9 +1,11 @@
 import * as eventTypes from './constants/eventTypes'
 import * as feedly from './services/feedly/interfaces'
-import Store from './store'
+import ReducerBuilder from './stores/ReducerBuilder'
+import Store from './stores/Store'
 import update from 'react-addons-update'
+import { IEventDispatcher } from './eventDispatchers/interfaces'
 
-interface AppState {
+interface State {
     subscriptions: feedly.Subscription[]
     categories: feedly.Category[]
     unreadCounts: feedly.UnreadCount[]
@@ -12,31 +14,22 @@ interface AppState {
     credential?: feedly.Credential
 }
 
-const initialState: AppState = {
-    subscriptions: [],
-    categories: [],
-    unreadCounts: [],
-    contents: null,
-    selectedStreamId: null,
-    credential: null
-}
-
-export default function storeProvider() {
-    return new Store(initialState)
-        .case<eventTypes.CategoriesReceived>(eventTypes.CategoriesReceived, (state, { categories }) => {
+export default function createStore() {
+    const reducer = new ReducerBuilder<State>()
+        .on<eventTypes.CategoriesReceived>(eventTypes.CategoriesReceived, (state, { categories }) => {
             return Object.assign({}, state, { categories })
         })
-        .case<eventTypes.ContentsReceived>(eventTypes.ContentsReceived, (state, { contents }) => {
+        .on<eventTypes.ContentsReceived>(eventTypes.ContentsReceived, (state, { contents }) => {
             const oldContents = state.contents
             if (oldContents && oldContents.id === contents.id) {
                 contents = update(contents, { items: { $unshift: oldContents.items } })
             }
             return Object.assign({}, state, { contents })
         })
-        .case<eventTypes.CredentialReceived>(eventTypes.CredentialReceived, (state, { credential }) => {
+        .on<eventTypes.CredentialReceived>(eventTypes.CredentialReceived, (state, { credential }) => {
             return Object.assign({}, state, { credential })
         })
-        .case<eventTypes.FullContentReceived>(eventTypes.FullContentReceived, (state, { fullContent }) => {
+        .on<eventTypes.FullContentReceived>(eventTypes.FullContentReceived, (state, { fullContent }) => {
             const { contents } = state
             if (contents == null) return state
 
@@ -51,13 +44,25 @@ export default function storeProvider() {
 
             return update(state, { contents: { items: { $set: items } } })
         })
-        .case<eventTypes.StreamSelected>(eventTypes.StreamSelected, (state, { streamId }) => {
+        .on<eventTypes.StreamSelected>(eventTypes.StreamSelected, (state, { streamId }) => {
             return Object.assign({}, state, { selectedStreamId: streamId })
         })
-        .case<eventTypes.SubscriptionsReceived>(eventTypes.SubscriptionsReceived, (state, { subscriptions }) => {
+        .on<eventTypes.SubscriptionsReceived>(eventTypes.SubscriptionsReceived, (state, { subscriptions }) => {
             return Object.assign({}, state, { subscriptions })
         })
-        .case<eventTypes.UnreadCountsReceived>(eventTypes.UnreadCountsReceived, (state, { unreadCounts }) => {
+        .on<eventTypes.UnreadCountsReceived>(eventTypes.UnreadCountsReceived, (state, { unreadCounts }) => {
             return Object.assign({}, state, { unreadCounts })
         })
+        .build()
+
+    const initialState: State = {
+        subscriptions: [],
+        categories: [],
+        unreadCounts: [],
+        contents: null,
+        selectedStreamId: null,
+        credential: null
+    }
+
+    return new Store(reducer, initialState)
 }

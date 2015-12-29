@@ -1,4 +1,4 @@
-import { Event, IEventDispatcher } from './interfaces'
+import { Event, IEventDispatcher, Subscriber, Subscription } from './interfaces'
 
 export default class LoggedEventDispatcher implements IEventDispatcher {
     constructor(private eventDispatcher: IEventDispatcher) {
@@ -6,8 +6,6 @@ export default class LoggedEventDispatcher implements IEventDispatcher {
 
     dispatch<T extends Event<string>>(event: T): void {
         console.log(event)
-
         this.eventDispatcher.dispatch(event)
     }
 }
-

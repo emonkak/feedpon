@@ -2,6 +2,7 @@ import Ix from 'ix'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 import React from 'react'
 import Subscription from './Subscription'
+import appContextTypes from './appContextTypes'
 import classnames from 'classnames'
 import { SelectStream } from '../../constants/actionTypes'
 
@@ -13,9 +14,7 @@ export default class SubscriptionCategory extends React.Component {
         selectedStreamId: React.PropTypes.string
     }
 
-    static contextTypes = {
-        dispatch: React.PropTypes.func.isRequired
-    }
+    static contextTypes = appContextTypes
 
     constructor(props) {
         super(props)

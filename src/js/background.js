@@ -1,6 +1,7 @@
 import 'regenerator/runtime'
 
 import ActionDispatcher from './actionDispatchers/ActionDispatcher'
+import ChromePortEventDispatcher from './eventDispatchers/ChromePortEventDispatcher'
 import GetCategoriesCacheHandler from './actionHandlers/GetCategoriesCacheHandler'
 import GetCategoriesHandler from './actionHandlers/GetCategoriesHandler'
 import GetCredentialHandler from './actionHandlers/GetCredentialHandler'
@@ -11,18 +12,17 @@ import GetUnreadCountsCacheHandler from './actionHandlers/GetUnreadCountsCacheHa
 import GetUnreadCountsHandler from './actionHandlers/GetUnreadCountsHandler'
 import LoggedActionDispatcher from './actionDispatchers/LoggedActionDispatcher'
 import LoggedEventDispatcher from './eventDispatchers/LoggedEventDispatcher'
-import MessagePortEventDispatcher from './eventDispatchers/MessagePortEventDispatcher'
 import NullActionDispatcher from './actionDispatchers/NullActionDispatcher'
 import SelectStreamHandler from './actionHandlers/SelectStreamHandler'
-import containerProvider from './containerProvider'
+import createContainer from './createContainer'
 import { GetCategories, GetCategoriesCache, GetCredential, GetFullContent, GetSubscriptions, GetSubscriptionsCache, GetUnreadCounts, GetUnreadCountsCache, SelectStream } from './constants/actionTypes'
 import { IEventDispatcher } from './eventDispatchers/interfaces'
 
 function handleConnect(port) {
-    const container = containerProvider()
+    const container = createContainer()
 
     const eventDispatcher = new LoggedEventDispatcher(
-        new MessagePortEventDispatcher(port)
+        new ChromePortEventDispatcher(port)
     )
     const actionDispatcher = new LoggedActionDispatcher(
         new ActionDispatcher(container, eventDispatcher, new NullActionDispatcher())

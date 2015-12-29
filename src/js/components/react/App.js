@@ -1,9 +1,10 @@
 import Main from './Main'
 import React from 'react'
 import Sidebar from './Sidebar'
+import appContextTypes from './appContextTypes'
 import { GetCredential, GetCategoriesCache, GetSubscriptionsCache, GetUnreadCountsCache } from '../../constants/actionTypes'
 
-export default class AppRoot extends React.Component {
+export default class App extends React.Component {
     static propTypes = {
         subscriptions: React.PropTypes.array.isRequired,
         categories: React.PropTypes.array.isRequired,
@@ -13,9 +14,7 @@ export default class AppRoot extends React.Component {
         credential: React.PropTypes.object,
     }
 
-    static contextTypes = {
-        dispatch: React.PropTypes.func.isRequired
-    }
+    static contextTypes = appContextTypes
 
     componentDidMount() {
         this.context.dispatch({ actionType: GetCredential })
