@@ -38,8 +38,8 @@ export default class Entry extends React.Component {
         const fullContents = entry._fullContents || []
 
         const contents = fullContents.length > 0
-            ? fullContents.map(({ content }, i) => <EntryContent key={i} content={content} />)
-            : entry.content ? <EntryContent content={entry.content.content} /> : null
+            ? fullContents.map(({ content, url }, i) => <EntryContent key={i} content={content} url={url} />)
+            : entry.content ? <EntryContent content={entry.content.content} url={entry.alternate[0].href} /> : null
 
         const actions = nextLink(entry)
             ? <button className="button button-default button-fill" onClick={::this.handleGetFullContent}>Get Full Content</button>

@@ -54,6 +54,7 @@ export default class GetFullContentHandler implements IActionHandler<GetFullCont
                 eventType: FullContentReceived,
                 fullContent: {
                     streamId,
+                    url,
                     content: content.outerHTML,
                     nextLink: nextLink ? nextLink.getAttribute('href') : null
                 }

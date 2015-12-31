@@ -38,6 +38,7 @@ export interface FullContentReceived extends Event<string> {
 }
 interface FullContent {
     streamId: string
+    url: string
     content: string
     nextLink?: string
 }

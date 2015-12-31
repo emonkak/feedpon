@@ -2,13 +2,15 @@ import PureRenderMixin from 'react-addons-pure-render-mixin'
 import React from 'react'
 import appContextTypes from './appContextTypes'
 import baseStyle from '../../../less/base.less'
+import escape from 'lodash.escape'
 
-function wrapContent(body) {
-    return `<html><head><base target="_blank"><style>${baseStyle}</style></head><body>${body}</body></html>`
+function wrapContent(body, url) {
+    return `<html><head><base href="${escape(url)}" target="_blank"><style>${baseStyle}</style></head><body>${body}</body></html>`
 }
 
 export default class EntryContent extends React.Component {
     static propTypes = {
+        url: React.PropTypes.string.isRequired,
         content: React.PropTypes.string.isRequired
     }
 
@@ -18,35 +20,34 @@ export default class EntryContent extends React.Component {
         super(props)
 
         this.state = { height: 0 }
+        this.heightChangedListener = this.handleHeightChanged.bind(this)
     }
 
     componentDidMount() {
-        this.windowResizeListener = ::this.handleHeightChanged
-        window.addEventListener('resize', this.windowResizeListener)
+        window.addEventListener('resize', this.heightChangedListener)
     }
 
     componentWillUnmount() {
-        window.removeEventListener('resize', this.windowResizeListener)
+        window.removeEventListener('resize', this.heightChangedListener)
     }
 
     handleHeightChanged(event) {
-        const target = this.refs.entryContent
-        const html = target.contentDocument.documentElement
-        this.setState({ height: html.offsetHeight })
+        const { frame } = this.refs
+        this.setState({ height: frame.contentDocument.documentElement.offsetHeight })
     }
 
     render() {
-        const { content } = this.props
+        const { content, url } = this.props
         const { height } = this.state
 
         return (
-            <iframe ref="entryContent"
+            <iframe ref="frame"
                     className="entry-content"
-                    srcDoc={wrapContent(content)}
+                    srcDoc={wrapContent(content, url)}
                     height={height}
                     seamless="seamless"
-                    sandbox="allow-same-origin"
-                    onLoad={::this.handleHeightChanged} />
+                    sandbox="allow-popups allow-same-origin"
+                    onLoad={this.heightChangedListener} />
         )
     }
 }
