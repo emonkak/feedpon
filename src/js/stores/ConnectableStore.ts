@@ -33,12 +33,14 @@ export default class ConnectableStore<T> implements IStore<T> {
 
         let disposed = false
 
-        return () => {
-            if (!disposed) {
-                disposed = true
-                this._refCount--
-                subscription()
-                if (this._refCount === 0) this._connection()
+        return {
+            dispose: () => {
+                if (!disposed) {
+                    disposed = true
+                    this._refCount--
+                    subscription.dispose()
+                    if (this._refCount === 0) this._connection.dispose()
+                }
             }
         }
     }

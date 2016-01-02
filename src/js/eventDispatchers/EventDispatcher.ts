@@ -13,6 +13,8 @@ export default class EventDispatcher implements ISubscribable<Event<string>> {
 
     subscribe(subscriber: Subscriber<Event<string>>): Subscription {
         this._subscribers.push(subscriber)
-        return () => removeFromArray(this._subscribers, subscriber)
+        return {
+            dispose: () => removeFromArray(this._subscribers, subscriber)
+        }
     }
 }

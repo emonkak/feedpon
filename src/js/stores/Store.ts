@@ -26,8 +26,8 @@ export default class Store<T> implements IStore<T> {
     subscribe(subscriber: Subscriber<T>): Subscription {
         this._subscribers.push(subscriber)
 
-        return () => {
-            removeFromArray(this._subscribers, subscriber)
+        return {
+            dispose: () => { removeFromArray(this._subscribers, subscriber) }
         }
     }
 }

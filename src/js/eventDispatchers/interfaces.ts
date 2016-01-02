@@ -2,8 +2,10 @@ export interface Event<T> {
     eventType: T
 }
 
-export type Subscriber<T> = (value: T) => void
-export type Subscription = () => void
+export type Subscriber<T> = (event: T) => void
+export interface Subscription {
+    dispose(): void
+}
 
 export const IEventDispatcher = class {}
 export interface IEventDispatcher {
