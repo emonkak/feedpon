@@ -20,15 +20,15 @@ export default class EntryContent extends React.Component {
         super(props)
 
         this.state = { height: 0 }
-        this.heightChangedListener = this.handleHeightChanged.bind(this)
+        this.handleHeightChanged = this.handleHeightChanged.bind(this)
     }
 
     componentDidMount() {
-        window.addEventListener('resize', this.heightChangedListener)
+        window.addEventListener('resize', this.handleHeightChanged)
     }
 
     componentWillUnmount() {
-        window.removeEventListener('resize', this.heightChangedListener)
+        window.removeEventListener('resize', this.handleHeightChanged)
     }
 
     handleHeightChanged(event) {
@@ -47,7 +47,7 @@ export default class EntryContent extends React.Component {
                     height={height}
                     seamless="seamless"
                     sandbox="allow-popups allow-same-origin"
-                    onLoad={this.heightChangedListener} />
+                    onLoad={this.handleHeightChanged} />
         )
     }
 }

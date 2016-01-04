@@ -11,18 +11,16 @@ import LoggedEventDispatcher from './eventDispatchers/LoggedEventDispatcher'
 import ObservableActionDispatcher from './actionDispatchers/ObservableActionDispatcher'
 import React from 'react'
 import ReactDOM from 'react-dom'
-import SelectStreamHandler from './actionHandlers/SelectStreamHandler'
 import connectToStore from './components/react/connectToStore'
 import container from './container'
-import { Authenticate, SelectStream } from './constants/actionTypes'
+import { Authenticate } from './constants/actionTypes'
 
 function bootstrap() {
     const eventDispatcher = new LoggedEventDispatcher(new EventDispatcher())
     const actionDispatcher = new LoggedActionDispatcher(
         new ObservableActionDispatcher(
             new ActionDispatcher(container, eventDispatcher, new ChromeBackgroundActionDispatcher())
-                .mount(Authenticate, AuthenticateHandler)
-                .mount(SelectStream, SelectStreamHandler),
+                .mount(Authenticate, AuthenticateHandler),
             eventDispatcher
         )
     )

@@ -3,7 +3,7 @@ import PureRenderMixin from 'react-addons-pure-render-mixin'
 import React from 'react'
 import appContextTypes from './appContextTypes'
 import { Router, Route } from 'react-router'
-import { SelectStream } from '../../constants/actionTypes'
+import { GetContents } from '../../constants/actionTypes'
 
 export default class Content extends React.Component {
     static propTypes = {
@@ -17,14 +17,28 @@ export default class Content extends React.Component {
         this.state = { isLoading: false }
     }
 
+    componentDidMount() {
+        const { params: { streamId } } = this.props
+
+        this.context.dispatch({
+            actionType: GetContents,
+            payload: {
+                streamId
+            }
+        })
+    }
+
     handleLoading() {
         const { contents } = this.props
         if (contents) {
             this.setState({ isLoading: true })
 
             this.dispatch({
-                actionType: SelectStream,
-                continuation: contents.continuation
+                actionType: GetContents,
+                payload: {
+                    streamId: contents.id,
+                    continuation: contents.continuation
+                }
             }).then(() => {
                 this.setState({ isLoading: false })
             })

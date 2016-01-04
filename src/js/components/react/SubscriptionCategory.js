@@ -4,13 +4,14 @@ import React from 'react'
 import Subscription from './Subscription'
 import appContextTypes from './appContextTypes'
 import classnames from 'classnames'
-import { GetContents, SelectStream } from '../../constants/actionTypes'
+import { GetContents } from '../../constants/actionTypes'
+import { Link } from 'react-router'
 
 export default class SubscriptionCategory extends React.Component {
     static propTypes = {
         category: React.PropTypes.object.isRequired,
         subscriptions: React.PropTypes.array.isRequired,
-        selected: React.PropTypes.bool.isRequired,
+        isSelected: React.PropTypes.bool.isRequired,
         selectedStreamId: React.PropTypes.string
     }
 
@@ -34,24 +35,16 @@ export default class SubscriptionCategory extends React.Component {
     }
 
     handleSelect(event) {
-        event.preventDefault()
-
-        this.context.dispatch({
-            actionType: SelectStream,
-            streamId: this.props.category.id
-        })
         this.context.dispatch({
             actionType: GetContents,
             payload: {
                 streamId: this.props.category.id
             }
         })
-
-        return false
     }
 
     render() {
-        const { category, subscriptions, selected } = this.props
+        const { category, subscriptions, isSelected } = this.props
         const { expanded } = this.state
 
         const unreadCount = Ix.Enumerable.fromArray(subscriptions)
@@ -60,12 +53,12 @@ export default class SubscriptionCategory extends React.Component {
 
         return (
             <li className="subscription-category-container">
-                <div className={classnames('subscription-category', { 'is-selected': selected })}>
+                <div className={classnames('subscription-category', { 'is-selected': isSelected })}>
                     <a className={classnames('subscription-category-expand-arrow', { 'is-expanded': expanded })} onClick={::this.handleExpand}></a>
-                    <a className="subscription-category-link" href="#" onClick={::this.handleSelect}>
+                    <Link className="subscription-category-link" to={`/streams/${encodeURIComponent(category.id)}`} onClick={::this.handleSelect}>
                         <span className="subscription-category-label">{category.label}</span>
                         <span className="subscription-category-unread-count">{unreadCount}</span>
-                    </a>
+                    </Link>
                 </div>
                 <ul className={classnames('subscription-list', { 'is-expanded': expanded })}>
                     {subscriptions.map(::this.renderSubscription)}
@@ -81,7 +74,7 @@ export default class SubscriptionCategory extends React.Component {
             <Subscription key={subscription.id}
                           subscription={subscription}
                           unreadCount={unreadCount}
-                          selected={subscription.id === selectedStreamId} />
+                          isSelected={subscription.id === selectedStreamId} />
         )
     }
 }

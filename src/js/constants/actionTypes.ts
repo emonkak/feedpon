@@ -47,8 +47,3 @@ export interface GetUnreadCounts extends Action<string> {
 export const GetUnreadCountsCache = 'GetUnreadCountsCache'
 export interface GetUnreadCountsCache extends Action<string> {
 }
-
-export const SelectStream = 'SelectStream'
-export interface SelectStream extends Action<string> {
-    streamId: string
-}

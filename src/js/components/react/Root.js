@@ -5,14 +5,11 @@ import Sidebar from './Sidebar'
 import appContextTypes from './appContextTypes'
 import { GetCredential, GetCategoriesCache, GetSubscriptionsCache, GetUnreadCountsCache } from '../../constants/actionTypes'
 
-export default class Main extends React.Component {
+export default class Root extends React.Component {
     static propTypes = {
-        subscriptions: React.PropTypes.array.isRequired,
-        categories: React.PropTypes.array.isRequired,
-        unreadCounts: React.PropTypes.array.isRequired,
-        contents: React.PropTypes.object,
-        selectedStreamId: React.PropTypes.string,
         credential: React.PropTypes.object,
+        content: React.PropTypes.element.isRequired,
+        sidebar: React.PropTypes.element
     }
 
     static contextTypes = appContextTypes
@@ -50,13 +47,12 @@ export default class Main extends React.Component {
     }
 
     renderMain() {
-        const { subscriptions, unreadCounts, categories, contents, credential, selectedStreamId } = this.props
-
+        const { credential, content, sidebar } = this.props
         if (credential) {
             return (
                 <div>
-                    <Sidebar subscriptions={subscriptions} unreadCounts={unreadCounts} categories={categories} credential={credential} selectedStreamId={selectedStreamId} />
-                    <Content contents={contents} />
+                    {sidebar}
+                    {content}
                 </div>
             )
         } else {
@@ -69,4 +65,4 @@ export default class Main extends React.Component {
     }
 }
 
-Object.assign(Main.prototype, PureRenderMixin)
+Object.assign(Root.prototype, PureRenderMixin)

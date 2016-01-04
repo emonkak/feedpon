@@ -43,11 +43,6 @@ interface FullContent {
     nextLink?: string
 }
 
-export const StreamSelected = 'StreamSelected'
-export interface StreamSelected extends Event<string> {
-    streamId: string
-}
-
 export const SubscriptionsReceived = 'SubscriptionsReceived'
 export interface SubscriptionsReceived extends Event<string> {
     subscriptions: feedly.Subscription[]

@@ -10,7 +10,6 @@ interface State {
     categories: feedly.Category[]
     unreadCounts: feedly.UnreadCount[]
     contents?: feedly.Contents
-    selectedStreamId?: string
     credential?: feedly.Credential
 }
 
@@ -43,9 +42,6 @@ export const reducer = new ReducerBuilder<State>()
 
         return update(state, { contents: { items: { $set: items } } })
     })
-    .on<eventTypes.StreamSelected>(eventTypes.StreamSelected, (state, { streamId }) => {
-        return Object.assign({}, state, { selectedStreamId: streamId })
-    })
     .on<eventTypes.SubscriptionsReceived>(eventTypes.SubscriptionsReceived, (state, { subscriptions }) => {
         return Object.assign({}, state, { subscriptions })
     })
@@ -59,6 +55,5 @@ export const initialState: State = {
     categories: [],
     unreadCounts: [],
     contents: null,
-    selectedStreamId: null,
     credential: null
 }

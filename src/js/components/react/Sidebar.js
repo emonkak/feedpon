@@ -10,8 +10,7 @@ export default class Sidebar extends React.Component {
         credential: React.PropTypes.object.isRequired,
         subscriptions: React.PropTypes.array.isRequired,
         unreadCounts: React.PropTypes.array.isRequired,
-        categories: React.PropTypes.array.isRequired,
-        selectedStreamId: React.PropTypes.string
+        categories: React.PropTypes.array.isRequired
     }
 
     static contextTypes = appContextTypes
@@ -72,14 +71,14 @@ export default class Sidebar extends React.Component {
     }
 
     renderCategory({ category, subscriptions }) {
-        const { selectedStreamId } = this.props
+        const { params: { streamId } } = this.props
 
         return (
             <SubscriptionCategory key={category.id}
                                   category={category}
                                   subscriptions={subscriptions}
-                                  selected={category.id === selectedStreamId}
-                                  selectedStreamId={selectedStreamId} />
+                                  isSelected={category.id === streamId}
+                                  selectedStreamId={streamId} />
         )
     }
 }
