@@ -98,7 +98,7 @@ export default class Gateway {
         return this.doGet('v3/streams/ids', input, authHeader(accessToken))
     }
 
-    getContents(accessToken: string, input: feedly.GetStreamInput): Promise<feedly.Contents> {
+    getEntryContents(accessToken: string, input: feedly.GetStreamInput): Promise<feedly.Contents> {
         return this.doGet('v3/streams/contents', input, authHeader(accessToken))
     }
 

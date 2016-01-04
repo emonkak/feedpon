@@ -14,10 +14,6 @@ export default class ConnectableStore<T> implements IStore<T> {
         return this._store.getState()
     }
 
-    setState(state: T): void {
-        return this._store.setState(state)
-    }
-
     dispatch<T extends Event<string>>(event: T): void {
         return this._store.dispatch(event)
     }

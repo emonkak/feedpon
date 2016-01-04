@@ -14,7 +14,7 @@ export interface IInjectableFunction<T> extends IInjectable<T> {
 export type IInjectableKey<T> = IInjectableClass<T> | string | symbol
 
 export const IContainer = class {}
-export interface IContainer {
+export interface IContainer extends IResolver {
     /**
      * Gets the instance from a given class.
      */
@@ -25,6 +25,9 @@ export interface IContainer {
      */
     has<T>(key: IInjectableKey<T>): boolean
 
+    /**
+     * Injects dependencies to a given function.
+     */
     inject<T>(fn: IInjectableFunction<T>, context?: any): T
 }
 

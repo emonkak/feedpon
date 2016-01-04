@@ -1,7 +1,7 @@
 import { IContainer, IDefinition, IDependency, IResolver, IInjectableClass, IInjectableKey, IInjectableFunction, IInjectionPolicy } from './interfaces'
 import { AliasDefinition, ClassDefinition, ValueDefinition, FactoryDefinition } from './definitions'
 
-export default class Container implements IContainer, IResolver {
+export default class Container implements IContainer {
     private _definitions: Map<IInjectableKey<any>, IDefinition<any>> = new Map<IInjectableKey<any>, IDefinition<any>>()
 
     constructor(private _injectionPolicy: IInjectionPolicy) {

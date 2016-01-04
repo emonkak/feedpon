@@ -3,8 +3,6 @@ import appContextTypes from './appContextTypes'
 
 export default function connectToStore(component, store) {
     class StoreWrapper extends React.Component {
-        static childContextTypes = appContextTypes
-
         constructor(props) {
             super(props)
             this.state = store.getState()
@@ -16,7 +14,7 @@ export default function connectToStore(component, store) {
         }
 
         componentWillUnmount() {
-            this._subscription()
+            this._subscription.dispose()
         }
 
         render() {

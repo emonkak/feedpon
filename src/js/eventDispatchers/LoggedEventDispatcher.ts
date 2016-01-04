@@ -8,4 +8,8 @@ export default class LoggedEventDispatcher implements IEventDispatcher {
         console.log(event)
         this.eventDispatcher.dispatch(event)
     }
+
+    subscribe(subscriber: Subscriber<Event<string>>): Subscription {
+        return this.eventDispatcher.subscribe(subscriber)
+    }
 }

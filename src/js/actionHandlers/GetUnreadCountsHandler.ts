@@ -16,7 +16,7 @@ export default class GetUnreadCountsHandler implements IActionHandler<GetUnreadC
 
     async handle(action: GetUnreadCounts, eventDispatcher: IEventDispatcher): Promise<void> {
         const { access_token } = await this.authenticator.getCredential()
-        const { unreadcounts } = await this.gateway.allUnreadCounts(access_token)
+        const { unreadcounts } = await this.gateway.allUnreadCounts(access_token, action.payload)
 
         await this.unreadCountRepository.putAll(unreadcounts)
 

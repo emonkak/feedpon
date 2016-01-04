@@ -4,7 +4,7 @@ import React from 'react'
 import Subscription from './Subscription'
 import appContextTypes from './appContextTypes'
 import classnames from 'classnames'
-import { SelectStream } from '../../constants/actionTypes'
+import { GetContents, SelectStream } from '../../constants/actionTypes'
 
 export default class SubscriptionCategory extends React.Component {
     static propTypes = {
@@ -39,6 +39,12 @@ export default class SubscriptionCategory extends React.Component {
         this.context.dispatch({
             actionType: SelectStream,
             streamId: this.props.category.id
+        })
+        this.context.dispatch({
+            actionType: GetContents,
+            payload: {
+                streamId: this.props.category.id
+            }
         })
 
         return false

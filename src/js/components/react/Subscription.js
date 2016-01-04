@@ -2,7 +2,7 @@ import PureRenderMixin from 'react-addons-pure-render-mixin'
 import React from 'react'
 import appContextTypes from './appContextTypes'
 import classnames from 'classnames'
-import { SelectStream } from '../../constants/actionTypes'
+import { GetContents, SelectStream } from '../../constants/actionTypes'
 
 export default class Subscription extends React.Component {
     static propTypes = {
@@ -19,6 +19,12 @@ export default class Subscription extends React.Component {
         this.context.dispatch({
             actionType: SelectStream,
             streamId: this.props.subscription.id
+        })
+        this.context.dispatch({
+            actionType: GetContents,
+            payload: {
+                streamId: this.props.category.id
+            }
         })
 
         return false

@@ -8,6 +8,11 @@ export const Authenticate = 'Authenticate'
 export interface Authenticate extends Action<string> {
 }
 
+export const GetContents = 'GetContents'
+export interface GetContents extends Action<string> {
+    payload: feedly.GetStreamInput
+}
+
 export const GetCategories = 'GetCategories'
 export interface GetCategories extends Action<string> {
 }
@@ -35,7 +40,8 @@ export interface GetSubscriptionsCache extends Action<string> {
 }
 
 export const GetUnreadCounts = 'GetUnreadCounts'
-export interface GetUnreadCounts extends Action<string>, feedly.GetUnreadCountsInput {
+export interface GetUnreadCounts extends Action<string> {
+    payload: feedly.GetUnreadCountsInput
 }
 
 export const GetUnreadCountsCache = 'GetUnreadCountsCache'
@@ -43,5 +49,6 @@ export interface GetUnreadCountsCache extends Action<string> {
 }
 
 export const SelectStream = 'SelectStream'
-export interface SelectStream extends Action<string>, feedly.GetStreamInput {
+export interface SelectStream extends Action<string> {
+    streamId: string
 }

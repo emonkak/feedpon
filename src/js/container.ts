@@ -16,6 +16,7 @@ import LocalForageWedataRepository from './services/contentFinder/LocalForageWed
 import SystemClock from './services/clock/SystemClock'
 import WedataGateway from './services/contentFinder/WedataGateway'
 import { IClock } from './services/clock/interfaces'
+import { IContainer } from './di/interfaces'
 import { IContentFinder, IWedataGateway, IWedataRepository } from './services/contentFinder/interfaces'
 import { IEnvironment, ICredentialRepository, ISubscriptionRepository, IUnreadCountRepository, ICategoryRepository } from './services/feedly/interfaces'
 import { IHttpClient } from './services/http/interfaces'
@@ -34,23 +35,21 @@ class Factries {
     }
 }
 
-export default function createContainer() {
-    const container = new Container(new InjectionPolicy(singletonScope))
+const container = new Container(new InjectionPolicy(singletonScope))
 
-    container.bind(ICategoryRepository).to(LocalForageCategoryRepository)
-    container.bind(IClock).to(SystemClock)
-    container.bind(ICredentialRepository).to(LocalForageCredentialRepository)
-    container.bind(IHttpClient).to(HttpClient)
-    container.bind(ISubscriptionRepository).to(LocalForageSubscriptionRepository)
-    container.bind(IUnreadCountRepository).to(LocalForageUnreadCountRepository)
-    container.bind(IWedataGateway).to(WedataGateway)
-    container.bind(IWedataRepository).to(LocalForageWedataRepository)
-    container.bind(IWindowOpener).to(ChromeWindowOpener)
+container.bind(ICategoryRepository).to(LocalForageCategoryRepository)
+container.bind(IClock).to(SystemClock)
+container.bind(ICredentialRepository).to(LocalForageCredentialRepository)
+container.bind(IHttpClient).to(HttpClient)
+container.bind(ISubscriptionRepository).to(LocalForageSubscriptionRepository)
+container.bind(IUnreadCountRepository).to(LocalForageUnreadCountRepository)
+container.bind(IWedataGateway).to(WedataGateway)
+container.bind(IWedataRepository).to(LocalForageWedataRepository)
+container.bind(IWindowOpener).to(ChromeWindowOpener)
 
-    container.factory(IContentFinder, Factries.contentFinder)
+container.factory(IContentFinder, Factries.contentFinder)
 
-    container.set('LocalForage', localforage)
-    container.set(IEnvironment, Environment)
+container.set('LocalForage', localforage)
+container.set(IEnvironment, Environment)
 
-    return container
-}
+export default container as IContainer

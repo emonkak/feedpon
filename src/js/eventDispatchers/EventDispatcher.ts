@@ -1,10 +1,10 @@
 /// <reference path="../../DefinitelyTyped/node/node-0.12.d.ts" />
 
-import { Event, ISubscribable, Subscriber, Subscription } from './interfaces'
+import { Event, IEventDispatcher, Subscriber, Subscription } from './interfaces'
 import { EventEmitter } from 'events'
 import removeFromArray from '../utils/removeFromArray'
 
-export default class EventDispatcher implements ISubscribable<Event<string>> {
+export default class EventDispatcher implements IEventDispatcher {
     private _subscribers: Subscriber<any>[] = []
 
     dispatch<T extends Event<string>>(event: T): void {
