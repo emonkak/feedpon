@@ -1,6 +1,5 @@
 import combineReducersByType from './combineReducersByType'
-import { Event } from '../eventDispatchers/interfaces'
-import { Reducer } from './interfaces'
+import { Event, Reducer } from '../interfaces'
 
 export default class ReducerBuilder<T> {
     private _reducers: { [key: string]: Reducer<T, Event<string>> } = {}

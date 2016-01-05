@@ -1,7 +1,5 @@
-import { Action } from '../constants/actionTypes'
-import { ActionDone, ActionFailed } from '../constants/eventTypes'
-import { IActionDispatcher } from './interfaces'
-import { IEventDispatcher } from '../eventDispatchers/interfaces'
+import { ActionDone, ActionFailed } from '../../constants/eventTypes'
+import { Action, IActionDispatcher, IEventDispatcher } from '../interfaces'
 
 export default class ObservableActionDispatcher implements IActionDispatcher {
     constructor(private dispatcher: IActionDispatcher,

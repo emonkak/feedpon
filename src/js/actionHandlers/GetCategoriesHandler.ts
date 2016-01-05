@@ -1,11 +1,10 @@
 import Authenticator from '../services/feedly/Authenticator'
 import Gateway from '../services/feedly/Gateway'
-import { IActionHandler } from './interfaces'
 import { CategoriesReceived } from '../constants/eventTypes'
 import { GetCategories } from '../constants/actionTypes'
+import { IActionHandler, IEventDispatcher } from '../shared/interfaces'
 import { ICategoryRepository } from '../services/feedly/interfaces'
-import { IEventDispatcher } from '../eventDispatchers/interfaces'
-import { Inject } from '../di/annotations'
+import { Inject } from '../shared/di/annotations'
 
 @Inject
 export default class GetCategoriesHandler implements IActionHandler<GetCategories, void> {

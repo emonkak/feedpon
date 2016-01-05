@@ -1,9 +1,9 @@
 import * as eventTypes from './constants/eventTypes'
 import * as feedly from './services/feedly/interfaces'
-import ReducerBuilder from './stores/ReducerBuilder'
-import Store from './stores/Store'
+import ReducerBuilder from './shared/stores/ReducerBuilder'
+import Store from './shared/stores/Store'
 import update from 'react-addons-update'
-import { IEventDispatcher } from './eventDispatchers/interfaces'
+import { IEventDispatcher } from './shared/interfaces'
 
 interface State {
     subscriptions: feedly.Subscription[]

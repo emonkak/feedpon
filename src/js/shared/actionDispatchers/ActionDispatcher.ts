@@ -1,8 +1,5 @@
-import { Action } from '../constants/actionTypes'
-import { IActionDispatcher } from './interfaces'
-import { IActionHandler, IActionHandlerClass } from '../actionHandlers/interfaces'
+import { Action, IActionDispatcher, IActionHandler, IActionHandlerClass, IEventDispatcher } from '../interfaces'
 import { IContainer } from '../di/interfaces'
-import { IEventDispatcher } from '../eventDispatchers/interfaces'
 
 export default class ActionDispatcher implements IActionDispatcher {
     private handlerClasses: { [key: string]: IActionHandlerClass<Action<any>, any> } = {}

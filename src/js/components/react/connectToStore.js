@@ -1,7 +1,7 @@
 import React from 'react'
 import appContextTypes from './appContextTypes'
 
-export default function connectToStore(component, store) {
+export default function connectToStore(Component, store) {
     class StoreWrapper extends React.Component {
         constructor(props) {
             super(props)
@@ -19,7 +19,7 @@ export default function connectToStore(component, store) {
 
         render() {
             const props = Object.assign({}, this.state, this.props)
-            return React.createElement(component, props, props.children)
+            return React.createElement(Component, props, props.children)
         }
     }
     return StoreWrapper

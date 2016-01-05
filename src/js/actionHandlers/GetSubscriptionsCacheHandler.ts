@@ -1,8 +1,7 @@
-import { IActionHandler } from './interfaces'
 import { GetSubscriptionsCache } from '../constants/actionTypes'
-import { IEventDispatcher } from '../eventDispatchers/interfaces'
+import { IEventDispatcher, IActionHandler } from '../shared/interfaces'
 import { ISubscriptionRepository } from '../services/feedly/interfaces'
-import { Inject } from '../di/annotations'
+import { Inject } from '../shared/di/annotations'
 import { SubscriptionsReceived } from '../constants/eventTypes'
 
 @Inject

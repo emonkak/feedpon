@@ -1,5 +1,5 @@
 import { IContentFinder, FoundContent } from './interfaces'
-import { Inject } from '../../di/annotations'
+import { Inject } from '../../shared/di/annotations'
 
 @Inject
 export default class ChainedContentFinder implements IContentFinder {

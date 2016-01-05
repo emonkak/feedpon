@@ -4,7 +4,7 @@
 import * as querystring from 'querystring'
 import * as feedly from './interfaces'
 import { IHttpClient } from '../http/interfaces'
-import { Inject } from '../../di/annotations'
+import { Inject } from '../../shared/di/annotations'
 
 function authHeader(accessToken: string): { [key: string]: string } {
     return {

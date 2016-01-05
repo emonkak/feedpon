@@ -1,4 +1,4 @@
-export default function htmlParser(htmlText: string): HTMLDocument {
+export default function parseHtml(htmlText: string): HTMLDocument {
     const parser = new DOMParser()
 
     let html = parser.parseFromString(htmlText, 'text/html')

@@ -1,9 +1,8 @@
 import { CategoriesReceived } from '../constants/eventTypes'
 import { GetCategories } from '../constants/actionTypes'
-import { IActionHandler } from './interfaces'
+import { IActionHandler, IEventDispatcher } from '../shared/interfaces'
 import { ICategoryRepository } from '../services/feedly/interfaces'
-import { IEventDispatcher } from '../eventDispatchers/interfaces'
-import { Inject } from '../di/annotations'
+import { Inject } from '../shared/di/annotations'
 
 @Inject
 export default class GetCategoriesCacheHandler implements IActionHandler<GetCategories, void> {

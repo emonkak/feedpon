@@ -4,7 +4,7 @@ import Ix from 'ix'
 import WedataLoader from './WedataLoader'
 import { AutoPagerizeData, autoPagerize } from './wedataResources'
 import { IContentFinder, FoundContent , WedataItem } from './interfaces'
-import { Inject } from '../../di/annotations'
+import { Inject } from '../../shared/di/annotations'
 
 @Inject
 export default class AutoPagerizeContentFinder implements IContentFinder {

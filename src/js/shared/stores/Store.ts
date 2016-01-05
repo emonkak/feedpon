@@ -1,6 +1,5 @@
-import { Event, Subscriber, Subscription } from '../eventDispatchers/interfaces'
-import { IStore, Reducer } from './interfaces'
 import removeFromArray from '../utils/removeFromArray'
+import { Event, IStore, Reducer, Subscriber, Subscription } from '../interfaces'
 
 export default class Store<T> implements IStore<T> {
     private _subscribers: Subscriber<T>[] = []

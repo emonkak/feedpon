@@ -1,4 +1,4 @@
-import { Event, IEventDispatcher, Subscriber, Subscription } from './interfaces'
+import { Event, IEventDispatcher, Subscriber, Subscription } from '../interfaces'
 
 export default class LoggedEventDispatcher implements IEventDispatcher {
     constructor(private eventDispatcher: IEventDispatcher) {

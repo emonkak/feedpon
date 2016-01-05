@@ -4,7 +4,7 @@ import * as feedly from './interfaces'
 import Gateway from './Gateway'
 import { IClock } from '../clock/interfaces'
 import { IWindowOpener } from '../window/interfaces'
-import { Inject } from '../../di/annotations'
+import { Inject } from '../../shared/di/annotations'
 
 @Inject
 export default class Authenticator {

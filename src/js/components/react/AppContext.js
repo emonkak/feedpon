@@ -1,6 +1,6 @@
-import ConnectableStore from '../../stores/ConnectableStore'
+import ConnectableStore from '../../shared/stores/ConnectableStore'
 import React from 'react'
-import Store from '../../stores/Store'
+import Store from '../../shared/stores/Store'
 import appContextTypes from './appContextTypes'
 
 export default class AppContext extends React.Component {

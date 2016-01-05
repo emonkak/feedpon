@@ -2,15 +2,14 @@
 /// <reference path="../typings/iconv-lite.d.ts" />
 /// <reference path="../typings/whatwg-fetch.d.ts" />
 
-import htmlParser from '../utils/htmlParser'
 import iconv from 'iconv-lite'
+import parseHtml from '../utils/parseHtml'
 import { FullContentReceived } from '../constants/eventTypes'
 import { GetFullContent } from '../constants/actionTypes'
-import { IActionHandler } from './interfaces'
+import { IActionHandler, IEventDispatcher } from '../shared/interfaces'
 import { IContentFinder } from '../services/contentFinder/interfaces'
-import { IEventDispatcher } from '../eventDispatchers/interfaces'
 import { IHttpClient } from '../services/http/interfaces'
-import { Inject } from '../di/annotations'
+import { Inject } from '../shared/di/annotations'
 
 const CHARSET_REGEXP = new RegExp('charset=([^()<>@,;:\\"/[\\]?.=\\s]*)', 'i')
 const UTF8_REGEXP = new RegExp('utf-?8', 'i')
@@ -43,7 +42,7 @@ export default class GetFullContentHandler implements IActionHandler<GetFullCont
         const response = await this.httpClient.send(new Request(url))
         const html = await decodeAsString(response)
 
-        const doc = htmlParser(html)
+        const doc = parseHtml(html)
         const foundContent = await this.contentFinder.find(url, doc)
 
         // TODO: When full content is not found

@@ -3,7 +3,7 @@
 import Ix from 'ix'
 import WedataLoader from './WedataLoader'
 import { IContentFinder, FoundContent , WedataItem } from './interfaces'
-import { Inject } from '../../di/annotations'
+import { Inject } from '../../shared/di/annotations'
 import { LDRFullFeedData, ldrFullFeed } from './wedataResources'
 
 @Inject

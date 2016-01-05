@@ -1,9 +1,5 @@
 import * as feedly from '../services/feedly/interfaces'
-import { Action } from './actionTypes'
-
-export interface Event<T> {
-    eventType: T
-}
+import { Event, Action } from '../shared/interfaces'
 
 export const ActionDone = 'ActionDone'
 export interface ActionDone extends Event<string> {

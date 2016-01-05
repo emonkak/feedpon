@@ -1,8 +1,7 @@
-import { IActionHandler } from './interfaces'
 import { GetUnreadCountsCache } from '../constants/actionTypes'
-import { IEventDispatcher } from '../eventDispatchers/interfaces'
+import { IActionHandler, IEventDispatcher } from '../shared/interfaces'
 import { IUnreadCountRepository } from '../services/feedly/interfaces'
-import { Inject } from '../di/annotations'
+import { Inject } from '../shared/di/annotations'
 import { UnreadCountsReceived } from '../constants/eventTypes'
 
 @Inject

@@ -13,7 +13,6 @@ export interface IInjectableFunction<T> extends IInjectable<T> {
 
 export type IInjectableKey<T> = IInjectableClass<T> | string | symbol
 
-export const IContainer = class {}
 export interface IContainer extends IResolver {
     /**
      * Gets the instance from a given class.

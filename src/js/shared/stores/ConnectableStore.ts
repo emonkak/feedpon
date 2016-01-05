@@ -1,5 +1,4 @@
-import { Event, Subscriber, Subscription, ISubscribable } from '../eventDispatchers/interfaces'
-import { IStore } from './interfaces'
+import { Event, IStore, ISubscribable, Subscriber, Subscription } from '../interfaces'
 
 export default class ConnectableStore<T> implements IStore<T> {
     private _connection: Subscription

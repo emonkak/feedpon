@@ -1,9 +1,8 @@
 import Authenticator from '../services/feedly/Authenticator'
-import { IActionHandler } from './interfaces'
 import { CredentialReceived } from '../constants/eventTypes'
 import { GetCredential } from '../constants/actionTypes'
-import { IEventDispatcher } from '../eventDispatchers/interfaces'
-import { Inject } from '../di/annotations'
+import { IActionHandler, IEventDispatcher } from '../shared/interfaces'
+import { Inject } from '../shared/di/annotations'
 
 @Inject
 export default class GetCredentialHandler implements IActionHandler<GetCredential, void> {

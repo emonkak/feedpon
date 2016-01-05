@@ -1,8 +1,5 @@
 import * as feedly from '../services/feedly/interfaces'
-
-export interface Action<T> {
-    actionType: T
-}
+import { Action } from '../shared/interfaces'
 
 export const Authenticate = 'Authenticate'
 export interface Authenticate extends Action<string> {

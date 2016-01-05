@@ -1,8 +1,5 @@
-/// <reference path="../../DefinitelyTyped/node/node-0.12.d.ts" />
-
-import { Event, IEventDispatcher, Subscriber, Subscription } from './interfaces'
-import { EventEmitter } from 'events'
 import removeFromArray from '../utils/removeFromArray'
+import { Event, IEventDispatcher, Subscriber, Subscription } from '../interfaces'
 
 export default class EventDispatcher implements IEventDispatcher {
     private _subscribers: Subscriber<any>[] = []

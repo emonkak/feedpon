@@ -1,7 +1,7 @@
 import 'regenerator/runtime'
 
-import ActionDispatcher from './actionDispatchers/ActionDispatcher'
-import EventDispatcher from './eventDispatchers/EventDispatcher'
+import ActionDispatcher from './shared/actionDispatchers/ActionDispatcher'
+import EventDispatcher from './shared/eventDispatchers/EventDispatcher'
 import GetCategoriesCacheHandler from './actionHandlers/GetCategoriesCacheHandler'
 import GetCategoriesHandler from './actionHandlers/GetCategoriesHandler'
 import GetContentsHandler from './actionHandlers/GetContentsHandler'
@@ -11,12 +11,11 @@ import GetSubscriptionsCacheHandler from './actionHandlers/GetSubscriptionsCache
 import GetSubscriptionsHandler from './actionHandlers/GetSubscriptionsHandler'
 import GetUnreadCountsCacheHandler from './actionHandlers/GetUnreadCountsCacheHandler'
 import GetUnreadCountsHandler from './actionHandlers/GetUnreadCountsHandler'
-import LoggedActionDispatcher from './actionDispatchers/LoggedActionDispatcher'
-import LoggedEventDispatcher from './eventDispatchers/LoggedEventDispatcher'
-import NullActionDispatcher from './actionDispatchers/NullActionDispatcher'
+import LoggedActionDispatcher from './shared/actionDispatchers/LoggedActionDispatcher'
+import LoggedEventDispatcher from './shared/eventDispatchers/LoggedEventDispatcher'
+import NullActionDispatcher from './shared/actionDispatchers/NullActionDispatcher'
 import container from './container'
 import { GetCategories, GetCategoriesCache, GetContents, GetCredential, GetFullContent, GetSubscriptions, GetSubscriptionsCache, GetUnreadCounts, GetUnreadCountsCache } from './constants/actionTypes'
-import { IEventDispatcher } from './eventDispatchers/interfaces'
 
 const eventDispatcher = new LoggedEventDispatcher(new EventDispatcher())
 const actionDispatcher = new LoggedActionDispatcher(
