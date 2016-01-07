@@ -14,13 +14,6 @@ export default class Root extends React.Component {
 
     static contextTypes = appContextTypes
 
-    componentDidMount() {
-        this.context.dispatch({ actionType: GetCredential })
-        this.context.dispatch({ actionType: GetCategoriesCache })
-        this.context.dispatch({ actionType: GetSubscriptionsCache })
-        this.context.dispatch({ actionType: GetUnreadCountsCache })
-    }
-
     handleAuthenticate() {
         this.context.dispatch({ actionType: Authenticate })
     }

@@ -34,15 +34,6 @@ export default class SubscriptionCategory extends React.Component {
         return false
     }
 
-    handleSelect(event) {
-        this.context.dispatch({
-            actionType: GetContents,
-            payload: {
-                streamId: this.props.category.id
-            }
-        })
-    }
-
     render() {
         const { category, subscriptions, isSelected } = this.props
         const { expanded } = this.state
@@ -55,7 +46,7 @@ export default class SubscriptionCategory extends React.Component {
             <li className="subscription-category-container">
                 <div className={classnames('subscription-category', { 'is-selected': isSelected })}>
                     <a className={classnames('subscription-category-expand-arrow', { 'is-expanded': expanded })} onClick={::this.handleExpand}></a>
-                    <Link className="subscription-category-link" to={`/streams/${encodeURIComponent(category.id)}`} onClick={::this.handleSelect}>
+                    <Link className="subscription-category-link" to={`/streams/${encodeURIComponent(category.id)}`}>
                         <span className="subscription-category-label">{category.label}</span>
                         <span className="subscription-category-unread-count">{unreadCount}</span>
                     </Link>

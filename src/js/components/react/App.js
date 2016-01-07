@@ -6,8 +6,9 @@ import Sidebar from './Sidebar'
 import appContextTypes from './appContextTypes'
 import connectToStore from './connectToStore'
 import { GetCredential, GetCategoriesCache, GetSubscriptionsCache, GetUnreadCountsCache } from '../../constants/actionTypes'
-import { Router, Route } from 'react-router'
-import { browserHistory, initialState, reducer } from '../../store'
+import { browserHistory, IndexRoute, Router, Route } from 'react-router'
+import { initialState, reducer } from '../../store'
+import { map } from 'rxjs/operator/map'
 
 export default class App extends React.Component {
     static contextTypes = appContextTypes
@@ -21,15 +22,20 @@ export default class App extends React.Component {
 
     render() {
         const store = this.context.createStore(reducer, initialState)
-        const ConnectedRoot = connectToStore(Root, store)
-        const ConnectedContent = connectToStore(Content, store)
+        const ConnectedRoot = connectToStore(Root, store::map(state => ({ credential: state.credential })))
+        const ConnectedContent = connectToStore(Content, store::map(state => ({ contents: state.contents })))
         const ConnectedDashboard = connectToStore(Dashboard, store)
-        const ConnectedSidebar = connectToStore(Sidebar, store)
+        const ConnectedSidebar = connectToStore(Sidebar, store::map(state => ({
+            categories: state.categories,
+            credential: state.credential,
+            subscriptions: state.subscriptions,
+            unreadCounts: state.unreadCounts
+        })))
         return (
             <Router history={browserHistory}>
                 <Route path="/" component={ConnectedRoot}>
                     <Route path="streams/:streamId" components={{ content: ConnectedContent, sidebar: ConnectedSidebar }} />
-                    <Route path="*" components={{ content: ConnectedDashboard, sidebar: ConnectedSidebar }} />
+                    <IndexRoute components={{ content: ConnectedDashboard, sidebar: ConnectedSidebar }} />
                 </Route>
             </Router>
         )

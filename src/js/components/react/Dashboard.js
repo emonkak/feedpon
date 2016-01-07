@@ -1,3 +1,4 @@
+import PureRenderMixin from 'react-addons-pure-render-mixin'
 import React from 'react'
 
 export default class Dashboard extends React.Component {
@@ -10,3 +11,4 @@ export default class Dashboard extends React.Component {
     }
 }
 
+Object.assign(Dashboard.prototype, PureRenderMixin)

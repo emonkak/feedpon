@@ -4,7 +4,6 @@ import { Event, Action } from '../shared/interfaces'
 export const ActionDone = 'ActionDone'
 export interface ActionDone extends Event<string> {
     action: Action<any>
-    result: any
 }
 
 export const ActionFailed = 'ActionFailed'

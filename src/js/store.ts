@@ -1,9 +1,8 @@
 import * as eventTypes from './constants/eventTypes'
 import * as feedly from './services/feedly/interfaces'
-import ReducerBuilder from './shared/stores/ReducerBuilder'
-import Store from './shared/stores/Store'
+import ReducerBuilder from './shared/utils/ReducerBuilder'
 import update from 'react-addons-update'
-import { IEventDispatcher } from './shared/interfaces'
+import { AnyEvent } from './shared/interfaces'
 
 interface State {
     subscriptions: feedly.Subscription[]
@@ -13,7 +12,7 @@ interface State {
     credential?: feedly.Credential
 }
 
-export const reducer = new ReducerBuilder<State>()
+export const reducer = new ReducerBuilder<State, AnyEvent>(event => event.eventType)
     .on<eventTypes.CategoriesReceived>(eventTypes.CategoriesReceived, (state, { categories }) => {
         return Object.assign({}, state, { categories })
     })

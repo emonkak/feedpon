@@ -14,15 +14,6 @@ export default class Subscription extends React.Component {
 
     static contextTypes = appContextTypes
 
-    handleSelect(event) {
-        this.context.dispatch({
-            actionType: GetContents,
-            payload: {
-                streamId: this.props.category.id
-            }
-        })
-    }
-
     render() {
         const { subscription, unreadCount, isSelected } = this.props
 
@@ -32,7 +23,7 @@ export default class Subscription extends React.Component {
 
         return (
             <li className={classnames('subscription', { 'is-selected': isSelected })}>
-                <Link className="subscription-link" to={`streams/${encodeURIComponent(subscription.id)}`} onClick={::this.handleSelect}>
+                <Link className="subscription-link" to={`streams/${encodeURIComponent(subscription.id)}`}>
                     {icon}
                     <span className="subscription-title">{subscription.title}</span>
                     <span className="subscription-unread-count">{unreadCount.count}</span>

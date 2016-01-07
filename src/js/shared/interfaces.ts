@@ -1,41 +1,27 @@
-export interface Event<T> {
-    eventType: T
-}
-
-export type Subscriber<T> = (value: T) => void
-
-export interface Subscription {
-    dispose(): void
-}
-
-export interface ISubscribable<T> {
-    subscribe(subscriber: Subscriber<T>): Subscription
-}
-
-export interface IEventDispatcher extends ISubscribable<Event<string>> {
-    dispatch<T extends Event<string>>(event: T): void
-}
-
-export type Reducer<T, U> = (acc: T, value: U) => T
-
-export interface IStore<T> extends ISubscribable<T> {
-    dispatch<T extends Event<string>>(event: T): void
-
-    getState(): T
-}
+import { Observable } from 'rxjs/Observable'
 
 export interface Action<T> {
     actionType: T
 }
 
+export interface Event<T> {
+    eventType: T
+}
+
+export type AnyAction = Action<string>
+
+export type AnyEvent = Event<string>
+
 export interface IActionDispatcher {
-    dispatch<T extends Action<string>>(action: T): Promise<any>
+    dispatch<T extends AnyAction>(action: T): Observable<AnyEvent>
 }
 
-export interface IActionHandler<T extends Action<any>, U> {
-    handle(action: T, eventDispatcher: IEventDispatcher): Promise<U>
+export interface IActionHandler<T extends AnyAction> {
+    handle(action: T, dispatch: (event: AnyEvent) => void): Promise<void>
 }
 
-export interface IActionHandlerClass<T extends Action<any>, U> {
-    new(...args: any[]): IActionHandler<T, U>
+export interface IActionHandlerClass<T extends AnyAction> {
+    new(...args: any[]): IActionHandler<T>
 }
+
+export type Reducer<TResult, TValue> = (result: TResult, value: TValue) => TResult

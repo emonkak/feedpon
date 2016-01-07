@@ -18,14 +18,25 @@ export default class Content extends React.Component {
     }
 
     componentDidMount() {
-        const { params: { streamId } } = this.props
+        const { params } = this.props
 
         this.context.dispatch({
             actionType: GetContents,
             payload: {
-                streamId
+                streamId: params.streamId
             }
         })
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (this.props.params.streamId !== nextProps.params.streamId) {
+            this.context.dispatch({
+                actionType: GetContents,
+                payload: {
+                    streamId: nextProps.params.streamId
+                }
+            })
+        }
     }
 
     handleLoading() {

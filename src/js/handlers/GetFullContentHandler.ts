@@ -6,7 +6,7 @@ import iconv from 'iconv-lite'
 import parseHtml from '../utils/parseHtml'
 import { FullContentReceived } from '../constants/eventTypes'
 import { GetFullContent } from '../constants/actionTypes'
-import { IActionHandler, IEventDispatcher } from '../shared/interfaces'
+import { AnyEvent, IActionHandler } from '../shared/interfaces'
 import { IContentFinder } from '../services/contentFinder/interfaces'
 import { IHttpClient } from '../services/http/interfaces'
 import { Inject } from '../shared/di/annotations'
@@ -32,12 +32,12 @@ async function decodeAsString(response: Response): Promise<string> {
 }
 
 @Inject
-export default class GetFullContentHandler implements IActionHandler<GetFullContent, void> {
+export default class GetFullContentHandler implements IActionHandler<GetFullContent> {
     constructor(private contentFinder: IContentFinder,
                 private httpClient: IHttpClient) {
     }
 
-    async handle(action: GetFullContent, eventDispatcher: IEventDispatcher): Promise<void> {
+    async handle(action: GetFullContent, dispatch: (event: AnyEvent) => void): Promise<void> {
         const { url, streamId } = action
         const response = await this.httpClient.send(new Request(url))
         const html = await decodeAsString(response)
@@ -49,7 +49,7 @@ export default class GetFullContentHandler implements IActionHandler<GetFullCont
         if (foundContent) {
             const { content, nextLink } = foundContent
 
-            eventDispatcher.dispatch<FullContentReceived>({
+            dispatch({
                 eventType: FullContentReceived,
                 fullContent: {
                     streamId,
@@ -57,7 +57,7 @@ export default class GetFullContentHandler implements IActionHandler<GetFullCont
                     content: content.outerHTML,
                     nextLink: nextLink ? nextLink.getAttribute('href') : null
                 }
-            })
+            } as FullContentReceived)
         }
     }
 }

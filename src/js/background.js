@@ -1,56 +1,46 @@
 import 'regenerator/runtime'
 
-import ActionDispatcher from './shared/actionDispatchers/ActionDispatcher'
-import EventDispatcher from './shared/eventDispatchers/EventDispatcher'
-import GetCategoriesCacheHandler from './actionHandlers/GetCategoriesCacheHandler'
-import GetCategoriesHandler from './actionHandlers/GetCategoriesHandler'
-import GetContentsHandler from './actionHandlers/GetContentsHandler'
-import GetCredentialHandler from './actionHandlers/GetCredentialHandler'
-import GetFullContentHandler from './actionHandlers/GetFullContentHandler'
-import GetSubscriptionsCacheHandler from './actionHandlers/GetSubscriptionsCacheHandler'
-import GetSubscriptionsHandler from './actionHandlers/GetSubscriptionsHandler'
-import GetUnreadCountsCacheHandler from './actionHandlers/GetUnreadCountsCacheHandler'
-import GetUnreadCountsHandler from './actionHandlers/GetUnreadCountsHandler'
-import LoggedActionDispatcher from './shared/actionDispatchers/LoggedActionDispatcher'
-import LoggedEventDispatcher from './shared/eventDispatchers/LoggedEventDispatcher'
-import NullActionDispatcher from './shared/actionDispatchers/NullActionDispatcher'
+import ActionDispatcher from './shared/dispatchers/ActionDispatcher'
+import GetCategoriesCacheHandler from './handlers/GetCategoriesCacheHandler'
+import GetCategoriesHandler from './handlers/GetCategoriesHandler'
+import GetContentsHandler from './handlers/GetContentsHandler'
+import GetCredentialHandler from './handlers/GetCredentialHandler'
+import GetFullContentHandler from './handlers/GetFullContentHandler'
+import GetSubscriptionsCacheHandler from './handlers/GetSubscriptionsCacheHandler'
+import GetSubscriptionsHandler from './handlers/GetSubscriptionsHandler'
+import GetUnreadCountsCacheHandler from './handlers/GetUnreadCountsCacheHandler'
+import GetUnreadCountsHandler from './handlers/GetUnreadCountsHandler'
 import container from './container'
 import { GetCategories, GetCategoriesCache, GetContents, GetCredential, GetFullContent, GetSubscriptions, GetSubscriptionsCache, GetUnreadCounts, GetUnreadCountsCache } from './constants/actionTypes'
 
-const eventDispatcher = new LoggedEventDispatcher(new EventDispatcher())
-const actionDispatcher = new LoggedActionDispatcher(
-    new ActionDispatcher(container, eventDispatcher, new NullActionDispatcher())
-        .mount(GetCategories, GetCategoriesHandler)
-        .mount(GetCategoriesCache, GetCategoriesCacheHandler)
-        .mount(GetContents, GetContentsHandler)
-        .mount(GetCredential, GetCredentialHandler)
-        .mount(GetFullContent, GetFullContentHandler)
-        .mount(GetSubscriptions, GetSubscriptionsHandler)
-        .mount(GetSubscriptionsCache, GetSubscriptionsCacheHandler)
-        .mount(GetUnreadCounts, GetUnreadCountsHandler)
-        .mount(GetUnreadCountsCache, GetUnreadCountsCacheHandler)
-)
+const actionDispatcher = new ActionDispatcher(container)
+    .mount(GetCategories, GetCategoriesHandler)
+    .mount(GetCategoriesCache, GetCategoriesCacheHandler)
+    .mount(GetContents, GetContentsHandler)
+    .mount(GetCredential, GetCredentialHandler)
+    .mount(GetFullContent, GetFullContentHandler)
+    .mount(GetSubscriptions, GetSubscriptionsHandler)
+    .mount(GetSubscriptionsCache, GetSubscriptionsCacheHandler)
+    .mount(GetUnreadCounts, GetUnreadCountsHandler)
+    .mount(GetUnreadCountsCache, GetUnreadCountsCacheHandler)
 
 function handleConnect(port) {
-    const subscription = eventDispatcher.subscribe(handleEvent)
     chrome.runtime.onMessage.addListener(handleMessage)
     port.onDisconnect.addListener(handleDisconnect)
 
-    function handleEvent(event) {
-        port.postMessage(event)
-    }
-
     function handleMessage(request, sender, sendResponse) {
         actionDispatcher.dispatch(request)
-            .then(result => sendResponse({ result, success: true }))
-            .catch(error => sendResponse({ result: error, success: false }))
+            .subscribe(
+                event => port.postMessage(event),
+                error => sendResponse({ error }),
+                () => sendResponse({})
+            )
         return true
     }
 
     function handleDisconnect(port) {
-        subscription.dispose()
-        port.onDisconnect.removeListener(handleDisconnect)
         chrome.runtime.onMessage.removeListener(handleMessage)
+        port.onDisconnect.removeListener(handleDisconnect)
     }
 }
 

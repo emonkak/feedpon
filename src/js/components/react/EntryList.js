@@ -17,6 +17,12 @@ export default class EntryList extends React.Component {
         this.state = { isLoading: false }
     }
 
+    componentWillReceiveProps(nextProps) {
+        if (this.props.contents !== nextProps.contents) {
+            this.setState({ isLoading: false })
+        }
+    }
+
     handleLoading() {
         const { contents } = this.props
 
@@ -28,8 +34,6 @@ export default class EntryList extends React.Component {
                 streamId: contents.id,
                 continuation: contents.continuation
             }
-        }).then(() => {
-            this.setState({ isLoading: false })
         })
     }
 
