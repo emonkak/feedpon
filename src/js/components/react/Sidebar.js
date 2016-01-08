@@ -1,8 +1,14 @@
-import Ix from 'ix'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 import React from 'react'
 import SubscriptionCategory from './SubscriptionCategory'
 import appContextTypes from './appContextTypes'
+import concatWith from '../../shared/collections/concatWith'
+import filter from '../../shared/collections/filter'
+import flatMap from '../../shared/collections/flatMap'
+import groupJoin from '../../shared/collections/groupJoin'
+import join from '../../shared/collections/join'
+import map from '../../shared/collections/map'
+import toArray from '../../shared/collections/toArray'
 import { GetSubscriptions, GetUnreadCounts, GetCategories } from '../../constants/actionTypes'
 
 export default class Sidebar extends React.Component {
@@ -18,11 +24,11 @@ export default class Sidebar extends React.Component {
     constructor(props) {
         super(props)
 
-        this.state = { filter: '' }
+        this.state = { filterQuery: '' }
     }
 
     handleFilterChanged(event) {
-        this.setState({ filter: event.target.value })
+        this.setState({ filterQuery: event.target.value })
     }
 
     handleUpdate() {
@@ -33,37 +39,38 @@ export default class Sidebar extends React.Component {
 
     render() {
         const { credential, unreadCounts } = this.props
-        const { filter } = this.state
+        const { filterQuery } = this.state
 
         const uncategorized = { label: 'Uncategorized', id: `user/${credential.id}/category/global.uncategorized` }
-        const subscriptions = Ix.Enumerable.fromArray(this.props.subscriptions)
-            .where(subscription => (subscription.title && subscription.title.indexOf(filter) !== -1) || (subscription.website && subscription.website.indexOf(filter) !== -1))
-            .join(
-                Ix.Enumerable.fromArray(unreadCounts),
+
+        const subscriptions = this.props.subscriptions
+            ::filter(subscription => (subscription.title && subscription.title.indexOf(filterQuery) !== -1) || (subscription.website && subscription.website.indexOf(filterQuery) !== -1))
+            ::join(
+                unreadCounts,
                 subscription => subscription.id,
                 unreadCount => unreadCount.id,
                 (subscription, unreadCount) => ({ subscription, unreadCount })
             )
-            .selectMany(({ subscription, unreadCount }) => {
-                return Ix.Enumerable.fromArray(subscription.categories)
-                    .defaultIfEmpty(uncategorized)
-                    .select(category => ({ category, subscription, unreadCount }));
+            ::flatMap(({ subscription, unreadCount }) => {
+                return subscription.categories.length > 0
+                    ? subscription.categories::map(category => ({ category, subscription, unreadCount }))
+                    : { category: uncategorized, subscription, unreadCount }
             })
-        const categories = Ix.Enumerable.fromArray(this.props.categories)
-            .concat(Ix.Enumerable.return(uncategorized))
-            .groupJoin(
+
+        const categories = this.props.categories
+            ::concatWith([uncategorized])
+            ::groupJoin(
                 subscriptions,
                 category => category.id,
                 ({ category }) => category.id,
-                (category, subscriptions) => ({ category, subscriptions: subscriptions.toArray() })
+                (category, subscriptions) => ({ category, subscriptions })
             )
-            .where(({ subscriptions }) => subscriptions.length > 0)
 
         return (
             <div className="l-sidebar">
                 <input className="subscription-filter" type="text" onChange={::this.handleFilterChanged} />
                 <ul className="subscription-category-list">
-                    {categories.select(::this.renderCategory).toArray()}
+                    {categories::map(::this.renderCategory)::toArray()}
                 </ul>
                 <button className="button button-default button-fill" onClick={::this.handleUpdate}>Update</button>
             </div>

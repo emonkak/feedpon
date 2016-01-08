@@ -16,10 +16,6 @@ module.exports = {
     module: {
         loaders: [
             {
-                test: require.resolve('ix/ix'),
-                loader: "imports?define=>false"
-            },
-            {
                 test: /\.json$/,
                 loader: 'json-loader'
             },
