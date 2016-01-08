@@ -11,6 +11,7 @@ export interface WedataItem<T> {
 export interface FoundContent {
     content: HTMLElement
     nextLink?: HTMLElement
+    encoding?: string
 }
 
 export interface WedataResource<T> {

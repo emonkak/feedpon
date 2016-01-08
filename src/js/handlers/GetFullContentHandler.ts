@@ -1,35 +1,16 @@
 /// <reference path="../../DefinitelyTyped/node/node-0.12.d.ts" />
-/// <reference path="../typings/iconv-lite.d.ts" />
+/// <reference path="../../DefinitelyTyped/text-encoding/text-encoding.d.ts" />
 /// <reference path="../typings/whatwg-fetch.d.ts" />
 
-import iconv from 'iconv-lite'
-import parseHtml from '../utils/parseHtml'
+import { AnyEvent, IActionHandler } from '../shared/interfaces'
 import { FullContentReceived } from '../constants/eventTypes'
 import { GetFullContent } from '../constants/actionTypes'
-import { AnyEvent, IActionHandler } from '../shared/interfaces'
 import { IContentFinder } from '../services/contentFinder/interfaces'
 import { IHttpClient } from '../services/http/interfaces'
 import { Inject } from '../shared/di/annotations'
 
-const CHARSET_REGEXP = new RegExp('charset=([^()<>@,;:\\"/[\\]?.=\\s]*)', 'i')
-const UTF8_REGEXP = new RegExp('utf-?8', 'i')
-
-async function decodeAsString(response: Response): Promise<string> {
-    const contentType = response.headers.get('Content-Type') || ''
-    const encodingMatches = contentType.match(CHARSET_REGEXP)
-
-    if (encodingMatches) {
-        const encoding = encodingMatches[1]
-
-        // Does not need to convert to UTF-8
-        if (!UTF8_REGEXP.test(encoding) && iconv.encodingExists(encoding)) {
-            const responseBuffer = await response.arrayBuffer()
-            return iconv.decode(new Buffer(new Uint8Array(responseBuffer)), encoding)
-        }
-    }
-
-    return await response.text()
-}
+const CHARSET_REGEXP = new RegExp('charset=([\\w-]+)', 'i')
+const QUOTED_CHARSET_REGEXP = new RegExp('charset=["\']?([\\w-]+)["\']?', 'i')
 
 @Inject
 export default class GetFullContentHandler implements IActionHandler<GetFullContent> {
@@ -60,4 +41,44 @@ export default class GetFullContentHandler implements IActionHandler<GetFullCont
             } as FullContentReceived)
         }
     }
+}
+
+async function decodeAsString(response: Response): Promise<string> {
+    const buffer = await response.arrayBuffer()
+    const encoding = detectEncodingFromHeaders(response.headers)
+        || detectEncodingFromContent(buffer)
+        || 'utf-8'
+    const decoder = new TextDecoder(encoding)
+    const bytes = new Uint8Array(buffer)
+    return decoder.decode(bytes)
+}
+
+function detectEncodingFromHeaders(headers: Headers): string {
+    const contentType = headers.get('Content-Type')
+    if (contentType != '') {
+        const matches = contentType.match(CHARSET_REGEXP)
+        if (matches) {
+            return matches[1]
+        }
+    }
+    return null
+}
+
+function detectEncodingFromContent(buffer: ArrayBuffer): string {
+    const bytes = new Uint8Array(buffer, 0, 1024)
+    try {
+        const decoder = new TextDecoder()
+        const content = decoder.decode(bytes)
+        const matches = content.match(QUOTED_CHARSET_REGEXP)
+        if (matches) {
+            return matches[1]
+        }
+    } catch (e) {
+    }
+    return null
+}
+
+function parseHtml(str: string): HTMLDocument {
+    const parser = new DOMParser()
+    return parser.parseFromString(str, 'text/html')
 }
