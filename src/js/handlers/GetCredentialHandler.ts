@@ -12,10 +12,12 @@ export default class GetCredentialHandler implements IActionHandler<GetCredentia
     async handle(action: GetCredential, dispatch: (event: AnyEvent) => void): Promise<void> {
         const credential = await this.authenticator.getCredential()
 
-        dispatch({
-            eventType: CredentialReceived,
-            credential
-        } as CredentialReceived)
+        if (credential) {
+            dispatch({
+                eventType: CredentialReceived,
+                credential
+            } as CredentialReceived)
+        }
     }
 }
 

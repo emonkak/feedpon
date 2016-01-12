@@ -3,7 +3,7 @@ import PureRenderMixin from 'react-addons-pure-render-mixin'
 import React from 'react'
 import Sidebar from './Sidebar'
 import appContextTypes from './appContextTypes'
-import { GetCredential, GetCategoriesCache, GetSubscriptionsCache, GetUnreadCountsCache } from '../../constants/actionTypes'
+import { Authenticate } from '../../constants/actionTypes'
 
 export default class Root extends React.Component {
     static propTypes = {

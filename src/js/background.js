@@ -32,7 +32,7 @@ function handleConnect(port) {
         actionDispatcher.dispatch(request)
             .subscribe(
                 event => port.postMessage(event),
-                error => sendResponse({ error }),
+                error => sendResponse({ error: error ? error.toString() : null }),
                 () => sendResponse({})
             )
         return true

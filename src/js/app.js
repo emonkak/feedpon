@@ -11,18 +11,19 @@ import connectToStore from './components/react/connectToStore'
 import container from './container'
 import { ActionDone, ActionFailed } from './constants/eventTypes'
 import { Authenticate } from './constants/actionTypes'
-import { FromEventPatternObservable } from 'rxjs/observable/fromEventPattern';
+import { FromEventPatternObservable } from 'rxjs/observable/fromEventPattern'
 import { Observable } from 'rxjs/Observable'
+import { Observer } from 'rxjs/Observer'
 import { Subject } from 'rxjs/Subject'
-import { _catch } from 'rxjs/operator/catch';
+import { _catch } from 'rxjs/operator/catch'
 import { _do } from 'rxjs/operator/do';
-import { concat } from 'rxjs/operator/concat';
-import { mergeMap } from 'rxjs/operator/mergeMap';
-import { merge } from 'rxjs/operator/merge-static';
+import { concat } from 'rxjs/operator/concat'
+import { merge } from 'rxjs/operator/merge-static'
+import { mergeMap } from 'rxjs/operator/mergeMap'
 
 // XXX: ScalarObservable is buggy. Use this instead
-function ofScalar(value) {
-    return Observable.create(observer => {
+function fromScalar<T>(value: T): Observable<T> {
+    return Observable.create((observer: Observer<T>) => {
         observer.next(value)
         observer.complete()
     })
@@ -39,8 +40,8 @@ function bootstrap() {
         ::_do(action => console.log(action))
         ::mergeMap(action => {
             return actionDispatcher.dispatch(action)
-                ::concat(ofScalar({ eventType: ActionDone, action }))
-                ::_catch(error => ofScalar({ eventType: ActionFailed, action, error }))
+                ::concat(fromScalar({ eventType: ActionDone, action }))
+                ::_catch(error => fromScalar({ eventType: ActionFailed, action, error }))
         })
     const eventStreamByChromeMessage = FromEventPatternObservable.create(
         ::port.onMessage.addListener,

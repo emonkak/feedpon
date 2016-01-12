@@ -9,8 +9,7 @@ export default class ActionDispatcher implements IActionDispatcher {
 
     private _fallback: IActionDispatcher = {
         dispatch<T extends AnyAction>(action: T): Observable<AnyEvent> {
-            // BUGS:
-            return ErrorObservable.create<any>(new Error(`Can not handle the "${action.actionType}" action.`))
+            return ErrorObservable.create<T>(new Error(`Can not handle the "${action.actionType}" action.`))
         }
     }
 

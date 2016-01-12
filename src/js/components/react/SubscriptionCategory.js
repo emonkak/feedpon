@@ -10,7 +10,6 @@ export default class SubscriptionCategory extends React.Component {
     static propTypes = {
         category: React.PropTypes.object.isRequired,
         subscriptions: React.PropTypes.array.isRequired,
-        isSelected: React.PropTypes.bool.isRequired,
         selectedStreamId: React.PropTypes.string
     }
 
@@ -34,7 +33,7 @@ export default class SubscriptionCategory extends React.Component {
     }
 
     render() {
-        const { category, subscriptions, isSelected } = this.props
+        const { category, subscriptions, selectedStreamId } = this.props
         const { expanded } = this.state
 
         const unreadCount = subscriptions
@@ -42,7 +41,7 @@ export default class SubscriptionCategory extends React.Component {
 
         return (
             <li className="subscription-category-container">
-                <div className={classnames('subscription-category', { 'is-selected': isSelected })}>
+                <div className={classnames('subscription-category', { 'is-selected': category.id === selectedStreamId })}>
                     <a className={classnames('subscription-category-expand-arrow', { 'is-expanded': expanded })} onClick={::this.handleExpand}></a>
                     <Link className="subscription-category-link" to={`/streams/${encodeURIComponent(category.id)}`}>
                         <span className="subscription-category-label">{category.label}</span>

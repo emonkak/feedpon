@@ -1,7 +1,8 @@
 import React from 'react'
 import appContextTypes from './appContextTypes'
-import { publishBehavior } from 'rxjs/operator/publishBehavior'
+import { concat } from 'rxjs/operator/concat'
 import { scan } from 'rxjs/operator/scan'
+import { startWith } from 'rxjs/operator/startWith'
 
 export default class AppContext extends React.Component {
     static propTypes = {
@@ -17,7 +18,7 @@ export default class AppContext extends React.Component {
             createStore(reducer, initialState) {
                 return eventStream
                     ::scan(reducer, initialState)
-                    ::publishBehavior(initialState).refCount()
+                    ::startWith(initialState)
             },
             dispatch(action) {
                 actionSubject.next(action)

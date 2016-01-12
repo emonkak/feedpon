@@ -9,6 +9,7 @@ import { GetCredential, GetCategoriesCache, GetSubscriptionsCache, GetUnreadCoun
 import { browserHistory, IndexRoute, Router, Route } from 'react-router'
 import { initialState, reducer } from '../../store'
 import { map } from 'rxjs/operator/map'
+import { share } from 'rxjs/operator/share'
 
 export default class App extends React.Component {
     static contextTypes = appContextTypes
@@ -21,9 +22,13 @@ export default class App extends React.Component {
     }
 
     render() {
-        const store = this.context.createStore(reducer, initialState)
-        const ConnectedRoot = connectToStore(Root, store::map(state => ({ credential: state.credential })))
-        const ConnectedContent = connectToStore(Content, store::map(state => ({ contents: state.contents })))
+        const store = this.context.createStore(reducer, initialState)::share()
+        const ConnectedRoot = connectToStore(Root, store::map(state => ({
+            credential: state.credential
+        })))
+        const ConnectedContent = connectToStore(Content, store::map(state => ({
+            contents: state.contents
+        })))
         const ConnectedDashboard = connectToStore(Dashboard, store)
         const ConnectedSidebar = connectToStore(Sidebar, store::map(state => ({
             categories: state.categories,

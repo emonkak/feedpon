@@ -13,7 +13,7 @@ import { GetSubscriptions, GetUnreadCounts, GetCategories } from '../../constant
 
 export default class Sidebar extends React.Component {
     static propTypes = {
-        credential: React.PropTypes.object.isRequired,
+        credential: React.PropTypes.object,
         subscriptions: React.PropTypes.array.isRequired,
         unreadCounts: React.PropTypes.array.isRequired,
         categories: React.PropTypes.array.isRequired
@@ -41,7 +41,9 @@ export default class Sidebar extends React.Component {
         const { credential, unreadCounts } = this.props
         const { filterQuery } = this.state
 
-        const uncategorized = { label: 'Uncategorized', id: `user/${credential.id}/category/global.uncategorized` }
+        const defaultCategories = credential
+            ? [{ label: 'Uncategorized', id: `user/${credential.id}/category/global.uncategorized` }]
+            : []
 
         const subscriptions = this.props.subscriptions
             ::filter(subscription => (subscription.title && subscription.title.indexOf(filterQuery) !== -1) || (subscription.website && subscription.website.indexOf(filterQuery) !== -1))
@@ -52,13 +54,12 @@ export default class Sidebar extends React.Component {
                 (subscription, unreadCount) => ({ subscription, unreadCount })
             )
             ::flatMap(({ subscription, unreadCount }) => {
-                return subscription.categories.length > 0
-                    ? subscription.categories::map(category => ({ category, subscription, unreadCount }))
-                    : { category: uncategorized, subscription, unreadCount }
+                const categories = subscription.categories.length > 0 ? subscription.categories : defaultCategories
+                return categories::map(category => ({ category, subscription, unreadCount }))
             })
 
         const categories = this.props.categories
-            ::concatWith([uncategorized])
+            ::concatWith(defaultCategories)
             ::groupJoin(
                 subscriptions,
                 category => category.id,
@@ -84,7 +85,6 @@ export default class Sidebar extends React.Component {
             <SubscriptionCategory key={category.id}
                                   category={category}
                                   subscriptions={subscriptions}
-                                  isSelected={category.id === streamId}
                                   selectedStreamId={streamId} />
         )
     }

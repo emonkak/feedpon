@@ -4,8 +4,8 @@ import appContextTypes from './appContextTypes'
 import baseStyle from '../../../less/base.less'
 import escape from 'lodash.escape'
 
-function wrapContent(body, url) {
-    return `<html><head><base href="${escape(url)}" target="_blank"><style>${baseStyle}</style></head><body>${body}</body></html>`
+function wrapContent(body, baseUrl) {
+    return `<html><head><base href="${escape(baseUrl)}" target="_blank"><style>${baseStyle}</style></head><body>${body}</body></html>`
 }
 
 export default class EntryContent extends React.Component {
