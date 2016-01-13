@@ -8,6 +8,7 @@ import { FullContentReceived } from '../constants/eventTypes'
 import { IContentFinder } from '../services/contentFinder/interfaces'
 import { IHttpClient } from '../services/http/interfaces'
 import { Inject } from '../shared/di/annotations'
+import sanitizeHtml from '../utils/sanitizeHtml'
 
 const CHARSET_REGEXP = new RegExp('charset=([\\w-]+)', 'i')
 const QUOTED_CHARSET_REGEXP = new RegExp('charset=["\']?([\\w-]+)["\']?', 'i')
@@ -35,7 +36,7 @@ export default class FetchFullContentHandler implements IActionHandler<FetchFull
                 fullContent: {
                     streamId,
                     url,
-                    content: content.outerHTML,
+                    content: sanitizeHtml(content),
                     nextLink: nextLink ? nextLink.getAttribute('href') : null
                 }
             } as FullContentReceived)
