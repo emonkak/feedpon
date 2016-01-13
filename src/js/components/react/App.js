@@ -6,10 +6,9 @@ import Sidebar from './Sidebar'
 import appContextTypes from './appContextTypes'
 import connectToStore from './connectToStore'
 import { GetCredential, GetCategoriesCache, GetSubscriptionsCache, GetUnreadCountsCache } from '../../constants/actionTypes'
-import { browserHistory, IndexRoute, Router, Route } from 'react-router'
+import { hashHistory, IndexRoute, Router, Route } from 'react-router'
 import { initialState, reducer } from '../../store'
 import { map } from 'rxjs/operator/map'
-import { share } from 'rxjs/operator/share'
 
 export default class App extends React.Component {
     static contextTypes = appContextTypes
@@ -22,7 +21,7 @@ export default class App extends React.Component {
     }
 
     render() {
-        const store = this.context.createStore(reducer, initialState)::share()
+        const store = this.context.createSharedStore(reducer, initialState)
         const ConnectedRoot = connectToStore(Root, store::map(state => ({
             credential: state.credential
         })))
@@ -37,7 +36,7 @@ export default class App extends React.Component {
             unreadCounts: state.unreadCounts
         })))
         return (
-            <Router history={browserHistory}>
+            <Router history={hashHistory}>
                 <Route path="/" component={ConnectedRoot}>
                     <Route path="streams/:streamId" components={{ content: ConnectedContent, sidebar: ConnectedSidebar }} />
                     <IndexRoute components={{ content: ConnectedDashboard, sidebar: ConnectedSidebar }} />

@@ -9,7 +9,7 @@ import groupJoin from '../../shared/collections/groupJoin'
 import join from '../../shared/collections/join'
 import map from '../../shared/collections/map'
 import toArray from '../../shared/collections/toArray'
-import { GetSubscriptions, GetUnreadCounts, GetCategories } from '../../constants/actionTypes'
+import { FetchSubscriptions, FetchUnreadCounts, FetchCategories } from '../../constants/actionTypes'
 
 export default class Sidebar extends React.Component {
     static propTypes = {
@@ -32,9 +32,9 @@ export default class Sidebar extends React.Component {
     }
 
     handleUpdate() {
-        this.context.dispatch({ actionType: GetSubscriptions })
-        this.context.dispatch({ actionType: GetUnreadCounts })
-        this.context.dispatch({ actionType: GetCategories })
+        this.context.dispatch({ actionType: FetchSubscriptions })
+        this.context.dispatch({ actionType: FetchUnreadCounts })
+        this.context.dispatch({ actionType: FetchCategories })
     }
 
     render() {

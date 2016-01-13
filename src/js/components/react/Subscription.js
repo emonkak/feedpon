@@ -2,7 +2,6 @@ import PureRenderMixin from 'react-addons-pure-render-mixin'
 import React from 'react'
 import appContextTypes from './appContextTypes'
 import classnames from 'classnames'
-import { GetContents } from '../../constants/actionTypes'
 import { Link } from 'react-router'
 
 export default class Subscription extends React.Component {

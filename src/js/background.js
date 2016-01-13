@@ -1,27 +1,27 @@
 import 'regenerator/runtime'
 
 import ActionDispatcher from './shared/dispatchers/ActionDispatcher'
+import FetchCategoriesHandler from './handlers/FetchCategoriesHandler'
+import FetchContentsHandler from './handlers/FetchContentsHandler'
+import FetchFullContentHandler from './handlers/FetchFullContentHandler'
+import FetchSubscriptionsHandler from './handlers/FetchSubscriptionsHandler'
+import FetchUnreadCountsHandler from './handlers/FetchUnreadCountsHandler'
 import GetCategoriesCacheHandler from './handlers/GetCategoriesCacheHandler'
-import GetCategoriesHandler from './handlers/GetCategoriesHandler'
-import GetContentsHandler from './handlers/GetContentsHandler'
 import GetCredentialHandler from './handlers/GetCredentialHandler'
-import GetFullContentHandler from './handlers/GetFullContentHandler'
 import GetSubscriptionsCacheHandler from './handlers/GetSubscriptionsCacheHandler'
-import GetSubscriptionsHandler from './handlers/GetSubscriptionsHandler'
 import GetUnreadCountsCacheHandler from './handlers/GetUnreadCountsCacheHandler'
-import GetUnreadCountsHandler from './handlers/GetUnreadCountsHandler'
 import container from './container'
-import { GetCategories, GetCategoriesCache, GetContents, GetCredential, GetFullContent, GetSubscriptions, GetSubscriptionsCache, GetUnreadCounts, GetUnreadCountsCache } from './constants/actionTypes'
+import { FetchCategories, FetchContents, FetchFullContent, FetchSubscriptions, FetchUnreadCounts, GetCategoriesCache, GetCredential, GetSubscriptionsCache, GetUnreadCountsCache } from './constants/actionTypes'
 
 const actionDispatcher = new ActionDispatcher(container)
-    .mount(GetCategories, GetCategoriesHandler)
+    .mount(FetchCategories, FetchCategoriesHandler)
+    .mount(FetchContents, FetchContentsHandler)
+    .mount(FetchFullContent, FetchFullContentHandler)
+    .mount(FetchSubscriptions, FetchSubscriptionsHandler)
+    .mount(FetchUnreadCounts, FetchUnreadCountsHandler)
     .mount(GetCategoriesCache, GetCategoriesCacheHandler)
-    .mount(GetContents, GetContentsHandler)
     .mount(GetCredential, GetCredentialHandler)
-    .mount(GetFullContent, GetFullContentHandler)
-    .mount(GetSubscriptions, GetSubscriptionsHandler)
     .mount(GetSubscriptionsCache, GetSubscriptionsCacheHandler)
-    .mount(GetUnreadCounts, GetUnreadCountsHandler)
     .mount(GetUnreadCountsCache, GetUnreadCountsCacheHandler)
 
 function handleConnect(port) {

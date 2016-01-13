@@ -1,6 +1,6 @@
+import { AnyEvent, IActionHandler } from '../shared/interfaces'
 import { CategoriesReceived } from '../constants/eventTypes'
 import { GetCategoriesCache } from '../constants/actionTypes'
-import { AnyEvent, IActionHandler } from '../shared/interfaces'
 import { ICategoryRepository } from '../services/feedly/interfaces'
 import { Inject } from '../shared/di/annotations'
 

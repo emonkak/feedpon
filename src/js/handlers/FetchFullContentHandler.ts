@@ -3,8 +3,8 @@
 /// <reference path="../typings/whatwg-fetch.d.ts" />
 
 import { AnyEvent, IActionHandler } from '../shared/interfaces'
+import { FetchFullContent } from '../constants/actionTypes'
 import { FullContentReceived } from '../constants/eventTypes'
-import { GetFullContent } from '../constants/actionTypes'
 import { IContentFinder } from '../services/contentFinder/interfaces'
 import { IHttpClient } from '../services/http/interfaces'
 import { Inject } from '../shared/di/annotations'
@@ -13,12 +13,12 @@ const CHARSET_REGEXP = new RegExp('charset=([\\w-]+)', 'i')
 const QUOTED_CHARSET_REGEXP = new RegExp('charset=["\']?([\\w-]+)["\']?', 'i')
 
 @Inject
-export default class GetFullContentHandler implements IActionHandler<GetFullContent> {
+export default class FetchFullContentHandler implements IActionHandler<FetchFullContent> {
     constructor(private contentFinder: IContentFinder,
                 private httpClient: IHttpClient) {
     }
 
-    async handle(action: GetFullContent, dispatch: (event: AnyEvent) => void): Promise<void> {
+    async handle(action: FetchFullContent, dispatch: (event: AnyEvent) => void): Promise<void> {
         const { url, streamId } = action
         const response = await this.httpClient.send(new Request(url))
         const html = await decodeAsString(response)

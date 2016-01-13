@@ -5,13 +5,28 @@ export const Authenticate = 'Authenticate'
 export interface Authenticate extends Action<string> {
 }
 
-export const GetContents = 'GetContents'
-export interface GetContents extends Action<string> {
+export const FetchContents = 'FetchContents'
+export interface FetchContents extends Action<string> {
     payload: feedly.GetStreamInput
 }
 
-export const GetCategories = 'GetCategories'
-export interface GetCategories extends Action<string> {
+export const FetchCategories = 'FetchCategories'
+export interface FetchCategories extends Action<string> {
+}
+
+export const FetchFullContent = 'FetchFullContent'
+export interface FetchFullContent extends Action<string> {
+    streamId: string
+    url: string
+}
+
+export const FetchSubscriptions = 'FetchSubscriptions'
+export interface FetchSubscriptions extends Action<string> {
+}
+
+export const FetchUnreadCounts = 'FetchUnreadCounts'
+export interface FetchUnreadCounts extends Action<string> {
+    payload: feedly.GetUnreadCountsInput
 }
 
 export const GetCategoriesCache = 'GetCategoriesCache'
@@ -22,23 +37,8 @@ export const GetCredential = 'GetCredential'
 export interface GetCredential extends Action<string> {
 }
 
-export const GetFullContent = 'GetFullContent'
-export interface GetFullContent extends Action<string> {
-    streamId: string
-    url: string
-}
-
-export const GetSubscriptions = 'GetSubscriptions'
-export interface GetSubscriptions extends Action<string> {
-}
-
 export const GetSubscriptionsCache = 'GetSubscriptionsCache'
 export interface GetSubscriptionsCache extends Action<string> {
-}
-
-export const GetUnreadCounts = 'GetUnreadCounts'
-export interface GetUnreadCounts extends Action<string> {
-    payload: feedly.GetUnreadCountsInput
 }
 
 export const GetUnreadCountsCache = 'GetUnreadCountsCache'

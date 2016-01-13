@@ -3,7 +3,7 @@ import PureRenderMixin from 'react-addons-pure-render-mixin'
 import React from 'react'
 import Waypoint from 'react-waypoint'
 import appContextTypes from './appContextTypes'
-import { GetContents } from '../../constants/actionTypes'
+import { FetchContents } from '../../constants/actionTypes'
 
 export default class EntryList extends React.Component {
     static propTypes = {
@@ -29,7 +29,7 @@ export default class EntryList extends React.Component {
         this.setState({ isLoading: true })
 
         this.context.dispatch({
-            actionType: GetContents,
+            actionType: FetchContents,
             payload: {
                 streamId: contents.id,
                 continuation: contents.continuation

@@ -2,7 +2,7 @@ import EntryContent from './EntryContent'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 import React from 'react'
 import appContextTypes from './appContextTypes'
-import { GetFullContent } from '../../constants/actionTypes'
+import { FetchFullContent } from '../../constants/actionTypes'
 
 function nextLink(entry) {
     const fullContents = entry._fullContents
@@ -19,14 +19,14 @@ export default class Entry extends React.Component {
 
     static contextTypes = appContextTypes
 
-    handleGetFullContent() {
+    handleFetchFullContent() {
         const { entry } = this.props
         const fullContents = entry._fullContents || []
 
         const url = nextLink(entry)
         if (url != null) {
             this.context.dispatch({
-                actionType: GetFullContent,
+                actionType: FetchFullContent,
                 streamId: entry.id,
                 url
             })
@@ -42,7 +42,7 @@ export default class Entry extends React.Component {
             : entry.content ? <EntryContent content={entry.content.content} url={entry.alternate[0].href} /> : null
 
         const actions = nextLink(entry)
-            ? <button className="button button-default button-fill" onClick={::this.handleGetFullContent}>Get Full Content</button>
+            ? <button className="button button-default button-fill" onClick={::this.handleFetchFullContent}>Fetch Full Content</button>
             : null
 
         return (

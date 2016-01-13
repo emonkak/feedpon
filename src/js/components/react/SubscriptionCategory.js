@@ -3,7 +3,6 @@ import React from 'react'
 import Subscription from './Subscription'
 import appContextTypes from './appContextTypes'
 import classnames from 'classnames'
-import { GetContents } from '../../constants/actionTypes'
 import { Link } from 'react-router'
 
 export default class SubscriptionCategory extends React.Component {

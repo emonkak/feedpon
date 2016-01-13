@@ -3,7 +3,7 @@ import PureRenderMixin from 'react-addons-pure-render-mixin'
 import React from 'react'
 import appContextTypes from './appContextTypes'
 import { Router, Route } from 'react-router'
-import { GetContents } from '../../constants/actionTypes'
+import { FetchContents } from '../../constants/actionTypes'
 
 export default class Content extends React.Component {
     static propTypes = {
@@ -21,19 +21,21 @@ export default class Content extends React.Component {
         const { params } = this.props
 
         this.context.dispatch({
-            actionType: GetContents,
+            actionType: FetchContents,
             payload: {
                 streamId: params.streamId
             }
         })
     }
 
-    componentWillReceiveProps(nextProps) {
-        if (this.props.params.streamId !== nextProps.params.streamId) {
+    componentDidUpdate(prevProps) {
+        const { params } = this.props
+
+        if (params.streamId !== prevProps.params.streamId) {
             this.context.dispatch({
-                actionType: GetContents,
+                actionType: FetchContents,
                 payload: {
-                    streamId: nextProps.params.streamId
+                    streamId: params.streamId
                 }
             })
         }
@@ -45,7 +47,7 @@ export default class Content extends React.Component {
             this.setState({ isLoading: true })
 
             this.dispatch({
-                actionType: GetContents,
+                actionType: FetchContents,
                 payload: {
                     streamId: contents.id,
                     continuation: contents.continuation
