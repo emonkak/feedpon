@@ -5,6 +5,11 @@ export const Authenticate = 'Authenticate'
 export interface Authenticate extends Action<string> {
 }
 
+export const ExpandUrl = 'ExpandUrl'
+export interface ExpandUrl extends Action<string> {
+    url: string
+}
+
 export const FetchContents = 'FetchContents'
 export interface FetchContents extends Action<string> {
     payload: feedly.GetStreamInput

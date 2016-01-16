@@ -1,6 +1,6 @@
 import Authenticator from '../services/feedly/Authenticator'
 import Gateway from '../services/feedly/Gateway'
-import { AnyEvent, IActionHandler } from '../shared/interfaces'
+import { EventDispatcher, IActionHandler } from '../shared/interfaces'
 import { CategoriesReceived } from '../constants/eventTypes'
 import { FetchCategories } from '../constants/actionTypes'
 import { ICategoryRepository } from '../services/feedly/interfaces'
@@ -13,7 +13,7 @@ export default class FetchCategoriesHandler implements IActionHandler<FetchCateg
                 private gateway: Gateway) {
     }
 
-    async handle(action: FetchCategories, dispatch: (event: AnyEvent) => void): Promise<void> {
+    async handle(action: FetchCategories, dispatch: EventDispatcher): Promise<void> {
         const { access_token } = await this.authenticator.getCredential()
         const categories = await this.gateway.allCategories(access_token)
 

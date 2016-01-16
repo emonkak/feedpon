@@ -2,7 +2,7 @@ import EntryContent from './EntryContent'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 import React from 'react'
 import appContextTypes from './appContextTypes'
-import { FetchFullContent } from '../../constants/actionTypes'
+import { ExpandUrl, FetchFullContent } from '../../constants/actionTypes'
 
 function nextLink(entry) {
     const fullContents = entry._fullContents
@@ -18,6 +18,17 @@ export default class Entry extends React.Component {
     }
 
     static contextTypes = appContextTypes
+
+    componentDidMount() {
+        const { entry } = this.props
+
+        entry.alternate.forEach(({ href }) => {
+            this.context.dispatch({
+                actionType: ExpandUrl,
+                url: href
+            })
+        })
+    }
 
     handleFetchFullContent() {
         const { entry } = this.props

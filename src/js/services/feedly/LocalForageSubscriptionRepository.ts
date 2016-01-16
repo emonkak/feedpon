@@ -6,18 +6,18 @@ import { Subscription, ISubscriptionRepository } from './interfaces'
 
 @Inject
 export default class LocalForageSubscriptionRepository implements ISubscriptionRepository {
-    constructor(@Named('LocalForage') private localForage: LocalForage) {
+    constructor(@Named('LocalForage') private _localForage: LocalForage) {
     }
 
     getAll(): Promise<Subscription[]> {
-        return this.localForage.getItem(storageKeys.SUBSCRIPTIONS)
+        return this._localForage.getItem(storageKeys.SUBSCRIPTIONS)
     }
 
     putAll(subscriptions: Subscription[]): Promise<void> {
-        return this.localForage.setItem(storageKeys.SUBSCRIPTIONS, subscriptions as any)
+        return this._localForage.setItem(storageKeys.SUBSCRIPTIONS, subscriptions as any)
     }
 
     deleteAll(): Promise<void> {
-        return this.localForage.removeItem(storageKeys.SUBSCRIPTIONS)
+        return this._localForage.removeItem(storageKeys.SUBSCRIPTIONS)
     }
 }

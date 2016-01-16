@@ -47,3 +47,9 @@ export const UnreadCountsReceived = 'UnreadCountsReceived'
 export interface UnreadCountsReceived extends Event<string> {
     unreadCounts: feedly.UnreadCount[]
 }
+
+export const UrlExpanded = 'UrlExpanded'
+export interface UrlExpanded extends Event<string> {
+    url: string
+    redirectUrl: string
+}

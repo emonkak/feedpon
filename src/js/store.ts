@@ -26,6 +26,26 @@ export const reducer = new ReducerBuilder<State, AnyEvent>(event => event.eventT
     .on<eventTypes.CredentialReceived>(eventTypes.CredentialReceived, (state, { credential }) => {
         return Object.assign({}, state, { credential })
     })
+    .on<eventTypes.UrlExpanded>(eventTypes.UrlExpanded, (state, { url, redirectUrl }) => {
+        const { contents } = state
+        if (contents == null) return state
+
+        const items = contents.items.map(item => {
+            let hasChanged = false
+
+            const alternate = item.alternate.map(link => {
+                if (link.href !== url) {
+                    return link
+                }
+                hasChanged = true
+                return { type: link.type, href: redirectUrl }
+            })
+
+            return hasChanged ? update(item, { alternate: { $set: alternate } }) : item
+        })
+
+        return update(state, { contents: { items: { $set: items } } })
+    })
     .on<eventTypes.FullContentReceived>(eventTypes.FullContentReceived, (state, { fullContent }) => {
         const { contents } = state
         if (contents == null) return state

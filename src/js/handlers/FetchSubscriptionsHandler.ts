@@ -1,6 +1,6 @@
 import Authenticator from '../services/feedly/Authenticator'
 import Gateway from '../services/feedly/Gateway'
-import { AnyEvent, IActionHandler } from '../shared/interfaces'
+import { EventDispatcher, IActionHandler } from '../shared/interfaces'
 import { FetchSubscriptions } from '../constants/actionTypes'
 import { ISubscriptionRepository } from '../services/feedly/interfaces'
 import { Inject } from '../shared/di/annotations'
@@ -13,7 +13,7 @@ export default class FetchSubscriptionsHandler implements IActionHandler<FetchSu
                 private subscriptionRepository: ISubscriptionRepository) {
     }
 
-    async handle(action: FetchSubscriptions, dispatch: (event: AnyEvent) => void): Promise<void> {
+    async handle(action: FetchSubscriptions, dispatch: EventDispatcher): Promise<void> {
         const { access_token } = await this.authenticator.getCredential()
         const subscriptions = await this.gateway.allSubscriptions(access_token)
 

@@ -1,6 +1,6 @@
 import Authenticator from '../services/feedly/Authenticator'
 import Gateway from '../services/feedly/Gateway'
-import { AnyEvent, IActionHandler } from '../shared/interfaces'
+import { EventDispatcher, IActionHandler } from '../shared/interfaces'
 import { FetchUnreadCounts } from '../constants/actionTypes'
 import { IUnreadCountRepository } from '../services/feedly/interfaces'
 import { Inject } from '../shared/di/annotations'
@@ -13,7 +13,7 @@ export default class FetchUnreadCountsHandler implements IActionHandler<FetchUnr
                 private unreadCountRepository: IUnreadCountRepository) {
     }
 
-    async handle(action: FetchUnreadCounts, dispatch: (event: AnyEvent) => void): Promise<void> {
+    async handle(action: FetchUnreadCounts, dispatch: EventDispatcher): Promise<void> {
         const { access_token } = await this.authenticator.getCredential()
         const { unreadcounts } = await this.gateway.allUnreadCounts(access_token, action.payload)
 

@@ -2,7 +2,7 @@
 /// <reference path="../../DefinitelyTyped/text-encoding/text-encoding.d.ts" />
 /// <reference path="../typings/whatwg-fetch.d.ts" />
 
-import { AnyEvent, IActionHandler } from '../shared/interfaces'
+import { EventDispatcher, IActionHandler } from '../shared/interfaces'
 import { FetchFullContent } from '../constants/actionTypes'
 import { FullContentReceived } from '../constants/eventTypes'
 import { IContentFinder } from '../services/contentFinder/interfaces'
@@ -19,7 +19,7 @@ export default class FetchFullContentHandler implements IActionHandler<FetchFull
                 private httpClient: IHttpClient) {
     }
 
-    async handle(action: FetchFullContent, dispatch: (event: AnyEvent) => void): Promise<void> {
+    async handle(action: FetchFullContent, dispatch: EventDispatcher): Promise<void> {
         const { url, streamId } = action
         const response = await this.httpClient.send(new Request(url))
         const html = await decodeAsString(response)

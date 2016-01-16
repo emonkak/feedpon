@@ -1,5 +1,6 @@
 export const CATEGORIES = 'CATEGORIES'
 export const CREDENTIAL = 'CREDENTIAL'
+export const REDIRECTIONS = 'REDIRECTIONS'
 export const SUBSCRIPTIONS = 'SUBSCRIPTIONS'
 export const UNREADCOUNTS = 'UNREADCOUNTS'
 export const WEDATA = 'WEDATA'

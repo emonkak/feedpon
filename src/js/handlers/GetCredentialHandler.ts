@@ -1,7 +1,7 @@
 import Authenticator from '../services/feedly/Authenticator'
 import { CredentialReceived } from '../constants/eventTypes'
 import { GetCredential } from '../constants/actionTypes'
-import { AnyEvent, IActionHandler } from '../shared/interfaces'
+import { EventDispatcher, IActionHandler } from '../shared/interfaces'
 import { Inject } from '../shared/di/annotations'
 
 @Inject
@@ -9,7 +9,7 @@ export default class GetCredentialHandler implements IActionHandler<GetCredentia
     constructor(private authenticator: Authenticator) {
     }
 
-    async handle(action: GetCredential, dispatch: (event: AnyEvent) => void): Promise<void> {
+    async handle(action: GetCredential, dispatch: EventDispatcher): Promise<void> {
         const credential = await this.authenticator.getCredential()
 
         if (credential) {

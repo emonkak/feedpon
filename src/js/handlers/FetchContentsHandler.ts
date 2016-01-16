@@ -1,6 +1,6 @@
 import Authenticator from '../services/feedly/Authenticator'
 import Gateway from '../services/feedly/Gateway'
-import { AnyEvent, IActionHandler } from '../shared/interfaces'
+import { EventDispatcher, IActionHandler } from '../shared/interfaces'
 import { ContentsReceived } from '../constants/eventTypes'
 import { Inject } from '../shared/di/annotations'
 import { FetchContents } from '../constants/actionTypes'
@@ -11,7 +11,7 @@ export default class FetchContentsHandler implements IActionHandler<FetchContent
                 private gateway: Gateway) {
     }
 
-    async handle(action: FetchContents, dispatch: (event: AnyEvent) => void): Promise<void> {
+    async handle(action: FetchContents, dispatch: EventDispatcher): Promise<void> {
         const { access_token } = await this.authenticator.getCredential()
         const contents = await this.gateway.getEntryContents(access_token, action.payload)
 

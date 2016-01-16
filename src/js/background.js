@@ -10,10 +10,12 @@ import GetCategoriesCacheHandler from './handlers/GetCategoriesCacheHandler'
 import GetCredentialHandler from './handlers/GetCredentialHandler'
 import GetSubscriptionsCacheHandler from './handlers/GetSubscriptionsCacheHandler'
 import GetUnreadCountsCacheHandler from './handlers/GetUnreadCountsCacheHandler'
+import ExpandUrlHandler from './handlers/ExpandUrlHandler'
 import container from './container'
-import { FetchCategories, FetchContents, FetchFullContent, FetchSubscriptions, FetchUnreadCounts, GetCategoriesCache, GetCredential, GetSubscriptionsCache, GetUnreadCountsCache } from './constants/actionTypes'
+import { ExpandUrl, FetchCategories, FetchContents, FetchFullContent, FetchSubscriptions, FetchUnreadCounts, GetCategoriesCache, GetCredential, GetSubscriptionsCache, GetUnreadCountsCache } from './constants/actionTypes'
 
 const actionDispatcher = new ActionDispatcher(container)
+    .mount(ExpandUrl, ExpandUrlHandler)
     .mount(FetchCategories, FetchCategoriesHandler)
     .mount(FetchContents, FetchContentsHandler)
     .mount(FetchFullContent, FetchFullContentHandler)

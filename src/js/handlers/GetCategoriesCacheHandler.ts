@@ -1,4 +1,4 @@
-import { AnyEvent, IActionHandler } from '../shared/interfaces'
+import { EventDispatcher, IActionHandler } from '../shared/interfaces'
 import { CategoriesReceived } from '../constants/eventTypes'
 import { GetCategoriesCache } from '../constants/actionTypes'
 import { ICategoryRepository } from '../services/feedly/interfaces'
@@ -9,7 +9,7 @@ export default class GetCategoriesCacheHandler implements IActionHandler<GetCate
     constructor(private categoryRepository: ICategoryRepository) {
     }
 
-    async handle(action: GetCategoriesCache, dispatch: (event: AnyEvent) => void): Promise<void> {
+    async handle(action: GetCategoriesCache, dispatch: EventDispatcher): Promise<void> {
         const categories = await this.categoryRepository.getAll()
         if (categories) {
             dispatch({

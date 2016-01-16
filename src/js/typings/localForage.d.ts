@@ -81,5 +81,5 @@ interface LocalForage {
 declare var localforage: LocalForage;
 
 declare module "localforage" {
-    export = localforage;
+    export default localforage;
 }

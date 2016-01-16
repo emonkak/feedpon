@@ -6,18 +6,18 @@ import { UnreadCount, IUnreadCountRepository } from './interfaces'
 
 @Inject
 export default class LocalForageUnreadCountRepository implements IUnreadCountRepository {
-    constructor(@Named('LocalForage') private localForage: LocalForage) {
+    constructor(@Named('LocalForage') private _localForage: LocalForage) {
     }
 
     getAll(): Promise<UnreadCount[]> {
-        return this.localForage.getItem(storageKeys.UNREADCOUNTS)
+        return this._localForage.getItem(storageKeys.UNREADCOUNTS)
     }
 
     putAll(unreadcounts: UnreadCount[]): Promise<void> {
-        return this.localForage.setItem(storageKeys.UNREADCOUNTS, unreadcounts as any)
+        return this._localForage.setItem(storageKeys.UNREADCOUNTS, unreadcounts as any)
     }
 
     deleteAll(): Promise<void> {
-        return this.localForage.removeItem(storageKeys.UNREADCOUNTS)
+        return this._localForage.removeItem(storageKeys.UNREADCOUNTS)
     }
 }
