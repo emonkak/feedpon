@@ -2,113 +2,121 @@
 
 import * as feedly from './interfaces'
 import Gateway from './Gateway'
+import { EmptyObservable } from 'rxjs/observable/empty'
+import { ErrorObservable } from 'rxjs/observable/throw'
 import { IClock } from '../clock/interfaces'
 import { IWindowOpener } from '../window/interfaces'
 import { Inject } from '../../shared/di/annotations'
+import { ScalarObservable } from 'rxjs/observable/ScalarObservable'
+
+import 'rxjs/add/operator/concatMap'
+import 'rxjs/add/operator/filter'
+import 'rxjs/add/operator/first'
+import 'rxjs/add/operator/toPromise'
 
 @Inject
 export default class Authenticator {
-    constructor(private credentialRepository: feedly.ICredentialRepository,
-                private clock: IClock,
-                private environment: feedly.IEnvironment,
-                private gateway: Gateway) {
+    constructor(private _credentialRepository: feedly.ICredentialRepository,
+                private _clock: IClock,
+                private _environment: feedly.IEnvironment,
+                private _gateway: Gateway) {
     }
 
-    getCredential(): Promise<feedly.Credential> {
-        return this.credentialRepository.get()
-            .then(credential => {
-                if (credential != null) {
-                    return this.expiresToken(credential)
-                        ? this.refresh(credential.refresh_token)
-                        : credential
-                } else {
-                    return null
-                }
-            })
+    async getCredential(): Promise<feedly.Credential> {
+        const credential = await this._credentialRepository.get()
+        if (credential) {
+            return this._expiresToken(credential)
+                ? this.refresh(credential.refresh_token)
+                : credential
+        } else {
+            return null
+        }
     }
 
-    authenticate(windowOpener: IWindowOpener): Promise<feedly.Credential> {
-        return this.doAuthenticate(windowOpener)
-            .then(response => this.doExchangeToken(response.code))
-            .then(response => Object.assign({ authorized: this.clock.now() }, response))
-            .then(credential => this.credentialRepository.put(credential).then(() => credential))
+    async authenticate(windowOpener: IWindowOpener): Promise<feedly.Credential> {
+        const authorization = await this._doAuthenticate(windowOpener)
+        if (authorization) {
+            const token = await this._doExchangeToken(authorization.code)
+            const credential = Object.assign({ authorized: this._clock.now() }, token)
+            await this._credentialRepository.put(credential)
+            return credential
+        } else {
+            return null
+        }
     }
 
-    authorized(): Promise<boolean> {
-        return this.credentialRepository.get()
-            .then(credential => !(credential == null || this.expiresToken(credential)))
+    async authorized(): Promise<boolean> {
+        const credential = await this._credentialRepository.get()
+        return credential && !this._expiresToken(credential)
     }
 
-    refresh(refreshToken: string): Promise<feedly.Credential> {
-        return this.doRefreshToken(refreshToken)
-            .then(response => Object.assign({
-                authorized: this.clock.now(),
-                refresh_token: refreshToken
-            }, response))
-            .then(credential => this.credentialRepository.put(credential).then(() => credential))
+    async refresh(refreshToken: string): Promise<feedly.Credential> {
+        const token = await this._doRefreshToken(refreshToken)
+        const credential = Object.assign({
+            authorized: this._clock.now(),
+            refresh_token: refreshToken
+        }, token)
+        await this._credentialRepository.put(credential)
+        return credential
     }
 
-    revoke(): Promise<void> {
-        return this.credentialRepository.get()
-            .then(credential => {
-                if (credential) {
-                    return Promise.all<any>([
-                        this.doRevokeToken(credential.refresh_token),
-                        this.credentialRepository.delete()
-                    ]).then(() => null)
-                } else {
-                    return null
-                }
-            })
+    async revoke(): Promise<void> {
+        const credential = await this._credentialRepository.get()
+        if (credential) {
+            await Promise.all<any>([
+                this._doRevokeToken(credential.refresh_token),
+                this._credentialRepository.delete()
+            ])
+        }
     }
 
-    private doAuthenticate(windowOpener: IWindowOpener): Promise<feedly.AuthenticateResponse> {
-        const { client_id, redirect_uri, scope } = this.environment
+    private _doAuthenticate(windowOpener: IWindowOpener): Promise<feedly.AuthenticateResponse> {
+        const { client_id, redirect_uri, scope } = this._environment
         const escape = encodeURIComponent
-        const authUrl = this.environment.endpoint + 'v3/auth/auth' +
+        const authUrl = this._environment.endpoint + 'v3/auth/auth' +
             '?response_type=code' +
             '&client_id=' + escape(client_id) +
             '&redirect_uri=' + escape(redirect_uri) +
             '&scope=' + escape(scope)
 
-        return new Promise((resolve, reject) => {
-            return windowOpener.open(authUrl, (url, close) => {
-                if (url.indexOf(redirect_uri) !== 0) return
-
+        return windowOpener.open(authUrl)
+            .filter(url => url.indexOf(redirect_uri) === 0)
+            .concatMap(url => {
                 const matchesForCode = url.match(/[?&]code=([^&]*)/)
-                const matchesForState = url.match(/[?&]state=([^&]*)/)
                 const matchesForError = url.match(/[?&]error=([^&]*)/)
+                const matchesForState = url.match(/[?&]state=([^&]*)/)
 
                 if (matchesForCode) {
-                    resolve({
+                    return ScalarObservable.create({
                         code: matchesForCode[1],
                         state: matchesForState ? matchesForState[1] : null
                     })
-                    close()
                 } else if (matchesForError) {
-                    reject({
+                    return ErrorObservable.create({
                         error: matchesForError[1],
                         state: matchesForState ? matchesForState[1] : null
                     })
-                    close()
+                } else {
+                    return EmptyObservable.create()
                 }
             })
+            .first()
+            .toPromise()
+    }
+
+    private _doRefreshToken(refresh_token: string): Promise<feedly.RefreshTokenResponse> {
+        const { client_id, client_secret } = this._environment
+        return this._gateway.refreshToken({
+            refresh_token,
+            client_id,
+            client_secret,
+            grant_type: 'refresh_token'
         })
     }
 
-    private doRefreshToken(refresh_token: string): Promise<feedly.RefreshTokenResponse> {
-        const { client_id, client_secret } = this.environment
-        return this.gateway.refreshToken({
-                refresh_token,
-                client_id,
-                client_secret,
-                grant_type: 'refresh_token'
-            })
-    }
-
-    private doExchangeToken(code: string): Promise<feedly.ExchangeTokenResponse> {
-        const { client_id, client_secret, redirect_uri } = this.environment
-        return this.gateway.exchangeToken({
+    private _doExchangeToken(code: string): Promise<feedly.ExchangeTokenResponse> {
+        const { client_id, client_secret, redirect_uri } = this._environment
+        return this._gateway.exchangeToken({
             code,
             client_id,
             client_secret,
@@ -117,9 +125,9 @@ export default class Authenticator {
         })
     }
 
-    private doRevokeToken(refresh_token: string): Promise<feedly.RevokeTokenResponse> {
-        const { client_id, client_secret, redirect_uri } = this.environment
-        return this.gateway.revokeToken({
+    private _doRevokeToken(refresh_token: string): Promise<feedly.RevokeTokenResponse> {
+        const { client_id, client_secret, redirect_uri } = this._environment
+        return this._gateway.revokeToken({
             refresh_token,
             client_id,
             client_secret,
@@ -127,7 +135,7 @@ export default class Authenticator {
         })
     }
 
-    private expiresToken(credential: feedly.Credential): boolean {
-        return credential.authorized + (credential.expires_in * 1000) < this.clock.now() + 1000 * 60
+    private _expiresToken(credential: feedly.Credential): boolean {
+        return credential.authorized + (credential.expires_in * 1000) < this._clock.now() + 1000 * 60
     }
 }
