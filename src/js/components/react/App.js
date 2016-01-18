@@ -21,7 +21,7 @@ export default class App extends React.Component {
     }
 
     render() {
-        const store = this.context.createSharedStore(reducer, initialState)
+        const store = this.context.createStore(reducer, initialState)
         const ConnectedRoot = connectToStore(Root, store::map(state => ({
             credential: state.credential
         })))

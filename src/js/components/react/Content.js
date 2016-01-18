@@ -17,7 +17,7 @@ export default class Content extends React.Component {
         this.state = { isLoading: false }
     }
 
-    componentDidMount() {
+    componentWillMount() {
         const { params } = this.props
 
         this.context.dispatch({

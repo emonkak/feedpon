@@ -3,7 +3,7 @@ import appContextTypes from './appContextTypes'
 
 export default function connectToStore(Component, store) {
     class StoreWrapper extends React.Component {
-        componentDidMount() {
+        componentWillMount() {
             this._subscription = store.subscribe(state => this.setState(state))
         }
 

@@ -19,7 +19,7 @@ export default class Entry extends React.Component {
 
     static contextTypes = appContextTypes
 
-    componentDidMount() {
+    componentWillMount() {
         const { entry } = this.props
 
         entry.alternate.forEach(({ href }) => {
