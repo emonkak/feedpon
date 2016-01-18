@@ -10,12 +10,12 @@ export default class LocalForageRedirectionRepository implements IRedirectionRep
     }
 
     get(url: string): Promise<Redirection> {
-        return this._localForage.getItem(storageKeys.REDIRECTIONS + '.' + url)
+        return this._localForage.getItem(storageKeys.REDIRECTIONS(url))
     }
 
     put(redirection: Redirection): Promise<void> {
         return this._localForage.setItem(
-            storageKeys.REDIRECTIONS + '.' + redirection.url,
+            storageKeys.REDIRECTIONS(redirection.url),
             redirection as any
         )
     }
