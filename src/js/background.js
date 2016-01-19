@@ -16,9 +16,11 @@ import { ExpandUrl, FetchCategories, FetchContents, FetchFullContent, FetchSubsc
 import { FromEventPatternObservable } from 'rxjs/observable/fromEventPattern'
 import { Observable } from 'rxjs/Observable'
 import { Subscription } from 'rxjs/Subscription'
+import { _finally } from 'rxjs/operator/finally'
 import { filter } from 'rxjs/operator/filter'
 import { map } from 'rxjs/operator/map'
 import { mergeMap } from 'rxjs/operator/mergeMap'
+import { takeUntil } from 'rxjs/operator/takeUntil'
 
 const actionDispatcher = new ActionDispatcher(container)
     .mount(ExpandUrl, ExpandUrlHandler)
@@ -44,23 +46,18 @@ const messages = FromEventPatternObservable.create(
 )
 
 const portsAndMessages = ports
-    ::mergeMap(port => Observable.create(subscriber => {
-        const subscription = FromEventPatternObservable.create(
-                ::port.onDisconnect.addListener,
-                ::port.onDisconnect.removeListener
-            )
-            .subscribe(() => subscriber.complete())
-        subscriber.add(subscription)
+    ::mergeMap(port => {
+        const disconnected = FromEventPatternObservable.create(
+            ::port.onDisconnect.addListener,
+            ::port.onDisconnect.removeListener
+        )
 
-        messages
+        return messages
+            ::takeUntil(disconnected)
+            ::_finally(() => port.disconnect())
             ::filter(message => message.sender.tab.id === port.sender.tab.id)
             ::map(message => ({ port, message }))
-            .subscribe(subscriber)
-
-        subscriber.add(new Subscription(() => {
-            port.disconnect()
-        }))
-    }))
+    })
 
 portsAndMessages
     .subscribe(({ port, message }) => {

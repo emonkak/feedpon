@@ -8,17 +8,19 @@ import { Subscriber } from 'rxjs/Subscriber'
 import { Subscription } from 'rxjs/Subscription'
 
 import 'rxjs/add/operator/filter'
+import 'rxjs/add/operator/finally'
 import 'rxjs/add/operator/map'
+import 'rxjs/add/operator/takeUntil'
 
 @Inject
 export default class ChromeWindowOpener implements IWindowOpener {
-    private _updatedTabs: Observable<{ tabId: number, changeInfo: chrome.tabs.TabChangeInfo, tab: chrome.tabs.Tab }> = FromEventPatternObservable.create(
+    private _tabUpdated: Observable<{ tabId: number, changeInfo: chrome.tabs.TabChangeInfo, tab: chrome.tabs.Tab }> = FromEventPatternObservable.create(
         (handler) => chrome.tabs.onUpdated.addListener(handler as any),
         (handler) => chrome.tabs.onUpdated.removeListener(handler as any),
         (tabId, changeInfo, tab) => ({ tabId, changeInfo, tab })
     )
 
-    private _removedWindows: Observable<number> = FromEventPatternObservable.create(
+    private _windowRemoved: Observable<number> = FromEventPatternObservable.create(
         (handler) => chrome.windows.onRemoved.addListener(handler as any),
         (handler) => chrome.windows.onRemoved.removeListener(handler as any)
     )
@@ -29,19 +31,15 @@ export default class ChromeWindowOpener implements IWindowOpener {
                 const createdwindowId = window.id
                 const createdTabId = window.tabs[0].id
 
-                const subscription = this._removedWindows
+                const windowRemoved = this._windowRemoved
                     .filter(windowId => windowId === createdwindowId)
-                    .subscribe(() => subscriber.complete())
-                subscriber.add(subscription)
 
-                this._updatedTabs
+                this._tabUpdated
+                    .takeUntil(windowRemoved)
+                    .finally(() => chrome.windows.remove(createdwindowId))
                     .filter(({ tabId, changeInfo }) => tabId === createdTabId && changeInfo.status === 'complete')
                     .map(({ tab }) => tab.url)
                     .subscribe(subscriber)
-
-                subscriber.add(new Subscription(() => {
-                    chrome.windows.remove(createdwindowId)
-                }))
             })
         })
     }
