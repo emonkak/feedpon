@@ -3,12 +3,16 @@ import { Inject } from '../../shared/di/annotations'
 
 @Inject
 export default class ChainedContentFinder implements IContentFinder {
-    constructor(private contentFinders: IContentFinder[]) {
+    constructor(private _contentFinders: IContentFinder[]) {
     }
 
-    find(url: string, doc: HTMLDocument): Promise<FoundContent> {
-        return this.contentFinders.reduce((promise, contentFinder) => {
-            return promise.then(found => found || contentFinder.find(url, doc))
-        }, Promise.resolve(null))
+    async find(url: string): Promise<FoundContent> {
+        for (const contentFinder of this._contentFinders) {
+            const result = await contentFinder.find(url)
+            if (result) {
+                return result
+            }
+        }
+        return null
     }
 }

@@ -11,7 +11,6 @@ export interface WedataItem<T> {
 export interface FoundContent {
     content: HTMLElement
     nextLink?: HTMLElement
-    encoding?: string
 }
 
 export interface WedataResource<T> {
@@ -21,7 +20,7 @@ export interface WedataResource<T> {
 
 export const IContentFinder = class {}
 export interface IContentFinder {
-    find(url: string, doc: HTMLDocument): Promise<FoundContent>
+    find(url: string): Promise<FoundContent>
 }
 
 export const IWedataGateway = class {}

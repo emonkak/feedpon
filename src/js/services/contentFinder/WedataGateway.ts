@@ -4,7 +4,7 @@ import { Inject } from '../../shared/di/annotations'
 
 @Inject
 export default class WedataGateway implements IWedataGateway {
-    constructor(private httpClient: IHttpClient) {
+    constructor(private _httpClient: IHttpClient) {
     }
 
     allItems<T>(resourceUrl: string): Promise<WedataItem<T>[]> {
@@ -12,7 +12,7 @@ export default class WedataGateway implements IWedataGateway {
             method: 'GET'
         })
 
-        return this.httpClient.send(request)
+        return this._httpClient.send(request)
             .then(response => response.json<WedataItem<T>[]>())
     }
 }

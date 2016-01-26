@@ -1,29 +1,37 @@
+/// <reference path="../../typings/whatwg-fetch.d.ts" />
+
 import WedataLoader from './WedataLoader'
+import decodeResponseAsString from '../../utils/decodeResponseAsString'
 import matches from '../../utils/matches'
+import parseHtml from '../../utils/parseHtml'
 import { IContentFinder, FoundContent , WedataItem } from './interfaces'
+import { IHttpClient } from '../http/interfaces'
 import { Inject } from '../../shared/di/annotations'
 import { LDRFullFeedData, ldrFullFeed } from './wedataResources'
 
 @Inject
 export default class LdrFullFeedContentFinder implements IContentFinder {
-    constructor(private wedataLoader: WedataLoader) {
+    constructor(private _wedataLoader: WedataLoader,
+                private _httpClient: IHttpClient) {
     }
 
-    async find(url: string, doc: HTMLDocument): Promise<FoundContent> {
-        const items = await this.wedataLoader.getItems<LDRFullFeedData>(ldrFullFeed)
+    async find(url: string): Promise<FoundContent> {
+        const items = await this._wedataLoader.getItems<LDRFullFeedData>(ldrFullFeed)
 
         for (const item of items) {
-            const entry = item.data
+            const { data } = item
 
-            if (matches(entry.url, url)) {
-                const content = document.evaluate(entry.xpath, doc.body, null, XPathResult.ANY_UNORDERED_NODE_TYPE, null)
+            if (matches(data.url, url)) {
+                const request = new Request(url)
+                const response = await this._httpClient.send(request)
+                const responseText = await decodeResponseAsString(response)
 
-                if (content.singleNodeValue) {
-                    return {
-                        content: content.singleNodeValue as HTMLElement,
-                        encoding: entry.enc
-                    }
-                }
+                const parsed = parseHtml(responseText)
+                const content = document.evaluate(data.xpath, parsed.body, null, XPathResult.ANY_UNORDERED_NODE_TYPE, null)
+
+                return content.singleNodeValue ? {
+                    content: content.singleNodeValue as HTMLElement
+                } : null
             }
         }
     }

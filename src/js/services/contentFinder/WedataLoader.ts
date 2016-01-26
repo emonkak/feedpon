@@ -3,25 +3,33 @@ import { Inject } from '../../shared/di/annotations'
 
 @Inject
 export default class WedataLoader {
-    private siteinfo: { [key: string]: WedataItem<any>[] } = {}
+    private _siteinfo: { [key: string]: WedataItem<any>[] } = {}
 
-    constructor(private wedataGateway: IWedataGateway,
-                private wedataRepository: IWedataRepository) {
+    constructor(private _wedataGateway: IWedataGateway,
+                private _wedataRepository: IWedataRepository) {
     }
 
-    getItems<T>(resource: WedataResource<T>): Promise<WedataItem<T>[]> {
-        if (this.siteinfo[resource.url]) {
-            return Promise.resolve(this.siteinfo[resource.url])
+    async getItems<T>(resource: WedataResource<T>): Promise<WedataItem<T>[]> {
+        if (this._siteinfo[resource.url]) {
+            return this._siteinfo[resource.url]
         }
 
-        return this.wedataRepository.getAll<T>(resource.url)
-            .then(items => (this.siteinfo[resource.url] = items as any) || this.reloadItems<T>(resource))
+        const items = await this._wedataRepository.getAll<T>(resource.url)
+        if (items) {
+            return this._siteinfo[resource.url] = items as any
+        }
+
+        return await this.reloadItems<T>(resource)
     }
 
-    reloadItems<T>(resource: WedataResource<T>): Promise<WedataItem<T>[]> {
-        return this.wedataGateway.allItems<T>(resource.url)
-            .then(resource.transformer)
-            .then(items => this.wedataRepository.putAll(resource.url, items).then(() => items))
-            .then(items => this.siteinfo[resource.url] = items)
+    async reloadItems<T>(resource: WedataResource<T>): Promise<WedataItem<T>[]> {
+        const allItems = await this._wedataGateway.allItems<T>(resource.url)
+        const transformedItems = resource.transformer(allItems)
+
+        this._siteinfo[resource.url] = transformedItems
+
+        await this._wedataRepository.putAll(resource.url, transformedItems)
+
+        return transformedItems
     }
 }
