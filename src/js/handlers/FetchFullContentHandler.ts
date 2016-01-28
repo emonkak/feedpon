@@ -21,13 +21,14 @@ export default class FetchFullContentHandler implements IActionHandler<FetchFull
         // TODO: When full content is not found
         if (foundContent) {
             const { content, nextLink } = foundContent
+            const sanitizedContent = sanitizeHtml(content)
 
             dispatch({
                 eventType: FullContentReceived,
                 fullContent: {
                     streamId,
                     url,
-                    content: sanitizeHtml(content),
+                    content: sanitizedContent,
                     nextLink: nextLink ? nextLink.getAttribute('href') : null
                 }
             } as FullContentReceived)
