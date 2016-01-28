@@ -1,8 +1,13 @@
 import * as feedly from '../services/feedly/interfaces'
-import { Action } from '../shared/interfaces'
+import { Action, Event } from '../shared/interfaces'
 
 export const Authenticate = 'Authenticate'
 export interface Authenticate extends Action<string> {
+}
+
+export const DispatchEvent = 'DispatchEvent'
+export interface DispatchEvent<TEvent extends Event<string>> extends Action<string> {
+    event: TEvent
 }
 
 export const ExpandUrl = 'ExpandUrl'
@@ -48,4 +53,29 @@ export interface GetSubscriptionsCache extends Action<string> {
 
 export const GetUnreadCountsCache = 'GetUnreadCountsCache'
 export interface GetUnreadCountsCache extends Action<string> {
+}
+
+export namespace History {
+    export const Push = 'History/Push'
+    export interface Push extends Action<string> {
+        path: string
+    }
+
+    export const Replace = 'History/Replace'
+    export interface Replace extends Action<string> {
+        path: string
+    }
+
+    export const Go = 'History/Go'
+    export interface Go extends Action<string> {
+        n: number
+    }
+
+    export const GoBack = 'History/GoBack'
+    export interface GoBack extends Action<string> {
+    }
+
+    export const GoForward = 'History/GoForward'
+    export interface GoForward extends Action<string> {
+    }
 }

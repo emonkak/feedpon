@@ -2,7 +2,7 @@ import PureRenderMixin from 'react-addons-pure-render-mixin'
 import React from 'react'
 import appContextTypes from './appContextTypes'
 import classnames from 'classnames'
-import { Link } from 'react-router'
+import { History } from '../../constants/actionTypes'
 
 export default class Subscription extends React.Component {
     static propTypes = {
@@ -13,6 +13,15 @@ export default class Subscription extends React.Component {
 
     static contextTypes = appContextTypes
 
+    handleSelectStream() {
+        const { subscription } = this.props
+
+        this.context.dispatch({
+            actionType: History.Push,
+            path: `streams/${encodeURIComponent(subscription.id)}`
+        })
+    }
+
     render() {
         const { subscription, unreadCount, isSelected } = this.props
 
@@ -22,11 +31,11 @@ export default class Subscription extends React.Component {
 
         return (
             <li className={classnames('subscription', { 'is-selected': isSelected })}>
-                <Link className="subscription-link" to={`streams/${encodeURIComponent(subscription.id)}`}>
+                <a className="subscription-link" onClick={::this.handleSelectStream}>
                     {icon}
                     <span className="subscription-title">{subscription.title}</span>
                     <span className="subscription-unread-count">{unreadCount.count}</span>
-                </Link>
+                </a>
             </li>
         )
     }

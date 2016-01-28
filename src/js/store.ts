@@ -1,3 +1,5 @@
+/// <reference path="../DefinitelyTyped/react-router/react-router.d.ts" />
+
 import * as eventTypes from './constants/eventTypes'
 import * as feedly from './services/feedly/interfaces'
 import ReducerBuilder from './shared/utils/ReducerBuilder'
@@ -10,6 +12,7 @@ interface State {
     unreadCounts: feedly.UnreadCount[]
     contents?: feedly.Contents
     credential?: feedly.Credential
+    location?: HistoryModule.Location
 }
 
 export const reducer = new ReducerBuilder<State, AnyEvent>(event => event.eventType)
@@ -61,6 +64,9 @@ export const reducer = new ReducerBuilder<State, AnyEvent>(event => event.eventT
 
         return update(state, { contents: { items: { $set: items } } })
     })
+    .on<eventTypes.LocationUpdated>(eventTypes.LocationUpdated, (state, { location }) => {
+        return Object.assign({}, state, { location })
+    })
     .on<eventTypes.SubscriptionsReceived>(eventTypes.SubscriptionsReceived, (state, { subscriptions }) => {
         return Object.assign({}, state, { subscriptions })
     })
@@ -74,5 +80,6 @@ export const initialState: State = {
     categories: [],
     unreadCounts: [],
     contents: null,
-    credential: null
+    credential: null,
+    location: null
 }

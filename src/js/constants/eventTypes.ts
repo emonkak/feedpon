@@ -1,3 +1,5 @@
+/// <reference path="../../DefinitelyTyped/react-router/react-router.d.ts" />
+
 import * as feedly from '../services/feedly/interfaces'
 import { Event, Action } from '../shared/interfaces'
 
@@ -36,6 +38,11 @@ interface FullContent {
     url: string
     content: string
     nextLink?: string
+}
+
+export const LocationUpdated = 'LocationUpdated'
+export interface LocationUpdated extends Event<string> {
+    location: HistoryModule.Location
 }
 
 export const SubscriptionsReceived = 'SubscriptionsReceived'

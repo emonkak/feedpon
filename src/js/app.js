@@ -5,6 +5,7 @@ import App from './components/react/App'
 import AppContext from './components/react/AppContext'
 import AuthenticateHandler from './handlers/AuthenticateHandler'
 import ChromeBackgroundActionDispatcher from './shared/dispatchers/ChromeBackgroundActionDispatcher'
+import DispatchEventHandler from './handlers/DispatchEventHandler'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import connectToStore from './components/react/connectToStore'
@@ -12,7 +13,7 @@ import container from './container'
 import fromChromeEvent from './utils/fromChromeEvent'
 import fromScalar from './utils/fromScalar'
 import { ActionDone, ActionFailed } from './constants/eventTypes'
-import { Authenticate } from './constants/actionTypes'
+import { Authenticate, DispatchEvent } from './constants/actionTypes'
 import { DeferObservable } from 'rxjs/observable/defer'
 import { EmptyObservable } from 'rxjs/observable/empty'
 import { FromEventPatternObservable } from 'rxjs/observable/fromEventPattern'
@@ -22,6 +23,7 @@ import { _do } from 'rxjs/operator/do'
 import { concat } from 'rxjs/operator/concat'
 import { concatMap } from 'rxjs/operator/concatMap'
 import { delay } from 'rxjs/operator/delay'
+import { hashHistory } from 'react-router'
 import { merge } from 'rxjs/operator/merge-static'
 import { mergeMap } from 'rxjs/operator/mergeMap'
 import { repeat } from 'rxjs/operator/repeat'
@@ -30,6 +32,7 @@ import { takeUntil } from 'rxjs/operator/takeUntil'
 const actionSubject = new Subject()
 const actionDispatcher = new ActionDispatcher(container)
     .mount(Authenticate, AuthenticateHandler)
+    .mount(DispatchEvent, DispatchEventHandler)
     .fallback(new ChromeBackgroundActionDispatcher())
 
 const eventStreamByLocalAction = actionSubject
@@ -56,7 +59,7 @@ const element = document.getElementById('app')
 
 ReactDOM.render(
     <AppContext actionSubject={actionSubject} eventStream={eventStream}>
-        <App />
+        <App history={hashHistory} />
     </AppContext>,
     element
 )
