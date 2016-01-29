@@ -31,19 +31,19 @@ export default class App extends React.Component {
             switch (action.actionType) {
             case History.Push:
                 history.push(action.path)
-                break;
+                break
             case History.Replace:
                 history.replace(action.path)
-                break;
+                break
             case History.Go:
                 history.go(action.n)
-                break;
+                break
             case History.GoBack:
                 history.goBack()
-                break;
+                break
             case History.GoForward:
                 history.goForward()
-                break;
+                break
             }
         }))
         this._subscription.add(this._store.subscribe(({ location }) => {

@@ -35,7 +35,7 @@ export interface IDefinition<T> {
 }
 
 export interface IDependency<T> {
-    get(): T;
+    get(): T
 }
 
 export interface IInjectionPolicy {
