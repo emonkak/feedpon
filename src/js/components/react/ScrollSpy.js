@@ -1,10 +1,13 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import difference from 'lodash.difference'
+import deepEqual from 'deep-equal'
+import except from '../../shared/collections/except'
 import inViewport from 'in-viewport'
+import toArray from '../../shared/collections/toArray'
 import { FromEventObservable } from 'rxjs/observable/fromEvent'
 import { Subscription } from 'rxjs/Subscription'
 import { debounceTime } from 'rxjs/operator/debounceTime'
+import { distinctUntilChanged } from 'rxjs/operator/distinctUntilChanged'
 import { map } from 'rxjs/operator/map'
 import { pairwise } from 'rxjs/operator/pairwise'
 import { share } from 'rxjs/operator/share'
@@ -21,20 +24,54 @@ export default class ScrollSpy extends React.Component {
     }
 
     static defaultProps = {
-        scrollDebounceTime: 200
+        scrollDebounceTime: 200,
+        useWindowAsScrollContainer: false
     }
 
     componentDidMount() {
-        this._registerListeners()
-    }
+        const { useWindowAsScrollContainer, scrollDebounceTime } = this.props
 
-    componentDidUpdate(prevProps, prevState) {
-        this._unregisterListeners()
-        this._registerListeners()
+        const container = useWindowAsScrollContainer ? window : this.refs.scrollable
+
+        const onInViewport$ = FromEventObservable.create(container, 'scroll')
+            ::debounceTime(scrollDebounceTime)
+            ::map(event => {
+                return React.Children.map(this.props.children, (element, i) => {
+                        return this.refs[i]
+                    })
+                    .filter(ref => inViewport(ReactDOM.findDOMNode(ref)))
+            })
+            ::share()
+        const pairwiseOnInViewport$ = onInViewport$
+            ::startWith([])
+            ::distinctUntilChanged(deepEqual)
+            ::pairwise()
+
+        this._subscription = new Subscription()
+        this._subscription.add(onInViewport$.subscribe(current => {
+            const { onInViewport } = this.props
+
+            if (onInViewport) {
+                onInViewport(current, container)
+            }
+        }))
+        this._subscription.add(pairwiseOnInViewport$.subscribe(([prev, current]) => {
+            const { onEnter, onLeave } = this.props
+
+            if (onEnter) {
+                const entered = current::except(prev)::toArray()
+                onEnter(entered, container)
+            }
+
+            if (onLeave) {
+                const leaved = prev::except(current)::toArray()
+                onLeave(leaved, container)
+            }
+        }))
     }
 
     componentWillUnmount() {
-        this._unregisterListeners()
+        this._subscription.unsubscribe()
     }
 
     render() {
@@ -47,61 +84,5 @@ export default class ScrollSpy extends React.Component {
                 })}
             </ul>
         )
-    }
-
-    _registerListeners() {
-        const { children, useWindowAsScrollContainer, scrollDebounceTime, onInViewport, onEnter, onLeave } = this.props
-
-        const container = useWindowAsScrollContainer ? window : this.refs.scrollable
-        const childDomNodes = React.Children.map(children, (element, i) => {
-            const ref = this.refs[i]
-            return ReactDOM.findDOMNode(ref)
-        })
-
-        const onInViewport$ = FromEventObservable.create(container, 'scroll')
-            ::debounceTime(scrollDebounceTime)
-            ::map(event => {
-                for (let i = 0, l = childDomNodes.length; i < l; i++) {
-                    if (inViewport(childDomNodes[i])) {
-                        const result = [this.refs[i]]
-                        for (let j = i + 1; j < l && inViewport(childDomNodes[j]); j++) {
-                            result.push(this.refs[j])
-                        }
-                        return result
-                    }
-                }
-                return []
-            })
-            ::share()
-        const onEnter$ = onInViewport$
-            ::startWith([])
-            ::pairwise()
-            ::map(([prev, current]) => difference(current, prev))
-        const onLeave$ = onInViewport$
-            ::startWith([])
-            ::pairwise()
-            ::map(([prev, current]) => difference(prev, current))
-
-        this._subscription = new Subscription()
-
-        if (onInViewport) {
-            this._subscription.add(
-                onInViewport$.subscribe(elements => onInViewport(elements, container))
-            )
-        }
-        if (onEnter) {
-            this._subscription.add(
-                onEnter$.subscribe(elements => onEnter(elements, container))
-            )
-        }
-        if (onLeave) {
-            this._subscription.add(
-                onLeave$.subscribe(elements => onLeave(elements, container))
-            )
-        }
-    }
-
-    _unregisterListeners() {
-        if (this._subscription) this._subscription.unsubscribe()
     }
 }

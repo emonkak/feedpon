@@ -30,31 +30,33 @@ export default class EntryList extends React.Component {
     }
 
     render() {
+        const { isLoading } = this.state
+
+        const waypoint = isLoading
+            ? <div />
+            : <div><Waypoint onEnter={::this.handleLoading} threshold={2.0} /></div>
+
         return (
-            <ScrollSpy className="entry-list"
-                       useWindowAsScrollContainer
-                       onInViewport={::this.handleInViewport}>
-                {this.renderEntries()}
-                {this.renderWaypont()}
-            </ScrollSpy>
+            <div>
+                <ScrollSpy className="entry-list"
+                           useWindowAsScrollContainer
+                           onInViewport={::this.handleInViewport}>
+                    {this.renderEntries()}
+                </ScrollSpy>
+                {waypoint}
+            </div>
         )
     }
 
     renderEntries(entry) {
         const { contents, activeEntry } = this.props
+
         return contents.items.map(item => {
             const isActive = !!(activeEntry && item.id === activeEntry.id)
             return (
                 <Entry key={item.id} entry={item} isActive={isActive} />
             )
         })
-    }
-
-    renderWaypont() {
-        const { isLoading } = this.state
-        if (isLoading) return null
-
-        return <Waypoint onEnter={::this.handleLoading} threshold={2.0} />
     }
 
     handleLoading() {
@@ -104,4 +106,3 @@ export default class EntryList extends React.Component {
 }
 
 Object.assign(EntryList.prototype, PureRenderMixin)
-
