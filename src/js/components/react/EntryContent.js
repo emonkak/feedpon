@@ -1,7 +1,7 @@
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 import React from 'react'
 import appContextTypes from './appContextTypes'
-import baseStyle from '../../../less/base.less'
+import baseStyle from '../../../css/base.css'
 import escape from 'lodash.escape'
 
 export default class EntryContent extends React.Component {

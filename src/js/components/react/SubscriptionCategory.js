@@ -20,26 +20,6 @@ export default class SubscriptionCategory extends React.Component {
         this.state = { expanded: false }
     }
 
-    handleExpand(event) {
-        event.preventDefault()
-
-        this.setState(state => ({
-            ...state,
-            expanded: !state.expanded
-        }))
-
-        return false
-    }
-
-    handleSelectStream() {
-        const { category } = this.props
-
-        this.context.dispatch({
-            actionType: History.Push,
-            path: `/streams/${encodeURIComponent(category.id)}`
-        })
-    }
-
     render() {
         const { category, subscriptions, selectedStreamId } = this.props
         const { expanded } = this.state
@@ -48,12 +28,14 @@ export default class SubscriptionCategory extends React.Component {
             .reduce((sum, { unreadCount }) => sum + unreadCount.count, 0)
 
         return (
-            <li className="subscription-category-container">
+            <li className='subscription-category-container'>
                 <div className={classnames('subscription-category', { 'is-selected': category.id === selectedStreamId })}>
-                    <a className={classnames('subscription-category-expand-arrow', { 'is-expanded': expanded })} onClick={::this.handleExpand}></a>
-                    <a className="subscription-category-link" onClick={::this.handleSelectStream}>
-                        <span className="subscription-category-label">{category.label}</span>
-                        <span className="subscription-category-unread-count">{unreadCount}</span>
+                    <a className={classnames('subscription-category-expand-button', {'is-expanded': expanded })} href="#" onClick={::this.handleExpand}>
+                        {expanded ? <i className='fa fa-caret-down' /> : <i className='fa fa-caret-right' />}
+                    </a>
+                    <a className='subscription-category-link' href="#" onClick={::this.handleSelectStream}>
+                        <span className='subscription-category-label'>{category.label}</span>
+                        <span className='subscription-category-unread-count'>{unreadCount}</span>
                     </a>
                 </div>
                 <ul className={classnames('subscription-list', { 'is-expanded': expanded })}>
@@ -72,6 +54,28 @@ export default class SubscriptionCategory extends React.Component {
                           unreadCount={unreadCount}
                           isSelected={subscription.id === selectedStreamId} />
         )
+    }
+
+    handleExpand(event) {
+        event.preventDefault()
+
+        this.setState(state => ({
+            ...state,
+            expanded: !state.expanded
+        }))
+
+        return false
+    }
+
+    handleSelectStream(event) {
+        event.preventDefault()
+
+        const { category } = this.props
+
+        this.context.dispatch({
+            actionType: History.Push,
+            path: `/streams/${encodeURIComponent(category.id)}`
+        })
     }
 }
 

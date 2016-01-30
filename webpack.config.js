@@ -1,5 +1,8 @@
 var IgnorePlugin = require('webpack/lib/IgnorePlugin')
+var autoprefixer = require('autoprefixer')
 var path = require('path')
+var postcssCssnext = require('postcss-cssnext')
+var postcssImport = require('postcss-import')
 
 module.exports = {
     entry: {
@@ -16,12 +19,8 @@ module.exports = {
     module: {
         loaders: [
             {
-                test: /\.json$/,
-                loader: 'json-loader'
-            },
-            {
-                test: /\.less$/,
-                loaders: ['css-loader', 'less-loader']
+                test: /\.css/,
+                loaders: ['css-loader', 'postcss-loader']
             },
             {
                 test: /\.ts$/,
@@ -36,5 +35,8 @@ module.exports = {
     },
     plugins: [
         new IgnorePlugin(/^crypto$/)
-    ]
+    ],
+    postcss: function() {
+        return [autoprefixer, postcssImport, postcssCssnext]
+    }
 }

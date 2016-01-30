@@ -27,7 +27,7 @@ export default class Subscription extends React.Component {
 
         const icon = subscription.iconUrl != null
             ? <img className="subscription-icon" src={subscription.iconUrl} alt={subscription.title} width="16" height="16" />
-            : <i className="subscription-icon subscription-icon-default" />
+            : <i className="subscription-icon fa fa-file-o" />
 
         return (
             <li className={classnames('subscription', { 'is-selected': isSelected })}>

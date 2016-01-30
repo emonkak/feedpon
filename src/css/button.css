@@ -18,9 +18,9 @@
   background-color: transparent;
   color: black;
   border-color: #888;
+}
 
-  &:hover {
-    background-color: black;
-    color: white;
-  }
+.button-default:hover {
+  background-color: black;
+  color: white;
 }

@@ -18,10 +18,10 @@ body {
 a {
   text-decoration: underline;
   color: black;
+}
 
-  a:visited {
-    color: inherit;
-  }
+a:visited {
+  color: inherit;
 }
 
 h1, h2, h3, h4, h5, h6, b, em, strong {
