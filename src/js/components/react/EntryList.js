@@ -43,8 +43,9 @@ export default class EntryList extends React.Component {
     renderEntries(entry) {
         const { contents, activeEntry } = this.props
         return contents.items.map(item => {
+            const isActive = !!(activeEntry && item.id === activeEntry.id)
             return (
-                <Entry key={item.id} entry={item} isActive={activeEntry && item.id === activeEntry.id} />
+                <Entry key={item.id} entry={item} isActive={isActive} />
             )
         })
     }

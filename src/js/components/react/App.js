@@ -60,7 +60,9 @@ export default class App extends React.Component {
                 this.context.dispatchEvent({ eventType: LocationUpdated, location })
             }
         }))
+    }
 
+    componentDidMount() {
         this.context.dispatch({ actionType: GetCredential })
         this.context.dispatch({ actionType: GetCategoriesCache })
         this.context.dispatch({ actionType: GetSubscriptionsCache })
