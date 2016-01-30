@@ -7,7 +7,8 @@ import { FetchContents } from '../../constants/actionTypes'
 
 export default class Content extends React.Component {
     static propTypes = {
-        contents: React.PropTypes.object
+        contents: React.PropTypes.object,
+        activeEntry: React.PropTypes.object
     }
 
     static contextTypes = appContextTypes
@@ -59,10 +60,10 @@ export default class Content extends React.Component {
     }
 
     render() {
-        const { contents } = this.props
+        const { contents, activeEntry } = this.props
         return (
             <div>
-                {contents ? <EntryList contents={contents} /> : null}
+                {contents ? <EntryList contents={contents} activeEntry={activeEntry} /> : null}
             </div>
         )
     }

@@ -1,13 +1,18 @@
 import Entry from './Entry'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 import React from 'react'
+import ReactDOM from 'react-dom'
+import ScrollSpy from './ScrollSpy'
 import Waypoint from 'react-waypoint'
 import appContextTypes from './appContextTypes'
+import maxBy from 'lodash.maxby'
+import { EntryActivated } from '../../constants/eventTypes'
 import { FetchContents } from '../../constants/actionTypes'
 
 export default class EntryList extends React.Component {
     static propTypes = {
-        contents: React.PropTypes.object.isRequired
+        contents: React.PropTypes.object.isRequired,
+        activeEntry: React.PropTypes.object
     }
 
     static contextTypes = appContextTypes
@@ -21,6 +26,33 @@ export default class EntryList extends React.Component {
         if (this.props.contents !== nextProps.contents) {
             this.setState({ isLoading: false })
         }
+    }
+
+    render() {
+        return (
+            <ScrollSpy className="entry-list"
+                       useWindowAsScrollContainer
+                       onInViewport={::this.handleInViewport}>
+                {this.renderEntries()}
+                {this.renderWaypont()}
+            </ScrollSpy>
+        )
+    }
+
+    renderEntries(entry) {
+        const { contents, activeEntry } = this.props
+        return contents.items.map(item => {
+            return (
+                <Entry key={item.id} entry={item} isActive={item === activeEntry} />
+            )
+        })
+    }
+
+    renderWaypont() {
+        const { isLoading } = this.state
+        if (isLoading) return null
+
+        return <Waypoint onEnter={::this.handleLoading} threshold={2.0} />
     }
 
     handleLoading() {
@@ -37,25 +69,30 @@ export default class EntryList extends React.Component {
         })
     }
 
-    render() {
-        return (
-            <ul className="entry-list">
-                {this.renderEntries()}
-                {this.renderWaypont()}
-            </ul>
-        )
-    }
+    handleInViewport(elements, container) {
+        const element = maxBy(elements, element => {
+            const node = ReactDOM.findDOMNode(element)
 
-    renderEntries(entry) {
-        const { contents } = this.props
-        return contents.items.map(item => <Entry key={item.id} entry={item} />)
-    }
+            let scrollTop = container.scrollY
+            let scrollBottom = scrollTop + container.innerHeight
+            let offsetTop = node.offsetTop
+            let offsetBottom = offsetTop + node.offsetHeight
 
-    renderWaypont() {
-        const { isLoading } = this.state
-        if (isLoading) return null
+            if (offsetTop < scrollTop) {
+                offsetTop = scrollTop
+            }
+            if (offsetBottom > scrollBottom) {
+                offsetBottom = scrollBottom
+            }
 
-        return <Waypoint onEnter={::this.handleLoading} threshold={2.0} />
+            return offsetBottom - offsetTop
+        })
+        if (element && (element.props.entry !== this.props.activeEntry)) {
+            this.context.dispatchEvent({
+                eventType: EntryActivated,
+                entry: element.props.entry
+            })
+        }
     }
 }
 

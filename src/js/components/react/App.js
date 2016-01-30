@@ -5,7 +5,7 @@ import Root from './Root'
 import Sidebar from './Sidebar'
 import appContextTypes from './appContextTypes'
 import connectToStore from './connectToStore'
-import { DispatchEvent, GetCredential, GetCategoriesCache, GetSubscriptionsCache, GetUnreadCountsCache, History } from '../../constants/actionTypes'
+import { GetCredential, GetCategoriesCache, GetSubscriptionsCache, GetUnreadCountsCache, History } from '../../constants/actionTypes'
 import { LocationUpdated } from '../../constants/eventTypes'
 import { Subscription } from 'rxjs/Subscription'
 import { IndexRoute, Router, Route } from 'react-router'
@@ -57,10 +57,7 @@ export default class App extends React.Component {
             currentLocationKey = location.key
 
             if (!syncingLocation) {
-                this.context.dispatch({
-                    actionType: DispatchEvent,
-                    event: { eventType: LocationUpdated, location }
-                })
+                this.context.dispatchEvent({ eventType: LocationUpdated, location })
             }
         }))
 
@@ -82,7 +79,8 @@ export default class App extends React.Component {
             credential: state.credential
         })))
         const ConnectedContent = connectToStore(Content, store::map(state => ({
-            contents: state.contents
+            contents: state.contents,
+            activeEntry: state.activeEntry
         })))
         const ConnectedDashboard = connectToStore(Dashboard, store)
         const ConnectedSidebar = connectToStore(Sidebar, store::map(state => ({

@@ -2,6 +2,7 @@ import EntryContent from './EntryContent'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 import React from 'react'
 import appContextTypes from './appContextTypes'
+import classnames from 'classnames'
 import { ExpandUrl, FetchFullContent } from '../../constants/actionTypes'
 
 function nextLink(entry) {
@@ -14,7 +15,8 @@ function nextLink(entry) {
 
 export default class Entry extends React.Component {
     static propTypes = {
-        entry: React.PropTypes.object.isRequired
+        entry: React.PropTypes.object.isRequired,
+        isActive: React.PropTypes.bool.isRequired
     }
 
     static contextTypes = appContextTypes
@@ -45,7 +47,7 @@ export default class Entry extends React.Component {
     }
 
     render() {
-        const { entry } = this.props
+        const { entry, isActive } = this.props
         const fullContents = entry._fullContents || []
 
         const contents = fullContents.length > 0
@@ -57,7 +59,7 @@ export default class Entry extends React.Component {
             : null
 
         return (
-            <li className="entry">
+            <li className={classnames("entry", { 'is-active': isActive })}>
                 <h2 className="entry-title">
                     <a href={entry.alternate[0].href} target="_blank">{entry.title}</a>
                 </h2>

@@ -29,6 +29,11 @@ export interface CredentialReceived extends Event<string> {
     credential: feedly.Credential
 }
 
+export const EntryActivated = 'EntryActivated'
+export interface EntryActivated extends Event<string> {
+    entry: feedly.Entry
+}
+
 export const FullContentReceived = 'FullContentReceived'
 export interface FullContentReceived extends Event<string> {
     fullContent: FullContent

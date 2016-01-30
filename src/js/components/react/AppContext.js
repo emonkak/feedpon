@@ -1,5 +1,6 @@
 import React from 'react'
 import appContextTypes from './appContextTypes'
+import { DispatchEvent } from '../../constants/actionTypes'
 import { concat } from 'rxjs/operator/concat'
 import { publish } from 'rxjs/operator/publish'
 import { publishBehavior } from 'rxjs/operator/publishBehavior'
@@ -34,6 +35,9 @@ export default class AppContext extends React.Component {
             },
             dispatch(action) {
                 actionSubject.next(action)
+            },
+            dispatchEvent(event) {
+                actionSubject.next({ actionType: DispatchEvent, event })
             },
             listen(subscriber) {
                 return actionSubject.subscribe(subscriber)

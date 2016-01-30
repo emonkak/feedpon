@@ -29,6 +29,9 @@ export const reducer = new ReducerBuilder<State, AnyEvent>(event => event.eventT
     .on<eventTypes.CredentialReceived>(eventTypes.CredentialReceived, (state, { credential }) => {
         return Object.assign({}, state, { credential })
     })
+    .on<eventTypes.EntryActivated>(eventTypes.EntryActivated, (state, { entry }) => {
+        return Object.assign({}, state, { activeEntry: entry })
+    })
     .on<eventTypes.UrlExpanded>(eventTypes.UrlExpanded, (state, { url, redirectUrl }) => {
         const { contents } = state
         if (contents == null) return state
