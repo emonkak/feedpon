@@ -43,7 +43,7 @@ export default class EntryList extends React.Component {
         const { contents, activeEntry } = this.props
         return contents.items.map(item => {
             return (
-                <Entry key={item.id} entry={item} isActive={item === activeEntry} />
+                <Entry key={item.id} entry={item} isActive={activeEntry && item.id === activeEntry.id} />
             )
         })
     }
@@ -78,6 +78,11 @@ export default class EntryList extends React.Component {
             let offsetTop = node.offsetTop
             let offsetBottom = offsetTop + node.offsetHeight
 
+            const contains = offsetTop >= scrollTop && offsetBottom <= scrollBottom
+            if (contains) {
+                return container.innerHeight
+            }
+
             if (offsetTop < scrollTop) {
                 offsetTop = scrollTop
             }
@@ -87,7 +92,10 @@ export default class EntryList extends React.Component {
 
             return offsetBottom - offsetTop
         })
-        if (element && (element.props.entry !== this.props.activeEntry)) {
+        if (element
+            && element instanceof Entry
+            && (this.props.activeEntry == null
+                || element.props.entry.id !== this.props.activeEntry.id)) {
             this.context.dispatchEvent({
                 eventType: EntryActivated,
                 entry: element.props.entry

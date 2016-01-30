@@ -25,10 +25,35 @@ export default class ScrollSpy extends React.Component {
     }
 
     componentDidMount() {
-        const { children, useWindowAsScrollContainer, onInViewport, onEnter, onLeave, scrollDebounceTime } = this.props
+        this._registerListeners()
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        this._unregisterListeners()
+        this._registerListeners()
+    }
+
+    componentWillUnmount() {
+        this._unregisterListeners()
+    }
+
+    render() {
+        const { children, className } = this.props
+
+        return (
+            <ul className={className} ref="scrollable">
+                {React.Children.map(children, (element, i) => {
+                    return React.cloneElement(element, { ref: i })
+                })}
+            </ul>
+        )
+    }
+
+    _registerListeners() {
+        const { children, useWindowAsScrollContainer, scrollDebounceTime, onInViewport, onEnter, onLeave } = this.props
 
         const container = useWindowAsScrollContainer ? window : this.refs.scrollable
-        const childNodes = React.Children.map(children, (element, i) => {
+        const childDomNodes = React.Children.map(children, (element, i) => {
             const ref = this.refs[i]
             return ReactDOM.findDOMNode(ref)
         })
@@ -36,10 +61,10 @@ export default class ScrollSpy extends React.Component {
         const onInViewport$ = FromEventObservable.create(container, 'scroll')
             ::debounceTime(scrollDebounceTime)
             ::map(event => {
-                for (let i = 0, l = childNodes.length; i < l; i++) {
-                    if (inViewport(childNodes[i])) {
+                for (let i = 0, l = childDomNodes.length; i < l; i++) {
+                    if (inViewport(childDomNodes[i])) {
                         const result = [this.refs[i]]
-                        for (let j = i + 1; j < l && inViewport(childNodes[j]); j++) {
+                        for (let j = i + 1; j < l && inViewport(childDomNodes[j]); j++) {
                             result.push(this.refs[j])
                         }
                         return result
@@ -76,19 +101,7 @@ export default class ScrollSpy extends React.Component {
         }
     }
 
-    componentWillUnmount() {
-        this._subscription.unsubscribe()
-    }
-
-    render() {
-        const { children, className } = this.props
-
-        return (
-            <ul className={className} ref="scrollable">
-                {React.Children.map(children, (element, i) => {
-                    return React.cloneElement(element, { ref: i })
-                })}
-            </ul>
-        )
+    _unregisterListeners() {
+        if (this._subscription) this._subscription.unsubscribe()
     }
 }
