@@ -1,5 +1,5 @@
-export default function* filter<T, TResult>(selector: (item: T) => TResult): Iterable<TResult> {
-    for (const item of this) {
-        yield selector(item)
+export default function* filter<T, TResult>(selector: (value: T) => TResult): Iterable<TResult> {
+    for (const value of this) {
+        yield selector(value)
     }
 }

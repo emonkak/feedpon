@@ -1,30 +1,30 @@
 export default function* groupJoin<TOuter, TInner, TKey, TResult>(
     inner: Iterable<TInner>,
-    outerKeySelector: (item: TOuter) => TKey,
-    innerKeySelector: (item: TInner) => TKey,
+    outerKeySelector: (value: TOuter) => TKey,
+    innerKeySelector: (value: TInner) => TKey,
     resultSelector: (outer: TOuter, inner: TInner[]) => TResult
 ): Iterable<TResult> {
     const table = prepareLookupTable(inner, innerKeySelector)
 
-    for (const item of this) {
-        const key = outerKeySelector(item)
+    for (const value of this) {
+        const key = outerKeySelector(value)
         if (table.has(key)) {
-            yield resultSelector(item, table.get(key))
+            yield resultSelector(value, table.get(key))
         } else {
-            yield resultSelector(item, [])
+            yield resultSelector(value, [])
         }
     }
 }
 
-function prepareLookupTable<TInner, TKey>(inner: Iterable<TInner>, innerKeySelector: (item: TInner) => TKey): Map<TKey, TInner[]> {
+function prepareLookupTable<TInner, TKey>(inner: Iterable<TInner>, innerKeySelector: (value: TInner) => TKey): Map<TKey, TInner[]> {
     const table = new Map<TKey, TInner[]>()
 
-    for (const item of inner) {
-        const key = innerKeySelector(item)
+    for (const value of inner) {
+        const key = innerKeySelector(value)
         if (table.has(key)) {
-            table.get(key).push(item)
+            table.get(key).push(value)
         } else {
-            table.set(key, [item])
+            table.set(key, [value])
         }
     }
 

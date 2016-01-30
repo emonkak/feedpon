@@ -1,7 +1,7 @@
-export default function* flatMap<T, TCollection>(
-    collectionSelector: (item: T) => Iterable<TCollection>
-): Iterable<TCollection> {
-    for (const item of this) {
-        yield* collectionSelector(item)
+export default function* flatMap<TSource, TResult>(
+    collectionSelector: (item: TSource) => Iterable<TResult>
+): Iterable<TResult> {
+    for (const value of this) {
+        yield* collectionSelector(value)
     }
 }

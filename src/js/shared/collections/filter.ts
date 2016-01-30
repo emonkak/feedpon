@@ -1,7 +1,7 @@
 export default function* filter<T>(predicate: (item: T) => boolean): Iterable<T> {
-    for (const item of this) {
-        if (predicate(item)) {
-            yield item
+    for (const value of this) {
+        if (predicate(value)) {
+            yield value
         }
     }
 }

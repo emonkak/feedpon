@@ -5,7 +5,8 @@ import ReactDOM from 'react-dom'
 import ScrollSpy from './ScrollSpy'
 import Waypoint from 'react-waypoint'
 import appContextTypes from './appContextTypes'
-import maxBy from 'lodash.maxby'
+import filter from '../../shared/collections/filter'
+import maxBy from '../../shared/collections/maxBy'
 import { EntryActivated } from '../../constants/eventTypes'
 import { FetchContents } from '../../constants/actionTypes'
 
@@ -70,30 +71,27 @@ export default class EntryList extends React.Component {
     }
 
     handleInViewport(elements, container) {
-        const element = maxBy(elements, element => {
-            const node = ReactDOM.findDOMNode(element)
+        const scrollTop = container.scrollY
+        const scrollBottom = scrollTop + container.innerHeight
 
-            let scrollTop = container.scrollY
-            let scrollBottom = scrollTop + container.innerHeight
-            let offsetTop = node.offsetTop
-            let offsetBottom = offsetTop + node.offsetHeight
+        const element = elements
+            ::filter(element => element instanceof Entry)
+            ::maxBy(element => {
+                const node = ReactDOM.findDOMNode(element)
+                const offsetTop = node.offsetTop
+                const offsetBottom = offsetTop + node.offsetHeight
 
-            const contains = offsetTop >= scrollTop && offsetBottom <= scrollBottom
-            if (contains) {
-                return container.innerHeight
-            }
+                if (offsetTop >= scrollTop && offsetBottom <= scrollBottom) {
+                    return scrollBottom - offsetTop
+                }
 
-            if (offsetTop < scrollTop) {
-                offsetTop = scrollTop
-            }
-            if (offsetBottom > scrollBottom) {
-                offsetBottom = scrollBottom
-            }
+                const displayTop = offsetTop < scrollTop ? scrollTop : offsetTop
+                const displayBottom = offsetBottom > scrollBottom ? scrollBottom : offsetBottom
 
-            return offsetBottom - offsetTop
-        })
+                return displayBottom - displayTop
+            })
+
         if (element
-            && element instanceof Entry
             && (this.props.activeEntry == null
                 || element.props.entry.id !== this.props.activeEntry.id)) {
             this.context.dispatchEvent({

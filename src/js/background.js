@@ -16,10 +16,8 @@ import { ExpandUrl, FetchCategories, FetchContents, FetchFullContent, FetchSubsc
 import { FromEventPatternObservable } from 'rxjs/observable/fromEventPattern'
 import { Observable } from 'rxjs/Observable'
 import { Subscription } from 'rxjs/Subscription'
-import { _finally } from 'rxjs/operator/finally'
 import { filter } from 'rxjs/operator/filter'
 import { map } from 'rxjs/operator/map'
-import { mergeMap } from 'rxjs/operator/mergeMap'
 import { takeUntil } from 'rxjs/operator/takeUntil'
 
 const actionDispatcher = new ActionDispatcher(container)
@@ -34,40 +32,37 @@ const actionDispatcher = new ActionDispatcher(container)
     .mount(GetSubscriptionsCache, GetSubscriptionsCacheHandler)
     .mount(GetUnreadCountsCache, GetUnreadCountsCacheHandler)
 
-const ports = FromEventPatternObservable.create(
+const port$ = FromEventPatternObservable.create(
     ::chrome.runtime.onConnect.addListener,
     ::chrome.runtime.onConnect.removeListener
 )
 
-const messages = FromEventPatternObservable.create(
-    ::chrome.runtime.onMessage.addListener,
-    ::chrome.runtime.onMessage.removeListener,
-    (request, sender, sendResponse) => ({ request, sender, sendResponse })
+const message$ = FromEventPatternObservable.create(
+    handler => chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+        handler({ request, sender, sendResponse })
+        return true
+    }),
+    handler => chrome.runtime.onMessage.removeListener(handler),
 )
 
-const portsAndMessages = ports
-    ::mergeMap(port => {
-        const disconnected = FromEventPatternObservable.create(
-            ::port.onDisconnect.addListener,
-            ::port.onDisconnect.removeListener
-        )
+port$.subscribe(port => {
+    const disconnected = FromEventPatternObservable.create(
+        ::port.onDisconnect.addListener,
+        ::port.onDisconnect.removeListener
+    )
 
-        return messages
-            ::takeUntil(disconnected)
-            ::_finally(() => port.disconnect())
-            ::filter(message => message.sender.tab.id === port.sender.tab.id)
-            ::map(message => ({ port, message }))
-    })
-
-portsAndMessages
-    .subscribe(({ port, message }) => {
-        actionDispatcher.dispatch(message.request)
-            .subscribe(
-                event => port.postMessage(event),
-                error => message.sendResponse({ error: error ? error.toString() : null }),
-                () => message.sendResponse({})
-            )
-    })
+    message$
+        ::takeUntil(disconnected)
+        ::filter(message => message.sender.tab.id === port.sender.tab.id)
+        .subscribe(message => {
+            actionDispatcher.dispatch(message.request)
+                .subscribe(
+                    event => port.postMessage(event),
+                    error => message.sendResponse({error: error ? error.toString() : null }),
+                    () => message.sendResponse({})
+                )
+        })
+})
 
 chrome.browserAction.onClicked.addListener(() => {
     chrome.tabs.create({ url: 'index.html' })
