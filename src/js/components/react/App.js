@@ -27,25 +27,6 @@ export default class App extends React.Component {
 
         this._store = this.context.createStore(reducer, initialState)
         this._subscription = new Subscription()
-        this._subscription.add(this.context.listen(action => {
-            switch (action.actionType) {
-            case History.Push:
-                history.push(action.path)
-                break
-            case History.Replace:
-                history.replace(action.path)
-                break
-            case History.Go:
-                history.go(action.n)
-                break
-            case History.GoBack:
-                history.goBack()
-                break
-            case History.GoForward:
-                history.goForward()
-                break
-            }
-        }))
         this._subscription.add(this._store.subscribe(({ location }) => {
             if (location && location.key !== currentLocationKey) {
                 syncingLocation = true

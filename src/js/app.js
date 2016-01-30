@@ -6,6 +6,7 @@ import AppContext from './components/react/AppContext'
 import AuthenticateHandler from './handlers/AuthenticateHandler'
 import ChromeBackgroundActionDispatcher from './shared/dispatchers/ChromeBackgroundActionDispatcher'
 import DispatchEventHandler from './handlers/DispatchEventHandler'
+import HistoryActionsHandler from './handlers/HistoryActionsHandler'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import connectToStore from './components/react/connectToStore'
@@ -13,7 +14,7 @@ import container from './container'
 import fromChromeEvent from './utils/fromChromeEvent'
 import fromScalar from './utils/fromScalar'
 import { ActionDone, ActionFailed } from './constants/eventTypes'
-import { Authenticate, DispatchEvent } from './constants/actionTypes'
+import { Authenticate, DispatchEvent, History } from './constants/actionTypes'
 import { DeferObservable } from 'rxjs/observable/defer'
 import { EmptyObservable } from 'rxjs/observable/empty'
 import { FromEventPatternObservable } from 'rxjs/observable/fromEventPattern'
@@ -33,6 +34,10 @@ const actionSubject = new Subject()
 const actionDispatcher = new ActionDispatcher(container)
     .mount(Authenticate, AuthenticateHandler)
     .mount(DispatchEvent, DispatchEventHandler)
+    .mount(History.GoBack, HistoryActionsHandler)
+    .mount(History.GoForward, HistoryActionsHandler)
+    .mount(History.Push, HistoryActionsHandler)
+    .mount(History.Replace, HistoryActionsHandler)
     .fallback(new ChromeBackgroundActionDispatcher())
 
 const eventStreamByLocalAction = actionSubject
@@ -56,6 +61,8 @@ const eventStream = merge(eventStreamByLocalAction, eventStreamByChromeMessage)
     ::_do(event => console.log(event))
 
 const element = document.getElementById('app')
+
+container.set('history', hashHistory)
 
 ReactDOM.render(
     <AppContext actionSubject={actionSubject} eventStream={eventStream}>

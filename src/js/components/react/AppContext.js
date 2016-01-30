@@ -38,9 +38,6 @@ export default class AppContext extends React.Component {
             },
             dispatchEvent(event) {
                 actionSubject.next({ actionType: DispatchEvent, event })
-            },
-            listen(subscriber) {
-                return actionSubject.subscribe(subscriber)
             }
         }
     }
