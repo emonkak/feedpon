@@ -19,10 +19,6 @@ module.exports = {
     module: {
         loaders: [
             {
-                test: /\.css/,
-                loaders: ['css-loader', 'postcss-loader']
-            },
-            {
                 test: /\.ts$/,
                 loaders: ['babel-loader', 'ts-loader']
             },

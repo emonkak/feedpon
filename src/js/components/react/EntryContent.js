@@ -1,7 +1,6 @@
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 import React from 'react'
 import appContextTypes from './appContextTypes'
-import baseStyle from '../../../css/base.css'
 
 export default class EntryContent extends React.Component {
     static propTypes = {
