@@ -1,13 +1,13 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import deepEqual from 'deep-equal'
-import except from '../../shared/collections/except'
 import inViewport from 'in-viewport'
-import toArray from '../../shared/collections/toArray'
+import maxBy from '../../shared/collections/maxBy'
 import { FromEventObservable } from 'rxjs/observable/fromEvent'
 import { Subscription } from 'rxjs/Subscription'
 import { debounceTime } from 'rxjs/operator/debounceTime'
 import { distinctUntilChanged } from 'rxjs/operator/distinctUntilChanged'
+import { filter } from 'rxjs/operator/filter'
 import { map } from 'rxjs/operator/map'
 import { pairwise } from 'rxjs/operator/pairwise'
 import { share } from 'rxjs/operator/share'
@@ -16,9 +16,8 @@ import { startWith } from 'rxjs/operator/startWith'
 export default class ScrollSpy extends React.Component {
     static propTypes = {
         className: React.PropTypes.string,
-        onInViewport: React.PropTypes.func,
-        onEnter: React.PropTypes.func,
-        onLeave: React.PropTypes.func,
+        onActivated: React.PropTypes.func,
+        onDeactivated: React.PropTypes.func,
         scrollDebounceTime: React.PropTypes.number,
         useWindowAsScrollContainer: React.PropTypes.bool
     }
@@ -33,39 +32,59 @@ export default class ScrollSpy extends React.Component {
 
         const container = useWindowAsScrollContainer ? window : this.refs.scrollable
 
-        const onInViewport$ = FromEventObservable.create(container, 'scroll')
+        const elementsInViewport$ = FromEventObservable.create(container, 'scroll')
             ::debounceTime(scrollDebounceTime)
             ::map(event => {
-                return React.Children.map(this.props.children, (element, i) => {
-                        return this.refs[i]
+                return React.Children.toArray(this.props.children)
+                    .map((element, i) => {
+                        const ref = this.refs[i]
+                        return [ref, ReactDOM.findDOMNode(ref)]
                     })
-                    .filter(ref => inViewport(ReactDOM.findDOMNode(ref)))
+                    .filter(([ref, node]) => inViewport(node))
             })
-            ::share()
-        const pairwiseOnInViewport$ = onInViewport$
-            ::startWith([])
+        const activeElementChanged$ = elementsInViewport$
+            ::map(elements => {
+                const scrollTop = container.scrollY || container.scrollTop
+                const scrollBottom = scrollTop + (container.innerHeight || container.scrollHeight)
+
+                return elements
+                    ::maxBy(element => {
+                        const [ref, node] = element
+                        const offsetTop = node.offsetTop
+                        const offsetBottom = offsetTop + node.offsetHeight
+
+                        if (offsetTop >= scrollTop && offsetBottom <= scrollBottom) {
+                            return scrollBottom - offsetTop
+                        }
+
+                        const displayTop = offsetTop < scrollTop ? scrollTop : offsetTop
+                        const displayBottom = offsetBottom > scrollBottom ? scrollBottom : offsetBottom
+
+                        return displayBottom - displayTop
+                    })
+            })
             ::distinctUntilChanged(deepEqual)
+            ::share()
+        const activeElement$ = activeElementChanged$
+            ::filter(x => x != null)
+        const inactiveElement$ = activeElementChanged$
             ::pairwise()
+            ::map(x => x[0])
+            ::filter(x => x != null)
 
         this._subscription = new Subscription()
-        this._subscription.add(onInViewport$.subscribe(current => {
-            const { onInViewport } = this.props
+        this._subscription.add(activeElement$.subscribe(element => {
+            const { onActivated } = this.props
 
-            if (onInViewport) {
-                onInViewport(current, container)
+            if (onActivated) {
+                onActivated(element[0], element[1], container)
             }
         }))
-        this._subscription.add(pairwiseOnInViewport$.subscribe(([prev, current]) => {
-            const { onEnter, onLeave } = this.props
+        this._subscription.add(inactiveElement$.subscribe(element => {
+            const { onDeactivated } = this.props
 
-            if (onEnter) {
-                const entered = current::except(prev)::toArray()
-                onEnter(entered, container)
-            }
-
-            if (onLeave) {
-                const leaved = prev::except(current)::toArray()
-                onLeave(leaved, container)
+            if (onDeactivated) {
+                onDeactivated(element[0], element[1], container)
             }
         }))
     }

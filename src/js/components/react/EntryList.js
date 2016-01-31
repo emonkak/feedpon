@@ -5,8 +5,6 @@ import ReactDOM from 'react-dom'
 import ScrollSpy from './ScrollSpy'
 import Waypoint from 'react-waypoint'
 import appContextTypes from './appContextTypes'
-import filter from '../../shared/collections/filter'
-import maxBy from '../../shared/collections/maxBy'
 import { EntryActivated } from '../../constants/eventTypes'
 import { FetchContents } from '../../constants/actionTypes'
 
@@ -40,7 +38,8 @@ export default class EntryList extends React.Component {
             <div>
                 <ScrollSpy className="entry-list"
                            useWindowAsScrollContainer
-                           onInViewport={::this.handleInViewport}>
+                           onActivated={::this.handleActivated}
+                           onDeactivated={::this.handleDeactivated}>
                     {this.renderEntries()}
                 </ScrollSpy>
                 {waypoint}
@@ -73,35 +72,18 @@ export default class EntryList extends React.Component {
         })
     }
 
-    handleInViewport(elements, container) {
-        const scrollTop = container.scrollY
-        const scrollBottom = scrollTop + container.innerHeight
+    handleActivated(element) {
+        const { activeEntry } = this.props
 
-        const element = elements
-            ::filter(element => element instanceof Entry)
-            ::maxBy(element => {
-                const node = ReactDOM.findDOMNode(element)
-                const offsetTop = node.offsetTop
-                const offsetBottom = offsetTop + node.offsetHeight
-
-                if (offsetTop >= scrollTop && offsetBottom <= scrollBottom) {
-                    return scrollBottom - offsetTop
-                }
-
-                const displayTop = offsetTop < scrollTop ? scrollTop : offsetTop
-                const displayBottom = offsetBottom > scrollBottom ? scrollBottom : offsetBottom
-
-                return displayBottom - displayTop
-            })
-
-        if (element
-            && (this.props.activeEntry == null
-                || element.props.entry.id !== this.props.activeEntry.id)) {
+        if (activeEntry == null || element.props.entry.id !== activeEntry.id) {
             this.context.dispatchEvent({
                 eventType: EntryActivated,
                 entry: element.props.entry
             })
         }
+    }
+
+    handleDeactivated(element) {
     }
 }
 
