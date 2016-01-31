@@ -7,4 +7,3 @@ export default function* except<T>(second: Iterable<T>): Iterable<T> {
         }
     }
 }
-

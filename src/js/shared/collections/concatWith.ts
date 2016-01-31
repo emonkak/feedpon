@@ -4,4 +4,3 @@ export default function* concatWith<T>(...sources: Iterable<T>[]): Iterable<T> {
         yield* source
     }
 }
-
