@@ -5,14 +5,6 @@ import appContextTypes from './appContextTypes'
 import classnames from 'classnames'
 import { ExpandUrl, FetchFullContent } from '../../constants/actionTypes'
 
-function nextLink(entry) {
-    const fullContents = entry._fullContents
-
-    return fullContents && fullContents.length > 0
-        ? fullContents[fullContents.length - 1].nextLink
-        : entry.alternate[0].href
-}
-
 export default class Entry extends React.Component {
     static propTypes = {
         entry: React.PropTypes.object.isRequired,
@@ -36,7 +28,7 @@ export default class Entry extends React.Component {
         const { entry } = this.props
         const fullContents = entry._fullContents || []
 
-        const url = nextLink(entry)
+        const url = getNextLink(entry)
         if (url != null) {
             this.context.dispatch({
                 actionType: FetchFullContent,
@@ -54,7 +46,7 @@ export default class Entry extends React.Component {
             ? fullContents.map(({ content, url }, i) => <EntryContent key={i} content={content} url={url} />)
             : entry.content ? <EntryContent content={entry.content.content} url={entry.alternate[0].href} /> : null
 
-        const actions = nextLink(entry)
+        const actions = getNextLink(entry)
             ? <button className="button button-default button-fill" onClick={::this.handleFetchFullContent}>Fetch Full Content</button>
             : null
 
@@ -80,3 +72,11 @@ export default class Entry extends React.Component {
 }
 
 Object.assign(Entry.prototype, PureRenderMixin)
+
+function getNextLink(entry) {
+    const fullContents = entry._fullContents
+
+    return fullContents && fullContents.length > 0
+        ? fullContents[fullContents.length - 1].nextLink
+        : entry.alternate[0].href
+}
