@@ -35,7 +35,7 @@ export interface IDefinition<T> {
 }
 
 export interface IDependency<T> {
-    get(): T
+    get(instances: WeakMap<IInjectable<any>, any>): T
 }
 
 export interface IInjectionPolicy {
@@ -47,9 +47,9 @@ export interface IInjectionPolicy {
 }
 
 export interface IInstantiable<T> {
-    injectable: IInjectable<T>
+    getInjectable(): IInjectable<T>
 
-    instantiate(): T
+    instantiate(instances: WeakMap<IInjectable<any>, any>): T
 }
 
 export interface IResolver {
@@ -57,5 +57,5 @@ export interface IResolver {
 }
 
 export interface IScope<T> {
-    (instantiable: IInstantiable<T>): T
+    (instantiable: IInstantiable<T>, instances: WeakMap<IInjectable<any>, any>): T
 }

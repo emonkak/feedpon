@@ -1,8 +1,10 @@
-import { IContainer, IDefinition, IDependency, IResolver, IInjectableClass, IInjectableKey, IInjectableFunction, IInjectionPolicy } from './interfaces'
+import { IContainer, IDefinition, IDependency, IResolver, IInjectable, IInjectableClass, IInjectableKey, IInjectableFunction, IInjectionPolicy } from './interfaces'
 import { AliasDefinition, ClassDefinition, ValueDefinition, FactoryDefinition } from './definitions'
 
 export default class Container implements IContainer {
-    private _definitions: Map<IInjectableKey<any>, IDefinition<any>> = new Map<IInjectableKey<any>, IDefinition<any>>()
+    private _definitions: Map<IInjectableKey<any>, IDefinition<any>> = new Map()
+
+    private _instances: WeakMap<IInjectable<any>, any> = new WeakMap()
 
     constructor(private _injectionPolicy: IInjectionPolicy) {
     }
@@ -54,7 +56,7 @@ export default class Container implements IContainer {
     }
 
     get<T>(key: IInjectableKey<T>): T {
-        return this.resolve(key).get()
+        return this.resolve(key).get(this._instances)
     }
 
     has<T>(key: IInjectableKey<T>): boolean {

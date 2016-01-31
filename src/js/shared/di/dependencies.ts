@@ -9,16 +9,16 @@ export class ClassDependency<T> implements IDependency<T>, IInstantiable<T> {
         }
     }
 
-    get injectable(): IInjectable<T> {
+    getInjectable(): IInjectable<T> {
         return this._target
     }
 
-    get(): T {
-        return this._scope(this)
+    get(instances: WeakMap<IInjectable<any>, any>): T {
+        return this._scope(this, instances)
     }
 
-    instantiate(): T {
-        const args = this._dependencies.map(dependency => dependency.get())
+    instantiate(instances: WeakMap<IInjectable<any>, any>): T {
+        const args = this._dependencies.map(dependency => dependency.get(instances))
         return new this._target(...args)
     }
 }
@@ -32,16 +32,16 @@ export class FactoryDependency<T> implements IDependency<T>, IInstantiable<T> {
         }
     }
 
-    get injectable(): IInjectable<T> {
+    getInjectable(): IInjectable<T> {
         return this._factory
     }
 
-    get(): T {
-        return this._scope(this)
+    get(instances: WeakMap<IInjectable<any>, any>): T {
+        return this._scope(this, instances)
     }
 
-    instantiate(): T {
-        const args = this._dependencies.map(dependency => dependency.get())
+    instantiate(instances: WeakMap<IInjectable<any>, any>): T {
+        const args = this._dependencies.map(dependency => dependency.get(instances))
         return this._factory(...args)
     }
 }

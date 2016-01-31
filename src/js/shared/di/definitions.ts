@@ -1,4 +1,4 @@
-import { IDefinition, IDependency, IInjectableClass, IInjectableKey, IInjectableFunction, IInjectionPolicy, IResolver, IScope } from './interfaces'
+import { IDefinition, IDependency, IInjectable, IInjectableClass, IInjectableKey, IInjectableFunction, IInjectionPolicy, IResolver, IScope } from './interfaces'
 import { ClassDependency, FactoryDependency } from './dependencies'
 
 abstract class BaseDefinition<T> implements IDefinition<T> {
@@ -83,7 +83,7 @@ export class ValueDefinition<T> implements IDefinition<T>, IDependency<T> {
         return this
     }
 
-    get(): T {
+    get(instances: WeakMap<IInjectable<any>, any>): T {
         return this._value
     }
 }

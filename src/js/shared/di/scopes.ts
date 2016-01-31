@@ -1,21 +1,19 @@
 import { IInjectable, IInstantiable } from './interfaces'
 
-const singletons = new WeakMap<IInjectable<any>, any>()
-
-export function prototypeScope<T>(instantiable: IInstantiable<T>): T {
-    return instantiable.instantiate()
+export function prototypeScope<T>(instantiable: IInstantiable<T>, instances: WeakMap<IInjectable<any>, any>): T {
+    return instantiable.instantiate(instances)
 }
 
-export function singletonScope<T>(instantiable: IInstantiable<T>): T {
-    const injectable = instantiable.injectable
+export function singletonScope<T>(instantiable: IInstantiable<T>, instances: WeakMap<IInjectable<any>, any>): T {
+    const injectable = instantiable.getInjectable()
 
-    if (singletons.has(injectable)) {
-        return singletons.get(injectable)
+    if (instances.has(injectable)) {
+        return instances.get(injectable)
     }
 
-    const instance = instantiable.instantiate()
+    const instance = instantiable.instantiate(instances)
 
-    singletons.set(injectable, instance)
+    instances.set(injectable, instance)
 
     return instance
 }
