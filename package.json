@@ -12,6 +12,7 @@
     "build:fonts": "ncp node_modules/font-awesome/fonts app/chrome/fonts",
     "build:js": "webpack --optimize-dedupe --optimize-minimize",
     "clean": "rimraf app/chrome/{js,css,fonts}",
+    "postinstall": "typings install",
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch": "npm-run-all -p watch:css watch:fonts watch:js",
     "watch:css": "postcss -c postcss.config.json -w -o app/chrome/css/index.css src/css/index.css",
@@ -52,6 +53,7 @@
     "rimraf": "^2.5.1",
     "ts-loader": "^0.7.2",
     "typescript": "^1.7.3",
+    "typings": "^0.6.6",
     "watch": "^0.16.0",
     "webpack": "^1.12.9"
   }

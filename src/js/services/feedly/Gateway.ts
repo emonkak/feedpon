@@ -1,6 +1,3 @@
-/// <reference path="../../typings/whatwg-fetch.d.ts" />
-/// <reference path="../../../DefinitelyTyped/node/node-0.12.d.ts" />
-
 import * as querystring from 'querystring'
 import * as feedly from './interfaces'
 import { IHttpClient } from '../http/interfaces'

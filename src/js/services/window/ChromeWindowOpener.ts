@@ -1,5 +1,3 @@
-/// <reference path="../../typings/chrome.d.ts" />
-
 import { FromEventPatternObservable } from 'rxjs/observable/fromEventPattern'
 import { IWindowOpener } from './interfaces'
 import { Inject } from '../../shared/di/annotations'

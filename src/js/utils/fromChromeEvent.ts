@@ -1,5 +1,3 @@
-/// <reference path="../typings/chrome.d.ts" />
-
 import { FromEventPatternObservable } from 'rxjs/observable/fromEventPattern'
 import { Observable } from 'rxjs/Observable'
 

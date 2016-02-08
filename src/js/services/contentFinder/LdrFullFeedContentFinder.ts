@@ -1,5 +1,3 @@
-/// <reference path="../../typings/whatwg-fetch.d.ts" />
-
 import WedataLoader from './WedataLoader'
 import decodeResponseAsString from '../../utils/decodeResponseAsString'
 import matches from '../../utils/matches'

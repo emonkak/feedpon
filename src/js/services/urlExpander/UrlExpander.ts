@@ -1,5 +1,3 @@
-/// <reference path="../../typings/whatwg-fetch.d.ts" />
-
 import { IHttpClient } from '../http/interfaces'
 import { Redirection, IRedirectionRepository } from './interfaces'
 import { Inject } from '../../shared/di/annotations'

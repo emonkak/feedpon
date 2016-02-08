@@ -1,5 +1,3 @@
-/// <reference path="./typings/localForage.d.ts" />
-
 import localforage from 'localforage'
 import AutoPagerizeContentFinder from './services/contentFinder/AutoPagerizeContentFinder'
 import ChainedContentFinder from './services/contentFinder/ChainedContentFinder'

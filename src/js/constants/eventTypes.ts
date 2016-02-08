@@ -1,5 +1,3 @@
-/// <reference path="../../DefinitelyTyped/react-router/react-router.d.ts" />
-
 import * as feedly from '../services/feedly/interfaces'
 import { Event, Action } from '../shared/interfaces'
 

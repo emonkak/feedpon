@@ -1,5 +1,3 @@
-/// <reference path="../../DefinitelyTyped/react-router/react-router.d.ts" />
-
 import { EventDispatcher, IActionHandler } from '../shared/interfaces'
 import { History } from '../constants/actionTypes'
 import { Inject, Named } from '../shared/di/annotations'

@@ -1,5 +1,3 @@
-/// <reference path="../../typings/whatwg-fetch.d.ts" />
-
 import * as feedly from './interfaces'
 import Gateway from './Gateway'
 import { EmptyObservable } from 'rxjs/observable/empty'

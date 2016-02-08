@@ -1,5 +1,3 @@
-/// <reference path="../../typings/localForage.d.ts" />
-
 import * as storageKeys from '../../constants/storageKeys'
 import { Inject, Named } from '../../shared/di/annotations'
 import { Subscription, ISubscriptionRepository } from './interfaces'

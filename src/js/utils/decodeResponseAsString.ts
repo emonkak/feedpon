@@ -1,6 +1,3 @@
-/// <reference path="../../DefinitelyTyped/node/node-0.12.d.ts" />
-/// <reference path="../../DefinitelyTyped/text-encoding/text-encoding.d.ts" />
-
 const CHARSET_REGEXP = new RegExp('charset=([\\w-]+)', 'i')
 const QUOTED_CHARSET_REGEXP = new RegExp('charset=["\']?([\\w-]+)["\']?', 'i')
 

@@ -1,10 +1,9 @@
-/// <reference path="../DefinitelyTyped/react-router/react-router.d.ts" />
-
 import * as eventTypes from './constants/eventTypes'
 import * as feedly from './services/feedly/interfaces'
 import ReducerBuilder from './shared/utils/ReducerBuilder'
-import update from 'react-addons-update'
 import { AnyEvent } from './shared/interfaces'
+
+const update = require('react-addons-update')
 
 interface State {
     subscriptions: feedly.Subscription[]

@@ -1,5 +1,3 @@
-/// <reference path="../typings/whatwg-fetch.d.ts" />
-
 import { EventDispatcher, IActionHandler } from '../shared/interfaces'
 import { FetchFullContent } from '../constants/actionTypes'
 import { FullContentReceived } from '../constants/eventTypes'
