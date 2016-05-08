@@ -10,6 +10,8 @@ import selectMany from '@emonkak/enumerable/selectMany'
 import toArray from '@emonkak/enumerable/toArray'
 import where from '@emonkak/enumerable/where'
 import { FetchSubscriptions, FetchUnreadCounts, FetchCategories } from '../../constants/actionTypes'
+import { fromEvent } from 'rxjs/observable/fromEvent'
+import { throttleTime } from 'rxjs/operator/throttleTime'
 
 export default class Sidebar extends React.Component {
     static propTypes = {
@@ -27,8 +29,14 @@ export default class Sidebar extends React.Component {
         this.state = { filterQuery: '' }
     }
 
-    handleFilterChanged(event) {
-        this.setState({ filterQuery: event.target.value })
+    componentDidMount() {
+        this._subscription = fromEvent(this.refs.subscriptionFilter, 'input')
+            ::throttleTime(250)
+            .subscribe(event => this.setState({ filterQuery: event.target.value }))
+    }
+
+    componentWillUnmount() {
+        this._subscription.unsubscribe()
     }
 
     handleUpdate() {
@@ -46,7 +54,6 @@ export default class Sidebar extends React.Component {
             : []
 
         const subscriptions = this.props.subscriptions
-            ::where(subscription => (subscription.title && subscription.title.indexOf(filterQuery) !== -1) || (subscription.website && subscription.website.indexOf(filterQuery) !== -1))
             ::join(
                 unreadCounts,
                 subscription => subscription.id,
@@ -54,8 +61,10 @@ export default class Sidebar extends React.Component {
                 (subscription, unreadCount) => ({ subscription, unreadCount })
             )
             ::selectMany(({ subscription, unreadCount }) => {
+                const isHidden = filterQuery.split(/\s+/)
+                    .some(q => (subscription.title && subscription.title.indexOf(q) === -1) && (subscription.website && subscription.website.indexOf(q) === -1))
                 const categories = subscription.categories.length > 0 ? subscription.categories : defaultCategories
-                return categories::select(category => ({ category, subscription, unreadCount }))
+                return categories::select(category => ({ category, subscription, unreadCount, isHidden }))
             })
 
         const categories = this.props.categories
@@ -69,7 +78,7 @@ export default class Sidebar extends React.Component {
 
         return (
             <div className="l-sidebar">
-                <input className="subscription-filter" type="text" onChange={::this.handleFilterChanged} />
+                <input ref="subscriptionFilter" className="subscription-filter" type="text" />
                 <ul className="subscription-category-list">
                     {categories::select(::this.renderCategory)::toArray()}
                 </ul>

@@ -45,14 +45,15 @@ export default class SubscriptionCategory extends React.Component {
         )
     }
 
-    renderSubscription({ subscription, unreadCount }) {
+    renderSubscription({ subscription, unreadCount, isHidden }) {
         const { selectedStreamId } = this.props
 
         return (
             <Subscription key={subscription.id}
                           subscription={subscription}
                           unreadCount={unreadCount}
-                          isSelected={subscription.id === selectedStreamId} />
+                          isSelected={subscription.id === selectedStreamId}
+                          isHidden={isHidden} />
         )
     }
 

@@ -8,7 +8,8 @@ export default class Subscription extends React.Component {
     static propTypes = {
         subscription: React.PropTypes.object.isRequired,
         unreadCount: React.PropTypes.object.isRequired,
-        isSelected: React.PropTypes.bool.isRequired
+        isSelected: React.PropTypes.bool.isRequired,
+        isHidden: React.PropTypes.bool.isRequired
     }
 
     static contextTypes = appContextTypes
@@ -23,14 +24,14 @@ export default class Subscription extends React.Component {
     }
 
     render() {
-        const { subscription, unreadCount, isSelected } = this.props
+        const { subscription, unreadCount, isSelected, isHidden } = this.props
 
         const icon = subscription.iconUrl != null
             ? <img className="subscription-icon" src={subscription.iconUrl} alt={subscription.title} width="16" height="16" />
             : <i className="subscription-icon fa fa-file-o" />
 
         return (
-            <li className={classnames('subscription', { 'is-selected': isSelected })}>
+            <li className={classnames('subscription', { 'is-selected': isSelected, 'is-hidden': isHidden })}>
                 <a className="subscription-link" onClick={::this.handleSelectStream}>
                     {icon}
                     <span className="subscription-title">{subscription.title}</span>
