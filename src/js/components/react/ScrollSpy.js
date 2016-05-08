@@ -1,13 +1,14 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import deepEqual from 'deep-equal'
+import firstOrDefault from '@emonkak/enumerable/firstOrDefault'
 import inViewport from 'in-viewport'
-import maxBy from '../../shared/collections/maxBy'
-import { fromEvent } from 'rxjs/observable/fromEvent'
+import maxBy from '@emonkak/enumerable/maxBy'
 import { Subscription } from 'rxjs/Subscription'
 import { debounceTime } from 'rxjs/operator/debounceTime'
 import { distinctUntilChanged } from 'rxjs/operator/distinctUntilChanged'
 import { filter } from 'rxjs/operator/filter'
+import { fromEvent } from 'rxjs/observable/fromEvent'
 import { map } from 'rxjs/operator/map'
 import { pairwise } from 'rxjs/operator/pairwise'
 import { share } from 'rxjs/operator/share'
@@ -62,6 +63,7 @@ export default class ScrollSpy extends React.Component {
 
                         return displayBottom - displayTop
                     })
+                    ::firstOrDefault()
             })
             ::distinctUntilChanged(deepEqual)
             ::share()
@@ -74,17 +76,19 @@ export default class ScrollSpy extends React.Component {
 
         this._subscription = new Subscription()
         this._subscription.add(activeElement$.subscribe(element => {
+            const [ref, node] = element
             const { onActivated } = this.props
 
             if (onActivated) {
-                onActivated(element[0], element[1], container)
+                onActivated(ref, node, container)
             }
         }))
         this._subscription.add(inactiveElement$.subscribe(element => {
+            const [ref, node] = element
             const { onDeactivated } = this.props
 
             if (onDeactivated) {
-                onDeactivated(element[0], element[1], container)
+                onDeactivated(ref, node, container)
             }
         }))
     }

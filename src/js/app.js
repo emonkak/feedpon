@@ -1,5 +1,3 @@
-import 'regenerator/runtime'
-
 import ActionDispatcher from './shared/dispatchers/ActionDispatcher'
 import App from './components/react/App'
 import AppContext from './components/react/AppContext'

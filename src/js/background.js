@@ -1,5 +1,3 @@
-import 'regenerator/runtime'
-
 import ActionDispatcher from './shared/dispatchers/ActionDispatcher'
 import ExpandUrlHandler from './handlers/ExpandUrlHandler'
 import FetchCategoriesHandler from './handlers/FetchCategoriesHandler'
