@@ -1,11 +1,13 @@
 import React from 'react'
 import appContextTypes from './appContextTypes'
+import { AnimationFrameScheduler } from 'rxjs/scheduler/AnimationFrameScheduler'
 import { DispatchEvent } from '../../constants/actionTypes'
 import { concat } from 'rxjs/operator/concat'
 import { publish } from 'rxjs/operator/publish'
 import { publishBehavior } from 'rxjs/operator/publishBehavior'
 import { scan } from 'rxjs/operator/scan'
 import { startWith } from 'rxjs/operator/startWith'
+import { subscribeOn } from 'rxjs/operator/subscribeOn'
 
 export default class AppContext extends React.Component {
     static propTypes = {
@@ -32,6 +34,7 @@ export default class AppContext extends React.Component {
                 return eventStream
                     ::scan(reducer, initialState)
                     ::publishBehavior(initialState).refCount()
+                    ::subscribeOn(new AnimationFrameScheduler())
             },
             dispatch(action) {
                 actionSubject.next(action)

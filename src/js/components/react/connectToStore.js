@@ -1,3 +1,4 @@
+import PureRenderMixin from 'react-addons-pure-render-mixin'
 import React from 'react'
 import appContextTypes from './appContextTypes'
 
@@ -15,5 +16,6 @@ export default function connectToStore(Component, store) {
             return this.state ? React.createElement(Component, Object.assign({}, this.state, this.props), this.props.children) : null
         }
     }
+    Object.assign(StoreWrapper.prototype, PureRenderMixin)
     return StoreWrapper
 }
