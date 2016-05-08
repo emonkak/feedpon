@@ -1,4 +1,4 @@
-import { FromEventPatternObservable } from 'rxjs/observable/fromEventPattern'
+import { fromEventPattern } from 'rxjs/observable/fromEventPattern'
 import { IWindowOpener } from './interfaces'
 import { Inject } from '../../shared/di/annotations'
 import { Observable } from 'rxjs/Observable'
@@ -10,15 +10,21 @@ import 'rxjs/add/operator/finally'
 import 'rxjs/add/operator/map'
 import 'rxjs/add/operator/takeUntil'
 
+type TabUpdatedEvent = {
+    tabId: number,
+    changeInfo: chrome.tabs.TabChangeInfo,
+    tab: chrome.tabs.Tab
+}
+
 @Inject
 export default class ChromeWindowOpener implements IWindowOpener {
-    private _tabUpdated: Observable<{ tabId: number, changeInfo: chrome.tabs.TabChangeInfo, tab: chrome.tabs.Tab }> = FromEventPatternObservable.create(
+    private _tabUpdated: Observable<TabUpdatedEvent> = fromEventPattern(
         (handler) => chrome.tabs.onUpdated.addListener(handler as any),
         (handler) => chrome.tabs.onUpdated.removeListener(handler as any),
         (tabId, changeInfo, tab) => ({ tabId, changeInfo, tab })
     )
 
-    private _windowRemoved: Observable<number> = FromEventPatternObservable.create(
+    private _windowRemoved: Observable<number> = fromEventPattern(
         (handler) => chrome.windows.onRemoved.addListener(handler as any),
         (handler) => chrome.windows.onRemoved.removeListener(handler as any)
     )
@@ -34,7 +40,7 @@ export default class ChromeWindowOpener implements IWindowOpener {
 
                 this._tabUpdated
                     .takeUntil(windowRemoved)
-                    .finally(() => chrome.windows.remove(createdwindowId))
+                    .finally<TabUpdatedEvent>(() => chrome.windows.remove(createdwindowId))
                     .filter(({ tabId, changeInfo }) => tabId === createdTabId && changeInfo.status === 'complete')
                     .map(({ tab }) => tab.url)
                     .subscribe(subscriber)

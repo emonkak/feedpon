@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom'
 import deepEqual from 'deep-equal'
 import inViewport from 'in-viewport'
 import maxBy from '../../shared/collections/maxBy'
-import { FromEventObservable } from 'rxjs/observable/fromEvent'
+import { fromEvent } from 'rxjs/observable/fromEvent'
 import { Subscription } from 'rxjs/Subscription'
 import { debounceTime } from 'rxjs/operator/debounceTime'
 import { distinctUntilChanged } from 'rxjs/operator/distinctUntilChanged'
@@ -32,7 +32,7 @@ export default class ScrollSpy extends React.Component {
 
         const container = useWindowAsScrollContainer ? window : this.refs.scrollable
 
-        const elementsInViewport$ = FromEventObservable.create(container, 'scroll')
+        const elementsInViewport$ = fromEvent(container, 'scroll')
             ::debounceTime(scrollDebounceTime)
             ::map(event => {
                 return React.Children.toArray(this.props.children)

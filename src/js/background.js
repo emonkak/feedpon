@@ -13,7 +13,7 @@ import GetSubscriptionsCacheHandler from './handlers/GetSubscriptionsCacheHandle
 import GetUnreadCountsCacheHandler from './handlers/GetUnreadCountsCacheHandler'
 import container from './container'
 import { ExpandUrl, FetchCategories, FetchContents, FetchFullContent, FetchSubscriptions, FetchUnreadCounts, GetCategoriesCache, GetCredential, GetSubscriptionsCache, GetUnreadCountsCache } from './constants/actionTypes'
-import { FromEventPatternObservable } from 'rxjs/observable/fromEventPattern'
+import { fromEventPattern } from 'rxjs/observable/fromEventPattern'
 import { Observable } from 'rxjs/Observable'
 import { Subscription } from 'rxjs/Subscription'
 import { filter } from 'rxjs/operator/filter'
@@ -32,12 +32,12 @@ const actionDispatcher = new ActionDispatcher(container)
     .mount(GetSubscriptionsCache, GetSubscriptionsCacheHandler)
     .mount(GetUnreadCountsCache, GetUnreadCountsCacheHandler)
 
-const port$ = FromEventPatternObservable.create(
+const port$ = fromEventPattern(
     ::chrome.runtime.onConnect.addListener,
     ::chrome.runtime.onConnect.removeListener
 )
 
-const message$ = FromEventPatternObservable.create(
+const message$ = fromEventPattern(
     handler => chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         handler({ request, sender, sendResponse })
         return true
@@ -46,7 +46,7 @@ const message$ = FromEventPatternObservable.create(
 )
 
 port$.subscribe(port => {
-    const disconnected = FromEventPatternObservable.create(
+    const disconnected = fromEventPattern(
         ::port.onDisconnect.addListener,
         ::port.onDisconnect.removeListener
     )

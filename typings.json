@@ -2,17 +2,16 @@
   "dependencies": {},
   "devDependencies": {},
   "ambientDependencies": {
-    "MediaStream": "github:DefinitelyTyped/DefinitelyTyped/webrtc/MediaStream.d.ts#bc92442c075929849ec41d28ab618892ba493504",
-    "chrome": "github:DefinitelyTyped/DefinitelyTyped/chrome/chrome.d.ts#770eb0fef6647a839e770b6ff8389e772eb3f6e3",
-    "filesystem": "github:DefinitelyTyped/DefinitelyTyped/filesystem/filesystem.d.ts#8acb8a3f7bfef5469cae1c249beb9c44259e1d3d",
-    "filewriter": "github:DefinitelyTyped/DefinitelyTyped/filewriter/filewriter.d.ts#1d345f6c1471fab46b7eb54ebe90013f578c78ca",
-    "history": "github:DefinitelyTyped/DefinitelyTyped/react-router/history.d.ts#99f6493ffb1ef5479c6154ec9f82a47178bbf8b6",
-    "localForage": "github:DefinitelyTyped/DefinitelyTyped/localForage/localForage.d.ts#bed1b13d7935dc027c94839379e654be96e8b0b2",
-    "node": "github:DefinitelyTyped/DefinitelyTyped/node/node.d.ts#aee0039a2d6686ec78352125010ebb38a7a7d743",
-    "react": "github:DefinitelyTyped/DefinitelyTyped/react/react.d.ts#83b88a031cc8f2006fd361bf0a0b548c3bcc8259",
-    "react-addons-update": "github:DefinitelyTyped/DefinitelyTyped/react/react-addons-update.d.ts#ca5bfe76d2d9bf6852cbc712d9f3e0047c93486e",
-    "react-router": "github:DefinitelyTyped/DefinitelyTyped/react-router/react-router.d.ts#07feae11780495b90145451d48d4a50923762ef1",
-    "text-encoding": "github:DefinitelyTyped/DefinitelyTyped/text-encoding/text-encoding.d.ts#281db74a55053efb4084f96021be65eafd96029f",
-    "whatwg-fetch": "github:DefinitelyTyped/DefinitelyTyped/whatwg-fetch/whatwg-fetch.d.ts#c865ee8d5909b6a11e5edf426b7494cd96e353ba"
+    "chrome": "github:DefinitelyTyped/DefinitelyTyped/chrome/chrome.d.ts#925bf8b076867d714a75b9e9d86118287e030db2",
+    "filesystem": "github:DefinitelyTyped/DefinitelyTyped/filesystem/filesystem.d.ts#56295f5058cac7ae458540423c50ac2dcf9fc711",
+    "filewriter": "github:DefinitelyTyped/DefinitelyTyped/filewriter/filewriter.d.ts#56295f5058cac7ae458540423c50ac2dcf9fc711",
+    "history": "github:DefinitelyTyped/DefinitelyTyped/react-router/history.d.ts#152fb904dffd145582da89a0c776822b26ff0e8d",
+    "localforage": "github:DefinitelyTyped/DefinitelyTyped/localForage/localForage.d.ts#56295f5058cac7ae458540423c50ac2dcf9fc711",
+    "node": "github:DefinitelyTyped/DefinitelyTyped/node/node.d.ts#b8948c7009ae9af08bc2be3ef6b50d4f9a0019ad",
+    "react": "github:DefinitelyTyped/DefinitelyTyped/react/react.d.ts#152fb904dffd145582da89a0c776822b26ff0e8d",
+    "react-addons-update": "github:DefinitelyTyped/DefinitelyTyped/react/react-addons-update.d.ts#56295f5058cac7ae458540423c50ac2dcf9fc711",
+    "react-router": "github:DefinitelyTyped/DefinitelyTyped/react-router/react-router.d.ts#152fb904dffd145582da89a0c776822b26ff0e8d",
+    "text-encoding": "github:DefinitelyTyped/DefinitelyTyped/text-encoding/text-encoding.d.ts#7de6c3dd94feaeb21f20054b9f30d5dabc5efabd",
+    "whatwg-fetch": "github:DefinitelyTyped/DefinitelyTyped/whatwg-fetch/whatwg-fetch.d.ts#99e58db462a793a03f3db1855a2be55f2d68c47d"
   }
 }

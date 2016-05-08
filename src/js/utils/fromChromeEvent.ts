@@ -1,13 +1,13 @@
-import { FromEventPatternObservable } from 'rxjs/observable/fromEventPattern'
+import { fromEventPattern } from 'rxjs/observable/fromEventPattern'
 import { Observable } from 'rxjs/Observable'
 
 export default function fromChromeEvent<T>(
-    event: chrome.events.Event,
+    event: chrome.events.Event<Function>,
     selector?: (...args: Array<any>) => T
 ): Observable<T> {
-    return FromEventPatternObservable.create(
+    return fromEventPattern(
         (handler) => event.addListener(handler),
-        (handler) => event.removeListener(handler as any),
+        (handler) => event.removeListener(handler),
         selector
     )
 }

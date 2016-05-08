@@ -1,5 +1,5 @@
 import { AnyAction, AnyEvent, IActionDispatcher, IActionHandlerClass } from '../interfaces'
-import { ErrorObservable } from 'rxjs/observable/throw'
+import { _throw } from 'rxjs/observable/throw'
 import { IContainer } from '../di/interfaces'
 import { Observable } from 'rxjs/Observable'
 import { Subscriber } from 'rxjs/Subscriber'
@@ -9,7 +9,7 @@ export default class ActionDispatcher implements IActionDispatcher {
 
     private _fallback: IActionDispatcher = {
         dispatch<T extends AnyAction>(action: T): Observable<AnyEvent> {
-            return ErrorObservable.create<T>(new Error(`Can not handle the "${action.actionType}" action.`))
+            return _throw<T>(new Error(`Can not handle the "${action.actionType}" action.`))
         }
     }
 

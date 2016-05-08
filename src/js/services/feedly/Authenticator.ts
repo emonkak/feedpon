@@ -1,11 +1,11 @@
 import * as feedly from './interfaces'
 import Gateway from './Gateway'
-import { EmptyObservable } from 'rxjs/observable/empty'
-import { ErrorObservable } from 'rxjs/observable/throw'
 import { IClock } from '../clock/interfaces'
 import { IWindowOpener } from '../window/interfaces'
 import { Inject } from '../../shared/di/annotations'
 import { ScalarObservable } from 'rxjs/observable/ScalarObservable'
+import { _throw } from 'rxjs/observable/throw'
+import { empty } from 'rxjs/observable/empty'
 
 import 'rxjs/add/operator/concatMap'
 import 'rxjs/add/operator/filter'
@@ -90,12 +90,12 @@ export default class Authenticator {
                         state: matchesForState ? matchesForState[1] : null
                     })
                 } else if (matchesForError) {
-                    return ErrorObservable.create({
+                    return _throw({
                         error: matchesForError[1],
                         state: matchesForState ? matchesForState[1] : null
                     })
                 } else {
-                    return EmptyObservable.create()
+                    return empty()
                 }
             })
             .first()
