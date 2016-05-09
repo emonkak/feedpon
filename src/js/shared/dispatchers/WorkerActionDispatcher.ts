@@ -11,9 +11,7 @@ export default class WorkerActionDispatcher implements IActionDispatcher {
             const chan = new MessageChannel()
 
             chan.port2.onmessage = ({ data }) => {
-                if (data == null) {
-                    observer.error('The response does not exist')
-                } else if ('error' in data) {
+                if (data && data.hasOwnProperty('error' )) {
                     observer.error(data.error)
                 } else {
                     observer.complete()
