@@ -1,5 +1,5 @@
-import PureRenderMixin from 'react-addons-pure-render-mixin'
-import React from 'react'
+import PureRenderMixin from 'react-addons-pure-render-mixin';
+import React from 'react';
 
 export default class Dashboard extends React.Component {
     render() {
@@ -7,8 +7,8 @@ export default class Dashboard extends React.Component {
             <div>
                 <h1>Dashboard</h1>
             </div>
-        )
+        );
     }
 }
 
-Object.assign(Dashboard.prototype, PureRenderMixin)
+Object.assign(Dashboard.prototype, PureRenderMixin);

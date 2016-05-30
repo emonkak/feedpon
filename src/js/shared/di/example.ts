@@ -1,37 +1,37 @@
-import Container from './container'
-import { Inject, Singleton } from './annotations'
-import { InjectionPolicy } from './injectionPolicies'
-import { prototypeScope } from './scopes'
+import Container from './container';
+import { Inject, Singleton } from './annotations';
+import { InjectionPolicy } from './injectionPolicies';
+import { prototypeScope } from './scopes';
 
-var IFoo = class {}
+const IFoo = class {};
 interface IFoo {
-    bar: IBar
+    bar: IBar;
 }
 
-var IBar = class {}
+const IBar = class {};
 interface IBar {
-    baz: IBaz
-    qux: IQux
+    baz: IBaz;
+    qux: IQux;
 }
 
-var IBaz = class {}
+const IBaz = class {};
 interface IBaz {
-    qux: IQux
+    qux: IQux;
 }
 
-var IQux = class {}
+const IQux = class {};
 interface IQux {}
 
 @Inject
 class Foo {
-    public qux: IQux
+    public qux: IQux;
 
     constructor(public bar: IBar) {
     }
 
     @Inject
     setQux(qux: IQux) {
-        this.qux = qux
+        this.qux = qux;
     }
 }
 
@@ -54,14 +54,14 @@ class Qux {
     }
 }
 
-const container = new Container(new InjectionPolicy(prototypeScope))
-container.bind(IFoo).to(Foo)
-container.bind(IBar).to(Bar)
-container.bind(IBaz).to(Baz)
-container.bind(IQux).to(Qux)
+const container = new Container(new InjectionPolicy(prototypeScope));
+container.bind(IFoo).to(Foo);
+container.bind(IBar).to(Bar);
+container.bind(IBaz).to(Baz);
+container.bind(IQux).to(Qux);
 
-const foo = container.get(Foo)
-container.inject(foo.setQux, foo)
+const foo = container.get(Foo);
+container.inject(foo.setQux, foo);
 
-console.log(foo)
-console.log(foo.bar.qux === foo.bar.baz.qux)
+console.log(foo);
+console.log(foo.bar.qux === foo.bar.baz.qux);

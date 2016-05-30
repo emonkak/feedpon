@@ -1,5 +1,5 @@
-import { fromEventPattern } from 'rxjs/observable/fromEventPattern'
-import { Observable } from 'rxjs/Observable'
+import { fromEventPattern } from 'rxjs/observable/fromEventPattern';
+import { Observable } from 'rxjs/Observable';
 
 export default function fromChromeEvent<T>(
     event: chrome.events.Event<Function>,
@@ -9,5 +9,5 @@ export default function fromChromeEvent<T>(
         (handler) => event.addListener(handler),
         (handler) => event.removeListener(handler),
         selector
-    )
+    );
 }

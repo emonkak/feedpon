@@ -1,28 +1,28 @@
-import { WedataResource } from './interfaces'
+import { WedataResource } from './interfaces';
 
 export interface AutoPagerizeData {
-    url: string
-    nextLink: string
-    pageElement: string
-    exampleUrl?: string
-    insertBefore?: string
+    url: string;
+    nextLink: string;
+    pageElement: string;
+    exampleUrl?: string;
+    insertBefore?: string;
 }
 
 export interface LDRFullFeedData {
-    url: string
-    xpath: string
-    type: string
-    enc?: string
-    microformats?: string
-    base?: string
+    url: string;
+    xpath: string;
+    type: string;
+    enc?: string;
+    microformats?: string;
+    base?: string;
 }
 
 export const autoPagerize: WedataResource<AutoPagerizeData> = {
     url: 'http://wedata.net/databases/AutoPagerize',
     transformer(items) {
-        return items
+        return items;
     }
-}
+};
 
 export const ldrFullFeed: WedataResource<LDRFullFeedData> = {
     url: 'http://wedata.net/databases/LDRFullFeed',
@@ -35,13 +35,13 @@ export const ldrFullFeed: WedataResource<LDRFullFeedData> = {
             SUBGENERAL: 2,
             GEN: 3,
             GENERAL: 3
-        }
+        };
 
         return items.sort((x, y) => {
-            const p1 = TYPE_PRIORITIES[x.data.type]
-            const p2 = TYPE_PRIORITIES[y.data.type]
-            if (p1 === p2) return 0
-            return p1 < p2 ? -1 : 1
-        })
+            const p1 = TYPE_PRIORITIES[x.data.type];
+            const p2 = TYPE_PRIORITIES[y.data.type];
+            if (p1 === p2) return 0;
+            return p1 < p2 ? -1 : 1;
+        });
     }
-}
+};

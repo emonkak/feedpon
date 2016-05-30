@@ -1,10 +1,10 @@
-import { EventDispatcher, IActionHandler } from '../shared/interfaces'
-import { FetchFullContent } from '../constants/actionTypes'
-import { FullContentReceived } from '../constants/eventTypes'
-import { IContentFinder } from '../services/contentFinder/interfaces'
-import { IHttpClient } from '../services/http/interfaces'
-import { Inject } from '../shared/di/annotations'
-import sanitizeHtml from '../utils/sanitizeHtml'
+import { EventDispatcher, IActionHandler } from '../shared/interfaces';
+import { FetchFullContent } from '../constants/actionTypes';
+import { FullContentReceived } from '../constants/eventTypes';
+import { IContentFinder } from '../services/contentFinder/interfaces';
+import { IHttpClient } from '../services/http/interfaces';
+import { Inject } from '../shared/di/annotations';
+import sanitizeHtml from '../utils/sanitizeHtml';
 
 @Inject
 export default class FetchFullContentHandler implements IActionHandler<FetchFullContent> {
@@ -13,13 +13,13 @@ export default class FetchFullContentHandler implements IActionHandler<FetchFull
     }
 
     async handle(action: FetchFullContent, dispatch: EventDispatcher): Promise<void> {
-        const { url, streamId } = action
-        const foundContent = await this.contentFinder.find(url)
+        const { url, streamId } = action;
+        const foundContent = await this.contentFinder.find(url);
 
         // TODO: When full content is not found
         if (foundContent) {
-            const { content, nextLink } = foundContent
-            const sanitizedContent = sanitizeHtml(content)
+            const { content, nextLink } = foundContent;
+            const sanitizedContent = sanitizeHtml(content);
 
             dispatch({
                 eventType: FullContentReceived,
@@ -29,7 +29,7 @@ export default class FetchFullContentHandler implements IActionHandler<FetchFull
                     content: sanitizedContent,
                     nextLink: nextLink ? nextLink.getAttribute('href') : null
                 }
-            } as FullContentReceived)
+            } as FullContentReceived);
         }
     }
 }

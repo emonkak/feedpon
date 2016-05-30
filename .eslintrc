@@ -1,0 +1,13 @@
+{
+    "env": {
+        "es6": true,
+        "node": true
+    },
+    "extends": "eslint:recommended",
+    "parser": "babel-eslint",
+    "rules": {
+        "no-empty": 0,
+        "no-unused-vars": 0,
+        "semi": 2
+    }
+}

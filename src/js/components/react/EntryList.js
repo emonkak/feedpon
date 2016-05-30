@@ -1,39 +1,39 @@
-import Entry from './Entry'
-import PureRenderMixin from 'react-addons-pure-render-mixin'
-import React from 'react'
-import ReactDOM from 'react-dom'
-import ScrollSpy from './ScrollSpy'
-import Waypoint from 'react-waypoint'
-import appContextTypes from './appContextTypes'
-import { EntryActivated } from '../../constants/eventTypes'
-import { FetchContents } from '../../constants/actionTypes'
+import Entry from './Entry';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import ScrollSpy from './ScrollSpy';
+import Waypoint from 'react-waypoint';
+import appContextTypes from './appContextTypes';
+import { EntryActivated } from '../../constants/eventTypes';
+import { FetchContents } from '../../constants/actionTypes';
 
 export default class EntryList extends React.Component {
     static propTypes = {
         contents: React.PropTypes.object.isRequired,
         activeEntry: React.PropTypes.object
-    }
+    };
 
-    static contextTypes = appContextTypes
+    static contextTypes = appContextTypes;
 
     constructor() {
-        super()
-        this.state = { isLoading: false }
+        super();
+        this.state = { isLoading: false };
     }
 
     componentWillReceiveProps(nextProps) {
         if (this.props.contents !== nextProps.contents) {
-            this.setState({ isLoading: false })
+            this.setState({ isLoading: false });
         }
     }
 
     render() {
-        const { contents } = this.props
-        const { isLoading } = this.state
+        const { contents } = this.props;
+        const { isLoading } = this.state;
 
         const waypoint = !isLoading && contents.items.continuation && contents.items.length > 0
             ? <Waypoint onEnter={::this.handleLoading} threshold={2.0} />
-            : <div />
+            : <div />;
 
         return (
             <div>
@@ -45,24 +45,24 @@ export default class EntryList extends React.Component {
                 </ScrollSpy>
                 {waypoint}
             </div>
-        )
+        );
     }
 
     renderEntries(entry) {
-        const { contents, activeEntry } = this.props
+        const { contents, activeEntry } = this.props;
 
         return contents.items.map(item => {
-            const isActive = !!(activeEntry && item.id === activeEntry.id)
+            const isActive = !!(activeEntry && item.id === activeEntry.id);
             return (
                 <Entry key={item.id} entry={item} isActive={isActive} />
-            )
-        })
+            );
+        });
     }
 
     handleLoading() {
-        const { contents } = this.props
+        const { contents } = this.props;
 
-        this.setState({ isLoading: true })
+        this.setState({ isLoading: true });
 
         this.context.dispatch({
             actionType: FetchContents,
@@ -70,17 +70,17 @@ export default class EntryList extends React.Component {
                 streamId: contents.id,
                 continuation: contents.continuation
             }
-        })
+        });
     }
 
     handleActivated(element) {
-        const { activeEntry } = this.props
+        const { activeEntry } = this.props;
 
         if (activeEntry == null || element.props.entry.id !== activeEntry.id) {
             this.context.dispatchEvent({
                 eventType: EntryActivated,
                 entry: element.props.entry
-            })
+            });
         }
     }
 
@@ -88,4 +88,4 @@ export default class EntryList extends React.Component {
     }
 }
 
-Object.assign(EntryList.prototype, PureRenderMixin)
+Object.assign(EntryList.prototype, PureRenderMixin);

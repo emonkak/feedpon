@@ -1,11 +1,11 @@
 export interface Redirection {
-    url: string
-    redirectUrl: string
+    url: string;
+    redirectUrl: string;
 }
 
-export const IRedirectionRepository = class {}
+export const IRedirectionRepository = class {};
 export interface IRedirectionRepository {
-    get(url: string): Promise<Redirection>
+    get(url: string): Promise<Redirection>;
 
-    put(redirection: Redirection): Promise<void>
+    put(redirection: Redirection): Promise<void>;
 }

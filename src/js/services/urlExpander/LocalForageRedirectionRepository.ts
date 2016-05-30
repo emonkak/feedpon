@@ -1,6 +1,6 @@
-import * as storageKeys from '../../constants/storageKeys'
-import { Inject, Named } from '../../shared/di/annotations'
-import { Redirection, IRedirectionRepository } from './interfaces'
+import * as storageKeys from '../../constants/storageKeys';
+import { Inject, Named } from '../../shared/di/annotations';
+import { Redirection, IRedirectionRepository } from './interfaces';
 
 @Inject
 export default class LocalForageRedirectionRepository implements IRedirectionRepository {
@@ -8,13 +8,13 @@ export default class LocalForageRedirectionRepository implements IRedirectionRep
     }
 
     get(url: string): Promise<Redirection> {
-        return this._localForage.getItem(storageKeys.REDIRECTIONS(url))
+        return this._localForage.getItem(storageKeys.REDIRECTIONS(url));
     }
 
     put(redirection: Redirection): Promise<void> {
         return this._localForage.setItem(
             storageKeys.REDIRECTIONS(redirection.url),
             redirection as any
-        )
+        );
     }
 }

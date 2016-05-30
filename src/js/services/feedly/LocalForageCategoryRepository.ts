@@ -1,6 +1,6 @@
-import * as storageKeys from '../../constants/storageKeys'
-import { Category, ICategoryRepository } from './interfaces'
-import { Inject, Named } from '../../shared/di/annotations'
+import * as storageKeys from '../../constants/storageKeys';
+import { Category, ICategoryRepository } from './interfaces';
+import { Inject, Named } from '../../shared/di/annotations';
 
 @Inject
 export default class LocalForageCategoryRepository implements ICategoryRepository {
@@ -8,14 +8,14 @@ export default class LocalForageCategoryRepository implements ICategoryRepositor
     }
 
     getAll(): Promise<Category[]> {
-        return this._localForage.getItem(storageKeys.CATEGORIES)
+        return this._localForage.getItem(storageKeys.CATEGORIES);
     }
 
     putAll(categories: Category[]): Promise<void> {
-        return this._localForage.setItem(storageKeys.CATEGORIES, categories as any)
+        return this._localForage.setItem(storageKeys.CATEGORIES, categories as any);
     }
 
     deleteAll(): Promise<void> {
-        return this._localForage.removeItem(storageKeys.CATEGORIES)
+        return this._localForage.removeItem(storageKeys.CATEGORIES);
     }
 }

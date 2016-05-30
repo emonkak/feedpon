@@ -1,6 +1,6 @@
-import { AnyAction, AnyEvent, IActionDispatcher, Event } from '../interfaces'
-import { Observable } from 'rxjs/Observable'
-import { Subscriber } from 'rxjs/Subscriber'
+import { AnyAction, AnyEvent, IActionDispatcher, Event } from '../interfaces';
+import { Observable } from 'rxjs/Observable';
+import { Subscriber } from 'rxjs/Subscriber';
 
 export default class WorkerActionDispatcher implements IActionDispatcher {
     constructor(private worker: Worker) {
@@ -8,17 +8,17 @@ export default class WorkerActionDispatcher implements IActionDispatcher {
 
     dispatch<T extends AnyAction>(action: T): Observable<AnyEvent> {
         return Observable.create((observer: Subscriber<AnyEvent>) => {
-            const chan = new MessageChannel()
+            const chan = new MessageChannel();
 
             chan.port2.onmessage = ({ data }) => {
                 if (data && data.hasOwnProperty('error' )) {
-                    observer.error(data.error)
+                    observer.error(data.error);
                 } else {
-                    observer.complete()
+                    observer.complete();
                 }
-            }
+            };
 
-            this.worker.postMessage(action, [chan.port1])
-        })
+            this.worker.postMessage(action, [chan.port1]);
+        });
     }
 }

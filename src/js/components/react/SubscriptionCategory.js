@@ -1,31 +1,31 @@
-import PureRenderMixin from 'react-addons-pure-render-mixin'
-import React from 'react'
-import Subscription from './Subscription'
-import appContextTypes from './appContextTypes'
-import classnames from 'classnames'
-import { History } from '../../constants/actionTypes'
+import PureRenderMixin from 'react-addons-pure-render-mixin';
+import React from 'react';
+import Subscription from './Subscription';
+import appContextTypes from './appContextTypes';
+import classnames from 'classnames';
+import { History } from '../../constants/actionTypes';
 
 export default class SubscriptionCategory extends React.Component {
     static propTypes = {
         category: React.PropTypes.object.isRequired,
         subscriptions: React.PropTypes.array.isRequired,
         selectedStreamId: React.PropTypes.string
-    }
+    };
 
-    static contextTypes = appContextTypes
+    static contextTypes = appContextTypes;
 
     constructor(props) {
-        super(props)
+        super(props);
 
-        this.state = { expanded: false }
+        this.state = { expanded: false };
     }
 
     render() {
-        const { category, subscriptions, selectedStreamId } = this.props
-        const { expanded } = this.state
+        const { category, subscriptions, selectedStreamId } = this.props;
+        const { expanded } = this.state;
 
         const unreadCount = subscriptions
-            .reduce((sum, { unreadCount }) => sum + unreadCount.count, 0)
+            .reduce((sum, { unreadCount }) => sum + unreadCount.count, 0);
 
         return (
             <li className='subscription-category-container'>
@@ -42,11 +42,11 @@ export default class SubscriptionCategory extends React.Component {
                     {subscriptions.map(::this.renderSubscription)}
                 </ul>
             </li>
-        )
+        );
     }
 
     renderSubscription({ subscription, unreadCount, isHidden }) {
-        const { selectedStreamId } = this.props
+        const { selectedStreamId } = this.props;
 
         return (
             <Subscription key={subscription.id}
@@ -54,30 +54,30 @@ export default class SubscriptionCategory extends React.Component {
                           unreadCount={unreadCount}
                           isSelected={subscription.id === selectedStreamId}
                           isHidden={isHidden} />
-        )
+        );
     }
 
     handleExpand(event) {
-        event.preventDefault()
+        event.preventDefault();
 
         this.setState(state => ({
             ...state,
             expanded: !state.expanded
-        }))
+        }));
 
-        return false
+        return false;
     }
 
     handleSelectStream(event) {
-        event.preventDefault()
+        event.preventDefault();
 
-        const { category } = this.props
+        const { category } = this.props;
 
         this.context.dispatch({
             actionType: History.Push,
             path: `/streams/${encodeURIComponent(category.id)}`
-        })
+        });
     }
 }
 
-Object.assign(SubscriptionCategory.prototype, PureRenderMixin)
+Object.assign(SubscriptionCategory.prototype, PureRenderMixin);

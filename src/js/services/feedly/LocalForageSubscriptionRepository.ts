@@ -1,6 +1,6 @@
-import * as storageKeys from '../../constants/storageKeys'
-import { Inject, Named } from '../../shared/di/annotations'
-import { Subscription, ISubscriptionRepository } from './interfaces'
+import * as storageKeys from '../../constants/storageKeys';
+import { Inject, Named } from '../../shared/di/annotations';
+import { Subscription, ISubscriptionRepository } from './interfaces';
 
 @Inject
 export default class LocalForageSubscriptionRepository implements ISubscriptionRepository {
@@ -8,14 +8,14 @@ export default class LocalForageSubscriptionRepository implements ISubscriptionR
     }
 
     getAll(): Promise<Subscription[]> {
-        return this._localForage.getItem(storageKeys.SUBSCRIPTIONS)
+        return this._localForage.getItem(storageKeys.SUBSCRIPTIONS);
     }
 
     putAll(subscriptions: Subscription[]): Promise<void> {
-        return this._localForage.setItem(storageKeys.SUBSCRIPTIONS, subscriptions as any)
+        return this._localForage.setItem(storageKeys.SUBSCRIPTIONS, subscriptions as any);
     }
 
     deleteAll(): Promise<void> {
-        return this._localForage.removeItem(storageKeys.SUBSCRIPTIONS)
+        return this._localForage.removeItem(storageKeys.SUBSCRIPTIONS);
     }
 }

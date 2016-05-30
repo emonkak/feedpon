@@ -1,4 +1,4 @@
-export const IClock = class {}
+export const IClock = class {};
 export interface IClock {
-    now(): number
+    now(): number;
 }

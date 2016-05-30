@@ -1,21 +1,21 @@
-import Content from './Content'
-import PureRenderMixin from 'react-addons-pure-render-mixin'
-import React from 'react'
-import Sidebar from './Sidebar'
-import appContextTypes from './appContextTypes'
-import { Authenticate, FetchSubscriptions, FetchUnreadCounts, FetchCategories } from '../../constants/actionTypes'
+import Content from './Content';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
+import React from 'react';
+import Sidebar from './Sidebar';
+import appContextTypes from './appContextTypes';
+import { Authenticate, FetchSubscriptions, FetchUnreadCounts, FetchCategories } from '../../constants/actionTypes';
 
 export default class Root extends React.Component {
     static propTypes = {
         credential: React.PropTypes.object,
         content: React.PropTypes.element.isRequired,
         sidebar: React.PropTypes.element
-    }
+    };
 
-    static contextTypes = appContextTypes
+    static contextTypes = appContextTypes;
 
     handleAuthenticate() {
-        this.context.dispatch({ actionType: Authenticate })
+        this.context.dispatch({ actionType: Authenticate });
     }
 
     render() {
@@ -24,7 +24,7 @@ export default class Root extends React.Component {
                 {this.renderHeader()}
                 {this.renderMain()}
             </div>
-        )
+        );
     }
 
     renderHeader() {
@@ -36,26 +36,26 @@ export default class Root extends React.Component {
                     </ul>
                 </nav>
             </header>
-        )
+        );
     }
 
     renderMain() {
-        const { credential, content, sidebar } = this.props
+        const { credential, content, sidebar } = this.props;
         if (credential) {
             return (
                 <div>
                     {sidebar}
                     {content}
                 </div>
-            )
+            );
         } else {
             return (
                 <div>
                     <button className="button button-default button-fill" onClick={::this.handleAuthenticate}>Authenticate</button>
                 </div>
-            )
+            );
         }
     }
 }
 
-Object.assign(Root.prototype, PureRenderMixin)
+Object.assign(Root.prototype, PureRenderMixin);
