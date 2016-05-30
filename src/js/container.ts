@@ -1,10 +1,11 @@
-import localforage from 'localforage';
 import AutoPagerizeContentFinder from './services/contentFinder/AutoPagerizeContentFinder';
 import ChainedContentFinder from './services/contentFinder/ChainedContentFinder';
 import ChromeWindowOpener from './services/window/ChromeWindowOpener';
 import Container from './shared/di/container';
 import Environment from './services/feedly/Environment';
 import HttpClient from './services/http/HttpClient';
+import Inject from './shared/di/annotation/Inject';
+import InjectionPolicy from './shared/di/injectionPolicy/InjectionPolicy';
 import LdrFullFeedContentFinder from './services/contentFinder/LdrFullFeedContentFinder';
 import LocalForageCategoryRepository from './services/feedly/LocalForageCategoryRepository';
 import LocalForageCredentialRepository from './services/feedly/LocalForageCredentialRepository';
@@ -14,6 +15,8 @@ import LocalForageUnreadCountRepository from './services/feedly/LocalForageUnrea
 import LocalForageWedataRepository from './services/contentFinder/LocalForageWedataRepository';
 import SystemClock from './services/clock/SystemClock';
 import WedataGateway from './services/contentFinder/WedataGateway';
+import localforage from 'localforage';
+import singletonScope from './shared/di/scope/singletonScope';
 import { IClock } from './services/clock/interfaces';
 import { IContainer } from './shared/di/interfaces';
 import { IContentFinder, IWedataGateway, IWedataRepository } from './services/contentFinder/interfaces';
@@ -21,9 +24,6 @@ import { IEnvironment, ICredentialRepository, ISubscriptionRepository, IUnreadCo
 import { IHttpClient } from './services/http/interfaces';
 import { IRedirectionRepository } from './services/urlExpander/interfaces';
 import { IWindowOpener } from './services/window/interfaces';
-import { Inject } from './shared/di/annotations';
-import { InjectionPolicy } from './shared/di/injectionPolicies';
-import { singletonScope } from './shared/di/scopes';
 
 class Factries {
     @Inject

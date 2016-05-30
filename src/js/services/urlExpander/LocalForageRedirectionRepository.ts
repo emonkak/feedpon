@@ -1,5 +1,6 @@
 import * as storageKeys from '../../constants/storageKeys';
-import { Inject, Named } from '../../shared/di/annotations';
+import Inject from '../../shared/di/annotation/Inject';
+import Named from '../../shared/di/annotation/Named';
 import { Redirection, IRedirectionRepository } from './interfaces';
 
 @Inject

@@ -1,10 +1,10 @@
+import Inject from '../shared/di/annotation/Inject';
+import sanitizeHtml from '../utils/sanitizeHtml';
 import { EventDispatcher, IActionHandler } from '../shared/interfaces';
 import { FetchFullContent } from '../constants/actionTypes';
 import { FullContentReceived } from '../constants/eventTypes';
 import { IContentFinder } from '../services/contentFinder/interfaces';
 import { IHttpClient } from '../services/http/interfaces';
-import { Inject } from '../shared/di/annotations';
-import sanitizeHtml from '../utils/sanitizeHtml';
 
 @Inject
 export default class FetchFullContentHandler implements IActionHandler<FetchFullContent> {

@@ -1,7 +1,8 @@
 import Container from './container';
-import { Inject, Singleton } from './annotations';
-import { InjectionPolicy } from './injectionPolicies';
-import { prototypeScope } from './scopes';
+import Inject from './annotation/Inject';
+import InjectionPolicy from './injectionPolicy/InjectionPolicy';
+import Singleton from './annotation/Singleton';
+import prototypeScope from './scopes/prototypeScope';
 
 const IFoo = class {};
 interface IFoo {

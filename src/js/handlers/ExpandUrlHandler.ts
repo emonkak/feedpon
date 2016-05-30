@@ -1,7 +1,7 @@
+import Inject from '../shared/di/annotation/Inject';
 import UrlExpander from '../services/urlExpander/UrlExpander';
 import { EventDispatcher, IActionHandler } from '../shared/interfaces';
 import { ExpandUrl } from '../constants/actionTypes';
-import { Inject } from '../shared/di/annotations';
 import { UrlExpanded } from '../constants/eventTypes';
 
 @Inject

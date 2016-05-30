@@ -1,9 +1,9 @@
-import { fromEventPattern } from 'rxjs/observable/fromEventPattern';
+import Inject from '../../shared/di/annotation/Inject';
 import { IWindowOpener } from './interfaces';
-import { Inject } from '../../shared/di/annotations';
 import { Observable } from 'rxjs/Observable';
 import { Subscriber } from 'rxjs/Subscriber';
 import { Subscription } from 'rxjs/Subscription';
+import { fromEventPattern } from 'rxjs/observable/fromEventPattern';
 
 import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/finally';

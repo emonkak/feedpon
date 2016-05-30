@@ -1,7 +1,7 @@
-import * as querystring from 'querystring';
 import * as feedly from './interfaces';
+import * as querystring from 'querystring';
+import Inject from '../../shared/di/annotation/Inject';
 import { IHttpClient } from '../http/interfaces';
-import { Inject } from '../../shared/di/annotations';
 
 function authHeader(accessToken: string): { [key: string]: string } {
     return {

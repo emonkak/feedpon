@@ -1,6 +1,6 @@
+import Inject from '../../shared/di/annotation/Inject';
 import { IHttpClient } from '../http/interfaces';
 import { Redirection, IRedirectionRepository } from './interfaces';
-import { Inject } from '../../shared/di/annotations';
 
 @Inject
 export default class UrlExpander {

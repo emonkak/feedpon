@@ -1,5 +1,5 @@
+import Inject from '../../shared/di/annotation/Inject';
 import { IClock } from './interfaces';
-import { Inject } from '../../shared/di/annotations';
 
 @Inject
 export default class SystemClock implements IClock {

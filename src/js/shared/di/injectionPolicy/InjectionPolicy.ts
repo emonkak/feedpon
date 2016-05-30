@@ -1,6 +1,6 @@
-import { IInjectable, IInjectableKey, IInjectionPolicy, IScope } from './interfaces';
+import { IInjectable, IInjectableKey, IInjectionPolicy, IScope } from '../interfaces';
 
-export class InjectionPolicy implements IInjectionPolicy {
+export default class InjectionPolicy implements IInjectionPolicy {
     constructor(private _defaultScope: IScope<any>) {
     }
 
@@ -16,3 +16,4 @@ export class InjectionPolicy implements IInjectionPolicy {
         return target.$inject && target.$inject.length === target.length;
     }
 }
+

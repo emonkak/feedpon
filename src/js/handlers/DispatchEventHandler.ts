@@ -1,7 +1,7 @@
+import Inject from '../shared/di/annotation/Inject';
 import { AnyEvent } from '../shared/interfaces';
 import { DispatchEvent } from '../constants/actionTypes';
 import { EventDispatcher, IActionHandler } from '../shared/interfaces';
-import { Inject } from '../shared/di/annotations';
 
 @Inject
 export default class DispatchEventHandler implements IActionHandler<DispatchEvent<AnyEvent>> {

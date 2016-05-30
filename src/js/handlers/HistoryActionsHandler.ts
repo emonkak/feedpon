@@ -1,6 +1,7 @@
+import Inject from '../shared/di/annotation/Inject';
+import Named from '../shared/di/annotation/Named';
 import { EventDispatcher, IActionHandler } from '../shared/interfaces';
 import { History } from '../constants/actionTypes';
-import { Inject, Named } from '../shared/di/annotations';
 
 type HistoryActions = History.Push | History.Replace | History.Go | History.GoBack | History.GoForward;
 

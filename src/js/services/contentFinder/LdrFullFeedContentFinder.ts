@@ -1,10 +1,10 @@
+import Inject from '../../shared/di/annotation/Inject';
 import WedataLoader from './WedataLoader';
 import decodeResponseAsString from '../../utils/decodeResponseAsString';
 import matches from '../../utils/matches';
 import parseHtml from '../../utils/parseHtml';
 import { IContentFinder, FoundContent , WedataItem } from './interfaces';
 import { IHttpClient } from '../http/interfaces';
-import { Inject } from '../../shared/di/annotations';
 import { LDRFullFeedData, ldrFullFeed } from './wedataResources';
 
 @Inject

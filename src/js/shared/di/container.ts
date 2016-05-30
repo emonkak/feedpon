@@ -1,5 +1,8 @@
+import AliasDefinition from './definition/AliasDefinition';
+import BindDefinition from './definition/BindDefinition';
+import FactoryDefinition from './definition/FactoryDefinition';
+import ValueDefinition from './definition/ValueDefinition';
 import { IContainer, IDefinition, IDependency, IResolver, IInjectable, IInjectableClass, IInjectableKey, IInjectableFunction, IInjectionPolicy } from './interfaces';
-import { AliasDefinition, ClassDefinition, ValueDefinition, FactoryDefinition } from './definitions';
 
 export default class Container implements IContainer {
     private _definitions: Map<IInjectableKey<any>, IDefinition<any>> = new Map();
@@ -17,8 +20,8 @@ export default class Container implements IContainer {
         return definition;
     }
 
-    bind<T>(key: IInjectableClass<T>): ClassDefinition<T> {
-        const definition = new ClassDefinition<T>(key);
+    bind<T>(key: IInjectableClass<T>): BindDefinition<T> {
+        const definition = new BindDefinition<T>(key);
 
         this._definitions.set(key, definition);
 
@@ -47,7 +50,7 @@ export default class Container implements IContainer {
         if (this._definitions.has(key)) {
             definition = this._definitions.get(key);
         } else if (typeof key === 'function') {
-            definition = new ClassDefinition(key);
+            definition = new BindDefinition(key);
         } else {
             throw `Can't resolve the dependencies for "${key}"`;
         }

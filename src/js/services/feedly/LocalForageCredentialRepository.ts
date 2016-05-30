@@ -1,6 +1,7 @@
 import * as storageKeys from '../../constants/storageKeys';
+import Inject from '../../shared/di/annotation/Inject';
+import Named from '../../shared/di/annotation/Named';
 import { Credential, ICredentialRepository } from './interfaces';
-import { Inject, Named } from '../../shared/di/annotations';
 
 @Inject
 export default class LocalForageCredentialRepository implements ICredentialRepository {
