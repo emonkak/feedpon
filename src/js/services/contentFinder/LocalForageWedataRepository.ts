@@ -16,7 +16,7 @@ export default class LocalForageWedataRepository implements IWedataRepository {
         return this._localForage.setItem(storageKeys.WEDATA(resourceUrl), items as any);
     }
 
-    deleteAll<T>(resourceUrl: string): Promise<void> {
+    deleteAll(resourceUrl: string): Promise<void> {
         return this._localForage.removeItem(storageKeys.WEDATA(resourceUrl));
     }
 }

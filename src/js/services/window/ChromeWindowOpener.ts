@@ -2,7 +2,6 @@ import Inject from '../../shared/di/annotation/Inject';
 import { IWindowOpener } from './interfaces';
 import { Observable } from 'rxjs/Observable';
 import { Subscriber } from 'rxjs/Subscriber';
-import { Subscription } from 'rxjs/Subscription';
 import { fromEventPattern } from 'rxjs/observable/fromEventPattern';
 
 import 'rxjs/add/operator/filter';
@@ -30,7 +29,7 @@ export default class ChromeWindowOpener implements IWindowOpener {
     );
 
     open(url: string): Observable<string> {
-        return Observable.create((subscriber: Subscriber<string>) => {
+        return new Observable((subscriber: Subscriber<string>) => {
             chrome.windows.create({ url, type: 'popup' }, window => {
                 const createdwindowId = window.id;
                 const createdTabId = window.tabs[0].id;
@@ -38,9 +37,8 @@ export default class ChromeWindowOpener implements IWindowOpener {
                 const windowRemoved = this._windowRemoved
                     .filter(windowId => windowId === createdwindowId);
 
-                this._tabUpdated
-                    .takeUntil(windowRemoved)
-                    .finally<TabUpdatedEvent>(() => chrome.windows.remove(createdwindowId))
+                this._tabUpdated.takeUntil(windowRemoved)
+                    .finally(() => chrome.windows.remove(createdwindowId))
                     .filter(({ tabId, changeInfo }) => tabId === createdTabId && changeInfo.status === 'complete')
                     .map(({ tab }) => tab.url)
                     .subscribe(subscriber);

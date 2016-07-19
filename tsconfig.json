@@ -2,9 +2,13 @@
     "compilerOptions": {
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
-        "module": "es2015",
+        "module": "commonjs",
         "moduleResolution": "node",
+        "noFallthroughCasesInSwitch": true,
         "noImplicitAny": true,
+        "noImplicitReturns": true,
+        "noImplicitThis": true,
+        "noUnusedLocals": true,
         "target": "es2015"
     },
     "exclude": [

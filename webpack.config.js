@@ -1,7 +1,7 @@
-var IgnorePlugin = require('webpack/lib/IgnorePlugin')
-var path = require('path')
-var postcssCssnext = require('postcss-cssnext')
-var postcssImport = require('postcss-import')
+var IgnorePlugin = require('webpack/lib/IgnorePlugin');
+var path = require('path');
+var postcssCssnext = require('postcss-cssnext');
+var postcssImport = require('postcss-import');
 
 module.exports = {
     entry: {
@@ -13,18 +13,26 @@ module.exports = {
         filename: '[name].js'
     },
     resolve: {
-        extensions: ['', '.ts', '.js']
+        extensions: ['', '.ts', '.js'],
+        alias: {
+            localforage: require.resolve('localforage/src/localforage')
+        }
     },
     module: {
         loaders: [
             {
+                test: /\.js$/,
+                include: path.resolve(__dirname, 'node_modules/localforage'),
+                loader: 'babel-loader?cacheDirectory=true&babelrc=false&plugins=transform-es2015-modules-commonjs'
+            },
+            {
                 test: /\.ts$/,
-                loaders: ['babel-loader', 'ts-loader']
+                loaders: ['ts-loader']
             },
             {
                 test: /\.js$/,
                 exclude: path.resolve(__dirname, 'node_modules'),
-                loader: 'babel-loader'
+                loader: 'babel-loader?cacheDirectory=true'
             }
         ]
     },
@@ -32,6 +40,6 @@ module.exports = {
         new IgnorePlugin(/^crypto$/)
     ],
     postcss: function() {
-        return [postcssImport, postcssCssnext]
+        return [postcssImport, postcssCssnext];
     }
-}
+};

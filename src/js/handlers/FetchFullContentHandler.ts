@@ -4,12 +4,10 @@ import { EventDispatcher, IActionHandler } from '../shared/interfaces';
 import { FetchFullContent } from '../constants/actionTypes';
 import { FullContentReceived } from '../constants/eventTypes';
 import { IContentFinder } from '../services/contentFinder/interfaces';
-import { IHttpClient } from '../services/http/interfaces';
 
 @Inject
 export default class FetchFullContentHandler implements IActionHandler<FetchFullContent> {
-    constructor(private contentFinder: IContentFinder,
-                private httpClient: IHttpClient) {
+    constructor(private contentFinder: IContentFinder) {
     }
 
     async handle(action: FetchFullContent, dispatch: EventDispatcher): Promise<void> {

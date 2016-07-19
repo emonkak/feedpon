@@ -34,5 +34,5 @@ export interface IWedataRepository {
 
     putAll<T>(resourceUrl: string, items: WedataItem<T>[]): Promise<void>;
 
-    deleteAll<T>(resourceUrl: string): Promise<void>;
+    deleteAll(resourceUrl: string): Promise<void>;
 }

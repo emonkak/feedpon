@@ -1,21 +1,21 @@
 import { Observable } from 'rxjs/Observable';
 
-export interface Action<T> {
+export interface IAction<T> {
     actionType: T;
 }
 
-export interface Event<T> {
+export interface IEvent<T> {
     eventType: T;
 }
 
-export type AnyAction = Action<string>;
+export type AnyAction = IAction<string>;
 
-export type AnyEvent = Event<string>;
+export type AnyEvent = IEvent<string>;
 
 export type EventDispatcher = (event: AnyEvent) => void;
 
 export interface IActionDispatcher {
-    dispatch<T extends AnyAction>(action: T): Observable<AnyEvent>;
+    dispatch(action: AnyAction): Observable<AnyEvent>;
 }
 
 export interface IActionHandler<T extends AnyAction> {

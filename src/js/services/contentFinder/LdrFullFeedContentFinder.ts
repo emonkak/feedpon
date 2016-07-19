@@ -3,7 +3,7 @@ import WedataLoader from './WedataLoader';
 import decodeResponseAsString from '../../utils/decodeResponseAsString';
 import matches from '../../utils/matches';
 import parseHtml from '../../utils/parseHtml';
-import { IContentFinder, FoundContent , WedataItem } from './interfaces';
+import { IContentFinder, FoundContent } from './interfaces';
 import { IHttpClient } from '../http/interfaces';
 import { LDRFullFeedData, ldrFullFeed } from './wedataResources';
 
@@ -19,7 +19,7 @@ export default class LdrFullFeedContentFinder implements IContentFinder {
         for (const item of items) {
             const { data } = item;
 
-            if (matches(data.url, url)) {
+            if (!matches(data.url, url)) {
                 const request = new Request(url);
                 const response = await this._httpClient.send(request);
                 const responseText = await decodeResponseAsString(response);
@@ -32,5 +32,7 @@ export default class LdrFullFeedContentFinder implements IContentFinder {
                 } : null;
             }
         }
+
+        return null;
     }
 }

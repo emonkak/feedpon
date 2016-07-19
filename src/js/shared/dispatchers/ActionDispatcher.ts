@@ -8,15 +8,15 @@ export default class ActionDispatcher implements IActionDispatcher {
     private _handlerClasses: { [key: string]: IActionHandlerClass<AnyAction> } = {};
 
     private _fallback: IActionDispatcher = {
-        dispatch<T extends AnyAction>(action: T): Observable<AnyEvent> {
-            return _throw<T>(new Error(`Can not handle the "${action.actionType}" action.`));
+        dispatch(action: AnyAction): Observable<AnyEvent> {
+            return _throw<AnyEvent>(new Error(`Can not handle the "${action.actionType}" action.`));
         }
     };
 
     constructor(private _container: IContainer) {
     }
 
-    mount<T extends AnyAction>(actionType: string, handlerClass: IActionHandlerClass<T>): this {
+    mount(actionType: string, handlerClass: IActionHandlerClass<AnyAction>): this {
         this._handlerClasses[actionType] = handlerClass;
         return this;
     }
@@ -26,11 +26,11 @@ export default class ActionDispatcher implements IActionDispatcher {
         return this;
     }
 
-    dispatch<T extends AnyAction>(action: T): Observable<AnyEvent> {
+    dispatch(action: AnyAction): Observable<AnyEvent> {
         const { actionType } = action;
         const handlerClass = this._handlerClasses[actionType];
         if (handlerClass) {
-            return Observable.create((observer: Subscriber<AnyEvent>) => {
+            return new Observable((observer: Subscriber<AnyEvent>) => {
                 const handler = this._container.get(handlerClass);
                 handler.handle(action, event => observer.next(event))
                     .then(() => observer.complete())

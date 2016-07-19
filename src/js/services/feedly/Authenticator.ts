@@ -124,7 +124,7 @@ export default class Authenticator {
     }
 
     private _doRevokeToken(refresh_token: string): Promise<feedly.RevokeTokenResponse> {
-        const { client_id, client_secret, redirect_uri } = this._environment;
+        const { client_id, client_secret } = this._environment;
         return this._gateway.revokeToken({
             refresh_token,
             client_id,

@@ -2,7 +2,7 @@ import AliasDefinition from './definition/AliasDefinition';
 import BindDefinition from './definition/BindDefinition';
 import FactoryDefinition from './definition/FactoryDefinition';
 import ValueDefinition from './definition/ValueDefinition';
-import { IContainer, IDefinition, IDependency, IResolver, IInjectable, IInjectableClass, IInjectableKey, IInjectableFunction, IInjectionPolicy } from './interfaces';
+import { IContainer, IDefinition, IDependency, IInjectable, IInjectableClass, IInjectableKey, IInjectableFunction, IInjectionPolicy } from './interfaces';
 
 export default class Container implements IContainer {
     private _definitions: Map<IInjectableKey<any>, IDefinition<any>> = new Map();

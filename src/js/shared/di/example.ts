@@ -2,7 +2,7 @@ import Container from './container';
 import Inject from './annotation/Inject';
 import InjectionPolicy from './injectionPolicy/InjectionPolicy';
 import Singleton from './annotation/Singleton';
-import prototypeScope from './scopes/prototypeScope';
+import prototypeScope from './scope/prototypeScope';
 
 const IFoo = class {};
 interface IFoo {

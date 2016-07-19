@@ -4,7 +4,7 @@ import decodeResponseAsString from '../../utils/decodeResponseAsString';
 import matches from '../../utils/matches';
 import parseHtml from '../../utils/parseHtml';
 import { AutoPagerizeData, autoPagerize } from './wedataResources';
-import { IContentFinder, FoundContent , WedataItem } from './interfaces';
+import { IContentFinder, FoundContent } from './interfaces';
 import { IHttpClient } from '../http/interfaces';
 
 @Inject
@@ -34,5 +34,7 @@ export default class AutoPagerizeContentFinder implements IContentFinder {
                 } : null;
             }
         }
+
+        return null;
     }
 }
