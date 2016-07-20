@@ -46,8 +46,8 @@ export default class ScrollSpy extends React.Component {
             });
         const activeElementChanged$ = elementsInViewport$
             ::map(elementPairs => {
-                const scrollTop = container.scrollY || container.scrollTop;
-                const scrollBottom = scrollTop + (container.innerHeight || container.scrollHeight);
+                const scrollTop = container.scrollY || container.scrollTop || 0;
+                const scrollBottom = scrollTop + (container.innerHeight || container.scrollHeight || 0);
 
                 return elementPairs
                     ::maxBy(elementPair => {
