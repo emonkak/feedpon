@@ -1,6 +1,6 @@
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import React from 'react';
-import appContextTypes from './appContextTypes';
+import appContextTypes from '../../shared/components/react/appContextTypes';
 
 export default class EntryContent extends React.Component {
     static propTypes = {

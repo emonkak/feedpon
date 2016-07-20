@@ -1,7 +1,7 @@
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import React from 'react';
 import Subscription from './Subscription';
-import appContextTypes from './appContextTypes';
+import appContextTypes from '../../shared/components/react/appContextTypes';
 import classnames from 'classnames';
 import { History } from '../../constants/actionTypes';
 

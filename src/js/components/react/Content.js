@@ -1,7 +1,7 @@
 import EntryList from './EntryList';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import React from 'react';
-import appContextTypes from './appContextTypes';
+import appContextTypes from '../../shared/components/react/appContextTypes';
 import { Router, Route } from 'react-router';
 import { FetchContents } from '../../constants/actionTypes';
 

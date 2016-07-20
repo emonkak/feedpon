@@ -1,6 +1,6 @@
 import Inject from '../shared/di/annotations/Inject';
 import { CategoriesReceived } from '../constants/eventTypes';
-import { EventDispatcher, IActionHandler } from '../shared/interfaces';
+import { IEventDispatcher, IActionHandler } from '../shared/interfaces';
 import { GetCategoriesCache } from '../constants/actionTypes';
 import { ICategoryRepository } from '../services/feedly/interfaces';
 
@@ -9,7 +9,7 @@ export default class GetCategoriesCacheHandler implements IActionHandler<GetCate
     constructor(private categoryRepository: ICategoryRepository) {
     }
 
-    async handle(action: GetCategoriesCache, dispatch: EventDispatcher): Promise<void> {
+    async handle(action: GetCategoriesCache, dispatch: IEventDispatcher): Promise<void> {
         const categories = await this.categoryRepository.getAll();
         if (categories) {
             dispatch({

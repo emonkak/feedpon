@@ -2,7 +2,7 @@ import Authenticator from '../services/feedly/Authenticator';
 import Inject from '../shared/di/annotations/Inject';
 import { Authenticate } from '../constants/actionTypes';
 import { CredentialReceived } from '../constants/eventTypes';
-import { EventDispatcher, IActionHandler } from '../shared/interfaces';
+import { IEventDispatcher, IActionHandler } from '../shared/interfaces';
 import { IWindowOpener } from '../services/window/interfaces';
 
 @Inject
@@ -11,7 +11,7 @@ export default class AuthenticateHandler implements IActionHandler<Authenticate>
                 private windowOpener: IWindowOpener) {
     }
 
-    async handle(action: Authenticate, dispatch: EventDispatcher): Promise<void> {
+    async handle(action: Authenticate, dispatch: IEventDispatcher): Promise<void> {
         const credential = await this.authenticator.authenticate(this.windowOpener);
 
         if (credential) {

@@ -1,5 +1,5 @@
 import Inject from '../shared/di/annotations/Inject';
-import { EventDispatcher, IActionHandler } from '../shared/interfaces';
+import { IEventDispatcher, IActionHandler } from '../shared/interfaces';
 import { GetUnreadCountsCache } from '../constants/actionTypes';
 import { IUnreadCountRepository } from '../services/feedly/interfaces';
 import { UnreadCountsReceived } from '../constants/eventTypes';
@@ -9,7 +9,7 @@ export default class GetUnreadCountsCacheHandler implements IActionHandler<GetUn
     constructor(private unreadCountRepository: IUnreadCountRepository) {
     }
 
-    async handle(action: GetUnreadCountsCache, dispatch: EventDispatcher): Promise<void> {
+    async handle(action: GetUnreadCountsCache, dispatch: IEventDispatcher): Promise<void> {
         const unreadCounts = await this.unreadCountRepository.getAll();
         if (unreadCounts) {
             dispatch({

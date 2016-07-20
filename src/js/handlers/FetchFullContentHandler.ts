@@ -1,6 +1,6 @@
 import Inject from '../shared/di/annotations/Inject';
 import sanitizeHtml from '../utils/sanitizeHtml';
-import { EventDispatcher, IActionHandler } from '../shared/interfaces';
+import { IEventDispatcher, IActionHandler } from '../shared/interfaces';
 import { FetchFullContent } from '../constants/actionTypes';
 import { FullContentReceived } from '../constants/eventTypes';
 import { IContentFinder } from '../services/contentFinder/interfaces';
@@ -10,7 +10,7 @@ export default class FetchFullContentHandler implements IActionHandler<FetchFull
     constructor(private contentFinder: IContentFinder) {
     }
 
-    async handle(action: FetchFullContent, dispatch: EventDispatcher): Promise<void> {
+    async handle(action: FetchFullContent, dispatch: IEventDispatcher): Promise<void> {
         const { url, streamId } = action;
         const foundContent = await this.contentFinder.find(url);
 

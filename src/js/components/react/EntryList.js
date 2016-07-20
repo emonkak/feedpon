@@ -4,7 +4,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import ScrollSpy from './ScrollSpy';
 import Waypoint from 'react-waypoint';
-import appContextTypes from './appContextTypes';
+import appContextTypes from '../../shared/components/react/appContextTypes';
 import { EntryActivated } from '../../constants/eventTypes';
 import { FetchContents } from '../../constants/actionTypes';
 

@@ -9,6 +9,7 @@
     "localforage": "github:DefinitelyTyped/DefinitelyTyped/localForage/localForage.d.ts#1936f51e478dcd840d6a44f76402672a45cd9d1e",
     "node": "github:DefinitelyTyped/DefinitelyTyped/node/node.d.ts#77b1b1709315b03b9b1b67c589d599bebeeef2ee",
     "react": "github:DefinitelyTyped/DefinitelyTyped/react/react.d.ts#d5282ee8f189fa4dc5f8ffa05cec7937432b1c5d",
+    "react-addons-pure-render-mixin": "github:DefinitelyTyped/DefinitelyTyped/react/react-addons-pure-render-mixin.d.ts#56295f5058cac7ae458540423c50ac2dcf9fc711",
     "react-addons-update": "github:DefinitelyTyped/DefinitelyTyped/react/react-addons-update.d.ts#56295f5058cac7ae458540423c50ac2dcf9fc711",
     "react-router": "github:DefinitelyTyped/DefinitelyTyped/react-router/react-router.d.ts#d5282ee8f189fa4dc5f8ffa05cec7937432b1c5d",
     "text-encoding": "github:DefinitelyTyped/DefinitelyTyped/text-encoding/text-encoding.d.ts#3a4bdab25ba029be91c671276e1661512cb37b65",

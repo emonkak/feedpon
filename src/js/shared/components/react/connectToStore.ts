@@ -1,9 +1,12 @@
-import PureRenderMixin from 'react-addons-pure-render-mixin';
-import React from 'react';
-import appContextTypes from './appContextTypes';
+import * as PureRenderMixin from 'react-addons-pure-render-mixin';
+import * as React from 'react';
+import { Observable } from 'rxjs/Observable';
+import { Subscription } from 'rxjs/Subscription';
 
-export default function connectToStore(Component, store) {
-    class StoreWrapper extends React.Component {
+export default function connectToStore<TState>(Component: React.ComponentClass<any>, store: Observable<TState>): React.ComponentClass<any> {
+    class StoreWrapper extends React.Component<any, TState> {
+        private _subscription: Subscription;
+
         componentWillMount() {
             this._subscription = store.subscribe(state => this.setState(state));
         }

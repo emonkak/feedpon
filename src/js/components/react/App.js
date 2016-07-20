@@ -3,12 +3,12 @@ import Dashboard from './Dashboard';
 import React from 'react';
 import Root from './Root';
 import Sidebar from './Sidebar';
-import appContextTypes from './appContextTypes';
-import connectToStore from './connectToStore';
+import appContextTypes from '../../shared/components/react/appContextTypes';
+import connectToStore from '../../shared/components/react/connectToStore';
 import { GetCredential, GetCategoriesCache, GetSubscriptionsCache, GetUnreadCountsCache, History } from '../../constants/actionTypes';
+import { IndexRoute, Router, Route } from 'react-router';
 import { LocationUpdated } from '../../constants/eventTypes';
 import { Subscription } from 'rxjs/Subscription';
-import { IndexRoute, Router, Route } from 'react-router';
 import { initialState, reducer } from '../../store';
 import { map } from 'rxjs/operator/map';
 

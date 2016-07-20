@@ -3,14 +3,12 @@
 
 import ActionDispatcher from './shared/dispatchers/ActionDispatcher';
 import App from './components/react/App';
-import AppContext from './components/react/AppContext';
+import AppContext from './shared/components/react/AppContext';
 import AuthenticateHandler from './handlers/AuthenticateHandler';
 import ChromeBackgroundActionDispatcher from './shared/dispatchers/ChromeBackgroundActionDispatcher';
-import DispatchEventHandler from './handlers/DispatchEventHandler';
 import HistoryActionsHandler from './handlers/HistoryActionsHandler';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import connectToStore from './components/react/connectToStore';
 import container from './container';
 import fromChromeEvent from './utils/fromChromeEvent';
 import { ActionDone, ActionFailed } from './constants/eventTypes';
@@ -30,24 +28,23 @@ import { mergeStatic } from 'rxjs/operator/merge';
 import { repeat } from 'rxjs/operator/repeat';
 import { takeUntil } from 'rxjs/operator/takeUntil';
 
-const actionSubject = new Subject();
+const actions = new Subject();
 const actionDispatcher = new ActionDispatcher(container)
     .mount(Authenticate, AuthenticateHandler)
-    .mount(DispatchEvent, DispatchEventHandler)
     .mount(History.GoBack, HistoryActionsHandler)
     .mount(History.GoForward, HistoryActionsHandler)
     .mount(History.Push, HistoryActionsHandler)
     .mount(History.Replace, HistoryActionsHandler)
     .fallback(new ChromeBackgroundActionDispatcher());
 
-const eventStreamByLocalAction = actionSubject
+const eventsByLocalAction = actions
     ::_do(action => console.log(action))
     ::mergeMap(action => {
         return actionDispatcher.dispatch(action)
             ::concat(ScalarObservable.create({ eventType: ActionDone, action }))
             ::_catch(error => ScalarObservable.create({ eventType: ActionFailed, action, error }));
     });
-const eventStreamByChromeMessage = defer(() => ScalarObservable.create(chrome.runtime.connect()))
+const eventsByChromeMessage = defer(() => ScalarObservable.create(chrome.runtime.connect()))
     ::_do(port => console.log(port))
     ::concatMap(port => {
         const disconnected = fromChromeEvent(port.onDisconnect);
@@ -56,7 +53,7 @@ const eventStreamByChromeMessage = defer(() => ScalarObservable.create(chrome.ru
             ::concat(empty()::delay(1000));
     })
     ::repeat();
-const eventStream = mergeStatic(eventStreamByLocalAction, eventStreamByChromeMessage)
+const events = mergeStatic(eventsByLocalAction, eventsByChromeMessage)
     ::_do(event => console.log(event));
 
 const element = document.getElementById('app');
@@ -64,7 +61,7 @@ const element = document.getElementById('app');
 container.set('history', hashHistory);
 
 ReactDOM.render(
-    <AppContext actionSubject={actionSubject} eventStream={eventStream}>
+    <AppContext actions={actions} events={events}>
         <App history={hashHistory} />
     </AppContext>,
     element
