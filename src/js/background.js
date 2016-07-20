@@ -55,7 +55,10 @@ port$.subscribe(port => {
             actionDispatcher.dispatch(message.request)
                 .subscribe(
                     event => port.postMessage(event),
-                    error => message.sendResponse({error: error ? error.toString() : null }),
+                    error => {
+                        message.sendResponse({ error: error ? error.toString() : null });
+                        throw error;
+                    },
                     () => message.sendResponse({})
                 );
         });

@@ -30,7 +30,7 @@ export default class EntryList extends React.Component {
         const { contents } = this.props;
         const { isLoading } = this.state;
 
-        const waypoint = !isLoading && contents.items.continuation && contents.items.length > 0
+        const waypoint = !isLoading && contents.continuation
             ? <Waypoint onEnter={::this.handleLoading} threshold={2.0} />
             : <div />;
 
