@@ -14,7 +14,6 @@ import { fromEvent } from 'rxjs/observable/fromEvent';
 import { map } from 'rxjs/operator/map';
 import { pairwise } from 'rxjs/operator/pairwise';
 import { share } from 'rxjs/operator/share';
-import { startWith } from 'rxjs/operator/startWith';
 
 export default class ScrollSpy extends React.Component {
     static propTypes = {
@@ -37,22 +36,22 @@ export default class ScrollSpy extends React.Component {
 
         const elementsInViewport$ = fromEvent(container, 'scroll')
             ::debounceTime(scrollDebounceTime)
-            ::map(event => {
+            ::map(() => {
                 return React.Children.toArray(this.props.children)
                     .map((element, i) => {
                         const ref = this.refs[i];
                         return [ref, ReactDOM.findDOMNode(ref)];
                     })
-                    .filter(([ref, node]) => inViewport(node));
+                    .filter((elementPair) => inViewport(elementPair[1]));
             });
         const activeElementChanged$ = elementsInViewport$
-            ::map(elements => {
+            ::map(elementPairs => {
                 const scrollTop = container.scrollY || container.scrollTop;
                 const scrollBottom = scrollTop + (container.innerHeight || container.scrollHeight);
 
-                return elements
-                    ::maxBy(element => {
-                        const [ref, node] = element;
+                return elementPairs
+                    ::maxBy(elementPair => {
+                        const node = elementPair[1];
                         const offsetTop = node.offsetTop;
                         const offsetBottom = offsetTop + node.offsetHeight;
 
@@ -77,16 +76,16 @@ export default class ScrollSpy extends React.Component {
             ::filter(x => x != null);
 
         this._subscription = new Subscription();
-        this._subscription.add(activeElement$.subscribe(element => {
-            const [ref, node] = element;
+        this._subscription.add(activeElement$.subscribe(elementPair => {
+            const [ref, node] = elementPair;
             const { onActivated } = this.props;
 
             if (onActivated) {
                 onActivated(ref, node, container);
             }
         }));
-        this._subscription.add(inactiveElement$.subscribe(element => {
-            const [ref, node] = element;
+        this._subscription.add(inactiveElement$.subscribe(elementPair => {
+            const [ref, node] = elementPair;
             const { onDeactivated } = this.props;
 
             if (onDeactivated) {

@@ -8,7 +8,6 @@ import join from '@emonkak/enumerable/join';
 import select from '@emonkak/enumerable/select';
 import selectMany from '@emonkak/enumerable/selectMany';
 import toArray from '@emonkak/enumerable/toArray';
-import where from '@emonkak/enumerable/where';
 import { FetchSubscriptions, FetchUnreadCounts, FetchCategories } from '../../constants/actionTypes';
 import { fromEvent } from 'rxjs/observable/fromEvent';
 import { throttleTime } from 'rxjs/operator/throttleTime';

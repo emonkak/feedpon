@@ -5,7 +5,7 @@ import Root from './Root';
 import Sidebar from './Sidebar';
 import appContextTypes from '../../shared/components/react/appContextTypes';
 import connectToStore from '../../shared/components/react/connectToStore';
-import { GetCredential, GetCategoriesCache, GetSubscriptionsCache, GetUnreadCountsCache, History } from '../../constants/actionTypes';
+import { GetCredential, GetCategoriesCache, GetSubscriptionsCache, GetUnreadCountsCache } from '../../constants/actionTypes';
 import { IndexRoute, Router, Route } from 'react-router';
 import { LocationUpdated } from '../../constants/eventTypes';
 import { Subscription } from 'rxjs/Subscription';

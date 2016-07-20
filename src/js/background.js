@@ -14,10 +14,7 @@ import GetUnreadCountsCacheHandler from './handlers/GetUnreadCountsCacheHandler'
 import container from './container';
 import { ExpandUrl, FetchCategories, FetchContents, FetchFullContent, FetchSubscriptions, FetchUnreadCounts, GetCategoriesCache, GetCredential, GetSubscriptionsCache, GetUnreadCountsCache } from './constants/actionTypes';
 import { fromEventPattern } from 'rxjs/observable/fromEventPattern';
-import { Observable } from 'rxjs/Observable';
-import { Subscription } from 'rxjs/Subscription';
 import { filter } from 'rxjs/operator/filter';
-import { map } from 'rxjs/operator/map';
 import { takeUntil } from 'rxjs/operator/takeUntil';
 
 const actionDispatcher = new ActionDispatcher(container)

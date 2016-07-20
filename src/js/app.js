@@ -12,7 +12,7 @@ import ReactDOM from 'react-dom';
 import container from './container';
 import fromChromeEvent from './utils/fromChromeEvent';
 import { ActionDone, ActionFailed } from './constants/eventTypes';
-import { Authenticate, DispatchEvent, History } from './constants/actionTypes';
+import { Authenticate, History } from './constants/actionTypes';
 import { ScalarObservable } from 'rxjs/observable/ScalarObservable';
 import { Subject } from 'rxjs/Subject';
 import { _catch } from 'rxjs/operator/catch';

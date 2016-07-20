@@ -26,7 +26,6 @@ export default class Entry extends React.Component {
 
     handleFetchFullContent() {
         const { entry } = this.props;
-        const fullContents = entry._fullContents || [];
 
         const url = getNextLink(entry);
         if (url != null) {

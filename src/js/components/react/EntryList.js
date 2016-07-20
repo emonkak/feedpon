@@ -1,7 +1,6 @@
 import Entry from './Entry';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import React from 'react';
-import ReactDOM from 'react-dom';
 import ScrollSpy from './ScrollSpy';
 import Waypoint from 'react-waypoint';
 import appContextTypes from '../../shared/components/react/appContextTypes';
@@ -48,7 +47,7 @@ export default class EntryList extends React.Component {
         );
     }
 
-    renderEntries(entry) {
+    renderEntries() {
         const { contents, activeEntry } = this.props;
 
         return contents.items.map(item => {
@@ -84,7 +83,7 @@ export default class EntryList extends React.Component {
         }
     }
 
-    handleDeactivated(element) {
+    handleDeactivated() {
     }
 }
 

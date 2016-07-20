@@ -50,6 +50,7 @@
     "cash-rm": "^0.2.0",
     "cssnano": "^3.7.3",
     "eslint": "^2.13.1",
+    "eslint-plugin-react": "^5.2.2",
     "npm-run-all": "^1.8.0",
     "postcss-cli": "^2.5.2",
     "postcss-cssnext": "^2.7.0",
