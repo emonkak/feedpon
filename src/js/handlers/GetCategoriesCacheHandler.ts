@@ -1,4 +1,4 @@
-import Inject from '../shared/di/annotation/Inject';
+import Inject from '../shared/di/annotations/Inject';
 import { CategoriesReceived } from '../constants/eventTypes';
 import { EventDispatcher, IActionHandler } from '../shared/interfaces';
 import { GetCategoriesCache } from '../constants/actionTypes';

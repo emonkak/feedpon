@@ -1,4 +1,4 @@
-import Inject from '../../shared/di/annotation/Inject';
+import Inject from '../../shared/di/annotations/Inject';
 import { IWindowOpener } from './interfaces';
 import { Observable } from 'rxjs/Observable';
 import { Subscriber } from 'rxjs/Subscriber';

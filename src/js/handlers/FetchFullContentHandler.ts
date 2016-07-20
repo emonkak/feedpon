@@ -1,4 +1,4 @@
-import Inject from '../shared/di/annotation/Inject';
+import Inject from '../shared/di/annotations/Inject';
 import sanitizeHtml from '../utils/sanitizeHtml';
 import { EventDispatcher, IActionHandler } from '../shared/interfaces';
 import { FetchFullContent } from '../constants/actionTypes';

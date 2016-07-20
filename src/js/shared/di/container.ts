@@ -1,7 +1,7 @@
-import AliasDefinition from './definition/AliasDefinition';
-import BindDefinition from './definition/BindDefinition';
-import FactoryDefinition from './definition/FactoryDefinition';
-import ValueDefinition from './definition/ValueDefinition';
+import AliasDefinition from './definitions/AliasDefinition';
+import BindDefinition from './definitions/BindDefinition';
+import FactoryDefinition from './definitions/FactoryDefinition';
+import ValueDefinition from './definitions/ValueDefinition';
 import { IContainer, IDefinition, IDependency, IInjectable, IInjectableClass, IInjectableKey, IInjectableFunction, IInjectionPolicy } from './interfaces';
 
 export default class Container implements IContainer {

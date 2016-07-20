@@ -1,4 +1,4 @@
-import Inject from '../shared/di/annotation/Inject';
+import Inject from '../shared/di/annotations/Inject';
 import { EventDispatcher, IActionHandler } from '../shared/interfaces';
 import { GetSubscriptionsCache } from '../constants/actionTypes';
 import { ISubscriptionRepository } from '../services/feedly/interfaces';

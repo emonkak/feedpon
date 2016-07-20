@@ -1,4 +1,4 @@
-import Inject from '../../shared/di/annotation/Inject';
+import Inject from '../../shared/di/annotations/Inject';
 import WedataLoader from './WedataLoader';
 import decodeResponseAsString from '../../utils/decodeResponseAsString';
 import matches from '../../utils/matches';

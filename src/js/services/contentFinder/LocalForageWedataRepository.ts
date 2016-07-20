@@ -1,6 +1,6 @@
 import * as storageKeys from '../../constants/storageKeys';
-import Inject from '../../shared/di/annotation/Inject';
-import Named from '../../shared/di/annotation/Named';
+import Inject from '../../shared/di/annotations/Inject';
+import Named from '../../shared/di/annotations/Named';
 import { WedataItem, IWedataRepository } from './interfaces';
 
 @Inject

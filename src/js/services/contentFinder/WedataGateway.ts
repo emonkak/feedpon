@@ -1,4 +1,4 @@
-import Inject from '../../shared/di/annotation/Inject';
+import Inject from '../../shared/di/annotations/Inject';
 import { IHttpClient } from '../http/interfaces';
 import { IWedataGateway, WedataItem } from './interfaces';
 

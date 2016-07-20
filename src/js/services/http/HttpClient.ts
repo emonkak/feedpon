@@ -1,5 +1,5 @@
 import { IHttpClient } from './interfaces';
-import Inject from '../../shared/di/annotation/Inject';
+import Inject from '../../shared/di/annotations/Inject';
 
 @Inject
 export default class HttpClient implements IHttpClient {

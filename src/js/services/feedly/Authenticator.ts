@@ -1,6 +1,6 @@
 import * as feedly from './interfaces';
 import Gateway from './Gateway';
-import Inject from '../../shared/di/annotation/Inject';
+import Inject from '../../shared/di/annotations/Inject';
 import { IClock } from '../clock/interfaces';
 import { IWindowOpener } from '../window/interfaces';
 import { ScalarObservable } from 'rxjs/observable/ScalarObservable';

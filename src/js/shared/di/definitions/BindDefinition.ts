@@ -1,5 +1,5 @@
 import AbstractDefinition from './AbstractDefinition'
-import ClassDependency from '../dependency/ClassDependency';
+import ClassDependency from '../dependencies/ClassDependency';
 import { IDependency, IInjectableClass, IInjectionPolicy, IResolver } from '../interfaces';
 
 export default class BindDefinition<T> extends AbstractDefinition<T> {

@@ -1,4 +1,4 @@
-import Inject from '../shared/di/annotation/Inject';
+import Inject from '../shared/di/annotations/Inject';
 import { DispatchEvent } from '../constants/actionTypes';
 import { EventDispatcher, IActionHandler } from '../shared/interfaces';
 

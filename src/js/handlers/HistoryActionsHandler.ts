@@ -1,5 +1,5 @@
-import Inject from '../shared/di/annotation/Inject';
-import Named from '../shared/di/annotation/Named';
+import Inject from '../shared/di/annotations/Inject';
+import Named from '../shared/di/annotations/Named';
 import { EventDispatcher, IActionHandler } from '../shared/interfaces';
 import { History } from '../constants/actionTypes';
 

@@ -1,5 +1,5 @@
 import AbstractDefinition from './AbstractDefinition'
-import FactoryDependency from '../dependency/FactoryDependency';
+import FactoryDependency from '../dependencies/FactoryDependency';
 import { IDependency, IInjectableFunction, IInjectionPolicy, IResolver } from '../interfaces';
 
 export default class FactoryDefinition<T> extends AbstractDefinition<T> {

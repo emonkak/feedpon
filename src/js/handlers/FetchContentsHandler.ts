@@ -1,6 +1,6 @@
 import Authenticator from '../services/feedly/Authenticator';
 import Gateway from '../services/feedly/Gateway';
-import Inject from '../shared/di/annotation/Inject';
+import Inject from '../shared/di/annotations/Inject';
 import { ContentsReceived } from '../constants/eventTypes';
 import { EventDispatcher, IActionHandler } from '../shared/interfaces';
 import { FetchContents } from '../constants/actionTypes';

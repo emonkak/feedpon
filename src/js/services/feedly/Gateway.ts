@@ -1,6 +1,6 @@
 import * as feedly from './interfaces';
 import * as querystring from 'querystring';
-import Inject from '../../shared/di/annotation/Inject';
+import Inject from '../../shared/di/annotations/Inject';
 import { IHttpClient } from '../http/interfaces';
 
 function authHeader(accessToken: string): { [key: string]: string } {

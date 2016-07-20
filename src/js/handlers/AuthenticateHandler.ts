@@ -1,5 +1,5 @@
 import Authenticator from '../services/feedly/Authenticator';
-import Inject from '../shared/di/annotation/Inject';
+import Inject from '../shared/di/annotations/Inject';
 import { Authenticate } from '../constants/actionTypes';
 import { CredentialReceived } from '../constants/eventTypes';
 import { EventDispatcher, IActionHandler } from '../shared/interfaces';
