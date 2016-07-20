@@ -36,7 +36,7 @@ export default class EntryList extends React.Component {
 
         return (
             <div>
-                <ScrollSpy className="entry-list"
+                <ScrollSpy className="entries"
                            useWindowAsScrollContainer
                            onActivated={::this.handleActivated}
                            onDeactivated={::this.handleDeactivated}>

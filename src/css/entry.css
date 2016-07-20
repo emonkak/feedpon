@@ -1,10 +1,14 @@
+.entries {
+  list-style: none;
+  padding: 0;
+}
+
 .entry {
-  padding: 4px;
-  border: 2px solid transparent;
+  padding: 8px;
 }
 
 .entry.is-active {
-  border-color: red;
+  background-color: #eee;
 }
 
 .entry-content {

@@ -38,7 +38,7 @@ export default class SubscriptionCategory extends React.Component {
                         <span className='subscription-category-unread-count'>{unreadCount}</span>
                     </a>
                 </div>
-                <ul className={classnames('subscription-list', { 'is-expanded': expanded })}>
+                <ul className={classnames('subscriptions', { 'is-expanded': expanded })}>
                     {subscriptions.map(::this.renderSubscription)}
                 </ul>
             </li>

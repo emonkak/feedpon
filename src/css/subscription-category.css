@@ -1,14 +1,14 @@
-.subscription-category-list {
+.subscription-categories {
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
-.subscription-category-container .subscription-list {
+.subscription-category-container .subscriptions {
   display: none;
 }
 
-.subscription-category-container .subscription-list.is-expanded {
+.subscription-category-container .subscriptions.is-expanded {
   display: block;
 }
 

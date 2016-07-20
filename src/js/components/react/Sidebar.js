@@ -78,7 +78,7 @@ export default class Sidebar extends React.Component {
         return (
             <div className="l-sidebar">
                 <input ref="subscriptionFilter" className="subscription-filter" type="text" />
-                <ul className="subscription-category-list">
+                <ul className="subscription-categories">
                     {categories::select(::this.renderCategory)::toArray()}
                 </ul>
                 <button className="button button-default button-fill" onClick={::this.handleUpdate}>Update</button>
