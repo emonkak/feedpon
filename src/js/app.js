@@ -38,14 +38,14 @@ const actionDispatcher = new ActionDispatcher(container)
     .fallback(new ChromeBackgroundActionDispatcher());
 
 const eventsByLocalAction = actions
-    ::_do(action => console.log(action))
+    ::_do(action => console.debug(action))
     ::mergeMap(action => {
         return actionDispatcher.dispatch(action)
             ::concat(ScalarObservable.create({ eventType: ActionDone, action }))
             ::_catch(error => ScalarObservable.create({ eventType: ActionFailed, action, error }));
     });
 const eventsByChromeMessage = defer(() => ScalarObservable.create(chrome.runtime.connect()))
-    ::_do(port => console.log(port))
+    ::_do(port => console.debug(port))
     ::concatMap(port => {
         const disconnected = fromChromeEvent(port.onDisconnect);
         return fromChromeEvent(port.onMessage)
@@ -54,7 +54,7 @@ const eventsByChromeMessage = defer(() => ScalarObservable.create(chrome.runtime
     })
     ::repeat();
 const events = mergeStatic(eventsByLocalAction, eventsByChromeMessage)
-    ::_do(event => console.log(event));
+    ::_do(event => console.debug(event));
 
 const element = document.getElementById('app');
 

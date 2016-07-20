@@ -72,13 +72,13 @@ export default class EntryList extends React.Component {
         });
     }
 
-    handleActivated(element) {
+    handleActivated(ref) {
         const { activeEntry } = this.props;
 
-        if (activeEntry == null || element.props.entry.id !== activeEntry.id) {
+        if (activeEntry == null || ref.props.entry.id !== activeEntry.id) {
             this.context.dispatchEvent({
                 eventType: EntryActivated,
-                entry: element.props.entry
+                entry: ref.props.entry
             });
         }
     }
