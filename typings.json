@@ -1,7 +1,7 @@
 {
   "dependencies": {},
   "devDependencies": {},
-  "ambientDependencies": {
+  "globalDependencies": {
     "chrome": "github:DefinitelyTyped/DefinitelyTyped/chrome/chrome.d.ts#00cb57670891e4b830b90227e8ffac64beba97c4",
     "filesystem": "github:DefinitelyTyped/DefinitelyTyped/filesystem/filesystem.d.ts#56295f5058cac7ae458540423c50ac2dcf9fc711",
     "filewriter": "github:DefinitelyTyped/DefinitelyTyped/filewriter/filewriter.d.ts#56295f5058cac7ae458540423c50ac2dcf9fc711",
