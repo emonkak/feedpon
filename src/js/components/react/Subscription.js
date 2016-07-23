@@ -19,7 +19,7 @@ export default class Subscription extends React.Component {
 
         this.context.dispatch({
             actionType: History.Push,
-            path: `streams/${encodeURIComponent(subscription.id)}`
+            path: `contents/${encodeURIComponent(subscription.id)}`
         });
     }
 

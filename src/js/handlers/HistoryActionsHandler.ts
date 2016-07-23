@@ -3,14 +3,14 @@ import Named from '../shared/di/annotations/Named';
 import { IEventDispatcher, IActionHandler } from '../shared/interfaces';
 import { History } from '../constants/actionTypes';
 
-type HistoryAction = History.Push | History.Replace | History.Go | History.GoBack | History.GoForward;
+type HistoryActions = History.Push | History.Replace | History.Go | History.GoBack | History.GoForward;
 
 @Inject
-export default class HistoryActionsHandler implements IActionHandler<HistoryAction> {
+export default class HistoryActionsHandler implements IActionHandler<HistoryActions> {
     constructor(@Named('history') private _history: HistoryModule.History) {
     }
 
-    handle(action: HistoryAction, dispatch: IEventDispatcher): Promise<void> {
+    handle(action: HistoryActions, dispatch: IEventDispatcher): Promise<void> {
         switch (action.actionType) {
         case History.Push:
             this._history.push(action.path);

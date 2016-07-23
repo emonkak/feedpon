@@ -1,4 +1,3 @@
-import EntryContent from './EntryContent';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import React from 'react';
 import appContextTypes from '../../shared/components/react/appContextTypes';
@@ -24,29 +23,11 @@ export default class Entry extends React.Component {
         });
     }
 
-    handleFetchFullContent() {
-        const { entry } = this.props;
-
-        const url = getNextLink(entry);
-        if (url != null) {
-            this.context.dispatch({
-                actionType: FetchFullContent,
-                streamId: entry.id,
-                url
-            });
-        }
-    }
-
     render() {
         const { entry, isActive } = this.props;
-        const fullContents = entry._fullContents || [];
 
-        const contents = fullContents.length > 0
-            ? fullContents.map(({ content, url }, i) => <EntryContent key={i} content={content} url={url} />)
-            : entry.content ? <EntryContent content={entry.content.content} url={entry.alternate[0].href} /> : null;
-
-        const actions = getNextLink(entry)
-            ? <button className="button button-default button-fill" onClick={::this.handleFetchFullContent}>Fetch Full Content</button>
+        const actions = this._nextLink(entry)
+            ? <button className="button button-default button-fill" onClick={::this._handleFetchFullContent}>Fetch Full Content</button>
             : null;
 
         return (
@@ -59,7 +40,7 @@ export default class Entry extends React.Component {
                     <a href={entry.alternate[0].href} target="_blank">{entry.alternate[0].href}</a>
                 </p>
 
-                <div className="entry-contents">{contents}</div>
+                <ul className="entry-contents">{this._renderContents()}</ul>
 
                 <footer className="entry-footer">
                     <time className="entry-timestamp">{new Date(entry.published).toLocaleString()}</time>
@@ -68,14 +49,44 @@ export default class Entry extends React.Component {
             </li>
         );
     }
+
+    _renderContents() {
+        const { entry } = this.props;
+        const fullContents = entry._fullContents || [];
+
+        if (fullContents.length > 0) {
+            return fullContents.map(({ content, url }, i) => (
+                <li key={i} dangerouslySetInnerHTML={{ __html: content }} />
+            ));
+        }
+
+        if (entry.content) {
+            return <li dangerouslySetInnerHTML={{ __html: entry.content.content }} />
+        }
+
+        return null;
+    }
+
+    _handleFetchFullContent() {
+        const { entry } = this.props;
+
+        const url = this._nextLink(entry);
+        if (url != null) {
+            this.context.dispatch({
+                actionType: FetchFullContent,
+                streamId: entry.id,
+                url
+            });
+        }
+    }
+
+    _nextLink(entry) {
+        const fullContents = entry._fullContents;
+
+        return fullContents && fullContents.length > 0
+            ? fullContents[fullContents.length - 1].nextLink
+            : entry.alternate[0].href;
+    }
 }
 
 Object.assign(Entry.prototype, PureRenderMixin);
-
-function getNextLink(entry) {
-    const fullContents = entry._fullContents;
-
-    return fullContents && fullContents.length > 0
-        ? fullContents[fullContents.length - 1].nextLink
-        : entry.alternate[0].href;
-}

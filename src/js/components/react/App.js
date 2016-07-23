@@ -1,16 +1,16 @@
-import Content from './Content';
+import Authentication from './Authentication';
+import Boot from './Boot';
+import Contents from './Contents';
 import Dashboard from './Dashboard';
 import React from 'react';
 import Root from './Root';
-import Sidebar from './Sidebar';
 import appContextTypes from '../../shared/components/react/appContextTypes';
 import connectToStore from '../../shared/components/react/connectToStore';
-import { GetCredential, GetCategoriesCache, GetSubscriptionsCache, GetUnreadCountsCache } from '../../constants/actionTypes';
+import { GetCredential } from '../../constants/actionTypes';
 import { IndexRoute, Router, Route } from 'react-router';
 import { LocationUpdated } from '../../constants/eventTypes';
 import { Subscription } from 'rxjs/Subscription';
-import { initialState, reducer } from '../../store';
-import { map } from 'rxjs/operator/map';
+import { initialState, reducer } from '../../state';
 
 export default class App extends React.Component {
     static contextTypes = appContextTypes;
@@ -41,13 +41,8 @@ export default class App extends React.Component {
                 this.context.dispatchEvent({ eventType: LocationUpdated, location });
             }
         }));
-    }
 
-    componentDidMount() {
         this.context.dispatch({ actionType: GetCredential });
-        this.context.dispatch({ actionType: GetCategoriesCache });
-        this.context.dispatch({ actionType: GetSubscriptionsCache });
-        this.context.dispatch({ actionType: GetUnreadCountsCache });
     }
 
     componentWillUnmount() {
@@ -58,26 +53,13 @@ export default class App extends React.Component {
         const { history } = this.props;
         const store = this._store;
 
-        const ConnectedRoot = connectToStore(Root, store::map(state => ({
-            credential: state.credential
-        })));
-        const ConnectedContent = connectToStore(Content, store::map(state => ({
-            contents: state.contents,
-            activeEntry: state.activeEntry
-        })));
-        const ConnectedDashboard = connectToStore(Dashboard, store);
-        const ConnectedSidebar = connectToStore(Sidebar, store::map(state => ({
-            categories: state.categories,
-            credential: state.credential,
-            subscriptions: state.subscriptions,
-            unreadCounts: state.unreadCounts
-        })));
-
         return (
             <Router history={history}>
-                <Route path="/" component={ConnectedRoot}>
-                    <Route path="streams/:streamId" components={{ content: ConnectedContent, sidebar: ConnectedSidebar }} />
-                    <IndexRoute components={{ content: ConnectedDashboard, sidebar: ConnectedSidebar }} />
+                <Route path="/" component={connectToStore(Boot, store)} />
+                <Route path="/authentication" component={Authentication} />
+                <Route component={connectToStore(Root, store)}>
+                    <Route path="/contents/:streamId" components={connectToStore(Contents, store)} />
+                    <Route path="/dashboard" component={connectToStore(Dashboard, store)} />
                 </Route>
             </Router>
         );

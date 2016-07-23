@@ -4,6 +4,7 @@ import * as eventTypes from './constants/eventTypes';
 const update = require('react-addons-update');
 
 interface State {
+    state: 'BOOTING' | 'AUTHENTICATION_REQUIRED' | 'AUTHENTICATED';
     subscriptions: feedly.Subscription[];
     categories: feedly.Category[];
     unreadCounts: feedly.UnreadCount[];
@@ -12,10 +13,22 @@ interface State {
     location?: HistoryModule.Location;
 }
 
+export const initialState: State = {
+    state: 'BOOTING',
+    subscriptions: [],
+    categories: [],
+    unreadCounts: [],
+    contents: null,
+    credential: null,
+    location: null
+};
+
 export function reducer(state: State, event: eventTypes.Event): State {
     switch (event.eventType) {
         case eventTypes.CategoriesReceived: {
-            return Object.assign({}, state, { categories: event.categories });
+            return Object.assign({}, state, {
+                categories: event.categories
+            });
         }
 
         case eventTypes.ContentsReceived: {
@@ -27,16 +40,29 @@ export function reducer(state: State, event: eventTypes.Event): State {
                     })
                 });
             } else {
-                return Object.assign({}, state, { contents: event.contents });
+                return Object.assign({}, state, {
+                    contents: event.contents
+                });
             }
         }
 
         case eventTypes.CredentialReceived: {
-            return Object.assign({}, state, { credential: event.credential });
+            return Object.assign({}, state, {
+                state: 'AUTHENTICATED',
+                credential: event.credential
+            });
+        }
+
+        case eventTypes.CredentialRevoked: {
+            return Object.assign({}, state, {
+                state: 'AUTHENTICATION_REQUIRED'
+            });
         }
 
         case eventTypes.EntryActivated: {
-            return Object.assign({}, state, { activeEntry: event.entry });
+            return Object.assign({}, state, {
+                activeEntry: event.entry
+            });
         }
 
         case eventTypes.UrlExpanded: {
@@ -58,7 +84,9 @@ export function reducer(state: State, event: eventTypes.Event): State {
                 return hasChanged ? Object.assign({}, item, { alternate }) : item;
             });
 
-            return update(state, { contents: { items: { $set: items } } });
+            return update(state, {
+                contents: { items: { $set: items } }
+            });
         }
 
         case eventTypes.FullContentReceived: {
@@ -77,30 +105,29 @@ export function reducer(state: State, event: eventTypes.Event): State {
                 }
             });
 
-            return update(state, { contents: { items: { $set: items } } });
+            return update(state, {
+                contents: { items: { $set: items } }
+            });
         }
 
         case eventTypes.LocationUpdated: {
-            return Object.assign({}, state, { location: event.location });
+            return Object.assign({}, state, {
+                location: event.location
+            });
         }
 
         case eventTypes.SubscriptionsReceived: {
-            return Object.assign({}, state, { subscriptions: event.subscriptions });
+            return Object.assign({}, state, {
+                subscriptions: event.subscriptions
+            });
         }
 
         case eventTypes.UnreadCountsReceived: {
-            return Object.assign({}, state, { unreadCounts: event.unreadCounts });
+            return Object.assign({}, state, {
+                unreadCounts: event.unreadCounts
+            });
         }
     }
 
     return state;
 }
-
-export const initialState: State = {
-    subscriptions: [],
-    categories: [],
-    unreadCounts: [],
-    contents: null,
-    credential: null,
-    location: null
-};

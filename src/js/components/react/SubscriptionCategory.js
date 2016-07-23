@@ -75,7 +75,7 @@ export default class SubscriptionCategory extends React.Component {
 
         this.context.dispatch({
             actionType: History.Push,
-            path: `/streams/${encodeURIComponent(category.id)}`
+            path: `/contents/${encodeURIComponent(category.id)}`
         });
     }
 }
