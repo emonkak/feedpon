@@ -6,6 +6,8 @@ import { UnreadCountsReceived } from '../constants/eventTypes';
 
 @Inject
 export default class GetUnreadCountsCacheHandler implements IActionHandler<GetUnreadCountsCache> {
+    static subscribedActionTypes = [GetUnreadCountsCache];
+
     constructor(private unreadCountRepository: IUnreadCountRepository) {
     }
 

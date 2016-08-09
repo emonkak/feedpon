@@ -7,6 +7,8 @@ type HistoryActions = History.Push | History.Replace | History.Go | History.GoBa
 
 @Inject
 export default class HistoryActionsHandler implements IActionHandler<HistoryActions> {
+    static subscribedActionTypes = [History.Push, History.Replace, History.Go, History.GoBack, History.GoForward];
+
     constructor(@Named('history') private _history: HistoryModule.History) {
     }
 

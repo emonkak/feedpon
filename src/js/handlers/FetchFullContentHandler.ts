@@ -7,6 +7,8 @@ import { IContentFinder } from '../services/contentFinder/interfaces';
 
 @Inject
 export default class FetchFullContentHandler implements IActionHandler<FetchFullContent> {
+    static subscribedActionTypes = [FetchFullContent];
+
     constructor(private contentFinder: IContentFinder) {
     }
 

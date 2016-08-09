@@ -6,6 +6,8 @@ import { SubscriptionsReceived } from '../constants/eventTypes';
 
 @Inject
 export default class GetSubscriptionsHandler implements IActionHandler<GetSubscriptionsCache> {
+    static subscribedActionTypes = [GetSubscriptionsCache];
+
     constructor(private subscriptionsRepository: ISubscriptionRepository) {
     }
 

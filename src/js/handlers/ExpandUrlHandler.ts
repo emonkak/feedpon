@@ -6,6 +6,8 @@ import { UrlExpanded } from '../constants/eventTypes';
 
 @Inject
 export default class ExpandUrlHandler implements IActionHandler<ExpandUrl> {
+    static subscribedActionTypes = [ExpandUrl];
+
     constructor(private _urlExpander: UrlExpander) {
     }
 

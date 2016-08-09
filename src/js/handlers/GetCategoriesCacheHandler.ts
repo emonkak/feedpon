@@ -6,6 +6,8 @@ import { ICategoryRepository } from '../services/feedly/interfaces';
 
 @Inject
 export default class GetCategoriesCacheHandler implements IActionHandler<GetCategoriesCache> {
+    static subscribedActionTypes = [GetCategoriesCache];
+
     constructor(private categoryRepository: ICategoryRepository) {
     }
 

@@ -7,6 +7,8 @@ import { IWindowOpener } from '../services/window/interfaces';
 
 @Inject
 export default class AuthenticateHandler implements IActionHandler<Authenticate> {
+    static subscribedActionTypes = [Authenticate];
+
     constructor(private authenticator: Authenticator,
                 private windowOpener: IWindowOpener) {
     }

@@ -26,4 +26,6 @@ export interface IActionHandler<T extends AnyAction> {
 
 export interface IActionHandlerClass<T extends AnyAction> {
     new(...args: any[]): IActionHandler<T>;
+
+    subscribedActionTypes: string[];
 }

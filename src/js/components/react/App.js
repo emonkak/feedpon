@@ -2,8 +2,8 @@ import Authentication from './Authentication';
 import Boot from './Boot';
 import Contents from './Contents';
 import Dashboard from './Dashboard';
+import Layout from './Layout';
 import React from 'react';
-import Root from './Root';
 import appContextTypes from '../../shared/components/react/appContextTypes';
 import connectToStore from '../../shared/components/react/connectToStore';
 import { GetCredential } from '../../constants/actionTypes';
@@ -57,7 +57,7 @@ export default class App extends React.Component {
             <Router history={history}>
                 <Route path="/" component={connectToStore(Boot, store)} />
                 <Route path="/authentication" component={Authentication} />
-                <Route component={connectToStore(Root, store)}>
+                <Route component={connectToStore(Layout, store)}>
                     <Route path="/contents/:streamId" components={connectToStore(Contents, store)} />
                     <Route path="/dashboard" component={connectToStore(Dashboard, store)} />
                 </Route>

@@ -8,6 +8,8 @@ import { SubscriptionsReceived } from '../constants/eventTypes';
 
 @Inject
 export default class FetchSubscriptionsHandler implements IActionHandler<FetchSubscriptions> {
+    static subscribedActionTypes = [FetchSubscriptions];
+
     constructor(private authenticator: Authenticator,
                 private gateway: Gateway,
                 private subscriptionRepository: ISubscriptionRepository) {

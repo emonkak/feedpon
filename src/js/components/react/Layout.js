@@ -6,7 +6,7 @@ import appContextTypes from '../../shared/components/react/appContextTypes';
 import { Authenticate, History } from '../../constants/actionTypes';
 import { GetCategoriesCache, GetSubscriptionsCache, GetUnreadCountsCache } from '../../constants/actionTypes';
 
-export default class Root extends React.Component {
+export default class Layout extends React.Component {
     static contextTypes = appContextTypes;
 
     componentWillMount() {

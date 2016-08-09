@@ -30,11 +30,8 @@ import { takeUntil } from 'rxjs/operator/takeUntil';
 
 const actions = new Subject();
 const actionDispatcher = new ActionDispatcher(container)
-    .mount(Authenticate, AuthenticateHandler)
-    .mount(History.GoBack, HistoryActionsHandler)
-    .mount(History.GoForward, HistoryActionsHandler)
-    .mount(History.Push, HistoryActionsHandler)
-    .mount(History.Replace, HistoryActionsHandler)
+    .mount(AuthenticateHandler)
+    .mount(HistoryActionsHandler)
     .fallback(new ChromeBackgroundActionDispatcher());
 
 const eventsByLocalAction = actions

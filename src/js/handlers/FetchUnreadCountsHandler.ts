@@ -8,6 +8,8 @@ import { UnreadCountsReceived } from '../constants/eventTypes';
 
 @Inject
 export default class FetchUnreadCountsHandler implements IActionHandler<FetchUnreadCounts> {
+    static subscribedActionTypes = [FetchUnreadCounts];
+
     constructor(private authenticator: Authenticator,
                 private gateway: Gateway,
                 private unreadCountRepository: IUnreadCountRepository) {

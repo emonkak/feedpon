@@ -7,6 +7,8 @@ import { FetchContents } from '../constants/actionTypes';
 
 @Inject
 export default class FetchContentsHandler implements IActionHandler<FetchContents> {
+    static subscribedActionTypes = [FetchContents];
+
     constructor(private authenticator: Authenticator,
                 private gateway: Gateway) {
     }

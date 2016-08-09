@@ -8,6 +8,8 @@ import { ICategoryRepository } from '../services/feedly/interfaces';
 
 @Inject
 export default class FetchCategoriesHandler implements IActionHandler<FetchCategories> {
+    static subscribedActionTypes = [FetchCategories];
+
     constructor(private authenticator: Authenticator,
                 private categoryRepository: ICategoryRepository,
                 private gateway: Gateway) {

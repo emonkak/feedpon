@@ -12,22 +12,21 @@ import GetCredentialHandler from './handlers/GetCredentialHandler';
 import GetSubscriptionsCacheHandler from './handlers/GetSubscriptionsCacheHandler';
 import GetUnreadCountsCacheHandler from './handlers/GetUnreadCountsCacheHandler';
 import container from './container';
-import { ExpandUrl, FetchCategories, FetchContents, FetchFullContent, FetchSubscriptions, FetchUnreadCounts, GetCategoriesCache, GetCredential, GetSubscriptionsCache, GetUnreadCountsCache } from './constants/actionTypes';
 import { fromEventPattern } from 'rxjs/observable/fromEventPattern';
 import { filter } from 'rxjs/operator/filter';
 import { takeUntil } from 'rxjs/operator/takeUntil';
 
 const actionDispatcher = new ActionDispatcher(container)
-    .mount(ExpandUrl, ExpandUrlHandler)
-    .mount(FetchCategories, FetchCategoriesHandler)
-    .mount(FetchContents, FetchContentsHandler)
-    .mount(FetchFullContent, FetchFullContentHandler)
-    .mount(FetchSubscriptions, FetchSubscriptionsHandler)
-    .mount(FetchUnreadCounts, FetchUnreadCountsHandler)
-    .mount(GetCategoriesCache, GetCategoriesCacheHandler)
-    .mount(GetCredential, GetCredentialHandler)
-    .mount(GetSubscriptionsCache, GetSubscriptionsCacheHandler)
-    .mount(GetUnreadCountsCache, GetUnreadCountsCacheHandler);
+    .mount(ExpandUrlHandler)
+    .mount(FetchCategoriesHandler)
+    .mount(FetchContentsHandler)
+    .mount(FetchFullContentHandler)
+    .mount(FetchSubscriptionsHandler)
+    .mount(FetchUnreadCountsHandler)
+    .mount(GetCategoriesCacheHandler)
+    .mount(GetCredentialHandler)
+    .mount(GetSubscriptionsCacheHandler)
+    .mount(GetUnreadCountsCacheHandler);
 
 const port$ = fromEventPattern(
     ::chrome.runtime.onConnect.addListener,

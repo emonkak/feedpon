@@ -6,6 +6,8 @@ import { GetCredential } from '../constants/actionTypes';
 
 @Inject
 export default class GetCredentialHandler implements IActionHandler<GetCredential> {
+    static subscribedActionTypes = [GetCredential];
+
     constructor(private authenticator: Authenticator) {
     }
 

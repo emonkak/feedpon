@@ -14,10 +14,8 @@ export default class Boot extends React.Component {
         this._dispatchActionFromState(this.props.state);
     }
 
-    componentWillUpdate(nextProps) {
-        if (this.props.state !== nextProps.state) {
-            this._dispatchActionFromState(nextProps.state);
-        }
+    componentWillReceiveProps(nextProps) {
+        this._dispatchActionFromState(nextProps.state);
     }
 
     render() {
