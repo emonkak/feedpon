@@ -1,9 +1,7 @@
 .DS_Store
+.vscode
 /app/chrome/css/
 /app/chrome/fonts/
 /app/chrome/js/
-/build/
-/dist/
 /node_modules/
-/typings/
 npm-debug.log*

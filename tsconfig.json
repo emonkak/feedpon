@@ -1,7 +1,9 @@
 {
     "compilerOptions": {
+        "allowSyntheticDefaultImports": true,
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
+        "jsx": "react",
         "module": "commonjs",
         "moduleResolution": "node",
         "noFallthroughCasesInSwitch": true,
@@ -13,8 +15,5 @@
     },
     "exclude": [
         "node_modules"
-    ],
-    "files": [
-        "./typings/index.d.ts"
     ]
 }
