@@ -1,0 +1,163 @@
+:root {
+  --default-color: #495057;
+  --default-background-color: #ffffff;
+
+  --light-color: #f8f9fa;
+  --medium-light-color: #e9ecef;
+  --medium-color: #dee2e6;
+  --medium-dark-color: #ced4da;
+  --dark-color: #868e96;
+
+  --positive-color: #20c997;
+  --negative-color: #ff6b6b;
+
+  --sidebar-width: 288px;
+  --baseline-height: 24px;
+}
+
+html {
+  font-family: -apple-system, 'BlinkMacSystemFont', '.SFNSDisplay-Regular', sans-serif;
+  font-size: 14px;
+  line-height: var(--baseline-height);
+}
+
+body {
+  margin: 0;
+  color: var(--default-color);
+  background: var(--default-background-color);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  line-height: calc(var(--baseline-height) * 2);
+  font-weight: 600;
+}
+
+h1 {
+  font-size: 2.0rem;
+}
+
+h2 {
+  font-size: 1.5rem;
+}
+
+h3 {
+  font-size: 1.375rem;
+}
+
+h4 {
+  font-size: 1.25rem;
+}
+
+h5 {
+  font-size: 1.125rem;
+}
+
+h6 {
+  font-size: 1rem;
+}
+
+blockquote, dl, figure, form, ol, p, pre, table, ul {
+  margin: 0 0 var(--baseline-height);
+}
+
+dt {
+  font-weight: 600;
+}
+
+dd {
+  margin: 0 0 0 1.5rem;
+}
+
+pre {
+  font-family: Consolas, monospace;
+  background: var(--light-color);
+  padding: var(--baseline-height) 1.5rem;
+  overflow: auto;
+  border-radius: 4px;
+}
+
+blockquote {
+  border-left: 2px solid var(--medium-color);
+  padding: calc(var(--baseline-height) / 2) 1.5rem calc(var(--baseline-height) / 2) calc(1.5rem - 2px);
+}
+
+ul, ol {
+  padding: 0 0 0 1.5rem;
+}
+
+ol ol, ol ul, ul ol, ul ul {
+  margin: 0;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+td, th {
+  padding: calc(var(--baseline-height) / 4) 0;
+  text-align: left;
+}
+
+caption {
+  font-weight: bold;
+  caption-side: bottom;
+  color: var(--dark-color);
+  text-align: left;
+  margin: calc(var(--baseline-height) / 2) 0;
+}
+
+a {
+  color: var(--positive-color);
+  text-decoration: none;
+  text-decoration-skip: ink;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+em {
+  font-weight: 600;
+  font-style: italic;
+}
+
+strong {
+  font-weight: 600;
+  font-style: normal;
+}
+
+code, var, samp {
+  background: var(--light-color);
+  padding: 3px;
+}
+
+input {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+input[type="text"]:focus {
+  outline: none;
+}
+
+button {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+button::-moz-focus-inner,
+[type="button"]::-moz-focus-inner,
+[type="reset"]::-moz-focus-inner,
+[type="submit"]::-moz-focus-inner {
+  border: none;
+  padding: 0;
+}
+
+:placeholder-shown,
+::-webkit-input-placeholder {
+  color: var(--dark-color);
+}

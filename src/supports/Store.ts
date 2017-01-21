@@ -22,8 +22,14 @@ export default class Store<TAction, TState> {
 
     private readonly _middlewares: Middleware<TAction>[] = [];
 
+    private readonly _finalize: Delegate<TAction>;
+
     constructor(private readonly _reducer: Reducer<TAction, TState>,
                 private _state: TState) {
+        this._finalize = (action: TAction): void => {
+            const nextState = this._reducer(this._state, action);
+            this.replaceState(nextState);
+        };
     }
 
     get state(): TState {
@@ -31,12 +37,8 @@ export default class Store<TAction, TState> {
     }
 
     dispatch(action: TAction): void {
-        const last = (action: TAction): void => {
-            const nextState = this._reducer(this._state, action);
-            this.replaceState(nextState);
-        };
-        const pipeline = createPipeline([...this._middlewares], last);
-        return pipeline(action);
+        const pipeline = createPipeline(this._middlewares, this._finalize);
+        pipeline(action);
     }
 
     replaceState(nextState: TState): void {
@@ -68,7 +70,7 @@ export default class Store<TAction, TState> {
                 if (!closed) {
                     observers.delete(observer);
                 }
-            },
+            }
         };
     }
 
@@ -77,7 +79,7 @@ export default class Store<TAction, TState> {
     }
 }
 
-function createPipeline<TAction>(middlewares: Middleware<TAction>[], last: Delegate<TAction>): Delegate<TAction> {
+function createPipeline<TAction>(middlewares: Middleware<TAction>[], finalize: Delegate<TAction>): Delegate<TAction> {
     let i = 0;
 
     const { length } = middlewares;
@@ -87,7 +89,7 @@ function createPipeline<TAction>(middlewares: Middleware<TAction>[], last: Deleg
             const middleware = middlewares[i++];
             middleware(action, next);
         } else {
-            last(action);
+            finalize(action);
         }
     };
 }
@@ -96,7 +98,7 @@ function toObserver<T>(nextOrObserver: Observer<T> | ((value: T) => void),
                        error: (errorValue: any) => void,
                        complete: (completeValue?: any) => void): Observer<T> {
     if (typeof nextOrObserver === 'function') {
-        return { next: nextOrObserver, error: error, complete };
+        return { next: nextOrObserver, error, complete };
     } else {
         return nextOrObserver;
     }

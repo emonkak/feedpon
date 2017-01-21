@@ -1,0 +1,12 @@
+.link-default {
+  color: var(--default-color);
+  text-decoration: none;
+  transition-property: color;
+  transition-duration: 0.2s;
+  transition-timing-function: ease-in-out;
+}
+
+.link-default:hover {
+  color: var(--positive-color);
+  text-decoration: none;
+}

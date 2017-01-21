@@ -1,0 +1,16 @@
+.main-header {
+  display: flex;
+  align-items: center;
+  border-bottom: 2px solid var(--default-color);
+  box-sizing: border-box;
+  width: 100%;
+  padding: calc(var(--baseline-height) / 4) 0.5rem calc(var(--baseline-height) / 4 - 2px);
+}
+
+.main-title {
+  flex: 1;
+  font-size: inherit;
+  line-height: inherit;
+  color: var(--default-color);
+  margin: 0;
+}

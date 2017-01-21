@@ -1,0 +1,48 @@
+.entry {
+  position: relative;
+  padding: var(--baseline-height) calc(var(--baseline-height) / 4);
+}
+
+.entry + .entry {
+  padding-top: calc(var(--baseline-height) - 3px);
+  padding-bottom: var(--baseline-height);
+  border-top: 3px double var(--medium-color);
+}
+
+.entry + .entry:before {
+  content: "\00a7";
+  position: absolute;
+  background: var(--default-background-color);
+  top: -0.75rem;
+  left: calc(50% - 0.75rem);
+  width: 1.5rem;
+  text-align: center;
+  font-size: 1.5rem;
+}
+
+.entry-header {
+  border-left: 2px solid var(--default-color);
+  padding: 0 0 0 1rem;
+  margin: 0 0 var(--baseline-height);
+}
+
+.entry-title {
+  color: var(--default-color);
+  font-size: 1.5rem;
+  line-height: inherit;
+  margin: 0;
+}
+
+.entry-body {
+  text-align: justify;
+  text-justify: inter-ideograph;
+}
+
+.entry-info {
+  color: var(--dark-color);
+}
+
+.entry-footer {
+  display: flex;
+  justify-content: center;
+}

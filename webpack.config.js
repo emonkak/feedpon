@@ -1,32 +1,23 @@
-var IgnorePlugin = require('webpack/lib/IgnorePlugin');
-var path = require('path');
-var postcssCssnext = require('postcss-cssnext');
-var postcssImport = require('postcss-import');
+const path = require('path');
 
 module.exports = {
     entry: {
-        'app': './src/app.tsx',
-        'background': './src/background.ts'
+        'index': './src/index.tsx'
     },
     output: {
-        path: './app/chrome/js',
+        path: './public/js',
         filename: '[name].js'
     },
     resolve: {
+        root: [path.join(__dirname, 'src')],
         extensions: ['', '.ts', '.tsx', '.js']
     },
     module: {
         loaders: [
             {
                 test: /\.tsx?$/,
-                loader: 'ts-loader'
+                loader: 'awesome-typescript-loader'
             }
         ]
-    },
-    plugins: [
-        new IgnorePlugin(/^crypto$/)
-    ],
-    postcss: function() {
-        return [postcssImport, postcssCssnext];
     }
 };

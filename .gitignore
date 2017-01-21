@@ -1,7 +1,7 @@
 .DS_Store
 .vscode
-/app/chrome/css/
-/app/chrome/fonts/
-/app/chrome/js/
+/public/css/
+/public/fonts/
+/public/js/
 /node_modules/
 npm-debug.log*

@@ -1,19 +1,20 @@
 {
     "compilerOptions": {
-        "allowSyntheticDefaultImports": true,
+        "allowJs": true,
+        "baseUrl": "./src/",
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "jsx": "react",
         "module": "commonjs",
         "moduleResolution": "node",
         "noFallthroughCasesInSwitch": true,
-        "noImplicitAny": true,
         "noImplicitReturns": true,
         "noImplicitThis": true,
         "noUnusedLocals": true,
         "target": "es2015"
     },
     "exclude": [
-        "node_modules"
+        "node_modules",
+        "public"
     ]
 }

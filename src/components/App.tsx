@@ -1,18 +1,24 @@
-import React, { PureComponent, PropTypes } from 'react';
-import { History } from 'react-router/lib/History';
+import * as React from 'react';
 
-type Props = {
-    history: History,
-};
+import Sidebar from 'components/Sidebar';
 
-export default class App extends PureComponent<Props, {}> {
-    static propsTypes = {
-        history: PropTypes.object.isRequired,
-    }
+export default class App extends React.PureComponent<any, any> {
+    static propTypes = {
+        children: React.PropTypes.element.isRequired,
+    };
 
     render() {
+        const { children } = this.props;
+
         return (
-            <div>'Hello world!'</div>
+            <div>
+                <div className="l-sidebar">
+                    <Sidebar />
+                </div>
+                <div className="l-main">
+                    {children}
+                </div>
+            </div>
         );
     }
 }

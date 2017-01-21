@@ -1,0 +1,89 @@
+.tree {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.tree .tree {
+  padding-left: 32px;
+}
+
+.tree > li + li,
+.tree .tree {
+  padding-top: calc(var(--baseline-height) / 4);
+}
+
+.tree-node {
+  display: flex;
+  align-items: stretch;
+  border-radius: 4px;
+  padding: calc(var(--baseline-height) / 4) 0;
+  transition: background-color 0.2s ease-in-out;
+  color: var(--default-color);
+}
+
+.tree-node:hover {
+  background: var(--medium-light-color);
+}
+
+.tree-node.is-important {
+  font-weight: 600;
+}
+
+.tree-node.is-selected {
+  background: var(--default-color);
+  color: var(--default-background-color);
+}
+
+.tree-node a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.tree-node-icon {
+  flex: 0 0 32px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.tree-node-text {
+  display: inline-flex;
+  align-items: center;
+  flex: 1;
+  padding: 0 0.5rem;
+}
+
+.tree-node-icon + .tree-node-text {
+  padding-left: 0;
+}
+
+.tree-node-text-primary {
+  flex: 1;
+  word-break: break-word;
+}
+
+.tree-node-text-secondary {
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+.tree-node-text-primary + .tree-node-text-secondary {
+  margin-left: 1rem;
+}
+
+.tree-section {
+  display: flex;
+  align-items: stretch;
+  font-weight: 600;
+  font-size: 0.875rem;
+  padding: calc(var(--baseline-height) / 4) 0 calc(var(--baseline-height) / 4 - 1px);
+  border-bottom: 1px solid var(--default-color);
+  border-radius: 0;
+  color: var(--default-color);
+}
+
+.tree-section a {
+  color: inherit;
+  text-decoration: none;
+}
