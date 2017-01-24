@@ -11,8 +11,8 @@ import TreeBranch from 'components/parts/TreeBranch';
 import TreeLeaf from 'components/parts/TreeLeaf';
 import TreeSection from 'components/parts/TreeSection';
 import connect from 'supports/components/connect';
-import { fetchSubscriptions } from 'messaging/actionCreators';
-import { replaceHistory } from 'supports/middlewares/historyActionCreators';
+import { fetchSubscriptions } from 'messaging/actions';
+import { replace } from 'supports/middlewares/historyActions';
 
 const numberFormatter = new Intl.NumberFormat();
 
@@ -103,6 +103,6 @@ export default class Sidebar extends React.PureComponent<any, any> {
     handleSelect(event: any, activeKey: React.Key, activeType: React.ReactType) {
         const { dispatch } = this.props;
 
-        dispatch(replaceHistory(activeKey as string));
+        dispatch(replace(activeKey as string));
     }
 }

@@ -1,25 +1,27 @@
 import { History } from 'react-router/lib/routerHistory';
 
+import { PUSH, REPLACE, GO, GO_BACK, GO_FORWARD } from 'supports/middlewares/historyActions';
+
 export default function historyMiddleware(history: History): (action: any, next: (action: any) => void) => void {
     return (action, next) => {
         switch (action.type) {
-            case 'PUSH_HISTORY':
+            case PUSH:
                 history.push(action.path);
                 break;
 
-            case 'REPLACE_HISTORY':
+            case REPLACE:
                 history.replace(action.path);
                 break;
 
-            case 'GO_HISTORY':
+            case GO:
                 history.go(action.n);
                 break;
 
-            case 'GO_BACK_HISTORY':
+            case GO_BACK:
                 history.goBack();
                 break;
 
-            case 'GO_FORWARD_HISTORY':
+            case GO_FORWARD:
                 history.goForward();
                 break;
 

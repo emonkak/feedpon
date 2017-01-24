@@ -13,8 +13,8 @@ import Dashboard from 'components/Dashboard';
 const routes = (
     <Route path="/" component={App}>
         <IndexRoute component={Dashboard} />
-        <Route path="all" component={AllFeeds} />    
-        <Route path="pins" component={PinFeeds} />    
+        <Route path="all" component={AllFeeds} />
+        <Route path="pins" component={PinFeeds} />
         <Route path="subscriptions/:subscription_id" component={SubscriptionFeeds} />
         <Route path="categories/:category_id" component={CategoryFeeds} />
         <Route path="settings" component={Settings} />

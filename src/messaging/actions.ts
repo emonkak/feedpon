@@ -1,5 +1,7 @@
 import { AsyncAction } from 'messaging/types';
 
+export const FETCH_SUBSCRIPTIONS = 'FETCH_SUBSCRIPTIONS';
+
 export function fetchSubscriptions(): AsyncAction {
     const subscriptions = [
         {
@@ -43,7 +45,7 @@ export function fetchSubscriptions(): AsyncAction {
     return dispatch => {
         setTimeout(() => {
             dispatch({
-                type: 'FETCH_SUBSCRIPTIONS',
+                type: FETCH_SUBSCRIPTIONS,
                 subscriptions,
             });
         }, 500);
