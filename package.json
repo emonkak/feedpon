@@ -28,14 +28,14 @@
     "react-dom": "^15.4.2",
     "react-height": "^2.2.0",
     "react-motion": "^0.4.7",
-    "react-router": "^3.0.1",
+    "react-router": "^3.0.2",
     "symbol-observable": "^1.0.4"
   },
   "devDependencies": {
     "@types/classnames": "0.0.32",
-    "@types/react": "^15.0.0",
-    "@types/react-dom": "^0.14.20",
-    "@types/react-router": "^2.0.45",
+    "@types/react": "^15.0.2",
+    "@types/react-dom": "^0.14.21",
+    "@types/react-router": "^2.0.46",
     "@types/whatwg-fetch": "^0.0.33",
     "awesome-typescript-loader": "^3.0.0-beta.18",
     "cash-cp": "^0.2.0",
@@ -50,6 +50,6 @@
     "tslint": "^4.3.1",
     "typescript": "^2.1.5",
     "watch": "^1.0.1",
-    "webpack": "^1.14.0"
+    "webpack": "^2.2.0"
   }
 }

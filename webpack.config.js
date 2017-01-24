@@ -9,11 +9,14 @@ module.exports = {
         filename: '[name].js'
     },
     resolve: {
-        root: [path.join(__dirname, 'src')],
-        extensions: ['', '.ts', '.tsx', '.js']
+        modules: [
+            path.join(__dirname, 'src'),
+            'node_modules'
+        ],
+        extensions: ['.ts', '.tsx', '.js', '.json']
     },
     module: {
-        loaders: [
+        rules: [
             {
                 test: /\.tsx?$/,
                 loader: 'awesome-typescript-loader'
