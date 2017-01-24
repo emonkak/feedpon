@@ -11,10 +11,11 @@ type Subscription = {
     readonly closed: boolean,
 };
 
-type Observer<T> = {
+type PartialObserver<T> = {
+    start?: (subscription : Subscription) => void;
     next?: (value: T) => void,
     error?: (errorValue: any) => void,
-    complete?: (completeValue?: any) => void,
+    complete?: () => void,
 };
 
 export default class Store<TAction, TState> {
@@ -51,27 +52,32 @@ export default class Store<TAction, TState> {
         return this;
     }
 
-    subscribe(nextOrObserver: ((value: TState) => void) | Observer<TState>,
+    subscribe(nextOrObserver: ((value: TState) => void) | PartialObserver<TState>,
               error?: (errorValue?: any) => void,
-              complete?: (completeValue?: any) => void): Subscription {
+              complete?: () => void): Subscription {
         const observer = toObserver(nextOrObserver, error, complete);
         const observers = this._observers;
 
-        let closed = false;
-
         observers.add(observer);
 
-        return {
+        let closed = false;
+
+        const subscription = {
             get closed() {
                 return closed;
             },
 
             unsubscribe() {
                 if (!closed) {
+                    closed = true;
                     observers.delete(observer);
                 }
             }
         };
+
+        observer.start(subscription);
+
+        return subscription;
     }
 
     [$$observable](): this {
@@ -94,12 +100,41 @@ function createPipeline<TAction>(middlewares: Middleware<TAction>[], finalize: D
     };
 }
 
-function toObserver<T>(nextOrObserver: Observer<T> | ((value: T) => void),
+function toObserver<T>(nextOrObserver: PartialObserver<T> | ((value: T) => void),
                        error: (errorValue: any) => void,
-                       complete: (completeValue?: any) => void): Observer<T> {
+                       complete: () => void): Observer<T> {
     if (typeof nextOrObserver === 'function') {
-        return { next: nextOrObserver, error, complete };
+        return new Observer({ next: nextOrObserver, error, complete });
     } else {
-        return nextOrObserver;
+        return new Observer(nextOrObserver);
+    }
+}
+
+class Observer<T> {
+    constructor(private readonly _observer: PartialObserver<T>) {
+    }
+
+    start(subscription: Subscription): void {
+        if (this._observer.start) {
+            this._observer.start(subscription);
+        }
+    }
+
+    next(value: T): void {
+        if (this._observer.next) {
+            this._observer.next(value);
+        }
+    }
+
+    error(errorValue: any) {
+        if (this._observer.error) {
+            this._observer.error(errorValue);
+        }
+    }
+
+    complete() {
+        if (this._observer.complete) {
+            this._observer.complete();
+        }
     }
 }
