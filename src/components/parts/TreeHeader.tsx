@@ -24,12 +24,12 @@ function renderRightIcon(props: any) {
     }
 }
 
-export default function TreeSection(props: any) {
+export default function TreeHeader(props: any) {
     const { title } = props;
 
     return (
         <li>
-            <div className="tree-section">
+            <div className="tree-header">
                 {renderLeftIcon(props)}
                 <span className="tree-node-text">{title}</span>
                 {renderRightIcon(props)}

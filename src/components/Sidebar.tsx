@@ -8,8 +8,8 @@ import '@emonkak/enumerable/extensions/toArray';
 
 import Tree from 'components/parts/Tree';
 import TreeBranch from 'components/parts/TreeBranch';
+import TreeHeader from 'components/parts/TreeHeader';
 import TreeLeaf from 'components/parts/TreeLeaf';
-import TreeSection from 'components/parts/TreeSection';
 import connect from 'supports/components/connect';
 import { fetchSubscriptions } from 'messaging/actions';
 import { replace } from 'supports/middlewares/historyActions';
@@ -52,9 +52,9 @@ export default class Sidebar extends React.PureComponent<any, any> {
                            <TreeLeaf key="/" primaryText="Dashboard" />
                            <TreeLeaf key="/all/" primaryText="All" secondaryText={numberFormatter.format(totalUnreadCount)} />
                            <TreeLeaf key="/pins/" primaryText="Pins" secondaryText="12" />
-                           <TreeSection title="Updated 6 minutes ago"
-                                        leftIcon={<i className="icon icon-16 icon-refresh" />}
-                                        rightIcon={<i className="icon icon-16 icon-more" />} />
+                           <TreeHeader title="Updated 6 minutes ago"
+                                       leftIcon={<i className="icon icon-16 icon-refresh" />}
+                                       rightIcon={<i className="icon icon-16 icon-more" />} />
                            {groupedSubscriptions}
                            <TreeLeaf key="/settings/" primaryText="Settings" />
                            <TreeLeaf key="/about/" primaryText="About..." />
