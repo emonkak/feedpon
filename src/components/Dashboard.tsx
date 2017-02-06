@@ -1,5 +1,8 @@
 import * as React from 'react';
 
+import Dropdown from 'components/parts/Dropdown';
+import MenuItem from 'components/parts/MenuItem';
+
 export default class Dashboard extends React.PureComponent<any, any> {
     render() {
         return (
@@ -9,12 +12,12 @@ export default class Dashboard extends React.PureComponent<any, any> {
                     <ul className="list-inline list-inline-slash">
                         <li><a href="#">Refresh</a></li>
                         <li><a href="#">Mark as Read</a></li>
-                        <li className="dropdown"><a className="dropdown-toggle" href="#">View</a>
-                            <div className="dropdown-menu dropdown-menu-right">
-                                <a className="dropdown-menu-item" href="#">Action</a>
-                                <a className="dropdown-menu-item" href="#">Another action</a>
-                                <a className="dropdown-menu-item" href="#">Something else her</a>
-                            </div>
+                        <li>
+                            <Dropdown toggleButton={<a className="dropdown-toggle" href="#">View</a>} pullRight={true}>
+                                <MenuItem>Action</MenuItem>
+                                <MenuItem>Another action</MenuItem>
+                                <MenuItem>Something else here</MenuItem>
+                            </Dropdown>
                         </li>
                     </ul>
                 </header>
@@ -60,16 +63,13 @@ export default class Dashboard extends React.PureComponent<any, any> {
                             </nav>
 
                             <h2>Dropdown</h2>
-                            <div className="dropdown">
-                                <a className="button button-default dropdown-toggle">Dropdown</a>
-                                <div className="dropdown-menu">
-                                    <a className="dropdown-menu-item" href="#">First Action</a>
-                                    <a className="dropdown-menu-item" href="#">Second Action</a>
-                                    <a className="dropdown-menu-item" href="#">Third Action</a>
-                                    <div className="dropdown-divider"></div>
-                                    <a className="dropdown-menu-item" href="#">Forth Action</a>
-                                </div>
-                            </div>
+                            <Dropdown toggleButton={<a className="button button-default dropdown-toggle">Dropdown</a>}>
+                                <MenuItem>First Action</MenuItem>
+                                <MenuItem>Second Action</MenuItem>
+                                <MenuItem>Third Action</MenuItem>
+                                <li className="dropdown-menu-divider"></li>
+                                <MenuItem>Forth Action</MenuItem>
+                            </Dropdown>
 
                             <h2>Modal</h2>
                             <div className="modal">

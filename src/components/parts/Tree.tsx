@@ -56,7 +56,9 @@ export default class Tree extends React.PureComponent<any, any> {
         const { children } = this.props;
 
         return (
-            <ul className="tree">{React.Children.map(children, this.renderChild.bind(this))}</ul>
+            <ul className="tree">
+                {React.Children.map(children, this.renderChild.bind(this))}
+            </ul>
         );
     }
 }

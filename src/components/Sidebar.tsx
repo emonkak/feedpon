@@ -29,6 +29,38 @@ export default class Sidebar extends React.PureComponent<any, any> {
         dispatch(fetchSubscriptions());
     }
 
+    handleSelect(event: any, activeKey: React.Key, activeType: React.ReactType) {
+        const { dispatch } = this.props;
+
+        dispatch(replace(activeKey as string));
+    }
+
+    renderCategory(category: any, subscriptions: any[]) {
+        const totalUnreadCount = subscriptions.reduce((total, subscription) => {
+            return total + subscription.unreadCount;
+        }, 0);
+
+        return (
+                <TreeBranch key={`/categories/${category.categoryId}`}
+                            className={classnames({ 'is-important': totalUnreadCount > 0 })}
+                            primaryText={category.name}
+                            secondaryText={totalUnreadCount > 0 ? numberFormatter.format(totalUnreadCount) : null}
+                            icon={<i className="icon icon-16 icon-angle-down" />}>
+                {subscriptions.map(subscription => this.renderSubscription(subscription))}
+            </TreeBranch>
+        );
+    }
+
+    renderSubscription(subscription: any) {
+        return (
+            <TreeLeaf key={`/subscriptions/${subscription.subscriptionId}`}
+                      className={classnames({ 'is-important': subscription.unreadCount > 0 })}
+                      primaryText={subscription.title}
+                      secondaryText={subscription.unreadCount > 0 ? numberFormatter.format(subscription.unreadCount) : null}
+                      icon={<i className="icon icon-16 icon-file" />} />
+        );
+    }
+
     render() {
         const { subscriptions } = this.props;
 
@@ -72,37 +104,5 @@ export default class Sidebar extends React.PureComponent<any, any> {
                 </footer>
             </nav>
         );
-    }
-
-    renderCategory(category: any, subscriptions: any[]) {
-        const totalUnreadCount = subscriptions.reduce((total, subscription) => {
-            return total + subscription.unreadCount;
-        }, 0);
-
-        return (
-                <TreeBranch key={`/categories/${category.categoryId}`}
-                            className={classnames({ 'is-important': totalUnreadCount > 0 })}
-                            primaryText={category.name}
-                            secondaryText={totalUnreadCount > 0 ? numberFormatter.format(totalUnreadCount) : null}
-                            icon={<i className="icon icon-16 icon-angle-down" />}>
-                {subscriptions.map(subscription => this.renderSubscription(subscription))}
-            </TreeBranch>
-        );
-    }
-
-    renderSubscription(subscription: any) {
-        return (
-            <TreeLeaf key={`/subscriptions/${subscription.subscriptionId}`}
-                      className={classnames({ 'is-important': subscription.unreadCount > 0 })}
-                      primaryText={subscription.title}
-                      secondaryText={subscription.unreadCount > 0 ? numberFormatter.format(subscription.unreadCount) : null}
-                      icon={<i className="icon icon-16 icon-file" />} />
-        );
-    }
-
-    handleSelect(event: any, activeKey: React.Key, activeType: React.ReactType) {
-        const { dispatch } = this.props;
-
-        dispatch(replace(activeKey as string));
     }
 }
