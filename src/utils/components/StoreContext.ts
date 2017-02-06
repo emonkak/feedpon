@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import Store from 'supports/Store';
+import Store from 'utils/Store';
 
 type Props = {
     store: Store<any, any>,

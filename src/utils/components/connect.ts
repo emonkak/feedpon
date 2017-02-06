@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import Store from 'supports/Store';
+import Store from 'utils/Store';
 
 export default function connect<TAction, TState>(mapStateToProps?: (state: TState) => any,
                                                  mapDispatchToProps?: (dispatch: (action: TAction) => void) => any): (component: React.ComponentClass<any>) => any {

@@ -10,9 +10,9 @@ import Tree from 'components/parts/Tree';
 import TreeBranch from 'components/parts/TreeBranch';
 import TreeHeader from 'components/parts/TreeHeader';
 import TreeLeaf from 'components/parts/TreeLeaf';
-import connect from 'supports/components/connect';
+import connect from 'utils/components/connect';
 import { fetchSubscriptions } from 'messaging/actions';
-import { replace } from 'supports/middlewares/historyActions';
+import { replace } from 'utils/middlewares/historyActions';
 
 const numberFormatter = new Intl.NumberFormat();
 

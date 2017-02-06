@@ -2,10 +2,10 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Router, hashHistory } from 'react-router';
 
-import Store from 'supports/Store';
-import StoreContext from 'supports/components/StoreContext';
-import asyncMiddleware from 'supports/middlewares/asyncMiddleware';
-import historyMiddleware from 'supports/middlewares/historyMiddleware';
+import Store from 'utils/Store';
+import StoreContext from 'utils/components/StoreContext';
+import asyncMiddleware from 'utils/middlewares/asyncMiddleware';
+import historyMiddleware from 'utils/middlewares/historyMiddleware';
 import initialState from 'messaging/initialState';
 import reducer from 'messaging/reducer';
 import routes from 'components/routes';
