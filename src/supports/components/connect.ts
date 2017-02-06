@@ -46,7 +46,7 @@ export default function connect<TAction, TState>(mapStateToProps?: (state: TStat
 
             render() {
                 const { children } = this.props;
-                const props = Object.assign(this.dispatchProps, this.state, this.props);
+                const props = Object.assign({}, this.dispatchProps, this.state, this.props);
 
                 return React.createElement(component, props, children);
             }
