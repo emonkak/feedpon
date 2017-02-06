@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as classnames from 'classnames';
 
 import Menu from 'components/parts/Menu';
 import createChainedFunction from 'utils/createChainedFunction';
@@ -66,7 +67,7 @@ export default class Dropdown extends React.PureComponent<any, any> {
         const { isOpened } = this.state;
 
         return (
-            <div className="dropdown">
+            <div className={classnames('dropdown', { 'is-opened': isOpened })}>
                 {this.renderToggleButton()}
                 <Menu onClose={this.handleClose}
                       onSelect={createChainedFunction(onSelect, this.handleClose)}

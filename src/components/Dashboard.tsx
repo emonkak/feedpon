@@ -63,7 +63,7 @@ export default class Dashboard extends React.PureComponent<any, any> {
                             </nav>
 
                             <h2>Dropdown</h2>
-                            <Dropdown toggleButton={<a className="button button-default dropdown-toggle">Dropdown</a>}>
+                            <Dropdown toggleButton={<button className="button button-default dropdown-toggle">Dropdown</button>}>
                                 <MenuItem>First Action</MenuItem>
                                 <MenuItem>Second Action</MenuItem>
                                 <MenuItem>Third Action</MenuItem>

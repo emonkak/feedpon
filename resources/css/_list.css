@@ -63,5 +63,5 @@ a.list-group-item:hover {
 }
 
 a.list-group-item:active {
-  background: var(--medium-color);
+  background: var(--medium-light-color);
 }

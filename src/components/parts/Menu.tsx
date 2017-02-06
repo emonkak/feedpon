@@ -39,7 +39,6 @@ export default class Menu extends React.PureComponent<any, any> {
             <RootCloseWrapper disabled={!isOpened} onRootClose={onClose}>
                 <ul className={classnames('dropdown-menu', {
                     'dropdown-menu-right': pullRight,
-                    'is-opened': isOpened,
                 })}>
                     {React.Children.map(children, this.renderChild.bind(this))}
                 </ul>

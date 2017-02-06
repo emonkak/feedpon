@@ -28,7 +28,7 @@
 }
 
 .nav-item:hover {
-  background: var(--light-color);
+  background: var(--medium-light-color);
   text-decoration: none;
 }
 
