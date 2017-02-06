@@ -1,4 +1,3 @@
-import * as Collapse from 'react-collapse';
 import * as React from 'react';
 import * as classnames from 'classnames';
 
@@ -95,9 +94,7 @@ export default class TreeBranch extends React.PureComponent<any, any> {
                           secondaryText={secondaryText}
                           onIconClick={this.handleExpand.bind(this)}
                           onTextClick={this.handleSelect.bind(this)} />
-                <Collapse isOpened={isExpanded} keepCollapsedContent={true}>
-                    <ul className="tree">{children}</ul>
-                </Collapse>
+                <ul className="tree">{children}</ul>
             </li>
         );
     }

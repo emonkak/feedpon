@@ -24,10 +24,7 @@
     "@emonkak/enumerable": "^1.1.0",
     "classnames": "^2.2.5",
     "react": "^15.4.2",
-    "react-collapse": "^2.3.3",
     "react-dom": "^15.4.2",
-    "react-height": "^2.2.0",
-    "react-motion": "^0.4.7",
     "react-router": "^3.0.2",
     "symbol-observable": "^1.0.4"
   },

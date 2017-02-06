@@ -5,6 +5,7 @@
 }
 
 .tree .tree {
+  display: none;
   padding-left: 32px;
 }
 
@@ -33,6 +34,10 @@
 .tree-node.is-selected {
   background: var(--default-color);
   color: var(--default-background-color);
+}
+
+.tree-node.is-expanded + .tree {
+  display: block;
 }
 
 .tree-node a {
