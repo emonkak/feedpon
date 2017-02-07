@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import Dropdown from 'components/parts/Dropdown';
-import MenuItem from 'components/parts/MenuItem';
+import DropdownMenuItem from 'components/parts/DropdownMenuItem';
 import Modal from 'components/parts/Modal';
 
 export default class Dashboard extends React.PureComponent<any, any> {
@@ -33,9 +33,9 @@ export default class Dashboard extends React.PureComponent<any, any> {
                         <li><a href="#">Mark as Read</a></li>
                         <li>
                             <Dropdown toggleButton={<a className="dropdown-toggle" href="#">View</a>} pullRight={true}>
-                                <MenuItem>Action</MenuItem>
-                                <MenuItem>Another action</MenuItem>
-                                <MenuItem>Something else here</MenuItem>
+                                <DropdownMenuItem>Action</DropdownMenuItem>
+                                <DropdownMenuItem>Another action</DropdownMenuItem>
+                                <DropdownMenuItem>Something else here</DropdownMenuItem>
                             </Dropdown>
                         </li>
                     </ul>
@@ -83,11 +83,11 @@ export default class Dashboard extends React.PureComponent<any, any> {
 
                             <h2>Dropdown</h2>
                             <Dropdown toggleButton={<button className="button button-default dropdown-toggle">Dropdown</button>}>
-                                <MenuItem>First Action</MenuItem>
-                                <MenuItem>Second Action</MenuItem>
-                                <MenuItem>Third Action</MenuItem>
+                                <DropdownMenuItem>First Action</DropdownMenuItem>
+                                <DropdownMenuItem>Second Action</DropdownMenuItem>
+                                <DropdownMenuItem>Third Action</DropdownMenuItem>
                                 <li className="dropdown-menu-divider"></li>
-                                <MenuItem>Forth Action</MenuItem>
+                                <DropdownMenuItem>Forth Action</DropdownMenuItem>
                             </Dropdown>
 
                             <h2>Modal</h2>

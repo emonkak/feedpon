@@ -4,7 +4,7 @@ import * as classnames from 'classnames';
 
 import createChainedFunction from 'utils/createChainedFunction';
 
-export default class Menu extends React.PureComponent<any, any> {
+export default class DropdownMenu extends React.PureComponent<any, any> {
     static propTypes = {
         children: React.PropTypes.node.isRequired,
         isDisabled: React.PropTypes.bool,

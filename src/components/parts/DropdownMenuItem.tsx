@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as classnames from 'classnames';
 
-export default class MenuItem extends React.PureComponent<any, any> {
+export default class DropdownMenuItem extends React.PureComponent<any, any> {
     static propTypes = {
         children: React.PropTypes.node,
         isActive: React.PropTypes.bool,
