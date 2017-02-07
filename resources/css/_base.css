@@ -16,9 +16,11 @@
 }
 
 html {
-  font-family: -apple-system, 'BlinkMacSystemFont', '.SFNSDisplay-Regular', sans-serif;
+  font-family: Corbel, -apple-system, 'BlinkMacSystemFont', '.SFNSDisplay-Regular', sans-serif;
   font-size: 14px;
   line-height: var(--baseline-height);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
