@@ -25,7 +25,6 @@
     "classnames": "^2.2.5",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
-    "react-overlays": "^0.6.10",
     "react-router": "^3.0.2",
     "symbol-observable": "^1.0.4"
   },

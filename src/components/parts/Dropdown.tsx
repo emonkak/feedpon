@@ -37,7 +37,7 @@ export default class Dropdown extends React.PureComponent<any, any> {
         this.setState(state => ({ ...state, isOpened: false }));
     }
 
-    handleToggle(event) {
+    handleToggle(event: React.MouseEvent<any>) {
         event.preventDefault();
 
         const { isOpened } = this.state;
@@ -66,10 +66,10 @@ export default class Dropdown extends React.PureComponent<any, any> {
         return (
             <div className={classnames('dropdown', { 'is-opened': isOpened })}>
                 {this.renderToggleButton()}
-                <Menu onClose={this.handleClose.bind(this)}
+                <Menu onCancel={this.handleClose.bind(this)}
                       onSelect={createChainedFunction(onSelect, this.handleClose.bind(this))}
-                      isOpened={isOpened}
-                      pullRight={pullRight}>
+                      pullRight={pullRight}
+                      isDisabled={!isOpened}>
                     {children}
                 </Menu>
             </div>

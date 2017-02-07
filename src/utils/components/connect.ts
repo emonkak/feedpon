@@ -22,7 +22,7 @@ export default function connect<TAction, TState>(mapStateToProps?: (state: TStat
 
             private subscription: { unsubscribe: () => void };
 
-            constructor(props, context) {
+            constructor(props: any, context: any) {
                 super(props, context);
 
                 this.state = context.store.state as TState;

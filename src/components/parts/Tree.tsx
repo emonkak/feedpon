@@ -36,17 +36,15 @@ export default class Tree extends React.PureComponent<any, any> {
             const { activeKey, activeType } = this.state;
             const childKey = child.key;
 
-            const props = {
+            return React.cloneElement(child, {
                 ...child.props,
                 isSelected: childType === activeType && childKey === activeKey,
                 onSelect: createChainedFunction(
-                    (event) => this.handleSelect(event, childKey, childType),
+                    event => this.handleSelect(event, childKey, childType),
                     child.props.onSelect
                 ),
                 children: React.Children.map(child.props.children, this.renderChild.bind(this))
-            };
-
-            return React.cloneElement(child, props);
+            });
         } else {
             return child;
         }

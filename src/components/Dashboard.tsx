@@ -5,11 +5,11 @@ import MenuItem from 'components/parts/MenuItem';
 import Modal from 'components/parts/Modal';
 
 export default class Dashboard extends React.PureComponent<any, any> {
-    constructor(props, context) {
+    constructor(props: any, context: any) {
         super(props, context);
 
         this.state = {
-            isModalShown: true,
+            isModalShown: false,
         };
     }
 
