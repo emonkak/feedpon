@@ -19,9 +19,6 @@ export default class Dropdown extends React.PureComponent<any, any> {
             isOpened: !!props.isOpened,
             pullRight: false,
         };
-
-        this.handleClose = this.handleClose.bind(this);
-        this.handleToggle = this.handleToggle.bind(this);
     }
 
     componentWillReceiveProps(nextProps: any) {
@@ -55,7 +52,7 @@ export default class Dropdown extends React.PureComponent<any, any> {
             ...toggleButton.props,
             onClick: createChainedFunction(
                 toggleButton.props.onClick,
-                this.handleToggle
+                this.handleToggle.bind(this)
             ),
         };
 
@@ -69,8 +66,8 @@ export default class Dropdown extends React.PureComponent<any, any> {
         return (
             <div className={classnames('dropdown', { 'is-opened': isOpened })}>
                 {this.renderToggleButton()}
-                <Menu onClose={this.handleClose}
-                      onSelect={createChainedFunction(onSelect, this.handleClose)}
+                <Menu onClose={this.handleClose.bind(this)}
+                      onSelect={createChainedFunction(onSelect, this.handleClose.bind(this))}
                       isOpened={isOpened}
                       pullRight={pullRight}>
                     {children}

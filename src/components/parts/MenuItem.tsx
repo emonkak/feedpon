@@ -9,12 +9,6 @@ export default class MenuItem extends React.PureComponent<any, any> {
         onSelect: React.PropTypes.func,
     };
 
-    constructor(props: any, context: any) {
-        super(props, context);
-
-        this.handleSelect = this.handleSelect.bind(this);
-    }
-
     handleSelect(event: any) {
         const { isDisabled, onSelect } = this.props;
 
@@ -37,7 +31,7 @@ export default class MenuItem extends React.PureComponent<any, any> {
                 'is-disabled': isDisabled,
                 'is-active': isActive,
             })}>
-                <a href="#" onClick={this.handleSelect}>{children}</a>
+                <a href="#" onClick={this.handleSelect.bind(this)}>{children}</a>
             </li>
         );
     }

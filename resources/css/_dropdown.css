@@ -67,7 +67,7 @@
   background-color: var(--medium-color);
 }
 
-.dropdown-toggle:after {
+.dropdown-toggle::after {
   display: inline-block;
   width: 0;
   height: 0;

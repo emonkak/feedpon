@@ -1,4 +1,52 @@
 .modal {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1050;
+  visibility: hidden;
+  overflow: hidden;
+  padding: 0 2rem;
+}
+
+.modal.is-shown {
+  visibility: visible;
+  overflow-y: auto;
+}
+
+.modal > .modal-dialog {
+  max-width: 640px;
+  margin: var(--baseline-height) auto;
+  transform: translate(0, -25%);
+  transition: transform 0.2s ease-in-out;
+}
+
+.modal.is-shown > .modal-dialog {
+  opacity: 1;
+  transform: translate(0, 0);
+}
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1000;
+  visibility: hidden;
+  background: #000;
+  transition: visibility 0s ease-in-out 0.2s, opacity 0.2s ease-in-out;
+  opacity: 0;
+}
+
+.modal-backdrop.is-shown {
+  visibility: visible;
+  opacity: 0.5;
+  transition-delay: 0s;
+}
+
+.modal-dialog {
   background: var(--default-color);
   color: var(--default-background-color);
   border-radius: 4px;

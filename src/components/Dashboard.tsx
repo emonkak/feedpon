@@ -2,9 +2,28 @@ import * as React from 'react';
 
 import Dropdown from 'components/parts/Dropdown';
 import MenuItem from 'components/parts/MenuItem';
+import Modal from 'components/parts/Modal';
 
 export default class Dashboard extends React.PureComponent<any, any> {
+    constructor(props, context) {
+        super(props, context);
+
+        this.state = {
+            isModalShown: true,
+        };
+    }
+
+    handleModalOpen() {
+        this.setState(state => ({ ...state, isModalShown: true }));
+    }
+
+    handleModalClose() {
+        this.setState(state => ({ ...state, isModalShown: false }));
+    }
+
     render() {
+        const { isModalShown } = this.state;
+
         return (
             <div className="main">
                 <header className="main-header">
@@ -72,21 +91,24 @@ export default class Dashboard extends React.PureComponent<any, any> {
                             </Dropdown>
 
                             <h2>Modal</h2>
-                            <div className="modal">
+                            <div className="button-toolbar">
+                                <button className="button button-positive" onClick={this.handleModalOpen.bind(this)}>Launch Modal</button>
+                            </div>
+                            <Modal isShown={isModalShown} onHide={this.handleModalClose.bind(this)}>
                                 <div className="modal-header">
                                     <h2>Modal Title</h2>
-                                    <button className="button button-close">×</button>
+                                    <button className="button button-close" onClick={this.handleModalClose.bind(this)}>×</button>
                                 </div>
                                 <div className="modal-body">
                                     <p>Modal body text goes here.</p>
                                 </div>
                                 <div className="modal-footer">
                                     <div className="button-toolbar">
-                                            <button className="button button-positive">Okay</button>
-                                            <button className="button button-invert">Cancel</button>
+                                        <button className="button button-positive">Okay</button>
+                                        <button className="button button-invert" onClick={this.handleModalClose.bind(this)}>Cancel</button>
                                     </div>
                                 </div>
-                            </div>
+                            </Modal>
 
                             <h2>Message</h2>
                             <div className="message message-default">
