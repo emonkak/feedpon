@@ -13,9 +13,9 @@
   content: "\00a7";
   position: absolute;
   background: var(--default-background-color);
-  top: -0.75rem;
-  left: calc(50% - 0.75rem);
-  width: 1.5rem;
+  top: -0.75em;
+  left: calc(50% - 0.75em);
+  width: 1.5em;
   text-align: center;
   font-size: 1.5rem;
 }
