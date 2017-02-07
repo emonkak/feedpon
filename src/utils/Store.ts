@@ -1,5 +1,3 @@
-import $$observable from 'symbol-observable';
-
 type Delegate<TAction> = (action: TAction) => void;
 
 type Middleware<TAction> = (action: TAction, next: Delegate<TAction>) => void;
@@ -17,6 +15,8 @@ type PartialObserver<T> = {
     error?: (errorValue: any) => void,
     complete?: () => void,
 };
+
+const $$observable = (Symbol as any).observable || '@@observable';
 
 export default class Store<TAction, TState> {
     private readonly _observers: Set<Observer<TState>> = new Set();
