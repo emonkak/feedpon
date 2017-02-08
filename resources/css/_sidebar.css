@@ -1,17 +1,7 @@
-.sidebar-header {
-  margin: 0 0 calc(var(--baseline-height) / 2);
+.sidebar {
+  padding: calc(var(--baseline-height) / 2) 1.5rem;
 }
 
-.sidebar-body {
-  margin: calc(var(--baseline-height) / 2) 0;
-}
-
-.sidebar-footer {
-  margin: calc(var(--baseline-height) / 2) 0 0;
-  text-align: center;
-  font-size: 0.875rem;
-}
-
-.sidebar-content {
-  margin: calc(var(--baseline-height) / 2) 0;
+.sidebar-group + .sidebar-group {
+  margin-top: calc(var(--baseline-height) / 2);
 }

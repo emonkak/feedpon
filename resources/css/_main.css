@@ -1,3 +1,7 @@
+.main {
+  padding: calc(var(--baseline-height) / 2) 1.5rem;
+}
+
 .main-header {
   display: flex;
   align-items: center;

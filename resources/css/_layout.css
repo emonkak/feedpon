@@ -5,13 +5,13 @@
   left: calc(-var(--sidebar-width));
   width: var(--sidebar-width);
   height: 100%;
-  padding: calc(var(--baseline-height) / 2) 1.5rem;
   overflow-x: hidden;
   overflow-y: auto;
   transition-property: left;
   transition-duration: 0.2s;
   transition-timing-function: ease-in-out;
   background: var(--light-color);
+  z-index: 200;
 }
 
 .l-sidebar.is-active {
@@ -23,7 +23,6 @@
 }
 
 .l-main {
-  padding: calc(var(--baseline-height) / 2) 1.5rem;
   transition-property: margin;
   transition-duration: 0.2s;
   transition-timing-function: ease-in-out;

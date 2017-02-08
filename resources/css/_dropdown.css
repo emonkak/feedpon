@@ -8,7 +8,7 @@
   visibility: hidden;
   top: 100%;
   left: 0;
-  z-index: 1000;
+  z-index: 2000;
   opacity: 0;
   transition: visibility 0s ease-in-out 0.2s, opacity 0.2s ease-in-out;
 }
@@ -38,9 +38,6 @@
 
 .dropdown-menu-item {
   white-space: nowrap;
-  transition-property: background-color, color;
-  transition-duration: 0.2s;
-  transition-timing-function: ease-in-out;
 }
 
 .dropdown-menu-item:hover {

@@ -24,6 +24,10 @@
   white-space: nowrap;
 }
 
+.u-text-center {
+  text-align: center;
+}
+
 .u-none {
   display: none;
 }

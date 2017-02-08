@@ -19,7 +19,6 @@
   align-items: stretch;
   border-radius: 4px;
   padding: calc(var(--baseline-height) / 4) 0;
-  transition: background-color 0.2s ease-in-out;
   color: var(--default-color);
 }
 

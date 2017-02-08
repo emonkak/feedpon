@@ -1,9 +1,21 @@
-.search-box {
-  background: transparent;
+input[type="text"] {
+  background: var(--default-background-color);
   color: inherit;
+  border: 1px solid var(--medium-color);
+  box-sizing: border-box;
+  border-radius: 4px;
+  padding: calc(var(--baseline-height) / 4 - 1px) calc(0.5rem - 1px);
+}
+
+input[type="text"]:focus {
+  border-color: var(--positive-color);
+}
+
+input.search-box {
+  background: transparent;
   border: none;
   border-bottom: 2px solid var(--default-color);
-  box-sizing: border-box;
-  padding: calc(var(--baseline-height) / 4) 0.5rem calc(var(--baseline-height) / 4 - 2px);
+  border-radius: 0;
+  padding: calc(var(--baseline-height) / 4) calc(var(--baseline-height) / 4) calc(var(--baseline-height) / 4 - 2px);
   width: 100%;
 }

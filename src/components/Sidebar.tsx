@@ -76,33 +76,32 @@ export default class Sidebar extends React.PureComponent<any, any> {
 
         return (
             <nav className="sidebar">
-                <header className="sidebar-header">
+                <div className="sidebar-group">
                     <input type="text" className="search-box" placeholder="Search for feeds ..." />
-                </header>
-                <div className="sidebar-body">
-                    <div className="sidebar-content">
-                        <Tree onSelect={this.handleSelect.bind(this)}>
-                           <TreeLeaf key="/" primaryText="Dashboard" />
-                           <TreeLeaf key="/all/" primaryText="All" secondaryText={numberFormatter.format(totalUnreadCount)} />
-                           <TreeLeaf key="/pins/" primaryText="Pins" secondaryText="12" />
-                           <TreeHeader title="Updated 6 minutes ago"
-                                       leftIcon={<i className="icon icon-16 icon-refresh" />}
-                                       rightIcon={<i className="icon icon-16 icon-more" />} />
-                           {groupedSubscriptions}
-                           <TreeLeaf key="/settings/" primaryText="Settings" />
-                           <TreeLeaf key="/about/" primaryText="About..." />
-                        </Tree>
-                    </div>
-                    <div className="sidebar-content">
-                        <button type="button" className="button button-block button-default">New Subscription</button>
-                    </div>
                 </div>
-                <footer className="sidebar-footer">
+                <div className="sidebar-group">
+                    <Tree activeKey={activeKey}
+                          onSelect={this.handleSelect.bind(this)}>
+                        <TreeLeaf key="/" primaryText="Dashboard" />
+                        <TreeLeaf key="/all/" primaryText="All" secondaryText={numberFormatter.format(totalUnreadCount)} />
+                        <TreeLeaf key="/pins/" primaryText="Pins" secondaryText="12" />
+                        <TreeHeader title="Updated 6 minutes ago"
+                                    leftIcon={<i className="icon icon-16 icon-refresh" />}
+                                    rightIcon={<i className="icon icon-16 icon-more" />} />
+                        {groupedSubscriptions}
+                        <TreeLeaf key="/settings/" primaryText="Settings" />
+                        <TreeLeaf key="/about/" primaryText="About..." />
+                    </Tree>
+                </div>
+                <div className="sidebar-group">
+                    <button type="button" className="button button-block button-default">New Subscription</button>
+                </div>
+                <div className="sidebar-group u-text-center">
                     <ul className="list-inline list-inline-slash">
                         <li><a href="#">emonkak@gmail.com</a></li>
                         <li><a href="#">Logout</a></li>
                     </ul>
-                </footer>
+                </div>
             </nav>
         );
     }
