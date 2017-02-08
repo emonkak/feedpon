@@ -24,8 +24,11 @@ export default class Modal extends React.PureComponent<any, any> {
         const { isShown } = this.props;
 
         if (isShown) {
+            const scrollbarWidth = window.innerWidth - document.body.clientWidth;
+            document.body.style.paddingRight = scrollbarWidth + 'px';
             document.body.style.overflow = 'hidden';
         } else {
+            document.body.style.paddingRight = '';
             document.body.style.overflow = '';
         }
     }
