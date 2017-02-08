@@ -8,39 +8,45 @@ export default class Tree extends React.PureComponent<any, any> {
     static propTypes = {
         children: React.PropTypes.node.isRequired,
         onSelect: React.PropTypes.func,
+        activeKey: React.PropTypes.string,
     };
 
     constructor(props: any) {
         super(props);
 
         this.state = {
-            activeKey: null,
-            activeType: null,
+            activeKey: props.activeKey,
         };
     }
 
-    handleSelect(event: any, activeKey: React.Key, activeType: React.ReactType) {
+    componentWillReceiveProps(nextProps: any) {
+        if (this.props.activeKey !== nextProps.activeKey) {
+            this.setState(state => ({ ...state, activeKey: nextProps.activeKey }));
+        }
+    }
+
+    handleSelect(event: any, activeKey: React.Key) {
         const { onSelect } = this.props;
 
         if (onSelect) {
-            onSelect(event, activeKey, activeType);
+            onSelect(event, activeKey);
         }
 
-        this.setState(state => ({ ...state, activeKey, activeType }));
+        this.setState(state => ({ ...state, activeKey }));
     }
 
     renderChild(child: React.ReactElement<any>) {
         const childType = child.type;
 
         if (childType === TreeBranch || childType === TreeLeaf) {
-            const { activeKey, activeType } = this.state;
+            const { activeKey } = this.state;
             const childKey = child.key;
 
             return React.cloneElement(child, {
                 ...child.props,
-                isSelected: childType === activeType && childKey === activeKey,
+                isSelected: childKey === activeKey,
                 onSelect: createChainedFunction(
-                    event => this.handleSelect(event, childKey, childType),
+                    event => this.handleSelect(event, childKey),
                     child.props.onSelect
                 ),
                 children: React.Children.map(child.props.children, this.renderChild.bind(this))

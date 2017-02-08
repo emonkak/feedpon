@@ -8,12 +8,12 @@ export default class App extends React.PureComponent<any, any> {
     };
 
     render() {
-        const { children } = this.props;
+        const { children, location } = this.props;
 
         return (
             <div>
                 <div className="l-sidebar">
-                    <Sidebar />
+                    <Sidebar activeKey={location.pathname} />
                 </div>
                 <div className="l-main">
                     {children}

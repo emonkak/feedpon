@@ -19,8 +19,9 @@ const numberFormatter = new Intl.NumberFormat();
 @connect()
 export default class Sidebar extends React.PureComponent<any, any> {
     static propTypes = {
-        subscriptions: React.PropTypes.array.isRequired,
+        activeKey: React.PropTypes.string,
         dispatch: React.PropTypes.func.isRequired,
+        subscriptions: React.PropTypes.array.isRequired,
     };
 
     componentWillMount() {
@@ -62,7 +63,7 @@ export default class Sidebar extends React.PureComponent<any, any> {
     }
 
     render() {
-        const { subscriptions } = this.props;
+        const { activeKey, subscriptions } = this.props;
 
         const totalUnreadCount = (subscriptions as any[]).reduce((total, subscription) => {
             return total + subscription.unreadCount;
