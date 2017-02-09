@@ -8,7 +8,7 @@
   --medium-dark-color: #ced4da;
   --dark-color: #868e96;
 
-  --positive-color: #22b8cf;
+  --positive-color: #20c997;
   --negative-color: #ff6b6b;
 
   --sidebar-width: 288px;
@@ -17,7 +17,7 @@
 }
 
 html {
-  font-family: -apple-system, 'BlinkMacSystemFont', '.SFNSDisplay-Regular', sans-serif;
+  font-family: -apple-system, 'BlinkMacSystemFont', '.SFNSDisplay-Regular', 'Segoe UI', sans-serif;
   font-size: 14px;
   line-height: var(--baseline-height);
   -webkit-font-smoothing: antialiased;

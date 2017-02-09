@@ -28,6 +28,10 @@
   text-align: center;
 }
 
+.u-text-small {
+  font-size: 0.875rem;
+}
+
 .u-none {
   display: none;
 }

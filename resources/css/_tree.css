@@ -18,7 +18,6 @@
   display: flex;
   align-items: stretch;
   border-radius: 4px;
-  padding: calc(var(--baseline-height) / 4) 0;
   color: var(--default-color);
 }
 
@@ -55,7 +54,7 @@
   display: inline-flex;
   align-items: center;
   flex: 1;
-  padding: 0 0.5rem;
+  padding: calc(var(--baseline-height) / 4) 0.5rem;
 }
 
 .tree-node-icon + .tree-node-text {

@@ -96,7 +96,7 @@ export default class Sidebar extends React.PureComponent<any, any> {
                 <div className="sidebar-group">
                     <button type="button" className="button button-block button-default">New Subscription</button>
                 </div>
-                <div className="sidebar-group u-text-center">
+                <div className="sidebar-group u-text-center u-text-small">
                     <ul className="list-inline list-inline-slash">
                         <li><a href="#">emonkak@gmail.com</a></li>
                         <li><a href="#">Logout</a></li>

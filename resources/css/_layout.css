@@ -27,7 +27,12 @@
   left: 0;
   right: 0;
   z-index: 100;
-  transition: margin 0.2s ease-in-out;
+  transition: margin 0.2s ease-in-out, transform 0.2s ease-in-out;
+  transform: translateY(-100%);
+}
+
+.l-navbar.is-pinned {
+  transform: translateY(0);
 }
 
 .l-main {
