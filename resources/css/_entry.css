@@ -1,11 +1,10 @@
 .entry {
   position: relative;
-  padding: var(--baseline-height) calc(var(--baseline-height) / 4);
+  padding: var(--baseline-height) 0;
 }
 
 .entry + .entry {
   padding-top: calc(var(--baseline-height) - 3px);
-  padding-bottom: var(--baseline-height);
   border-top: 3px double var(--medium-color);
 }
 

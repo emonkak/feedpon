@@ -7,11 +7,10 @@
   height: 100%;
   overflow-x: hidden;
   overflow-y: auto;
-  transition-property: left;
-  transition-duration: 0.2s;
-  transition-timing-function: ease-in-out;
   background: var(--light-color);
+  border-right: 1px solid var(--medium-color);
   z-index: 200;
+  transition: left 0.2 ease-in-out;
 }
 
 .l-sidebar.is-active {
@@ -22,10 +21,18 @@
   margin-left: var(--sidebar-width);
 }
 
+.l-navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  transition: margin 0.2s ease-in-out;
+}
+
 .l-main {
-  transition-property: margin;
-  transition-duration: 0.2s;
-  transition-timing-function: ease-in-out;
+  margin-top: var(--navbar-height);
+  transition: margin 0.2s ease-in-out;
 }
 
 @media (min-width: 768px) {
@@ -34,6 +41,10 @@
   }
 
   .l-main {
+    margin-left: var(--sidebar-width);
+  }
+
+  .l-navbar {
     margin-left: var(--sidebar-width);
   }
 }
