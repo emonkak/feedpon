@@ -21,7 +21,7 @@
   margin-left: var(--sidebar-width);
 }
 
-.l-navbar {
+.l-header {
   position: fixed;
   top: 0;
   left: 0;
@@ -31,13 +31,12 @@
   transform: translateY(-100%);
 }
 
-.l-navbar.is-pinned {
+.l-header.is-pinned {
   transform: translateY(0);
 }
 
-.l-main {
+.l-header + .l-main {
   margin-top: var(--navbar-height);
-  transition: margin 0.2s ease-in-out;
 }
 
 @media (min-width: 768px) {
@@ -49,7 +48,7 @@
     margin-left: var(--sidebar-width);
   }
 
-  .l-navbar {
+  .l-header {
     margin-left: var(--sidebar-width);
   }
 }

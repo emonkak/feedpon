@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-export default class SubscriptionFeeds extends React.PureComponent<any, any> {
+export default class SubscriptionEntries extends React.PureComponent<any, any> {
     render() {
         return (
             <div className="main">

@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-export default class CategoryFeeds extends React.PureComponent<any, any> {
+export default class CategoryEntries extends React.PureComponent<any, any> {
     render() {
         return (
             <div className="main">

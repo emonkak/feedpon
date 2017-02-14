@@ -4,7 +4,8 @@ import * as classnames from 'classnames';
 
 export default class AutoHidingHeader extends React.PureComponent<any, any> {
     static propTypes = {
-        children: React.PropTypes.element.isRequired,
+        children: React.PropTypes.element,
+        className: React.PropTypes.string,
         isPinned: React.PropTypes.bool,
         pinnedClassName: React.PropTypes.string,
         tolerance: React.PropTypes.number,
@@ -70,15 +71,18 @@ export default class AutoHidingHeader extends React.PureComponent<any, any> {
     }
 
     render() {
-        const { children, pinnedClassName, unpinnedClassName } = this.props;
+        const { children, className, pinnedClassName, unpinnedClassName } = this.props;
         const { isPinned } = this.state;
 
-        return React.cloneElement(children, {
-            ...children.props,
-            className: classnames(children.props.className, {
-                [pinnedClassName]: isPinned,
-                [unpinnedClassName]: !isPinned,
-            })
+        const containerClassName = classnames(className, {
+            [pinnedClassName]: isPinned,
+            [unpinnedClassName]: !isPinned,
         });
+
+        return (
+            <header className={containerClassName}>
+                {children}
+            </header>
+        );
     }
 }
