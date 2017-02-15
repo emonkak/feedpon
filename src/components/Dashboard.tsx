@@ -81,7 +81,7 @@ export default class Dashboard extends React.PureComponent<any, any> {
                         </div>
                         <Modal isShown={isModalShown} onHide={this.handleModalClose.bind(this)}>
                             <div className="modal-header">
-                                <h2>Modal Title</h2>
+                                <h3 className="modal-title">Modal Title</h3>
                                 <button className="button button-close" onClick={this.handleModalClose.bind(this)}>×</button>
                             </div>
                             <div className="modal-body">
