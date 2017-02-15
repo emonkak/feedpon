@@ -59,7 +59,7 @@ export default class AutoHidingHeader extends React.PureComponent<any, any> {
     handleUpdate() {
         const { tolerance } = this.props;
         const { clientHeight } = ReactDOM.findDOMNode(this);
-        const scrollDistance = Math.abs(this.lastScrollTop - window.scrollY);
+        const scrollDistance = Math.abs(this.lastScrollTop - this.scroller.scrollTop);
 
         if (this.scroller.scrollTop <= clientHeight) {
             this.setState({
