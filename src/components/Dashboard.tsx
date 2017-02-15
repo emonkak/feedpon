@@ -82,7 +82,7 @@ export default class Dashboard extends React.PureComponent<any, any> {
                         <Modal isShown={isModalShown} onHide={this.handleModalClose.bind(this)}>
                             <div className="modal-header">
                                 <h3 className="modal-title">Modal Title</h3>
-                                <button className="button button-close" onClick={this.handleModalClose.bind(this)}>×</button>
+                                <button className="button button-close" onClick={this.handleModalClose.bind(this)}></button>
                             </div>
                             <div className="modal-body">
                                 <p>Modal body text goes here.</p>
@@ -99,7 +99,7 @@ export default class Dashboard extends React.PureComponent<any, any> {
                         <div className="message message-default">
                             <header className="message-header">
                                 <h6 className="message-title">Changes in Service</h6>
-                                <button className="button button-close">×</button>
+                                <button className="button button-close"></button>
                             </header>
                             <div className="message-body">
                                 <p>We just updated our privacy policy here to better service our customers. We recommend reviewing the changes.</p>
@@ -108,7 +108,7 @@ export default class Dashboard extends React.PureComponent<any, any> {
                         <div className="message message-positive">
                             <header className="message-header">
                                 <h6 className="message-title">Changes in Service</h6>
-                                <button className="button button-close">×</button>
+                                <button className="button button-close"></button>
                             </header>
                             <div className="message-body">
                                 <p>We just updated our privacy policy here to better service our customers. We recommend reviewing the changes.</p>
@@ -117,7 +117,7 @@ export default class Dashboard extends React.PureComponent<any, any> {
                         <div className="message message-negative">
                             <header className="message-header">
                                 <h6 className="message-title">Changes in Service</h6>
-                                <button className="button button-close">×</button>
+                                <button className="button button-close"></button>
                             </header>
                             <div className="message-body">
                                 <p>We just updated our privacy policy here to better service our customers. We recommend reviewing the changes.</p>
