@@ -1,9 +1,11 @@
 .badge {
+  padding: 0 0.5rem;
+  min-width: var(--baseline-height);
+  box-sizing: border-box;
+  border-radius: 50%;
   font-size: 0.875rem;
   font-weight: bold;
-  border-radius: 50%;
-  line-height: 1.5rem;
-  padding: 0 0.5rem;
+  text-align: center;
 }
 
 .badge-overlap {
