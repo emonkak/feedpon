@@ -76,7 +76,9 @@ export default class Layout extends React.PureComponent<any, any> {
                     <AutoHidingHeader className="l-header">
                         <FeedNavbar onToggleSidebar={this.handleToggleSidebar.bind(this)} />
                     </AutoHidingHeader>
-                    {main}
+                    <div className="l-main-inner">
+                        {main}
+                    </div>
                 </div>
             </div>
         );
