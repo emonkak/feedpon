@@ -11,12 +11,15 @@ import TreeBranch from 'components/parts/TreeBranch';
 import TreeHeader from 'components/parts/TreeHeader';
 import TreeLeaf from 'components/parts/TreeLeaf';
 import connect from 'utils/components/connect';
+import { State } from 'messaging/types';
 import { fetchSubscriptions } from 'messaging/actions';
 import { replace } from 'utils/middlewares/historyActions';
 
 const numberFormatter = new Intl.NumberFormat();
 
-@connect()
+@connect((state: State) => ({
+    subscriptions: state.subscriptions
+}))
 export default class Sidebar extends React.PureComponent<any, any> {
     static propTypes = {
         activeKey: React.PropTypes.string,

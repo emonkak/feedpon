@@ -1,4 +1,4 @@
-import { History } from 'react-router/lib/routerHistory';
+import { History } from 'history';
 
 import { PUSH, REPLACE, GO, GO_BACK, GO_FORWARD } from 'utils/middlewares/historyActions';
 

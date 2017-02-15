@@ -8,6 +8,7 @@ export default class AutoHidingHeader extends React.PureComponent<any, any> {
         className: React.PropTypes.string,
         isPinned: React.PropTypes.bool,
         pinnedClassName: React.PropTypes.string,
+        scroller: React.PropTypes.instanceOf(Element),
         tolerance: React.PropTypes.number,
         unpinnedClassName: React.PropTypes.string,
     };
@@ -19,9 +20,11 @@ export default class AutoHidingHeader extends React.PureComponent<any, any> {
         unpinnedClassName: '',
     };
 
-    private lastScrollY: number = 0;
+    private lastScrollTop: number = 0;
 
     private isTicking: boolean = false;
+
+    private scroller: Element = null;
 
     constructor(props: any, context: any) {
         super(props, context);
@@ -31,43 +34,60 @@ export default class AutoHidingHeader extends React.PureComponent<any, any> {
         };
 
         this.handleScroll = this.handleScroll.bind(this);
-        this.update = this.update.bind(this);
+        this.handleUpdate = this.handleUpdate.bind(this);
     }
 
     componentDidMount() {
-        document.addEventListener('scroll', this.handleScroll);
+        this.scroller = this.props.scroller || this.getScroller();
 
-        this.lastScrollY = window.scrollY;
+        this.scroller.addEventListener('scroll', this.handleScroll);
+
+        this.lastScrollTop = this.scroller.scrollTop;
     }
 
     componentWillUnmount() {
-        document.removeEventListener('scroll', this.handleScroll);
+        this.scroller.removeEventListener('scroll', this.handleScroll);
     }
 
     handleScroll() {
         if (!this.isTicking) {
-            window.requestAnimationFrame(this.update);
+            window.requestAnimationFrame(this.handleUpdate);
             this.isTicking = true;
         }
     }
 
-    update() {
+    handleUpdate() {
         const { tolerance } = this.props;
         const { clientHeight } = ReactDOM.findDOMNode(this);
-        const scrollDistance = Math.abs(this.lastScrollY - window.scrollY);
+        const scrollDistance = Math.abs(this.lastScrollTop - window.scrollY);
 
-        if (window.scrollY <= clientHeight) {
+        if (this.scroller.scrollTop <= clientHeight) {
             this.setState({
                 isPinned: true,
             });
         } else if (scrollDistance > tolerance) {
             this.setState({
-                isPinned: this.lastScrollY > window.scrollY,
+                isPinned: this.lastScrollTop > this.scroller.scrollTop,
             });
         }
 
-        this.lastScrollY = window.scrollY;
+        this.lastScrollTop = this.scroller.scrollTop;
         this.isTicking = false;
+    }
+
+    getScroller(): Element {
+        let node = ReactDOM.findDOMNode(this);
+
+        do {
+            const style = getComputedStyle(node, null);
+            const overflowY = style.getPropertyValue('overflow-y');
+
+            if (overflowY === 'auto' || overflowY === 'scroll') {
+                break;
+            }
+        } while (node = node.parentNode as Element);
+
+        return node;
     }
 
     render() {
@@ -80,9 +100,9 @@ export default class AutoHidingHeader extends React.PureComponent<any, any> {
         });
 
         return (
-            <header className={containerClassName}>
+            <div className={containerClassName}>
                 {children}
-            </header>
+            </div>
         );
     }
 }

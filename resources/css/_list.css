@@ -58,10 +58,10 @@
 }
 
 a.list-group-item:hover {
-  background: var(--light-color);
+  background-color: var(--light-color);
   text-decoration: none;
 }
 
 a.list-group-item:active {
-  background: var(--medium-light-color);
+  background-color: var(--medium-light-color);
 }

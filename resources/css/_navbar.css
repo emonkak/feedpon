@@ -1,8 +1,8 @@
 .navbar {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   box-sizing: border-box;
-  padding: 0 1.5em;
+  padding: 0 1.5rem 0 0;
   height: var(--navbar-height);
   border-bottom: 1px solid var(--medium-color);
   background: var(--default-background-color);
@@ -13,5 +13,28 @@
   font-size: inherit;
   line-height: inherit;
   color: var(--default-color);
-  margin: 0;
+  display: flex;
+  align-items: center;
+  padding: 0 1.5rem;
+}
+
+.navbar-icon {
+  flex: 0 0 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: inherit;
+  text-decoration: none;
+  text-align: center;
+  border-right: 1px solid var(--medium-color);
+  transition: background-color 0.2s ease-in-out;
+}
+
+.navbar-icon:hover {
+  background-color: var(--light-color);
+}
+
+.navbar-icon:active {
+  background-color: var(--medium-light-color);
 }
