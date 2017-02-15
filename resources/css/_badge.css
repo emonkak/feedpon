@@ -1,0 +1,23 @@
+.badge {
+  font-size: 0.875rem;
+  font-weight: bold;
+  border-radius: 50%;
+  line-height: 1.5rem;
+  padding: 0 0.5rem;
+}
+
+.badge-overlap {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+}
+
+.badge-positive {
+  background: var(--positive-color);
+  color: var(--default-background-color);
+}
+
+.badge-negative {
+  background: var(--negative-color);
+  color: var(--default-background-color);
+}

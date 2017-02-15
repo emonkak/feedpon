@@ -1,5 +1,6 @@
 @import './_base.css';
 
+@import './_badge.css';
 @import './_button.css';
 @import './_dropdown.css';
 @import './_entry.css';

@@ -21,15 +21,24 @@ export default class FeedNav extends React.PureComponent<any, any> {
     render() {
         return (
             <nav className="navbar">
-                <a className="navbar-icon u-md-none" href="#" onClick={this.handleToggleSidebar.bind(this)}>
+                <a className="navbar-toggle-icon u-md-none" href="#" onClick={this.handleToggleSidebar.bind(this)}>
                     <i className="icon icon-24 icon-menu" />
                 </a>
-                <h1 className="navbar-title u-text-truncate"><a className="link-default" href="#">Typographica</a></h1>
-                <ul className="list-inline list-inline-slash">
-                    <li><a href="#">Refresh</a></li>
-                    <li><a href="#">Mark as Read</a></li>
+                <h1 className="navbar-title"><a className="link-default u-text-truncate" href="#">Navigation Bar Title Here</a></h1>
+                <ul className="navbar-actions">
                     <li>
-                        <Dropdown toggleButton={<a className="dropdown-toggle" href="#">View</a>} pullRight={true}>
+                        <a className="link-default icon-container" href="#">
+                            <i className="icon icon-24 icon-checkmark" />
+                            <span className="badge badge-overlap badge-negative">8</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a className="link-default icon-container" href="#">
+                            <i className="icon icon-24 icon-refresh" />
+                        </a>
+                    </li>
+                    <li>
+                        <Dropdown toggleButton={<a className="link-default" href="#"><i className="icon icon-24 icon-more" /></a>} pullRight={true}>
                             <DropdownMenuItem>Action</DropdownMenuItem>
                             <DropdownMenuItem>Another action</DropdownMenuItem>
                             <DropdownMenuItem>Something else here</DropdownMenuItem>
