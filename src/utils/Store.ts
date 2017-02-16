@@ -38,7 +38,7 @@ export default class Store<TAction, TState> {
     }
 
     dispatch(action: TAction): void {
-        const pipeline = createPipeline(this._middlewares, this._finalize);
+        const pipeline = createPipeline(this._middlewares, this._finalize, 0);
         pipeline(action);
     }
 
@@ -85,14 +85,11 @@ export default class Store<TAction, TState> {
     }
 }
 
-function createPipeline<TAction>(middlewares: Middleware<TAction>[], finalize: Delegate<TAction>): Delegate<TAction> {
-    let i = 0;
-
-    const { length } = middlewares;
-
-    return function next(action: TAction): void {
-        if (i < length) {
-            const middleware = middlewares[i++];
+function createPipeline<TAction>(middlewares: Middleware<TAction>[], finalize: Delegate<TAction>, index: number): Delegate<TAction> {
+    return (action: TAction) => {
+        if (index < middlewares.length) {
+            const middleware = middlewares[index];
+            const next = createPipeline(middlewares, finalize, index + 1);
             middleware(action, next);
         } else {
             finalize(action);

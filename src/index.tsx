@@ -13,7 +13,12 @@ import { Action, State } from 'messaging/types';
 
 const store = new Store<Action, State>(reducer, initialState)
     .pipe(asyncMiddleware)
-    .pipe(historyMiddleware(hashHistory));
+    .pipe(historyMiddleware(hashHistory))
+    .pipe((action, next) => {
+        console.log(action);
+
+        next(action);
+    });
 
 const element = document.getElementById('app');
 
