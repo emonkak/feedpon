@@ -29,7 +29,7 @@ export default class Navbar extends React.PureComponent<any, any> {
                     <li>
                         <a className="link-default icon-container" href="#">
                             <i className="icon icon-24 icon-checkmark" />
-                            <span className="badge badge-overlap badge-negative">8</span>
+                            <span className="badge badge-overlap badge-negative">2</span>
                         </a>
                     </li>
                     <li>

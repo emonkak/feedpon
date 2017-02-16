@@ -1,9 +1,10 @@
 .badge {
-  padding: 0 0.5rem;
-  min-width: var(--baseline-height);
   box-sizing: border-box;
+  padding: 0 0.5em;
+  min-width: 16px;
+  line-height: 16px;
   border-radius: 50%;
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   font-weight: bold;
   text-align: center;
 }
