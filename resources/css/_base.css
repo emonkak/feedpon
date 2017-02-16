@@ -8,8 +8,10 @@
   --medium-dark-color: #ced4da;
   --dark-color: #868e96;
 
-  --positive-color: #20c997;
+  --positive-color: #22b8cf;
+  --positive-light-color: #e3fafc;
   --negative-color: #ff6b6b;
+  --negative-light-color: #fff5f5;
 
   --sidebar-width: 288px;
   --navbar-height: 48px;

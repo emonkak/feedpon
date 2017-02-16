@@ -1,9 +1,7 @@
-import { AsyncAction } from 'messaging/types';
-
-export const FETCH_SUBSCRIPTIONS = 'FETCH_SUBSCRIPTIONS';
+import { Action, AsyncAction, Notification, Subscription } from 'messaging/types';
 
 export function fetchSubscriptions(): AsyncAction {
-    const subscriptions = [
+    const subscriptions: Subscription[] = [
         {
             subscriptionId: 1,
             title: 'Entry',
@@ -45,9 +43,35 @@ export function fetchSubscriptions(): AsyncAction {
     return dispatch => {
         setTimeout(() => {
             dispatch({
-                type: FETCH_SUBSCRIPTIONS,
+                type: 'FETCH_SUBSCRIPTIONS',
                 subscriptions,
             });
         }, 500);
+    };
+}
+
+export function sendNotification(notification: Notification): AsyncAction {
+    if (!notification.id) {
+        notification.id = Date.now();
+    }
+
+    return dispatch => {
+        dispatch({
+            type: 'SEND_NOTIFICATION',
+            notification
+        });
+
+        if (notification.dismissAfter) {
+            setTimeout(() => {
+                dispatch(dismissNotification(notification.id));
+            }, notification.dismissAfter);
+        }
+    };
+}
+
+export function dismissNotification(id: number): Action {
+    return {
+        type: 'DISMISS_NOTIFICATION',
+        id,
     };
 }

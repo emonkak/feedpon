@@ -29,13 +29,11 @@
   left: 0;
 }
 
-.l-container.is-opened .l-main {
+.l-container.is-opened .l-main,
+.l-container.is-opened .l-header,
+.l-container.is-opened .l-notification {
   padding-left: var(--sidebar-width);
   overflow: hidden;
-}
-
-.l-container.is-opened .l-header {
-  padding-left: var(--sidebar-width);
 }
 
 .l-sidebar {
@@ -72,7 +70,7 @@
   right: 0;
   width: 100%;
   z-index: 100;
-  transform: translateY(-100%);
+  transform: translateY(-var(--navbar-height));
   transition: transform 0.2s ease-in-out, padding 0.2s ease-in-out;
 }
 

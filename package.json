@@ -15,7 +15,7 @@
     "clean": "rm -f -r public/{js,css}",
     "lint": "tslint 'src/**/*.ts'",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "http-server ./public",
+    "start": "http-server -c-1 ./public",
     "watch": "npm-run-all -p watch:css watch:js",
     "watch:css": "postcss -c postcss.config.json -w -o public/css/index.css resources/css/index.css",
     "watch:js": "webpack --watch --devtool source-map"
@@ -23,13 +23,16 @@
   "dependencies": {
     "@emonkak/enumerable": "^1.1.0",
     "classnames": "^2.2.5",
+    "moment": "^2.17.1",
     "react": "^15.4.2",
+    "react-addons-css-transition-group": "^15.4.2",
     "react-dom": "^15.4.2",
     "react-router": "^3.0.2"
   },
   "devDependencies": {
     "@types/classnames": "0.0.32",
     "@types/react": "^15.0.9",
+    "@types/react-addons-css-transition-group": "^15.0.1",
     "@types/react-dom": "^0.14.23",
     "@types/react-router": "^3.0.3",
     "@types/whatwg-fetch": "^0.0.33",
@@ -44,7 +47,6 @@
     "postcss-import": "^9.1.0",
     "tslint": "^4.4.2",
     "typescript": "^2.1.6",
-    "watch": "^1.0.1",
     "webpack": "^2.2.1"
   }
 }

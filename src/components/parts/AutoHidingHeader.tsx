@@ -4,7 +4,7 @@ import * as classnames from 'classnames';
 
 export default class AutoHidingHeader extends React.PureComponent<any, any> {
     static propTypes = {
-        children: React.PropTypes.element,
+        children: React.PropTypes.node,
         className: React.PropTypes.string,
         isPinned: React.PropTypes.bool,
         pinnedClassName: React.PropTypes.string,

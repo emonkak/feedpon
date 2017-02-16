@@ -4,6 +4,7 @@ import { locationShape, routerShape } from 'react-router/lib/PropTypes';
 
 import AutoHidingHeader from 'components/parts/AutoHidingHeader';
 import Navbar from 'components/Navbar';
+import Notifications from 'components/Notifications';
 import Sidebar from 'components/Sidebar';
 
 export default class Layout extends React.PureComponent<any, any> {
@@ -74,6 +75,7 @@ export default class Layout extends React.PureComponent<any, any> {
                 <div className="l-main">
                     <AutoHidingHeader className="l-header">
                         <Navbar onToggleSidebar={this.handleToggleSidebar.bind(this)} />
+                        <Notifications />
                     </AutoHidingHeader>
                     <div className="l-main-inner">
                         {children}

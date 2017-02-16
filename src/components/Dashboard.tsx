@@ -3,7 +3,10 @@ import * as React from 'react';
 import Dropdown from 'components/parts/Dropdown';
 import DropdownMenuItem from 'components/parts/DropdownMenuItem';
 import Modal from 'components/parts/Modal';
+import connect from 'utils/components/connect';
+import { sendNotification } from 'messaging/actions';
 
+@connect()
 export default class Dashboard extends React.PureComponent<any, any> {
     constructor(props: any, context: any) {
         super(props, context);
@@ -19,6 +22,16 @@ export default class Dashboard extends React.PureComponent<any, any> {
 
     handleModalClose() {
         this.setState(state => ({ ...state, isModalShown: false }));
+    }
+
+    handleSendNotification(kind: any) {
+        const { dispatch } = this.props;
+
+        dispatch(sendNotification({
+            message: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
+            kind,
+            dismissAfter: 3000,
+        }));
     }
 
     render() {
@@ -46,14 +59,14 @@ export default class Dashboard extends React.PureComponent<any, any> {
 
                         <h2>Button</h2>
                         <p className="button-toolbar">
-                            <button className="button button-default">Default</button>
-                            <button className="button button-positive">Positive</button>
-                            <button className="button button-negative">Negative</button>
+                            <button className="button button-default" onClick={this.handleSendNotification.bind(this, 'default')}>Default</button>
+                            <button className="button button-positive" onClick={this.handleSendNotification.bind(this, 'positive')}>Positive</button>
+                            <button className="button button-negative" onClick={this.handleSendNotification.bind(this, 'negative')}>Negative</button>
                         </p>
                         <p className="button-toolbar">
-                            <button className="button button-large button-default">Default</button>
-                            <button className="button button-large button-positive">Positive</button>
-                            <button className="button button-large button-negative">Negative</button>
+                            <button className="button button-large button-default" onClick={this.handleSendNotification.bind(this, 'default')}>Default</button>
+                            <button className="button button-large button-positive" onClick={this.handleSendNotification.bind(this, 'positive')}>Positive</button>
+                            <button className="button button-large button-negative" onClick={this.handleSendNotification.bind(this, 'negative')}>Negative</button>
                         </p>
 
                         <h2>Paragraph</h2>
