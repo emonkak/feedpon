@@ -3,13 +3,12 @@ import * as classnames from 'classnames';
 import { locationShape, routerShape } from 'react-router/lib/PropTypes';
 
 import AutoHidingHeader from 'components/parts/AutoHidingHeader';
-import FeedNavbar from 'components/FeedNavbar';
+import Navbar from 'components/Navbar';
 import Sidebar from 'components/Sidebar';
 
 export default class Layout extends React.PureComponent<any, any> {
     static propTypes = {
-        main: React.PropTypes.node.isRequired,
-        navbar: React.PropTypes.node,
+        children: React.PropTypes.node.isRequired,
         location: locationShape,
         router: routerShape,
     };
@@ -60,7 +59,7 @@ export default class Layout extends React.PureComponent<any, any> {
     }
 
     render() {
-        const { main, location } = this.props;
+        const { children, location } = this.props;
         const { sidebarIsOpened } = this.state;
 
         const containerClassName = classnames('l-container', {
@@ -74,10 +73,10 @@ export default class Layout extends React.PureComponent<any, any> {
                 </div>
                 <div className="l-main">
                     <AutoHidingHeader className="l-header">
-                        <FeedNavbar onToggleSidebar={this.handleToggleSidebar.bind(this)} />
+                        <Navbar onToggleSidebar={this.handleToggleSidebar.bind(this)} />
                     </AutoHidingHeader>
                     <div className="l-main-inner">
-                        {main}
+                        {children}
                     </div>
                 </div>
             </div>

@@ -3,7 +3,7 @@ import * as React from 'react';
 import Dropdown from 'components/parts/Dropdown';
 import DropdownMenuItem from 'components/parts/DropdownMenuItem';
 
-export default class FeedNav extends React.PureComponent<any, any> {
+export default class Navbar extends React.PureComponent<any, any> {
     static propTypes = {
         onToggleSidebar: React.PropTypes.func,
     };
