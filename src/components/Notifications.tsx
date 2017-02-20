@@ -29,17 +29,15 @@ export default class Notifications extends React.PureComponent<any, any> {
 
         return (
             <CSSTransitionGroup
-                component="ul"
+                component="div"
                 className="notifications"
                 transitionName="slide-down"
                 transitionEnterTimeout={200}
                 transitionLeaveTimeout={200}>
                 {notifications.map(({ id, kind, message }: any) =>
-                    <li key={id}>
-                        <Notification kind={kind} onClose={this.handleClose.bind(this, id)}>
-                            {message}
-                        </Notification>
-                    </li>
+                    <Notification key={id} kind={kind} onClose={this.handleClose.bind(this, id)}>
+                        {message}
+                    </Notification>
                 )}
             </CSSTransitionGroup>
         );
