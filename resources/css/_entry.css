@@ -26,7 +26,6 @@
 }
 
 .entry-title {
-  color: var(--default-color);
   font-size: 1.5rem;
   line-height: inherit;
   margin: 0;
