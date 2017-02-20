@@ -3,15 +3,15 @@ import * as moment from 'moment';
 
 export default class Entry extends React.Component<any, any> {
     static propTypes = {
+        author: React.PropTypes.string.isRequired,
+        content: React.PropTypes.string.isRequired,
+        postedAt: React.PropTypes.string.isRequired,
         title: React.PropTypes.string.isRequired,
         url: React.PropTypes.string.isRequired,
-        author: React.PropTypes.string.isRequired,
-        postedAt: React.PropTypes.string.isRequired,
-        body: React.PropTypes.string.isRequired,
     };
 
     render() {
-        const { title, url, author, postedAt, body } = this.props;
+        const { title, url, author, postedAt, content } = this.props;
 
         return (
             <article className="entry">
@@ -24,7 +24,7 @@ export default class Entry extends React.Component<any, any> {
                         </ul>
                     </div>
                 </header>
-                <div className="entry-body" dangerouslySetInnerHTML={body} />
+                <div className="entry-content" dangerouslySetInnerHTML={content} />
                 <footer className="entry-footer">
                     <ul className="list-inline list-inline-dot u-baseline-double">
                         <li><a className="link-default" href="#"><i className="icon icon-32 icon-pin-3"></i></a></li>

@@ -1,14 +1,14 @@
 import * as React from 'react';
 import * as classnames from 'classnames';
 
-import DropdownMenu from 'components/parts/DropdownMenu';
+import Menu from 'components/parts/Menu';
 import createChainedFunction from 'utils/createChainedFunction';
 
 export default class Dropdown extends React.PureComponent<any, any> {
     static propTypes = {
-        isOpened: React.PropTypes.bool,
         onClose: React.PropTypes.func,
         onSelect: React.PropTypes.func,
+        opened: React.PropTypes.bool,
         pullRight: React.PropTypes.bool,
     };
 
@@ -16,14 +16,14 @@ export default class Dropdown extends React.PureComponent<any, any> {
         super(props, context);
 
         this.state = {
-            isOpened: !!props.isOpened,
+            opened: !!props.opened,
             pullRight: false,
         };
     }
 
     componentWillReceiveProps(nextProps: any) {
-        if (this.props.isOpened !== nextProps.isOpened) {
-            this.setState(state => ({ ...state, isOpened: nextProps.isOpened }));
+        if (this.props.opened !== nextProps.opened) {
+            this.setState(state => ({ ...state, opened: nextProps.opened }));
         }
     }
 
@@ -34,15 +34,15 @@ export default class Dropdown extends React.PureComponent<any, any> {
             onClose();
         }
 
-        this.setState(state => ({ ...state, isOpened: false }));
+        this.setState(state => ({ ...state, opened: false }));
     }
 
     handleToggle(event: React.MouseEvent<any>) {
         event.preventDefault();
 
-        const { isOpened } = this.state;
+        const { opened } = this.state;
 
-        this.setState(state => ({ ...state, isOpened: !isOpened }));
+        this.setState(state => ({ ...state, opened: !opened }));
     }
 
     renderToggleButton() {
@@ -61,17 +61,17 @@ export default class Dropdown extends React.PureComponent<any, any> {
 
     render() {
         const { children, onSelect, pullRight } = this.props;
-        const { isOpened } = this.state;
+        const { opened } = this.state;
 
         return (
-            <div className={classnames('dropdown', { 'is-opened': isOpened })}>
+            <div className={classnames('dropdown', { 'is-opened': opened })}>
                 {this.renderToggleButton()}
-                <DropdownMenu onCancel={this.handleClose.bind(this)}
-                              onSelect={createChainedFunction(onSelect, this.handleClose.bind(this))}
-                              pullRight={pullRight}
-                              isDisabled={!isOpened}>
+                <Menu onCancel={this.handleClose.bind(this)}
+                      onSelect={createChainedFunction(onSelect, this.handleClose.bind(this))}
+                      pullRight={pullRight}
+                      disabled={!opened}>
                     {children}
-                </DropdownMenu>
+                </Menu>
             </div>
         );
     }

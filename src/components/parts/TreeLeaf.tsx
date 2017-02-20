@@ -7,36 +7,36 @@ export default class TreeLeaf extends React.PureComponent<any, any> {
     static propTypes = {
         className: React.PropTypes.string,
         icon: React.PropTypes.element,
-        isSelected: React.PropTypes.bool,
         onSelect: React.PropTypes.func,
         primaryText: React.PropTypes.string.isRequired,
         secondaryText: React.PropTypes.string,
+        selected: React.PropTypes.bool,
     };
 
     static defaultProps = {
-        isSelected: false,
+        selected: false,
     }
 
     constructor(props: any) {
         super(props);
 
         this.state = {
-            isSelected: props.isSelected,
-            isExpanded: props.isExpanded,
+            selected: props.selected,
+            expanded: props.expanded,
         };
     }
 
     componentWillReceiveProps(nextProps: any) {
-        if (this.props.isSelected !== nextProps.isSelected) {
-            this.setState(state => ({ ...state, isSelected: nextProps.isSelected }));
+        if (this.props.selected !== nextProps.selected) {
+            this.setState(state => ({ ...state, selected: nextProps.selected }));
         }
     }
 
     handleSelect(event: any) {
         event.preventDefault();
 
-        const { isSelected } = this.state;
-        if (isSelected) {
+        const { selected } = this.state;
+        if (selected) {
             return;
         }
 
@@ -45,16 +45,16 @@ export default class TreeLeaf extends React.PureComponent<any, any> {
             onSelect(event);
         }
 
-        this.setState(state => ({ ...state, isSelected: true }));
+        this.setState(state => ({ ...state, selected: true }));
     }
 
     render() {
         const { className, icon, primaryText, secondaryText } = this.props;
-        const { isSelected } = this.state;
+        const { selected } = this.state;
 
         return (
             <li>
-                <TreeNode className={classnames({ 'is-selected': isSelected }, className)}
+                <TreeNode className={classnames({ 'is-selected': selected }, className)}
                           icon={icon}
                           primaryText={primaryText}
                           secondaryText={secondaryText}

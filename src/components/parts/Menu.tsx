@@ -4,17 +4,17 @@ import * as classnames from 'classnames';
 
 import createChainedFunction from 'utils/createChainedFunction';
 
-export default class DropdownMenu extends React.PureComponent<any, any> {
+export default class Menu extends React.PureComponent<any, any> {
     static propTypes = {
         children: React.PropTypes.node.isRequired,
-        isDisabled: React.PropTypes.bool,
+        disabled: React.PropTypes.bool,
         onCancel: React.PropTypes.func,
         onSelect: React.PropTypes.func,
         pullRight: React.PropTypes.bool,
     };
 
     static defaultProps = {
-        isDisabled: true,
+        disabled: true,
     }
 
     constructor(props: any, context: any) {
@@ -36,18 +36,18 @@ export default class DropdownMenu extends React.PureComponent<any, any> {
     }
 
     componentDidMount() {
-        const { isDisabled } = this.props;
+        const { disabled } = this.props;
 
-        if (!isDisabled) {
+        if (!disabled) {
             this.registerDocumentListeners();
         }
     }
 
     componentDidUpdate(prevProps: any, prevState: any) {
-        const { isDisabled } = this.props;
+        const { disabled } = this.props;
 
-        if (prevProps.isDisabled !== isDisabled) {
-            if (isDisabled) {
+        if (prevProps.disabled !== disabled) {
+            if (disabled) {
                 this.unregisterDocumentListeners();
             } else {
                 this.registerDocumentListeners();
@@ -56,9 +56,9 @@ export default class DropdownMenu extends React.PureComponent<any, any> {
     }
 
     componentWillUnmount() {
-        const { isDisabled } = this.props;
+        const { disabled } = this.props;
 
-        if (!isDisabled) {
+        if (!disabled) {
             this.unregisterDocumentListeners();
         }
     }
@@ -88,8 +88,8 @@ export default class DropdownMenu extends React.PureComponent<any, any> {
         const { children, pullRight } = this.props;
 
         return (
-            <ul className={classnames('dropdown-menu', {
-                'dropdown-menu-right': pullRight,
+            <ul className={classnames('menu', {
+                'menu-right': pullRight,
             })}>
                 {React.Children.map(children, this.renderChild.bind(this))}
             </ul>

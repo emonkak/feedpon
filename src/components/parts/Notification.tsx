@@ -45,7 +45,7 @@ export default class Notification extends React.PureComponent<any, any> {
                 <div className="notification-icon">
                     {this.renderKindIcon()}
                 </div>
-                <div className="notification-body">
+                <div className="notification-content">
                     {children}
                 </div>
                 <a className="notification-icon link-default" href="#" onClick={this.handleClose.bind(this)}>

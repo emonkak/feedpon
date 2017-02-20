@@ -6,9 +6,9 @@ import createChainedFunction from 'utils/createChainedFunction';
 
 export default class Tree extends React.PureComponent<any, any> {
     static propTypes = {
+        activeKey: React.PropTypes.string,
         children: React.PropTypes.node.isRequired,
         onSelect: React.PropTypes.func,
-        activeKey: React.PropTypes.string,
     };
 
     constructor(props: any) {
@@ -44,7 +44,7 @@ export default class Tree extends React.PureComponent<any, any> {
 
             return React.cloneElement(child, {
                 ...child.props,
-                isSelected: childKey === activeKey,
+                selected: childKey === activeKey,
                 onSelect: createChainedFunction(
                     event => this.handleSelect(event, childKey),
                     child.props.onSelect

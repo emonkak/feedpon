@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import Dropdown from 'components/parts/Dropdown';
-import DropdownMenuItem from 'components/parts/DropdownMenuItem';
+import MenuItem from 'components/parts/MenuItem';
 import Modal from 'components/parts/Modal';
 import connect from 'utils/components/connect';
 import { sendNotification } from 'messaging/actions';
@@ -49,7 +49,7 @@ export default class Dashboard extends React.PureComponent<any, any> {
                             </ul>
                         </div>
                     </header>
-                    <div className="entry-body">
+                    <div className="entry-content">
                         <h1>Heading level 1</h1>
                         <h2>Heading level 2</h2>
                         <h3>Heading level 3</h3>
@@ -99,60 +99,42 @@ export default class Dashboard extends React.PureComponent<any, any> {
 
                         <h2>Dropdown</h2>
                         <Dropdown toggleButton={<button className="button button-default dropdown-toggle">Dropdown</button>}>
-                            <DropdownMenuItem>First Action</DropdownMenuItem>
-                            <DropdownMenuItem>Second Action</DropdownMenuItem>
-                            <DropdownMenuItem>Third Action</DropdownMenuItem>
-                            <li className="dropdown-menu-divider"></li>
-                            <DropdownMenuItem>Forth Action</DropdownMenuItem>
+                            <MenuItem>First Action</MenuItem>
+                            <MenuItem>Second Action</MenuItem>
+                            <MenuItem>Third Action</MenuItem>
+                            <li className="menu-divider"></li>
+                            <MenuItem>Forth Action</MenuItem>
                         </Dropdown>
 
                         <h2>Modal</h2>
                         <div className="button-toolbar">
                             <button className="button button-positive" onClick={this.handleModalOpen.bind(this)}>Launch Modal</button>
                         </div>
-                        <Modal isShown={isModalShown} onHide={this.handleModalClose.bind(this)}>
-                            <div className="modal-header">
-                                <h3 className="modal-title">Modal Title</h3>
-                                <button className="button button-close" onClick={this.handleModalClose.bind(this)}></button>
-                            </div>
-                            <div className="modal-body">
-                                <p>Modal body text goes here.</p>
-                            </div>
-                            <div className="modal-footer">
-                                <div className="button-toolbar">
-                                    <button className="button button-positive">Okay</button>
-                                    <button className="button button-invert" onClick={this.handleModalClose.bind(this)}>Cancel</button>
-                                </div>
+                        <Modal shown={isModalShown} onHide={this.handleModalClose.bind(this)}>
+                            <button className="close" onClick={this.handleModalClose.bind(this)}></button>
+                            <h3 className="modal-title">Modal Title</h3>
+                            <p>Modal body text goes here.</p>
+                            <div className="button-toolbar">
+                                <button className="button button-positive">Okay</button>
+                                <button className="button button-invert" onClick={this.handleModalClose.bind(this)}>Cancel</button>
                             </div>
                         </Modal>
 
                         <h2>Message</h2>
                         <div className="message message-default">
-                            <header className="message-header">
-                                <h6 className="message-title">Changes in Service</h6>
-                                <button className="button button-close"></button>
-                            </header>
-                            <div className="message-body">
-                                <p>We just updated our privacy policy here to better service our customers. We recommend reviewing the changes.</p>
-                            </div>
+                            <button className="close"></button>
+                            <h6 className="message-title">Changes in Service</h6>
+                            <p>We just updated our privacy policy here to better service our customers. We recommend reviewing the changes.</p>
                         </div>
                         <div className="message message-positive">
-                            <header className="message-header">
-                                <h6 className="message-title">Changes in Service</h6>
-                                <button className="button button-close"></button>
-                            </header>
-                            <div className="message-body">
-                                <p>We just updated our privacy policy here to better service our customers. We recommend reviewing the changes.</p>
-                            </div>
+                            <button className="close"></button>
+                            <h6 className="message-title">Changes in Service</h6>
+                            <p>We just updated our privacy policy here to better service our customers. We recommend reviewing the changes.</p>
                         </div>
                         <div className="message message-negative">
-                            <header className="message-header">
-                                <h6 className="message-title">Changes in Service</h6>
-                                <button className="button button-close"></button>
-                            </header>
-                            <div className="message-body">
-                                <p>We just updated our privacy policy here to better service our customers. We recommend reviewing the changes.</p>
-                            </div>
+                            <button className="close"></button>
+                            <h6 className="message-title">Changes in Service</h6>
+                            <p>We just updated our privacy policy here to better service our customers. We recommend reviewing the changes.</p>
                         </div>
 
                         <h2>List</h2>
@@ -262,7 +244,7 @@ export default class Dashboard extends React.PureComponent<any, any> {
                             </ul>
                         </div>
                     </header>
-                    <div className="entry-body">
+                    <div className="entry-content">
                         <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
                     </div>
                     <footer className="entry-footer">

@@ -4,12 +4,12 @@ import * as classnames from 'classnames';
 export default class Modal extends React.PureComponent<any, any> {
     static propTypes = {
         children: React.PropTypes.node.isRequired,
-        isShown: React.PropTypes.bool,
         onHide: React.PropTypes.func,
+        shown: React.PropTypes.bool,
     };
 
     static defaultProps = {
-        isShown: false,
+        shown: false,
     };
 
     componentDidMount() {
@@ -21,9 +21,9 @@ export default class Modal extends React.PureComponent<any, any> {
     }
 
     refreshBodyStyles() {
-        const { isShown } = this.props;
+        const { shown } = this.props;
 
-        if (isShown) {
+        if (shown) {
             const scrollbarWidth = window.innerWidth - document.body.clientWidth;
             document.body.style.paddingRight = scrollbarWidth + 'px';
             document.body.style.overflow = 'hidden';
@@ -46,12 +46,12 @@ export default class Modal extends React.PureComponent<any, any> {
     }
 
     render() {
-        const { children, isShown } = this.props;
+        const { children, shown } = this.props;
 
         return (
             <div>
-                <div className={classnames('modal-backdrop', { 'is-shown': isShown })} />
-                <div className={classnames('modal', { 'is-shown': isShown })}
+                <div className={classnames('modal-backdrop', { 'is-shown': shown })} />
+                <div className={classnames('modal', { 'is-shown': shown })}
                      onClick={this.handleClick.bind(this)}>
                     <div className="modal-dialog">
                         {children}

@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import Dropdown from 'components/parts/Dropdown';
-import DropdownMenuItem from 'components/parts/DropdownMenuItem';
+import MenuItem from 'components/parts/MenuItem';
 
 export default class Navbar extends React.PureComponent<any, any> {
     static propTypes = {
@@ -39,9 +39,9 @@ export default class Navbar extends React.PureComponent<any, any> {
                     </li>
                     <li>
                         <Dropdown toggleButton={<a className="link-default" href="#"><i className="icon icon-24 icon-more" /></a>} pullRight={true}>
-                            <DropdownMenuItem>Action</DropdownMenuItem>
-                            <DropdownMenuItem>Another action</DropdownMenuItem>
-                            <DropdownMenuItem>Something else here</DropdownMenuItem>
+                            <MenuItem>Action</MenuItem>
+                            <MenuItem>Another action</MenuItem>
+                            <MenuItem>Something else here</MenuItem>
                         </Dropdown>
                     </li>
                 </ul>

@@ -5,7 +5,7 @@
   margin: 0 0 var(--baseline-height);
 }
 
-.message p:last-child {
+.message > p:last-child {
   margin-bottom: 0;
 }
 
@@ -26,10 +26,4 @@
 .message-title {
   font-size: 1.125rem;
   line-height: inherit;
-}
-
-.message-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: stretch;
 }

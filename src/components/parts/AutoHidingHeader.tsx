@@ -6,7 +6,7 @@ export default class AutoHidingHeader extends React.PureComponent<any, any> {
     static propTypes = {
         children: React.PropTypes.node,
         className: React.PropTypes.string,
-        isPinned: React.PropTypes.bool,
+        pinned: React.PropTypes.bool,
         pinnedClassName: React.PropTypes.string,
         scroller: React.PropTypes.instanceOf(Element),
         tolerance: React.PropTypes.number,
@@ -14,7 +14,7 @@ export default class AutoHidingHeader extends React.PureComponent<any, any> {
     };
 
     static defaultProps = {
-        isPinned: true,
+        pinned: true,
         pinnedClassName: 'is-pinned',
         tolerance: 8,
         unpinnedClassName: '',
@@ -30,7 +30,7 @@ export default class AutoHidingHeader extends React.PureComponent<any, any> {
         super(props, context);
 
         this.state = {
-            isPinned: props.isPinned,
+            pinned: props.pinned,
         };
 
         this.handleScroll = this.handleScroll.bind(this);
@@ -63,11 +63,11 @@ export default class AutoHidingHeader extends React.PureComponent<any, any> {
 
         if (this.scroller.scrollTop <= clientHeight) {
             this.setState({
-                isPinned: true,
+                pinned: true,
             });
         } else if (scrollDistance > tolerance) {
             this.setState({
-                isPinned: this.lastScrollTop > this.scroller.scrollTop,
+                pinned: this.lastScrollTop > this.scroller.scrollTop,
             });
         }
 
@@ -92,11 +92,11 @@ export default class AutoHidingHeader extends React.PureComponent<any, any> {
 
     render() {
         const { children, className, pinnedClassName, unpinnedClassName } = this.props;
-        const { isPinned } = this.state;
+        const { pinned } = this.state;
 
         const containerClassName = classnames(className, {
-            [pinnedClassName]: isPinned,
-            [unpinnedClassName]: !isPinned,
+            [pinnedClassName]: pinned,
+            [unpinnedClassName]: !pinned,
         });
 
         return (

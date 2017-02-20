@@ -7,56 +7,56 @@ export default class TreeBranch extends React.PureComponent<any, any> {
     static propTypes = {
         children: React.PropTypes.node.isRequired,
         className: React.PropTypes.string,
-        isExpanded: React.PropTypes.bool,
-        isSelected: React.PropTypes.bool,
+        expanded: React.PropTypes.bool,
         onExpand: React.PropTypes.func,
         onSelect: React.PropTypes.func,
         primaryText: React.PropTypes.string.isRequired,
         secondaryText: React.PropTypes.string,
+        selected: React.PropTypes.bool,
     };
 
     static defaultProps = {
-        isSelected: false,
-        isExpanded: false,
+        selected: false,
+        expanded: false,
     }
 
     constructor(props: any) {
         super(props);
 
         this.state = {
-            isSelected: props.isSelected,
-            isExpanded: props.isExpanded,
+            selected: props.selected,
+            expanded: props.expanded,
         };
     }
 
     componentWillReceiveProps(nextProps: any) {
-        if (this.props.isSelected !== nextProps.isSelected) {
-            this.setState(state => ({ ...state, isSelected: nextProps.isSelected }));
+        if (this.props.selected !== nextProps.selected) {
+            this.setState(state => ({ ...state, selected: nextProps.selected }));
         }
 
-        if (this.props.isExpanded !== nextProps.isExpanded) {
-            this.setState(state => ({ ...state, isExpanded: nextProps.isExpanded }));
+        if (this.props.expanded !== nextProps.expanded) {
+            this.setState(state => ({ ...state, expanded: nextProps.expanded }));
         }
     }
 
     handleExpand(event: any) {
         event.preventDefault();
 
-        const { isExpanded } = this.state;
+        const { expanded } = this.state;
         const { onExpand } = this.props;
 
         if (onExpand) {
-            onExpand(event, !isExpanded);
+            onExpand(event, !expanded);
         }
 
-        this.setState(state => ({ ...state, isExpanded: !isExpanded }));
+        this.setState(state => ({ ...state, expanded: !expanded }));
     }
 
     handleSelect(event: any) {
         event.preventDefault();
 
-        const { isSelected } = this.state;
-        if (isSelected) {
+        const { selected } = this.state;
+        if (selected) {
             return;
         }
 
@@ -65,13 +65,13 @@ export default class TreeBranch extends React.PureComponent<any, any> {
             onSelect(event);
         }
 
-        this.setState(state => ({ ...state, isSelected: true }));
+        this.setState(state => ({ ...state, selected: true }));
     }
 
     renderIcon() {
-        const { isExpanded } = this.state;
+        const { expanded } = this.state;
 
-        if (isExpanded) {
+        if (expanded) {
             return (
                 <i className="icon icon-16 icon-angle-down" />
             );
@@ -84,11 +84,11 @@ export default class TreeBranch extends React.PureComponent<any, any> {
 
     render() {
         const { children, className, primaryText, secondaryText } = this.props;
-        const { isExpanded, isSelected } = this.state;
+        const { expanded, selected } = this.state;
 
         return (
             <li>
-                <TreeNode className={classnames({ 'is-selected': isSelected, 'is-expanded': isExpanded }, className)}
+                <TreeNode className={classnames({ 'is-selected': selected, 'is-expanded': expanded }, className)}
                           icon={this.renderIcon()}
                           primaryText={primaryText}
                           secondaryText={secondaryText}
