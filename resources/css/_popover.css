@@ -1,7 +1,7 @@
 .popover {
   position: relative;
   margin: 0 0 var(--baseline-height);
-  padding: calc(var(--baseline-height) / 2 - 1px) 1.5rem;
+  padding: calc(var(--baseline-height) / 2 - 1px) calc(1.5rem - 1px);
   border: 1px solid transparent;
   border-radius: 4px;
   box-shadow: 0 1px 2px color(var(--default-color) alpha(25%));
