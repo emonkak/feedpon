@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as classnames from 'classnames';
 
+import Closable from 'components/parts/Closable';
 import Menu from 'components/parts/Menu';
 import createChainedFunction from 'utils/createChainedFunction';
 
@@ -10,6 +11,7 @@ export default class Dropdown extends React.PureComponent<any, any> {
         onSelect: React.PropTypes.func,
         opened: React.PropTypes.bool,
         pullRight: React.PropTypes.bool,
+        toggleButton: React.PropTypes.element.isRequired,
     };
 
     constructor(props: any, context: any) {
@@ -66,12 +68,13 @@ export default class Dropdown extends React.PureComponent<any, any> {
         return (
             <div className={classnames('dropdown', { 'is-opened': opened })}>
                 {this.renderToggleButton()}
-                <Menu onCancel={this.handleClose.bind(this)}
-                      onSelect={createChainedFunction(onSelect, this.handleClose.bind(this))}
-                      pullRight={pullRight}
-                      disabled={!opened}>
-                    {children}
-                </Menu>
+                <Closable onClose={this.handleClose.bind(this)}
+                          disabled={!opened}>
+                    <Menu onSelect={createChainedFunction(onSelect, this.handleClose.bind(this))}
+                          pullRight={pullRight}>
+                        {children}
+                    </Menu>
+                </Closable>
             </div>
         );
     }
