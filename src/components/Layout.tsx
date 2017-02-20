@@ -73,11 +73,11 @@ export default class Layout extends React.PureComponent<any, any> {
                     <Sidebar activeKey={location.pathname} />
                 </div>
                 <div className="l-main">
-                    <AutoHidingHeader className="l-header">
+                    <AutoHidingHeader className="l-main-header">
                         <Navbar onToggleSidebar={this.handleToggleSidebar.bind(this)} />
                         <Notifications />
                     </AutoHidingHeader>
-                    <div className="l-main-inner">
+                    <div className="l-main-content">
                         {children}
                     </div>
                 </div>

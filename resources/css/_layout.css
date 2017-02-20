@@ -30,8 +30,7 @@
 }
 
 .l-container.is-opened .l-main,
-.l-container.is-opened .l-header,
-.l-container.is-opened .l-notification {
+.l-container.is-opened .l-main-header {
   padding-left: var(--sidebar-width);
   overflow: hidden;
 }
@@ -59,11 +58,11 @@
   -webkit-overflow-scrolling: touch;
 }
 
-.l-main-inner {
+.l-main-content {
   padding-top: var(--navbar-height);
 }
 
-.l-header {
+.l-main-header {
   position: fixed;
   top: 0;
   left: 0;
@@ -74,7 +73,7 @@
   transition: transform 0.2s ease-in-out, padding 0.2s ease-in-out;
 }
 
-.l-header.is-pinned {
+.l-main-header.is-pinned {
   transform: translateY(0);
 }
 
@@ -84,7 +83,7 @@
   }
 
   .l-main,
-  .l-header {
+  .l-main-header {
     padding-left: var(--sidebar-width);
     box-sizing: border-box;
   }
