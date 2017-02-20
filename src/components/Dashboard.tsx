@@ -79,6 +79,24 @@ export default class Dashboard extends React.PureComponent<any, any> {
                             <a className="nav-item" href="#">Third</a>
                         </nav>
 
+                        <h2>Popover</h2>
+                        <div className="popover popover-default popover-above">
+                            <h3 className="popover-title">Popover Title</h3>
+                            <p>Popover Content</p>
+                        </div>
+                        <div className="popover popover-default popover-above popover-right">
+                            <h3 className="popover-title">Popover Title</h3>
+                            <p>Popover Content</p>
+                        </div>
+                        <div className="popover popover-positive popover-below">
+                            <h3 className="popover-title">Popover Title</h3>
+                            <p>Popover Content</p>
+                        </div>
+                        <div className="popover popover-negative popover-below popover-right">
+                            <h3 className="popover-title">Popover Title</h3>
+                            <p>Popover Content</p>
+                        </div>
+
                         <h2>Dropdown</h2>
                         <Dropdown toggleButton={<button className="button button-default dropdown-toggle">Dropdown</button>}>
                             <DropdownMenuItem>First Action</DropdownMenuItem>

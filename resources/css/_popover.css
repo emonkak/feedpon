@@ -1,0 +1,79 @@
+.popover {
+  position: relative;
+  margin: 0 0 var(--baseline-height);
+  padding: calc(var(--baseline-height) / 2 - 1px) 1.5rem;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  box-shadow: 0 1px 2px color(var(--default-color) alpha(25%));
+}
+
+.popover::before,
+.popover::after {
+  display: block;
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  box-sizing: border-box;
+}
+
+.popover::before {
+  border: 1px solid transparent;
+}
+
+.popover::after {
+  box-shadow: -2px 2px 2px -1px color(var(--default-color) alpha(25%));
+  z-index: -1;
+}
+
+.popover > p:last-child {
+  margin-bottom: 0;
+}
+
+.popover-default,
+.popover-default::before {
+  color: var(--default-color);
+  background: var(--default-background-color);
+  border-color: var(--default-color);
+}
+
+.popover-positive,
+.popover-positive::before {
+  color: var(--positive-color);
+  background: var(--default-background-color);
+  border-color: var(--positive-color);
+}
+
+.popover-negative,
+.popover-negative::before {
+  color: var(--negative-color);
+  background: var(--default-background-color);
+  border-color: var(--negative-color);
+}
+
+.popover-above::before,
+.popover-above::after {
+  content: '';
+  bottom: 0;
+  transform: translateY(50%) rotate(-45deg);
+  border-top-color: transparent;
+  border-right-color: transparent;
+}
+
+.popover-below::before,
+.popover-below::after {
+  content: '';
+  top: 0;
+  transform: translateY(-50%) rotate(-45deg);
+  border-bottom-color: transparent;
+  border-left-color: transparent;
+}
+
+.popover-right::before,
+.popover-right::after {
+  right: 1.5rem;
+}
+
+.popover-title {
+  font-size: 1.125rem;
+  line-height: inherit;
+}
