@@ -4,9 +4,11 @@ import * as classnames from 'classnames';
 export default class MenuItem extends React.PureComponent<any, any> {
     static propTypes = {
         active: React.PropTypes.bool,
-        children: React.PropTypes.node,
         disabled: React.PropTypes.bool,
+        icon: React.PropTypes.node,
         onSelect: React.PropTypes.func,
+        primaryText: React.PropTypes.string,
+        secondaryText: React.PropTypes.string,
     };
 
     handleSelect(event: any) {
@@ -23,16 +25,56 @@ export default class MenuItem extends React.PureComponent<any, any> {
         }
     }
 
-    render() {
-        const { children, active, disabled } = this.props;
+    renderIcon() {
+        const { icon } = this.props;
+
+        if (!icon) {
+            return null;
+        }
 
         return (
-            <li className={classnames('menu-item', {
-                'is-disabled': disabled,
-                'is-active': active,
-            })}>
-                <a href="#" onClick={this.handleSelect.bind(this)}>{children}</a>
-            </li>
+            <span className="menu-item-icon">{icon}</span>
+        );
+    }
+
+    renderPrimaryText() {
+        const { primaryText } = this.props;
+
+        if (!primaryText) {
+            return null;
+        }
+
+        return (
+            <span className="menu-item-primary-text">{primaryText}</span>
+        );
+    }
+
+    renderSecondaryText() {
+        const { secondaryText } = this.props;
+
+        if (!secondaryText) {
+            return null;
+        }
+
+        return (
+            <span className="menu-item-secondary-text">{secondaryText}</span>
+        );
+    }
+
+    render() {
+        const { active, disabled } = this.props;
+
+        const className = classnames('menu-item', {
+            'is-disabled': disabled,
+            'is-active': active,
+        });
+
+        return (
+            <a className={className} href="#" onClick={this.handleSelect.bind(this)}>
+               {this.renderIcon()}
+               {this.renderPrimaryText()}
+               {this.renderSecondaryText()}
+            </a>
         );
     }
 }

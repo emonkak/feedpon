@@ -27,11 +27,11 @@ export default class Menu extends React.PureComponent<any, any> {
         const { children, pullRight } = this.props;
 
         return (
-            <ul className={classnames('menu', {
+            <div className={classnames('menu', {
                 'menu-right': pullRight,
             })}>
                 {React.Children.map(children, this.renderChild.bind(this))}
-            </ul>
+            </div>
         );
     }
 }

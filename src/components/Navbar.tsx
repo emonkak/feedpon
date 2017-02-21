@@ -39,9 +39,9 @@ export default class Navbar extends React.PureComponent<any, any> {
                     </li>
                     <li>
                         <Dropdown toggleButton={<a className="link-default" href="#"><i className="icon icon-24 icon-more" /></a>} pullRight={true}>
-                            <MenuItem>Action</MenuItem>
-                            <MenuItem>Another action</MenuItem>
-                            <MenuItem>Something else here</MenuItem>
+                            <MenuItem icon={<i className="icon icon-16 icon-checkmark" />} primaryText="Action" secondaryText="Secondary Text" />
+                            <MenuItem primaryText="Another action" secondaryText="Secondary Text" />
+                            <MenuItem primaryText="Something else here" secondaryText="Secondary Text" />
                         </Dropdown>
                     </li>
                 </ul>
