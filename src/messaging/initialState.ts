@@ -1,8 +1,11 @@
 import { State } from 'messaging/types';
 
 const initialState: State = {
-    subscriptions: [],
+    entries: [],
+    feed: null,
     notifications: [],
+    pageTitle: 'Feedpon',
+    subscriptions: [],
 };
 
 export default initialState;

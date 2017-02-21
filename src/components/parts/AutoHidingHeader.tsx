@@ -85,7 +85,7 @@ export default class AutoHidingHeader extends React.PureComponent<any, any> {
             if (overflowY === 'auto' || overflowY === 'scroll') {
                 break;
             }
-        } while (node = node.parentNode as Element);
+        } while (node.parentNode instanceof Element && (node = node.parentNode));
 
         return node;
     }

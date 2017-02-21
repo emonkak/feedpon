@@ -2,9 +2,15 @@ import * as React from 'react';
 
 import Dropdown from 'components/parts/Dropdown';
 import MenuItem from 'components/parts/MenuItem';
+import connect from 'utils/components/connect';
+import { State } from 'messaging/types';
 
+@connect((state: State) => ({
+    title: state.pageTitle,
+}))
 export default class Navbar extends React.PureComponent<any, any> {
     static propTypes = {
+        title: React.PropTypes.string,
         onToggleSidebar: React.PropTypes.func,
     };
 
@@ -19,12 +25,14 @@ export default class Navbar extends React.PureComponent<any, any> {
     }
 
     render() {
+        const { title } = this.props;
+
         return (
             <nav className="navbar">
                 <a className="navbar-toggle-icon u-md-none" href="#" onClick={this.handleToggleSidebar.bind(this)}>
                     <i className="icon icon-24 icon-menu" />
                 </a>
-                <h1 className="navbar-title"><a className="link-default u-text-truncate" href="#">Navigation Bar Title Here</a></h1>
+                <h1 className="navbar-title"><a className="link-default u-text-truncate" href="#">{title}</a></h1>
                 <ul className="navbar-actions">
                     <li>
                         <a className="link-default icon-container" href="#">

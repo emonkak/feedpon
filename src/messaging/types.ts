@@ -1,10 +1,34 @@
-export type Action = FetchSubscriptions | SendNotification | DismissNotification;
+export type Action
+    = { type: 'DISMISS_NOTIFICATION', id: number }
+    | { type: 'FETCH_ENTRIES', feed: Feed, entries: Entry[] }
+    | { type: 'FETCH_SUBSCRIPTIONS', subscriptions: Subscription[] }
+    | { type: 'SELECT_FEED', feed: Feed }
+    | { type: 'SEND_NOTIFICATION', notification: Notification }
+    | { type: 'UNSELECT_FEED' };
 
 export type AsyncAction = (dispatch: (action: Action) => void) => void;
 
 export interface State {
-    subscriptions: Subscription[];
+    entries: Entry[];
+    feed: Feed | null;
     notifications: Notification[];
+    pageTitle: string;
+    subscriptions: Subscription[];
+}
+
+export interface Feed {
+    id?: number;
+    title: string;
+    type: 'all' | 'category' | 'pin' | 'subscription';
+}
+
+export interface Entry {
+    entryId: number;
+    author: string;
+    content: string;
+    postedAt: string;
+    title: string;
+    url: string;
 }
 
 export interface Subscription {
@@ -23,18 +47,3 @@ export interface Notification {
     message: string;
     kind: 'default' | 'positive' | 'negative';
 }
-
-export interface FetchSubscriptions {
-    type: 'FETCH_SUBSCRIPTIONS';
-    subscriptions: Subscription[];
-};
-
-export interface SendNotification {
-    type: 'SEND_NOTIFICATION';
-    notification: Notification;
-};
-
-export interface DismissNotification {
-    type: 'DISMISS_NOTIFICATION';
-    id: number;
-};

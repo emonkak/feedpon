@@ -5,6 +5,7 @@ export default class Entry extends React.Component<any, any> {
     static propTypes = {
         author: React.PropTypes.string.isRequired,
         content: React.PropTypes.string.isRequired,
+        entryId: React.PropTypes.number.isRequired,
         postedAt: React.PropTypes.string.isRequired,
         title: React.PropTypes.string.isRequired,
         url: React.PropTypes.string.isRequired,
@@ -24,7 +25,7 @@ export default class Entry extends React.Component<any, any> {
                         </ul>
                     </div>
                 </header>
-                <div className="entry-content" dangerouslySetInnerHTML={content} />
+                <div className="entry-content" dangerouslySetInnerHTML={{ __html: content }} />
                 <footer className="entry-footer">
                     <ul className="list-inline list-inline-dot u-baseline-double">
                         <li><a className="link-default" href="#"><i className="icon icon-32 icon-pin-3"></i></a></li>

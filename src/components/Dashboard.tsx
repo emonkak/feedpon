@@ -38,7 +38,7 @@ export default class Dashboard extends React.PureComponent<any, any> {
         const { isModalShown } = this.state;
 
         return (
-            <div className="main">
+            <div className="container">
                 <article className="entry">
                     <header className="entry-header">
                         <h1 className="entry-title"><a className="link-default" href="#">The standard Lorem Ipsum passage, used since the 1500s</a></h1>

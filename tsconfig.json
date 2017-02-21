@@ -8,7 +8,6 @@
         "module": "commonjs",
         "moduleResolution": "node",
         "noFallthroughCasesInSwitch": true,
-        "noImplicitAny": true,
         "noImplicitReturns": true,
         "noImplicitThis": true,
         "noUnusedLocals": true,
@@ -17,5 +16,8 @@
     "exclude": [
         "node_modules",
         "public"
-    ]
+    ],
+    "awesomeTypescriptLoaderOptions": {
+      "silent": true
+    }
 }
