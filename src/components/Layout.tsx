@@ -63,12 +63,12 @@ export default class Layout extends React.PureComponent<any, any> {
         const { children, location } = this.props;
         const { sidebarIsOpened } = this.state;
 
-        const containerClassName = classnames('l-container', {
+        const rootClassName = classnames('l-root', {
             'is-opened': sidebarIsOpened,
         });
 
         return (
-            <div className={containerClassName} onClick={this.handleCloseSidebar.bind(this)} ref="">
+            <div className={rootClassName} onClick={this.handleCloseSidebar.bind(this)} ref="">
                 <div className='l-sidebar'>
                     <Sidebar activeKey={location.pathname} />
                 </div>
