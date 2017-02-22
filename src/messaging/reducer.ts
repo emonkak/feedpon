@@ -25,7 +25,6 @@ export default function reducer(state: State, action: Action): State {
                 ...state,
                 entries: [],
                 feed: action.feed,
-                pageTitle: action.feed.title,
             };
 
         case 'UNSELECT_FEED':

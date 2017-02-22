@@ -12,7 +12,6 @@ export interface State {
     entries: Entry[];
     feed: Feed | null;
     notifications: Notification[];
-    pageTitle: string;
     subscriptions: Subscription[];
 }
 

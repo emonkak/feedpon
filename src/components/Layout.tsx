@@ -3,13 +3,13 @@ import * as classnames from 'classnames';
 import { locationShape, routerShape } from 'react-router/lib/PropTypes';
 
 import AutoHidingHeader from 'components/parts/AutoHidingHeader';
-import Navbar from 'components/Navbar';
 import Notifications from 'components/Notifications';
 import Sidebar from 'components/Sidebar';
 
 export default class Layout extends React.PureComponent<any, any> {
     static propTypes = {
-        children: React.PropTypes.node.isRequired,
+        content: React.PropTypes.element.isRequired,
+        navbar: React.PropTypes.element.isRequired,
         location: locationShape,
         router: routerShape,
     };
@@ -60,7 +60,7 @@ export default class Layout extends React.PureComponent<any, any> {
     }
 
     render() {
-        const { children, location } = this.props;
+        const { content, navbar, location } = this.props;
         const { sidebarIsOpened } = this.state;
 
         const rootClassName = classnames('l-root', {
@@ -68,17 +68,17 @@ export default class Layout extends React.PureComponent<any, any> {
         });
 
         return (
-            <div className={rootClassName} onClick={this.handleCloseSidebar.bind(this)} ref="">
+            <div className={rootClassName} onClick={this.handleCloseSidebar.bind(this)}>
                 <div className='l-sidebar'>
                     <Sidebar activeKey={location.pathname} />
                 </div>
                 <div className="l-main">
                     <AutoHidingHeader className="l-main-header">
-                        <Navbar onToggleSidebar={this.handleToggleSidebar.bind(this)} />
+                        {React.cloneElement(navbar, { onToggleSidebar: this.handleToggleSidebar.bind(this) })}
                         <Notifications />
                     </AutoHidingHeader>
                     <div className="l-main-content">
-                        {children}
+                        {content}
                     </div>
                 </div>
             </div>

@@ -4,7 +4,6 @@ const initialState: State = {
     entries: [],
     feed: null,
     notifications: [],
-    pageTitle: 'Feedpon',
     subscriptions: [],
 };
 

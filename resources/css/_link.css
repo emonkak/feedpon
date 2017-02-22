@@ -1,9 +1,7 @@
 .link-default {
   color: var(--default-color);
   text-decoration: none;
-  transition-property: color;
-  transition-duration: 0.2s;
-  transition-timing-function: ease-in-out;
+  transition: color 0.2s ease-in-out;
 }
 
 .link-default:hover {

@@ -9,13 +9,23 @@
 
 .navbar-title {
   flex: 1;
-  font-size: inherit;
-  line-height: inherit;
-  color: var(--default-color);
   display: flex;
   align-items: center;
   padding: 0 1.5rem;
   min-width: 0;
+  font-size: inherit;
+  font-weight: 600;
+  line-height: inherit;
+  color: inherit;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  transition: color 0.2s ease-in-out;
+}
+
+.navbar-title:hover {
+  color: var(--positive-color);
+  text-decoration: none;
 }
 
 .navbar-toggle-icon {
@@ -39,28 +49,16 @@
   background-color: var(--medium-light-color);
 }
 
-.navbar-actions {
-  display: inline-flex;
-  align-items: stretch;
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.navbar-actions > li {
+.navbar-action {
+  display: flex;
+  align-items: center;
+  position: relative;
   background: transparent;
+  color: inherit;
+  text-decoration: none;
   transition: background-color 0.2s ease-in-out;
 }
 
-.navbar-actions > li:hover {
+.navbar-action:hover {
   background-color: var(--light-color);
-}
-
-.navbar-actions > li > a,
-.navbar-actions > li > .dropdown > a {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 48px;
-  min-width: 48px;
 }
