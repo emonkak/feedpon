@@ -13,10 +13,10 @@ export default class TreeBranch extends React.PureComponent<any, any> {
         primaryText: React.PropTypes.string.isRequired,
         secondaryText: React.PropTypes.string,
         selected: React.PropTypes.bool,
+        value: React.PropTypes.any.isRequired,
     };
 
     static defaultProps = {
-        selected: false,
         expanded: false,
     }
 
@@ -24,38 +24,39 @@ export default class TreeBranch extends React.PureComponent<any, any> {
         super(props);
 
         this.state = {
-            selected: props.selected,
             expanded: props.expanded,
         };
     }
 
     componentWillReceiveProps(nextProps: any) {
-        if (this.props.selected !== nextProps.selected) {
-            this.setState(state => ({ ...state, selected: nextProps.selected }));
-        }
-
         if (this.props.expanded !== nextProps.expanded) {
-            this.setState(state => ({ ...state, expanded: nextProps.expanded }));
+            this.setState(state => ({
+                ...state,
+                expanded: nextProps.expanded || state.expanded,
+            }));
         }
     }
 
     handleExpand(event: any) {
         event.preventDefault();
 
-        const { expanded } = this.state;
         const { onExpand } = this.props;
+        const { expanded } = this.state;
 
         if (onExpand) {
             onExpand(event, !expanded);
         }
 
-        this.setState(state => ({ ...state, expanded: !expanded }));
+        this.setState(state => ({
+            ...state,
+            expanded: !expanded,
+        }));
     }
 
     handleSelect(event: any) {
         event.preventDefault();
 
-        const { selected } = this.state;
+        const { selected } = this.props;
         if (selected) {
             return;
         }
@@ -64,8 +65,6 @@ export default class TreeBranch extends React.PureComponent<any, any> {
         if (onSelect) {
             onSelect(event);
         }
-
-        this.setState(state => ({ ...state, selected: true }));
     }
 
     renderIcon() {
@@ -83,8 +82,8 @@ export default class TreeBranch extends React.PureComponent<any, any> {
     }
 
     render() {
-        const { children, className, primaryText, secondaryText } = this.props;
-        const { expanded, selected } = this.state;
+        const { children, className, primaryText, secondaryText, selected } = this.props;
+        const { expanded } = this.state;
 
         return (
             <li>

@@ -6,7 +6,7 @@ import createChainedFunction from 'utils/createChainedFunction';
 
 export default class Tree extends React.PureComponent<any, any> {
     static propTypes = {
-        activeKey: React.PropTypes.string,
+        value: React.PropTypes.string,
         children: React.PropTypes.node.isRequired,
         onSelect: React.PropTypes.func,
     };
@@ -15,38 +15,43 @@ export default class Tree extends React.PureComponent<any, any> {
         super(props);
 
         this.state = {
-            activeKey: props.activeKey,
+            value: props.value,
         };
     }
 
     componentWillReceiveProps(nextProps: any) {
-        if (this.props.activeKey !== nextProps.activeKey) {
-            this.setState(state => ({ ...state, activeKey: nextProps.activeKey }));
+        if (this.props.value !== nextProps.value) {
+            this.setState(state => ({ ...state, value: nextProps.value }));
         }
     }
 
-    handleSelect(event: any, activeKey: React.Key) {
+    handleSelect(event: any, value: React.Key) {
         const { onSelect } = this.props;
 
         if (onSelect) {
-            onSelect(event, activeKey);
+            onSelect(event, value);
         }
 
-        this.setState(state => ({ ...state, activeKey }));
+        this.setState(state => ({ ...state, value }));
     }
 
     renderChild(child: React.ReactElement<any>) {
-        const childType = child.type;
+        if (child.type === TreeBranch || child.type === TreeLeaf) {
+            const { value } = this.state;
 
-        if (childType === TreeBranch || childType === TreeLeaf) {
-            const { activeKey } = this.state;
-            const childKey = child.key;
+            const shouldExpand = (child: React.ReactElement<any>) => {
+                return child.type === TreeLeaf
+                    ? child.props.value === value
+                    : React.Children.toArray(child.props.children)
+                        .some(shouldExpand);
+            };
 
             return React.cloneElement(child, {
                 ...child.props,
-                selected: childKey === activeKey,
+                expanded: shouldExpand(child),
+                selected: child.props.value === value,
                 onSelect: createChainedFunction(
-                    event => this.handleSelect(event, childKey),
+                    event => this.handleSelect(event, child.key),
                     child.props.onSelect
                 ),
                 children: React.Children.map(child.props.children, this.renderChild.bind(this))

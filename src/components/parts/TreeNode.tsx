@@ -41,7 +41,7 @@ export default class TreeNode extends React.PureComponent<any, any> {
         return (
             <div className={classnames('tree-node', className)}>
                 {this.renderIcon()}
-                <a className="tree-node-text" href="#" onClick={onTextClick}>
+                <a className="tree-node-label" href="#" onClick={onTextClick}>
                     <span className="tree-node-text-primary">{primaryText}</span>
                     {this.renderSecondaryText()}
                 </a>

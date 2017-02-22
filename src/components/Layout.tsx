@@ -70,7 +70,7 @@ export default class Layout extends React.PureComponent<any, any> {
         return (
             <div className={rootClassName} onClick={this.handleCloseSidebar.bind(this)}>
                 <div className='l-sidebar'>
-                    <Sidebar activeKey={location.pathname} />
+                    <Sidebar selectedValue={location.pathname} />
                 </div>
                 <div className="l-main">
                     <AutoHidingHeader className="l-main-header">

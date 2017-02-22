@@ -18,7 +18,7 @@ export default class TreeHeader extends React.PureComponent<any, any> {
             <li>
                 <div className="tree-header">
                     {this.renderIcon(leftIcon, onLeftIconClick)}
-                    <span className="tree-node-text">{title}</span>
+                    <span className="tree-node-label">{title}</span>
                     {this.renderIcon(rightIcon, onRightIconClick)}
                 </div>
             </li>

@@ -46,14 +46,14 @@
   align-items: center;
 }
 
-.tree-node-text {
+.tree-node-label {
   display: inline-flex;
   align-items: center;
   flex: 1;
   padding: calc(var(--baseline-height) / 4) 0.5rem;
 }
 
-.tree-node-icon + .tree-node-text {
+.tree-node-icon + .tree-node-label {
   padding-left: 0;
 }
 

@@ -22,7 +22,7 @@ const numberFormatter = new Intl.NumberFormat();
 }))
 export default class Sidebar extends React.PureComponent<any, any> {
     static propTypes = {
-        activeKey: React.PropTypes.string,
+        selectedValue: React.PropTypes.string,
         dispatch: React.PropTypes.func.isRequired,
         subscriptions: React.PropTypes.array.isRequired,
     };
@@ -33,10 +33,10 @@ export default class Sidebar extends React.PureComponent<any, any> {
         dispatch(fetchSubscriptions());
     }
 
-    handleSelect(event: any, activeKey: React.Key, activeType: React.ReactType) {
+    handleSelect(event: any, selectedValue: any, activeType: React.ReactType) {
         const { dispatch } = this.props;
 
-        dispatch(replace(activeKey as string));
+        dispatch(replace(selectedValue));
     }
 
     renderCategory(category: any, subscriptions: any[]) {
@@ -46,6 +46,7 @@ export default class Sidebar extends React.PureComponent<any, any> {
 
         return (
                 <TreeBranch key={`/categories/${category.categoryId}`}
+                            value={`/categories/${category.categoryId}`}
                             className={classnames({ 'is-important': totalUnreadCount > 0 })}
                             primaryText={category.name}
                             secondaryText={totalUnreadCount > 0 ? numberFormatter.format(totalUnreadCount) : null}
@@ -58,6 +59,7 @@ export default class Sidebar extends React.PureComponent<any, any> {
     renderSubscription(subscription: any) {
         return (
             <TreeLeaf key={`/subscriptions/${subscription.subscriptionId}`}
+                      value={`/subscriptions/${subscription.subscriptionId}`}
                       className={classnames({ 'is-important': subscription.unreadCount > 0 })}
                       primaryText={subscription.title}
                       secondaryText={subscription.unreadCount > 0 ? numberFormatter.format(subscription.unreadCount) : null}
@@ -66,7 +68,7 @@ export default class Sidebar extends React.PureComponent<any, any> {
     }
 
     render() {
-        const { activeKey, subscriptions } = this.props;
+        const { selectedValue, subscriptions } = this.props;
 
         const totalUnreadCount = (subscriptions as any[]).reduce((total, subscription) => {
             return total + subscription.unreadCount;
@@ -83,17 +85,17 @@ export default class Sidebar extends React.PureComponent<any, any> {
                     <input type="text" className="search-box" placeholder="Search for feeds ..." />
                 </div>
                 <div className="sidebar-group">
-                    <Tree activeKey={activeKey}
+                    <Tree value={selectedValue}
                           onSelect={this.handleSelect.bind(this)}>
-                        <TreeLeaf key="/" primaryText="Dashboard" />
-                        <TreeLeaf key="/all/" primaryText="All" secondaryText={numberFormatter.format(totalUnreadCount)} />
-                        <TreeLeaf key="/pins/" primaryText="Pins" secondaryText="12" />
+                        <TreeLeaf key="/" value="/" primaryText="Dashboard" />
+                        <TreeLeaf key="/all/" value="/all/" primaryText="All" secondaryText={numberFormatter.format(totalUnreadCount)} />
+                        <TreeLeaf key="/pins/" value="/pins/" primaryText="Pins" secondaryText="12" />
                         <TreeHeader title="Updated 6 minutes ago"
                                     leftIcon={<i className="icon icon-16 icon-refresh" />}
                                     rightIcon={<i className="icon icon-16 icon-more" />} />
                         {groupedSubscriptions}
-                        <TreeLeaf key="/settings/" primaryText="Settings" />
-                        <TreeLeaf key="/about/" primaryText="About..." />
+                        <TreeLeaf key="/settings/" value="/settings/" primaryText="Settings" />
+                        <TreeLeaf key="/about/" value="/about/" primaryText="About..." />
                     </Tree>
                 </div>
                 <div className="sidebar-group">

@@ -11,31 +11,17 @@ export default class TreeLeaf extends React.PureComponent<any, any> {
         primaryText: React.PropTypes.string.isRequired,
         secondaryText: React.PropTypes.string,
         selected: React.PropTypes.bool,
+        value: React.PropTypes.any.isRequired,
     };
 
     static defaultProps = {
         selected: false,
     }
 
-    constructor(props: any) {
-        super(props);
-
-        this.state = {
-            selected: props.selected,
-            expanded: props.expanded,
-        };
-    }
-
-    componentWillReceiveProps(nextProps: any) {
-        if (this.props.selected !== nextProps.selected) {
-            this.setState(state => ({ ...state, selected: nextProps.selected }));
-        }
-    }
-
     handleSelect(event: any) {
         event.preventDefault();
 
-        const { selected } = this.state;
+        const { selected } = this.props;
         if (selected) {
             return;
         }
@@ -44,13 +30,10 @@ export default class TreeLeaf extends React.PureComponent<any, any> {
         if (onSelect) {
             onSelect(event);
         }
-
-        this.setState(state => ({ ...state, selected: true }));
     }
 
     render() {
-        const { className, icon, primaryText, secondaryText } = this.props;
-        const { selected } = this.state;
+        const { className, icon, primaryText, secondaryText, selected } = this.props;
 
         return (
             <li>
