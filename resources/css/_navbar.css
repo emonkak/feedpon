@@ -23,7 +23,7 @@
   transition: color 0.2s ease-in-out;
 }
 
-.navbar-title:hover {
+a.navbar-title:hover {
   color: var(--positive-color);
   text-decoration: none;
 }
