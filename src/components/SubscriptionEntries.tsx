@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import Entry from 'components/parts/Entry';
 import connect from 'utils/components/connect';
-import { fetchSubscriptionEntries, unselectFeed } from 'messaging/actions';
+import { fetchSubscription, unselectFeed } from 'messaging/actions';
 
 @connect()
 export default class SubscriptionEntries extends React.PureComponent<any, any> {
@@ -14,14 +14,14 @@ export default class SubscriptionEntries extends React.PureComponent<any, any> {
     componentWillMount() {
         const { dispatch, params } = this.props;
 
-        dispatch(fetchSubscriptionEntries(params.subscription_id | 0));
+        dispatch(fetchSubscription(params.subscription_id | 0));
     }
 
     componentWillReceiveProps(nextProps: any) {
         if (this.props.params.subscription_id !== nextProps.params.subscription_id) {
             const { dispatch } = this.props;
 
-            dispatch(fetchSubscriptionEntries(nextProps.params.subscription_id | 0));
+            dispatch(fetchSubscription(nextProps.params.subscription_id | 0));
         }
     }
 

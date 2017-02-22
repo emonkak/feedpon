@@ -1,49 +1,49 @@
 import * as areEqual from 'fbjs/lib/areEqual';
 
-import { Action, State } from 'messaging/types';
+import { Event, State } from 'messaging/types';
 
-export default function reducer(state: State, action: Action): State {
-    switch (action.type) {
-        case 'FETCH_ENTRIES':
-            if (!areEqual(state.feed, action.feed)) {
+export default function reducer(state: State, event: Event): State {
+    switch (event.type) {
+        case 'ENTRIES_FETCHED':
+            if (!areEqual(state.feed, event.feed)) {
                 return state;
             }
 
             return {
                 ...state,
-                entries: action.entries,
+                entries: event.entries,
             };
 
-        case 'FETCH_SUBSCRIPTIONS':
+        case 'SUBSCRIPTIONS_FETCHED':
             return {
                 ...state,
-                subscriptions: action.subscriptions
+                subscriptions: event.subscriptions
             };
 
-        case 'SELECT_FEED':
+        case 'FEED_SELECTED':
             return {
                 ...state,
                 entries: [],
-                feed: action.feed,
+                feed: event.feed,
             };
 
-        case 'UNSELECT_FEED':
+        case 'FEED_UNSELECTED':
             return {
                 ...state,
                 entries: [],
                 feed: null,
             };
 
-        case 'SEND_NOTIFICATION':
+        case 'NOTIFICATION_SENT':
             return {
                 ...state,
-                notifications: [...state.notifications, action.notification]
+                notifications: [...state.notifications, event.notification]
             };
 
-        case 'DISMISS_NOTIFICATION':
+        case 'NOTIFICATION_DISMISSED':
             return {
                 ...state,
-                notifications: state.notifications.filter(notification => notification.id !== action.id)
+                notifications: state.notifications.filter(notification => notification.id !== event.id)
             };
 
         default:

@@ -1,4 +1,4 @@
-import { Action, AsyncAction, Entry, Feed, Notification, Subscription } from 'messaging/types';
+import { AsyncAction, Entry, Event, Feed, Notification, Subscription } from 'messaging/types';
 
 const subscriptions: Subscription[] = [
     {
@@ -72,7 +72,7 @@ export function fetchSubscriptions(): AsyncAction {
     return dispatch => {
         setTimeout(() => {
             dispatch({
-                type: 'FETCH_SUBSCRIPTIONS',
+                type: 'SUBSCRIPTIONS_FETCHED',
                 subscriptions,
             });
         }, delay);
@@ -87,13 +87,13 @@ export function fetchAllEntries(): AsyncAction {
         };
 
         dispatch({
-            type: 'SELECT_FEED',
+            type: 'FEED_SELECTED',
             feed,
         });
 
         setTimeout(() => {
             dispatch({
-                type: 'FETCH_ENTRIES',
+                type: 'ENTRIES_FETCHED',
                 entries,
                 feed,
             });
@@ -101,22 +101,22 @@ export function fetchAllEntries(): AsyncAction {
     };
 }
 
-export function fetchCategoryEntries(categoryId: number): AsyncAction {
+export function fetchCategory(categoryId: number): AsyncAction {
     return dispatch => {
-        const feed: Feed = {
-            id: categoryId,
-            title: 'Category Title',
-            type: 'category',
-        };
-
-        dispatch({
-            type: 'SELECT_FEED',
-            feed,
-        });
-
         setTimeout(() => {
+            const feed: Feed = {
+                id: categoryId,
+                title: 'Category ' + categoryId,
+                type: 'category',
+            };
+
             dispatch({
-                type: 'FETCH_ENTRIES',
+                type: 'FEED_SELECTED',
+                feed,
+            });
+
+            dispatch({
+                type: 'ENTRIES_FETCHED',
                 entries,
                 feed,
             });
@@ -132,13 +132,13 @@ export function fetchPinEntries(): AsyncAction {
         };
 
         dispatch({
-            type: 'SELECT_FEED',
+            type: 'FEED_SELECTED',
             feed,
         });
 
         setTimeout(() => {
             dispatch({
-                type: 'FETCH_ENTRIES',
+                type: 'ENTRIES_FETCHED',
                 entries,
                 feed,
             });
@@ -146,22 +146,22 @@ export function fetchPinEntries(): AsyncAction {
     };
 }
 
-export function fetchSubscriptionEntries(subscriptionId: number): AsyncAction {
+export function fetchSubscription(subscriptionId: number): AsyncAction {
     return dispatch => {
-        const feed: Feed = {
-            type: 'subscription',
-            title: 'Subscription Title',
-            id: subscriptionId,
-        };
-
-        dispatch({
-            type: 'SELECT_FEED',
-            feed,
-        });
-
         setTimeout(() => {
+            const feed: Feed = {
+                type: 'subscription',
+                title: 'Subscription ' + subscriptionId,
+                id: subscriptionId,
+            };
+
             dispatch({
-                type: 'FETCH_ENTRIES',
+                type: 'FEED_SELECTED',
+                feed,
+            });
+
+            dispatch({
+                type: 'ENTRIES_FETCHED',
                 entries,
                 feed,
             });
@@ -169,9 +169,9 @@ export function fetchSubscriptionEntries(subscriptionId: number): AsyncAction {
     };
 }
 
-export function unselectFeed(): Action {
+export function unselectFeed(): Event {
     return {
-        type: 'UNSELECT_FEED',
+        type: 'FEED_UNSELECTED',
     };
 }
 
@@ -182,7 +182,7 @@ export function sendNotification(notification: Notification): AsyncAction {
 
     return dispatch => {
         dispatch({
-            type: 'SEND_NOTIFICATION',
+            type: 'NOTIFICATION_SENT',
             notification
         });
 
@@ -194,9 +194,9 @@ export function sendNotification(notification: Notification): AsyncAction {
     };
 }
 
-export function dismissNotification(id: number): Action {
+export function dismissNotification(id: number): Event {
     return {
-        type: 'DISMISS_NOTIFICATION',
+        type: 'NOTIFICATION_DISMISSED',
         id,
     };
 }

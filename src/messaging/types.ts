@@ -1,12 +1,12 @@
-export type Action
-    = { type: 'DISMISS_NOTIFICATION', id: number }
-    | { type: 'FETCH_ENTRIES', feed: Feed, entries: Entry[] }
-    | { type: 'FETCH_SUBSCRIPTIONS', subscriptions: Subscription[] }
-    | { type: 'SELECT_FEED', feed: Feed }
-    | { type: 'SEND_NOTIFICATION', notification: Notification }
-    | { type: 'UNSELECT_FEED' };
+export type Event
+    = { type: 'FEED_SELECTED', feed: Feed }
+    | { type: 'FEED_UNSELECTED' }
+    | { type: 'ENTRIES_FETCHED', feed: Feed, entries: Entry[] }
+    | { type: 'NOTIFICATION_DISMISSED', id: number }
+    | { type: 'NOTIFICATION_SENT', notification: Notification }
+    | { type: 'SUBSCRIPTIONS_FETCHED', subscriptions: Subscription[] };
 
-export type AsyncAction = (dispatch: (action: Action) => void) => void;
+export type AsyncAction = (dispatch: (event: Event) => void) => void;
 
 export interface State {
     entries: Entry[];

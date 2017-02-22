@@ -1,8 +1,8 @@
-type Delegate<TAction> = (action: TAction) => void;
+type Delegate<TEvent> = (event: TEvent) => void;
 
-type Middleware<TAction> = (action: TAction, next: Delegate<TAction>) => void;
+type Middleware<TEvent> = (event: TEvent, next: Delegate<TEvent>) => void;
 
-type Reducer<TAction, TState> = (state: TState, action: TAction) => TState;
+type Reducer<TEvent, TState> = (state: TState, event: TEvent) => TState;
 
 type Subscription = {
     unsubscribe(): void,
@@ -18,17 +18,17 @@ type PartialObserver<T> = {
 
 const $$observable = (Symbol as any).observable || '@@observable';
 
-export default class Store<TAction, TState> {
+export default class Store<TEvent, TState> {
     private readonly _observers: Set<Observer<TState>> = new Set();
 
-    private readonly _middlewares: Middleware<TAction>[] = [];
+    private readonly _middlewares: Middleware<TEvent>[] = [];
 
-    private readonly _finalize: Delegate<TAction>;
+    private readonly _finalize: Delegate<TEvent>;
 
-    constructor(private readonly _reducer: Reducer<TAction, TState>,
+    constructor(private readonly _reducer: Reducer<TEvent, TState>,
                 private _state: TState) {
-        this._finalize = (action: TAction): void => {
-            const nextState = this._reducer(this._state, action);
+        this._finalize = (event: TEvent): void => {
+            const nextState = this._reducer(this._state, event);
             this.replaceState(nextState);
         };
     }
@@ -37,9 +37,9 @@ export default class Store<TAction, TState> {
         return this._state;
     }
 
-    dispatch(action: TAction): void {
+    dispatch(event: TEvent): void {
         const pipeline = createPipeline(this._middlewares, this._finalize, 0);
-        pipeline(action);
+        pipeline(event);
     }
 
     replaceState(nextState: TState): void {
@@ -47,7 +47,7 @@ export default class Store<TAction, TState> {
         this._observers.forEach(observer => observer.next(nextState));
     }
 
-    pipe(middleware: Middleware<TAction>): this {
+    pipe(middleware: Middleware<TEvent>): this {
         this._middlewares.push(middleware);
         return this;
     }
@@ -85,14 +85,14 @@ export default class Store<TAction, TState> {
     }
 }
 
-function createPipeline<TAction>(middlewares: Middleware<TAction>[], finalize: Delegate<TAction>, index: number): Delegate<TAction> {
-    return (action: TAction) => {
+function createPipeline<TEvent>(middlewares: Middleware<TEvent>[], finalize: Delegate<TEvent>, index: number): Delegate<TEvent> {
+    return (event: TEvent) => {
         if (index < middlewares.length) {
             const middleware = middlewares[index];
             const next = createPipeline(middlewares, finalize, index + 1);
-            middleware(action, next);
+            middleware(event, next);
         } else {
-            finalize(action);
+            finalize(event);
         }
     };
 }

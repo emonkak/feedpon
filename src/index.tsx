@@ -9,9 +9,9 @@ import historyMiddleware from 'utils/middlewares/historyMiddleware';
 import initialState from 'messaging/initialState';
 import reducer from 'messaging/reducer';
 import routes from 'components/routes';
-import { Action, State } from 'messaging/types';
+import { Event, State } from 'messaging/types';
 
-const store = new Store<Action, State>(reducer, initialState)
+const store = new Store<Event, State>(reducer, initialState)
     .pipe(asyncMiddleware)
     .pipe(historyMiddleware(hashHistory))
     .pipe((action, next) => {
