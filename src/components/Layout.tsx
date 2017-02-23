@@ -14,6 +14,8 @@ export default class Layout extends React.PureComponent<any, any> {
         router: routerShape,
     };
 
+    private mainElement: Element = null;
+
     constructor(props: any, context: any) {
         super(props, context);
 
@@ -37,6 +39,8 @@ export default class Layout extends React.PureComponent<any, any> {
     }
 
     handleChangeLocation() {
+        this.mainElement.scrollTop = 0;
+
         this.setState(state => ({
             ...state,
             sidebarIsOpened: false,
@@ -72,7 +76,7 @@ export default class Layout extends React.PureComponent<any, any> {
                 <div className='l-sidebar'>
                     <Sidebar selectedValue={location.pathname} />
                 </div>
-                <div className="l-main">
+                <div className="l-main" ref={element => { this.mainElement = element }}>
                     <AutoHidingHeader className="l-main-header">
                         {React.cloneElement(navbar, { onToggleSidebar: this.handleToggleSidebar.bind(this) })}
                         <Notifications />
