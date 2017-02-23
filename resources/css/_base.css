@@ -23,7 +23,7 @@ html, body {
 }
 
 html {
-  font-family: -apple-system, 'BlinkMacSystemFont', '.SFNSDisplay-Regular', 'San Francisco Text', 'Segoe UI', sans-serif;
+  font-family: 'Optima', 'Segoe UI', sans-serif;
   font-size: 14px;
   line-height: var(--baseline-height);
   -webkit-font-smoothing: antialiased;

@@ -1,4 +1,4 @@
-@keyframes placeholder {
+@keyframes placeholder-shining {
   0% {
     background-position: -100vw 100%;
   }
@@ -21,13 +21,12 @@
   animation-duration: 2s;
   animation-fill-mode: forwards;
   animation-iteration-count: infinite;
-  animation-name: placeholder;
+  animation-name: placeholder-shining;
   animation-timing-function: linear;
 }
 
 .placeholder::before {
   content: '\200b';
-  white-space: wrap;
 }
 
 .placeholder-100 {

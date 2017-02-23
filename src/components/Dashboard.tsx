@@ -139,10 +139,12 @@ export default class Dashboard extends React.PureComponent<any, any> {
 
                         <h2>Placeholder</h2>
                         <h2 className="placeholder placeholder-animated placeholder-60"></h2>
-                        <div className="placeholder placeholder-animated placeholder-100"></div>
-                        <div className="placeholder placeholder-animated placeholder-100"></div>
-                        <div className="placeholder placeholder-animated placeholder-100"></div>
-                        <div className="placeholder placeholder-animated placeholder-80"></div>
+                        <p>
+                            <span className="placeholder placeholder-animated placeholder-100" />
+                            <span className="placeholder placeholder-animated placeholder-100" />
+                            <span className="placeholder placeholder-animated placeholder-100" />
+                            <span className="placeholder placeholder-animated placeholder-80" />
+                        </p>
 
                         <h2>List</h2>
                         <ul>
