@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { PropTypes, PureComponent } from 'react';
 
 import Dropdown from 'components/parts/Dropdown';
 import MenuItem from 'components/parts/MenuItem';
@@ -11,12 +11,12 @@ import { changeViewMode } from 'messaging/actions';
     feed: state.feed,
     viewMode: state.viewMode
 }))
-export default class FeedNavbar extends React.PureComponent<any, any> {
+export default class FeedNavbar extends PureComponent<any, any> {
     static propTypes = {
-        dispatch: React.PropTypes.func.isRequired,
-        feed: React.PropTypes.object,
-        onToggleSidebar: React.PropTypes.func,
-        viewMode: React.PropTypes.string.isRequired
+        dispatch: PropTypes.func.isRequired,
+        feed: PropTypes.object,
+        onToggleSidebar: PropTypes.func,
+        viewMode: PropTypes.string.isRequired
     };
 
     handleChangeViewMode(viewMode: ViewMode) {

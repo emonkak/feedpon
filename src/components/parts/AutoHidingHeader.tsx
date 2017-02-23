@@ -1,16 +1,16 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import * as classnames from 'classnames';
+import React, { PropTypes, PureComponent } from 'react';
+import ReactDOM from 'react-dom';
+import classnames from 'classnames';
 
-export default class AutoHidingHeader extends React.PureComponent<any, any> {
+export default class AutoHidingHeader extends PureComponent<any, any> {
     static propTypes = {
-        children: React.PropTypes.node,
-        className: React.PropTypes.string,
-        pinned: React.PropTypes.bool,
-        pinnedClassName: React.PropTypes.string,
-        scroller: React.PropTypes.instanceOf(Element),
-        tolerance: React.PropTypes.number,
-        unpinnedClassName: React.PropTypes.string,
+        children: PropTypes.node,
+        className: PropTypes.string,
+        pinned: PropTypes.bool,
+        pinnedClassName: PropTypes.string,
+        scroller: PropTypes.instanceOf(Element),
+        tolerance: PropTypes.number,
+        unpinnedClassName: PropTypes.string,
     };
 
     static defaultProps = {

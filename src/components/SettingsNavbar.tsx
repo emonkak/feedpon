@@ -1,10 +1,10 @@
-import * as React from 'react';
+import React, { PropTypes, PureComponent } from 'react';
 
 import Navbar from 'components/parts/Navbar';
 
-export default class SettingsNavbar extends React.PureComponent<any, any> {
+export default class SettingsNavbar extends PureComponent<any, any> {
     static propTypes = {
-        onToggleSidebar: React.PropTypes.func,
+        onToggleSidebar: PropTypes.func,
     };
 
     render() {

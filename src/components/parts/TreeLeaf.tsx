@@ -1,17 +1,17 @@
-import * as React from 'react';
-import * as classnames from 'classnames';
+import React, { PropTypes, PureComponent } from 'react';
+import classnames from 'classnames';
 
 import TreeNode from 'components/parts/TreeNode';
 
-export default class TreeLeaf extends React.PureComponent<any, any> {
+export default class TreeLeaf extends PureComponent<any, any> {
     static propTypes = {
-        className: React.PropTypes.string,
-        icon: React.PropTypes.element,
-        onSelect: React.PropTypes.func,
-        primaryText: React.PropTypes.string.isRequired,
-        secondaryText: React.PropTypes.string,
-        selected: React.PropTypes.bool,
-        value: React.PropTypes.any.isRequired,
+        className: PropTypes.string,
+        icon: PropTypes.element,
+        onSelect: PropTypes.func,
+        primaryText: PropTypes.string.isRequired,
+        secondaryText: PropTypes.string,
+        selected: PropTypes.bool,
+        value: PropTypes.any.isRequired,
     };
 
     static defaultProps = {

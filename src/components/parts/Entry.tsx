@@ -1,23 +1,23 @@
-import * as React from 'react';
-import * as classnames from 'classnames';
-import * as moment from 'moment';
+import React, { PropTypes, PureComponent } from 'react';
+import classnames from 'classnames';
+import moment from 'moment';
 
-export default class FullEntry extends React.Component<any, any> {
+export default class FullEntry extends PureComponent<any, any> {
     static propTypes = {
-        author: React.PropTypes.string.isRequired,
-        content: React.PropTypes.string.isRequired,
-        entryId: React.PropTypes.oneOfType([
-            React.PropTypes.string,
-            React.PropTypes.number
+        author: PropTypes.string.isRequired,
+        content: PropTypes.string.isRequired,
+        entryId: PropTypes.oneOfType([
+            PropTypes.string,
+            PropTypes.number
         ]).isRequired,
-        publishedAt: React.PropTypes.string.isRequired,
-        title: React.PropTypes.string.isRequired,
-        url: React.PropTypes.string.isRequired,
-        origin: React.PropTypes.shape({
-            title: React.PropTypes.string.isRequired,
-            url: React.PropTypes.string.isRequired,
+        publishedAt: PropTypes.string.isRequired,
+        title: PropTypes.string.isRequired,
+        url: PropTypes.string.isRequired,
+        origin: PropTypes.shape({
+            title: PropTypes.string.isRequired,
+            url: PropTypes.string.isRequired,
         }),
-        viewMode: React.PropTypes.oneOf(['full', 'compact']).isRequired
+        viewMode: PropTypes.oneOf(['full', 'compact']).isRequired
     };
 
     render() {

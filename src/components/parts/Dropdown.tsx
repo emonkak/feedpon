@@ -1,17 +1,17 @@
-import * as React from 'react';
-import * as classnames from 'classnames';
+import React, { PropTypes, PureComponent, cloneElement } from 'react';
+import classnames from 'classnames';
 
 import Closable from 'components/parts/Closable';
 import Menu from 'components/parts/Menu';
 import createChainedFunction from 'utils/createChainedFunction';
 
-export default class Dropdown extends React.PureComponent<any, any> {
+export default class Dropdown extends PureComponent<any, any> {
     static propTypes = {
-        onClose: React.PropTypes.func,
-        onSelect: React.PropTypes.func,
-        opened: React.PropTypes.bool,
-        pullRight: React.PropTypes.bool,
-        toggleButton: React.PropTypes.element.isRequired,
+        onClose: PropTypes.func,
+        onSelect: PropTypes.func,
+        opened: PropTypes.bool,
+        pullRight: PropTypes.bool,
+        toggleButton: PropTypes.element.isRequired,
     };
 
     constructor(props: any, context: any) {
@@ -58,7 +58,7 @@ export default class Dropdown extends React.PureComponent<any, any> {
             ),
         };
 
-        return React.cloneElement(toggleButton, props);
+        return cloneElement(toggleButton, props);
     }
 
     render() {

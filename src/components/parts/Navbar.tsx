@@ -1,9 +1,9 @@
-import * as React from 'react';
+import React, { PropTypes, PureComponent } from 'react';
 
-export default class Navbar extends React.PureComponent<any, any> {
+export default class Navbar extends PureComponent<any, any> {
     static propTypes = {
-        children: React.PropTypes.node,
-        onToggleSidebar: React.PropTypes.func,
+        children: PropTypes.node,
+        onToggleSidebar: PropTypes.func,
     };
 
     handleToggleSidebar(event: React.MouseEvent<any>) {

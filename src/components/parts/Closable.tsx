@@ -1,11 +1,11 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import { PropTypes, PureComponent, cloneElement } from 'react';
+import { findDOMNode } from 'react-dom';
 
-export default class Closable extends React.PureComponent<any, any> {
+export default class Closable extends PureComponent<any, any> {
     static propTypes = {
-        children: React.PropTypes.element.isRequired,
-        disabled: React.PropTypes.bool,
-        onClose: React.PropTypes.func,
+        children: PropTypes.element.isRequired,
+        disabled: PropTypes.bool,
+        onClose: PropTypes.func,
     };
 
     static defaultProps = {
@@ -24,7 +24,7 @@ export default class Closable extends React.PureComponent<any, any> {
         const { onClose } = this.props;
 
         if (onClose) {
-            const childNode = ReactDOM.findDOMNode(this.childElement);
+            const childNode = findDOMNode(this.childElement);
 
             if (!childNode.contains(event.target as Node)) {
                 onClose();
@@ -69,7 +69,7 @@ export default class Closable extends React.PureComponent<any, any> {
     }
 
     render() {
-        return React.cloneElement(this.props.children, {
+        return cloneElement(this.props.children, {
             ref: (element) => { this.childElement = element },
         });
     }

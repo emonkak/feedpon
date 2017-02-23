@@ -1,5 +1,5 @@
-import * as React from 'react';
-import * as classnames from 'classnames';
+import React, { PropTypes, PureComponent } from 'react';
+import classnames from 'classnames';
 import Enumerable from '@emonkak/enumerable';
 
 import '@emonkak/enumerable/extensions/groupBy';
@@ -20,11 +20,11 @@ const numberFormatter = new Intl.NumberFormat();
 @connect((state: State) => ({
     subscriptions: state.subscriptions
 }))
-export default class Sidebar extends React.PureComponent<any, any> {
+export default class Sidebar extends PureComponent<any, any> {
     static propTypes = {
-        selectedValue: React.PropTypes.string,
-        dispatch: React.PropTypes.func.isRequired,
-        subscriptions: React.PropTypes.array.isRequired,
+        selectedValue: PropTypes.string,
+        dispatch: PropTypes.func.isRequired,
+        subscriptions: PropTypes.array.isRequired,
     };
 
     componentWillMount() {

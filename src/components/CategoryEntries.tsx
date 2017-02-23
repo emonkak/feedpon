@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { PropTypes, PureComponent } from 'react';
 
 import EntryList from 'components/parts/EntryList';
 import connect from 'utils/components/connect';
@@ -10,12 +10,12 @@ import { fetchCategory, unselectFeed } from 'messaging/actions';
     feed: state.feed,
     viewMode: state.viewMode
 }))
-export default class CategoryEntries extends React.PureComponent<any, any> {
+export default class CategoryEntries extends PureComponent<any, any> {
     static propTypes = {
-        dispatch: React.PropTypes.func.isRequired,
-        entries: React.PropTypes.array.isRequired,
-        feed: React.PropTypes.object,
-        viewMode: React.PropTypes.string.isRequired
+        dispatch: PropTypes.func.isRequired,
+        entries: PropTypes.array.isRequired,
+        feed: PropTypes.object,
+        viewMode: PropTypes.string.isRequired
     };
 
     componentWillMount() {

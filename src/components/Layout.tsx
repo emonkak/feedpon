@@ -1,15 +1,15 @@
-import * as React from 'react';
-import * as classnames from 'classnames';
+import React, { PropTypes, PureComponent, cloneElement } from 'react';
+import classnames from 'classnames';
 import { locationShape, routerShape } from 'react-router/lib/PropTypes';
 
 import AutoHidingHeader from 'components/parts/AutoHidingHeader';
 import Notifications from 'components/Notifications';
 import Sidebar from 'components/Sidebar';
 
-export default class Layout extends React.PureComponent<any, any> {
+export default class Layout extends PureComponent<any, any> {
     static propTypes = {
-        content: React.PropTypes.element.isRequired,
-        navbar: React.PropTypes.element.isRequired,
+        content: PropTypes.element.isRequired,
+        navbar: PropTypes.element.isRequired,
         location: locationShape,
         router: routerShape,
     };
@@ -78,7 +78,7 @@ export default class Layout extends React.PureComponent<any, any> {
                 </div>
                 <div className="l-main" ref={element => { this.mainElement = element }}>
                     <AutoHidingHeader className="l-main-header">
-                        {React.cloneElement(navbar, { onToggleSidebar: this.handleToggleSidebar.bind(this) })}
+                        {cloneElement(navbar, { onToggleSidebar: this.handleToggleSidebar.bind(this) })}
                         <Notifications />
                     </AutoHidingHeader>
                     <div className="l-main-content">

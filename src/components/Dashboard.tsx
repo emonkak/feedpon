@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { PureComponent } from 'react';
 
 import Dropdown from 'components/parts/Dropdown';
 import MenuItem from 'components/parts/MenuItem';
@@ -7,7 +7,7 @@ import connect from 'utils/components/connect';
 import { sendNotification } from 'messaging/actions';
 
 @connect()
-export default class Dashboard extends React.PureComponent<any, any> {
+export default class Dashboard extends PureComponent<any, any> {
     constructor(props: any, context: any) {
         super(props, context);
 

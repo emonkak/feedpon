@@ -1,14 +1,14 @@
-import * as React from 'react';
+import React, { PropTypes, PureComponent } from 'react';
 
 import Entry from 'components/parts/Entry';
 import EntryPlaceholder from 'components/parts/EntryPlaceholder';
 
-export default class EntryList extends React.PureComponent<any, any> {
+export default class EntryList extends PureComponent<any, any> {
     static propTypes = {
-        entries: React.PropTypes.array.isRequired,
-        feed: React.PropTypes.object,
-        isLoading: React.PropTypes.bool.isRequired,
-        viewMode: React.PropTypes.oneOf(['full', 'compact', 'magazine']).isRequired
+        entries: PropTypes.array.isRequired,
+        feed: PropTypes.object,
+        isLoading: PropTypes.bool.isRequired,
+        viewMode: PropTypes.oneOf(['full', 'compact', 'magazine']).isRequired
     };
 
     render() {

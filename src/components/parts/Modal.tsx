@@ -1,11 +1,11 @@
-import * as React from 'react';
-import * as classnames from 'classnames';
+import React, { PropTypes, PureComponent } from 'react';
+import classnames from 'classnames';
 
-export default class Modal extends React.PureComponent<any, any> {
+export default class Modal extends PureComponent<any, any> {
     static propTypes = {
-        children: React.PropTypes.node.isRequired,
-        onHide: React.PropTypes.func,
-        shown: React.PropTypes.bool,
+        children: PropTypes.node.isRequired,
+        onHide: PropTypes.func,
+        shown: PropTypes.bool,
     };
 
     static defaultProps = {

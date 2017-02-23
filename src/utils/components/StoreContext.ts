@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { Children, PropTypes, PureComponent } from 'react';
 
 import Store from 'utils/Store';
 
@@ -6,14 +6,14 @@ type Props = {
     store: Store<any, any>,
 };
 
-export default class StoreContext extends React.PureComponent<Props, {}> {
+export default class StoreContext extends PureComponent<Props, {}> {
     static propTypes = {
-        store: React.PropTypes.instanceOf(Store).isRequired,
-        children: React.PropTypes.element.isRequired,
+        store: PropTypes.instanceOf(Store).isRequired,
+        children: PropTypes.element.isRequired,
     };
 
     static childContextTypes = {
-        store: React.PropTypes.instanceOf(Store).isRequired,
+        store: PropTypes.instanceOf(Store).isRequired,
     };
 
     getChildContext() {
@@ -22,6 +22,6 @@ export default class StoreContext extends React.PureComponent<Props, {}> {
     }
 
     render() {
-        return React.Children.only(this.props.children);
+        return Children.only(this.props.children);
     }
 }

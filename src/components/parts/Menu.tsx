@@ -1,20 +1,20 @@
-import * as React from 'react';
-import * as classnames from 'classnames';
+import React, { Children, PropTypes, PureComponent, cloneElement } from 'react';
+import classnames from 'classnames';
 
 import createChainedFunction from 'utils/createChainedFunction';
 
-export default class Menu extends React.PureComponent<any, any> {
+export default class Menu extends PureComponent<any, any> {
     static propTypes = {
-        children: React.PropTypes.node.isRequired,
-        onSelect: React.PropTypes.func,
-        pullRight: React.PropTypes.bool,
+        children: PropTypes.node.isRequired,
+        onSelect: PropTypes.func,
+        pullRight: PropTypes.bool,
     };
 
     renderChild(child: React.ReactElement<any>) {
         const { onSelect } = this.props;
         const childKey = child.key;
 
-        return React.cloneElement(child, {
+        return cloneElement(child, {
             ...child.props,
             onSelect: createChainedFunction(
                 child.props.onSelect,
@@ -30,7 +30,7 @@ export default class Menu extends React.PureComponent<any, any> {
             <div className={classnames('menu', {
                 'menu-right': pullRight,
             })}>
-                {React.Children.map(children, this.renderChild.bind(this))}
+                {Children.map(children, this.renderChild.bind(this))}
             </div>
         );
     }

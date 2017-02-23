@@ -1,9 +1,10 @@
 {
   "name": "feedpon",
   "version": "0.0.0",
-  "description": "The feed reader for me",
+  "description": "A feed reader for me",
   "author": "Shota Nozaki",
   "license": "MIT",
+  "private": true,
   "repository": {
     "type": "git",
     "url": "https://github.com/emonkak/feedpon.git"
@@ -37,7 +38,6 @@
     "@types/react-dom": "^0.14.23",
     "@types/react-router": "^3.0.4",
     "@types/whatwg-fetch": "^0.0.33",
-    "awesome-typescript-loader": "^3.0.4",
     "cash-cp": "^0.2.0",
     "cash-rm": "^0.2.0",
     "cssnano": "^3.10.0",
@@ -46,6 +46,7 @@
     "postcss-cli": "^3.0.0-beta",
     "postcss-cssnext": "^2.9.0",
     "postcss-import": "^9.1.0",
+    "ts-loader": "^2.0.1",
     "tslint": "^4.4.2",
     "typescript": "^2.1.6",
     "webpack": "^2.2.1"

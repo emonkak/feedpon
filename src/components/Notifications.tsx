@@ -1,19 +1,19 @@
-import * as CSSTransitionGroup from 'react-addons-css-transition-group';
-import * as React from 'react';
+import CSSTransitionGroup from 'react-addons-css-transition-group';
+import React, { PropTypes, PureComponent } from 'react';
 
 import Notification from 'components/parts/Notification';
 import connect from 'utils/components/connect';
 import { dismissNotification } from 'messaging/actions';
 
 @connect()
-export default class Notifications extends React.PureComponent<any, any> {
+export default class Notifications extends PureComponent<any, any> {
     static propTypes = {
-        dispatch: React.PropTypes.func.isRequired,
-        notifications: React.PropTypes.arrayOf(
-            React.PropTypes.shape({
-                id: React.PropTypes.number.isRequired,
-                message: React.PropTypes.string.isRequired,
-                kind: React.PropTypes.oneOf(['default', 'positive', 'negative']),
+        dispatch: PropTypes.func.isRequired,
+        notifications: PropTypes.arrayOf(
+            PropTypes.shape({
+                id: PropTypes.number.isRequired,
+                message: PropTypes.string.isRequired,
+                kind: PropTypes.oneOf(['default', 'positive', 'negative']),
             })
         ).isRequired,
     };

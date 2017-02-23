@@ -1,11 +1,11 @@
-import * as React from 'react';
-import * as classnames from 'classnames';
+import React, { PropTypes, PureComponent } from 'react';
+import classnames from 'classnames';
 
-export default class Notification extends React.PureComponent<any, any> {
+export default class Notification extends PureComponent<any, any> {
     static propTypes = {
-        children: React.PropTypes.node.isRequired,
-        kind: React.PropTypes.oneOf(['default', 'positive', 'negative']),
-        onClose: React.PropTypes.func,
+        children: PropTypes.node.isRequired,
+        kind: PropTypes.oneOf(['default', 'positive', 'negative']),
+        onClose: PropTypes.func,
     };
 
     handleClose(event: React.MouseEvent<any>) {

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { PropTypes, PureComponent, createElement } from 'react';
 
 import Store from 'utils/Store';
 
@@ -13,9 +13,9 @@ export default function connect<TAction, TState>(mapStateToProps?: (state: TStat
     }
 
     return component => {
-        return class StoreSubscriber extends React.PureComponent<any, TState> {
+        return class StoreSubscriber extends PureComponent<any, TState> {
             static contextTypes = {
-                store: React.PropTypes.instanceOf(Store).isRequired,
+                store: PropTypes.instanceOf(Store).isRequired,
             };
 
             private dispatchProps: any;
@@ -48,7 +48,7 @@ export default function connect<TAction, TState>(mapStateToProps?: (state: TStat
                 const { children } = this.props;
                 const props = Object.assign({}, this.dispatchProps, this.state, this.props);
 
-                return React.createElement(component, props, children);
+                return createElement(component, props, children);
             }
         };
     };

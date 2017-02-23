@@ -1,14 +1,14 @@
-import * as React from 'react';
-import * as classnames from 'classnames';
+import React, { PropTypes, PureComponent } from 'react';
+import classnames from 'classnames';
 
-export default class MenuItem extends React.PureComponent<any, any> {
+export default class MenuItem extends PureComponent<any, any> {
     static propTypes = {
-        active: React.PropTypes.bool,
-        disabled: React.PropTypes.bool,
-        icon: React.PropTypes.node,
-        onSelect: React.PropTypes.func,
-        primaryText: React.PropTypes.string,
-        secondaryText: React.PropTypes.string,
+        active: PropTypes.bool,
+        disabled: PropTypes.bool,
+        icon: PropTypes.node,
+        onSelect: PropTypes.func,
+        primaryText: PropTypes.string,
+        secondaryText: PropTypes.string,
     };
 
     handleSelect(event: any) {

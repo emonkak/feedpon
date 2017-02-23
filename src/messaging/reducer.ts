@@ -1,4 +1,4 @@
-import * as areEqual from 'fbjs/lib/areEqual';
+import areEqual from 'fbjs/lib/areEqual';
 
 import { Event, State } from 'messaging/types';
 

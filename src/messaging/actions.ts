@@ -1,5 +1,5 @@
 import { AsyncAction, Entry, Event, Feed, Notification, Subscription, ViewMode } from 'messaging/types';
-import * as rss from 'json/rss.json';
+import rss from 'json/rss.json';
 
 const subscriptions: Subscription[] = [
     {

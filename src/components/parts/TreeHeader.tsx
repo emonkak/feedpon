@@ -1,6 +1,6 @@
-import * as React from 'react';
+import React, { PureComponent } from 'react';
 
-export default class TreeHeader extends React.PureComponent<any, any> {
+export default class TreeHeader extends PureComponent<any, any> {
     renderIcon(icon: React.ReactElement<any>, onClick: React.EventHandler<any>) {
         if (icon) {
             return (

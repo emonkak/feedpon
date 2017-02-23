@@ -1,14 +1,14 @@
-import * as React from 'react';
+import React, { Children, PropTypes, PureComponent, cloneElement } from 'react';
 
 import TreeBranch from 'components/parts/TreeBranch';
 import TreeLeaf from 'components/parts/TreeLeaf';
 import createChainedFunction from 'utils/createChainedFunction';
 
-export default class Tree extends React.PureComponent<any, any> {
+export default class Tree extends PureComponent<any, any> {
     static propTypes = {
-        value: React.PropTypes.string,
-        children: React.PropTypes.node.isRequired,
-        onSelect: React.PropTypes.func,
+        value: PropTypes.string,
+        children: PropTypes.node.isRequired,
+        onSelect: PropTypes.func,
     };
 
     constructor(props: any) {
@@ -42,11 +42,11 @@ export default class Tree extends React.PureComponent<any, any> {
             const shouldExpand = (child: React.ReactElement<any>) => {
                 return child.type === TreeLeaf
                     ? child.props.value === value
-                    : React.Children.toArray(child.props.children)
+                    : Children.toArray(child.props.children)
                         .some(shouldExpand);
             };
 
-            return React.cloneElement(child, {
+            return cloneElement(child, {
                 ...child.props,
                 expanded: shouldExpand(child),
                 selected: child.props.value === value,
@@ -54,7 +54,7 @@ export default class Tree extends React.PureComponent<any, any> {
                     event => this.handleSelect(event, child.key),
                     child.props.onSelect
                 ),
-                children: React.Children.map(child.props.children, this.renderChild.bind(this))
+                children: Children.map(child.props.children, this.renderChild.bind(this))
             });
         } else {
             return child;
@@ -66,7 +66,7 @@ export default class Tree extends React.PureComponent<any, any> {
 
         return (
             <ul className="tree">
-                {React.Children.map(children, this.renderChild.bind(this))}
+                {Children.map(children, this.renderChild.bind(this))}
             </ul>
         );
     }
