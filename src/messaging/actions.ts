@@ -81,17 +81,17 @@ export function fetchSubscriptions(): AsyncAction {
 
 export function fetchAllEntries(): AsyncAction {
     return dispatch => {
-        const feed: Feed = {
-            title: 'All',
-            type: 'all',
-        };
-
-        dispatch({
-            type: 'FEED_SELECTED',
-            feed,
-        });
-
         setTimeout(() => {
+            const feed: Feed = {
+                title: 'All',
+                type: 'all',
+            };
+
+            dispatch({
+                type: 'FEED_SELECTED',
+                feed,
+            });
+
             dispatch({
                 type: 'ENTRIES_FETCHED',
                 entries,
@@ -126,17 +126,17 @@ export function fetchCategory(categoryId: number): AsyncAction {
 
 export function fetchPinEntries(): AsyncAction {
     return dispatch => {
-        const feed: Feed = {
-            title: 'Pins',
-            type: 'pin',
-        };
-
-        dispatch({
-            type: 'FEED_SELECTED',
-            feed,
-        });
-
         setTimeout(() => {
+            const feed: Feed = {
+                title: 'Pins',
+                type: 'pin',
+            };
+
+            dispatch({
+                type: 'FEED_SELECTED',
+                feed,
+            });
+
             dispatch({
                 type: 'ENTRIES_FETCHED',
                 entries,

@@ -16,10 +16,10 @@
 @import './_nav.css';
 @import './_navbar.css';
 @import './_notification.css';
+@import './_placeholder.css';
 @import './_popover.css';
 @import './_sidebar.css';
 @import './_table.css';
 @import './_tree.css';
 
-@import './_transisions.css';
 @import './_utils.css';

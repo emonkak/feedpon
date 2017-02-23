@@ -29,7 +29,7 @@
 
 .menu-item-icon {
   flex: 0 0 32px;
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
 }

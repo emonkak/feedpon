@@ -41,13 +41,13 @@
 
 .tree-node-icon {
   flex: 0 0 32px;
-  display: inline-flex;
+  display: flex;
   justify-content: center;
   align-items: center;
 }
 
 .tree-node-label {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   flex: 1;
   padding: calc(var(--baseline-height) / 4) 0.5rem;

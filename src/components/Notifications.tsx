@@ -31,7 +31,7 @@ export default class Notifications extends React.PureComponent<any, any> {
             <CSSTransitionGroup
                 component="div"
                 className="notifications"
-                transitionName="slide-down"
+                transitionName="notification"
                 transitionEnterTimeout={200}
                 transitionLeaveTimeout={200}>
                 {notifications.map(({ id, kind, message }: any) =>

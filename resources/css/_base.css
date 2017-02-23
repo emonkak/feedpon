@@ -13,9 +13,9 @@
   --negative-color: #ff6b6b;
   --negative-light-color: #fff5f5;
 
-  --sidebar-width: 288px;
-  --navbar-height: 48px;
   --baseline-height: 24px;
+  --navbar-height: 48px;
+  --sidebar-width: 288px;
 }
 
 html, body {

@@ -26,7 +26,7 @@
 }
 
 .entry-title {
-  font-size: 1.5rem;
+  font-size: 1.0rem;
   line-height: inherit;
   margin: 0;
 }
@@ -43,4 +43,5 @@
 .entry-footer {
   display: flex;
   justify-content: center;
+  margin: var(--baseline-height) 0 0;
 }

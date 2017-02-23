@@ -1,14 +1,19 @@
 import * as React from 'react';
 
-import Entry from 'components/parts/Entry';
+import Entries from 'components/parts/Entries';
 import connect from 'utils/components/connect';
+import { State } from 'messaging/types';
 import { fetchSubscription, unselectFeed } from 'messaging/actions';
 
-@connect()
+@connect((state: State) => ({
+    entries: state.entries,
+    feed: state.feed,
+}))
 export default class SubscriptionEntries extends React.PureComponent<any, any> {
     static propTypes = {
         dispatch: React.PropTypes.func.isRequired,
         entries: React.PropTypes.array.isRequired,
+        feed: React.PropTypes.object,
     };
 
     componentWillMount() {
@@ -21,6 +26,8 @@ export default class SubscriptionEntries extends React.PureComponent<any, any> {
         if (this.props.params.subscription_id !== nextProps.params.subscription_id) {
             const { dispatch } = this.props;
 
+            dispatch(unselectFeed());
+
             dispatch(fetchSubscription(nextProps.params.subscription_id | 0));
         }
     }
@@ -32,11 +39,11 @@ export default class SubscriptionEntries extends React.PureComponent<any, any> {
     }
 
     render() {
-        const { entries } = this.props;
+        const { entries, feed } = this.props;
 
         return (
             <div className="container">
-                {entries.map(entry => <Entry key={entry.entryId} {...entry} />)}
+                <Entries isLoading={!feed} entries={entries} />
             </div>
         );
     }

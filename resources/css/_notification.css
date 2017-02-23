@@ -39,3 +39,22 @@
   align-items: center;
   margin: calc(var(--baseline-height) / 2) 0 calc(var(--baseline-height) / 2 - 1px);
 }
+
+.notification-enter,
+.notification-leave {
+  position: relative;
+  transition: transform 0.2s ease-in-out, opacity 0.2s ease-in-out;
+  z-index: -1;
+}
+
+.notification-enter,
+.notification-leave.notification-leave-active {
+  transform: translateY(-100%);
+  opacity: 0;
+}
+
+.notification-enter.notification-enter-active,
+.notification-leave {
+  transform: translateY(0);
+  opacity: 1;
+}

@@ -137,6 +137,13 @@ export default class Dashboard extends React.PureComponent<any, any> {
                             <p>We just updated our privacy policy here to better service our customers. We recommend reviewing the changes.</p>
                         </div>
 
+                        <h2>Placeholder</h2>
+                        <h2 className="placeholder placeholder-animated placeholder-60"></h2>
+                        <div className="placeholder placeholder-animated placeholder-100"></div>
+                        <div className="placeholder placeholder-animated placeholder-100"></div>
+                        <div className="placeholder placeholder-animated placeholder-100"></div>
+                        <div className="placeholder placeholder-animated placeholder-80"></div>
+
                         <h2>List</h2>
                         <ul>
                             <li><a href="http://www.lipsum.com/">Lorem ipsum</a> dolor sit amet, consectetur adipiscing elit.</li>
