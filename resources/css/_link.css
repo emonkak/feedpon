@@ -1,7 +1,6 @@
 .link-default {
   color: var(--default-color);
   text-decoration: none;
-  transition: color 0.2s ease-in-out;
 }
 
 .link-default:hover {

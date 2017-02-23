@@ -11,7 +11,7 @@ export default function reducer(state: State, event: Event): State {
 
             return {
                 ...state,
-                entries: event.entries,
+                entries: event.entries
             };
 
         case 'SUBSCRIPTIONS_FETCHED':
@@ -24,14 +24,14 @@ export default function reducer(state: State, event: Event): State {
             return {
                 ...state,
                 entries: [],
-                feed: event.feed,
+                feed: event.feed
             };
 
         case 'FEED_UNSELECTED':
             return {
                 ...state,
                 entries: [],
-                feed: null,
+                feed: null
             };
 
         case 'NOTIFICATION_SENT':
@@ -44,6 +44,12 @@ export default function reducer(state: State, event: Event): State {
             return {
                 ...state,
                 notifications: state.notifications.filter(notification => notification.id !== event.id)
+            };
+
+        case 'VIEW_MODE_CHANGED':
+            return {
+                ...state,
+                viewMode: event.viewMode
             };
 
         default:

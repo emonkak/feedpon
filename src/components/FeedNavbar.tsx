@@ -4,16 +4,29 @@ import Dropdown from 'components/parts/Dropdown';
 import MenuItem from 'components/parts/MenuItem';
 import Navbar from 'components/parts/Navbar';
 import connect from 'utils/components/connect';
+import { State, ViewMode } from 'messaging/types';
+import { changeViewMode } from 'messaging/actions';
 
-@connect((state: any) => ({ feed: state.feed }))
+@connect((state: State) => ({
+    feed: state.feed,
+    viewMode: state.viewMode
+}))
 export default class FeedNavbar extends React.PureComponent<any, any> {
     static propTypes = {
+        dispatch: React.PropTypes.func.isRequired,
         feed: React.PropTypes.object,
         onToggleSidebar: React.PropTypes.func,
+        viewMode: React.PropTypes.string.isRequired
     };
 
+    handleChangeViewMode(viewMode: ViewMode) {
+        const { dispatch } = this.props;
+
+        dispatch(changeViewMode(viewMode));
+    }
+
     render() {
-        const { feed, onToggleSidebar } = this.props;
+        const { feed, viewMode, onToggleSidebar } = this.props;
 
         return (
             <Navbar onToggleSidebar={onToggleSidebar}>
@@ -26,9 +39,18 @@ export default class FeedNavbar extends React.PureComponent<any, any> {
                     <i className="icon icon-48 icon-size-24 icon-refresh" />
                 </a>
                 <Dropdown toggleButton={<a className="navbar-action" href="#"><i className="icon icon-48 icon-size-24 icon-more" /></a>} pullRight={true}>
-                    <MenuItem icon={<i className="icon icon-16 icon-checkmark" />} primaryText="Action" secondaryText="Secondary Text" />
-                    <MenuItem primaryText="Another action" secondaryText="Secondary Text" />
-                    <MenuItem primaryText="Something else here" secondaryText="Secondary Text" />
+                    <MenuItem
+                        icon={viewMode === 'full' ? <i className="icon icon-16 icon-checkmark" /> : null}
+                        primaryText="Full View"
+                        onSelect={() => this.handleChangeViewMode('full')} />
+                    <MenuItem
+                        icon={viewMode === 'compact' ? <i className="icon icon-16 icon-checkmark" /> : null}
+                        primaryText="Compact View"
+                        onSelect={() => this.handleChangeViewMode('compact')} />
+                    <div className="menu-divider" />
+                    <MenuItem primaryText="Action" />
+                    <MenuItem primaryText="Another action" />
+                    <MenuItem primaryText="Something else here" />
                 </Dropdown>
             </Navbar>
         );

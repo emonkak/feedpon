@@ -1,7 +1,8 @@
 .DS_Store
 .vscode
+/node_modules/
 /public/css/
 /public/fonts/
 /public/js/
-/node_modules/
+/src/json/
 npm-debug.log*

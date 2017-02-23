@@ -10,12 +10,17 @@
 
   --positive-color: #22b8cf;
   --positive-light-color: #e3fafc;
+
   --negative-color: #ff6b6b;
   --negative-light-color: #fff5f5;
+
+  --highlight--color: #fcc419;
+  --highlight-light-color: #fff9db;
 
   --baseline-height: 24px;
   --navbar-height: 48px;
   --sidebar-width: 288px;
+  --container-width: 800px;
 }
 
 html, body {
@@ -23,11 +28,9 @@ html, body {
 }
 
 html {
-  font-family: 'Optima', 'Segoe UI', sans-serif;
+  font-family: -apple-system, 'BlinkMacSystemFont', '.SFNSDisplay-Regular', 'San Francisco Text', 'Segoe UI', 'Helvetica', 'YuGothic', 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
   font-size: 14px;
   line-height: var(--baseline-height);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
@@ -38,8 +41,8 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
   margin: 0;
-  line-height: calc(var(--baseline-height) * 2);
   font-weight: 600;
+  line-height: calc(var(--baseline-height) * 2);
 }
 
 h1 {
@@ -78,10 +81,17 @@ dd {
   margin: 0 0 0 1.5rem;
 }
 
+pre, code, var, samp {
+  font-family: Consolas, Menlo, Monaco, monospace;
+}
+
+code, var, samp {
+  line-height: 1;
+}
+
 pre {
-  font-family: Consolas, monospace;
   background: var(--light-color);
-  padding: var(--baseline-height) 1.5rem;
+  padding: calc(var(--baseline-height) / 2) 1.5rem;
   overflow: auto;
   border-radius: 4px;
 }
@@ -89,6 +99,10 @@ pre {
 blockquote {
   border-left: 2px solid var(--medium-color);
   padding: calc(var(--baseline-height) / 2) 1.5rem calc(var(--baseline-height) / 2) calc(1.5rem - 2px);
+}
+
+blockquote > p:last-child {
+  margin-bottom: 0;
 }
 
 ul, ol {
@@ -104,8 +118,19 @@ table {
   border-spacing: 0;
 }
 
-td, th {
-  padding: calc(var(--baseline-height) / 4) 0;
+tbody tr:nth-of-type(odd) {
+  background: var(--light-color);
+}
+
+thead th {
+  padding-bottom: calc(var(--baseline-height) / 4 - 2px);
+  border-bottom: 2px solid var(--medium-color);
+}
+
+td,
+th {
+  padding: calc(var(--baseline-height) / 4) 1rem calc(var(--baseline-height) / 4 - 1px);
+  border-bottom: 1px solid var(--medium-color);
   text-align: left;
 }
 
@@ -113,7 +138,7 @@ caption {
   font-weight: bold;
   caption-side: bottom;
   color: var(--dark-color);
-  text-align: left;
+  text-align: center;
   margin: calc(var(--baseline-height) / 2) 0;
 }
 
@@ -129,12 +154,21 @@ a:hover {
 
 em {
   font-weight: 600;
-  font-style: italic;
+  font-style: normal;
 }
 
 strong {
   font-weight: 600;
   font-style: normal;
+  background-color: var(--positive-light-color);
+  padding: 3px;
+}
+
+mark {
+  font-weight: 600;
+  font-style: normal;
+  background-color: var(--highlight-light-color);
+  padding: 3px;
 }
 
 code, var, samp {

@@ -1,5 +1,6 @@
 export type Event
-    = { type: 'FEED_SELECTED', feed: Feed }
+    = { type: 'VIEW_MODE_CHANGED', viewMode: ViewMode }
+    | { type: 'FEED_SELECTED', feed: Feed }
     | { type: 'FEED_UNSELECTED' }
     | { type: 'ENTRIES_FETCHED', feed: Feed, entries: Entry[] }
     | { type: 'NOTIFICATION_DISMISSED', id: number }
@@ -13,25 +14,31 @@ export interface State {
     feed: Feed | null;
     notifications: Notification[];
     subscriptions: Subscription[];
+    viewMode: ViewMode;
 }
+
+export type ViewMode = 'full' | 'compact';
 
 export interface Feed {
-    id?: number;
+    id?: string | number;
     title: string;
-    type: 'all' | 'category' | 'pin' | 'subscription';
+    type: FeedType;
 }
 
+export type FeedType = 'all' | 'category' | 'pin' | 'subscription';
+
 export interface Entry {
-    entryId: number;
+    entryId: string | number;
     author: string;
     content: string;
-    postedAt: string;
+    description: string;
+    publishedAt: string;
     title: string;
     url: string;
 }
 
 export interface Subscription {
-    subscriptionId: number;
+    subscriptionId: string | number;
     title: string;
     category: {
         categoryId: number;
@@ -41,7 +48,7 @@ export interface Subscription {
 };
 
 export interface Notification {
-    id?: number;
+    id?: string | number;
     dismissAfter?: number;
     message: string;
     kind: 'default' | 'positive' | 'negative';

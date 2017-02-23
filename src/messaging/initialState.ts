@@ -5,6 +5,7 @@ const initialState: State = {
     feed: null,
     notifications: [],
     subscriptions: [],
+    viewMode: 'full',
 };
 
 export default initialState;

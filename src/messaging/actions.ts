@@ -1,4 +1,5 @@
-import { AsyncAction, Entry, Event, Feed, Notification, Subscription } from 'messaging/types';
+import { AsyncAction, Entry, Event, Feed, Notification, Subscription, ViewMode } from 'messaging/types';
+import * as rss from 'json/rss.json';
 
 const subscriptions: Subscription[] = [
     {
@@ -39,32 +40,46 @@ const subscriptions: Subscription[] = [
     }
 ];
 
-const entries: Entry[] = [
-    {
-        entryId: 1,
-        author: 'Lorem Ipsum',
-        content: `<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>`,
-        postedAt: new Date().toISOString(),
-        title: 'Lorem Ipsum',
-        url: 'http://www.lipsum.com/',
-    },
-    {
-        entryId: 2,
-        author: 'Lorem Ipsum',
-        content: `<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>`,
-        postedAt: new Date().toISOString(),
-        title: 'Lorem Ipsum',
-        url: 'http://www.lipsum.com/',
-    },
-    {
-        entryId: 3,
-        author: 'Lorem Ipsum',
-        content: `<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>`,
-        postedAt: new Date().toISOString(),
-        title: 'Lorem Ipsum',
-        url: 'http://www.lipsum.com/',
-    },
-];
+const entries: Entry[] = rss.items.map((item: any) => ({
+    entryId: item.guid,
+    author: item.author,
+    content: item.content,
+    description: item.description,
+    publishedAt: item.pubDate,
+    title: item.title,
+    url: item.link,
+    origin: {
+        title: rss.feed.title,
+        url: rss.feed.link,
+    }
+}));
+
+// const entries: Entry[] = [
+//     {
+//         entryId: 1,
+//         author: 'Lorem Ipsum',
+//         content: `<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>`,
+//         publishedAt: new Date().toISOString(),
+//         title: 'Lorem Ipsum',
+//         url: 'http://www.lipsum.com/',
+//     },
+//     {
+//         entryId: 2,
+//         author: 'Lorem Ipsum',
+//         content: `<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>`,
+//         publishedAt: new Date().toISOString(),
+//         title: 'Lorem Ipsum',
+//         url: 'http://www.lipsum.com/',
+//     },
+//     {
+//         entryId: 3,
+//         author: 'Lorem Ipsum',
+//         content: `<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>`,
+//         publishedAt: new Date().toISOString(),
+//         title: 'Lorem Ipsum',
+//         url: 'http://www.lipsum.com/',
+//     },
+// ];
 
 const delay = 500;
 
@@ -73,7 +88,7 @@ export function fetchSubscriptions(): AsyncAction {
         setTimeout(() => {
             dispatch({
                 type: 'SUBSCRIPTIONS_FETCHED',
-                subscriptions,
+                subscriptions
             });
         }, delay);
     };
@@ -84,18 +99,18 @@ export function fetchAllEntries(): AsyncAction {
         setTimeout(() => {
             const feed: Feed = {
                 title: 'All',
-                type: 'all',
+                type: 'all'
             };
 
             dispatch({
                 type: 'FEED_SELECTED',
-                feed,
+                feed
             });
 
             dispatch({
                 type: 'ENTRIES_FETCHED',
                 entries,
-                feed,
+                feed
             });
         }, delay);
     };
@@ -107,18 +122,18 @@ export function fetchCategory(categoryId: number): AsyncAction {
             const feed: Feed = {
                 id: categoryId,
                 title: 'Category ' + categoryId,
-                type: 'category',
+                type: 'category'
             };
 
             dispatch({
                 type: 'FEED_SELECTED',
-                feed,
+                feed
             });
 
             dispatch({
                 type: 'ENTRIES_FETCHED',
                 entries,
-                feed,
+                feed
             });
         }, delay);
     };
@@ -129,18 +144,18 @@ export function fetchPinEntries(): AsyncAction {
         setTimeout(() => {
             const feed: Feed = {
                 title: 'Pins',
-                type: 'pin',
+                type: 'pin'
             };
 
             dispatch({
                 type: 'FEED_SELECTED',
-                feed,
+                feed
             });
 
             dispatch({
                 type: 'ENTRIES_FETCHED',
                 entries,
-                feed,
+                feed
             });
         }, delay);
     };
@@ -152,18 +167,18 @@ export function fetchSubscription(subscriptionId: number): AsyncAction {
             const feed: Feed = {
                 type: 'subscription',
                 title: 'Subscription ' + subscriptionId,
-                id: subscriptionId,
+                id: subscriptionId
             };
 
             dispatch({
                 type: 'FEED_SELECTED',
-                feed,
+                feed
             });
 
             dispatch({
                 type: 'ENTRIES_FETCHED',
                 entries,
-                feed,
+                feed
             });
         }, delay);
     };
@@ -171,7 +186,7 @@ export function fetchSubscription(subscriptionId: number): AsyncAction {
 
 export function unselectFeed(): Event {
     return {
-        type: 'FEED_UNSELECTED',
+        type: 'FEED_UNSELECTED'
     };
 }
 
@@ -194,9 +209,16 @@ export function sendNotification(notification: Notification): AsyncAction {
     };
 }
 
-export function dismissNotification(id: number): Event {
+export function dismissNotification(id: any): Event {
     return {
         type: 'NOTIFICATION_DISMISSED',
-        id,
+        id
+    };
+}
+
+export function changeViewMode(viewMode: ViewMode): Event {
+    return {
+        type: 'VIEW_MODE_CHANGED',
+        viewMode
     };
 }

@@ -19,5 +19,8 @@
     ],
     "awesomeTypescriptLoaderOptions": {
       "silent": true
-    }
+    },
+    "files": [
+      "./src/typings/json.d.ts"
+    ]
 }

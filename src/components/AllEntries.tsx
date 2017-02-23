@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import Entries from 'components/parts/Entries';
+import EntryList from 'components/parts/EntryList';
 import connect from 'utils/components/connect';
 import { State } from 'messaging/types';
 import { fetchAllEntries, unselectFeed } from 'messaging/actions';
@@ -8,12 +8,14 @@ import { fetchAllEntries, unselectFeed } from 'messaging/actions';
 @connect((state: State) => ({
     entries: state.entries,
     feed: state.feed,
+    viewMode: state.viewMode
 }))
 export default class AllEntries extends React.PureComponent<any, any> {
     static propTypes = {
         dispatch: React.PropTypes.func.isRequired,
         entries: React.PropTypes.array.isRequired,
-        feed: React.PropTypes.object
+        feed: React.PropTypes.object,
+        viewMode: React.PropTypes.string.isRequired
     };
 
     componentWillMount() {
@@ -29,12 +31,13 @@ export default class AllEntries extends React.PureComponent<any, any> {
     }
 
     render() {
-        const { feed, entries } = this.props;
+        const { entries, feed, viewMode } = this.props;
 
         return (
-            <div className="container">
-                <Entries isLoading={!feed} entries={entries} />
-            </div>
+            <EntryList
+                isLoading={!feed}
+                entries={entries}
+                viewMode={viewMode} />
         );
     }
 }

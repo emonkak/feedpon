@@ -36,9 +36,6 @@
   border-width: 0;
   border-style: solid;
   text-decoration: none;
-  transition-property: background-color, border-color;
-  transition-duration: 0.2s;
-  transition-timing-function: ease-in-out;
 }
 
 .list-group-item:first-child,
@@ -60,8 +57,4 @@
 a.list-group-item:hover {
   background-color: var(--light-color);
   text-decoration: none;
-}
-
-a.list-group-item:active {
-  background-color: var(--medium-light-color);
 }
