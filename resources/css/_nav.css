@@ -1,8 +1,5 @@
 .nav {
   display: inline-flex;
-  list-style: none;
-  padding: 0;
-  margin: 0 0 var(--baseline-height);
   border-radius: 4px;
   border: 1px solid var(--dark-color);
   box-shadow: 0px 1px 2px color(var(--default-color) alpha(25%));
