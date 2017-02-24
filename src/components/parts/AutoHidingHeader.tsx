@@ -1,36 +1,37 @@
 import React, { PropTypes, PureComponent } from 'react';
-import ReactDOM from 'react-dom';
+import { findDOMNode } from 'react-dom';
 import classnames from 'classnames';
+
+import getScrollable from 'utils/dom/getScrollable';
 
 export default class AutoHidingHeader extends PureComponent<any, any> {
     static propTypes = {
         children: PropTypes.node,
         className: PropTypes.string,
         pinned: PropTypes.bool,
-        pinnedClassName: PropTypes.string,
-        scroller: PropTypes.instanceOf(Element),
-        tolerance: PropTypes.number,
-        unpinnedClassName: PropTypes.string,
+        scrollable: PropTypes.oneOfType([
+            PropTypes.instanceOf(Element),
+            PropTypes.instanceOf(Window)
+        ]),
+        tolerance: PropTypes.number
     };
 
     static defaultProps = {
         pinned: true,
-        pinnedClassName: 'is-pinned',
-        tolerance: 8,
-        unpinnedClassName: '',
+        tolerance: 8
     };
 
     private lastScrollTop: number = 0;
 
     private isTicking: boolean = false;
 
-    private scroller: Element = null;
+    private scrollable: Element;
 
     constructor(props: any, context: any) {
         super(props, context);
 
         this.state = {
-            pinned: props.pinned,
+            pinned: props.pinned
         };
 
         this.handleScroll = this.handleScroll.bind(this);
@@ -38,15 +39,15 @@ export default class AutoHidingHeader extends PureComponent<any, any> {
     }
 
     componentDidMount() {
-        this.scroller = this.props.scroller || this.getScroller();
+        this.scrollable = this.props.scrollable || getScrollable(findDOMNode(this));
 
-        this.scroller.addEventListener('scroll', this.handleScroll);
+        this.scrollable.addEventListener('scroll', this.handleScroll);
 
-        this.lastScrollTop = this.scroller.scrollTop;
+        this.lastScrollTop = this.scrollable.scrollTop;
     }
 
     componentWillUnmount() {
-        this.scroller.removeEventListener('scroll', this.handleScroll);
+        this.scrollable.removeEventListener('scroll', this.handleScroll);
     }
 
     handleScroll() {
@@ -58,45 +59,29 @@ export default class AutoHidingHeader extends PureComponent<any, any> {
 
     handleUpdate() {
         const { tolerance } = this.props;
-        const { clientHeight } = ReactDOM.findDOMNode(this);
-        const scrollDistance = Math.abs(this.lastScrollTop - this.scroller.scrollTop);
+        const { clientHeight } = findDOMNode(this);
+        const scrollDistance = Math.abs(this.lastScrollTop - this.scrollable.scrollTop);
 
-        if (this.scroller.scrollTop <= clientHeight) {
+        if (this.scrollable.scrollTop <= clientHeight) {
             this.setState({
                 pinned: true,
             });
         } else if (scrollDistance > tolerance) {
             this.setState({
-                pinned: this.lastScrollTop > this.scroller.scrollTop,
+                pinned: this.lastScrollTop > this.scrollable.scrollTop,
             });
         }
 
-        this.lastScrollTop = this.scroller.scrollTop;
+        this.lastScrollTop = this.scrollable.scrollTop;
         this.isTicking = false;
     }
 
-    getScroller(): Element {
-        let node = ReactDOM.findDOMNode(this);
-
-        do {
-            const style = getComputedStyle(node, null);
-            const overflowY = style.getPropertyValue('overflow-y');
-
-            if (overflowY === 'auto' || overflowY === 'scroll') {
-                break;
-            }
-        } while (node.parentNode instanceof Element && (node = node.parentNode));
-
-        return node;
-    }
-
     render() {
-        const { children, className, pinnedClassName, unpinnedClassName } = this.props;
+        const { children, className } = this.props;
         const { pinned } = this.state;
 
         const containerClassName = classnames(className, {
-            [pinnedClassName]: pinned,
-            [unpinnedClassName]: !pinned,
+            'is-pinned': pinned
         });
 
         return (

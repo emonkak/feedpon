@@ -1,18 +1,16 @@
-.entry:active,
-.entry.is-active
-{
+.entry {
+  border-bottom: 1px solid var(--medium-color);
+}
+
+.entry.is-active {
   box-shadow: inset 0 0 0 4px var(--positive-light-color);
 }
 
-.entry + .entry {
-  border-top: 1px solid var(--medium-color);
-}
-
-.entry + .entry-full {
+..entry-full {
   padding-top: calc(var(--baseline-height) - 1px);
 }
 
-.entry + .entry-compact {
+.entry-compact {
   padding-top: calc(var(--baseline-height) / 2 - 1px);
 }
 

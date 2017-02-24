@@ -22,9 +22,11 @@
     "watch:js": "webpack --watch --devtool source-map"
   },
   "dependencies": {
-    "@emonkak/enumerable": "^1.1.0",
+    "@emonkak/enumerable": "^2.0.0",
     "classnames": "^2.2.5",
     "fbjs": "^0.8.9",
+    "in-viewport": "^3.4.2",
+    "lodash.debounce": "^4.0.8",
     "moment": "^2.17.1",
     "react": "^15.4.2",
     "react-addons-css-transition-group": "^15.4.2",
@@ -37,7 +39,6 @@
     "@types/react-addons-css-transition-group": "^15.0.1",
     "@types/react-dom": "^0.14.23",
     "@types/react-router": "^3.0.4",
-    "@types/whatwg-fetch": "^0.0.33",
     "cash-cp": "^0.2.0",
     "cash-rm": "^0.2.0",
     "cssnano": "^3.10.0",

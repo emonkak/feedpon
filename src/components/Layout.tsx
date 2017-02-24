@@ -14,7 +14,7 @@ export default class Layout extends PureComponent<any, any> {
         router: routerShape,
     };
 
-    private mainElement: Element = null;
+    private mainElement: Element;
 
     constructor(props: any, context: any) {
         super(props, context);

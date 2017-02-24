@@ -2,7 +2,7 @@ import React, { PropTypes, PureComponent } from 'react';
 import classnames from 'classnames';
 import moment from 'moment';
 
-export default class FullEntry extends PureComponent<any, any> {
+export default class Entry extends PureComponent<any, any> {
     static propTypes = {
         author: PropTypes.string.isRequired,
         content: PropTypes.string.isRequired,
@@ -10,6 +10,7 @@ export default class FullEntry extends PureComponent<any, any> {
             PropTypes.string,
             PropTypes.number
         ]).isRequired,
+        isActive: PropTypes.bool,
         publishedAt: PropTypes.string.isRequired,
         title: PropTypes.string.isRequired,
         url: PropTypes.string.isRequired,
@@ -20,11 +21,19 @@ export default class FullEntry extends PureComponent<any, any> {
         viewMode: PropTypes.oneOf(['full', 'compact']).isRequired
     };
 
+    static defaultProps = {
+        isActive: false
+    };
+
     render() {
-        const { author, content, description, origin, publishedAt, title, url, viewMode } = this.props;
+        const { author, content, isActive, description, origin, publishedAt, title, url, viewMode } = this.props;
 
         return (
-            <article className={classnames('entry', 'entry-' + viewMode)}>
+            <article className={classnames(
+                'entry',
+                'entry-' + viewMode,
+                { 'is-active': isActive }
+            )}>
                 <div className="container">
                     <header className="entry-header">
                         <h2 className="entry-title"><a className="link-default" target="_blank" href={url}>{title}</a></h2>
