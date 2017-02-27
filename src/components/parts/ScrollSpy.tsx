@@ -3,8 +3,6 @@ import React, { Children, PropTypes, PureComponent } from 'react';
 import debounce from 'lodash.debounce';
 import { findDOMNode } from 'react-dom';
 
-import getScrollable from 'utils/dom/getScrollable';
-
 import '@emonkak/enumerable/extensions/firstOrDefault';
 import '@emonkak/enumerable/extensions/maxBy';
 import '@emonkak/enumerable/extensions/select';
@@ -21,7 +19,7 @@ export default class ScrollSpy extends PureComponent<any, any> {
     static propTypes = {
         children: PropTypes.node.isRequired,
         className: PropTypes.string,
-        getScrollable: PropTypes.func,
+        getScrollable: PropTypes.func.isRequired,
         onActivate: PropTypes.func,
         onDeactivate: PropTypes.func,
         renderActiveChild: PropTypes.func.isRequired,
@@ -31,7 +29,6 @@ export default class ScrollSpy extends PureComponent<any, any> {
     static childContextTypes = contextTypes;
 
     static defaultProps = {
-        getScrollable,
         scrollDebounceTime: 100
     };
 

@@ -5,6 +5,7 @@ import { locationShape, routerShape } from 'react-router/lib/PropTypes';
 import AutoHidingHeader from 'components/parts/AutoHidingHeader';
 import Notifications from 'components/Notifications';
 import Sidebar from 'components/Sidebar';
+import getScrollable from 'utils/dom/getScrollable';
 
 export default class Layout extends PureComponent<any, any> {
     static propTypes = {
@@ -41,26 +42,33 @@ export default class Layout extends PureComponent<any, any> {
     handleChangeLocation() {
         this.mainElement.scrollTop = 0;
 
-        this.setState(state => ({
-            ...state,
-            sidebarIsOpened: false,
-        }));
+        this.refreshSidebar(false);
     }
 
     handleToggleSidebar() {
-        this.setState(state => ({
-            ...state,
-            sidebarIsOpened: !state.sidebarIsOpened,
-        }));
+        this.refreshSidebar(!this.state.sidebarIsOpened);
     }
 
     handleCloseSidebar(event: React.MouseEvent<any>) {
         if (event.target === event.currentTarget){
-            this.setState(state => ({
-                ...state,
-                sidebarIsOpened: false,
-            }));
+            this.refreshSidebar(false);
         }
+    }
+
+    refreshSidebar(isOpened: boolean) {
+        if (isOpened) {
+            const scrollbarWidth = window.innerWidth - document.body.clientWidth;
+            document.body.style.paddingRight = scrollbarWidth + 'px';
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.paddingRight = '';
+            document.body.style.overflow = '';
+        }
+
+        this.setState(state => ({
+            ...state,
+            sidebarIsOpened: isOpened
+        }));
     }
 
     render() {
@@ -77,7 +85,9 @@ export default class Layout extends PureComponent<any, any> {
                     <Sidebar selectedValue={location.pathname} />
                 </div>
                 <div className="l-main" ref={element => { this.mainElement = element }}>
-                    <AutoHidingHeader className="l-main-header">
+                    <AutoHidingHeader
+                        className="l-main-header"
+                        getScrollable={getScrollable}>
                         {cloneElement(navbar, { onToggleSidebar: this.handleToggleSidebar.bind(this) })}
                         <Notifications />
                     </AutoHidingHeader>

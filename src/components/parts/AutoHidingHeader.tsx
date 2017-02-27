@@ -2,19 +2,16 @@ import React, { PropTypes, PureComponent } from 'react';
 import { findDOMNode } from 'react-dom';
 import classnames from 'classnames';
 
-import getScrollable from 'utils/dom/getScrollable';
-
 export default class AutoHidingHeader extends PureComponent<any, any> {
     static propTypes = {
         children: PropTypes.node,
         className: PropTypes.string,
         pinned: PropTypes.bool,
-        getScrollable: PropTypes.func,
+        getScrollable: PropTypes.func.isRequired,
         tolerance: PropTypes.number
     };
 
     static defaultProps = {
-        getScrollable,
         pinned: true,
         tolerance: 8
     };
@@ -23,7 +20,7 @@ export default class AutoHidingHeader extends PureComponent<any, any> {
 
     private isTicking: boolean = false;
 
-    private scrollable: Element;
+    private scrollable: any;
 
     constructor(props: any, context: any) {
         super(props, context);
@@ -41,7 +38,7 @@ export default class AutoHidingHeader extends PureComponent<any, any> {
 
         this.scrollable.addEventListener('scroll', this.handleScroll);
 
-        this.lastScrollTop = this.scrollable.scrollTop;
+        this.lastScrollTop = this.scrollable.scrollY || this.scrollable.scrollTop || 0;
     }
 
     componentWillUnmount() {
@@ -58,19 +55,20 @@ export default class AutoHidingHeader extends PureComponent<any, any> {
     handleUpdate() {
         const { tolerance } = this.props;
         const { clientHeight } = findDOMNode(this);
-        const scrollDistance = Math.abs(this.lastScrollTop - this.scrollable.scrollTop);
+        const scrollTop = this.scrollable.scrollY || this.scrollable.scrollTop || 0;
+        const scrollDistance = Math.abs(this.lastScrollTop - scrollTop);
 
-        if (this.scrollable.scrollTop <= clientHeight) {
+        if (scrollTop <= clientHeight) {
             this.setState({
                 pinned: true,
             });
         } else if (scrollDistance > tolerance) {
             this.setState({
-                pinned: this.lastScrollTop > this.scrollable.scrollTop,
+                pinned: this.lastScrollTop > scrollTop,
             });
         }
 
-        this.lastScrollTop = this.scrollable.scrollTop;
+        this.lastScrollTop = scrollTop;
         this.isTicking = false;
     }
 

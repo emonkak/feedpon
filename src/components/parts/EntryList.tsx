@@ -3,6 +3,7 @@ import React, { PropTypes, PureComponent, cloneElement } from 'react';
 import Entry from 'components/parts/Entry';
 import EntryPlaceholder from 'components/parts/EntryPlaceholder';
 import ScrollSpy from 'components/parts/ScrollSpy';
+import getScrollable from 'utils/dom/getScrollable';
 
 export default class EntryList extends PureComponent<any, any> {
     static propTypes = {
@@ -38,7 +39,9 @@ export default class EntryList extends PureComponent<any, any> {
         }
 
         return (
-            <ScrollSpy renderActiveChild={this.renderActiveChild.bind(this)}>
+            <ScrollSpy
+                renderActiveChild={this.renderActiveChild.bind(this)}
+                getScrollable={getScrollable}>
                 {entries.map(entry => <Entry key={entry.entryId} viewMode={viewMode} {...entry} />)}
             </ScrollSpy>
         );
