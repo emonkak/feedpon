@@ -2,10 +2,6 @@ import React, { PropTypes, PureComponent } from 'react';
 import classnames from 'classnames';
 import Enumerable from '@emonkak/enumerable';
 
-import '@emonkak/enumerable/extensions/groupBy';
-import '@emonkak/enumerable/extensions/select';
-import '@emonkak/enumerable/extensions/toArray';
-
 import Tree from 'components/parts/Tree';
 import TreeBranch from 'components/parts/TreeBranch';
 import TreeHeader from 'components/parts/TreeHeader';
@@ -14,6 +10,10 @@ import connect from 'utils/components/connect';
 import { State } from 'messaging/types';
 import { fetchSubscriptions } from 'messaging/actions';
 import { replace } from 'utils/middlewares/historyActions';
+
+import '@emonkak/enumerable/extensions/groupBy';
+import '@emonkak/enumerable/extensions/select';
+import '@emonkak/enumerable/extensions/toArray';
 
 const numberFormatter = new Intl.NumberFormat();
 

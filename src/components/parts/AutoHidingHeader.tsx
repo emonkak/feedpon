@@ -9,14 +9,12 @@ export default class AutoHidingHeader extends PureComponent<any, any> {
         children: PropTypes.node,
         className: PropTypes.string,
         pinned: PropTypes.bool,
-        scrollable: PropTypes.oneOfType([
-            PropTypes.instanceOf(Element),
-            PropTypes.instanceOf(Window)
-        ]),
+        getScrollable: PropTypes.func,
         tolerance: PropTypes.number
     };
 
     static defaultProps = {
+        getScrollable,
         pinned: true,
         tolerance: 8
     };
@@ -39,7 +37,7 @@ export default class AutoHidingHeader extends PureComponent<any, any> {
     }
 
     componentDidMount() {
-        this.scrollable = this.props.scrollable || getScrollable(findDOMNode(this));
+        this.scrollable = this.props.getScrollable(findDOMNode(this));
 
         this.scrollable.addEventListener('scroll', this.handleScroll);
 

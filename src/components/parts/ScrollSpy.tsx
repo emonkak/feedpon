@@ -1,7 +1,6 @@
 import Enumerable from '@emonkak/enumerable';
 import React, { Children, PropTypes, PureComponent } from 'react';
 import debounce from 'lodash.debounce';
-import inViewport from 'in-viewport';
 import { findDOMNode } from 'react-dom';
 
 import getScrollable from 'utils/dom/getScrollable';
@@ -22,20 +21,18 @@ export default class ScrollSpy extends PureComponent<any, any> {
     static propTypes = {
         children: PropTypes.node.isRequired,
         className: PropTypes.string,
+        getScrollable: PropTypes.func,
         onActivate: PropTypes.func,
         onDeactivate: PropTypes.func,
         renderActiveChild: PropTypes.func.isRequired,
-        scrollDebounceTime: PropTypes.number,
-        scrollable: PropTypes.oneOfType([
-            PropTypes.instanceOf(HTMLElement),
-            PropTypes.instanceOf(Window)
-        ])
+        scrollDebounceTime: PropTypes.number
     };
 
     static childContextTypes = contextTypes;
 
     static defaultProps = {
-        scrollDebounceTime: 200
+        getScrollable,
+        scrollDebounceTime: 100
     };
 
     private scrollable: any;
@@ -66,7 +63,7 @@ export default class ScrollSpy extends PureComponent<any, any> {
     }
 
     componentDidMount() {
-        this.scrollable = this.props.scrollable || getScrollable(findDOMNode(this));
+        this.scrollable = this.props.getScrollable(findDOMNode(this));
         this.scrollable.addEventListener('scroll', this.handleScroll);
     }
 
@@ -76,20 +73,20 @@ export default class ScrollSpy extends PureComponent<any, any> {
 
     handleScroll() {
         const nextActiveKey = this.getActiveKey();
-        const { activeKey } = this.state;
+        const prevActiveKey = this.state.activeKey;
 
-        if (nextActiveKey !== activeKey) {
+        if (nextActiveKey !== prevActiveKey) {
             if (nextActiveKey) {
                 const { onActivate } = this.props;
 
                 if (onActivate) {
-                    onActivate(nextActiveKey, activeKey);
+                    onActivate(nextActiveKey, prevActiveKey);
                 }
             } else {
                 const { onDeactivate } = this.props;
 
                 if (onDeactivate) {
-                    onDeactivate(activeKey);
+                    onDeactivate(prevActiveKey);
                 }
             }
         }
@@ -102,22 +99,27 @@ export default class ScrollSpy extends PureComponent<any, any> {
 
     getActiveKey(): string | null {
         const scrollTop = this.scrollable.scrollY || this.scrollable.scrollTop || 0;
-        const scrollBottom = scrollTop + (this.scrollable.innerHeight || this.scrollable.scrollHeight || 0);
+        const scrollBottom = scrollTop + (this.scrollable.innerHeight || this.scrollable.clientHeight || 0);
 
         return new Enumerable(this.childElements)
-            .where(([key, element]) => inViewport(element))
+            .where(([key, element]) => {
+                const offsetTop = element.offsetTop;
+                const offsetBottom = offsetTop + element.offsetHeight;
+
+                return offsetTop < scrollBottom && offsetBottom > scrollTop;
+            })
             .maxBy(([key, element]) => {
                 const offsetTop = element.offsetTop;
                 const offsetBottom = offsetTop + element.offsetHeight;
 
                 if (offsetTop >= scrollTop && offsetBottom <= scrollBottom) {
                     return scrollBottom - offsetTop;
+                } else {
+                    const displayTop = Math.max(offsetTop, scrollTop);
+                    const displayBottom = Math.min(offsetBottom, scrollBottom);
+
+                    return displayBottom - displayTop;
                 }
-
-                const displayTop = offsetTop < scrollTop ? scrollTop : offsetTop;
-                const displayBottom = offsetBottom > scrollBottom ? scrollBottom : offsetBottom;
-
-                return displayBottom - displayTop;
             })
             .select(([key, element]) => key)
             .firstOrDefault();

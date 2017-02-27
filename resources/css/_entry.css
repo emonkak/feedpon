@@ -6,7 +6,7 @@
   box-shadow: inset 0 0 0 4px var(--positive-light-color);
 }
 
-..entry-full {
+.entry-full {
   padding-top: calc(var(--baseline-height) - 1px);
 }
 
@@ -61,10 +61,6 @@
 
 .entry-compact {
   padding: calc(var(--baseline-height) / 2) 0;
-}
-
-.entry-compact:hover {
-  background: var(--light-color);
 }
 
 .entry-compact .entry-title {
