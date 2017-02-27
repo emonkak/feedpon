@@ -1,6 +1,6 @@
 import Enumerable from '@emonkak/enumerable';
 import React, { Children, PropTypes, PureComponent } from 'react';
-import debounce from 'lodash.debounce';
+import throttle from 'lodash.throttle';
 import { findDOMNode } from 'react-dom';
 
 import '@emonkak/enumerable/extensions/firstOrDefault';
@@ -34,7 +34,7 @@ export default class ScrollSpy extends PureComponent<any, any> {
 
     private scrollable: any;
 
-    public readonly childElements: Map<string, HTMLElement> = new Map();
+    public readonly childKeys: Map<HTMLElement, string> = new Map();
 
     constructor(props: any, context: any) {
         super(props, context);
@@ -43,16 +43,16 @@ export default class ScrollSpy extends PureComponent<any, any> {
             activeKey: null,
         };
 
-        this.handleScroll = debounce(this.handleScroll.bind(this), props.scrollDebounceTime);
+        this.handleScroll = throttle(this.handleScroll.bind(this), props.scrollDebounceTime);
     }
 
     getChildContext() {
         const scrollSpy = {
-            register: (key: string, element: HTMLElement) => {
-                this.childElements.set(key, element);
+            register: (element: HTMLElement, key: string) => {
+                this.childKeys.set(element, key);
             },
-            unregister: (key: string) => {
-                this.childElements.delete(key);
+            unregister: (element: HTMLElement) => {
+                this.childKeys.delete(element);
             }
         };
 
@@ -98,14 +98,14 @@ export default class ScrollSpy extends PureComponent<any, any> {
         const scrollTop = this.scrollable.scrollY || this.scrollable.scrollTop || 0;
         const scrollBottom = scrollTop + (this.scrollable.innerHeight || this.scrollable.clientHeight || 0);
 
-        return new Enumerable(this.childElements)
-            .where(([key, element]) => {
+        return new Enumerable(this.childKeys)
+            .where(([element, key]) => {
                 const offsetTop = element.offsetTop;
                 const offsetBottom = offsetTop + element.offsetHeight;
 
                 return offsetTop < scrollBottom && offsetBottom > scrollTop;
             })
-            .maxBy(([key, element]) => {
+            .maxBy(([element, key]) => {
                 const offsetTop = element.offsetTop;
                 const offsetBottom = offsetTop + element.offsetHeight;
 
@@ -118,7 +118,7 @@ export default class ScrollSpy extends PureComponent<any, any> {
                     return displayBottom - displayTop;
                 }
             })
-            .select(([key, element]) => key)
+            .select(([element, key]) => key)
             .firstOrDefault();
     }
 
@@ -158,11 +158,11 @@ class ScrollSpyChild extends PureComponent<any, any> {
     static contextTypes = contextTypes;
 
     componentDidMount() {
-        this.context.scrollSpy.register(this.props.keyForSpy, findDOMNode(this));
+        this.context.scrollSpy.register(findDOMNode(this), this.props.keyForSpy);
     }
 
     componentWillUnmount() {
-        this.context.scrollSpy.unregister(this.props.keyForSpy);
+        this.context.scrollSpy.unregister(findDOMNode(this));
     }
 
     render() {

@@ -1,6 +1,7 @@
 import React, { PropTypes, PureComponent } from 'react';
-import { findDOMNode } from 'react-dom';
 import classnames from 'classnames';
+import throttle from 'lodash.throttle';
+import { findDOMNode } from 'react-dom';
 
 export default class AutoHidingHeader extends PureComponent<any, any> {
     static propTypes = {
@@ -8,17 +9,17 @@ export default class AutoHidingHeader extends PureComponent<any, any> {
         className: PropTypes.string,
         pinned: PropTypes.bool,
         getScrollable: PropTypes.func.isRequired,
-        tolerance: PropTypes.number
+        tolerance: PropTypes.number,
+        scrollDebounceTime: PropTypes.number
     };
 
     static defaultProps = {
         pinned: true,
+        scrollDebounceTime: 100,
         tolerance: 8
     };
 
     private lastScrollTop: number = 0;
-
-    private isTicking: boolean = false;
 
     private scrollable: any;
 
@@ -29,13 +30,11 @@ export default class AutoHidingHeader extends PureComponent<any, any> {
             pinned: props.pinned
         };
 
-        this.handleScroll = this.handleScroll.bind(this);
-        this.handleUpdate = this.handleUpdate.bind(this);
+        this.handleScroll = throttle(this.handleScroll.bind(this), props.scrollDebounceTime);
     }
 
     componentDidMount() {
         this.scrollable = this.props.getScrollable(findDOMNode(this));
-
         this.scrollable.addEventListener('scroll', this.handleScroll);
 
         this.lastScrollTop = this.scrollable.scrollY || this.scrollable.scrollTop || 0;
@@ -46,13 +45,6 @@ export default class AutoHidingHeader extends PureComponent<any, any> {
     }
 
     handleScroll() {
-        if (!this.isTicking) {
-            window.requestAnimationFrame(this.handleUpdate);
-            this.isTicking = true;
-        }
-    }
-
-    handleUpdate() {
         const { tolerance } = this.props;
         const { clientHeight } = findDOMNode(this);
         const scrollTop = this.scrollable.scrollY || this.scrollable.scrollTop || 0;
@@ -69,7 +61,6 @@ export default class AutoHidingHeader extends PureComponent<any, any> {
         }
 
         this.lastScrollTop = scrollTop;
-        this.isTicking = false;
     }
 
     render() {
