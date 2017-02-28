@@ -1,17 +1,57 @@
 .entry {
+  position: relative;
+  padding: calc(var(--baseline-height) / 2) 0 calc(var(--baseline-height) / 2 - 1px);
   border-bottom: 1px solid var(--medium-color);
 }
 
+.entry:last-child {
+  margin-bottom: 100vh;
+}
+
 .entry.is-active {
-  box-shadow: inset 0 0 0 4px var(--positive-light-color);
+  box-shadow: 0 2px 18px color(var(--default-color) alpha(25%)),
+              0 0 6px color(var(--default-color) alpha(25%));
+  z-index: 10;
 }
 
-.entry-full {
-  padding-top: calc(var(--baseline-height) - 1px);
+.entry.is-expanded {
+  padding: var(--baseline-height) 0 calc(var(--baseline-height) - 1px);
+
+  & .entry-header {
+    margin: 0 0 var(--baseline-height);
+    text-align: center;
+  }
+
+  & .entry-title {
+    margin-bottom: calc(var(--baseline-height) / 2);
+    font-size: 1.25rem;
+  }
+
+  & .entry-action-list {
+    display: flex;
+  }
 }
 
-.entry-compact {
-  padding-top: calc(var(--baseline-height) / 2 - 1px);
+.entry.is-read {
+  & .entry-title {
+    color: var(--dark-color);
+  }
+}
+
+.entry-title {
+  margin: 0;
+  font-size: inherit;
+  font-weight: 600;
+  line-height: inherit;
+}
+
+.entry-title a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.entry-title a:hover {
+  color: var(--positive-color);
 }
 
 .entry-info,
@@ -19,13 +59,8 @@
   color: var(--dark-color);
 }
 
-.entry-title {
-  margin: 0;
-  font-weight: bold;
-  line-height: inherit;
-}
-
 .entry-content {
+  margin: 0 0 var(--baseline-height);
   hyphens: auto;
   overflow-wrap: break-word;
   text-align: justify;
@@ -37,43 +72,28 @@
   max-width: 100%;
 }
 
-.entry-footer {
-  display: flex;
-  justify-content: center;
-}
-
-.entry-full {
-  padding: var(--baseline-height) 0;
-}
-
-.entry-full .entry-header {
-  text-align: center;
-}
-
-.entry-full .entry-title {
-  margin: calc(var(--baseline-height) / 2) 0;
-  font-size: 1.25rem;
-}
-
-.entry-full .entry-content {
-  margin: var(--baseline-height) 0;
-}
-
-.entry-compact {
-  padding: calc(var(--baseline-height) / 2) 0;
-}
-
-.entry-compact .entry-title {
-  font-size: 1.0rem;
-}
-
-.entry-compact .entry-content,
-.entry-compact .entry-title {
+.entry-description {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.entry-compact .entry-footer {
+.entry-action-list {
   display: none;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  line-height: 1;
+}
+
+.entry-action {
+  color: inherit;
+  text-align: center;
+  text-decoration: none;
+  padding: 0 0.5rem;
+}
+
+.entry-action:hover {
+  color: var(--positive-color);
+  text-decoration: none;
 }

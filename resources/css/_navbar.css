@@ -4,7 +4,7 @@
   box-sizing: border-box;
   height: var(--navbar-height);
   border-bottom: 1px solid var(--medium-color);
-  background: var(--default-background-color);
+  background-color: var(--default-background-color);
 }
 
 .navbar-title {
@@ -52,7 +52,7 @@ a.navbar-title:hover {
   display: flex;
   align-items: center;
   position: relative;
-  background: transparent;
+  background-color: transparent;
   color: inherit;
   text-decoration: none;
 }

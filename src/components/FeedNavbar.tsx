@@ -30,7 +30,7 @@ export default class FeedNavbar extends PureComponent<any, any> {
 
         return (
             <Navbar onToggleSidebar={onToggleSidebar}>
-                <a className="navbar-title" href="#">{feed ? feed.title : 'Loading...'}</a>
+                <div className="navbar-title" href="#"><a className="link-default" href="#">{feed ? feed.title : 'Loading...'}</a></div>
                 <a className="navbar-action" href="#">
                     <i className="icon icon-48 icon-size-24 icon-checkmark" />
                     <span className="badge badge-overlap badge-negative">2</span>

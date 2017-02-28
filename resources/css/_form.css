@@ -1,5 +1,5 @@
 input[type="text"] {
-  background: var(--default-background-color);
+  background-color: var(--default-background-color);
   color: inherit;
   border: 1px solid var(--medium-color);
   box-sizing: border-box;
@@ -12,7 +12,7 @@ input[type="text"]:focus {
 }
 
 input.search-box {
-  background: transparent;
+  background-color: transparent;
   border: none;
   border-bottom: 2px solid var(--default-color);
   border-radius: 0;

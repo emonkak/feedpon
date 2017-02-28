@@ -18,7 +18,7 @@
 }
 
 .tree-node:hover {
-  background: var(--medium-light-color);
+  background-color: var(--medium-light-color);
 }
 
 .tree-node.is-important {
@@ -26,7 +26,7 @@
 }
 
 .tree-node.is-selected {
-  background: var(--default-color);
+  background-color: var(--default-color);
   color: var(--default-background-color);
 }
 

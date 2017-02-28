@@ -16,11 +16,11 @@
 }
 
 .badge-positive {
-  background: var(--positive-color);
+  background-color: var(--positive-color);
   color: var(--default-background-color);
 }
 
 .badge-negative {
-  background: var(--negative-color);
+  background-color: var(--negative-color);
   color: var(--default-background-color);
 }

@@ -20,6 +20,8 @@ export default class ScrollSpy extends PureComponent<any, any> {
         children: PropTypes.node.isRequired,
         className: PropTypes.string,
         getScrollable: PropTypes.func.isRequired,
+        marginBottom: PropTypes.number,
+        marginTop: PropTypes.number,
         onActivate: PropTypes.func,
         onDeactivate: PropTypes.func,
         renderActiveChild: PropTypes.func.isRequired,
@@ -29,6 +31,8 @@ export default class ScrollSpy extends PureComponent<any, any> {
     static childContextTypes = contextTypes;
 
     static defaultProps = {
+        marginBottom: 0,
+        marginTop: 0,
         scrollDebounceTime: 100
     };
 
@@ -95,8 +99,9 @@ export default class ScrollSpy extends PureComponent<any, any> {
     }
 
     getActiveKey(): string | null {
-        const scrollTop = this.scrollable.scrollY || this.scrollable.scrollTop || 0;
-        const scrollBottom = scrollTop + (this.scrollable.innerHeight || this.scrollable.clientHeight || 0);
+        const { marginBottom, marginTop } = this.props;
+        const scrollTop = (this.scrollable.scrollY || this.scrollable.scrollTop || 0) + marginTop;
+        const scrollBottom = scrollTop + (this.scrollable.innerHeight || this.scrollable.clientHeight || 0) - marginBottom;
 
         return new Enumerable(this.childKeys)
             .where(([element, key]) => {

@@ -38,7 +38,7 @@
   left: 0;
   z-index: 1000;
   visibility: hidden;
-  background: #000;
+  background-color: #000;
   transition: visibility 0s ease-in-out 0.2s, opacity 0.2s ease-in-out;
   opacity: 0;
 }
@@ -50,7 +50,7 @@
 }
 
 .modal-dialog {
-  background: var(--default-color);
+  background-color: var(--default-color);
   color: var(--default-background-color);
   border-radius: 4px;
   padding: var(--baseline-height) 1.5rem;

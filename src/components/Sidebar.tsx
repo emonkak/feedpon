@@ -101,7 +101,7 @@ export default class Sidebar extends PureComponent<any, any> {
                 <div className="sidebar-group">
                     <button type="button" className="button button-block button-default">New Subscription</button>
                 </div>
-                <div className="sidebar-group u-text-center u-text-small">
+                <div className="sidebar-group u-text-center">
                     <ul className="list-inline list-inline-slash">
                         <li><a href="#">emonkak@gmail.com</a></li>
                         <li><a href="#">Logout</a></li>

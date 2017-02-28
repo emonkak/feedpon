@@ -2,6 +2,6 @@
   padding: calc(var(--baseline-height) / 2) 1.5rem;
 }
 
-.sidebar-group + .sidebar-group {
-  margin-top: calc(var(--baseline-height) / 2);
+.sidebar-group {
+  margin-bottom: calc(var(--baseline-height) / 2);
 }

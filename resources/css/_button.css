@@ -1,7 +1,7 @@
 .button {
   display: inline-block;
   padding: calc(var(--baseline-height) / 4 - 1px) 1rem;
-  background: inherit;
+  background-color: inherit;
   border: 1px solid transparent;
   border-radius: 4px;
   color: inherit;
@@ -25,19 +25,19 @@
 }
 
 .button-default {
-  background: var(--default-background-color);
+  background-color: var(--default-background-color);
   border-color: var(--dark-color);
   color: var(--default-color);
 }
 
 .button-default:hover {
-  background: var(--default-color);
+  background-color: var(--default-color);
   border-color: transparent;
   color: var(--default-background-color);
 }
 
 .button-default:active {
-  background: color(var(--default-color) lightness(+5%) alpha(90%));
+  background-color: color(var(--default-color) lightness(+5%) alpha(90%));
   border-color: transparent;
   color: var(--default-background-color);
 }
@@ -47,19 +47,19 @@
 }
 
 .button-invert {
-  background: var(--default-color);
+  background-color: var(--default-color);
   border-color: var(--default-background-color);
   color: var(--default-background-color);
 }
 
 .button-invert:hover {
-  background: var(--default-background-color);
+  background-color: var(--default-background-color);
   border-color: transparent;
   color: var(--default-color);
 }
 
 .button-invert:active {
-  background: color(var(--default-background-color) lightness(+5%) alpha(90%));
+  background-color: color(var(--default-background-color) lightness(+5%) alpha(90%));
   border-color: transparent;
   color: var(--default-color);
 }
@@ -70,15 +70,15 @@
 
 .button-positive {
   color: var(--default-background-color);
-  background: var(--positive-color);
+  background-color: var(--positive-color);
 }
 
 .button-positive:hover {
-  background: color(var(--positive-color) lightness(+5%));
+  background-color: color(var(--positive-color) lightness(+5%));
 }
 
 .button-positive:active {
-  background: color(var(--positive-color) lightness(+5%) alpha(90%));
+  background-color: color(var(--positive-color) lightness(+5%) alpha(90%));
 }
 
 .button-positive:focus {
@@ -87,15 +87,15 @@
 
 .button-negative {
   color: var(--default-background-color);
-  background: var(--negative-color);
+  background-color: var(--negative-color);
 }
 
 .button-negative:hover {
-  background: color(var(--negative-color) lightness(+5%));
+  background-color: color(var(--negative-color) lightness(+5%));
 }
 
 .button-negative:active {
-  background: color(var(--negative-color) lightness(+5%) alpha(90%));
+  background-color: color(var(--negative-color) lightness(+5%) alpha(90%));
 }
 
 .button-negative:focus {
@@ -121,7 +121,7 @@
   padding: 0;
   width: 24px;
   height: 24px;
-  background: currentColor;
+  background-color: currentColor;
   border: 0;
   color: inherit;
   cursor: pointer;

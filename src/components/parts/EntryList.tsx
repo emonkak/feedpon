@@ -10,7 +10,7 @@ export default class EntryList extends PureComponent<any, any> {
         entries: PropTypes.array.isRequired,
         feed: PropTypes.object,
         isLoading: PropTypes.bool.isRequired,
-        viewMode: PropTypes.oneOf(['full', 'compact', 'magazine']).isRequired
+        viewMode: PropTypes.oneOf(['full', 'compact']).isRequired
     };
 
     renderActiveChild(child: React.ReactElement<any>) {
@@ -25,7 +25,7 @@ export default class EntryList extends PureComponent<any, any> {
 
         if (isLoading) {
             return (
-                <div>
+                <div className="entry-list">
                     <EntryPlaceholder viewMode={viewMode} />
                     <EntryPlaceholder viewMode={viewMode} />
                     <EntryPlaceholder viewMode={viewMode} />
@@ -40,9 +40,16 @@ export default class EntryList extends PureComponent<any, any> {
 
         return (
             <ScrollSpy
+                className="entry-list"
+                marginTop={48}
                 renderActiveChild={this.renderActiveChild.bind(this)}
                 getScrollable={getScrollable}>
-                {entries.map(entry => <Entry key={entry.entryId} viewMode={viewMode} {...entry} />)}
+                {entries.map(entry =>
+                    <Entry
+                        key={entry.entryId}
+                        viewMode={viewMode}
+                        {...entry} />
+                )}
             </ScrollSpy>
         );
     }

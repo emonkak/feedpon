@@ -11,7 +11,7 @@ export default class EntryPlaceholder extends React.Component<any, any> {
 
         if (viewMode === 'full') {
             return (
-                <div>
+                <div className="entry-content">
                     <p>
                         <span className="placeholder placeholder-animated placeholder-100" />
                         <span className="placeholder placeholder-animated placeholder-100" />
@@ -34,7 +34,9 @@ export default class EntryPlaceholder extends React.Component<any, any> {
             );
         } else {
             return (
-                <span className="placeholder placeholder-animated placeholder-100" />
+                <div className="entry-description">
+                    <span className="placeholder placeholder-animated placeholder-100" />
+                </div>
             );
         }
     }
@@ -54,17 +56,13 @@ export default class EntryPlaceholder extends React.Component<any, any> {
                             </ul>
                         </div>
                     </header>
-                    <div className="entry-content">
-                        {this.renderContent()}
+                    {this.renderContent()}
+                    <div className="entry-action-list">
+                        <div className="entry-action"><i className="icon icon-24 icon-pin-3"></i></div>
+                        <div className="entry-action"><i className="icon icon-24 icon-bookmark"></i></div>
+                        <div className="entry-action"><i className="icon icon-24 icon-comments"></i></div>
+                        <div className="entry-action"><i className="icon icon-24 icon-share"></i></div>
                     </div>
-                    <footer className="entry-footer">
-                        <ul className="list-inline list-inline-dot u-baseline-2">
-                            <li><i className="icon icon-32 icon-pin-3"></i></li>
-                            <li><i className="icon icon-32 icon-bookmark"></i></li>
-                            <li><i className="icon icon-32 icon-comments"></i></li>
-                            <li><i className="icon icon-32 icon-share"></i></li>
-                        </ul>
-                    </footer>
                 </div>
             </article>
         );

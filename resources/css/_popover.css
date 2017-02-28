@@ -32,21 +32,21 @@
 .popover-default,
 .popover-default::before {
   color: var(--default-color);
-  background: var(--default-background-color);
+  background-color: var(--default-background-color);
   border-color: var(--default-color);
 }
 
 .popover-positive,
 .popover-positive::before {
   color: var(--positive-color);
-  background: var(--default-background-color);
+  background-color: var(--default-background-color);
   border-color: var(--positive-color);
 }
 
 .popover-negative,
 .popover-negative::before {
   color: var(--negative-color);
-  background: var(--default-background-color);
+  background-color: var(--default-background-color);
   border-color: var(--negative-color);
 }
 

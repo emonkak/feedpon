@@ -46,6 +46,7 @@ const entries: Entry[] = rss.items.map((item: any) => ({
     content: item.content,
     description: item.description,
     publishedAt: item.pubDate,
+    popularity: Math.random() * 100,
     title: item.title,
     url: item.link,
     origin: {

@@ -4,7 +4,7 @@
   padding: calc(var(--baseline-height) / 4 - 1px) 0;
   border: 1px solid var(--medium-dark-color);
   border-radius: 4px;
-  background: var(--default-background-color);
+  background-color: var(--default-background-color);
   box-shadow: 0px 1px 2px color(var(--default-color) alpha(25%));
 }
 
@@ -18,13 +18,13 @@
 }
 
 .menu-item:hover {
-  background: var(--medium-light-color);
+  background-color: var(--medium-light-color);
   text-decoration: none;
 }
 
 .menu-item:active,
 .menu-item.is-selected {
-  background: var(--medium-color);
+  background-color: var(--medium-color);
 }
 
 .menu-item-icon {

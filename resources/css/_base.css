@@ -36,7 +36,7 @@ html {
 body {
   margin: 0;
   color: var(--default-color);
-  background: var(--default-background-color);
+  background-color: var(--default-background-color);
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -94,7 +94,7 @@ code, var, samp {
 }
 
 pre {
-  background: var(--light-color);
+  background-color: var(--light-color);
   padding: calc(var(--baseline-height) / 2) 1.5rem;
   overflow: auto;
   border-radius: 4px;
@@ -123,7 +123,7 @@ table {
 }
 
 tbody tr:nth-of-type(odd) {
-  background: var(--light-color);
+  background-color: var(--light-color);
 }
 
 thead th {
@@ -176,7 +176,7 @@ mark {
 }
 
 code, var, samp {
-  background: var(--light-color);
+  background-color: var(--light-color);
   padding: 3px;
 }
 

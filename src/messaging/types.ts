@@ -32,6 +32,7 @@ export interface Entry {
     author: string;
     content: string;
     description: string;
+    popularity: number;
     publishedAt: string;
     title: string;
     url: string;
