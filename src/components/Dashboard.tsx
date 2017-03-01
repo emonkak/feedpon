@@ -87,7 +87,7 @@ export default class Dashboard extends PureComponent<any, any> {
                 </div>
 
                 <h2>Dropdown</h2>
-                <Dropdown toggleButton={<button className="button button-default dropdown-toggle">Dropdown</button>}>
+                <Dropdown toggleButton={<button className="button button-default dropdown-arrow">Dropdown</button>}>
                     <MenuItem primaryText="First Action"></MenuItem>
                     <MenuItem primaryText="Second Action"></MenuItem>
                     <MenuItem primaryText="Third Action"></MenuItem>

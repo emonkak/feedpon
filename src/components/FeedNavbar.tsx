@@ -4,29 +4,29 @@ import Dropdown from 'components/parts/Dropdown';
 import MenuItem from 'components/parts/MenuItem';
 import Navbar from 'components/parts/Navbar';
 import connect from 'utils/components/connect';
-import { State, ViewMode } from 'messaging/types';
-import { changeViewMode } from 'messaging/actions';
+import { State, ViewType } from 'messaging/types';
+import { changeViewType } from 'messaging/actions';
 
 @connect((state: State) => ({
     feed: state.feed,
-    viewMode: state.viewMode
+    viewType: state.viewType
 }))
 export default class FeedNavbar extends PureComponent<any, any> {
     static propTypes = {
         dispatch: PropTypes.func.isRequired,
         feed: PropTypes.object,
         onToggleSidebar: PropTypes.func,
-        viewMode: PropTypes.string.isRequired
+        viewType: PropTypes.string.isRequired
     };
 
-    handleChangeViewMode(viewMode: ViewMode) {
+    handleChangeViewType(viewType: ViewType) {
         const { dispatch } = this.props;
 
-        dispatch(changeViewMode(viewMode));
+        dispatch(changeViewType(viewType));
     }
 
     render() {
-        const { feed, viewMode, onToggleSidebar } = this.props;
+        const { feed, viewType, onToggleSidebar } = this.props;
 
         return (
             <Navbar onToggleSidebar={onToggleSidebar}>
@@ -40,13 +40,13 @@ export default class FeedNavbar extends PureComponent<any, any> {
                 </a>
                 <Dropdown toggleButton={<a className="navbar-action" href="#"><i className="icon icon-48 icon-size-24 icon-more" /></a>} pullRight={true}>
                     <MenuItem
-                        icon={viewMode === 'full' ? <i className="icon icon-16 icon-checkmark" /> : null}
-                        primaryText="Full View"
-                        onSelect={() => this.handleChangeViewMode('full')} />
+                        icon={viewType === 'expanded' ? <i className="icon icon-16 icon-checkmark" /> : null}
+                        primaryText="Expanded View"
+                        onSelect={() => this.handleChangeViewType('expanded')} />
                     <MenuItem
-                        icon={viewMode === 'compact' ? <i className="icon icon-16 icon-checkmark" /> : null}
-                        primaryText="Compact View"
-                        onSelect={() => this.handleChangeViewMode('compact')} />
+                        icon={viewType === 'collapsable' ? <i className="icon icon-16 icon-checkmark" /> : null}
+                        primaryText="Collapsable View"
+                        onSelect={() => this.handleChangeViewType('collapsable')} />
                     <div className="menu-divider" />
                     <MenuItem primaryText="Action" />
                     <MenuItem primaryText="Another action" />

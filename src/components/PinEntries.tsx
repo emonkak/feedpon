@@ -8,14 +8,14 @@ import { fetchPinEntries, unselectFeed } from 'messaging/actions';
 @connect((state: State) => ({
     entries: state.entries,
     feed: state.feed,
-    viewMode: state.viewMode
+    viewType: state.viewType
 }))
 export default class PinEntries extends PureComponent<any, any> {
     static propTypes = {
         dispatch: PropTypes.func.isRequired,
         entries: PropTypes.array.isRequired,
         feed: PropTypes.object,
-        viewMode: PropTypes.string.isRequired
+        viewType: PropTypes.string.isRequired
     };
 
     componentWillMount() {
@@ -31,13 +31,13 @@ export default class PinEntries extends PureComponent<any, any> {
     }
 
     render() {
-        const { entries, feed, viewMode } = this.props;
+        const { entries, feed, viewType } = this.props;
 
         return (
             <EntryList
-                isLoading={!feed}
+                loading={!feed}
                 entries={entries}
-                viewMode={viewMode} />
+                viewType={viewType} />
         );
     }
 }

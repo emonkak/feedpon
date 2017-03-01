@@ -1,4 +1,4 @@
-import { AsyncAction, Entry, Event, Feed, Notification, Subscription, ViewMode } from 'messaging/types';
+import { AsyncAction, Entry, Event, Feed, Notification, Subscription, ViewType } from 'messaging/types';
 import rss from 'json/rss.json';
 
 const subscriptions: Subscription[] = [
@@ -217,9 +217,9 @@ export function dismissNotification(id: any): Event {
     };
 }
 
-export function changeViewMode(viewMode: ViewMode): Event {
+export function changeViewType(viewType: ViewType): Event {
     return {
-        type: 'VIEW_MODE_CHANGED',
-        viewMode
+        type: 'VIEW_TYPE_CHANGED',
+        viewType
     };
 }

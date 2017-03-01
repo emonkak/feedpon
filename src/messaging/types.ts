@@ -1,5 +1,5 @@
 export type Event
-    = { type: 'VIEW_MODE_CHANGED', viewMode: ViewMode }
+    = { type: 'VIEW_TYPE_CHANGED', viewType: ViewType }
     | { type: 'FEED_SELECTED', feed: Feed }
     | { type: 'FEED_UNSELECTED' }
     | { type: 'ENTRIES_FETCHED', feed: Feed, entries: Entry[] }
@@ -14,10 +14,10 @@ export interface State {
     feed: Feed | null;
     notifications: Notification[];
     subscriptions: Subscription[];
-    viewMode: ViewMode;
+    viewType: ViewType;
 }
 
-export type ViewMode = 'full' | 'compact';
+export type ViewType = 'expanded' | 'collapsable';
 
 export interface Feed {
     id?: string | number;

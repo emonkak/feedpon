@@ -56,15 +56,3 @@
   overflow: hidden;
   background-color: var(--medium-color);
 }
-
-.dropdown-toggle::after {
-  display: inline-block;
-  width: 0;
-  height: 0;
-  margin-left: 0.25rem;
-  vertical-align: middle;
-  content: '';
-  border-top: 0.25rem solid;
-  border-right: 0.25rem solid transparent;
-  border-left: 0.25rem solid transparent;
-}

@@ -1,15 +1,19 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import classnames from 'classnames';
 
 export default class EntryPlaceholder extends React.Component<any, any> {
     static propTypes = {
-        viewMode: React.PropTypes.oneOf(['full', 'compact']).isRequired
+        expanded: PropTypes.bool
+    };
+
+    static defaultProps = {
+        expanded: false
     };
 
     renderContent() {
-        const { viewMode } = this.props;
+        const { expanded } = this.props;
 
-        if (viewMode === 'full') {
+        if (expanded) {
             return (
                 <div className="entry-content">
                     <p>
@@ -42,10 +46,12 @@ export default class EntryPlaceholder extends React.Component<any, any> {
     }
 
     render() {
-        const { viewMode } = this.props;
+        const { expanded } = this.props;
 
         return (
-            <article className={classnames('entry', 'entry-' + viewMode)}>
+            <article className={classnames('entry', {
+                'is-expanded': expanded
+            })}>
                 <div className="container">
                     <header className="entry-header">
                         <h2 className="entry-title"><span className="placeholder placeholder-animated placeholder-60" /></h2>

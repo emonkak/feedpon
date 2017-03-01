@@ -129,9 +129,5 @@
 }
 
 .close:hover {
-  opacity: 0.75;
-}
-
-.close:active {
-  opacity: 0.5;
+  color: var(--positive-color);
 }

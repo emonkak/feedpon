@@ -24,7 +24,8 @@ export default class ScrollSpy extends PureComponent<any, any> {
         marginTop: PropTypes.number,
         onActivate: PropTypes.func,
         onDeactivate: PropTypes.func,
-        renderActiveChild: PropTypes.func.isRequired,
+        renderActiveChild: PropTypes.func,
+        renderInactiveChild: PropTypes.func,
         scrollDebounceTime: PropTypes.number
     };
 
@@ -33,6 +34,8 @@ export default class ScrollSpy extends PureComponent<any, any> {
     static defaultProps = {
         marginBottom: 0,
         marginTop: 0,
+        renderActiveChild: child => child,
+        renderInactiveChild: child => child,
         scrollDebounceTime: 100
     };
 
@@ -45,6 +48,7 @@ export default class ScrollSpy extends PureComponent<any, any> {
 
         this.state = {
             activeKey: null,
+            inactiveKey: null
         };
 
         this.handleScroll = throttle(this.handleScroll.bind(this), props.scrollDebounceTime);
@@ -73,15 +77,15 @@ export default class ScrollSpy extends PureComponent<any, any> {
     }
 
     handleScroll() {
-        const nextActiveKey = this.getActiveKey();
+        const activeKey = this.getActiveKey();
         const prevActiveKey = this.state.activeKey;
 
-        if (nextActiveKey !== prevActiveKey) {
-            if (nextActiveKey) {
+        if (activeKey !== prevActiveKey) {
+            if (activeKey) {
                 const { onActivate } = this.props;
 
                 if (onActivate) {
-                    onActivate(nextActiveKey, prevActiveKey);
+                    onActivate(activeKey, prevActiveKey);
                 }
             } else {
                 const { onDeactivate } = this.props;
@@ -90,12 +94,13 @@ export default class ScrollSpy extends PureComponent<any, any> {
                     onDeactivate(prevActiveKey);
                 }
             }
-        }
 
-        this.setState(state => ({
-            ...state,
-            activeKey: nextActiveKey
-        }));
+            this.setState(state => ({
+                ...state,
+                activeKey,
+                inactiveKey: prevActiveKey
+            }));
+        }
     }
 
     getActiveKey(): string | null {
@@ -128,11 +133,15 @@ export default class ScrollSpy extends PureComponent<any, any> {
     }
 
     renderChild(child: React.ReactElement<any>) {
-        const { renderActiveChild } = this.props;
-        const { activeKey } = this.state;
+        const { renderActiveChild, renderInactiveChild } = this.props;
+        const { activeKey, inactiveKey } = this.state;
 
         if (child.key === activeKey) {
             child = renderActiveChild(child);
+        }
+
+        if (child.key === inactiveKey) {
+            child = renderInactiveChild(child);
         }
 
         return (

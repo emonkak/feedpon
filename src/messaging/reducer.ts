@@ -46,10 +46,10 @@ export default function reducer(state: State, event: Event): State {
                 notifications: state.notifications.filter(notification => notification.id !== event.id)
             };
 
-        case 'VIEW_MODE_CHANGED':
+        case 'VIEW_TYPE_CHANGED':
             return {
                 ...state,
-                viewMode: event.viewMode
+                viewType: event.viewType
             };
 
         default:

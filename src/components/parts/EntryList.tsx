@@ -1,56 +1,32 @@
-import React, { PropTypes, PureComponent, cloneElement } from 'react';
+import React, { PropTypes, PureComponent } from 'react';
 
-import Entry from 'components/parts/Entry';
-import EntryPlaceholder from 'components/parts/EntryPlaceholder';
-import ScrollSpy from 'components/parts/ScrollSpy';
-import getScrollable from 'utils/dom/getScrollable';
+import CollapsableEntryList from 'components/parts/CollapsableEntryList';
+import ExpandedEntryList from 'components/parts/ExpandedEntryList';
 
 export default class EntryList extends PureComponent<any, any> {
     static propTypes = {
         entries: PropTypes.array.isRequired,
         feed: PropTypes.object,
-        isLoading: PropTypes.bool.isRequired,
-        viewMode: PropTypes.oneOf(['full', 'compact']).isRequired
+        loading: PropTypes.bool.isRequired,
+        viewType: PropTypes.oneOf(['expanded', 'collapsable']).isRequired
     };
 
-    renderActiveChild(child: React.ReactElement<any>) {
-        return cloneElement(child, {
-            ...child.props,
-            isActive: true
-        });
-    }
-
     render() {
-        const { entries, isLoading, viewMode } = this.props;
+        const { entries, loading, viewType } = this.props;
 
-        if (isLoading) {
-            return (
-                <div className="entry-list">
-                    <EntryPlaceholder viewMode={viewMode} />
-                    <EntryPlaceholder viewMode={viewMode} />
-                    <EntryPlaceholder viewMode={viewMode} />
-                    <EntryPlaceholder viewMode={viewMode} />
-                    <EntryPlaceholder viewMode={viewMode} />
-                    <EntryPlaceholder viewMode={viewMode} />
-                    <EntryPlaceholder viewMode={viewMode} />
-                    <EntryPlaceholder viewMode={viewMode} />
-                </div>
-            );
+        switch (viewType) {
+            case 'expanded':
+                return (
+                    <ExpandedEntryList entries={entries} loading={loading} />
+                );
+
+            case 'collapsable':
+                return (
+                    <CollapsableEntryList entries={entries} loading={loading} />
+                );
+
+            default:
+                return null;
         }
-
-        return (
-            <ScrollSpy
-                className="entry-list"
-                marginTop={48}
-                renderActiveChild={this.renderActiveChild.bind(this)}
-                getScrollable={getScrollable}>
-                {entries.map(entry =>
-                    <Entry
-                        key={entry.entryId}
-                        viewMode={viewMode}
-                        {...entry} />
-                )}
-            </ScrollSpy>
-        );
     }
 }
