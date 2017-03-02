@@ -3,10 +3,8 @@ import React, { PropTypes, PureComponent, cloneElement } from 'react';
 import Entry from 'components/parts/Entry';
 import EntryPlaceholder from 'components/parts/EntryPlaceholder';
 import ScrollSpy from 'components/parts/ScrollSpy';
-import getScrollable from 'utils/dom/getScrollable';
-import { Entry as EntryType } from 'messaging/types';
 
-export default class CollapsableEntryList extends PureComponent<any, any> {
+export default class CollapsibleEntryList extends PureComponent<any, any> {
     static propTypes = {
         entries: PropTypes.arrayOf(PropTypes.object),
         loading: PropTypes.bool
@@ -45,7 +43,7 @@ export default class CollapsableEntryList extends PureComponent<any, any> {
         });
     }
 
-    renderEntry(entry: EntryType) {
+    renderEntry(entry: any) {
         const { collapsedKey } = this.state;
         const collapsed = collapsedKey === entry.entryId;
 
@@ -53,9 +51,10 @@ export default class CollapsableEntryList extends PureComponent<any, any> {
             <Entry
                 key={entry.entryId}
                 closable={collapsed}
+                collapsible={!collapsed}
                 entry={entry}
                 expanded={collapsed}
-                onClickTitle={!collapsed ? this.handleCollapse.bind(this, entry.entryId) : null}
+                onCollapse={this.handleCollapse.bind(this, entry.entryId)}
                 onClose={this.handleClose.bind(this)} />
         );
     }
@@ -82,8 +81,7 @@ export default class CollapsableEntryList extends PureComponent<any, any> {
             <ScrollSpy
                 className="entry-list"
                 marginTop={48}
-                renderActiveChild={this.renderActiveChild.bind(this)}
-                getScrollable={getScrollable}>
+                renderActiveChild={this.renderActiveChild.bind(this)}>
                 {entries.map(this.renderEntry.bind(this))}
             </ScrollSpy>
         );

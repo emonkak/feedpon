@@ -1,13 +1,6 @@
-.l-root {
-  position: absolute;
-  height: 100%;
-  width: 100%;
-  overflow: hidden;
-}
-
 .l-root::before {
   content: '';
-  position: absolute;
+  position: fixed;
   visibility: hidden;
   top: 0;
   left: 0;
@@ -17,6 +10,10 @@
   opacity: 0;
   background-color: #000;
   transition: visibility 0s ease-in-out 0.2s, opacity 0.2s ease-in-out;
+}
+
+.l-root.is-opened {
+  overflow: hidden;
 }
 
 .l-root.is-opened::before {
@@ -32,7 +29,6 @@
 .l-root.is-opened .l-main,
 .l-root.is-opened .l-main-header {
   padding-left: var(--sidebar-width);
-  overflow: hidden;
 }
 
 .l-sidebar {
@@ -52,10 +48,7 @@
 
 .l-main {
   width: 100%;
-  height: 100%;
-  overflow-y: auto;
   transition: padding 0.2s ease-in-out;
-  -webkit-overflow-scrolling: touch;
 }
 
 .l-main-content {

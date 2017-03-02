@@ -1,6 +1,7 @@
 import React, { PropTypes, PureComponent } from 'react';
 import classnames from 'classnames';
 import moment from 'moment';
+import { findDOMNode } from 'react-dom';
 
 import stripHtml from 'utils/stripHtml';
 
@@ -8,6 +9,7 @@ export default class Entry extends PureComponent<any, any> {
     static propTypes = {
         active: PropTypes.bool,
         closable: PropTypes.bool,
+        collapsible: PropTypes.bool,
         entry: PropTypes.shape({
             author: PropTypes.string.isRequired,
             content: PropTypes.string.isRequired,
@@ -34,13 +36,19 @@ export default class Entry extends PureComponent<any, any> {
         expanded: false
     };
 
-    handleClickTitle(event: React.MouseEvent<any>) {
-        const { onClickTitle } = this.props;
+    handleCollapse(event: React.MouseEvent<any>) {
+        const { onCollapse } = this.props;
 
-        if (onClickTitle) {
+        if (onCollapse) {
             event.preventDefault();
 
-            onClickTitle();
+            const node = findDOMNode(this) as HTMLElement;
+
+            window.requestAnimationFrame(() => {
+                window.scrollTo({ top: node.offsetTop, behavior: 'smooth' });
+            });
+
+            onCollapse();
         }
     }
 
@@ -60,7 +68,7 @@ export default class Entry extends PureComponent<any, any> {
     }
 
     render() {
-        const { active, closable, entry, expanded, onClose } = this.props;
+        const { active, closable, collapsible, entry, expanded, onClose } = this.props;
         const { author, origin, publishedAt, title, url } = entry;
 
         return (
@@ -75,11 +83,11 @@ export default class Entry extends PureComponent<any, any> {
                         <h2 className="entry-title">
                             <a
                                 className={classnames('entry-title', {
-                                    'dropdown-arrow': !expanded
+                                    'dropdown-arrow': collapsible
                                 })}
                                 target="_blank"
                                 href={url}
-                                onClick={this.handleClickTitle.bind(this)}>
+                                onClick={collapsible ? this.handleCollapse.bind(this) : null}>
                                 {title}
                             </a>
                         </h2>

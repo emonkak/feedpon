@@ -32,6 +32,7 @@ export default class ScrollSpy extends PureComponent<any, any> {
     static childContextTypes = contextTypes;
 
     static defaultProps = {
+        getScrollable: () => window,
         marginBottom: 0,
         marginTop: 0,
         renderActiveChild: child => child,

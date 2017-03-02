@@ -5,7 +5,6 @@ import { locationShape, routerShape } from 'react-router/lib/PropTypes';
 import AutoHidingHeader from 'components/parts/AutoHidingHeader';
 import Notifications from 'components/Notifications';
 import Sidebar from 'components/Sidebar';
-import getScrollable from 'utils/dom/getScrollable';
 
 export default class Layout extends PureComponent<any, any> {
     static propTypes = {
@@ -86,8 +85,7 @@ export default class Layout extends PureComponent<any, any> {
                 </div>
                 <div className="l-main" ref={element => { this.mainElement = element }}>
                     <AutoHidingHeader
-                        className="l-main-header"
-                        getScrollable={getScrollable}>
+                        className="l-main-header">
                         {cloneElement(navbar, { onToggleSidebar: this.handleToggleSidebar.bind(this) })}
                         <Notifications />
                     </AutoHidingHeader>

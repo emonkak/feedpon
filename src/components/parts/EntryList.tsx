@@ -1,6 +1,6 @@
 import React, { PropTypes, PureComponent } from 'react';
 
-import CollapsableEntryList from 'components/parts/CollapsableEntryList';
+import CollapsibleEntryList from 'components/parts/CollapsibleEntryList';
 import ExpandedEntryList from 'components/parts/ExpandedEntryList';
 
 export default class EntryList extends PureComponent<any, any> {
@@ -22,7 +22,7 @@ export default class EntryList extends PureComponent<any, any> {
 
             case 'collapsable':
                 return (
-                    <CollapsableEntryList entries={entries} loading={loading} />
+                    <CollapsibleEntryList entries={entries} loading={loading} />
                 );
 
             default:
