@@ -1,6 +1,6 @@
 type Delegate<TEvent> = (event: TEvent) => void;
 
-type Middleware<TEvent> = (event: TEvent, next: Delegate<TEvent>) => void;
+type Middleware<TEvent, TState> = (event: TEvent, next: Delegate<TEvent>, getState: () => TState) => void;
 
 type Reducer<TEvent, TState> = (state: TState, event: TEvent) => TState;
 
@@ -19,36 +19,38 @@ type PartialObserver<T> = {
 const $$observable = (Symbol as any).observable || '@@observable';
 
 export default class Store<TEvent, TState> {
-    private readonly _observers: Set<Observer<TState>> = new Set();
+    private readonly observers: Set<Observer<TState>> = new Set();
 
-    private readonly _middlewares: Middleware<TEvent>[] = [];
+    private readonly middlewares: Middleware<TEvent, TState>[] = [];
 
-    private readonly _finalize: Delegate<TEvent>;
+    private readonly finalize: Delegate<TEvent>;
 
-    constructor(private readonly _reducer: Reducer<TEvent, TState>,
-                private _state: TState) {
-        this._finalize = (event: TEvent): void => {
-            const nextState = this._reducer(this._state, event);
+    constructor(private readonly reducer: Reducer<TEvent, TState>,
+                private state: TState) {
+        this.getState = this.getState.bind(this);
+
+        this.finalize = (event: TEvent): void => {
+            const nextState = this.reducer(this.state, event);
             this.replaceState(nextState);
         };
     }
 
-    get state(): TState {
-        return this._state;
+    getState(): TState {
+        return this.state;
     }
 
     dispatch(event: TEvent): void {
-        const pipeline = createPipeline(this._middlewares, this._finalize, 0);
+        const pipeline = createPipeline(this.middlewares, this.getState, this.finalize, 0);
         pipeline(event);
     }
 
     replaceState(nextState: TState): void {
-        this._state = nextState;
-        this._observers.forEach(observer => observer.next(nextState));
+        this.state = nextState;
+        this.observers.forEach(observer => observer.next(nextState));
     }
 
-    pipe(middleware: Middleware<TEvent>): this {
-        this._middlewares.push(middleware);
+    pipe(middleware: Middleware<TEvent, TState>): this {
+        this.middlewares.push(middleware);
         return this;
     }
 
@@ -56,7 +58,7 @@ export default class Store<TEvent, TState> {
               error?: (errorValue?: any) => void,
               complete?: () => void): Subscription {
         const observer = toObserver(nextOrObserver, error, complete);
-        const observers = this._observers;
+        const observers = this.observers;
 
         observers.add(observer);
 
@@ -85,12 +87,12 @@ export default class Store<TEvent, TState> {
     }
 }
 
-function createPipeline<TEvent>(middlewares: Middleware<TEvent>[], finalize: Delegate<TEvent>, index: number): Delegate<TEvent> {
+function createPipeline<TEvent, TState>(middlewares: Middleware<TEvent, TState>[], getState: () => TState, finalize: Delegate<TEvent>, index: number): Delegate<TEvent> {
     return (event: TEvent) => {
         if (index < middlewares.length) {
             const middleware = middlewares[index];
-            const next = createPipeline(middlewares, finalize, index + 1);
-            middleware(event, next);
+            const next = createPipeline(middlewares, getState, finalize, index + 1);
+            middleware(event, next, getState);
         } else {
             finalize(event);
         }
@@ -108,30 +110,30 @@ function toObserver<T>(nextOrObserver: PartialObserver<T> | ((value: T) => void)
 }
 
 class Observer<T> {
-    constructor(private readonly _observer: PartialObserver<T>) {
+    constructor(private readonly observer: PartialObserver<T>) {
     }
 
     start(subscription: Subscription): void {
-        if (this._observer.start) {
-            this._observer.start(subscription);
+        if (this.observer.start) {
+            this.observer.start(subscription);
         }
     }
 
     next(value: T): void {
-        if (this._observer.next) {
-            this._observer.next(value);
+        if (this.observer.next) {
+            this.observer.next(value);
         }
     }
 
     error(errorValue: any) {
-        if (this._observer.error) {
-            this._observer.error(errorValue);
+        if (this.observer.error) {
+            this.observer.error(errorValue);
         }
     }
 
     complete() {
-        if (this._observer.complete) {
-            this._observer.complete();
+        if (this.observer.complete) {
+            this.observer.complete();
         }
     }
 }
