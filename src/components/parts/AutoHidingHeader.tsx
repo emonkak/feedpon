@@ -3,18 +3,20 @@ import classnames from 'classnames';
 import throttle from 'lodash.throttle';
 import { findDOMNode } from 'react-dom';
 
+import getScrollableParent from 'utils/dom/getScrollableParent';
+
 export default class AutoHidingHeader extends PureComponent<any, any> {
     static propTypes = {
         children: PropTypes.node,
         className: PropTypes.string,
         pinned: PropTypes.bool,
-        getScrollable: PropTypes.func.isRequired,
+        getScrollableParent: PropTypes.func,
         tolerance: PropTypes.number,
         scrollDebounceTime: PropTypes.number
     };
 
     static defaultProps = {
-        getScrollable: () => window,
+        getScrollableParent,
         pinned: true,
         scrollDebounceTime: 100,
         tolerance: 8
@@ -35,7 +37,7 @@ export default class AutoHidingHeader extends PureComponent<any, any> {
     }
 
     componentDidMount() {
-        this.scrollable = this.props.getScrollable(findDOMNode(this));
+        this.scrollable = this.props.getScrollableParent(findDOMNode(this));
         this.scrollable.addEventListener('scroll', this.handleScroll);
 
         this.lastScrollTop = this.scrollable.scrollY || this.scrollable.scrollTop || 0;

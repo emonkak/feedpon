@@ -3,6 +3,8 @@ import React, { Children, PropTypes, PureComponent } from 'react';
 import throttle from 'lodash.throttle';
 import { findDOMNode } from 'react-dom';
 
+import getScrollableParent from 'utils/dom/getScrollableParent';
+
 import '@emonkak/enumerable/extensions/firstOrDefault';
 import '@emonkak/enumerable/extensions/maxBy';
 import '@emonkak/enumerable/extensions/select';
@@ -19,7 +21,7 @@ export default class ScrollSpy extends PureComponent<any, any> {
     static propTypes = {
         children: PropTypes.node.isRequired,
         className: PropTypes.string,
-        getScrollable: PropTypes.func.isRequired,
+        getScrollableParent: PropTypes.func.isRequired,
         marginBottom: PropTypes.number,
         marginTop: PropTypes.number,
         onActivate: PropTypes.func,
@@ -32,7 +34,7 @@ export default class ScrollSpy extends PureComponent<any, any> {
     static childContextTypes = contextTypes;
 
     static defaultProps = {
-        getScrollable: () => window,
+        getScrollableParent,
         marginBottom: 0,
         marginTop: 0,
         renderActiveChild: child => child,
@@ -69,7 +71,7 @@ export default class ScrollSpy extends PureComponent<any, any> {
     }
 
     componentDidMount() {
-        this.scrollable = this.props.getScrollable(findDOMNode(this));
+        this.scrollable = this.props.getScrollableParent(findDOMNode(this));
         this.scrollable.addEventListener('scroll', this.handleScroll);
     }
 

@@ -14,8 +14,6 @@ export default class Layout extends PureComponent<any, any> {
         router: routerShape,
     };
 
-    private mainElement: Element;
-
     constructor(props: any, context: any) {
         super(props, context);
 
@@ -39,7 +37,7 @@ export default class Layout extends PureComponent<any, any> {
     }
 
     handleChangeLocation() {
-        this.mainElement.scrollTop = 0;
+        window.scrollTo(0, 0);
 
         this.refreshSidebar(false);
     }
@@ -83,7 +81,7 @@ export default class Layout extends PureComponent<any, any> {
                 <div className='l-sidebar'>
                     <Sidebar selectedValue={location.pathname} />
                 </div>
-                <div className="l-main" ref={element => { this.mainElement = element }}>
+                <div className="l-main">
                     <AutoHidingHeader
                         className="l-main-header">
                         {cloneElement(navbar, { onToggleSidebar: this.handleToggleSidebar.bind(this) })}
