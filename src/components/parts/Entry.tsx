@@ -95,7 +95,7 @@ export default class Entry extends PureComponent<any, any> {
                             <ul className="list-inline list-inline-dot">
                                 {origin && (<li className="entry-origin"><a target="_blank" href={origin.url}>{origin.title}</a></li>)}
                                 {author && (<li className="entry-author">{author}</li>)}
-                                {publishedAt && (<li className="entry-published-at">{moment(publishedAt).fromNow()}</li>)}
+                                {publishedAt && (<li className="entry-published-at"><time dateTime={publishedAt}>{moment(publishedAt).fromNow()}</time></li>)}
                             </ul>
                         </div>
                     </header>
