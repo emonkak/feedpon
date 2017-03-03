@@ -69,6 +69,24 @@ h6 {
   font-size: 1rem;
 }
 
+hr {
+  position: relative;
+  border: 0;
+  border-top: 4px double var(--medium-color);
+  margin: calc(var(--baseline-height) - 2px) 0 calc(var(--baseline-height) - 2px);
+}
+
+hr::before {
+  content: "\00a7";
+  position: absolute;
+  background: var(--default-background-color);
+  top: calc(-var(--baseline-height) / 2);
+  left: calc(50% - 0.75em);
+  width: 1.5em;
+  text-align: center;
+  font-size: 1.5rem;
+}
+
 blockquote, dl, figure, form, ol, p, pre, table, ul {
   margin: 0 0 var(--baseline-height);
 }
