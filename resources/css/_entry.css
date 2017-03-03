@@ -2,6 +2,7 @@
   position: relative;
   padding: calc(var(--baseline-height) / 2) 0 calc(var(--baseline-height) / 2 - 1px);
   border-bottom: 1px solid var(--medium-color);
+  transition: box-shadow 0.2s ease-in-out;
 }
 
 .entry:last-child {
