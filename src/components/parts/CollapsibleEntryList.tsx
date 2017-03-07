@@ -7,7 +7,8 @@ import ScrollSpy from 'components/parts/ScrollSpy';
 export default class CollapsibleEntryList extends PureComponent<any, any> {
     static propTypes = {
         entries: PropTypes.arrayOf(PropTypes.object),
-        loading: PropTypes.bool
+        loading: PropTypes.bool,
+        scrollTo: PropTypes.func.isRequired
     };
 
     static defaultProps = {
@@ -22,7 +23,13 @@ export default class CollapsibleEntryList extends PureComponent<any, any> {
         };
     }
 
-    handleCollapse(collapsedKey: any) {
+    handleCollapse(collapsedKey: any, collapsedElement: HTMLElement) {
+        const { scrollTo } = this.props;
+
+        window.requestAnimationFrame(() => {
+            scrollTo(0, collapsedElement.offsetTop);
+        });
+
         this.setState(state => ({
             ...state,
             collapsedKey
@@ -80,7 +87,6 @@ export default class CollapsibleEntryList extends PureComponent<any, any> {
         return (
             <ScrollSpy
                 className="entry-list"
-                marginTop={48}
                 renderActiveChild={this.renderActiveChild.bind(this)}>
                 {entries.map(this.renderEntry.bind(this))}
             </ScrollSpy>

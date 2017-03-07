@@ -22,7 +22,7 @@ export default class AutoHidingHeader extends PureComponent<any, any> {
         tolerance: 8
     };
 
-    private lastScrollTop: number = 0;
+    private lastScrollTop: number = null;
 
     private scrollable: any;
 
@@ -30,7 +30,7 @@ export default class AutoHidingHeader extends PureComponent<any, any> {
         super(props, context);
 
         this.state = {
-            pinned: props.pinned
+            isPinned: props.pinned
         };
 
         this.handleScroll = throttle(this.handleScroll.bind(this), props.scrollDebounceTime);
@@ -39,42 +39,60 @@ export default class AutoHidingHeader extends PureComponent<any, any> {
     componentDidMount() {
         this.scrollable = this.props.getScrollableParent(findDOMNode(this));
         this.scrollable.addEventListener('scroll', this.handleScroll);
-
-        this.lastScrollTop = this.scrollable.scrollY || this.scrollable.scrollTop || 0;
     }
 
     componentWillUnmount() {
         this.scrollable.removeEventListener('scroll', this.handleScroll);
     }
 
+    componentWillReceiveProps(nextProps: any) {
+        if (this.props.pinned !== nextProps.pinned) {
+            if (!nextProps.pinned) {
+                this.lastScrollTop = null;
+
+                this.setState(state => ({
+                    ...state,
+                    isPinned: false
+                }));
+            }
+        }
+    }
+
     handleScroll() {
-        const { tolerance } = this.props;
+        const { pinned, tolerance } = this.props;
         const { clientHeight } = findDOMNode(this);
         const scrollTop = this.scrollable.scrollY || this.scrollable.scrollTop || 0;
 
-        if (scrollTop < clientHeight) {
-            this.setState({
-                pinned: true,
-            });
-        } else {
-            const scrollDistance = Math.abs(this.lastScrollTop - scrollTop);
+        if (pinned) {
+            /// Ignore first scroll
+            if (this.lastScrollTop !== null) {
+                if (scrollTop < clientHeight) {
+                    this.setState(state => ({
+                        ...state,
+                        isPinned: true
+                    }));
+                } else {
+                    const scrollDistance = Math.abs(this.lastScrollTop - scrollTop);
 
-            if (scrollDistance > tolerance) {
-                this.setState({
-                    pinned: this.lastScrollTop > scrollTop,
-                });
+                    if (scrollDistance > tolerance) {
+                        this.setState(state => ({
+                            ...state,
+                            isPinned: this.lastScrollTop > scrollTop
+                        }));
+                    }
+                }
             }
-        }
 
-        this.lastScrollTop = scrollTop;
+            this.lastScrollTop = scrollTop;
+        }
     }
 
     render() {
-        const { children, className } = this.props;
-        const { pinned } = this.state;
+        const { children, className, pinned } = this.props;
+        const { isPinned } = this.state;
 
         const containerClassName = classnames(className, {
-            'is-pinned': pinned
+            'is-pinned': pinned && isPinned
         });
 
         return (

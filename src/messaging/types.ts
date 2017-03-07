@@ -17,7 +17,7 @@ export interface State {
     viewType: ViewType;
 }
 
-export type ViewType = 'expanded' | 'collapsable';
+export type ViewType = 'expanded' | 'collapsible';
 
 export interface Feed {
     id?: string | number;

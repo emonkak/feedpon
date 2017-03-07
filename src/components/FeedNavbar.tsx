@@ -44,9 +44,9 @@ export default class FeedNavbar extends PureComponent<any, any> {
                         primaryText="Expanded View"
                         onSelect={() => this.handleChangeViewType('expanded')} />
                     <MenuItem
-                        icon={viewType === 'collapsable' ? <i className="icon icon-16 icon-checkmark" /> : null}
+                        icon={viewType === 'collapsible' ? <i className="icon icon-16 icon-checkmark" /> : null}
                         primaryText="Collapsable View"
-                        onSelect={() => this.handleChangeViewType('collapsable')} />
+                        onSelect={() => this.handleChangeViewType('collapsible')} />
                     <div className="menu-divider" />
                     <MenuItem primaryText="Action" />
                     <MenuItem primaryText="Another action" />

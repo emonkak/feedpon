@@ -8,21 +8,27 @@ export default class EntryList extends PureComponent<any, any> {
         entries: PropTypes.array.isRequired,
         feed: PropTypes.object,
         loading: PropTypes.bool.isRequired,
-        viewType: PropTypes.oneOf(['expanded', 'collapsable']).isRequired
+        scrollTo: PropTypes.func.isRequired,
+        viewType: PropTypes.oneOf(['expanded', 'collapsible']).isRequired
     };
 
     render() {
-        const { entries, loading, viewType } = this.props;
+        const { entries, loading, scrollTo, viewType } = this.props;
 
         switch (viewType) {
             case 'expanded':
                 return (
-                    <ExpandedEntryList entries={entries} loading={loading} />
+                    <ExpandedEntryList
+                        entries={entries}
+                        loading={loading} />
                 );
 
-            case 'collapsable':
+            case 'collapsible':
                 return (
-                    <CollapsibleEntryList entries={entries} loading={loading} />
+                    <CollapsibleEntryList
+                        entries={entries}
+                        loading={loading}
+                        scrollTo={scrollTo} />
                 );
 
             default:

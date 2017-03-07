@@ -5,6 +5,7 @@ import { locationShape, routerShape } from 'react-router/lib/PropTypes';
 import AutoHidingHeader from 'components/parts/AutoHidingHeader';
 import Notifications from 'components/Notifications';
 import Sidebar from 'components/Sidebar';
+import smoothScroll from 'utils/dom/smoothScroll';
 
 export default class Layout extends PureComponent<any, any> {
     static propTypes = {
@@ -18,7 +19,8 @@ export default class Layout extends PureComponent<any, any> {
         super(props, context);
 
         this.state = {
-            sidebarIsOpened: false,
+            isScrolling: false,
+            sidebarIsOpened: false
         };
 
         this.handleChangeLocation = this.handleChangeLocation.bind(this);
@@ -68,9 +70,23 @@ export default class Layout extends PureComponent<any, any> {
         }));
     }
 
+    scrollTo(x, y) {
+        this.setState(state => ({
+            ...state,
+            isScrolling: true
+        }));
+
+        smoothScroll(document.body, x, y).then(() => {
+            this.setState(state => ({
+                ...state,
+                isScrolling: false
+            }));
+        });
+    }
+
     render() {
         const { content, navbar, location } = this.props;
-        const { sidebarIsOpened } = this.state;
+        const { isScrolling, sidebarIsOpened } = this.state;
 
         const rootClassName = classnames('l-root', {
             'is-opened': sidebarIsOpened,
@@ -83,12 +99,13 @@ export default class Layout extends PureComponent<any, any> {
                 </div>
                 <div className="l-main">
                     <AutoHidingHeader
+                        pinned={!isScrolling}
                         className="l-main-header">
                         {cloneElement(navbar, { onToggleSidebar: this.handleToggleSidebar.bind(this) })}
                         <Notifications />
                     </AutoHidingHeader>
                     <div className="l-main-content">
-                        {content}
+                        {cloneElement(content, { scrollTo: this.scrollTo.bind(this) })}
                     </div>
                 </div>
             </div>

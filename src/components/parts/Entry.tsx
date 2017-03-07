@@ -42,13 +42,7 @@ export default class Entry extends PureComponent<any, any> {
         if (onCollapse) {
             event.preventDefault();
 
-            const node = findDOMNode(this) as HTMLElement;
-
-            window.requestAnimationFrame(() => {
-                window.scrollTo({ top: node.offsetTop, behavior: 'smooth' });
-            });
-
-            onCollapse();
+            onCollapse(findDOMNode(this));
         }
     }
 

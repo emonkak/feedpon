@@ -10,7 +10,7 @@ export default function getScrollableParent(el: Element): Element | Window {
             overflowY === 'scroll') {
             return el;
         }
-    } while (el !== document.body);
+    } while (el !== el.ownerDocument.body);
 
     return window;
 }

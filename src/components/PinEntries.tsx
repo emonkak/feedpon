@@ -31,12 +31,13 @@ export default class PinEntries extends PureComponent<any, any> {
     }
 
     render() {
-        const { entries, feed, viewType } = this.props;
+        const { entries, feed, scrollTo, viewType } = this.props;
 
         return (
             <EntryList
                 loading={!feed}
                 entries={entries}
+                scrollTo={scrollTo}
                 viewType={viewType} />
         );
     }
