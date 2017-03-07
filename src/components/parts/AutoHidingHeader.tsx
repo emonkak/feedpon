@@ -51,16 +51,19 @@ export default class AutoHidingHeader extends PureComponent<any, any> {
         const { tolerance } = this.props;
         const { clientHeight } = findDOMNode(this);
         const scrollTop = this.scrollable.scrollY || this.scrollable.scrollTop || 0;
-        const scrollDistance = Math.abs(this.lastScrollTop - scrollTop);
 
         if (scrollTop < clientHeight) {
             this.setState({
                 pinned: true,
             });
-        } else if (scrollDistance > tolerance) {
-            this.setState({
-                pinned: this.lastScrollTop > scrollTop,
-            });
+        } else {
+            const scrollDistance = Math.abs(this.lastScrollTop - scrollTop);
+
+            if (scrollDistance > tolerance) {
+                this.setState({
+                    pinned: this.lastScrollTop > scrollTop,
+                });
+            }
         }
 
         this.lastScrollTop = scrollTop;
