@@ -67,7 +67,7 @@ a.navbar-title:hover {
   background-color: var(--light-color);
 }
 
-@media (--desktop-viewport) {
+@media (--md-viewport) {
   .navbar-container {
     padding-left: 1.5rem;
     padding-right: 1.5rem;

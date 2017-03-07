@@ -1,3 +1,7 @@
+@custom-media --sm-viewport (min-width: 576px);
+@custom-media --md-viewport (min-width: 768px);
+@custom-media --lg-viewport (min-width: 980px);
+
 :root {
   --default-color: #495057;
   --default-background-color: #ffffff;
