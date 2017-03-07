@@ -1,17 +1,22 @@
 .navbar {
-  display: flex;
-  align-items: stretch;
   box-sizing: border-box;
-  height: var(--navbar-height);
   border-bottom: 1px solid var(--medium-color);
   background-color: var(--default-background-color);
+  height: var(--navbar-height);
+}
+
+.navbar-container {
+  display: flex;
+  align-items: stretch;
+  margin: 0 auto;
+  max-width: var(--container-width);
 }
 
 .navbar-title {
   flex: 1;
   display: flex;
   align-items: center;
-  padding: 0 1.5rem;
+  padding: 0 1.5rem 0 0;
   min-width: 0;
   font-size: inherit;
   font-weight: 600;
@@ -38,6 +43,7 @@ a.navbar-title:hover {
   text-decoration: none;
   text-align: center;
   border-right: 1px solid var(--medium-color);
+  margin-right: 1.5em;
 }
 
 .navbar-toggle-icon:hover {
@@ -59,4 +65,11 @@ a.navbar-title:hover {
 
 .navbar-action:hover {
   background-color: var(--light-color);
+}
+
+@media (--desktop-viewport) {
+  .navbar-container {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
 }
