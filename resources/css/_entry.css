@@ -1,12 +1,20 @@
+.entry-list::after {
+  content: 'No more entries here.';
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--light-color);
+  font-weight: 600;
+}
+
 .entry {
   position: relative;
   padding: calc(var(--baseline-height) / 2) 0 calc(var(--baseline-height) / 2 - 1px);
   border-bottom: 1px solid var(--medium-color);
   transition: box-shadow 0.2s ease-in-out;
-}
-
-.entry:last-child {
-  margin-bottom: 100vh;
 }
 
 .entry.is-active {
