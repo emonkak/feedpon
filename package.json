@@ -10,7 +10,7 @@
     "url": "https://github.com/emonkak/feedpon.git"
   },
   "scripts": {
-    "build": "NODE_ENV=production npm-run-all -p build:css build:js",
+    "build": "npm-run-all -p build:css build:js",
     "build:css": "postcss -o public/css/index.css resources/css/index.css",
     "build:js": "webpack",
     "clean": "rm -f -r public/{js,css}",
@@ -46,11 +46,15 @@
     "npm-run-all": "^4.0.1",
     "postcss-cli": "^3.0.0-beta",
     "postcss-cssnext": "^2.9.0",
+    "postcss-csso": "^1.1.2",
+    "postcss-custom-media": "^5.0.1",
     "postcss-import": "^9.1.0",
     "postcss-nesting": "^2.3.1",
     "ts-loader": "^2.0.1",
     "tslint": "^4.4.2",
     "typescript": "^2.1.6",
+    "uglify-js": "git://github.com/mishoo/UglifyJS2.git#harmony",
+    "uglifyjs-webpack-plugin": "^0.3.0",
     "webpack": "^2.2.1"
   }
 }

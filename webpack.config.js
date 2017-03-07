@@ -1,6 +1,6 @@
 const path = require('path');
 
-module.exports = {
+const config = {
     entry: {
         'index': './src/index.tsx'
     },
@@ -22,5 +22,18 @@ module.exports = {
                 loader: 'ts-loader'
             }
         ]
-    }
+    },
+    plugins: []
 };
+
+if (process.env.NODE_ENV === 'production') {
+    const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+
+    config.plugins.push(new UglifyJsPlugin({
+        compress: {
+            warnings: false
+        }
+    }));
+}
+
+module.exports = config;
