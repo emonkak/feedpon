@@ -3,7 +3,8 @@ import classnames from 'classnames';
 import moment from 'moment';
 import { findDOMNode } from 'react-dom';
 
-import stripHtml from 'utils/stripHtml';
+import Sandbox from 'components/parts/Sandbox';
+import stripHtml from 'utils/dom/stripHtml';
 
 export default class Entry extends PureComponent<any, any> {
     static propTypes = {
@@ -52,7 +53,7 @@ export default class Entry extends PureComponent<any, any> {
 
         if (expanded) {
             return (
-                <div className="entry-content" dangerouslySetInnerHTML={{ __html: content }} />
+                <Sandbox className="entry-content" html={content} />
             );
         } else {
             return (
