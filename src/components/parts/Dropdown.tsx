@@ -7,6 +7,7 @@ import createChainedFunction from 'utils/createChainedFunction';
 
 export default class Dropdown extends PureComponent<any, any> {
     static propTypes = {
+        className: PropTypes.string,
         onClose: PropTypes.func,
         onSelect: PropTypes.func,
         opened: PropTypes.bool,
@@ -62,11 +63,11 @@ export default class Dropdown extends PureComponent<any, any> {
     }
 
     render() {
-        const { children, onSelect, pullRight } = this.props;
+        const { children, className, onSelect, pullRight } = this.props;
         const { opened } = this.state;
 
         return (
-            <div className={classnames('dropdown', { 'is-opened': opened })}>
+            <div className={classnames('dropdown', className, { 'is-opened': opened })}>
                 {this.renderToggleButton()}
                 <Closable onClose={this.handleClose.bind(this)}
                           disabled={!opened}>

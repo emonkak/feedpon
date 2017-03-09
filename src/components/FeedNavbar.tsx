@@ -52,7 +52,7 @@ export default class FeedNavbar extends PureComponent<any, any> {
                 <a className="navbar-action" href="javascript:void()">
                     <i className="icon icon-48 icon-size-24 icon-refresh" />
                 </a>
-                <Dropdown toggleButton={<a className="navbar-action" href="#"><i className="icon icon-48 icon-size-24 icon-more" /></a>} pullRight={true}>
+                <Dropdown className="navbar-action" toggleButton={<a href="#"><i className="icon icon-48 icon-size-24 icon-more" /></a>} pullRight={true}>
                     <MenuItem
                         icon={viewMode === 'expanded' ? <i className="icon icon-16 icon-checkmark" /> : null}
                         primaryText="Expanded View"

@@ -1,4 +1,5 @@
 .navbar {
+  box-sizing: border-box;
   border-bottom: 1px solid var(--medium-color);
   background-color: var(--default-background-color);
   height: var(--navbar-height);
@@ -59,7 +60,10 @@ a.navbar-title:hover {
   display: flex;
   align-items: center;
   position: relative;
-  background-color: transparent;
+}
+
+.navbar-action,
+.navbar-action a {
   color: inherit;
   text-decoration: none;
 }
