@@ -1,10 +1,14 @@
 import React, { Children, PropTypes, PureComponent } from 'react';
 import throttle from 'lodash.throttle';
 import { findDOMNode } from 'react-dom';
+import Enumerable from '@emonkak/enumerable';
+
+import '@emonkak/enumerable/extensions/firstOrDefault';
+import '@emonkak/enumerable/extensions/maxBy';
+import '@emonkak/enumerable/extensions/select';
+import '@emonkak/enumerable/extensions/where';
 
 import getScrollableParent from 'utils/dom/getScrollableParent';
-import ScrollSpyRegistry from 'components/parts/ScrollSpyRegistry';
-import ScrollSpyChild from 'components/parts/ScrollSpyChild';
 
 export default class ScrollSpy extends PureComponent<any, any> {
     static propTypes = {
@@ -115,5 +119,68 @@ export default class ScrollSpy extends PureComponent<any, any> {
                 {Children.map(children, this.renderChild.bind(this))}
             </div>
         );
+    }
+}
+
+class ScrollSpyChild extends PureComponent<any, any> {
+    static propTypes = {
+        children: PropTypes.element.isRequired,
+        keyForSpy: PropTypes.oneOfType([
+            PropTypes.string,
+            PropTypes.number
+        ]).isRequired,
+        registry: PropTypes.shape({
+            register: PropTypes.func.isRequired,
+            unregister: PropTypes.func.isRequired
+        }).isRequired
+    };
+
+    componentDidMount() {
+        this.props.registry.register(findDOMNode(this), this.props.keyForSpy);
+    }
+
+    componentWillUnmount() {
+        this.props.registry.unregister(findDOMNode(this));
+    }
+
+    render() {
+        return Children.only(this.props.children);
+    }
+}
+
+class ScrollSpyRegistry {
+    private readonly childKeys: Map<HTMLElement, string> = new Map();
+
+    register(element: HTMLElement, key: string): void {
+        this.childKeys.set(element, key);
+    }
+
+    unregister(element: HTMLElement): void {
+        this.childKeys.delete(element);
+    }
+
+    getActiveKey(scrollTop: number, scrollBottom: number): string {
+        return new Enumerable(this.childKeys)
+            .where(([element, key]) => {
+                const offsetTop = element.offsetTop;
+                const offsetBottom = offsetTop + element.offsetHeight;
+
+                return offsetTop < scrollBottom && offsetBottom > scrollTop;
+            })
+            .maxBy(([element, key]) => {
+                const offsetTop = element.offsetTop;
+                const offsetBottom = offsetTop + element.offsetHeight;
+
+                if (offsetTop >= scrollTop && offsetBottom <= scrollBottom) {
+                    return scrollBottom - offsetTop;
+                } else {
+                    const displayTop = Math.max(offsetTop, scrollTop);
+                    const displayBottom = Math.min(offsetBottom, scrollBottom);
+
+                    return displayBottom - displayTop;
+                }
+            })
+            .select(([element, key]) => key)
+            .firstOrDefault();
     }
 }
