@@ -1,8 +1,8 @@
 import React, { PropTypes, PureComponent } from 'react';
 import classnames from 'classnames';
-import moment from 'moment';
 import { findDOMNode } from 'react-dom';
 
+import RelativeTime from 'components/parts/RelativeTime';
 import StripHtml from 'components/parts/StripHtml';
 
 export default class Entry extends PureComponent<any, any> {
@@ -94,7 +94,7 @@ export default class Entry extends PureComponent<any, any> {
                             <ul className="list-inline list-inline-dot">
                                 {entry.origin && (<li className="entry-origin"><a target="_blank" href={entry.origin.url}>{entry.origin.title}</a></li>)}
                                 {entry.author && (<li className="entry-author">{entry.author}</li>)}
-                                {entry.publishedAt && (<li className="entry-published-at"><time dateTime={entry.publishedAt}>{moment(entry.publishedAt).fromNow()}</time></li>)}
+                                {entry.publishedAt && (<li className="entry-published-at"><RelativeTime time={entry.publishedAt} /></li>)}
                             </ul>
                         </div>
                     </header>
