@@ -47,6 +47,8 @@ export default class ScrollSpy extends PureComponent<any, any> {
     componentDidMount() {
         this.scrollable = this.props.getScrollableParent(findDOMNode(this));
         this.scrollable.addEventListener('scroll', this.handleScroll);
+
+        this.handleScroll();
     }
 
     componentWillUnmount() {
