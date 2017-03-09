@@ -1,17 +1,38 @@
-import areEqual from 'fbjs/lib/areEqual';
-
 import { Event, State } from 'messaging/types';
 
 export default function reducer(state: State, event: Event): State {
     switch (event.type) {
-        case 'ENTRIES_FETCHED':
-            if (!areEqual(state.feed, event.feed)) {
-                return state;
+        case 'FEED_FETCHING':
+            if (state.feed && state.feed.feedId === event.feedId) {
+                return {
+                    ...state,
+                    feed: {
+                        ...state.feed,
+                        isLoading: true
+                    }
+                };
             }
 
             return {
                 ...state,
-                entries: event.entries
+                feed: null
+            };
+
+        case 'FEED_FETCHED':
+            if (state.feed && state.feed.feedId !== event.feed.feedId) {
+                return state;
+            }
+
+            const entries = state.feed
+                ? state.feed.entries.concat(event.feed.entries)
+                : event.feed.entries;
+
+            return {
+                ...state,
+                feed: {
+                    ...event.feed,
+                    entries
+                }
             };
 
         case 'SUBSCRIPTIONS_FETCHED':
@@ -20,17 +41,9 @@ export default function reducer(state: State, event: Event): State {
                 subscriptions: event.subscriptions
             };
 
-        case 'FEED_SELECTED':
-            return {
-                ...state,
-                entries: [],
-                feed: event.feed
-            };
-
         case 'FEED_UNSELECTED':
             return {
                 ...state,
-                entries: [],
                 feed: null
             };
 

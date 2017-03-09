@@ -50,6 +50,7 @@
     "postcss-custom-media": "^5.0.1",
     "postcss-import": "^9.1.0",
     "postcss-nesting": "^2.3.1",
+    "react-waypoint": "^5.1.0",
     "ts-loader": "^2.0.1",
     "tslint": "^4.4.2",
     "typescript": "^2.1.6",

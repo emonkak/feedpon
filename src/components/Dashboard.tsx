@@ -126,6 +126,44 @@ export default class Dashboard extends PureComponent<any, any> {
                     <p>We just updated our privacy policy here to better service our customers. We recommend reviewing the changes.</p>
                 </div>
 
+                <h2>Icon</h2>
+                <p>
+                    <i className="icon icon-32 icon-menu" />
+                    <i className="icon icon-32 icon-angle-right" />
+                    <i className="icon icon-32 icon-angle-down" />
+                    <i className="icon icon-32 icon-more" />
+                    <i className="icon icon-32 icon-refresh" />
+                    <i className="icon icon-32 icon-file" />
+                    <i className="icon icon-32 icon-bookmark" />
+                    <i className="icon icon-32 icon-comments" />
+                    <i className="icon icon-32 icon-share" />
+                    <i className="icon icon-32 icon-pin-3" />
+                    <i className="icon icon-32 icon-checkmark" />
+                    <i className="icon icon-32 icon-info" />
+                    <i className="icon icon-32 icon-checked" />
+                    <i className="icon icon-32 icon-warning" />
+                    <i className="icon icon-32 icon-delete" />
+                    <i className="icon icon-32 icon-spinner" />
+                </p>
+                <p>
+                    <i className="icon icon-16 icon-menu" />
+                    <i className="icon icon-16 icon-angle-right" />
+                    <i className="icon icon-16 icon-angle-down" />
+                    <i className="icon icon-16 icon-more" />
+                    <i className="icon icon-16 icon-refresh" />
+                    <i className="icon icon-16 icon-file" />
+                    <i className="icon icon-16 icon-bookmark" />
+                    <i className="icon icon-16 icon-comments" />
+                    <i className="icon icon-16 icon-share" />
+                    <i className="icon icon-16 icon-pin-3" />
+                    <i className="icon icon-16 icon-checkmark" />
+                    <i className="icon icon-16 icon-info" />
+                    <i className="icon icon-16 icon-checked" />
+                    <i className="icon icon-16 icon-warning" />
+                    <i className="icon icon-16 icon-delete" />
+                    <i className="icon icon-16 icon-spinner" />
+                </p>
+
                 <h2>Placeholder</h2>
                 <h2 className="placeholder placeholder-animated placeholder-60"></h2>
                 <p>

@@ -10,6 +10,7 @@
   align-items: stretch;
   margin: 0 auto;
   max-width: var(--container-width);
+  height: 100%;
 }
 
 .navbar-title {

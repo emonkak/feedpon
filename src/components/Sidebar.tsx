@@ -45,8 +45,8 @@ export default class Sidebar extends PureComponent<any, any> {
         }, 0);
 
         return (
-                <TreeBranch key={`/categories/${category.categoryId}`}
-                            value={`/categories/${category.categoryId}`}
+                <TreeBranch key={`/feeds/${category.feedId}`}
+                            value={`/feeds/${category.feedId}`}
                             className={classnames({ 'is-important': totalUnreadCount > 0 })}
                             primaryText={category.name}
                             secondaryText={totalUnreadCount > 0 ? numberFormatter.format(totalUnreadCount) : null}
@@ -58,8 +58,8 @@ export default class Sidebar extends PureComponent<any, any> {
 
     renderSubscription(subscription: any) {
         return (
-            <TreeLeaf key={`/subscriptions/${subscription.subscriptionId}`}
-                      value={`/subscriptions/${subscription.subscriptionId}`}
+            <TreeLeaf key={`/feeds/${subscription.feedId}`}
+                      value={`/feeds/${subscription.feedId}`}
                       className={classnames({ 'is-important': subscription.unreadCount > 0 })}
                       primaryText={subscription.title}
                       secondaryText={subscription.unreadCount > 0 ? numberFormatter.format(subscription.unreadCount) : null}
@@ -88,14 +88,14 @@ export default class Sidebar extends PureComponent<any, any> {
                     <Tree value={selectedValue}
                           onSelect={this.handleSelect.bind(this)}>
                         <TreeLeaf key="/" value="/" primaryText="Dashboard" />
-                        <TreeLeaf key="/all/" value="/all/" primaryText="All" secondaryText={numberFormatter.format(totalUnreadCount)} />
-                        <TreeLeaf key="/pins/" value="/pins/" primaryText="Pins" secondaryText="12" />
+                        <TreeLeaf key="/feeds/all/" value="/feeds/all/" primaryText="All" secondaryText={numberFormatter.format(totalUnreadCount)} />
+                        <TreeLeaf key="/feeds/pins/" value="/feeds/pins/" primaryText="Pins" secondaryText="12" />
                         <TreeHeader title="Updated 6 minutes ago"
                                     leftIcon={<i className="icon icon-16 icon-refresh" />}
                                     rightIcon={<i className="icon icon-16 icon-more" />} />
                         {groupedSubscriptions}
-                        <TreeLeaf key="/settings/" value="/settings/" primaryText="Settings" />
-                        <TreeLeaf key="/about/" value="/about/" primaryText="About..." />
+                        <TreeLeaf key="/feeds/settings/" value="/feeds/settings/" primaryText="Settings" />
+                        <TreeLeaf key="/feeds/about/" value="/feeds/about/" primaryText="About..." />
                     </Tree>
                 </div>
                 <div className="sidebar-group">

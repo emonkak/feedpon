@@ -1,16 +1,17 @@
 export type Event
     = { type: 'VIEW_TYPE_CHANGED', viewType: ViewType }
-    | { type: 'FEED_SELECTED', feed: Feed }
+    | { type: 'FEED_FETCHED', feed: Feed }
+    | { type: 'FEED_FETCHING', feedId: string }
     | { type: 'FEED_UNSELECTED' }
-    | { type: 'ENTRIES_FETCHED', feed: Feed, entries: Entry[] }
     | { type: 'NOTIFICATION_DISMISSED', id: number }
     | { type: 'NOTIFICATION_SENT', notification: Notification }
     | { type: 'SUBSCRIPTIONS_FETCHED', subscriptions: Subscription[] };
 
-export type AsyncAction = (dispatch: (event: Event) => void) => void;
+export interface AsyncAction {
+    (dispatch: (event: Event) => void, getState: () => State): void;
+}
 
 export interface State {
-    entries: Entry[];
     feed: Feed | null;
     notifications: Notification[];
     subscriptions: Subscription[];
@@ -20,12 +21,12 @@ export interface State {
 export type ViewType = 'expanded' | 'collapsible';
 
 export interface Feed {
-    id?: string | number;
+    feedId: string;
     title: string;
-    type: FeedType;
+    entries: Entry[];
+    hasMoreEntries: boolean;
+    isLoading: boolean;
 }
-
-export type FeedType = 'all' | 'category' | 'pin' | 'subscription';
 
 export interface Entry {
     entryId: string | number;
@@ -39,14 +40,18 @@ export interface Entry {
 }
 
 export interface Subscription {
+    feedId: string,
     subscriptionId: string | number;
     title: string;
-    category: {
-        categoryId: number;
-        name: string;
-    };
+    category: Category;
     unreadCount: number;
 };
+
+export interface Category {
+    categoryId: number;
+    feedId: string,
+    name: string;
+}
 
 export interface Notification {
     id?: string | number;
