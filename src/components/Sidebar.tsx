@@ -15,8 +15,6 @@ import '@emonkak/enumerable/extensions/groupJoin';
 import '@emonkak/enumerable/extensions/select';
 import '@emonkak/enumerable/extensions/toArray';
 
-const numberFormatter = new Intl.NumberFormat();
-
 interface Props {
     readonly categories?: Category[];
     readonly dispatch?: (action: any) => void;
@@ -58,7 +56,7 @@ export default class Sidebar extends PureComponent<Props, {}> {
                             value={`/feeds/${category.feedId}`}
                             className={classnames({ 'is-important': totalUnreadCount > 0 })}
                             primaryText={category.name}
-                            secondaryText={totalUnreadCount > 0 ? numberFormatter.format(totalUnreadCount) : null}
+                            secondaryText={totalUnreadCount > 0 ? Number(totalUnreadCount).toLocaleString() : null}
                             icon={<i className="icon icon-16 icon-angle-down" />}>
                 {subscriptions.map(subscription => this.renderSubscription(subscription))}
             </TreeBranch>
@@ -71,7 +69,7 @@ export default class Sidebar extends PureComponent<Props, {}> {
                       value={`/feeds/${subscription.feedId}`}
                       className={classnames({ 'is-important': subscription.unreadCount > 0 })}
                       primaryText={subscription.title}
-                      secondaryText={subscription.unreadCount > 0 ? numberFormatter.format(subscription.unreadCount) : null}
+                      secondaryText={subscription.unreadCount > 0 ? Number(subscription.unreadCount).toLocaleString() : null}
                       icon={<i className="icon icon-16 icon-file" />} />
         );
     }
@@ -102,7 +100,7 @@ export default class Sidebar extends PureComponent<Props, {}> {
                     <Tree value={selectedValue}
                           onSelect={this.handleSelect.bind(this)}>
                         <TreeLeaf key="/" value="/" primaryText="Dashboard" />
-                        <TreeLeaf key="/feeds/all/" value="/feeds/all/" primaryText="All" secondaryText={numberFormatter.format(totalUnreadCount)} />
+                        <TreeLeaf key="/feeds/all/" value="/feeds/all/" primaryText="All" secondaryText={Number(totalUnreadCount).toLocaleString()} />
                         <TreeLeaf key="/feeds/pins/" value="/feeds/pins/" primaryText="Pins" secondaryText="12" />
                         <TreeHeader title="Updated 6 minutes ago"
                                     leftIcon={<i className="icon icon-16 icon-refresh" />}
