@@ -1,6 +1,6 @@
 export type Event
     = { type: 'CATEGORIES_FETCHED', categories: Category[] }
-    | { type: 'VIEW_TYPE_CHANGED', viewType: ViewType }
+    | { type: 'VIEW_TYPE_CHANGED', viewMode: ViewType }
     | { type: 'FEED_FETCHED', feed: Feed }
     | { type: 'FEED_FETCHING', feedId: string }
     | { type: 'FEED_UNSELECTED' }
@@ -17,7 +17,7 @@ export interface State {
     feed: Feed | null;
     notifications: Notification[];
     subscriptions: Subscription[];
-    viewType: ViewType;
+    viewMode: ViewType;
 }
 
 export type ViewType = 'expanded' | 'collapsible';

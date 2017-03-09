@@ -1,6 +1,7 @@
+import 'intersection-observer';
+
 import React from 'react';
 import ReactDOM from 'react-dom';
-import smoothscroll from 'smoothscroll-polyfill';
 import { Router, hashHistory } from 'react-router';
 
 import Store from 'utils/Store';
@@ -11,8 +12,6 @@ import initialState from 'messaging/initialState';
 import reducer from 'messaging/reducer';
 import routes from 'components/routes';
 import { Event, State } from 'messaging/types';
-
-smoothscroll.polyfill();
 
 const store = new Store<Event, State>(reducer, initialState)
     .pipe(asyncMiddleware)

@@ -1,15 +1,14 @@
 import React, { PropTypes, PureComponent } from 'react';
-import Waypoint from 'react-waypoint';
 
-import CollapsibleEntryList from 'components/parts/CollapsibleEntryList';
-import ExpandedEntryList from 'components/parts/ExpandedEntryList';
+import EntryList from 'components/parts/EntryList';
+import Waypoint from 'components/parts/Waypoint';
 import connect from 'utils/components/connect';
 import { State } from 'messaging/types';
 import { fetchFeed, unselectFeed } from 'messaging/actions';
 
 @connect((state: State) => ({
     feed: state.feed,
-    viewType: state.viewType
+    viewMode: state.viewMode
 }))
 export default class Feed extends PureComponent<any, any> {
     static propTypes = {
@@ -19,8 +18,9 @@ export default class Feed extends PureComponent<any, any> {
             hasMoreEntries: PropTypes.bool.isRequired,
             isLoading: PropTypes.bool.isRequired
         }),
+        isScrolling: PropTypes.bool,
         scrollTo: PropTypes.func.isRequired,
-        viewType: PropTypes.oneOf(['expanded', 'collapsible']).isRequired
+        viewMode: PropTypes.oneOf(['expanded', 'collapsible']).isRequired
     };
 
     componentWillMount() {
@@ -50,27 +50,15 @@ export default class Feed extends PureComponent<any, any> {
     }
 
     renderList() {
-        const { feed, scrollTo, viewType } = this.props;
+        const { feed, scrollTo, viewMode } = this.props;
 
-        switch (viewType) {
-            case 'expanded':
-                return (
-                    <ExpandedEntryList
-                        entries={feed ? feed.entries : []}
-                        loading={!feed} />
-                );
-
-            case 'collapsible':
-                return (
-                    <CollapsibleEntryList
-                        entries={feed ? feed.entries : []}
-                        loading={!feed}
-                        scrollTo={scrollTo} />
-                );
-
-            default:
-                return null;
-        }
+        return (
+            <EntryList
+                entries={feed ? feed.entries : []}
+                loading={!feed}
+                scrollTo={scrollTo}
+                viewMode={viewMode} />
+        );
     }
 
     renderFooter() {
@@ -87,8 +75,10 @@ export default class Feed extends PureComponent<any, any> {
                 </div>
             );
         } else if (feed.hasMoreEntries) {
+            const { isScrolling } = this.props;
+
             return (
-                <Waypoint onEnter={this.handleLoadMoreEntries.bind(this)}>
+                <Waypoint disabled={isScrolling} onEnter={this.handleLoadMoreEntries.bind(this)}>
                     <div className="entry-footer">
                         No more entries here.
                     </div>

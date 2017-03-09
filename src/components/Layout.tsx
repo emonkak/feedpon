@@ -105,7 +105,7 @@ export default class Layout extends PureComponent<any, any> {
                         <Notifications />
                     </AutoHidingHeader>
                     <div className="l-main-content">
-                        {cloneElement(content, { scrollTo: this.scrollTo.bind(this) })}
+                        {cloneElement(content, { isScrolling, scrollTo: this.scrollTo.bind(this) })}
                     </div>
                 </div>
             </div>

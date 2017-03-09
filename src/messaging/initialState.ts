@@ -5,7 +5,7 @@ const initialState: State = {
     feed: null,
     notifications: [],
     subscriptions: [],
-    viewType: 'collapsible',
+    viewMode: 'collapsible',
 };
 
 export default initialState;

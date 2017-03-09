@@ -16,7 +16,7 @@ export default class ScrollSpyRegistry {
         this.childKeys.delete(element);
     }
 
-    findActiveKey(scrollTop: number, scrollBottom: number): string | null {
+    getActiveKey(scrollTop: number, scrollBottom: number): string {
         return new Enumerable(this.childKeys)
             .where(([element, key]) => {
                 const offsetTop = element.offsetTop;

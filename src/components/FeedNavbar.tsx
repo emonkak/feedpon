@@ -9,42 +9,56 @@ import { changeViewType } from 'messaging/actions';
 
 @connect((state: State) => ({
     feed: state.feed,
-    viewType: state.viewType
+    viewMode: state.viewMode
 }))
 export default class FeedNavbar extends PureComponent<any, any> {
     static propTypes = {
         dispatch: PropTypes.func.isRequired,
         feed: PropTypes.object,
         onToggleSidebar: PropTypes.func,
-        viewType: PropTypes.string.isRequired
+        viewMode: PropTypes.string.isRequired
     };
 
-    handleChangeViewType(viewType: ViewType) {
+    handleChangeViewType(viewMode: ViewType) {
         const { dispatch } = this.props;
 
-        dispatch(changeViewType(viewType));
+        dispatch(changeViewType(viewMode));
+    }
+
+    renderTitle() {
+        const { feed } = this.props;
+
+        if (feed) {
+            return (
+                <a className="link-default" href="#">{feed.title}</a>
+            );
+        } else {
+            return (
+                <span>Loading...</span>
+            );
+        }
     }
 
     render() {
-        const { feed, viewType, onToggleSidebar } = this.props;
+        const { viewMode, onToggleSidebar } = this.props;
 
         return (
             <Navbar onToggleSidebar={onToggleSidebar}>
-                <div className="navbar-title" href="#"><a className="link-default" href="#">{feed ? feed.title : 'Loading...'}</a></div>
-                <a className="navbar-action" href="#">
+                <div className="navbar-title" href="#">{this.renderTitle()}</div>
+                <a className="navbar-action" href="javascript:void()">
                     <i className="icon icon-48 icon-size-24 icon-checkmark" />
                     <span className="badge badge-overlap badge-negative">2</span>
                 </a>
-                <a className="navbar-action" href="#">
+                <a className="navbar-action" href="javascript:void()">
                     <i className="icon icon-48 icon-size-24 icon-refresh" />
                 </a>
                 <Dropdown toggleButton={<a className="navbar-action" href="#"><i className="icon icon-48 icon-size-24 icon-more" /></a>} pullRight={true}>
                     <MenuItem
-                        icon={viewType === 'expanded' ? <i className="icon icon-16 icon-checkmark" /> : null}
+                        icon={viewMode === 'expanded' ? <i className="icon icon-16 icon-checkmark" /> : null}
                         primaryText="Expanded View"
                         onSelect={() => this.handleChangeViewType('expanded')} />
                     <MenuItem
-                        icon={viewType === 'collapsible' ? <i className="icon icon-16 icon-checkmark" /> : null}
+                        icon={viewMode === 'collapsible' ? <i className="icon icon-16 icon-checkmark" /> : null}
                         primaryText="Collapsable View"
                         onSelect={() => this.handleChangeViewType('collapsible')} />
                     <div className="menu-divider" />

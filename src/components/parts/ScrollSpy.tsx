@@ -14,7 +14,7 @@ export default class ScrollSpy extends PureComponent<any, any> {
         marginBottom: PropTypes.number,
         marginTop: PropTypes.number,
         onActivate: PropTypes.func,
-        onDeactivate: PropTypes.func,
+        onInactivate: PropTypes.func,
         renderActiveChild: PropTypes.func,
         renderInactiveChild: PropTypes.func,
         scrollDebounceTime: PropTypes.number
@@ -56,10 +56,14 @@ export default class ScrollSpy extends PureComponent<any, any> {
     }
 
     handleScroll() {
-        const activeKey = this.getActiveKey();
+        const { marginBottom, marginTop } = this.props;
+        const scrollTop = (this.scrollable.scrollY || this.scrollable.scrollTop || 0) + marginTop;
+        const scrollBottom = scrollTop + (this.scrollable.innerHeight || this.scrollable.clientHeight || 0) - marginBottom;
+
+        const activeKey = this.registry.getActiveKey(scrollTop, scrollBottom);
         const prevActiveKey = this.state.activeKey;
 
-        if (activeKey !== prevActiveKey) {
+        if (prevActiveKey !== activeKey) {
             if (activeKey) {
                 const { onActivate } = this.props;
 
@@ -67,10 +71,10 @@ export default class ScrollSpy extends PureComponent<any, any> {
                     onActivate(activeKey, prevActiveKey);
                 }
             } else {
-                const { onDeactivate } = this.props;
+                const { onInactivate } = this.props;
 
-                if (onDeactivate) {
-                    onDeactivate(prevActiveKey);
+                if (onInactivate) {
+                    onInactivate(prevActiveKey);
                 }
             }
 
@@ -80,14 +84,6 @@ export default class ScrollSpy extends PureComponent<any, any> {
                 inactiveKey: prevActiveKey
             }));
         }
-    }
-
-    getActiveKey(): string | null {
-        const { marginBottom, marginTop } = this.props;
-        const scrollTop = (this.scrollable.scrollY || this.scrollable.scrollTop || 0) + marginTop;
-        const scrollBottom = scrollTop + (this.scrollable.innerHeight || this.scrollable.clientHeight || 0) - marginBottom;
-
-        return this.registry.findActiveKey(scrollTop, scrollBottom);
     }
 
     renderChild(child: React.ReactElement<any>) {

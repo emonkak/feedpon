@@ -3,13 +3,11 @@ import classnames from 'classnames';
 import moment from 'moment';
 import { findDOMNode } from 'react-dom';
 
-import Sandbox from 'components/parts/Sandbox';
-import stripHtml from 'utils/dom/stripHtml';
+import StripHtml from 'components/parts/StripHtml';
 
 export default class Entry extends PureComponent<any, any> {
     static propTypes = {
         active: PropTypes.bool,
-        closable: PropTypes.bool,
         collapsible: PropTypes.bool,
         entry: PropTypes.shape({
             author: PropTypes.string.isRequired,
@@ -33,64 +31,70 @@ export default class Entry extends PureComponent<any, any> {
 
     static defaultProps = {
         active: false,
-        closable: false,
+        collapsible: false,
         expanded: false
     };
 
     handleCollapse(event: React.SyntheticEvent<any>) {
-        const { onCollapse } = this.props;
+        const { onCollapse, collapsible, expanded } = this.props;
 
-        if (onCollapse) {
+        if (collapsible && !expanded && onCollapse) {
             event.preventDefault();
 
             onCollapse(findDOMNode(this));
         }
     }
 
+    handleClose() {
+        const { collapsible, expanded, onClose } = this.props;
+
+        if (collapsible && expanded && onClose) {
+            onClose();
+        }
+    }
+
     renderContent() {
         const { entry, expanded } = this.props;
-        const { content, description } = entry;
 
         if (expanded) {
             return (
-                <Sandbox className="entry-content" html={content} />
+                <div dangerouslySetInnerHTML={{ __html: entry.content }} className="entry-content" />
             );
         } else {
             return (
-                <div className="entry-description">{stripHtml(description)}</div>
+                <StripHtml className="entry-description" html={entry.description} />
             );
         }
     }
 
     render() {
-        const { active, closable, collapsible, entry, expanded, onClose } = this.props;
-        const { author, origin, publishedAt, title, url } = entry;
+        const { active, collapsible, entry, expanded } = this.props;
 
         return (
             <article
+                id={'entry-' + entry.entryId}
                 className={classnames('entry', { 
                     'is-active': active,
+                    'is-collapsible': collapsible,
                     'is-expanded': expanded
                 })}>
                 <div className="container">
-                    {closable && <button type="button" className="close" onClick={onClose} />}
                     <header className="entry-header">
+                        <button type="button" className="close" onClick={this.handleClose.bind(this)} />
                         <h2 className="entry-title">
                             <a
-                                className={classnames('entry-title', {
-                                    'dropdown-arrow': collapsible
-                                })}
+                                className="entry-title"
                                 target="_blank"
-                                href={url}
-                                onClick={collapsible ? this.handleCollapse.bind(this) : null}>
-                                {title}
+                                href={entry.url}
+                                onClick={this.handleCollapse.bind(this)}>
+                                {entry.title}
                             </a>
                         </h2>
                         <div className="entry-info">
                             <ul className="list-inline list-inline-dot">
-                                {origin && (<li className="entry-origin"><a target="_blank" href={origin.url}>{origin.title}</a></li>)}
-                                {author && (<li className="entry-author">{author}</li>)}
-                                {publishedAt && (<li className="entry-published-at"><time dateTime={publishedAt}>{moment(publishedAt).fromNow()}</time></li>)}
+                                {entry.origin && (<li className="entry-origin"><a target="_blank" href={entry.origin.url}>{entry.origin.title}</a></li>)}
+                                {entry.author && (<li className="entry-author">{entry.author}</li>)}
+                                {entry.publishedAt && (<li className="entry-published-at"><time dateTime={entry.publishedAt}>{moment(entry.publishedAt).fromNow()}</time></li>)}
                             </ul>
                         </div>
                     </header>

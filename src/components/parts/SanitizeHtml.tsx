@@ -3,7 +3,7 @@ import { findDOMNode } from 'react-dom';
 
 import sanitizeNode from 'utils/dom/sanitizeNode';
 
-export default class Sandbox extends PureComponent<any, any> {
+export default class SanitizeHtml extends PureComponent<any, any> {
     static propTypes = {
         className: PropTypes.string,
         html: PropTypes.string.isRequired

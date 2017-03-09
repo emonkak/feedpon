@@ -24,14 +24,13 @@
   "dependencies": {
     "@emonkak/enumerable": "^2.0.0",
     "classnames": "^2.2.5",
-    "fbjs": "^0.8.9",
+    "intersection-observer": "^0.2.1",
     "lodash.throttle": "^4.1.1",
     "moment": "^2.17.1",
     "react": "^15.4.2",
     "react-addons-css-transition-group": "^15.4.2",
     "react-dom": "^15.4.2",
-    "react-router": "^3.0.2",
-    "smoothscroll-polyfill": "^0.3.4"
+    "react-router": "^3.0.2"
   },
   "devDependencies": {
     "@types/classnames": "0.0.32",
@@ -50,7 +49,6 @@
     "postcss-custom-media": "^5.0.1",
     "postcss-import": "^9.1.0",
     "postcss-nesting": "^2.3.1",
-    "react-waypoint": "^5.1.0",
     "ts-loader": "^2.0.1",
     "tslint": "^4.4.2",
     "typescript": "^2.1.6",

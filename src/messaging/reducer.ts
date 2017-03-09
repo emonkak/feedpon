@@ -68,7 +68,7 @@ export default function reducer(state: State, event: Event): State {
         case 'VIEW_TYPE_CHANGED':
             return {
                 ...state,
-                viewType: event.viewType
+                viewMode: event.viewMode
             };
 
         default:

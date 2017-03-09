@@ -93,7 +93,7 @@ export function fetchFeed(feedId: string): AsyncEvent {
                     title: 'Feed title here',
                     entries: ENTRIES.map(entry => ({
                         ...entry,
-                        entryId: Math.random()
+                        entryId: entry.entryId + '.' + Date.now()
                     })),
                     hasMoreEntries: true,
                     isLoading: false
@@ -135,9 +135,9 @@ export function dismissNotification(id: any): Event {
     };
 }
 
-export function changeViewType(viewType: ViewType): Event {
+export function changeViewType(viewMode: ViewType): Event {
     return {
         type: 'VIEW_TYPE_CHANGED',
-        viewType
+        viewMode
     };
 }
