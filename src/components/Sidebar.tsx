@@ -106,8 +106,8 @@ export default class Sidebar extends PureComponent<Props, {}> {
                                     leftIcon={<i className="icon icon-16 icon-refresh" />}
                                     rightIcon={<i className="icon icon-16 icon-more" />} />
                         {groupedSubscriptions}
-                        <TreeLeaf key="/feeds/settings/" value="/feeds/settings/" primaryText="Settings" />
-                        <TreeLeaf key="/feeds/about/" value="/feeds/about/" primaryText="About..." />
+                        <TreeLeaf key="/settings/" value="/feeds/settings/" primaryText="Settings" />
+                        <TreeLeaf key="/about/" value="/feeds/about/" primaryText="About..." />
                     </Tree>
                 </div>
                 <div className="sidebar-group">
