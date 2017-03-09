@@ -108,6 +108,7 @@
 .entry-content img,
 .entry-content video {
   max-width: 100%;
+  height: auto;
 }
 
 .entry-action-list {
