@@ -39,7 +39,7 @@ export default class Dropdown extends PureComponent<any, any> {
         this.setState(state => ({ ...state, opened: false }));
     }
 
-    handleToggle(event: React.MouseEvent<any>) {
+    handleToggle(event: React.SyntheticEvent<any>) {
         event.preventDefault();
 
         const { opened } = this.state;

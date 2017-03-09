@@ -53,7 +53,7 @@ export default class TreeBranch extends PureComponent<any, any> {
         }));
     }
 
-    handleSelect(event: any) {
+    handleSelect(event: React.SyntheticEvent<any>) {
         event.preventDefault();
 
         const { selected } = this.props;

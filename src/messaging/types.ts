@@ -1,5 +1,6 @@
 export type Event
-    = { type: 'VIEW_TYPE_CHANGED', viewType: ViewType }
+    = { type: 'CATEGORIES_FETCHED', categories: Category[] }
+    | { type: 'VIEW_TYPE_CHANGED', viewType: ViewType }
     | { type: 'FEED_FETCHED', feed: Feed }
     | { type: 'FEED_FETCHING', feedId: string }
     | { type: 'FEED_UNSELECTED' }
@@ -7,11 +8,12 @@ export type Event
     | { type: 'NOTIFICATION_SENT', notification: Notification }
     | { type: 'SUBSCRIPTIONS_FETCHED', subscriptions: Subscription[] };
 
-export interface AsyncAction {
+export interface AsyncEvent {
     (dispatch: (event: Event) => void, getState: () => State): void;
 }
 
 export interface State {
+    categories: Category[];
     feed: Feed | null;
     notifications: Notification[];
     subscriptions: Subscription[];
@@ -43,7 +45,7 @@ export interface Subscription {
     feedId: string,
     subscriptionId: string | number;
     title: string;
-    category: Category;
+    categoryId: number;
     unreadCount: number;
 };
 

@@ -1,50 +1,47 @@
 import rss from 'json/rss.json';
-import { AsyncAction, Entry, Event, Notification, Subscription, ViewType } from 'messaging/types';
+import { AsyncEvent, Category, Entry, Event, Notification, Subscription, ViewType } from 'messaging/types';
 
 const SUBSCRIPTIONS: Subscription[] = [
     {
         subscriptionId: 1,
+        categoryId: 1,
         feedId: '1',
         title: 'Entry',
-        category: {
-            categoryId: 1,
-            feedId: '101',
-            name: 'Bike',
-        },
         unreadCount: 123,
     },
     {
         subscriptionId: 2,
+        categoryId: 1,
         feedId: '2',
         title: 'Really Very Long Title Entry',
-        category: {
-            categoryId: 1,
-            feedId: '102',
-            name: 'Bike',
-        },
         unreadCount: 0,
     },
     {
         subscriptionId: 3,
+        categoryId: 1,
         feedId: '3',
         title: 'Entry',
-        category: {
-            categoryId: 1,
-            feedId: '103',
-            name: 'Bike',
-        },
         unreadCount: 1234,
     },
     {
         subscriptionId: 4,
+        categoryId: 2,
         feedId: '4',
         title: 'Entry',
-        category: {
-            categoryId: 2,
-            feedId: '104',
-            name: 'Programing',
-        },
         unreadCount: 123,
+    }
+];
+
+const CATEGORIES: Category[] = [
+    {
+        categoryId: 1,
+        feedId: '101',
+        name: 'Bike'
+    },
+    {
+        categoryId: 2,
+        feedId: '102',
+        name: 'Programing'
     }
 ];
 
@@ -65,9 +62,14 @@ const ENTRIES: Entry[] = rss.items.map((item: any) => ({
 
 const DELAY = 500;
 
-export function fetchSubscriptions(): AsyncAction {
+export function fetchSubscriptions(): AsyncEvent {
     return dispatch => {
         setTimeout(() => {
+            dispatch({
+                type: 'CATEGORIES_FETCHED',
+                categories: CATEGORIES
+            });
+
             dispatch({
                 type: 'SUBSCRIPTIONS_FETCHED',
                 subscriptions: SUBSCRIPTIONS
@@ -76,7 +78,7 @@ export function fetchSubscriptions(): AsyncAction {
     };
 }
 
-export function fetchFeed(feedId: string): AsyncAction {
+export function fetchFeed(feedId: string): AsyncEvent {
     return (dispatch) => {
         dispatch({
             type: 'FEED_FETCHING',
@@ -107,7 +109,7 @@ export function unselectFeed(): Event {
     };
 }
 
-export function sendNotification(notification: Notification): AsyncAction {
+export function sendNotification(notification: Notification): AsyncEvent {
     if (!notification.id) {
         notification.id = Date.now();
     }

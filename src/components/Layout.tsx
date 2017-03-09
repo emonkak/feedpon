@@ -48,7 +48,7 @@ export default class Layout extends PureComponent<any, any> {
         this.refreshSidebar(!this.state.sidebarIsOpened);
     }
 
-    handleCloseSidebar(event: React.MouseEvent<any>) {
+    handleCloseSidebar(event: React.SyntheticEvent<any>) {
         if (event.target === event.currentTarget){
             this.refreshSidebar(false);
         }

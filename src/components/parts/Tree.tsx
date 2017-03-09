@@ -25,7 +25,7 @@ export default class Tree extends PureComponent<any, any> {
         }
     }
 
-    handleSelect(event: any, value: React.Key) {
+    handleSelect(event: React.SyntheticEvent<any>, value: React.Key) {
         const { onSelect } = this.props;
 
         if (onSelect) {
@@ -36,7 +36,7 @@ export default class Tree extends PureComponent<any, any> {
     }
 
     renderChild(child: React.ReactElement<any>) {
-        if (child.type === TreeBranch || child.type === TreeLeaf) {
+        if (child != null && (child.type === TreeBranch || child.type === TreeLeaf)) {
             const { value } = this.state;
 
             const shouldExpand = (child: React.ReactElement<any>) => {
@@ -56,9 +56,9 @@ export default class Tree extends PureComponent<any, any> {
                 ),
                 children: Children.map(child.props.children, this.renderChild.bind(this))
             });
-        } else {
-            return child;
         }
+
+        return child;
     }
 
     render() {

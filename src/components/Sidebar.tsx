@@ -7,24 +7,33 @@ import TreeBranch from 'components/parts/TreeBranch';
 import TreeHeader from 'components/parts/TreeHeader';
 import TreeLeaf from 'components/parts/TreeLeaf';
 import connect from 'utils/components/connect';
-import { State } from 'messaging/types';
+import { Category, State, Subscription } from 'messaging/types';
 import { fetchSubscriptions } from 'messaging/actions';
 import { replace } from 'utils/middlewares/historyActions';
 
-import '@emonkak/enumerable/extensions/groupBy';
+import '@emonkak/enumerable/extensions/groupJoin';
 import '@emonkak/enumerable/extensions/select';
 import '@emonkak/enumerable/extensions/toArray';
 
 const numberFormatter = new Intl.NumberFormat();
 
+interface Props {
+    readonly categories?: Category[];
+    readonly dispatch?: (action: any) => void;
+    readonly selectedValue?: string;
+    readonly subscriptions?: Subscription[];
+}
+
 @connect((state: State) => ({
+    categories: state.categories,
     subscriptions: state.subscriptions
 }))
-export default class Sidebar extends PureComponent<any, any> {
+export default class Sidebar extends PureComponent<Props, {}> {
     static propTypes = {
-        selectedValue: PropTypes.string,
+        categories: PropTypes.array.isRequired,
         dispatch: PropTypes.func.isRequired,
-        subscriptions: PropTypes.array.isRequired,
+        selectedValue: PropTypes.string,
+        subscriptions: PropTypes.array.isRequired
     };
 
     componentWillMount() {
@@ -33,13 +42,13 @@ export default class Sidebar extends PureComponent<any, any> {
         dispatch(fetchSubscriptions());
     }
 
-    handleSelect(event: any, selectedValue: any, activeType: React.ReactType) {
+    handleSelect(event: React.SyntheticEvent<any>, selectedValue: string, activeType: React.ReactType) {
         const { dispatch } = this.props;
 
         dispatch(replace(selectedValue));
     }
 
-    renderCategory(category: any, subscriptions: any[]) {
+    renderCategory(category: Category, subscriptions: Subscription[]) {
         const totalUnreadCount = subscriptions.reduce((total, subscription) => {
             return total + subscription.unreadCount;
         }, 0);
@@ -56,7 +65,7 @@ export default class Sidebar extends PureComponent<any, any> {
         );
     }
 
-    renderSubscription(subscription: any) {
+    renderSubscription(subscription: Subscription) {
         return (
             <TreeLeaf key={`/feeds/${subscription.feedId}`}
                       value={`/feeds/${subscription.feedId}`}
@@ -68,15 +77,20 @@ export default class Sidebar extends PureComponent<any, any> {
     }
 
     render() {
-        const { selectedValue, subscriptions } = this.props;
+        const { categories, selectedValue, subscriptions } = this.props;
 
-        const totalUnreadCount = (subscriptions as any[]).reduce((total, subscription) => {
+        const totalUnreadCount = subscriptions.reduce((total, subscription) => {
             return total + subscription.unreadCount;
         }, 0);
 
-        const groupedSubscriptions = new Enumerable(subscriptions as any[])
-            .groupBy(subscription => subscription.category.categoryId)
-            .select(([categoryId, subscriptions]) => this.renderCategory(subscriptions[0].category, subscriptions))
+        const groupedSubscriptions = new Enumerable(categories)
+            .groupJoin(
+                subscriptions,
+                category => category.categoryId,
+                subscription => subscription.categoryId,
+                (category, subscriptions) => ({ category, subscriptions })
+            )
+            .select(({ category, subscriptions }) => this.renderCategory(category, subscriptions))
             .toArray();
 
         return (

@@ -18,7 +18,7 @@ export default class TreeLeaf extends PureComponent<any, any> {
         selected: false,
     }
 
-    handleSelect(event: any) {
+    handleSelect(event: React.SyntheticEvent<any>) {
         event.preventDefault();
 
         const { selected } = this.props;

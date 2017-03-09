@@ -37,7 +37,7 @@ export default class Entry extends PureComponent<any, any> {
         expanded: false
     };
 
-    handleCollapse(event: React.MouseEvent<any>) {
+    handleCollapse(event: React.SyntheticEvent<any>) {
         const { onCollapse } = this.props;
 
         if (onCollapse) {

@@ -35,6 +35,12 @@ export default function reducer(state: State, event: Event): State {
                 }
             };
 
+        case 'CATEGORIES_FETCHED':
+            return {
+                ...state,
+                categories: event.categories
+            };
+
         case 'SUBSCRIPTIONS_FETCHED':
             return {
                 ...state,
