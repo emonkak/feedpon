@@ -39,10 +39,12 @@ export default class AutoHidingHeader extends PureComponent<any, any> {
     componentDidMount() {
         this.scrollable = this.props.getScrollableParent(findDOMNode(this));
         this.scrollable.addEventListener('scroll', this.handleScroll);
+        this.scrollable.addEventListener('touchmove', this.handleScroll);
     }
 
     componentWillUnmount() {
         this.scrollable.removeEventListener('scroll', this.handleScroll);
+        this.scrollable.removeEventListener('touchmove', this.handleScroll);
     }
 
     componentWillUpdate(nextProps: any, nextState: any) {
