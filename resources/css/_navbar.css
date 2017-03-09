@@ -2,6 +2,7 @@
   border-bottom: 1px solid var(--medium-color);
   background-color: var(--default-background-color);
   height: var(--navbar-height);
+  backface-visibility: hidden;
 }
 
 .navbar-container {
