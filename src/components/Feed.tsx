@@ -70,7 +70,7 @@ export default class Feed extends PureComponent<any, any> {
 
         if (feed.isLoading) {
             return (
-                <div className="entry-footer">
+                <div className="entry-latest">
                     <i className="icon icon-32 icon-size-24 icon-spinner" />Loading entries...
                 </div>
             );
@@ -79,14 +79,14 @@ export default class Feed extends PureComponent<any, any> {
 
             return (
                 <Waypoint disabled={isScrolling} onEnter={this.handleLoadMoreEntries.bind(this)}>
-                    <div className="entry-footer">
+                    <div className="entry-latest">
                         No more entries here.
                     </div>
                 </Waypoint>
             );
         } else {
             return (
-                <div className="entry-footer">
+                <div className="entry-latest">
                     No more entries here.
                 </div>
             );

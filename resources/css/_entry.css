@@ -59,17 +59,6 @@
   }
 }
 
-.entry-footer {
-  display: flex;
-  height: 100vh;
-  width: 100%;
-  text-align: center;
-  align-items: center;
-  justify-content: center;
-  background-color: var(--light-color);
-  font-weight: 600;
-}
-
 .entry-title {
   margin: 0;
   font-size: inherit;
@@ -129,4 +118,15 @@
 .entry-action:hover {
   color: var(--positive-color);
   text-decoration: none;
+}
+
+.entry-latest {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--light-color);
+  font-weight: 600;
 }
