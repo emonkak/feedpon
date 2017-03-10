@@ -62,12 +62,12 @@
   right: 0;
   width: 100%;
   z-index: 100;
-  transform: translateY(-var(--navbar-height));
+  transform: translate3d(0, -var(--navbar-height), 0);
   transition: transform 0.2s ease-in-out, padding 0.2s ease-in-out;
 }
 
 .l-main-header.is-pinned {
-  transform: translateY(0);
+  transform: translate3d(0, 0, 0);
 }
 
 @media (--md-viewport) {
