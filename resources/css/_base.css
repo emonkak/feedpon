@@ -32,12 +32,18 @@ html {
   font-size: 14px;
   line-height: var(--baseline-height);
   touch-action: manipulation;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
   margin: 0;
   color: var(--default-color);
   background-color: var(--default-background-color);
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -169,7 +175,6 @@ a {
   color: var(--positive-color);
   text-decoration: none;
   text-decoration-skip: ink;
-  -webkit-tap-highlight-color: transparent;
 }
 
 a:hover {
