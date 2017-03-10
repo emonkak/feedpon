@@ -63,3 +63,8 @@
   font-weight: 600;
   line-height: inherit;
 }
+
+.modal-is-opened {
+  overflow: hidden;
+  height: 100%;
+}

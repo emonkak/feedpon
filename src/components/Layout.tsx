@@ -57,8 +57,10 @@ export default class Layout extends PureComponent<any, any> {
     refreshSidebar(isOpened: boolean) {
         if (isOpened) {
             document.body.classList.add('sidebar-is-opened');
+            document.documentElement.classList.add('sidebar-is-opened');
         } else {
             document.body.classList.remove('sidebar-is-opened');
+            document.documentElement.classList.remove('sidebar-is-opened');
         }
 
         this.setState(state => ({

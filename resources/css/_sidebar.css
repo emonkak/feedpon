@@ -5,3 +5,8 @@
 .sidebar-group {
   margin-bottom: calc(var(--baseline-height) / 2);
 }
+
+.sidebar-is-opened {
+  overflow: hidden;
+  height: 100%;
+}
