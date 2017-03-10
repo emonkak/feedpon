@@ -12,16 +12,16 @@ export default class Dashboard extends PureComponent<any, any> {
         super(props, context);
 
         this.state = {
-            isModalShown: false,
+            modalIsOpened: false,
         };
     }
 
-    handleModalOpen() {
-        this.setState(state => ({ ...state, isModalShown: true }));
+    handleOpenModal() {
+        this.setState(state => ({ ...state, modalIsOpened: true }));
     }
 
-    handleModalClose() {
-        this.setState(state => ({ ...state, isModalShown: false }));
+    handleCloseModal() {
+        this.setState(state => ({ ...state, modalIsOpened: false }));
     }
 
     handleSendNotification(kind: any) {
@@ -35,7 +35,7 @@ export default class Dashboard extends PureComponent<any, any> {
     }
 
     render() {
-        const { isModalShown } = this.state;
+        const { modalIsOpened } = this.state;
 
         return (
             <div className="container">
@@ -97,15 +97,15 @@ export default class Dashboard extends PureComponent<any, any> {
 
                 <h2>Modal</h2>
                 <div className="button-toolbar">
-                    <button className="button button-positive" onClick={this.handleModalOpen.bind(this)}>Launch Modal</button>
+                    <button className="button button-positive" onClick={this.handleOpenModal.bind(this)}>Launch Modal</button>
                 </div>
-                <Modal shown={isModalShown} onHide={this.handleModalClose.bind(this)}>
-                    <button className="close" onClick={this.handleModalClose.bind(this)}></button>
+                <Modal opened={modalIsOpened} onClose={this.handleCloseModal.bind(this)}>
+                    <button className="close" onClick={this.handleCloseModal.bind(this)}></button>
                     <h3 className="modal-title">Modal Title</h3>
                     <p>Modal body text goes here.</p>
                     <div className="button-toolbar">
                         <button className="button button-positive">Okay</button>
-                        <button className="button button-invert" onClick={this.handleModalClose.bind(this)}>Cancel</button>
+                        <button className="button button-invert" onClick={this.handleCloseModal.bind(this)}>Cancel</button>
                     </div>
                 </Modal>
 

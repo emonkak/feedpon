@@ -56,12 +56,9 @@ export default class Layout extends PureComponent<any, any> {
 
     refreshSidebar(isOpened: boolean) {
         if (isOpened) {
-            const scrollbarWidth = window.innerWidth - document.body.clientWidth;
-            document.body.style.paddingRight = scrollbarWidth + 'px';
-            document.body.style.overflow = 'hidden';
+            document.body.classList.add('sidebar-is-opened');
         } else {
-            document.body.style.paddingRight = '';
-            document.body.style.overflow = '';
+            document.body.classList.remove('sidebar-is-opened');
         }
 
         this.setState(state => ({

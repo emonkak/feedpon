@@ -13,7 +13,7 @@
   padding: 0 1.5rem;
 }
 
-.modal.is-shown {
+.modal.is-opened {
   visibility: visible;
   overflow-y: auto;
 }
@@ -25,7 +25,7 @@
   transition: transform 0.2s ease-in-out;
 }
 
-.modal.is-shown > .modal-dialog {
+.modal.is-opened > .modal-dialog {
   opacity: 1;
   transform: translate(0, 0);
 }
@@ -43,7 +43,7 @@
   opacity: 0;
 }
 
-.modal-backdrop.is-shown {
+.modal-backdrop.is-opened {
   visibility: visible;
   opacity: 0.5;
   transition-delay: 0s;

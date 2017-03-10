@@ -4,12 +4,12 @@ import classnames from 'classnames';
 export default class Modal extends PureComponent<any, any> {
     static propTypes = {
         children: PropTypes.node.isRequired,
-        onHide: PropTypes.func,
-        shown: PropTypes.bool,
+        onClose: PropTypes.func,
+        opened: PropTypes.bool,
     };
 
     static defaultProps = {
-        shown: false,
+        opened: false,
     };
 
     componentDidMount() {
@@ -21,15 +21,12 @@ export default class Modal extends PureComponent<any, any> {
     }
 
     refreshBodyStyles() {
-        const { shown } = this.props;
+        const { opened } = this.props;
 
-        if (shown) {
-            const scrollbarWidth = window.innerWidth - document.body.clientWidth;
-            document.body.style.paddingRight = scrollbarWidth + 'px';
-            document.body.style.overflow = 'hidden';
+        if (opened) {
+            document.body.classList.add('modal-is-opened');
         } else {
-            document.body.style.paddingRight = '';
-            document.body.style.overflow = '';
+            document.body.classList.remove('modal-is-opened');
         }
     }
 
@@ -38,20 +35,20 @@ export default class Modal extends PureComponent<any, any> {
             return;
         }
 
-        const { onHide } = this.props;
+        const { onClose } = this.props;
 
-        if (onHide) {
-            onHide();
+        if (onClose) {
+            onClose();
         }
     }
 
     render() {
-        const { children, shown } = this.props;
+        const { children, opened } = this.props;
 
         return (
             <div>
-                <div className={classnames('modal-backdrop', { 'is-shown': shown })} />
-                <div className={classnames('modal', { 'is-shown': shown })}
+                <div className={classnames('modal-backdrop', { 'is-opened': opened })} />
+                <div className={classnames('modal', { 'is-opened': opened })}
                      onClick={this.handleClick.bind(this)}>
                     <div className="modal-dialog">
                         {children}
