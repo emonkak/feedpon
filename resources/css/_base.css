@@ -31,6 +31,7 @@ html {
   font-family: -apple-system, 'BlinkMacSystemFont', '.SFNSDisplay-Regular', 'San Francisco Text', 'Segoe UI', 'Helvetica', 'YuGothic', 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
   font-size: 14px;
   line-height: var(--baseline-height);
+  touch-action: manipulation;
 }
 
 body {
