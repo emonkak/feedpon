@@ -25,10 +25,10 @@ export default class Modal extends PureComponent<any, any> {
 
         if (opened) {
             document.body.classList.add('modal-is-opened');
-            document.documentElement.classList.add('sidebar-is-opened');
+            document.documentElement.classList.add('modal-is-opened');
         } else {
             document.body.classList.remove('modal-is-opened');
-            document.documentElement.classList.remove('sidebar-is-opened');
+            document.documentElement.classList.remove('modal-is-opened');
         }
     }
 
