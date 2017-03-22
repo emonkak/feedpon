@@ -1,13 +1,26 @@
 export default function throttleEventHandler(handler: (event?: Event) => void, throttleTime: number): (event: Event) => void {
     let lastInvoked = 0;
+    let timer = null;
 
     return function(event: Event): void {
-        const { timeStamp } = event;
+        if (timer == null) {
+            const { timeStamp } = event;
+            const elapsedTime = timeStamp - lastInvoked;
 
-        if (timeStamp - lastInvoked > throttleTime) {
-            handler(event);
+            if (elapsedTime < throttleTime) {
+                const delay = throttleTime - elapsedTime;
 
-            lastInvoked = timeStamp;
+                timer = setTimeout(() => {
+                    handler(event);
+
+                    lastInvoked = timeStamp + delay;
+                    timer = null;
+                }, delay);
+            } else {
+                handler(event);
+
+                lastInvoked = timeStamp;
+            }
         }
     };
 }

@@ -5,7 +5,9 @@ const initialState: State = {
     feed: null,
     notifications: [],
     subscriptions: [],
-    viewMode: 'collapsible',
+    preference: {
+        viewMode: 'expanded'
+    }
 };
 
 export default initialState;

@@ -3,12 +3,14 @@ import React, { PropTypes, PureComponent } from 'react';
 import EntryList from 'components/parts/EntryList';
 import connect from 'utils/components/connect';
 import { State } from 'messaging/types';
-import { fetchFeed, unselectFeed } from 'messaging/actions';
+import { fetchFeed, markEntryAsRead, saveReadEntries, unselectFeed } from 'messaging/actions';
 
-@connect((state: State) => ({
-    feed: state.feed,
-    viewMode: state.viewMode
-}))
+@connect((state: State) => {
+    return {
+        feed: state.feed,
+        viewMode: state.preference.viewMode
+    };
+})
 export default class Feed extends PureComponent<any, any> {
     static propTypes = {
         dispatch: PropTypes.func.isRequired,
@@ -17,6 +19,7 @@ export default class Feed extends PureComponent<any, any> {
             hasMoreEntries: PropTypes.bool.isRequired,
             isLoading: PropTypes.bool.isRequired
         }),
+        isScrolling: PropTypes.bool.isRequired,
         scrollTo: PropTypes.func.isRequired,
         viewMode: PropTypes.oneOf(['expanded', 'collapsible']).isRequired
     };
@@ -29,33 +32,41 @@ export default class Feed extends PureComponent<any, any> {
 
     componentWillUpdate(nextProps: any, nextState: any) {
         if (this.props.params.feed_id !== nextProps.params.feed_id) {
-            const { dispatch } = this.props;
+            const { feed, dispatch } = this.props;
+
+            if (feed) {
+                dispatch(saveReadEntries(feed.entries.filter(entry => entry.readAt)));
+            }
 
             dispatch(fetchFeed(nextProps.params.feed_id));
         }
     }
 
     componentWillUnmount() {
-        const { dispatch } = this.props;
+        this.props.dispatch(unselectFeed());
+    }
 
-        dispatch(unselectFeed());
+    handleMarkEntryAsRead(entryId: string) {
+        this.props.dispatch(markEntryAsRead(entryId, new Date()));
     }
 
     handleLoadMoreEntries(event: React.SyntheticEvent<any>) {
-        const { dispatch, params } = this.props;
-
         event.preventDefault();
+
+        const { dispatch, params } = this.props;
 
         dispatch(fetchFeed(params.feed_id));
     }
 
     renderList() {
-        const { feed, scrollTo, viewMode } = this.props;
+        const { feed, isScrolling, scrollTo, viewMode } = this.props;
 
         return (
             <EntryList
                 entries={feed ? feed.entries : []}
-                loading={!feed}
+                isLoading={!feed}
+                isScrolling={isScrolling}
+                onMarkAsRead={this.handleMarkEntryAsRead.bind(this)}
                 scrollTo={scrollTo}
                 viewMode={viewMode} />
         );

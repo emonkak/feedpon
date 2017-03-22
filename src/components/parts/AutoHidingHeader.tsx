@@ -7,19 +7,19 @@ import throttleEventHandler from 'utils/throttleEventHandler';
 
 export default class AutoHidingHeader extends PureComponent<any, any> {
     static propTypes = {
-        children: PropTypes.node,
+        children: PropTypes.node.isRequired,
         className: PropTypes.string,
-        pinned: PropTypes.bool,
         getScrollableParent: PropTypes.func,
-        tolerance: PropTypes.number,
-        scrollThrottleTime: PropTypes.number
+        isPinned: PropTypes.bool.isRequired,
+        scrollThrottleTime: PropTypes.number.isRequired,
+        tolerance: PropTypes.number.isRequired
     };
 
     static defaultProps = {
         getScrollableParent,
-        pinned: true,
-        scrollThrottleTime: 60,
-        tolerance: 8
+        isPinned: true,
+        scrollThrottleTime: 100,
+        tolerance: 4
     };
 
     private lastScrollTop: number = null;
@@ -30,10 +30,10 @@ export default class AutoHidingHeader extends PureComponent<any, any> {
         super(props, context);
 
         this.state = {
-            isPinned: props.pinned
+            isPinned: props.isPinned
         };
 
-        this.handleScroll = throttleEventHandler(this.handleScroll.bind(this), props.scrollThrottleTime) as any;
+        this.handleScroll = throttleEventHandler(this.handleScroll.bind(this), props.scrollThrottleTime);
     }
 
     componentDidMount() {
@@ -47,24 +47,24 @@ export default class AutoHidingHeader extends PureComponent<any, any> {
         this.scrollable.removeEventListener('touchmove', this.handleScroll);
     }
 
-    componentWillUpdate(nextProps: any, nextState: any) {
-        if (this.props.pinned !== nextProps.pinned) {
+    componentWillReceiveProps(nextProps: any) {
+        if (this.props.isPinned !== nextProps.isPinned) {
             const { clientHeight } = findDOMNode(this);
             const scrollTop = this.scrollable.scrollY || this.scrollable.scrollTop || 0;
 
             this.setState(state => ({
                 ...state,
-                isPinned: nextProps.pinned && scrollTop < clientHeight
+                isPinned: nextProps.isPinned && scrollTop < clientHeight
             }));
 
             this.lastScrollTop = null;
         }
     }
 
-    handleScroll() {
-        const { pinned, tolerance } = this.props;
+    handleScroll(event: Event) {
+        const { isPinned } = this.props;
 
-        if (pinned) {
+        if (isPinned) {
             const scrollTop = this.scrollable.scrollY || this.scrollable.scrollTop || 0;
 
             /// Ignore first scroll
@@ -80,6 +80,7 @@ export default class AutoHidingHeader extends PureComponent<any, any> {
                     }));
                 } else {
                     const scrollDistance = Math.abs(this.lastScrollTop - scrollTop);
+                    const { tolerance } = this.props;
 
                     if (scrollDistance > tolerance) {
                         this.setState(state => ({
@@ -95,11 +96,10 @@ export default class AutoHidingHeader extends PureComponent<any, any> {
     }
 
     render() {
-        const { children, className, pinned } = this.props;
-        const { isPinned } = this.state;
+        const { children, className, isPinned } = this.props;
 
         const containerClassName = classnames(className, {
-            'is-pinned': pinned && isPinned
+            'is-pinned': isPinned && this.state.isPinned
         });
 
         return (

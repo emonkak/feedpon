@@ -4,12 +4,12 @@ import { findDOMNode } from 'react-dom';
 export default class Closable extends PureComponent<any, any> {
     static propTypes = {
         children: PropTypes.element.isRequired,
-        disabled: PropTypes.bool,
+        isDisabled: PropTypes.bool.isRequired,
         onClose: PropTypes.func,
     };
 
     static defaultProps = {
-        disabled: false,
+        isDisabled: false,
     }
 
     private childElement: Element;
@@ -33,18 +33,18 @@ export default class Closable extends PureComponent<any, any> {
     }
 
     componentDidMount() {
-        const { disabled } = this.props;
+        const { isDisabled } = this.props;
 
-        if (!disabled) {
+        if (!isDisabled) {
             this.registerDocumentListeners();
         }
     }
 
     componentDidUpdate(prevProps: any, prevState: any) {
-        const { disabled } = this.props;
+        const { isDisabled } = this.props;
 
-        if (prevProps.disabled !== disabled) {
-            if (disabled) {
+        if (prevProps.isDisabled !== isDisabled) {
+            if (isDisabled) {
                 this.unregisterDocumentListeners();
             } else {
                 this.registerDocumentListeners();
@@ -53,9 +53,9 @@ export default class Closable extends PureComponent<any, any> {
     }
 
     componentWillUnmount() {
-        const { disabled } = this.props;
+        const { isDisabled } = this.props;
 
-        if (!disabled) {
+        if (!isDisabled) {
             this.unregisterDocumentListeners();
         }
     }

@@ -38,6 +38,14 @@
 .entry.is-expanded {
   padding: var(--baseline-height) 0 calc(var(--baseline-height) - 1px);
 
+  & .entry-description {
+    display: none;
+  }
+
+  & .entry-content {
+    display: block;
+  }
+
   & .entry-header {
     margin: 0 0 var(--baseline-height);
     text-align: center;
@@ -88,6 +96,7 @@
 }
 
 .entry-content {
+  display: none;
   margin: 0 0 var(--baseline-height);
   hyphens: auto;
   overflow-wrap: break-word;

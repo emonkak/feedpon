@@ -3,17 +3,17 @@ import classnames from 'classnames';
 
 export default class EntryPlaceholder extends React.Component<any, any> {
     static propTypes = {
-        expanded: PropTypes.bool
+        isExpanded: PropTypes.bool.isRequired
     };
 
     static defaultProps = {
-        expanded: false
+        isExpanded: false
     };
 
     renderContent() {
-        const { expanded } = this.props;
+        const { isExpanded } = this.props;
 
-        if (expanded) {
+        if (isExpanded) {
             return (
                 <div className="entry-content">
                     <p>
@@ -46,11 +46,11 @@ export default class EntryPlaceholder extends React.Component<any, any> {
     }
 
     render() {
-        const { expanded } = this.props;
+        const { isExpanded } = this.props;
 
         return (
             <article className={classnames('entry', {
-                'is-expanded': expanded
+                'is-expanded': isExpanded
             })}>
                 <div className="container">
                     <header className="entry-header">

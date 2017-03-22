@@ -3,8 +3,8 @@ import moment from 'moment';
 
 export default class RelativeTime extends PureComponent<any, any> {
     static propTypes = {
-        time: PropTypes.string,
-        interval: PropTypes.number
+        time: PropTypes.string.isRequired,
+        interval: PropTypes.number.isRequired
     };
 
     static defaultProps = {

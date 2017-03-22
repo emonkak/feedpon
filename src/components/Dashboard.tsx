@@ -92,14 +92,14 @@ export default class Dashboard extends PureComponent<any, any> {
                     <MenuItem primaryText="Second Action"></MenuItem>
                     <MenuItem primaryText="Third Action"></MenuItem>
                     <div className="menu-divider"></div>
-                    <MenuItem primaryText="Forth Action"></MenuItem>
+                    <MenuItem isDisabled={true} primaryText="Forth Action"></MenuItem>
                 </Dropdown>
 
                 <h2>Modal</h2>
                 <div className="button-toolbar">
                     <button className="button button-positive" onClick={this.handleOpenModal.bind(this)}>Launch Modal</button>
                 </div>
-                <Modal opened={modalIsOpened} onClose={this.handleCloseModal.bind(this)}>
+                <Modal isOpened={modalIsOpened} onClose={this.handleCloseModal.bind(this)}>
                     <button className="close" onClick={this.handleCloseModal.bind(this)}></button>
                     <h3 className="modal-title">Modal Title</h3>
                     <p>Modal body text goes here.</p>

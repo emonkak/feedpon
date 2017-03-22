@@ -7,32 +7,32 @@ export default class TreeBranch extends PureComponent<any, any> {
     static propTypes = {
         children: PropTypes.node.isRequired,
         className: PropTypes.string,
-        expanded: PropTypes.bool,
+        isExpanded: PropTypes.bool,
+        isSelected: PropTypes.bool,
         onExpand: PropTypes.func,
         onSelect: PropTypes.func,
         primaryText: PropTypes.string.isRequired,
         secondaryText: PropTypes.string,
-        selected: PropTypes.bool,
         value: PropTypes.any.isRequired,
     };
 
     static defaultProps = {
-        expanded: false,
+        isExpanded: false,
     }
 
     constructor(props: any) {
         super(props);
 
         this.state = {
-            expanded: props.expanded,
+            isExpanded: props.isExpanded,
         };
     }
 
     componentWillReceiveProps(nextProps: any) {
-        if (this.props.expanded !== nextProps.expanded) {
+        if (this.props.isExpanded !== nextProps.isExpanded) {
             this.setState(state => ({
                 ...state,
-                expanded: nextProps.expanded || state.expanded,
+                isExpanded: nextProps.isExpanded || state.isExpanded,
             }));
         }
     }
@@ -41,23 +41,23 @@ export default class TreeBranch extends PureComponent<any, any> {
         event.preventDefault();
 
         const { onExpand } = this.props;
-        const { expanded } = this.state;
+        const { isExpanded } = this.state;
 
         if (onExpand) {
-            onExpand(event, !expanded);
+            onExpand(event, !isExpanded);
         }
 
         this.setState(state => ({
             ...state,
-            expanded: !expanded,
+            isExpanded: !isExpanded,
         }));
     }
 
     handleSelect(event: React.SyntheticEvent<any>) {
         event.preventDefault();
 
-        const { selected } = this.props;
-        if (selected) {
+        const { isSelected } = this.props;
+        if (isSelected) {
             return;
         }
 
@@ -68,9 +68,9 @@ export default class TreeBranch extends PureComponent<any, any> {
     }
 
     renderIcon() {
-        const { expanded } = this.state;
+        const { isExpanded } = this.state;
 
-        if (expanded) {
+        if (isExpanded) {
             return (
                 <i className="icon icon-16 icon-angle-down" />
             );
@@ -82,12 +82,12 @@ export default class TreeBranch extends PureComponent<any, any> {
     }
 
     render() {
-        const { children, className, primaryText, secondaryText, selected } = this.props;
-        const { expanded } = this.state;
+        const { children, className, isSelected, primaryText, secondaryText } = this.props;
+        const { isExpanded } = this.state;
 
         return (
             <li>
-                <TreeNode className={classnames({ 'is-selected': selected, 'is-expanded': expanded }, className)}
+                <TreeNode className={classnames({ 'is-selected': isSelected, 'is-expanded': isExpanded }, className)}
                           icon={this.renderIcon()}
                           primaryText={primaryText}
                           secondaryText={secondaryText}

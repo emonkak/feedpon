@@ -48,8 +48,8 @@ export default class Tree extends PureComponent<any, any> {
 
             return cloneElement(child, {
                 ...child.props,
-                expanded: shouldExpand(child),
-                selected: child.props.value === value,
+                isExpanded: shouldExpand(child),
+                isSelected: child.props.value === value,
                 onSelect: createChainedFunction(
                     event => this.handleSelect(event, child.key),
                     child.props.onSelect

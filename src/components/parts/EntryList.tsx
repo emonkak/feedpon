@@ -7,16 +7,14 @@ import { Entry as EntryType } from 'messaging/types';
 
 export default class EntryList extends PureComponent<any, any> {
     static propTypes = {
-        entries: PropTypes.arrayOf(PropTypes.object),
-        loading: PropTypes.bool,
-        viewMode: PropTypes.oneOf(['expanded', 'collapsible']).isRequired
+        entries: PropTypes.arrayOf(PropTypes.object).isRequired,
+        isScrolling: PropTypes.bool.isRequired,
+        isLoading: PropTypes.bool.isRequired,
+        viewMode: PropTypes.oneOf(['expanded', 'collapsible']).isRequired,
+        onMarkAsRead: PropTypes.func
     };
 
-    static defaultProps = {
-        loading: false
-    };
-
-    private activeId: string;
+    private activeEntryId: string;
 
     private scrollElement: HTMLElement;
 
@@ -24,7 +22,7 @@ export default class EntryList extends PureComponent<any, any> {
         super(props, context);
 
         this.state = {
-            collapsedId: null
+            collapsedEntryId: null
         };
     }
 
@@ -32,15 +30,15 @@ export default class EntryList extends PureComponent<any, any> {
         if (nextProps.viewMode !== this.props.viewMode) {
             this.setState(state => ({
                 ...state,
-                collapsedId: null
+                collapsedEntryId: null
             }));
         }
     }
 
     componentWillUpdate(nextProps: any, nextState: any) {
         if (nextProps.viewMode !== this.props.viewMode) {
-            if (this.activeId != null) {
-                this.scrollElement = document.getElementById('entry-' + this.activeId);
+            if (this.activeEntryId != null) {
+                this.scrollElement = document.getElementById('entry-' + this.activeEntryId);
             }
         }
     }
@@ -53,41 +51,55 @@ export default class EntryList extends PureComponent<any, any> {
         }
     }
 
-    handleActivateEntry(activeId: string, inactiveId: string | null) {
-        this.activeId = activeId;
+    handleActivate(activeEntryId: string, inactiveEntryId: string, activeEntryIndex: number, inactiveEntryIndex: number) {
+        this.activeEntryId = activeEntryId;
+
+        const { onMarkAsRead } = this.props;
+
+        if (onMarkAsRead
+            && inactiveEntryId != ''
+            && activeEntryIndex > inactiveEntryIndex) {
+            onMarkAsRead(inactiveEntryId);
+        }
     }
 
-    handleInactivateEntry(inactiveId: string) {
-        this.activeId = null;
+    handleInactivate(inactiveEntryId: string) {
+        this.activeEntryId = null;
+
+        const { onMarkAsRead } = this.props;
+
+        if (onMarkAsRead) {
+            onMarkAsRead(inactiveEntryId);
+        }
     }
 
-    handleCollapse(collapsedId: any, collapsedElement: HTMLElement) {
+    handleCollapse(collapsedEntryId: any, collapsedElement: HTMLElement) {
         this.scrollElement = collapsedElement;
 
         this.setState(state => ({
             ...state,
-            collapsedId
+            collapsedEntryId
         }));
     }
 
     handleClose() {
         this.setState(state => ({
             ...state,
-            collapsedId: null
+            collapsedEntryId: null
         }));
     }
 
     renderEntry(entry: EntryType) {
-        const { collapsedId } = this.state;
+        const { collapsedEntryId } = this.state;
         const { viewMode } = this.props;
-        const collapsible = viewMode === 'collapsible';
-        const expanded = viewMode === 'expanded' || collapsedId === entry.entryId;
+        const isCollapsible = viewMode === 'collapsible';
+        const isExpanded = viewMode === 'expanded' || collapsedEntryId === entry.entryId;
 
         return (
             <Entry
-                collapsible={collapsible}
                 entry={entry}
-                expanded={expanded}
+                isCollapsible={isCollapsible}
+                isExpanded={isExpanded}
                 key={entry.entryId}
                 onClose={this.handleClose.bind(this)}
                 onCollapse={this.handleCollapse.bind(this, entry.entryId)} />
@@ -97,32 +109,35 @@ export default class EntryList extends PureComponent<any, any> {
     renderActiveEntry(child: React.ReactElement<any>) {
         return cloneElement(child, {
             ...child.props,
-            active: true
+            isActive: true
         });
     }
 
     render() {
-        const { entries, loading, viewMode } = this.props;
+        const { isLoading, viewMode } = this.props;
 
-        if (loading) {
-            const expanded = viewMode === 'expanded';
+        if (isLoading) {
+            const isExpanded = viewMode === 'expanded';
 
             return (
                 <div className="entry-list">
-                    <EntryPlaceholder expanded={expanded} />
-                    <EntryPlaceholder expanded={expanded} />
-                    <EntryPlaceholder expanded={expanded} />
-                    <EntryPlaceholder expanded={expanded} />
-                    <EntryPlaceholder expanded={expanded} />
+                    <EntryPlaceholder isExpanded={isExpanded} />
+                    <EntryPlaceholder isExpanded={isExpanded} />
+                    <EntryPlaceholder isExpanded={isExpanded} />
+                    <EntryPlaceholder isExpanded={isExpanded} />
+                    <EntryPlaceholder isExpanded={isExpanded} />
                 </div>
             );
         }
 
+        const { entries, isScrolling } = this.props;
+
         return (
             <ScrollSpy
-                onActivate={this.handleActivateEntry.bind(this)}
-                onInactivate={this.handleInactivateEntry.bind(this)}
                 className="entry-list"
+                isDisabled={isScrolling}
+                onActivate={this.handleActivate.bind(this)}
+                onInactivate={this.handleInactivate.bind(this)}
                 renderActiveChild={this.renderActiveEntry.bind(this)}>
                 {entries.map(this.renderEntry.bind(this))}
             </ScrollSpy>

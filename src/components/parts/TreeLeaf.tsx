@@ -7,22 +7,22 @@ export default class TreeLeaf extends PureComponent<any, any> {
     static propTypes = {
         className: PropTypes.string,
         icon: PropTypes.element,
+        isSelected: PropTypes.bool.isRequired,
         onSelect: PropTypes.func,
         primaryText: PropTypes.string.isRequired,
         secondaryText: PropTypes.string,
-        selected: PropTypes.bool,
         value: PropTypes.any.isRequired,
     };
 
     static defaultProps = {
-        selected: false,
+        isSelected: false,
     }
 
     handleSelect(event: React.SyntheticEvent<any>) {
         event.preventDefault();
 
-        const { selected } = this.props;
-        if (selected) {
+        const { isSelected } = this.props;
+        if (isSelected) {
             return;
         }
 
@@ -33,11 +33,11 @@ export default class TreeLeaf extends PureComponent<any, any> {
     }
 
     render() {
-        const { className, icon, primaryText, secondaryText, selected } = this.props;
+        const { className, icon, isSelected, primaryText, secondaryText } = this.props;
 
         return (
             <li>
-                <TreeNode className={classnames({ 'is-selected': selected }, className)}
+                <TreeNode className={classnames({ 'is-selected': isSelected }, className)}
                           icon={icon}
                           primaryText={primaryText}
                           secondaryText={secondaryText}

@@ -98,13 +98,20 @@ export default class Layout extends PureComponent<any, any> {
                 </div>
                 <div className="l-main">
                     <AutoHidingHeader
-                        pinned={!isScrolling}
+                        isPinned={!isScrolling}
                         className="l-main-header">
-                        {cloneElement(navbar, { onToggleSidebar: this.handleToggleSidebar.bind(this) })}
+                        {cloneElement(navbar, {
+                            isScrolling,
+                            onToggleSidebar: this.handleToggleSidebar.bind(this),
+                            scrollTo: this.scrollTo.bind(this)
+                        })}
                         <Notifications />
                     </AutoHidingHeader>
                     <div className="l-main-content">
-                        {cloneElement(content, { isScrolling, scrollTo: this.scrollTo.bind(this) })}
+                        {cloneElement(content, {
+                            isScrolling,
+                            scrollTo: this.scrollTo.bind(this)
+                        })}
                     </div>
                 </div>
             </div>

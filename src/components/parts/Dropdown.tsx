@@ -8,25 +8,29 @@ import createChainedFunction from 'utils/createChainedFunction';
 export default class Dropdown extends PureComponent<any, any> {
     static propTypes = {
         className: PropTypes.string,
+        isOpened: PropTypes.bool.isRequired,
         onClose: PropTypes.func,
         onSelect: PropTypes.func,
-        opened: PropTypes.bool,
         pullRight: PropTypes.bool,
-        toggleButton: PropTypes.element.isRequired,
+        toggleButton: PropTypes.element.isRequired
+    };
+
+    static defaultProps = {
+        isOpened: false
     };
 
     constructor(props: any, context: any) {
         super(props, context);
 
         this.state = {
-            opened: !!props.opened,
+            isOpened: !!props.isOpened,
             pullRight: false,
         };
     }
 
     componentWillReceiveProps(nextProps: any) {
-        if (this.props.opened !== nextProps.opened) {
-            this.setState(state => ({ ...state, opened: nextProps.opened }));
+        if (this.props.isOpened !== nextProps.isOpened) {
+            this.update(nextProps.isOpened);
         }
     }
 
@@ -37,15 +41,27 @@ export default class Dropdown extends PureComponent<any, any> {
             onClose();
         }
 
-        this.setState(state => ({ ...state, opened: false }));
+        this.update(false);
     }
 
     handleToggle(event: React.SyntheticEvent<any>) {
         event.preventDefault();
 
-        const { opened } = this.state;
+        const { isOpened } = this.state;
 
-        this.setState(state => ({ ...state, opened: !opened }));
+        this.update(!isOpened);
+    }
+
+    update(isOpened: boolean) {
+        if (isOpened) {
+            document.body.classList.add('dropdown-is-opened');
+            document.documentElement.classList.add('dropdown-is-opened');
+        } else {
+            document.body.classList.remove('dropdown-is-opened');
+            document.documentElement.classList.remove('dropdown-is-opened');
+        }
+
+        this.setState(state => ({ ...state, isOpened }));
     }
 
     renderToggleButton() {
@@ -64,13 +80,13 @@ export default class Dropdown extends PureComponent<any, any> {
 
     render() {
         const { children, className, onSelect, pullRight } = this.props;
-        const { opened } = this.state;
+        const { isOpened } = this.state;
 
         return (
-            <div className={classnames('dropdown', className, { 'is-opened': opened })}>
+            <div className={classnames('dropdown', className, { 'is-opened': isOpened })}>
                 {this.renderToggleButton()}
                 <Closable onClose={this.handleClose.bind(this)}
-                          disabled={!opened}>
+                          isDisabled={!isOpened}>
                     <Menu onSelect={createChainedFunction(onSelect, this.handleClose.bind(this))}
                           pullRight={pullRight}>
                         {children}

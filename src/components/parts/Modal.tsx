@@ -4,12 +4,12 @@ import classnames from 'classnames';
 export default class Modal extends PureComponent<any, any> {
     static propTypes = {
         children: PropTypes.node.isRequired,
-        onClose: PropTypes.func,
-        opened: PropTypes.bool,
+        isOpened: PropTypes.bool.isRequired,
+        onClose: PropTypes.func
     };
 
     static defaultProps = {
-        opened: false,
+        isOpened: false,
     };
 
     componentDidMount() {
@@ -21,9 +21,9 @@ export default class Modal extends PureComponent<any, any> {
     }
 
     refreshBodyStyles() {
-        const { opened } = this.props;
+        const { isOpened } = this.props;
 
-        if (opened) {
+        if (isOpened) {
             document.body.classList.add('modal-is-opened');
             document.documentElement.classList.add('modal-is-opened');
         } else {
@@ -45,12 +45,12 @@ export default class Modal extends PureComponent<any, any> {
     }
 
     render() {
-        const { children, opened } = this.props;
+        const { children, isOpened } = this.props;
 
         return (
             <div>
-                <div className={classnames('modal-backdrop', { 'is-opened': opened })} />
-                <div className={classnames('modal', { 'is-opened': opened })}
+                <div className={classnames('modal-backdrop', { 'is-opened': isOpened })} />
+                <div className={classnames('modal', { 'is-opened': isOpened })}
                      onClick={this.handleClick.bind(this)}>
                     <div className="modal-dialog">
                         {children}

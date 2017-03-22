@@ -5,9 +5,13 @@ import createChainedFunction from 'utils/createChainedFunction';
 
 export default class Menu extends PureComponent<any, any> {
     static propTypes = {
-        children: PropTypes.node.isRequired,
+        children: PropTypes.node,
         onSelect: PropTypes.func,
-        pullRight: PropTypes.bool,
+        pullRight: PropTypes.bool.isRequired,
+    };
+
+    static defaultProps = {
+        pullRight: false
     };
 
     renderChild(child: React.ReactElement<any>) {

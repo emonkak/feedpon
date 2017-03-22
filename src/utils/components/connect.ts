@@ -25,7 +25,7 @@ export default function connect<TAction, TState>(mapStateToProps?: (state: TStat
             constructor(props: any, context: any) {
                 super(props, context);
 
-                this.state = context.store.state as TState;
+                this.state = mapStateToProps(context.store.state as TState);
             }
 
             componentWillMount() {

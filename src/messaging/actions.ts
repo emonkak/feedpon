@@ -1,5 +1,5 @@
 import rss from 'json/rss.json';
-import { AsyncEvent, Category, Entry, Event, Notification, Subscription, ViewType } from 'messaging/types';
+import { AsyncEvent, Category, Entry, Event, ViewMode, Notification, Subscription } from 'messaging/types';
 
 const SUBSCRIPTIONS: Subscription[] = [
     {
@@ -55,12 +55,57 @@ const ENTRIES: Entry[] = rss.items.map((item: any) => ({
     title: item.title,
     url: item.link,
     origin: {
+        feedId: rss.feed.url,
         title: rss.feed.title,
         url: rss.feed.link,
-    }
+    },
+    keepUnread: false
 }));
 
+const DEFAULT_DISMISS_AFTER = 3000;
+
 const DELAY = 500;
+
+export function markEntryAsRead(entryId: string, timestamp: Date): Event {
+    return {
+        type: 'ENTRY_MARKED_AS_READ',
+        entryId,
+        readAt: timestamp.toISOString()
+    };
+}
+
+export function clearReadEntries(): Event {
+    return {
+        type: 'READ_ENTRIES_CLEARED'
+    };
+}
+
+export function keepEntryAsUnread(entryId: string): Event {
+    return {
+        type: 'ENTRY_KEPT_AS_UNREAD',
+        entryId
+    };
+}
+
+export function saveReadEntries(entries: Entry[]): AsyncEvent {
+    return (dispatch, getState) => {
+        if (entries.length === 0) {
+            return;
+        }
+
+        setTimeout(() => {
+            const message = entries.length === 1
+                ? `${entries.length} entry is marked as read.`
+                : `${entries.length} entries are marked as read.`;
+
+            sendNotification({
+                message,
+                kind: 'positive',
+                dismissAfter: DEFAULT_DISMISS_AFTER
+            })(dispatch, getState);
+        }, DELAY);
+    };
+}
 
 export function fetchSubscriptions(): AsyncEvent {
     return dispatch => {
@@ -82,7 +127,7 @@ export function fetchFeed(feedId: string): AsyncEvent {
     return (dispatch) => {
         dispatch({
             type: 'FEED_FETCHING',
-            feedId
+            feedId: feedId
         });
 
         setTimeout(() => {
@@ -135,9 +180,9 @@ export function dismissNotification(id: any): Event {
     };
 }
 
-export function changeViewType(viewMode: ViewType): Event {
+export function changeViewMode(viewMode: ViewMode): Event {
     return {
-        type: 'VIEW_TYPE_CHANGED',
+        type: 'VIEW_MODE_CHANGED',
         viewMode
     };
 }
