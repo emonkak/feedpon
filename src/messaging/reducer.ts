@@ -8,6 +8,7 @@ export default function reducer(state: State, event: Event): State {
                     ...state,
                     feed: {
                         ...state.feed,
+                        hasMoreEntries: false,
                         isLoading: true
                     }
                 };

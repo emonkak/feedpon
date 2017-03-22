@@ -83,7 +83,6 @@ export default class Entry extends PureComponent<any, any> {
                         <button type="button" className="close" onClick={this.handleClose.bind(this)} />
                         <h2 className="entry-title">
                             <a
-                                className="entry-title"
                                 target="_blank"
                                 href={entry.url}
                                 onClick={this.handleCollapse.bind(this)}>

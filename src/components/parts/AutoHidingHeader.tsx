@@ -1,9 +1,9 @@
 import React, { PropTypes, PureComponent } from 'react';
 import classnames from 'classnames';
-import throttle from 'lodash.throttle';
 import { findDOMNode } from 'react-dom';
 
 import getScrollableParent from 'utils/dom/getScrollableParent';
+import throttleEventHandler from 'utils/throttleEventHandler';
 
 export default class AutoHidingHeader extends PureComponent<any, any> {
     static propTypes = {
@@ -12,13 +12,13 @@ export default class AutoHidingHeader extends PureComponent<any, any> {
         pinned: PropTypes.bool,
         getScrollableParent: PropTypes.func,
         tolerance: PropTypes.number,
-        scrollDebounceTime: PropTypes.number
+        scrollThrottleTime: PropTypes.number
     };
 
     static defaultProps = {
         getScrollableParent,
         pinned: true,
-        scrollDebounceTime: 100,
+        scrollThrottleTime: 60,
         tolerance: 8
     };
 
@@ -33,7 +33,7 @@ export default class AutoHidingHeader extends PureComponent<any, any> {
             isPinned: props.pinned
         };
 
-        this.handleScroll = throttle(this.handleScroll.bind(this), props.scrollDebounceTime);
+        this.handleScroll = throttleEventHandler(this.handleScroll.bind(this), props.scrollThrottleTime) as any;
     }
 
     componentDidMount() {
@@ -63,13 +63,17 @@ export default class AutoHidingHeader extends PureComponent<any, any> {
 
     handleScroll() {
         const { pinned, tolerance } = this.props;
-        const { clientHeight } = findDOMNode(this);
-        const scrollTop = this.scrollable.scrollY || this.scrollable.scrollTop || 0;
 
         if (pinned) {
+            const scrollTop = this.scrollable.scrollY || this.scrollable.scrollTop || 0;
+
             /// Ignore first scroll
             if (this.lastScrollTop !== null) {
-                if (scrollTop < clientHeight) {
+                const scrollBottom = scrollTop + (this.scrollable.innerHeight || this.scrollable.clientHeight || 0);
+                const scrollHeight = (this.scrollable.document ? this.scrollable.document.documentElement : this.scrollable).scrollHeight || 0;
+                const { clientHeight } = findDOMNode(this);
+
+                if (scrollTop < clientHeight || scrollBottom > scrollHeight - clientHeight) {
                     this.setState(state => ({
                         ...state,
                         isPinned: true

@@ -1,5 +1,4 @@
 import React, { Children, PropTypes, PureComponent } from 'react';
-import throttle from 'lodash.throttle';
 import { findDOMNode } from 'react-dom';
 import Enumerable from '@emonkak/enumerable';
 
@@ -9,6 +8,7 @@ import '@emonkak/enumerable/extensions/select';
 import '@emonkak/enumerable/extensions/where';
 
 import getScrollableParent from 'utils/dom/getScrollableParent';
+import throttleEventHandler from 'utils/throttleEventHandler';
 
 export default class ScrollSpy extends PureComponent<any, any> {
     static propTypes = {
@@ -21,7 +21,7 @@ export default class ScrollSpy extends PureComponent<any, any> {
         onInactivate: PropTypes.func,
         renderActiveChild: PropTypes.func,
         renderInactiveChild: PropTypes.func,
-        scrollDebounceTime: PropTypes.number
+        scrollThrottleTime: PropTypes.number
     };
 
     static defaultProps = {
@@ -30,7 +30,7 @@ export default class ScrollSpy extends PureComponent<any, any> {
         marginTop: 0,
         renderActiveChild: child => child,
         renderInactiveChild: child => child,
-        scrollDebounceTime: 100
+        scrollThrottleTime: 60
     };
 
     private readonly registry = new ScrollSpyRegistry();
@@ -45,7 +45,7 @@ export default class ScrollSpy extends PureComponent<any, any> {
             inactiveKey: null
         };
 
-        this.handleScroll = throttle(this.handleScroll.bind(this), props.scrollDebounceTime);
+        this.handleScroll = throttleEventHandler(this.handleScroll.bind(this), props.scrollThrottleTime) as any;
     }
 
     componentDidMount() {

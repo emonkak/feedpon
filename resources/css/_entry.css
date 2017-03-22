@@ -66,18 +66,19 @@
   line-height: inherit;
 }
 
-.entry-title a {
+.entry-info {
+  color: var(--dark-color);
+}
+
+.entry-title a,
+.entry-info a {
   color: inherit;
   text-decoration: none;
 }
 
-.entry-title a:hover {
+.entry-title a:hover,
+.entry-info a:hover {
   color: var(--positive-color);
-}
-
-.entry-info,
-.entry-info a {
-  color: var(--dark-color);
 }
 
 .entry-description {
@@ -122,11 +123,19 @@
 
 .entry-latest {
   display: flex;
-  height: 100vh;
+  height: calc(100vh - var(--navbar-height));
   width: 100%;
   text-align: center;
   align-items: center;
   justify-content: center;
   background-color: var(--light-color);
   font-weight: 600;
+}
+
+.entry-latest a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
 }

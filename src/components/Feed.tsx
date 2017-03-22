@@ -1,7 +1,6 @@
 import React, { PropTypes, PureComponent } from 'react';
 
 import EntryList from 'components/parts/EntryList';
-import Waypoint from 'components/parts/Waypoint';
 import connect from 'utils/components/connect';
 import { State } from 'messaging/types';
 import { fetchFeed, unselectFeed } from 'messaging/actions';
@@ -18,7 +17,6 @@ export default class Feed extends PureComponent<any, any> {
             hasMoreEntries: PropTypes.bool.isRequired,
             isLoading: PropTypes.bool.isRequired
         }),
-        isScrolling: PropTypes.bool,
         scrollTo: PropTypes.func.isRequired,
         viewMode: PropTypes.oneOf(['expanded', 'collapsible']).isRequired
     };
@@ -43,8 +41,10 @@ export default class Feed extends PureComponent<any, any> {
         dispatch(unselectFeed());
     }
 
-    handleLoadMoreEntries() {
+    handleLoadMoreEntries(event: React.SyntheticEvent<any>) {
         const { dispatch, params } = this.props;
+
+        event.preventDefault();
 
         dispatch(fetchFeed(params.feed_id));
     }
@@ -61,43 +61,44 @@ export default class Feed extends PureComponent<any, any> {
         );
     }
 
-    renderFooter() {
+    renderLatest() {
         const { feed } = this.props;
 
-        if (feed === null) {
-            return null;
-        }
-
-        if (feed.isLoading) {
-            return (
-                <div className="entry-latest">
-                    <i className="icon icon-32 icon-size-24 icon-spinner" />Loading entries...
-                </div>
-            );
-        } else if (feed.hasMoreEntries) {
-            const { isScrolling } = this.props;
-
-            return (
-                <Waypoint disabled={isScrolling} onEnter={this.handleLoadMoreEntries.bind(this)}>
+        if (feed) {
+            if (feed.isLoading) {
+                return (
+                    <div className="entry-latest">
+                        <i className="icon icon-32 icon-spinner" />
+                    </div>
+                );
+            } else if (feed.hasMoreEntries) {
+                return (
+                    <div className="entry-latest">
+                        <a
+                            className="link-default"
+                            href="#"
+                            onClick={this.handleLoadMoreEntries.bind(this)}>
+                            Load more entries...
+                        </a>
+                    </div>
+                );
+            } else {
+                return (
                     <div className="entry-latest">
                         No more entries here.
                     </div>
-                </Waypoint>
-            );
-        } else {
-            return (
-                <div className="entry-latest">
-                    No more entries here.
-                </div>
-            );
+                );
+            }
         }
+
+        return null;
     }
 
     render() {
         return (
             <div>
                 {this.renderList()}
-                {this.renderFooter()}
+                {this.renderLatest()}
             </div>
         );
     }
