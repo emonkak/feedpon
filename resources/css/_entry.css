@@ -16,6 +16,10 @@
 }
 
 .entry.is-collapsible:not(.is-expanded) {
+  & .entry-description {
+    display: block;
+  }
+
   & .entry-title a::after {
     content: '';
     display: inline-block;
@@ -37,10 +41,6 @@
 
 .entry.is-expanded {
   padding: var(--baseline-height) 0 calc(var(--baseline-height) - 1px);
-
-  & .entry-description {
-    display: none;
-  }
 
   & .entry-content {
     display: block;
@@ -90,6 +90,7 @@
 }
 
 .entry-description {
+  display: none;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
