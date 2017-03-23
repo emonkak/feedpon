@@ -7,6 +7,7 @@
   background-color: var(--default-background-color);
   box-shadow: 0px 1px 2px color(var(--default-color) alpha(25%));
   min-width: 192px;
+  max-width: 480px;
 }
 
 .menu-item {
@@ -35,14 +36,20 @@
   justify-content: center;
 }
 
+.menu-item-primary-text,
+.menu-item-secondary-text {
+  margin-right: 24px;
+}
+
 .menu-item-primary-text:first-child,
 .menu-item-secondary-text:first-child {
   margin-left: 32px;
 }
 
-.menu-item-primary-text,
-.menu-item-secondary-text {
-  margin-right: 24px;
+.menu-item-primary-text {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .menu-item-secondary-text {
