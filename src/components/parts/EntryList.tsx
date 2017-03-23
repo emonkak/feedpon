@@ -5,6 +5,8 @@ import EntryPlaceholder from 'components/parts/EntryPlaceholder';
 import ScrollSpy from 'components/parts/ScrollSpy';
 import { Entry as EntryType } from 'messaging/types';
 
+const SCROLL_OFFSET = 48;
+
 export default class EntryList extends PureComponent<any, any> {
     static propTypes = {
         entries: PropTypes.arrayOf(PropTypes.object).isRequired,
@@ -45,7 +47,7 @@ export default class EntryList extends PureComponent<any, any> {
 
     componentDidUpdate(prevProps: any, prevState: any) {
         if (this.scrollElement) {
-            this.props.scrollTo(0, this.scrollElement.offsetTop);
+            this.props.scrollTo(0, this.scrollElement.offsetTop - SCROLL_OFFSET);
 
             this.scrollElement = null;
         }
@@ -136,6 +138,7 @@ export default class EntryList extends PureComponent<any, any> {
             <ScrollSpy
                 className="entry-list"
                 isDisabled={isScrolling}
+                marginTop={SCROLL_OFFSET}
                 onActivate={this.handleActivate.bind(this)}
                 onInactivate={this.handleInactivate.bind(this)}
                 renderActiveChild={this.renderActiveEntry.bind(this)}>

@@ -2,7 +2,6 @@ import React, { PropTypes, PureComponent, cloneElement } from 'react';
 import classnames from 'classnames';
 import { locationShape, routerShape } from 'react-router/lib/PropTypes';
 
-import AutoHidingHeader from 'components/parts/AutoHidingHeader';
 import Notifications from 'components/Notifications';
 import Sidebar from 'components/Sidebar';
 import smoothScroll from 'utils/dom/smoothScroll';
@@ -97,16 +96,14 @@ export default class Layout extends PureComponent<any, any> {
                     <Sidebar selectedValue={location.pathname} />
                 </div>
                 <div className="l-main">
-                    <AutoHidingHeader
-                        isPinned={!isScrolling}
-                        className="l-main-header">
+                    <div className="l-main-header">
                         {cloneElement(navbar, {
                             isScrolling,
                             onToggleSidebar: this.handleToggleSidebar.bind(this),
                             scrollTo: this.scrollTo.bind(this)
                         })}
                         <Notifications />
-                    </AutoHidingHeader>
+                    </div>
                     <div className="l-main-content">
                         {cloneElement(content, {
                             isScrolling,

@@ -13,6 +13,8 @@ import connect from 'utils/components/connect';
 import { Entry, State, ViewMode } from 'messaging/types';
 import { changeViewMode, clearReadEntries } from 'messaging/actions';
 
+const SCROLL_OFFSET = 48;
+
 @connect((state: State) => ({
     feed: state.feed,
     viewMode: state.preference.viewMode
@@ -34,7 +36,7 @@ export default class FeedNavbar extends PureComponent<any, any> {
         const scrollElement = document.getElementById('entry-' + entryId);
 
         if (scrollElement) {
-            this.props.scrollTo(0, scrollElement.offsetTop);
+            this.props.scrollTo(0, scrollElement.offsetTop - SCROLL_OFFSET);
         }
     }
 
