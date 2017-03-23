@@ -7,6 +7,10 @@
   list-style: none;
 }
 
+.notifications-reversed {
+  flex-direction: column-reverse;
+}
+
 .notification {
   display: flex;
   align-items: stretch;
@@ -14,6 +18,11 @@
   min-height: var(--navbar-height);
   background-color: var(--light-color);
   border-bottom: 1px solid var(--medium-color);
+}
+
+.notification-reversed {
+  border-top: 1px solid var(--medium-color);
+  border-bottom: 0;
 }
 
 .notification-positive {
@@ -51,6 +60,11 @@
 .notification-leave.notification-leave-active {
   transform: translateY(-100%);
   opacity: 0;
+}
+
+.notification-reversed.notification-enter,
+.notification-reversed.notification-leave.notification-leave-active {
+  transform: translateY(100%);
 }
 
 .notification-enter.notification-enter-active,

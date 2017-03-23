@@ -4,8 +4,13 @@ import classnames from 'classnames';
 export default class Notification extends PureComponent<any, any> {
     static propTypes = {
         children: PropTypes.node.isRequired,
+        isReversed: PropTypes.bool.isRequired,
         kind: PropTypes.oneOf(['default', 'positive', 'negative']),
         onClose: PropTypes.func,
+    };
+
+    static defaultProps = {
+        isReversed: false
     };
 
     handleClose(event: React.SyntheticEvent<any>) {
@@ -33,11 +38,12 @@ export default class Notification extends PureComponent<any, any> {
     }
 
     render() {
-        const { children, kind } = this.props;
+        const { children, kind, isReversed } = this.props;
 
         const className = classnames('notification', {
-            'notification-positive': kind === 'positive',
             'notification-negative': kind === 'negative',
+            'notification-positive': kind === 'positive',
+            'notification-reversed': isReversed
         });
 
         return (
