@@ -33,6 +33,7 @@ export interface Feed {
     entries: Entry[];
     feedId: string;
     title: string;
+    description: string;
     subscribers: number;
     hasMoreEntries: boolean;
     isLoading: boolean;
@@ -49,7 +50,6 @@ export interface Entry {
     description: string;
     bookmarks: number;
     publishedAt: string;
-    keepUnread: boolean;
     readAt?: string;
 }
 

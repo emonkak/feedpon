@@ -58,8 +58,7 @@ const ENTRIES: Entry[] = rss.items.map((item: any, i: number) => ({
         feedId: rss.feed.url,
         title: rss.feed.title,
         url: rss.feed.link,
-    },
-    keepUnread: false
+    }
 }));
 
 const DEFAULT_DISMISS_AFTER = 3000;
@@ -135,7 +134,8 @@ export function fetchFeed(feedId: string): AsyncEvent {
                 type: 'FEED_FETCHED',
                 feed: {
                     feedId,
-                    title: 'Feed title here',
+                    title: 'Lorem Ipsum',
+                    description: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
                     subscribers: 123,
                     entries: ENTRIES.map(entry => ({
                         ...entry,

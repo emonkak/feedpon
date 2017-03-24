@@ -56,8 +56,7 @@ function reduceFeed(feed: Feed | null, event: Event): Feed {
                     ...feed,
                     entries: feed.entries.map(entry => ({
                         ...entry,
-                        readAt: null,
-                        keepUnread: false
+                        readAt: null
                     }))
                 };
             }
@@ -72,8 +71,7 @@ function reduceFeed(feed: Feed | null, event: Event): Feed {
                         if (entry.entryId === event.entryId) {
                             return {
                                 ...entry,
-                                readAt: event.readAt,
-                                keepUnread: false
+                                readAt: event.readAt
                             };
                         } else {
                             return entry;
@@ -92,8 +90,7 @@ function reduceFeed(feed: Feed | null, event: Event): Feed {
                         if (entry.entryId === event.entryId) {
                             return {
                                 ...entry,
-                                readAt: null,
-                                keepUnread: true
+                                readAt: null
                             };
                         } else {
                             return entry;

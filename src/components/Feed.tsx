@@ -71,7 +71,10 @@ export default class Feed extends PureComponent<any, any> {
                 <header className="feed-header">
                     <div className="container">
                         <div className="feed-header-content">
-                            <span className="feed-info placeholder placeholder-animated placeholder-60" />
+                            <div className="feed-metadata">
+                                <span className="placeholder placeholder-animated placeholder-80" />
+                                <span className="placeholder placeholder-animated placeholder-40" />
+                            </div>
                         </div>
                     </div>
                 </header>
@@ -87,7 +90,7 @@ export default class Feed extends PureComponent<any, any> {
                 <Dropdown
                     toggleButton={
                         <a className="button button-default dropdown-arrow" href="#">
-                            <i className="icon icon-middle icon-20 icon-settings" />
+                            <i className="icon icon-align-middle icon-20 icon-settings" />
                         </a>
                     }
                     pullRight={true}>
@@ -111,9 +114,12 @@ export default class Feed extends PureComponent<any, any> {
             <header className="feed-header">
                 <div className="container">
                     <div className="feed-header-content">
-                        <div className="feed-info-list">
-                            <span className="feed-info"><strong>{feed.subscribers}</strong> subscribers</span>
-                            <span className="feed-info"><strong>{feed.entries.length}</strong> entries</span>
+                        <div className="feed-metadata">
+                            <div className="feed-description">{feed.description}</div>
+                            <div className="feed-info-list">
+                                <span className="feed-info"><strong>{feed.subscribers}</strong> subscribers</span>
+                                <span className="feed-info"><strong>{feed.entries.length}</strong> entries</span>
+                            </div>
                         </div>
                         {subscribeButton}
                     </div>

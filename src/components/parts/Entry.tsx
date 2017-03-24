@@ -47,7 +47,9 @@ export default class Entry extends PureComponent<any, any> {
         }
     }
 
-    handleClose() {
+    handleClose(event: React.SyntheticEvent<any>) {
+        event.preventDefault();
+
         const { isCollapsible, isExpanded, onClose } = this.props;
 
         if (isCollapsible && isExpanded && onClose) {
@@ -62,14 +64,14 @@ export default class Entry extends PureComponent<any, any> {
 
         return (
             <a
-                className={classnames('entry-info', 'entry-bookmarks', {
+                className={classnames('entry-infobar-item', 'entry-infobar-bookmarks', {
                     'is-bookmarked': entry.bookmarks > 0,
                     'is-popular': entry.bookmarks >= 10,
                     'is-very-popular': entry.bookmarks >= 20
                 })}
                 target="_blank"
                 href={urlPrefix + entry.url}>
-                <i className="icon icon-bottom icon-16 icon-bookmark" />{entry.bookmarks}
+                <i className="icon icon-align-bottom icon-16 icon-bookmark" />{entry.bookmarks}
             </a>
         );
     }
@@ -80,7 +82,7 @@ export default class Entry extends PureComponent<any, any> {
         if (entry.origin) {  // FIXME: If same origin
             return (
                 <a
-                    className="entry-info entry-origin"
+                    className="entry-infobar-item entry-infobar-origin"
                     target="_blank"
                     href={entry.origin.url}>
                     <strong>{entry.origin.title}</strong>
@@ -96,7 +98,7 @@ export default class Entry extends PureComponent<any, any> {
 
         if (entry.author) {
             return (
-                <span className="entry-info entry-author">by {entry.author}</span>
+                <span className="entry-infobar-item entry-infobar-author">by {entry.author}</span>
             );
         }
 
@@ -108,7 +110,7 @@ export default class Entry extends PureComponent<any, any> {
 
         if (entry.publishedAt) {
             return (
-                <span className="entry-info entry-published-at">
+                <span className="entry-infobar-item entry-infobar-published-at">
                     <RelativeTime time={entry.publishedAt} />
                 </span>
             );
@@ -130,30 +132,31 @@ export default class Entry extends PureComponent<any, any> {
                     'is-unread': !entry.readAt
                 })}>
                 <div className="container">
-                    <header className="entry-header">
-                        <button type="button" className="close" onClick={this.handleClose.bind(this)} />
-                        <h2 className="entry-title">
-                            <a
-                                target="_blank"
-                                href={entry.url}
-                                onClick={this.handleCollapse.bind(this)}>
-                                {entry.title}
-                            </a>
-                        </h2>
-                        <div>
-                            {this.renderBookmarks()}
-                            {this.renderOrign()}
-                            {this.renderAuthor()}
-                            {this.renderPublishedAt()}
-                        </div>
-                    </header>
+                    <div className="entry-toolbar">
+                        <a className="entry-toolbar-item" href="#"><i className="icon icon-16 icon-new-document"></i></a>
+                        <a className="entry-toolbar-item" href="#"><i className="icon icon-16 icon-pin-3"></i></a>
+                        <a className="entry-toolbar-item entry-close" href="#" onClick={this.handleClose.bind(this)}><i className="icon icon-16 icon-close"></i></a>
+                    </div>
+                    <h2 className="entry-title">
+                        <a
+                            target="_blank"
+                            href={entry.url}
+                            onClick={this.handleCollapse.bind(this)}>
+                            {entry.title}
+                        </a>
+                    </h2>
+                    <div className="entry-infobar">
+                        {this.renderBookmarks()}
+                        {this.renderOrign()}
+                        {this.renderAuthor()}
+                        {this.renderPublishedAt()}
+                    </div>
                     <StripHtml className="entry-description" html={entry.description} />
                     <div dangerouslySetInnerHTML={{ __html: entry.content }} className="entry-content" />
-                    <div className="entry-action-list">
-                        <a className="entry-action" href="#"><i className="icon icon-24 icon-pin-3"></i></a>
-                        <a className="entry-action" href="#"><i className="icon icon-24 icon-bookmark"></i></a>
-                        <a className="entry-action" href="#"><i className="icon icon-24 icon-comments"></i></a>
-                        <a className="entry-action" href="#"><i className="icon icon-24 icon-share"></i></a>
+                    <div className="entry-actionbar">
+                        <a className="entry-actionbar-item" href="#"><i className="icon icon-20 icon-bookmark"></i></a>
+                        <a className="entry-actionbar-item" href="#"><i className="icon icon-20 icon-external-link"></i></a>
+                        <a className="entry-actionbar-item" href="#"><i className="icon icon-20 icon-share"></i></a>
                     </div>
                 </div>
             </article>
