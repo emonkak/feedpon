@@ -44,7 +44,7 @@ export default class RelativeTime extends PureComponent<any, any> {
         const { relativeTime } = this.state;
 
         return (
-            <time dateTime={time} title={time}>{relativeTime}</time>
+            <time dateTime={time} title={moment(time).format('llll')}>{relativeTime}</time>
         );
     }
 }

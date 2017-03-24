@@ -53,25 +53,22 @@ export default class EntryList extends PureComponent<any, any> {
         }
     }
 
-    handleActivate(activeEntryId: string, inactiveEntryId: string, activeEntryIndex: number, inactiveEntryIndex: number) {
+    handleActivate(activeEntryId: string, activeEntryIndex: number) {
         this.activeEntryId = activeEntryId;
-
-        const { onMarkAsRead } = this.props;
-
-        if (onMarkAsRead
-            && inactiveEntryId != ''
-            && activeEntryIndex > inactiveEntryIndex) {
-            onMarkAsRead(inactiveEntryId);
-        }
     }
 
-    handleInactivate(inactiveEntryId: string) {
+    handleInactivate(inactiveEntryId: string, inactiveEntryIndex: number) {
         this.activeEntryId = null;
 
         const { onMarkAsRead } = this.props;
 
         if (onMarkAsRead) {
-            onMarkAsRead(inactiveEntryId);
+            const { entries } = this.props;
+
+            entries
+                .slice(0, inactiveEntryIndex + 1)
+                .filter(entry => entry.readAt == null)
+                .forEach(entry => onMarkAsRead(entry.entryId));
         }
     }
 

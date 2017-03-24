@@ -1,16 +1,10 @@
-import Enumerable from '@emonkak/enumerable';
 import React, { PropTypes, PureComponent } from 'react';
-
-import '@emonkak/enumerable/extensions/orderBy';
-import '@emonkak/enumerable/extensions/toArray';
-import '@emonkak/enumerable/extensions/where';
 
 import Dropdown from 'components/parts/Dropdown';
 import MenuItem from 'components/parts/MenuItem';
 import Navbar from 'components/parts/Navbar';
-import RelativeTime from 'components/parts/RelativeTime';
 import connect from 'utils/components/connect';
-import { Entry, State, ViewMode } from 'messaging/types';
+import { State, ViewMode } from 'messaging/types';
 import { changeViewMode, clearReadEntries } from 'messaging/actions';
 
 const SCROLL_OFFSET = 48;
@@ -65,10 +59,7 @@ export default class FeedNavbar extends PureComponent<any, any> {
             return null;
         }
 
-        const readEntries = new Enumerable<Entry>(feed.entries)
-            .where(entry => !!entry.readAt)
-            .orderBy(entry => entry.readAt)
-            .toArray();
+        const readEntries = feed.entries.filter(entry => !!entry.readAt);
 
         return (
             <Dropdown
@@ -81,12 +72,11 @@ export default class FeedNavbar extends PureComponent<any, any> {
                 }
                 pullRight={true}>
                 <div className="menu-heading">Read entries</div>
-                {readEntries.map(entry => (
+                {readEntries.map((entry, index) => (
                     <MenuItem 
                         onSelect={this.handleMarkEntryAsRead.bind(this, entry.entryId)}
                         key={entry.entryId}
-                        primaryText={entry.title}
-                        secondaryText={<RelativeTime time={entry.readAt} />} />
+                        primaryText={entry.title} />
                 ))}
                 <div className="menu-divider" />
                 <MenuItem

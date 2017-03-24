@@ -61,9 +61,10 @@
   }
 }
 
-.entry.is-read {
-  & .entry-title {
-    color: var(--dark-color);
+.entry.is-unread {
+  & .entry-title::before {
+    content: '* ';
+    color: var(--negative-color);
   }
 }
 

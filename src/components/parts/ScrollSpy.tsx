@@ -15,14 +15,14 @@ export default class ScrollSpy extends PureComponent<any, any> {
         children: PropTypes.node.isRequired,
         className: PropTypes.string,
         getScrollableParent: PropTypes.func.isRequired,
-        isDisabled: PropTypes.bool,
-        marginBottom: PropTypes.number,
-        marginTop: PropTypes.number,
+        isDisabled: PropTypes.bool.isRequired,
+        marginBottom: PropTypes.number.isRequired,
+        marginTop: PropTypes.number.isRequired,
         onActivate: PropTypes.func,
         onInactivate: PropTypes.func,
-        renderActiveChild: PropTypes.func,
-        renderInactiveChild: PropTypes.func,
-        scrollThrottleTime: PropTypes.number
+        renderActiveChild: PropTypes.func.isRequired,
+        renderInactiveChild: PropTypes.func.isRequired,
+        scrollThrottleTime: PropTypes.number.isRequired
     };
 
     static defaultProps = {
@@ -55,7 +55,6 @@ export default class ScrollSpy extends PureComponent<any, any> {
     componentDidMount() {
         this.scrollable = this.props.getScrollableParent(findDOMNode(this));
 
-        this.scrollable.addEventListener('resize', this.handleScroll);
         this.scrollable.addEventListener('scroll', this.handleScroll);
         this.scrollable.addEventListener('touchmove', this.handleScroll);
 
@@ -63,7 +62,6 @@ export default class ScrollSpy extends PureComponent<any, any> {
     }
 
     componentWillUnmount() {
-        this.scrollable.removeEventListener('resize', this.handleScroll);
         this.scrollable.removeEventListener('scroll', this.handleScroll);
         this.scrollable.removeEventListener('touchmove', this.handleScroll);
     }
@@ -87,10 +85,14 @@ export default class ScrollSpy extends PureComponent<any, any> {
 
         if (prevActiveKey !== activeKey) {
             if (activeKey) {
-                const { onActivate } = this.props;
+                const { onActivate, onInactivate } = this.props;
+
+                if (prevActiveKey !== '' && onInactivate) {
+                    onInactivate(prevActiveKey, prevActiveIndex);
+                }
 
                 if (onActivate) {
-                    onActivate(activeKey, prevActiveKey, activeIndex, prevActiveIndex);
+                    onActivate(activeKey, activeIndex);
                 }
             } else {
                 const { onInactivate } = this.props;
@@ -181,7 +183,7 @@ class ScrollSpyRegistry {
         this.childKeys.delete(element);
     }
 
-    getActiveKeyAndIndex(scrollTop: number, scrollBottom: number, scrollHeight): KeyAndIndex {
+    getActiveKeyAndIndex(scrollTop: number, scrollBottom: number, scrollHeight: number): KeyAndIndex {
         const defaultResult = { key: '', index: -1 };
 
         if (scrollBottom === scrollHeight) {

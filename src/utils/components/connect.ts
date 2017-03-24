@@ -2,8 +2,8 @@ import React, { PropTypes, PureComponent, createElement } from 'react';
 
 import Store from 'utils/Store';
 
-export default function connect<TAction, TState>(mapStateToProps?: (state: TState) => any,
-                                                 mapDispatchToProps?: (dispatch: (action: TAction) => void) => any): (component: React.ComponentClass<any>) => any {
+export default function connect<TEvent, TState>(mapStateToProps?: (state: TState) => any,
+                                                mapDispatchToProps?: (dispatch: (action: TEvent) => void) => any): (component: React.ComponentClass<any>) => any {
     if (!mapStateToProps) {
         mapStateToProps = state => state;
     }
@@ -29,7 +29,7 @@ export default function connect<TAction, TState>(mapStateToProps?: (state: TStat
             }
 
             componentWillMount() {
-                const store = this.context.store as Store<TAction, TState>;
+                const store = this.context.store as Store<TEvent, TState>;
 
                 this.dispatchProps = mapDispatchToProps(store.dispatch.bind(store));
                 this.subscription = store.subscribe(
