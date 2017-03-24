@@ -115,8 +115,8 @@ export default class Sidebar extends PureComponent<Props, {}> {
                 </div>
                 <div className="sidebar-group u-text-center">
                     <ul className="list-inline list-inline-slash">
-                        <li><a href="#">emonkak@gmail.com</a></li>
-                        <li><a href="#">Logout</a></li>
+                        <li className="list-inline-item"><a href="#">emonkak@gmail.com</a></li>
+                        <li className="list-inline-item"><a href="#">Logout</a></li>
                     </ul>
                 </div>
             </nav>

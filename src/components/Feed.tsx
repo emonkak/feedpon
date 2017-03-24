@@ -72,19 +72,19 @@ export default class Feed extends PureComponent<any, any> {
         );
     }
 
-    renderLatest() {
+    renderFooter() {
         const { feed } = this.props;
 
         if (feed) {
             if (feed.isLoading) {
                 return (
-                    <div className="entry-latest">
+                    <div className="feed-footer">
                         <i className="icon icon-32 icon-spinner" />
                     </div>
                 );
             } else if (feed.hasMoreEntries) {
                 return (
-                    <div className="entry-latest">
+                    <div className="feed-footer">
                         <a
                             className="link-default"
                             href="#"
@@ -95,7 +95,7 @@ export default class Feed extends PureComponent<any, any> {
                 );
             } else {
                 return (
-                    <div className="entry-latest">
+                    <div className="feed-footer">
                         No more entries here.
                     </div>
                 );
@@ -109,7 +109,7 @@ export default class Feed extends PureComponent<any, any> {
         return (
             <div>
                 {this.renderList()}
-                {this.renderLatest()}
+                {this.renderFooter()}
             </div>
         );
     }

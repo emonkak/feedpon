@@ -117,14 +117,15 @@ export default class EntryList extends PureComponent<any, any> {
 
         if (isLoading) {
             const isExpanded = viewMode === 'expanded';
+            const isCollapsible = viewMode === 'collapsible';
 
             return (
                 <div className="entry-list">
-                    <EntryPlaceholder isExpanded={isExpanded} />
-                    <EntryPlaceholder isExpanded={isExpanded} />
-                    <EntryPlaceholder isExpanded={isExpanded} />
-                    <EntryPlaceholder isExpanded={isExpanded} />
-                    <EntryPlaceholder isExpanded={isExpanded} />
+                    <EntryPlaceholder isCollapsible={isCollapsible} isExpanded={isExpanded} />
+                    <EntryPlaceholder isCollapsible={isCollapsible} isExpanded={isExpanded} />
+                    <EntryPlaceholder isCollapsible={isCollapsible} isExpanded={isExpanded} />
+                    <EntryPlaceholder isCollapsible={isCollapsible} isExpanded={isExpanded} />
+                    <EntryPlaceholder isCollapsible={isCollapsible} isExpanded={isExpanded} />
                 </div>
             );
         }

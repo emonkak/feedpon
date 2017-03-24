@@ -19,18 +19,6 @@
   & .entry-description {
     display: block;
   }
-
-  & .entry-title a::after {
-    content: '';
-    display: inline-block;
-    width: 0;
-    height: 0;
-    margin-left: 0.25rem;
-    vertical-align: middle;
-    border-top: 0.25rem solid;
-    border-right: 0.25rem solid transparent;
-    border-left: 0.25rem solid transparent;
-  }
 }
 
 .entry.is-collapsible.is-expanded {
@@ -48,7 +36,6 @@
 
   & .entry-header {
     margin: 0 0 var(--baseline-height);
-    text-align: center;
   }
 
   & .entry-title {
@@ -62,8 +49,8 @@
 }
 
 .entry.is-unread {
-  & .entry-title::before {
-    content: '* ';
+  & .entry-title::after {
+    content: '\00a0*';
     color: var(--negative-color);
   }
 }
@@ -79,14 +66,43 @@
   color: var(--dark-color);
 }
 
-.entry-title a,
-.entry-info a {
+.entry-info + .entry-info::before {
+  content: '\00a0';
+}
+
+.entry-info.entry-bookmarks + .entry-info::before {
+  content: '\00a0/\00a0';
+}
+
+
+.entry-info.entry-bookmarks > a {
+  padding: 2px;
+}
+
+.entry-info.entry-bookmarks > a:hover {
+  color: inherit;
+}
+
+.entry-info.entry-bookmarks.is-bookmarked > a {
+  color: var(--negative-color);
+}
+
+.entry-info.entry-bookmarks.is-popular > a {
+  font-weight: 600;
+}
+
+.entry-info.entry-bookmarks.is-very-popular > a {
+  background-color: var(--negative-light-color);
+}
+
+.entry-title > a,
+.entry-info > a {
   color: inherit;
   text-decoration: none;
 }
 
-.entry-title a:hover,
-.entry-info a:hover {
+.entry-title > a:hover,
+.entry-info > a:hover {
   color: var(--positive-color);
 }
 
@@ -132,7 +148,7 @@
   text-decoration: none;
 }
 
-.entry-latest {
+.feed-footer {
   display: flex;
   height: calc(100vh - var(--navbar-height));
   width: 100%;
@@ -143,7 +159,7 @@
   font-weight: 600;
 }
 
-.entry-latest a {
+.feed-footer > a {
   display: flex;
   align-items: center;
   justify-content: center;

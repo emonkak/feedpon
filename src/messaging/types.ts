@@ -45,7 +45,7 @@ export interface Entry {
     origin: Origin;
     content: string;
     description: string;
-    popularity: number;
+    bookmarks: number;
     publishedAt: string;
     keepUnread: boolean;
     readAt?: string;

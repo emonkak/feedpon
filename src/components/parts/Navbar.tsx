@@ -23,7 +23,7 @@ export default class Navbar extends PureComponent<any, any> {
             <nav className="navbar">
                 <div className="navbar-container">
                     <a className="navbar-toggle-icon u-md-none" href="#" onClick={this.handleToggleSidebar.bind(this)}>
-                        <i className="icon icon-48 icon-size-24 icon-menu" />
+                        <i className="icon icon-24 icon-menu" />
                     </a>
                     {children}
                 </div>

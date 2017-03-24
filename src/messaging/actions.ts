@@ -45,13 +45,13 @@ const CATEGORIES: Category[] = [
     }
 ];
 
-const ENTRIES: Entry[] = rss.items.map((item: any) => ({
+const ENTRIES: Entry[] = rss.items.map((item: any, i: number) => ({
     entryId: item.guid,
     author: item.author,
     content: item.content,
     description: item.description,
     publishedAt: item.pubDate,
-    popularity: Math.random() * 100,
+    bookmarks: [0, 1, 2, 10, 11, 12, 51, 52, 53, 100, 101, 102][i % 12],
     title: item.title,
     url: item.link,
     origin: {

@@ -21,6 +21,7 @@
   --highlight--color: #fcc419;
   --highlight-light-color: #fff9db;
 
+  --font-size: 14px;
   --baseline-height: 24px;
   --navbar-height: 48px;
   --sidebar-width: 288px;
@@ -29,7 +30,7 @@
 
 html {
   font-family: -apple-system, 'BlinkMacSystemFont', '.SFNSDisplay-Regular', 'San Francisco Text', 'Segoe UI', 'Helvetica', 'YuGothic', 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size);
   line-height: var(--baseline-height);
   touch-action: manipulation;
   -webkit-text-size-adjust: 100%;
@@ -182,27 +183,24 @@ a:hover {
 }
 
 em {
-  font-weight: 600;
-  font-style: normal;
+  font-style: italic;
 }
 
 strong {
   font-weight: 600;
   font-style: normal;
-  background-color: var(--positive-light-color);
-  padding: 3px;
 }
 
 mark {
   font-weight: 600;
   font-style: normal;
   background-color: var(--highlight-light-color);
-  padding: 3px;
+  padding: 2px;
 }
 
 code, var, samp {
   background-color: var(--light-color);
-  padding: 3px;
+  padding: 2px;
 }
 
 input {

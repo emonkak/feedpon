@@ -12,7 +12,7 @@
   background-size: 100%;
   background-color: currentColor;
   display: inline-block;
-  vertical-align: middle;
+  vertical-align: text-bottom;
 }
 
 .icon-menu {
@@ -41,6 +41,7 @@
 
 .icon-bookmark {
   mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M7 5v23l1.594-1.188L16 21.25l7.406 5.563L25 28V5H7zm2 2h14v17l-6.406-4.813L16 18.75l-.594.438L9 24V7z"/></svg>') no-repeat;
+  transform: translate(-0.5px, -0.5px);
 }
 
 .icon-comments {
@@ -89,11 +90,6 @@
   height: 16px;
 }
 
-.icon-20 {
-  width: 20px;
-  height: 20px;
-}
-
 .icon-24 {
   width: 24px;
   height: 24px;
@@ -102,27 +98,4 @@
 .icon-32 {
   width: 32px;
   height: 32px;
-}
-
-.icon-48 {
-  width: 48px;
-  height: 48px;
-}
-
-.icon-size-16,
-.icon-size-24,
-.icon-size-32 {
-  mask-position: 50% 50%;
-}
-
-.icon-size-16 {
-  mask-size: 16px 16px;
-}
-
-.icon-size-24 {
-  mask-size: 24px 24px;
-}
-
-.icon-size-32 {
-  mask-size: 32px 32px;
 }

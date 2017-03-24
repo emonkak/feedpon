@@ -66,7 +66,7 @@ export default class FeedNavbar extends PureComponent<any, any> {
                 className="navbar-action"
                 toggleButton={
                     <a href="#">
-                        <i className="icon icon-48 icon-size-24 icon-checkmark" />
+                        <i className="icon icon-24 icon-checkmark" />
                         <span className="badge badge-overlap badge-negative">{readEntries.length || ''}</span>
                     </a>
                 }
@@ -96,7 +96,7 @@ export default class FeedNavbar extends PureComponent<any, any> {
                 {this.renderReadEntryDropdown()}
                 <Dropdown
                     className="navbar-action"
-                    toggleButton={<a href="#"><i className="icon icon-48 icon-size-24 icon-more" /></a>}
+                    toggleButton={<a href="#"><i className="icon icon-24 icon-more" /></a>}
                     pullRight={true}>
                     <MenuItem
                         icon={viewMode === 'expanded' ? <i className="icon icon-16 icon-checkmark" /> : null}
@@ -104,7 +104,7 @@ export default class FeedNavbar extends PureComponent<any, any> {
                         onSelect={() => this.handleChangeViewType('expanded')} />
                     <MenuItem
                         icon={viewMode === 'collapsible' ? <i className="icon icon-16 icon-checkmark" /> : null}
-                        primaryText="Collapsable View"
+                        primaryText="Collapsible View"
                         onSelect={() => this.handleChangeViewType('collapsible')} />
                     <div className="menu-divider" />
                     <MenuItem primaryText="Action" />

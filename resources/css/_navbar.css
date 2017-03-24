@@ -57,15 +57,17 @@ a.navbar-title:hover {
 }
 
 .navbar-action {
-  display: flex;
-  align-items: center;
   position: relative;
 }
 
-.navbar-action,
-.navbar-action a {
+.navbar-action > a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: inherit;
   text-decoration: none;
+  width: 48px;
+  height: 48px;
 }
 
 .navbar-action:hover {
