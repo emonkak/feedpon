@@ -26,15 +26,17 @@ export interface State {
 export interface Category {
     categoryId: number;
     feedId: string,
-    name: string;
+    title: string;
 }
 
 export interface Feed {
     entries: Entry[];
     feedId: string;
+    title: string;
+    subscribers: number;
     hasMoreEntries: boolean;
     isLoading: boolean;
-    title: string;
+    subscription?: Subscription;
 }
 
 export interface Entry {

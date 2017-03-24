@@ -35,7 +35,9 @@ export default class FeedNavbar extends PureComponent<any, any> {
     }
 
     handleClearReadEntries(entryId: string) {
-        this.props.dispatch(clearReadEntries());
+        const { scrollTo, dispatch } = this.props;
+
+        scrollTo(0, 0).then(() => dispatch(clearReadEntries()));
     }
 
     renderTitle() {
@@ -55,11 +57,8 @@ export default class FeedNavbar extends PureComponent<any, any> {
     renderReadEntryDropdown() {
         const { feed } = this.props;
 
-        if (!feed) {
-            return null;
-        }
-
-        const readEntries = feed.entries.filter(entry => !!entry.readAt);
+        const entries = feed ? feed.entries : [];
+        const readEntries = entries.filter(entry => !!entry.readAt);
 
         return (
             <Dropdown
@@ -83,34 +82,52 @@ export default class FeedNavbar extends PureComponent<any, any> {
                     onSelect={this.handleClearReadEntries.bind(this)}
                     isDisabled={readEntries.length === 0}
                     primaryText="Clear all read entries" />
+                <div className="menu-divider" />
+                <MenuItem
+                    isDisabled={entries.length === 0}
+                    primaryText="Mark all as read" />
+            </Dropdown>
+        );
+    }
+
+    renderConfigDropdown() {
+        const { viewMode } = this.props;
+
+        return (
+            <Dropdown
+                className="navbar-action"
+                toggleButton={<a href="#"><i className="icon icon-24 icon-more" /></a>}
+                pullRight={true}>
+                <div className="menu-heading">View</div>
+                <MenuItem
+                    icon={viewMode === 'expanded' ? <i className="icon icon-16 icon-checkmark" /> : null}
+                    primaryText="Expanded View"
+                    onSelect={() => this.handleChangeViewType('expanded')} />
+                <MenuItem
+                    icon={viewMode === 'collapsible' ? <i className="icon icon-16 icon-checkmark" /> : null}
+                    primaryText="Collapsible View"
+                    onSelect={() => this.handleChangeViewType('collapsible')} />
+                <div className="menu-divider" />
+                <div className="menu-heading">Order</div>
+                <MenuItem primaryText="Newest First" />
+                <MenuItem primaryText="Oldest First" />
+                <div className="menu-divider" />
+                <MenuItem primaryText="Unread only" />
             </Dropdown>
         );
     }
 
     render() {
-        const { onToggleSidebar, viewMode } = this.props;
+        const { onToggleSidebar } = this.props;
 
         return (
             <Navbar onToggleSidebar={onToggleSidebar}>
                 <div className="navbar-title" href="#">{this.renderTitle()}</div>
+                <div className="navbar-action">
+                    <a href="#"><i className="icon icon-24 icon-refresh" /></a>
+                </div>
                 {this.renderReadEntryDropdown()}
-                <Dropdown
-                    className="navbar-action"
-                    toggleButton={<a href="#"><i className="icon icon-24 icon-more" /></a>}
-                    pullRight={true}>
-                    <MenuItem
-                        icon={viewMode === 'expanded' ? <i className="icon icon-16 icon-checkmark" /> : null}
-                        primaryText="Expanded View"
-                        onSelect={() => this.handleChangeViewType('expanded')} />
-                    <MenuItem
-                        icon={viewMode === 'collapsible' ? <i className="icon icon-16 icon-checkmark" /> : null}
-                        primaryText="Collapsible View"
-                        onSelect={() => this.handleChangeViewType('collapsible')} />
-                    <div className="menu-divider" />
-                    <MenuItem primaryText="Action" />
-                    <MenuItem primaryText="Another action" />
-                    <MenuItem primaryText="Something else here" />
-                </Dropdown>
+                {this.renderConfigDropdown()}
             </Navbar>
         );
     }

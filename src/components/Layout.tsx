@@ -68,13 +68,13 @@ export default class Layout extends PureComponent<any, any> {
         }));
     }
 
-    scrollTo(x, y) {
+    scrollTo(x: number, y: number): Promise<void> {
         this.setState(state => ({
             ...state,
             isScrolling: true
         }));
 
-        smoothScroll(document.body, x, y).then(() => {
+        return smoothScroll(document.body, x, y).then(() => {
             this.setState(state => ({
                 ...state,
                 isScrolling: false

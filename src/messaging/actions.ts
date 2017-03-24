@@ -36,12 +36,12 @@ const CATEGORIES: Category[] = [
     {
         categoryId: 1,
         feedId: '101',
-        name: 'Bike'
+        title: 'Bike'
     },
     {
         categoryId: 2,
         feedId: '102',
-        name: 'Programing'
+        title: 'Programing'
     }
 ];
 
@@ -136,12 +136,14 @@ export function fetchFeed(feedId: string): AsyncEvent {
                 feed: {
                     feedId,
                     title: 'Feed title here',
+                    subscribers: 123,
                     entries: ENTRIES.map(entry => ({
                         ...entry,
                         entryId: entry.entryId + '.' + Date.now()
                     })),
                     hasMoreEntries: true,
-                    isLoading: false
+                    isLoading: false,
+                    subscription: SUBSCRIPTIONS[0]
                 }
             });
         }, DELAY);

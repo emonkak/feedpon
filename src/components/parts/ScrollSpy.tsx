@@ -10,6 +10,11 @@ import '@emonkak/enumerable/extensions/where';
 import getScrollableParent from 'utils/dom/getScrollableParent';
 import throttleEventHandler from 'utils/throttleEventHandler';
 
+const initialState = {
+    activeKey: '',
+    activeIndex: -1
+};
+
 export default class ScrollSpy extends PureComponent<any, any> {
     static propTypes = {
         children: PropTypes.node.isRequired,
@@ -21,7 +26,6 @@ export default class ScrollSpy extends PureComponent<any, any> {
         onActivate: PropTypes.func,
         onInactivate: PropTypes.func,
         renderActiveChild: PropTypes.func.isRequired,
-        renderInactiveChild: PropTypes.func.isRequired,
         scrollThrottleTime: PropTypes.number.isRequired
     };
 
@@ -31,7 +35,6 @@ export default class ScrollSpy extends PureComponent<any, any> {
         marginBottom: 0,
         marginTop: 0,
         renderActiveChild: child => child,
-        renderInactiveChild: child => child,
         scrollThrottleTime: 100
     };
 
@@ -42,12 +45,7 @@ export default class ScrollSpy extends PureComponent<any, any> {
     constructor(props: any, context: any) {
         super(props, context);
 
-        this.state = {
-            activeKey: '',
-            activeIndex: -1,
-            prevActiveKey: '',
-            prevActiveIndex: -1
-        };
+        this.state = initialState;
 
         this.handleScroll = throttleEventHandler(this.handleScroll.bind(this), props.scrollThrottleTime);
     }
@@ -64,6 +62,16 @@ export default class ScrollSpy extends PureComponent<any, any> {
     componentWillUnmount() {
         this.scrollable.removeEventListener('scroll', this.handleScroll);
         this.scrollable.removeEventListener('touchmove', this.handleScroll);
+    }
+
+    componentWillReceiveProps(nextProps: any) {
+        if (this.props.isDisabled !== nextProps.isDisabled) {
+            if (nextProps.isDisabled) {
+                this.setState(initialState);
+            } else {
+                this.update();
+            }
+        }
     }
 
     handleScroll(event: Event) {
@@ -105,21 +113,17 @@ export default class ScrollSpy extends PureComponent<any, any> {
             this.setState(state => ({
                 ...state,
                 activeKey,
-                activeIndex,
-                prevActiveKey,
-                prevActiveIndex
+                activeIndex
             }));
         }
     }
 
     renderChild(child: React.ReactElement<any>, index: number) {
-        const { renderActiveChild, renderInactiveChild } = this.props;
-        const { activeKey, prevActiveKey } = this.state;
+        const { renderActiveChild } = this.props;
+        const { activeKey } = this.state;
 
         if (child.key === activeKey) {
             child = renderActiveChild(child);
-        } else if (child.key === prevActiveKey) {
-            child = renderInactiveChild(child);
         }
 
         return (

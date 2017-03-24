@@ -1,6 +1,8 @@
 import React, { PropTypes, PureComponent } from 'react';
 
+import Dropdown from 'components/parts/Dropdown';
 import EntryList from 'components/parts/EntryList';
+import MenuItem from 'components/parts/MenuItem';
 import connect from 'utils/components/connect';
 import { State } from 'messaging/types';
 import { fetchFeed, markEntryAsRead, saveReadEntries, unselectFeed } from 'messaging/actions';
@@ -8,16 +10,19 @@ import { fetchFeed, markEntryAsRead, saveReadEntries, unselectFeed } from 'messa
 @connect((state: State) => {
     return {
         feed: state.feed,
+        categories: state.categories,
         viewMode: state.preference.viewMode
     };
 })
 export default class Feed extends PureComponent<any, any> {
     static propTypes = {
         dispatch: PropTypes.func.isRequired,
+        categories: PropTypes.array.isRequired,
         feed: PropTypes.shape({
             entries: PropTypes.array.isRequired,
             hasMoreEntries: PropTypes.bool.isRequired,
-            isLoading: PropTypes.bool.isRequired
+            isLoading: PropTypes.bool.isRequired,
+            subscription: PropTypes.object.isRequired
         }),
         isScrolling: PropTypes.bool.isRequired,
         scrollTo: PropTypes.func.isRequired,
@@ -58,6 +63,65 @@ export default class Feed extends PureComponent<any, any> {
         dispatch(fetchFeed(params.feed_id));
     }
 
+    renderHeader() {
+        const { feed } = this.props;
+
+        if (feed == null) {
+            return (
+                <header className="feed-header">
+                    <div className="container">
+                        <div className="feed-header-content">
+                            <span className="feed-info placeholder placeholder-animated placeholder-60" />
+                        </div>
+                    </div>
+                </header>
+            );
+        }
+
+        const { categories } = this.props;
+        const isSubscribed = feed.subscription != null;
+        const categoryId = isSubscribed ? feed.subscription.categoryId : null;
+
+        const subscribeButton = isSubscribed
+            ?  (
+                <Dropdown
+                    toggleButton={
+                        <a className="button button-default dropdown-arrow" href="#">
+                            <i className="icon icon-middle icon-20 icon-settings" />
+                        </a>
+                    }
+                    pullRight={true}>
+                    <div className="menu-heading">Category</div>
+                    {categories.map(category => (
+                        <MenuItem
+                            key={category.categoryId}
+                            icon={category.categoryId === categoryId ? <i className="icon icon-16 icon-checkmark" /> : null}
+                            primaryText={category.title} />
+                    ))}
+                    <div className="menu-divider" />
+                    <MenuItem primaryText="New Category..." />
+                    <div className="menu-divider" />
+                    <MenuItem
+                        isDisabled={!isSubscribed}
+                        primaryText="Unsubscribe" />
+                </Dropdown>
+            ) : (<a className="button button-positive dropdown-arrow" href="#">Subscribe</a>);
+
+        return (
+            <header className="feed-header">
+                <div className="container">
+                    <div className="feed-header-content">
+                        <div className="feed-info-list">
+                            <span className="feed-info"><strong>{feed.subscribers}</strong> subscribers</span>
+                            <span className="feed-info"><strong>{feed.entries.length}</strong> entries</span>
+                        </div>
+                        {subscribeButton}
+                    </div>
+                </div>
+            </header>
+        );
+    }
+
     renderList() {
         const { feed, isScrolling, scrollTo, viewMode } = this.props;
 
@@ -75,39 +139,40 @@ export default class Feed extends PureComponent<any, any> {
     renderFooter() {
         const { feed } = this.props;
 
-        if (feed) {
-            if (feed.isLoading) {
-                return (
-                    <div className="feed-footer">
-                        <i className="icon icon-32 icon-spinner" />
-                    </div>
-                );
-            } else if (feed.hasMoreEntries) {
-                return (
-                    <div className="feed-footer">
-                        <a
-                            className="link-default"
-                            href="#"
-                            onClick={this.handleLoadMoreEntries.bind(this)}>
-                            Load more entries...
-                        </a>
-                    </div>
-                );
-            } else {
-                return (
-                    <div className="feed-footer">
-                        No more entries here.
-                    </div>
-                );
-            }
+        if (feed == null) {
+            return null;
         }
 
-        return null;
+        if (feed.isLoading) {
+            return (
+                <footer className="feed-footer">
+                    <i className="icon icon-32 icon-spinner " />
+                </footer>
+            );
+        } else if (feed.hasMoreEntries) {
+            return (
+                <footer className="feed-footer">
+                    <a
+                        className="link-default"
+                        href="#"
+                        onClick={this.handleLoadMoreEntries.bind(this)}>
+                        Load more entries...
+                    </a>
+                </footer>
+            );
+        } else {
+            return (
+                <footer className="feed-footer">
+                    No more entries here.
+                </footer>
+            );
+        }
     }
 
     render() {
         return (
             <div>
+                {this.renderHeader()}
                 {this.renderList()}
                 {this.renderFooter()}
             </div>

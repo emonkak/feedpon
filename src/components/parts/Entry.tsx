@@ -61,24 +61,30 @@ export default class Entry extends PureComponent<any, any> {
         const urlPrefix = 'http://b.hatena.ne.jp/entry/';
 
         return (
-            <span className={classnames('entry-info', 'entry-bookmarks', {
-                'is-bookmarked': entry.bookmarks > 0,
-                'is-popular': entry.bookmarks >= 10,
-                'is-very-popular': entry.bookmarks >= 20
-            })}>
-                <a target="_blank" href={urlPrefix + entry.url}><i className="icon icon-16 icon-bookmark" />{entry.bookmarks}</a>
-            </span>
+            <a
+                className={classnames('entry-info', 'entry-bookmarks', {
+                    'is-bookmarked': entry.bookmarks > 0,
+                    'is-popular': entry.bookmarks >= 10,
+                    'is-very-popular': entry.bookmarks >= 20
+                })}
+                target="_blank"
+                href={urlPrefix + entry.url}>
+                <i className="icon icon-bottom icon-16 icon-bookmark" />{entry.bookmarks}
+            </a>
         );
     }
 
     renderOrign() {
         const { entry } = this.props;
 
-        if (entry.origin != null) {  // FIXME: If same origin
+        if (entry.origin) {  // FIXME: If same origin
             return (
-                <span className="entry-info entry-origin">
-                    <a target="_blank" href={entry.origin.url}><strong>{entry.origin.title}</strong></a>
-                </span>
+                <a
+                    className="entry-info entry-origin"
+                    target="_blank"
+                    href={entry.origin.url}>
+                    <strong>{entry.origin.title}</strong>
+                </a>
             );
         }
 
@@ -88,11 +94,9 @@ export default class Entry extends PureComponent<any, any> {
     renderAuthor() {
         const { entry } = this.props;
 
-        if (entry.author != null) {
+        if (entry.author) {
             return (
-                <span className="entry-info entry-author">
-                    by <strong>{entry.author}</strong>
-                </span>
+                <span className="entry-info entry-author">by {entry.author}</span>
             );
         }
 
@@ -102,7 +106,7 @@ export default class Entry extends PureComponent<any, any> {
     renderPublishedAt() {
         const { entry } = this.props;
 
-        if (entry.publishedAt != null) {
+        if (entry.publishedAt) {
             return (
                 <span className="entry-info entry-published-at">
                     <RelativeTime time={entry.publishedAt} />

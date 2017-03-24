@@ -55,7 +55,7 @@ export default class Sidebar extends PureComponent<Props, {}> {
                 <TreeBranch key={`/feeds/${category.feedId}`}
                             value={`/feeds/${category.feedId}`}
                             className={classnames({ 'is-important': totalUnreadCount > 0 })}
-                            primaryText={category.name}
+                            primaryText={category.title}
                             secondaryText={totalUnreadCount > 0 ? Number(totalUnreadCount).toLocaleString() : null}
                             icon={<i className="icon icon-16 icon-angle-down" />}>
                 {subscriptions.map(subscription => this.renderSubscription(subscription))}
@@ -106,15 +106,15 @@ export default class Sidebar extends PureComponent<Props, {}> {
                                     leftIcon={<i className="icon icon-16 icon-refresh" />}
                                     rightIcon={<i className="icon icon-16 icon-more" />} />
                         {groupedSubscriptions}
-                        <TreeLeaf key="/settings/" value="/feeds/settings/" primaryText="Settings" />
-                        <TreeLeaf key="/about/" value="/feeds/about/" primaryText="About..." />
+                        <TreeLeaf key="/settings/" value="/settings/" primaryText="Settings" />
+                        <TreeLeaf key="/about/" value="/about/" primaryText="About..." />
                     </Tree>
                 </div>
                 <div className="sidebar-group">
                     <button type="button" className="button button-block button-default">New Subscription</button>
                 </div>
                 <div className="sidebar-group u-text-center">
-                    <ul className="list-inline list-inline-slash">
+                    <ul className="list-inline">
                         <li className="list-inline-item"><a href="#">emonkak@gmail.com</a></li>
                         <li className="list-inline-item"><a href="#">Logout</a></li>
                     </ul>
