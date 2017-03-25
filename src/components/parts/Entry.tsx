@@ -3,6 +3,7 @@ import classnames from 'classnames';
 import { findDOMNode } from 'react-dom';
 
 import RelativeTime from 'components/parts/RelativeTime';
+import SanitizeHtml from 'components/parts/SanitizeHtml';
 import StripHtml from 'components/parts/StripHtml';
 
 export default class Entry extends PureComponent<any, any> {
@@ -181,7 +182,7 @@ class EntryInner extends PureComponent<any, any> {
                     </div>
                 </header>
                 <StripHtml className="entry-description" html={entry.description} />
-                <div dangerouslySetInnerHTML={{ __html: entry.content }} className="entry-content" />
+                <SanitizeHtml className="entry-content" html={entry.content} />
                 <footer className="entry-footer">
                     <a className="entry-action" href="#"><i className="icon icon-20 icon-bookmark"></i></a>
                     <a className="entry-action" href="#"><i className="icon icon-20 icon-external-link"></i></a>

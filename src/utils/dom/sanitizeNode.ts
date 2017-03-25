@@ -7,12 +7,12 @@ const VOID_ELEMENTS = new Set(['area', 'br', 'col', 'hr', 'img', 'wbr']);
 const OPTIONAL_END_TAG_ELEMENTS = new Set(['colgroup', 'dd', 'dt', 'li', 'p', 'tbody', 'td', 'tfoot', 'th', 'thead', 'tr', 'rp', 'rt']);
 
 // Safe Block Elements - HTML5
-const BLOCK_ELEMENTS = new Set(['address', 'article', 'aside', 'blockquote', 'caption', 'center', 'del', 'dir', 'div', 'dl', 'figcaption', 'figure', 'footer', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'header', 'hgroup', 'hr', 'ins', 'main', 'map', 'menu', 'nav', 'ol', 'pre', 'section', 'table', 'ul']);
+const BLOCK_ELEMENTS = new Set(['address', 'article', 'aside', 'blockquote', 'caption', 'center', 'del', 'details', 'dialog', 'dir', 'div', 'dl', 'figcaption', 'figure', 'footer', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'header', 'hgroup', 'hr', 'ins', 'main', 'map', 'menu', 'nav', 'ol', 'pre', 'section', 'summary', 'table', 'ul']);
 
 // Inline Elements - HTML5
-const INLINE_ELEMENTS = new Set(['a', 'abbr', 'acronym', 'b', 'bdi', 'bdo', 'big', 'br', 'cite', 'code', 'del', 'dfn', 'em', 'font', 'i', 'img', 'ins', 'kbd', 'label', 'map', 'mark', 'nobr', 'q', 'rp', 'rt', 'ruby', 's', 'samp', 'small', 'span', 'strike', 'strong', 'sub', 'sup', 'time', 'tt', 'u', 'var']);
+const INLINE_ELEMENTS = new Set(['a', 'abbr', 'acronym', 'audio', 'b', 'bdi', 'bdo', 'big', 'br', 'cite', 'code', 'del', 'dfn', 'em', 'font', 'i', 'img', 'ins', 'kbd', 'label', 'map', 'mark', 'picture', 'q', 'rp', 'rt', 'ruby', 's', 'samp', 'small', 'span', 'strike', 'strong', 'sub', 'sup', 'time', 'track',  'tt', 'u', 'var', 'video']);
 
-const SAFE_ELEMENTS = new Set([
+const VALID_ELEMENTS = new Set([
     ...VOID_ELEMENTS,
     ...OPTIONAL_END_TAG_ELEMENTS,
     ...BLOCK_ELEMENTS,
@@ -21,56 +21,87 @@ const SAFE_ELEMENTS = new Set([
 
 const URI_ATTRS = new Set(['background', 'cite', 'href', 'longdesc', 'src', 'usemap', 'xlink:href']);
 
-const HTML_ATTRS = new Set(['abbr', 'align', 'alt', 'axis', 'bgcolor', 'border', 'cellpadding', 'cellspacing', 'clear', 'color', 'cols', 'colspan', 'compact', 'coords', 'dir', 'face', 'headers', 'height', 'hreflang', 'hspace', 'ismap', 'lang', 'language', 'nohref', 'nowrap', 'rel', 'rev', 'rows', 'rowspan', 'rules', 'scope', 'scrolling', 'shape', 'size', 'span', 'start', 'summary', 'target', 'title', 'type', 'valign', 'value', 'vspace', 'width']);
+const SRCSET_ATTRS = new Set(['srcset']);
 
-const SAFE_ATTRS = new Set([
+const HTML_ATTRS = new Set(['abbr', 'accesskey', 'align', 'alt', 'autoplay', 'axis', 'bgcolor', 'border', 'cellpadding', 'cellspacing', 'clear', 'color', 'cols', 'colspan',  'compact', 'controls', 'coords', 'datetime', 'default', 'dir', 'download', 'face', 'headers', 'height', 'hidden', 'hreflang', 'hspace',  'ismap', 'itemprop', 'itemscope', 'kind', 'label', 'lang', 'language', 'loop', 'media', 'muted', 'nohref', 'nowrap', 'open', 'preload', 'rel', 'rev', 'role', 'rows', 'rowspan', 'rules',  'scope', 'scrolling', 'shape', 'size', 'sizes', 'span', 'srclang', 'start', 'summary', 'tabindex', 'target', 'title', 'translate', 'type', 'usemap',  'valign', 'value', 'vspace', 'width']);
+
+const VAILD_ATTRS = new Set([
+    ...HTML_ATTRS,
+    ...SRCSET_ATTRS,
     ...URI_ATTRS,
-    ...HTML_ATTRS
 ]);
 
-const SAFE_HREF_REGEXP = new RegExp('^https?://');
+const SAFE_URL_PATTERN = /^(?:(?:https?|mailto|ftp|tel|file):|[^&:/?#]*(?:[/?#]|$))/gi;
 
-function isSafeAttribute(attrnName: string): boolean {
-    return SAFE_ATTRS.has(attrnName.toLowerCase());
+const DATA_URL_PATTERN =
+    /^data:(?:image\/(?:bmp|gif|jpeg|jpg|png|tiff|webp)|video\/(?:mpeg|mp4|ogg|webm)|audio\/(?:mp3|oga|ogg|opus));base64,[a-z0-9+\/]+=*$/i;
+
+function isValidElement(tagNmae: string): boolean {
+    return VALID_ELEMENTS.has(tagNmae.toLowerCase());
 }
 
-function isSafeElement(tagNmae: string): boolean {
-    return SAFE_ELEMENTS.has(tagNmae.toLowerCase());
+function isUriAttribute(attrName: string): boolean {
+    return URI_ATTRS.has(attrName.toLowerCase());
 }
 
-function sanitize(node: Node) {
-    if (node.nodeType === node.TEXT_NODE) {
-        return true;
+function isSrcsetAttribute(attrName: string): boolean {
+    return SRCSET_ATTRS.has(attrName.toLowerCase());
+}
+
+function isValidAttribute(attrName: string): boolean {
+    return VAILD_ATTRS.has(attrName.toLowerCase());
+}
+
+function sanitizeUrl(url: string): string {
+    if (url.match(SAFE_URL_PATTERN) || url.match(DATA_URL_PATTERN)) {
+        return url;
     }
 
-    if (node.nodeType === node.ELEMENT_NODE) {
-        if (isSafeElement(node.nodeName)) {
-            sanitizeAttributes(node as Element);
-            return true;
-        }
+    return 'unsafe:' + url;
+}
 
-        (node as Element).remove();
+function sanitizeSrcset(srcset: string): string {
+    return srcset
+        .split(',')
+        .map(url => sanitizeUrl(url.trim()))
+        .join(',');
+}
+
+function sanitizeAttribute(node: Element, attr: Attr): void {
+    if (isValidAttribute(attr.name)) {
+        if (isUriAttribute(attr.name)) {
+            node.setAttribute(attr.name, sanitizeUrl(attr.value));
+        }
+        if (isSrcsetAttribute(attr.name)) {
+            node.setAttribute(attr.name, sanitizeSrcset(attr.value));
+        }
+    } else {
+        node.removeAttribute(attr.name);
+    }
+}
+
+function step(node: Node): boolean {
+    switch (node.nodeType) {
+        case node.TEXT_NODE:
+            return true;
+
+        case node.ELEMENT_NODE:
+            if (isValidElement(node.nodeName)) {
+                const { attributes } = node;
+
+                for (let i = attributes.length - 1; i >= 0; i--) {
+                    sanitizeAttribute(node as Element, attributes[i]);
+                }
+
+                return true;
+            }
+
+            (node as Element).remove();
+
+            break;
     }
 
     return false;
-}
-
-function sanitizeAttributes(node: Element) {
-    const { attributes } = node;
-
-    for (let i = attributes.length - 1; i >= 0; i--) {
-        const attr = attributes[i];
-
-        if (!isSafeAttribute(attr.name)) {
-            node.removeAttribute(attr.name);
-        }
-
-        if (attr.name.toLowerCase() === 'href') {
-            if (!SAFE_HREF_REGEXP.test(attr.value)) {
-                node.setAttribute('href', 'javascript:void(0)');
-            }
-        }
-    }
 }
 
 function walkNode(node: Node, callback: (node: Node) => boolean): void {
@@ -101,7 +132,5 @@ function walkNode(node: Node, callback: (node: Node) => boolean): void {
 }
 
 export default function sanitizeNode(node: Node): void {
-    for (const child of node.childNodes) {
-        walkNode(child, sanitize);
-    }
+    walkNode(node, step);
 }

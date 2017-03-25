@@ -24,7 +24,9 @@ export default class SanitizeHtml extends PureComponent<any, any> {
         const parser = new DOMParser();
         const parsedDocument = parser.parseFromString(html, 'text/html');
 
-        sanitizeNode(parsedDocument.body);
+        for (const child of parsedDocument.body.childNodes) {
+            sanitizeNode(child);
+        }
 
         const fragment = document.createDocumentFragment();
         fragment.appendChild(parsedDocument.documentElement);
