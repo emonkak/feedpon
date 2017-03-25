@@ -37,10 +37,17 @@ export default class Entry extends PureComponent<any, any> {
         isExpanded: false
     };
 
-    handleCollapse(event: React.SyntheticEvent<any>) {
-        const { onCollapse, isCollapsible, isExpanded } = this.props;
+    constructor(props: any, context: any) {
+        super(props, context);
 
-        if (isCollapsible && !isExpanded && onCollapse) {
+        this.handleClose = this.handleClose.bind(this);
+        this.handleCollapse = this.handleCollapse.bind(this);
+    }
+
+    handleCollapse(event: React.SyntheticEvent<any>) {
+        const { isCollapsible, isExpanded, onCollapse } = this.props;
+
+        if (onCollapse && isCollapsible && !isExpanded) {
             event.preventDefault();
 
             onCollapse(findDOMNode(this));
@@ -52,10 +59,38 @@ export default class Entry extends PureComponent<any, any> {
 
         const { isCollapsible, isExpanded, onClose } = this.props;
 
-        if (isCollapsible && isExpanded && onClose) {
+        if (onClose && isCollapsible && isExpanded) {
             onClose();
         }
     }
+
+    render() {
+        const { entry, isActive, isCollapsible, isExpanded } = this.props;
+
+        return (
+            <article
+                id={'entry--' + entry.entryId}
+                className={classnames('entry', {
+                    'is-active': isActive,
+                    'is-collapsible': isCollapsible,
+                    'is-expanded': isExpanded,
+                    'is-unread': !entry.readAt
+                })}>
+                <EntryInner
+                    entry={entry}
+                    onClose={this.handleClose}
+                    onCollapse={this.handleCollapse} />
+            </article>
+        );
+    }
+}
+
+class EntryInner extends PureComponent<any, any> {
+    static propTypes = {
+        entry: PropTypes.object.isRequired,
+        onClose: PropTypes.func.isRequired,
+        onCollapse: PropTypes.func.isRequired
+    };
 
     renderBookmarks() {
         const { entry } = this.props;
@@ -64,7 +99,7 @@ export default class Entry extends PureComponent<any, any> {
 
         return (
             <a
-                className={classnames('entry-infobar-item', 'entry-infobar-bookmarks', {
+                className={classnames('entry-info', 'entry-info-bookmarks', {
                     'is-bookmarked': entry.bookmarks > 0,
                     'is-popular': entry.bookmarks >= 10,
                     'is-very-popular': entry.bookmarks >= 20
@@ -82,7 +117,7 @@ export default class Entry extends PureComponent<any, any> {
         if (entry.origin) {  // FIXME: If same origin
             return (
                 <a
-                    className="entry-infobar-item entry-infobar-origin"
+                    className="entry-info entry-info-origin"
                     target="_blank"
                     href={entry.origin.url}>
                     <strong>{entry.origin.title}</strong>
@@ -98,7 +133,7 @@ export default class Entry extends PureComponent<any, any> {
 
         if (entry.author) {
             return (
-                <span className="entry-infobar-item entry-infobar-author">by {entry.author}</span>
+                <span className="entry-info entry-info-author">by {entry.author}</span>
             );
         }
 
@@ -110,7 +145,7 @@ export default class Entry extends PureComponent<any, any> {
 
         if (entry.publishedAt) {
             return (
-                <span className="entry-infobar-item entry-infobar-published-at">
+                <span className="entry-info entry-info-published-at">
                     <RelativeTime time={entry.publishedAt} />
                 </span>
             );
@@ -120,46 +155,39 @@ export default class Entry extends PureComponent<any, any> {
     }
 
     render() {
-        const { entry, isActive, isCollapsible, isExpanded } = this.props;
+        const { entry, onClose, onCollapse } = this.props;
 
         return (
-            <article
-                id={'entry-' + entry.entryId}
-                className={classnames('entry', { 
-                    'is-active': isActive,
-                    'is-collapsible': isCollapsible,
-                    'is-expanded': isExpanded,
-                    'is-unread': !entry.readAt
-                })}>
-                <div className="container">
-                    <div className="entry-toolbar">
-                        <a className="entry-toolbar-item" href="#"><i className="icon icon-16 icon-new-document"></i></a>
-                        <a className="entry-toolbar-item" href="#"><i className="icon icon-16 icon-pin-3"></i></a>
-                        <a className="entry-toolbar-item entry-close" href="#" onClick={this.handleClose.bind(this)}><i className="icon icon-16 icon-close"></i></a>
-                    </div>
+            <div className="container">
+                <header className="entry-header">
+                    <nav className="entry-nav">
+                        <a className="entry-action" href="#"><i className="icon icon-20 icon-new-document"></i></a>
+                        <a className="entry-action" href="#"><i className="icon icon-20 icon-pin-3"></i></a>
+                        <a className="entry-action entry-action-close" href="#" onClick={onClose}><i className="icon icon-16 icon-close"></i></a>
+                    </nav>
                     <h2 className="entry-title">
                         <a
                             target="_blank"
                             href={entry.url}
-                            onClick={this.handleCollapse.bind(this)}>
+                            onClick={onCollapse}>
                             {entry.title}
                         </a>
                     </h2>
-                    <div className="entry-infobar">
+                    <div className="entry-info-list">
                         {this.renderBookmarks()}
                         {this.renderOrign()}
                         {this.renderAuthor()}
                         {this.renderPublishedAt()}
                     </div>
-                    <StripHtml className="entry-description" html={entry.description} />
-                    <div dangerouslySetInnerHTML={{ __html: entry.content }} className="entry-content" />
-                    <div className="entry-actionbar">
-                        <a className="entry-actionbar-item" href="#"><i className="icon icon-20 icon-bookmark"></i></a>
-                        <a className="entry-actionbar-item" href="#"><i className="icon icon-20 icon-external-link"></i></a>
-                        <a className="entry-actionbar-item" href="#"><i className="icon icon-20 icon-share"></i></a>
-                    </div>
-                </div>
-            </article>
+                </header>
+                <StripHtml className="entry-description" html={entry.description} />
+                <div dangerouslySetInnerHTML={{ __html: entry.content }} className="entry-content" />
+                <footer className="entry-footer">
+                    <a className="entry-action" href="#"><i className="icon icon-20 icon-bookmark"></i></a>
+                    <a className="entry-action" href="#"><i className="icon icon-20 icon-external-link"></i></a>
+                    <a className="entry-action" href="#"><i className="icon icon-20 icon-share"></i></a>
+                </footer>
+            </div>
         );
     }
 }

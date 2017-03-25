@@ -21,10 +21,12 @@ export default class EntryPlaceholder extends React.Component<any, any> {
                 'is-expanded': isExpanded
             })}>
                 <div className="container">
-                    <h2 className="entry-title"><span className="placeholder placeholder-animated placeholder-80" /></h2>
-                    <div className="entry-infobar">
-                        <span className="placeholder placeholder-animated placeholder-60" />
-                    </div>
+                    <header className="entry-header">
+                        <h2 className="entry-title"><span className="placeholder placeholder-animated placeholder-80" /></h2>
+                        <div className="entry-info-list">
+                            <span className="placeholder placeholder-animated placeholder-60" />
+                        </div>
+                    </header>
                     <div className="entry-description">
                         <span className="placeholder placeholder-animated placeholder-100" />
                     </div>
@@ -48,11 +50,11 @@ export default class EntryPlaceholder extends React.Component<any, any> {
                             <span className="placeholder placeholder-animated placeholder-40" />
                         </p>
                     </div>
-                    <div className="entry-actionbar">
-                        <span className="entry-actionbar-item"><i className="icon icon-20 icon-bookmark"></i></span>
-                        <span className="entry-actionbar-item"><i className="icon icon-20 icon-external-link"></i></span>
-                        <span className="entry-actionbar-item"><i className="icon icon-20 icon-share"></i></span>
-                    </div>
+                    <footer className="entry-footer">
+                        <span className="entry-action"><i className="icon icon-20 icon-bookmark"></i></span>
+                        <span className="entry-action"><i className="icon icon-20 icon-external-link"></i></span>
+                        <span className="entry-action"><i className="icon icon-20 icon-share"></i></span>
+                    </footer>
                 </div>
             </article>
         );

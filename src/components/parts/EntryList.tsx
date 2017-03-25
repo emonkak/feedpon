@@ -40,7 +40,7 @@ export default class EntryList extends PureComponent<any, any> {
     componentWillUpdate(nextProps: any, nextState: any) {
         if (nextProps.viewMode !== this.props.viewMode) {
             if (this.activeEntryId != null) {
-                this.scrollElement = document.getElementById('entry-' + this.activeEntryId);
+                this.scrollElement = document.getElementById('entry--' + this.activeEntryId);
             }
         }
     }
