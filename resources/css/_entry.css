@@ -157,5 +157,5 @@ a.entry-info:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: calc(var(--baseline-height) * 2);
+  min-height: calc(var(--baseline-height) * 2);
 }
