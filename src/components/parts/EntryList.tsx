@@ -61,10 +61,14 @@ export default class EntryList extends PureComponent<any, any> {
         if (onMarkAsRead) {
             const { entries } = this.props;
 
-            entries
+            const readEntryIds = entries
                 .slice(0, activeEntryIndex)
                 .filter(entry => entry.readAt == null)
-                .forEach(entry => onMarkAsRead(entry.entryId));
+                .map(entry => entry.entryId);
+
+            if (readEntryIds.length > 0) {
+                onMarkAsRead(readEntryIds);
+            }
         }
     }
 

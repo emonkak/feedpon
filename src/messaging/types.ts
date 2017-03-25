@@ -1,7 +1,7 @@
 export type Event
     = { type: 'CATEGORIES_FETCHED', categories: Category[] }
-    | { type: 'ENTRY_KEPT_AS_UNREAD', entryId: string }
-    | { type: 'ENTRY_MARKED_AS_READ', entryId: string, readAt: string }
+    | { type: 'ENTRY_READ', entryIds: string[], readAt: string }
+    | { type: 'ENTRY_MARKED_AS_READ', entryIds: string[] }
     | { type: 'FEED_FETCHED', feed: Feed }
     | { type: 'FEED_FETCHING', feedId: string }
     | { type: 'FEED_UNSELECTED' }
@@ -50,6 +50,7 @@ export interface Entry {
     description: string;
     bookmarks: number;
     publishedAt: string;
+    markAsRead: boolean;
     readAt?: string;
 }
 

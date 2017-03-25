@@ -102,6 +102,8 @@ export default class Layout extends PureComponent<any, any> {
                             onToggleSidebar: this.handleToggleSidebar.bind(this),
                             scrollTo: this.scrollTo.bind(this)
                         })}
+                    </div>
+                    <div className="l-main-notifications">
                         <Notifications />
                     </div>
                     <div className="l-main-content">

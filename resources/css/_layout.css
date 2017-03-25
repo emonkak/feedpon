@@ -27,7 +27,8 @@
 }
 
 .l-root.is-opened .l-main,
-.l-root.is-opened .l-main-header {
+.l-root.is-opened .l-main-header,
+.l-root.is-opened .l-main-notifications {
   padding-left: var(--sidebar-width);
 }
 
@@ -59,9 +60,18 @@
   position: fixed;
   top: 0;
   left: 0;
-  right: 0;
   width: 100%;
   z-index: 100;
+  transition: padding 0.2s ease-in-out;
+}
+
+.l-main-notifications {
+  position: fixed;
+  top: 0;
+  /* bottom: 0; */
+  left: 0;
+  width: 100%;
+  z-index: 200;
   transition: padding 0.2s ease-in-out;
 }
 
@@ -71,7 +81,8 @@
   }
 
   .l-main,
-  .l-main-header {
+  .l-main-header,
+  .l-main-notifications {
     padding-left: var(--sidebar-width);
     box-sizing: border-box;
   }

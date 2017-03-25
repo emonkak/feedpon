@@ -5,7 +5,7 @@ import EntryList from 'components/parts/EntryList';
 import MenuItem from 'components/parts/MenuItem';
 import connect from 'utils/components/connect';
 import { State } from 'messaging/types';
-import { fetchFeed, markEntryAsRead, saveReadEntries, unselectFeed } from 'messaging/actions';
+import { fetchFeed, readEntry, saveReadEntries, unselectFeed } from 'messaging/actions';
 
 @connect((state: State) => {
     return {
@@ -40,7 +40,11 @@ export default class Feed extends PureComponent<any, any> {
             const { feed, dispatch } = this.props;
 
             if (feed) {
-                dispatch(saveReadEntries(feed.entries.filter(entry => entry.readAt)));
+                const readEntryIds = feed.entries
+                    .filter(entry => !entry.markAsRead && entry.readAt)
+                    .map(entry => entry.entryId);
+
+                dispatch(saveReadEntries(readEntryIds));
             }
 
             dispatch(fetchFeed(nextProps.params.feed_id));
@@ -48,11 +52,23 @@ export default class Feed extends PureComponent<any, any> {
     }
 
     componentWillUnmount() {
-        this.props.dispatch(unselectFeed());
+        const { feed, dispatch } = this.props;
+
+        if (feed) {
+            const readEntryIds = feed.entries
+                .filter(entry => !entry.markAsRead && entry.readAt)
+                .map(entry => entry.entryId);
+
+            dispatch(saveReadEntries(readEntryIds));
+        }
+
+        dispatch(unselectFeed());
     }
 
-    handleMarkEntryAsRead(entryId: string) {
-        this.props.dispatch(markEntryAsRead(entryId, new Date()));
+    handleMarkEntryAsRead(entryIds: string[]) {
+        const { dispatch } = this.props;
+
+        dispatch(readEntry(entryIds, new Date()));
     }
 
     handleLoadMoreEntries(event: React.SyntheticEvent<any>) {

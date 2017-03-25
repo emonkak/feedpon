@@ -54,10 +54,35 @@ function reduceFeed(feed: Feed | null, event: Event): Feed {
             if (feed) {
                 return {
                     ...feed,
-                    entries: feed.entries.map(entry => ({
-                        ...entry,
-                        readAt: null
-                    }))
+                    entries: feed.entries.map(entry => {
+                        if (entry.markAsRead) {
+                            return entry;
+                        }
+
+                        return {
+                            ...entry,
+                            readAt: null
+                        };
+                    })
+                };
+            }
+
+            return null;
+
+        case 'ENTRY_READ':
+            if (feed) {
+                return {
+                    ...feed,
+                    entries: feed.entries.map(entry => {
+                        if (event.entryIds.indexOf(entry.entryId) === -1) {
+                            return entry;
+                        }
+
+                        return {
+                            ...entry,
+                            readAt: event.readAt
+                        };
+                    })
                 };
             }
 
@@ -68,33 +93,14 @@ function reduceFeed(feed: Feed | null, event: Event): Feed {
                 return {
                     ...feed,
                     entries: feed.entries.map(entry => {
-                        if (entry.entryId === event.entryId) {
-                            return {
-                                ...entry,
-                                readAt: event.readAt
-                            };
-                        } else {
+                        if (event.entryIds.indexOf(entry.entryId) === -1) {
                             return entry;
                         }
-                    })
-                };
-            }
 
-            return null;
-
-        case 'ENTRY_KEPT_AS_UNREAD':
-            if (feed) {
-                return {
-                    ...feed,
-                    entries: feed.entries.map(entry => {
-                        if (entry.entryId === event.entryId) {
-                            return {
-                                ...entry,
-                                readAt: null
-                            };
-                        } else {
-                            return entry;
-                        }
+                        return {
+                            ...entry,
+                            markAsRead: true
+                        };
                     })
                 };
             }

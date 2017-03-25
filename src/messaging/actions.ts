@@ -58,17 +58,18 @@ const ENTRIES: Entry[] = rss.items.map((item: any, i: number) => ({
         feedId: rss.feed.url,
         title: rss.feed.title,
         url: rss.feed.link,
-    }
+    },
+    markAsRead: false
 }));
 
 const DEFAULT_DISMISS_AFTER = 3000;
 
 const DELAY = 500;
 
-export function markEntryAsRead(entryId: string, timestamp: Date): Event {
+export function readEntry(entryIds: string[], timestamp: Date): Event {
     return {
-        type: 'ENTRY_MARKED_AS_READ',
-        entryId,
+        type: 'ENTRY_READ',
+        entryIds,
         readAt: timestamp.toISOString()
     };
 }
@@ -79,23 +80,21 @@ export function clearReadEntries(): Event {
     };
 }
 
-export function keepEntryAsUnread(entryId: string): Event {
-    return {
-        type: 'ENTRY_KEPT_AS_UNREAD',
-        entryId
-    };
-}
-
-export function saveReadEntries(entries: Entry[]): AsyncEvent {
+export function saveReadEntries(entryIds: string[]): AsyncEvent {
     return (dispatch, getState) => {
-        if (entries.length === 0) {
+        if (entryIds.length === 0) {
             return;
         }
 
         setTimeout(() => {
-            const message = entries.length === 1
-                ? `${entries.length} entry is marked as read.`
-                : `${entries.length} entries are marked as read.`;
+            const message = entryIds.length === 1
+                ? `${entryIds.length} entry is marked as read.`
+                : `${entryIds.length} entries are marked as read.`;
+
+            dispatch({
+                type: 'ENTRY_MARKED_AS_READ',
+                entryIds
+            });
 
             sendNotification({
                 message,
