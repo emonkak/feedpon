@@ -82,8 +82,6 @@
 .tree-header {
   display: flex;
   align-items: stretch;
-  font-weight: 600;
-  font-size: 0.875rem;
   padding: calc(var(--baseline-height) / 2 - 1px) 0 0;
   border-bottom: 1px solid var(--default-color);
   border-radius: 0;
@@ -93,4 +91,9 @@
 .tree-header > a {
   color: inherit;
   text-decoration: none;
+}
+
+.tree-header > .tree-node-label {
+  font-weight: 600;
+  font-size: 0.875rem;
 }
