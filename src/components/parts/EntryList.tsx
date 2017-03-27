@@ -145,6 +145,11 @@ export default class EntryList extends PureComponent<any, any> {
                     <EntryPlaceholder isCollapsible={isCollapsible} isExpanded={isExpanded} />
                     <EntryPlaceholder isCollapsible={isCollapsible} isExpanded={isExpanded} />
                     <EntryPlaceholder isCollapsible={isCollapsible} isExpanded={isExpanded} />
+                    <EntryPlaceholder isCollapsible={isCollapsible} isExpanded={isExpanded} />
+                    <EntryPlaceholder isCollapsible={isCollapsible} isExpanded={isExpanded} />
+                    <EntryPlaceholder isCollapsible={isCollapsible} isExpanded={isExpanded} />
+                    <EntryPlaceholder isCollapsible={isCollapsible} isExpanded={isExpanded} />
+                    <EntryPlaceholder isCollapsible={isCollapsible} isExpanded={isExpanded} />
                 </div>
             );
         }
