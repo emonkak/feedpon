@@ -168,7 +168,7 @@ export default class Feed extends PureComponent<any, any> {
         if (feed.isLoading) {
             return (
                 <footer className="feed-footer">
-                    <i className="icon icon-32 icon-spinner " />
+                    <i className="icon icon-32 icon-spinner animation-clockwise-rotation " />
                 </footer>
             );
         } else if (feed.hasMoreEntries) {

@@ -107,6 +107,10 @@ export function saveReadEntries(entryIds: string[]): AsyncEvent {
 
 export function fetchSubscriptions(): AsyncEvent {
     return dispatch => {
+        dispatch({
+            type: 'SUBSCRIPTIONS_FETCHING'
+        });
+
         setTimeout(() => {
             dispatch({
                 type: 'CATEGORIES_FETCHED',
@@ -115,7 +119,8 @@ export function fetchSubscriptions(): AsyncEvent {
 
             dispatch({
                 type: 'SUBSCRIPTIONS_FETCHED',
-                subscriptions: SUBSCRIPTIONS
+                subscriptions: SUBSCRIPTIONS,
+                fetchedAt: new Date().toISOString()
             });
         }, DELAY);
     };

@@ -8,7 +8,8 @@ export type Event
     | { type: 'NOTIFICATION_DISMISSED', id: number }
     | { type: 'NOTIFICATION_SENT', notification: Notification }
     | { type: 'READ_ENTRIES_CLEARED' }
-    | { type: 'SUBSCRIPTIONS_FETCHED', subscriptions: Subscription[] }
+    | { type: 'SUBSCRIPTIONS_FETCHING' }
+    | { type: 'SUBSCRIPTIONS_FETCHED', subscriptions: Subscription[], fetchedAt: string }
     | { type: 'VIEW_MODE_CHANGED', viewMode: ViewMode };
 
 export interface AsyncEvent {
@@ -20,7 +21,7 @@ export interface State {
     feed: Feed | null;
     notifications: Notification[];
     preference: Preference;
-    subscriptions: Subscription[];
+    subscriptions: Subscriptions;
 }
 
 export interface Category {
@@ -72,6 +73,12 @@ export interface Preference {
 }
 
 export type ViewMode = 'expanded' | 'collapsible';
+
+export interface Subscriptions {
+    items: Subscription[];
+    isLoading: boolean;
+    lastUpdatedAt: string | null;
+}
 
 export interface Subscription {
     feedId: string,

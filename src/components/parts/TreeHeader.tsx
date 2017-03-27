@@ -1,25 +1,17 @@
-import React, { PureComponent } from 'react';
+import React, { PropTypes, PureComponent } from 'react';
 
 export default class TreeHeader extends PureComponent<any, any> {
-    renderIcon(icon: React.ReactElement<any>, onClick: React.EventHandler<any>) {
-        if (icon) {
-            return (
-                <a className="tree-node-icon" href="#" onClick={onClick}>{icon}</a>
-            );
-        } else {
-            return null;
-        }
-    }
+    static propTypes = {
+        children: PropTypes.node
+    };
 
     render() {
-        const { leftIcon, onLeftIconClick, onRightIconClick, rightIcon, title } = this.props;
+        const { children } = this.props;
 
         return (
             <li>
                 <div className="tree-header">
-                    {this.renderIcon(leftIcon, onLeftIconClick)}
-                    <span className="tree-node-label">{title}</span>
-                    {this.renderIcon(rightIcon, onRightIconClick)}
+                    {children}
                 </div>
             </li>
         );

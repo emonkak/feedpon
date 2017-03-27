@@ -1,5 +1,4 @@
 .menu {
-  display: block;
   box-sizing: border-box;
   padding: calc(var(--baseline-height) / 4 - 1px) 0;
   border: 1px solid var(--medium-dark-color);

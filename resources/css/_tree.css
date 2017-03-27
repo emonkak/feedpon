@@ -34,7 +34,7 @@
   display: block;
 }
 
-.tree-node a {
+.tree-node > a {
   color: inherit;
   text-decoration: none;
 }
@@ -44,6 +44,14 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.tree-node-icon > a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
 }
 
 .tree-node-label {
@@ -82,7 +90,7 @@
   color: var(--default-color);
 }
 
-.tree-header a {
+.tree-header > a {
   color: inherit;
   text-decoration: none;
 }

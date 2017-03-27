@@ -18,7 +18,7 @@
   -webkit-overflow-scrolling: touch;
 }
 
-.dropdown > .menu-right {
+.dropdown.is-pull-right > .menu {
   left: auto;
   right: 0;
 }

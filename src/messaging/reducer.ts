@@ -1,4 +1,4 @@
-import { Category, Event, Feed, Notification, Preference, State, Subscription } from 'messaging/types';
+import { Category, Event, Feed, Notification, Preference, State, Subscriptions } from 'messaging/types';
 
 export default function reducer(state: State, event: Event): State {
     return {
@@ -138,10 +138,20 @@ function reducePreference(preference: Preference, event: Event): Preference {
     }
 }
 
-function reduceSubscriptions(subscriptions: Subscription[], event: Event): Subscription[] {
+function reduceSubscriptions(subscriptions: Subscriptions, event: Event): Subscriptions {
     switch (event.type) {
+        case 'SUBSCRIPTIONS_FETCHING':
+            return {
+                ...subscriptions,
+                isLoading: true
+            };
+
         case 'SUBSCRIPTIONS_FETCHED':
-            return event.subscriptions;
+            return {
+                isLoading: false,
+                items: event.subscriptions,
+                lastUpdatedAt: event.fetchedAt
+            };
 
         default:
             return subscriptions;

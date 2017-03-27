@@ -83,12 +83,15 @@ export default class Dropdown extends PureComponent<any, any> {
         const { isOpened } = this.state;
 
         return (
-            <div className={classnames('dropdown', className, { 'is-opened': isOpened })}>
+            <div className={classnames('dropdown', className, {
+                'is-opened': isOpened,
+                'is-pull-right': pullRight
+            })}>
                 {this.renderToggleButton()}
-                <Closable onClose={this.handleClose.bind(this)}
-                          isDisabled={!isOpened}>
-                    <Menu onSelect={createChainedFunction(onSelect, this.handleClose.bind(this))}
-                          pullRight={pullRight}>
+                <Closable
+                    onClose={this.handleClose.bind(this)}
+                    isDisabled={!isOpened}>
+                    <Menu onSelect={createChainedFunction(onSelect, this.handleClose.bind(this))}>
                         {children}
                     </Menu>
                 </Closable>

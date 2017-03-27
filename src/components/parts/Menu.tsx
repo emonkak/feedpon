@@ -32,7 +32,7 @@ export default class Menu extends PureComponent<any, any> {
 
         return (
             <div className={classnames('menu', {
-                'menu-right': pullRight,
+                'menu-pull-right': pullRight,
             })}>
                 {Children.map(children, this.renderChild.bind(this))}
             </div>
