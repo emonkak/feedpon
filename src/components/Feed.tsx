@@ -3,7 +3,7 @@ import React, { PropTypes, PureComponent } from 'react';
 import Dropdown from 'components/parts/Dropdown';
 import EntryList from 'components/parts/EntryList';
 import MenuItem from 'components/parts/MenuItem';
-import connect from 'utils/components/connect';
+import connect from 'supports/react/connect';
 import { State } from 'messaging/types';
 import { fetchFeed, readEntry, saveReadEntries, unselectFeed } from 'messaging/actions';
 

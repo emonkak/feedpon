@@ -1,6 +1,6 @@
 import React, { PropTypes, PureComponent } from 'react';
 
-import stripHtml from 'utils/dom/stripHtml';
+import stripHtml from 'supports/dom/stripHtml';
 
 export default class StripHtml extends PureComponent<any, any> {
     static propTypes = {

@@ -11,7 +11,7 @@ const initialState: State = {
     },
     preference: {
         viewMode: 'expanded'
-    },
+    }
 };
 
 export default initialState;

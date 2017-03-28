@@ -3,7 +3,7 @@ import React, { PureComponent } from 'react';
 import Dropdown from 'components/parts/Dropdown';
 import MenuItem from 'components/parts/MenuItem';
 import Modal from 'components/parts/Modal';
-import connect from 'utils/components/connect';
+import connect from 'supports/react/connect';
 import { sendNotification } from 'messaging/actions';
 
 @connect()

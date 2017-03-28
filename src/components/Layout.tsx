@@ -4,7 +4,7 @@ import { locationShape, routerShape } from 'react-router/lib/PropTypes';
 
 import Notifications from 'components/Notifications';
 import Sidebar from 'components/Sidebar';
-import smoothScroll from 'utils/dom/smoothScroll';
+import smoothScroll from 'supports/dom/smoothScroll';
 
 export default class Layout extends PureComponent<any, any> {
     static propTypes = {

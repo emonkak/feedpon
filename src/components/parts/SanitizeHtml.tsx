@@ -1,7 +1,7 @@
 import React, { PropTypes, PureComponent } from 'react';
 import { findDOMNode } from 'react-dom';
 
-import sanitizeNode from 'utils/dom/sanitizeNode';
+import sanitizeNode from 'supports/dom/sanitizeNode';
 
 export default class SanitizeHtml extends PureComponent<any, any> {
     static propTypes = {

@@ -1,7 +1,7 @@
 import React, { Children, PropTypes, PureComponent, cloneElement } from 'react';
 import classnames from 'classnames';
 
-import createChainedFunction from 'utils/createChainedFunction';
+import createChainedFunction from 'supports/createChainedFunction';
 
 export default class Menu extends PureComponent<any, any> {
     static propTypes = {

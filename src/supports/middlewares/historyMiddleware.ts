@@ -1,6 +1,6 @@
 import { History } from 'history';
 
-import { PUSH, REPLACE, GO, GO_BACK, GO_FORWARD } from 'utils/middlewares/historyActions';
+import { PUSH, REPLACE, GO, GO_BACK, GO_FORWARD } from 'supports/middlewares/historyActions';
 
 export default function historyMiddleware(history: History): (action: any, next: (action: any) => void) => void {
     return (action, next) => {

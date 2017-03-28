@@ -3,7 +3,7 @@ import classnames from 'classnames';
 
 import Closable from 'components/parts/Closable';
 import Menu from 'components/parts/Menu';
-import createChainedFunction from 'utils/createChainedFunction';
+import createChainedFunction from 'supports/createChainedFunction';
 
 export default class Dropdown extends PureComponent<any, any> {
     static propTypes = {

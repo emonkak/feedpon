@@ -9,10 +9,10 @@ import Tree from 'components/parts/Tree';
 import TreeBranch from 'components/parts/TreeBranch';
 import TreeHeader from 'components/parts/TreeHeader';
 import TreeLeaf from 'components/parts/TreeLeaf';
-import connect from 'utils/components/connect';
+import connect from 'supports/react/connect';
 import { Category, State, Subscription } from 'messaging/types';
 import { fetchSubscriptions } from 'messaging/actions';
-import { replace } from 'utils/middlewares/historyActions';
+import { replace } from 'supports/middlewares/historyActions';
 
 import '@emonkak/enumerable/extensions/groupJoin';
 import '@emonkak/enumerable/extensions/select';

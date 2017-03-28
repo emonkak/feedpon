@@ -3,7 +3,7 @@ import React, { PropTypes, PureComponent } from 'react';
 import Dropdown from 'components/parts/Dropdown';
 import MenuItem from 'components/parts/MenuItem';
 import Navbar from 'components/parts/Navbar';
-import connect from 'utils/components/connect';
+import connect from 'supports/react/connect';
 import { State, ViewMode } from 'messaging/types';
 import { changeViewMode, clearReadEntries } from 'messaging/actions';
 

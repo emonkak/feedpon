@@ -1,6 +1,6 @@
 import React, { PropTypes, PureComponent, createElement } from 'react';
 
-import Store from 'utils/Store';
+import Store from 'supports/Store';
 
 export default function connect<TEvent, TState>(mapStateToProps?: (state: TState) => any,
                                                 mapDispatchToProps?: (dispatch: (action: TEvent) => void) => any): (component: React.ComponentClass<any>) => any {
@@ -15,7 +15,7 @@ export default function connect<TEvent, TState>(mapStateToProps?: (state: TState
     return component => {
         return class StoreSubscriber extends PureComponent<any, TState> {
             static contextTypes = {
-                store: PropTypes.instanceOf(Store).isRequired,
+                store: PropTypes.instanceOf(Store).isRequired
             };
 
             private dispatchProps: any;
