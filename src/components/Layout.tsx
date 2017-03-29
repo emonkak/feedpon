@@ -83,7 +83,7 @@ export default class Layout extends PureComponent<any, any> {
     }
 
     render() {
-        const { content, navbar, location } = this.props;
+        const { content, location, navbar, router } = this.props;
         const { isScrolling, sidebarIsOpened } = this.state;
 
         const rootClassName = classnames('l-root', {
@@ -93,7 +93,7 @@ export default class Layout extends PureComponent<any, any> {
         return (
             <div className={rootClassName} onClick={this.handleCloseSidebar.bind(this)}>
                 <div className='l-sidebar'>
-                    <Sidebar selectedValue={location.pathname} />
+                    <Sidebar router={router} selectedValue={location.pathname} />
                 </div>
                 <div className="l-main">
                     <div className="l-main-header">

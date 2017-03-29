@@ -1,6 +1,8 @@
+import Enumerable from '@emonkak/enumerable';
 import React, { PropTypes, PureComponent } from 'react';
 import classnames from 'classnames';
-import Enumerable from '@emonkak/enumerable';
+import { InjectedRouter } from 'react-router';
+import { routerShape } from 'react-router/lib/PropTypes';
 
 import Dropdown from 'components/parts/Dropdown';
 import MenuItem from 'components/parts/MenuItem';
@@ -12,7 +14,6 @@ import TreeLeaf from 'components/parts/TreeLeaf';
 import connect from 'supports/react/connect';
 import { Category, State, Subscription } from 'messaging/types';
 import { fetchSubscriptions } from 'messaging/actions';
-import { replace } from 'supports/middlewares/historyActions';
 
 import '@emonkak/enumerable/extensions/groupJoin';
 import '@emonkak/enumerable/extensions/select';
@@ -25,6 +26,7 @@ interface Props {
     readonly lastUpdatedAt?: string;
     readonly selectedValue?: string;
     readonly subscriptions?: Subscription[];
+    readonly router?: InjectedRouter;
 }
 
 @connect((state: State) => ({
@@ -39,6 +41,7 @@ export default class Sidebar extends PureComponent<Props, {}> {
         dispatch: PropTypes.func.isRequired,
         isLoading: PropTypes.bool.isRequired,
         lastUpdatedAt: PropTypes.string,
+        router: routerShape,
         selectedValue: PropTypes.string,
         subscriptions: PropTypes.array.isRequired
     };
@@ -50,9 +53,9 @@ export default class Sidebar extends PureComponent<Props, {}> {
     }
 
     handleSelect(event: React.SyntheticEvent<any>, selectedValue: string, activeType: React.ReactType) {
-        const { dispatch } = this.props;
+        const { router } = this.props;
 
-        dispatch(replace(selectedValue));
+        router.replace(selectedValue);
     }
 
     handleReload(event: React.SyntheticEvent<any>) {
