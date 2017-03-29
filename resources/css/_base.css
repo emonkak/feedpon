@@ -28,7 +28,7 @@
   --container-width: 800px;
 }
 
-html {
+html, body {
   font-family: -apple-system, 'BlinkMacSystemFont', '.SFNSDisplay-Regular', 'San Francisco Text', 'Segoe UI', 'Helvetica', 'YuGothic', 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
   font-size: var(--font-size);
   line-height: var(--baseline-height);

@@ -2,6 +2,7 @@ const path = require('path');
 
 const config = {
     entry: {
+        'background': './src/background.ts',
         'index': './src/index.tsx'
     },
     output: {
