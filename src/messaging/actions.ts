@@ -1,5 +1,8 @@
+import querystring from 'querystring';
+
 import rss from 'json/rss.json';
-import { AsyncEvent, Category, Entry, Event, ViewMode, Notification, Subscription } from 'messaging/types';
+import { AsyncEvent, Category, Entry, Environment, Event, Notification, Subscription, ViewMode } from './types';
+import { exchangeToken } from 'supports/feedly/api';
 
 const SUBSCRIPTIONS: Subscription[] = [
     {
@@ -65,6 +68,85 @@ const ENTRIES: Entry[] = rss.items.map((item: any, i: number) => ({
 const DEFAULT_DISMISS_AFTER = 3000;
 
 const DELAY = 500;
+
+function observeUrlChanging(window: chrome.windows.Window, callback: (url: string) => void): void {
+    function handleUpdateTab(tabId: number, changeInfo: chrome.tabs.TabChangeInfo, tab: chrome.tabs.Tab): void {
+        if (tab.windowId === window.id && tab.status === 'complete') {
+            callback(tab.url)
+        }
+    }
+
+    function handleRemoveWindow(windowId: number): void {
+        if (windowId === window.id) {
+            unregisterListeners();
+        }
+    }
+
+    function unregisterListeners(): void {
+        chrome.tabs.onUpdated.removeListener(handleUpdateTab);
+        chrome.windows.onRemoved.removeListener(handleRemoveWindow);
+    }
+
+    chrome.tabs.onUpdated.addListener(handleUpdateTab);
+    chrome.windows.onRemoved.addListener(handleRemoveWindow);
+}
+
+export function authenticate(environment: Environment): AsyncEvent {
+    return (dispatch, getState) => {
+        async function handleRedirectUrl(urlString: string): Promise<void> {
+            const url = new URL(urlString);
+            const { searchParams } = url as any;  // XXX: Avid the type definition bug
+
+            const error = searchParams.get('error');
+            if (error) {
+                sendNotification({
+                    message: 'Authentication failed: ' + error,
+                    kind: 'negative'
+                })(dispatch, getState);
+
+                return;
+            }
+
+            const code = searchParams.get('code');
+
+            const token = await exchangeToken(environment.endpoint, {
+                code,
+                client_id: environment.clientId,
+                client_secret: environment.clientSecret,
+                redirect_uri: environment.redirectUri,
+                grant_type: 'authorization_code'
+            });
+
+            const credential = {
+                authorizedAt: new Date().toISOString(),
+                token
+            };
+
+            dispatch({
+                type: 'AUTHENTICATED',
+                credential
+            });
+        }
+
+        const url = environment.endpoint + 'v3/auth/auth?' +
+            querystring.stringify({
+                client_id: environment.clientId,
+                redirect_uri: environment.redirectUri,
+                response_type: 'code',
+                scope: environment.scope
+            });
+
+        chrome.windows.create({ url, type: 'popup' }, (window) => {
+            observeUrlChanging(window, async (url) => {
+                if (url.startsWith(environment.redirectUri)) {
+                    chrome.windows.remove(window.id);
+
+                    handleRedirectUrl(url);
+                }
+            });
+        });
+    };
+}
 
 export function readEntry(entryIds: string[], timestamp: Date): Event {
     return {

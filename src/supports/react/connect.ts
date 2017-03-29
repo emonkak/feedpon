@@ -3,7 +3,7 @@ import React, { PropTypes, PureComponent, createElement } from 'react';
 import Store from 'supports/Store';
 
 export default function connect<TEvent, TState>(mapStateToProps?: (state: TState) => any,
-                                                mapDispatchToProps?: (dispatch: (action: TEvent) => void) => any): (component: React.ComponentClass<any>) => any {
+                                                mapDispatchToProps?: (dispatch: (event: TEvent) => void) => any): (component: React.ComponentClass<any>) => any {
     if (!mapStateToProps) {
         mapStateToProps = state => state;
     }

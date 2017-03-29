@@ -1,5 +1,8 @@
+import { ExchangeTokenResponse } from 'supports/feedly/types';
+
 export type Event
-    = { type: 'CATEGORIES_FETCHED', categories: Category[] }
+    = { type: 'AUTHENTICATED', credential: Credential }
+    | { type: 'CATEGORIES_FETCHED', categories: Category[] }
     | { type: 'ENTRY_READ', entryIds: string[], readAt: string }
     | { type: 'ENTRY_MARKED_AS_READ', entryIds: string[] }
     | { type: 'FEED_FETCHED', feed: Feed }
@@ -18,10 +21,25 @@ export interface AsyncEvent {
 
 export interface State {
     categories: Category[];
+    credential: Credential | null;
+    environment: Environment;
     feed: Feed | null;
     notifications: Notification[];
     preference: Preference;
     subscriptions: Subscriptions;
+}
+
+export interface Credential {
+    authorizedAt: string;
+    token: ExchangeTokenResponse;
+}
+
+export interface Environment {
+    endpoint: string;
+    clientId: string;
+    clientSecret: string;
+    scope: string;
+    redirectUri: string;
 }
 
 export interface Category {

@@ -1,8 +1,10 @@
-import { Category, Event, Feed, Notification, Preference, State, Subscriptions } from 'messaging/types';
+import { Category, Credential, Event, Feed, Notification, Preference, State, Subscriptions } from './types';
 
 export default function reducer(state: State, event: Event): State {
     return {
         categories: reduceCategories(state.categories, event),
+        credential: reduceCredential(state.credential, event),
+        environment: state.environment,
         feed: reduceFeed(state.feed, event),
         notifications: reduceNotifications(state.notifications, event),
         preference: reducePreference(state.preference, event),
@@ -17,6 +19,16 @@ function reduceCategories(categories: Category[], event: Event): Category[] {
 
         default:
             return categories;
+    }
+}
+
+function reduceCredential(credential: Credential | null, event: Event): Credential | null {
+    switch (event.type) {
+        case 'AUTHENTICATED':
+            return event.credential;
+
+        default:
+            return credential;
     }
 }
 
