@@ -62,6 +62,7 @@
   display: flex;
   float: right;
   visibility: hidden;
+  padding-left: 1.5rem;
 }
 
 .entry-action,
@@ -79,7 +80,7 @@ a.entry-action {
 }
 
 .entry-action + .entry-action {
-  margin-left: 6px;
+  margin-left: 8px;
 }
 
 a.entry-action:hover {
