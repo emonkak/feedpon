@@ -1,8 +1,7 @@
 import Enumerable from '@emonkak/enumerable';
 import React, { PropTypes, PureComponent } from 'react';
 import classnames from 'classnames';
-import { InjectedRouter } from 'react-router';
-import { routerShape } from 'react-router/lib/PropTypes';
+import { History } from 'history';
 
 import Dropdown from 'components/parts/Dropdown';
 import MenuItem from 'components/parts/MenuItem';
@@ -11,6 +10,7 @@ import Tree from 'components/parts/Tree';
 import TreeBranch from 'components/parts/TreeBranch';
 import TreeHeader from 'components/parts/TreeHeader';
 import TreeLeaf from 'components/parts/TreeLeaf';
+import bindAction from 'supports/bindAction';
 import connect from 'supports/react/connect';
 import { Category, State, Subscription } from 'messaging/types';
 import { fetchSubscriptions } from 'messaging/actions';
@@ -20,41 +20,35 @@ import '@emonkak/enumerable/extensions/select';
 import '@emonkak/enumerable/extensions/toArray';
 
 interface Props {
-    readonly categories?: Category[];
-    readonly dispatch?: (action: any) => void;
-    readonly isLoading?: boolean;
-    readonly lastUpdatedAt?: string;
-    readonly selectedValue?: string;
-    readonly subscriptions?: Subscription[];
-    readonly router?: InjectedRouter;
+    categories: Category[];
+    isLoading: boolean;
+    lastUpdatedAt: string | null;
+    onFetchSubscriptions: () => void;
+    router: History;
+    selectedValue?: string;
+    subscriptions: Subscription[];
 }
 
-@connect((state: State) => ({
-    categories: state.categories,
-    subscriptions: state.subscriptions.items,
-    isLoading: state.subscriptions.isLoading,
-    lastUpdatedAt: state.subscriptions.lastUpdatedAt
-}))
-export default class Sidebar extends PureComponent<Props, {}> {
+class Sidebar extends PureComponent<Props, {}> {
     static propTypes = {
         categories: PropTypes.array.isRequired,
-        dispatch: PropTypes.func.isRequired,
         isLoading: PropTypes.bool.isRequired,
         lastUpdatedAt: PropTypes.string,
-        router: routerShape,
+        onFetchSubscriptions: PropTypes.func.isRequired,
+        router: PropTypes.object.isRequired,
         selectedValue: PropTypes.string,
         subscriptions: PropTypes.array.isRequired
     };
 
     componentWillMount() {
-        const { dispatch, lastUpdatedAt } = this.props;
+        const { lastUpdatedAt, onFetchSubscriptions } = this.props;
 
         if (lastUpdatedAt == null) {
-            dispatch(fetchSubscriptions());
+            onFetchSubscriptions();
         }
     }
 
-    handleSelect(event: React.SyntheticEvent<any>, selectedValue: string, activeType: React.ReactType) {
+    handleSelect(selectedValue: string) {
         const { router } = this.props;
 
         router.replace(selectedValue);
@@ -63,10 +57,10 @@ export default class Sidebar extends PureComponent<Props, {}> {
     handleReload(event: React.SyntheticEvent<any>) {
         event.preventDefault();
 
-        const { dispatch, isLoading } = this.props;
+        const { isLoading, onFetchSubscriptions } = this.props;
 
         if (!isLoading) {
-            dispatch(fetchSubscriptions());
+            onFetchSubscriptions();
         }
     }
 
@@ -80,8 +74,7 @@ export default class Sidebar extends PureComponent<Props, {}> {
                             value={`/feeds/${encodeURIComponent(category.feedId)}`}
                             className={classnames({ 'is-important': totalUnreadCount > 0 })}
                             primaryText={category.title}
-                            secondaryText={totalUnreadCount > 0 ? Number(totalUnreadCount).toLocaleString() : null}
-                            icon={<i className="icon icon-16 icon-angle-down" />}>
+                            secondaryText={totalUnreadCount > 0 ? Number(totalUnreadCount).toLocaleString() : null}>
                 {subscriptions.map(subscription => this.renderSubscription(subscription))}
             </TreeBranch>
         );
@@ -121,7 +114,7 @@ export default class Sidebar extends PureComponent<Props, {}> {
 
         return (
             <Tree value={selectedValue}
-                    onSelect={this.handleSelect.bind(this)}>
+                  onSelect={this.handleSelect.bind(this)}>
                 <TreeLeaf key="/" value="/" primaryText="Dashboard" />
                 <TreeLeaf key="/feeds/all/" value="/feeds/all/" primaryText="All" secondaryText={Number(totalUnreadCount).toLocaleString()} />
                 <TreeLeaf key="/feeds/pins/" value="/feeds/pins/" primaryText="Pins" secondaryText="12" />
@@ -172,3 +165,15 @@ export default class Sidebar extends PureComponent<Props, {}> {
         );
     }
 }
+
+export default connect(
+    (state: State) => ({
+        categories: state.subscriptions.categories,
+        subscriptions: state.subscriptions.items,
+        isLoading: state.subscriptions.isLoading,
+        lastUpdatedAt: state.subscriptions.lastUpdatedAt
+    }),
+    (dispatch) => ({
+        onFetchSubscriptions: bindAction(fetchSubscriptions, dispatch)
+    })
+)(Sidebar);

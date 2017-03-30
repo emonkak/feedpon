@@ -1,30 +1,26 @@
 import React, { PropTypes, PureComponent } from 'react';
-import { locationShape } from 'react-router/lib/PropTypes';
+import { Location } from 'history';
 
+import bindAction from 'supports/bindAction';
 import connect from 'supports/react/connect';
 import { State } from 'messaging/types';
 import { authenticate } from 'messaging/actions';
 
-@connect((state: State) => ({
-    environment: state.environment
-}))
-export default class Authentication extends PureComponent<any, any> {
+interface Props {
+    location: Location;
+    onAuthenticate: () => void;
+}
+
+class Authentication extends PureComponent<Props, {}> {
     static propTypes = {
-        environment: PropTypes.shape({
-            endpoint: PropTypes.string.isRequired,
-            clientId: PropTypes.string.isRequired,
-            clientSecret: PropTypes.string.isRequired,
-            scope: PropTypes.string.isRequired,
-            redirectUri: PropTypes.string.isRequired
-        }),
-        dispatch: PropTypes.func.isRequired,
-        location: locationShape
+        location: PropTypes.object.isRequired,
+        onAuthenticate: PropTypes.func.isRequired
     };
 
     handleAuthenticate() {
-        const { dispatch, environment } = this.props;
+        const { onAuthenticate } = this.props;
 
-        dispatch(authenticate(environment));
+        onAuthenticate();
     }
 
     render() {
@@ -34,12 +30,19 @@ export default class Authentication extends PureComponent<any, any> {
                 <h1>Authentication</h1>
 
                 <button
+                    type="button"
                     className="button button-positive"
-                    onClick={this.handleAuthenticate.bind(this)}
-                    type="button">
+                    onClick={this.handleAuthenticate.bind(this)}>
                     Authenticate
                 </button>
             </div>
         );
     }
 }
+
+export default connect(
+    (state: State) => ({}),
+    (dispatch) => ({
+        onAuthenticate: bindAction(authenticate, dispatch)
+    })
+)(Authentication);

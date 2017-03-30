@@ -1,37 +1,36 @@
-import React, { PropTypes, PureComponent, createElement } from 'react';
+import { ComponentClass, PropTypes, PureComponent, createElement } from 'react';
 
 import Store from 'supports/Store';
 
-export default function connect<TEvent, TState>(mapStateToProps?: (state: TState) => any,
-                                                mapDispatchToProps?: (dispatch: (event: TEvent) => void) => any): (component: React.ComponentClass<any>) => any {
-    if (!mapStateToProps) {
-        mapStateToProps = state => state;
-    }
-
+export default function connect<TStateProps, TDispatchProps>(
+    mapStateToProps: (state: any) => TStateProps,
+    mapDispatchToProps?: (dispatch: (event: any) => void) => TDispatchProps
+): <TProps extends TStateProps & TDispatchProps>(component: ComponentClass<TProps>) => ComponentClass<Partial<TProps>> {
     if (!mapDispatchToProps) {
-        mapDispatchToProps = dispatch => ({ dispatch });
+        mapDispatchToProps = (dispatch) => ({}) as any;
     }
 
-    return component => {
-        return class StoreSubscriber extends PureComponent<any, TState> {
+    return <TProps extends TStateProps & TDispatchProps>(component: ComponentClass<TProps>): ComponentClass<Partial<TProps>> => {
+        return class StoreSubscriber extends PureComponent<Partial<TProps>, TStateProps> {
             static contextTypes = {
                 store: PropTypes.instanceOf(Store).isRequired
             };
 
-            private dispatchProps: any;
+            private dispatchProps: TDispatchProps;
 
             private subscription: { unsubscribe: () => void };
 
-            constructor(props: any, context: any) {
+            constructor(props: Partial<TProps>, context: any) {
                 super(props, context);
 
-                this.state = mapStateToProps(context.store.state as TState);
+                this.state = mapStateToProps(context.store.state);
             }
 
             componentWillMount() {
-                const store = this.context.store as Store<TEvent, TState>;
+                const store = this.context.store as Store<any, any>;
 
                 this.dispatchProps = mapDispatchToProps(store.dispatch.bind(store));
+
                 this.subscription = store.subscribe(
                     state => this.setState(mapStateToProps(state))
                 );
@@ -46,7 +45,7 @@ export default function connect<TEvent, TState>(mapStateToProps?: (state: TState
 
             render() {
                 const { children } = this.props;
-                const props = Object.assign({}, this.dispatchProps, this.state, this.props);
+                const props = Object.assign({}, this.state, this.dispatchProps, this.props);
 
                 return createElement(component, props, children);
             }

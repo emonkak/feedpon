@@ -3,7 +3,13 @@ import classnames from 'classnames';
 
 import createChainedFunction from 'supports/createChainedFunction';
 
-export default class Menu extends PureComponent<any, any> {
+interface Props {
+    children?: React.ReactNode;
+    onSelect?: (value: string | number) => void;
+    pullRight?: boolean;
+}
+
+export default class Menu extends PureComponent<Props, {}> {
     static propTypes = {
         children: PropTypes.node,
         onSelect: PropTypes.func,
@@ -22,7 +28,7 @@ export default class Menu extends PureComponent<any, any> {
             ...child.props,
             onSelect: createChainedFunction(
                 child.props.onSelect,
-                event => onSelect(event, childKey)
+                () => onSelect(childKey)
             ),
         });
     }

@@ -34,7 +34,7 @@ export default class ScrollSpy extends PureComponent<any, any> {
         getScrollableParent,
         marginBottom: 0,
         marginTop: 0,
-        renderActiveChild: child => child,
+        renderActiveChild: (child: React.ReactElement<any>) => child,
         scrollThrottleTime: 100
     };
 

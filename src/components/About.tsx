@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 
-export default class About extends PureComponent<any, any> {
+export default class About extends PureComponent<{}, {}> {
     render() {
         return (
             <div className="container">

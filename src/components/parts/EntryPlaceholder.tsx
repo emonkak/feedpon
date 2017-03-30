@@ -1,7 +1,12 @@
 import React, { PropTypes } from 'react';
 import classnames from 'classnames';
 
-export default class EntryPlaceholder extends React.Component<any, any> {
+interface Props {
+    isCollapsible?: boolean;
+    isExpanded?: boolean;
+}
+
+export default class EntryPlaceholder extends React.Component<Props, {}> {
     static propTypes = {
         isCollapsible: PropTypes.bool.isRequired,
         isExpanded: PropTypes.bool.isRequired
@@ -27,7 +32,7 @@ export default class EntryPlaceholder extends React.Component<any, any> {
                             <span className="placeholder placeholder-animated placeholder-60" />
                         </div>
                     </header>
-                    <div className="entry-description">
+                    <div className="entry-summary">
                         <span className="placeholder placeholder-animated placeholder-100" />
                     </div>
                     <div className="entry-content">

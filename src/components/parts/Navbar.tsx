@@ -1,6 +1,11 @@
 import React, { PropTypes, PureComponent } from 'react';
 
-export default class Navbar extends PureComponent<any, any> {
+interface Props {
+    children?: React.ReactNode;
+    onToggleSidebar?: () => void;
+}
+
+export default class Navbar extends PureComponent<Props, {}> {
     static propTypes = {
         children: PropTypes.node,
         onToggleSidebar: PropTypes.func,
@@ -12,7 +17,7 @@ export default class Navbar extends PureComponent<any, any> {
         const { onToggleSidebar } = this.props;
 
         if (onToggleSidebar) {
-            onToggleSidebar(event);
+            onToggleSidebar();
         }
     }
 

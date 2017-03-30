@@ -1,7 +1,6 @@
 import { State } from './types';
 
 const initialState: State = {
-    categories: [],
     credential: null,
     environment: {
         endpoint: 'https://cloud.feedly.com/',
@@ -13,9 +12,10 @@ const initialState: State = {
     feed: null,
     notifications: [],
     subscriptions: {
+        categories: [],
         isLoading: false,
-        lastUpdatedAt: null,
-        items: []
+        items: [],
+        lastUpdatedAt: null
     },
     preference: {
         viewMode: 'expanded'

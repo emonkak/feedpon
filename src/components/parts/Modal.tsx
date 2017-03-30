@@ -1,7 +1,13 @@
 import React, { PropTypes, PureComponent } from 'react';
 import classnames from 'classnames';
 
-export default class Modal extends PureComponent<any, any> {
+interface Props {
+    children?: React.ReactNode;
+    isOpened?: boolean;
+    onClose?: () => void;
+}
+
+export default class Modal extends PureComponent<Props, {}> {
     static propTypes = {
         children: PropTypes.node.isRequired,
         isOpened: PropTypes.bool.isRequired,

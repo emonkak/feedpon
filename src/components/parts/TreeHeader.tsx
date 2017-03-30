@@ -1,6 +1,10 @@
 import React, { PropTypes, PureComponent } from 'react';
 
-export default class TreeHeader extends PureComponent<any, any> {
+interface Props {
+    children?: React.ReactNode
+}
+
+export default class TreeHeader extends PureComponent<Props, {}> {
     static propTypes = {
         children: PropTypes.node
     };

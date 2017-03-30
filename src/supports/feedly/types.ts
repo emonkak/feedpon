@@ -126,6 +126,7 @@ export interface Entry {
     author?: string;
     origin: EntryOrigin;
     content?: EntryContent;
+    summary?: EntryContent;
     unread: boolean;
     crawled: number;
 }

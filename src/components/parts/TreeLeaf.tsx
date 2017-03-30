@@ -3,7 +3,17 @@ import classnames from 'classnames';
 
 import TreeNode from 'components/parts/TreeNode';
 
-export default class TreeLeaf extends PureComponent<any, any> {
+interface Props {
+    className?: string;
+    icon?: React.ReactElement<any>;
+    isSelected?: boolean;
+    onSelect?: () => void;
+    primaryText: string;
+    secondaryText?: string;
+    value: string | number;
+}
+
+export default class TreeLeaf extends PureComponent<Props, {}> {
     static propTypes = {
         className: PropTypes.string,
         icon: PropTypes.element,
@@ -28,7 +38,7 @@ export default class TreeLeaf extends PureComponent<any, any> {
 
         const { onSelect } = this.props;
         if (onSelect) {
-            onSelect(event);
+            onSelect();
         }
     }
 

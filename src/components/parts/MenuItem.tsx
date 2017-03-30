@@ -1,6 +1,14 @@
 import React, { PropTypes, PureComponent } from 'react';
 
-export default class MenuItem extends PureComponent<any, any> {
+interface Props {
+    isDisabled?: boolean;
+    icon?: React.ReactNode;
+    onSelect?: () => void;
+    primaryText?: React.ReactNode;
+    secondaryText?: React.ReactNode;
+}
+
+export default class MenuItem extends PureComponent<Props, {}> {
     static propTypes = {
         isDisabled: PropTypes.bool.isRequired,
         icon: PropTypes.node,
@@ -13,7 +21,7 @@ export default class MenuItem extends PureComponent<any, any> {
         isDisabled: false
     };
 
-    handleSelect(event: any) {
+    handleSelect(event: React.SyntheticEvent<any>) {
         event.preventDefault();
 
         const { onSelect } = this.props;

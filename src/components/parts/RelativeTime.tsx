@@ -1,17 +1,26 @@
 import React, { PropTypes, PureComponent } from 'react';
 import moment from 'moment';
 
-export default class RelativeTime extends PureComponent<any, any> {
+interface Props {
+    time: string;
+    refreshInterval?: number;
+}
+
+interface State {
+    relativeTime: string;
+}
+
+export default class RelativeTime extends PureComponent<Props, State> {
     static propTypes = {
         time: PropTypes.string.isRequired,
-        interval: PropTypes.number.isRequired
+        refreshInterval: PropTypes.number.isRequired
     };
 
     static defaultProps = {
-        interval: 1000 * 30
+        refreshInterval: 1000 * 30
     };
 
-    private timer: number;
+    private timer: number | null;
 
     constructor(props: any, context: any) {
         super(props, context);
@@ -22,22 +31,38 @@ export default class RelativeTime extends PureComponent<any, any> {
     }
 
     componentWillMount() {
-        this.timer = setInterval(this.update.bind(this), this.props.interval)
-
-        this.update();
+        this.startTimer(this.props.refreshInterval);
     }
 
     componentWillReceiveProps(nextProps: any) {
         if (this.props.time !== nextProps.time) {
-            this.update();
+            this.refresh();
+        }
+
+        if (this.props.refreshInterval !== nextProps.refreshInterval) {
+            this.stopTimer();
+
+            this.startTimer(nextProps.refreshInterval);
         }
     }
 
     componentWillUnmount() {
-        clearInterval(this.timer);
+        this.stopTimer();
     }
 
-    update() {
+    startTimer(refreshInterval: number) {
+        this.timer = setInterval(this.refresh.bind(this), refreshInterval)
+
+        this.refresh();
+    }
+
+    stopTimer() {
+        if (this.timer != null) {
+            clearInterval(this.timer);
+        }
+    }
+
+    refresh() {
         const { time } = this.props;
 
         this.setState({
@@ -50,7 +75,9 @@ export default class RelativeTime extends PureComponent<any, any> {
         const { relativeTime } = this.state;
 
         return (
-            <time dateTime={time} title={moment(time).format('llll')}>{relativeTime}</time>
+            <time dateTime={time} title={moment(time).format('llll')}>
+                {relativeTime}
+            </time>
         );
     }
 }

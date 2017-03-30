@@ -1,7 +1,16 @@
 import React, { PropTypes, PureComponent } from 'react';
 import classnames from 'classnames';
 
-export default class TreeNode extends PureComponent<any, any> {
+interface Props {
+    className?: string,
+    icon?: React.ReactElement<any>,
+    onIconClick?: (event: React.SyntheticEvent<any>) => void;
+    onTextClick?: (event: React.SyntheticEvent<any>) => void;
+    primaryText: string;
+    secondaryText?: string;
+}
+
+export default class TreeNode extends PureComponent<Props, {}> {
     static propTypes = {
         className: PropTypes.string,
         icon: PropTypes.element,

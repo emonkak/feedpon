@@ -11,10 +11,9 @@
   z-index: 10;
 }
 
-.entry.is-unread {
-  & .entry-title::after {
-    content: '\00a0*';
-    color: var(--negative-color);
+.entry.is-read {
+  & .entry-title {
+    color: var(--dark-color);
   }
 }
 
@@ -29,7 +28,7 @@
     font-size: 1.25rem;
   }
 
-  & .entry-description {
+  & .entry-summary {
     display: none;
   }
 }
@@ -62,7 +61,7 @@
   display: flex;
   float: right;
   visibility: hidden;
-  padding-left: 1.5rem;
+  padding-left: 8px;
 }
 
 .entry-action,
@@ -134,7 +133,7 @@ a.entry-info:hover {
   background-color: var(--negative-light-color);
 }
 
-.entry-description {
+.entry-summary {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

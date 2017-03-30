@@ -3,7 +3,23 @@ import classnames from 'classnames';
 
 import TreeNode from 'components/parts/TreeNode';
 
-export default class TreeBranch extends PureComponent<any, any> {
+interface Props {
+    children?: React.ReactNode;
+    className?: string;
+    isExpanded?: boolean;
+    isSelected?: boolean;
+    onExpand?: (isExpanded: boolean) => void;
+    onSelect?: () => void;
+    primaryText: string;
+    secondaryText?: string;
+    value: string | number;
+};
+
+interface State {
+    isExpanded: boolean;
+};
+
+export default class TreeBranch extends PureComponent<Props, State> {
     static propTypes = {
         children: PropTypes.node.isRequired,
         className: PropTypes.string,
@@ -20,15 +36,15 @@ export default class TreeBranch extends PureComponent<any, any> {
         isExpanded: false,
     }
 
-    constructor(props: any) {
-        super(props);
+    constructor(props: Props, context: any) {
+        super(props, context);
 
         this.state = {
             isExpanded: props.isExpanded,
         };
     }
 
-    componentWillReceiveProps(nextProps: any) {
+    componentWillReceiveProps(nextProps: Props) {
         if (this.props.isExpanded !== nextProps.isExpanded) {
             this.setState(state => ({
                 ...state,
@@ -37,33 +53,28 @@ export default class TreeBranch extends PureComponent<any, any> {
         }
     }
 
-    handleExpand(event: any) {
+    handleExpand(event: React.SyntheticEvent<any>) {
         event.preventDefault();
 
         const { onExpand } = this.props;
         const { isExpanded } = this.state;
 
         if (onExpand) {
-            onExpand(event, !isExpanded);
+            onExpand(!isExpanded);
         }
 
-        this.setState(state => ({
-            ...state,
+        this.setState({
             isExpanded: !isExpanded,
-        }));
+        });
     }
 
     handleSelect(event: React.SyntheticEvent<any>) {
         event.preventDefault();
 
-        const { isSelected } = this.props;
-        if (isSelected) {
-            return;
-        }
+        const { isSelected, onSelect } = this.props;
 
-        const { onSelect } = this.props;
-        if (onSelect) {
-            onSelect(event);
+        if (!isSelected && onSelect) {
+            onSelect();
         }
     }
 

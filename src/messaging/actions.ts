@@ -7,7 +7,6 @@ import '@emonkak/enumerable/extensions/selectMany';
 
 import {
     AsyncEvent,
-    Environment,
     Event,
     Notification,
     ViewMode
@@ -47,7 +46,7 @@ function observeUrlChanging(window: chrome.windows.Window, callback: (url: strin
     chrome.windows.onRemoved.addListener(handleRemoveWindow);
 }
 
-export function authenticate(environment: Environment): AsyncEvent {
+export function authenticate(): AsyncEvent {
     return (dispatch, getState) => {
         async function handleRedirectUrl(urlString: string): Promise<void> {
             const url = new URL(urlString);
@@ -63,6 +62,7 @@ export function authenticate(environment: Environment): AsyncEvent {
                 return;
             }
 
+            const { environment } = getState();
             const code = searchParams.get('code');
 
             const token = await exchangeToken(environment.endpoint, {
@@ -83,6 +83,8 @@ export function authenticate(environment: Environment): AsyncEvent {
                 credential
             });
         }
+
+        const { environment } = getState();
 
         const url = environment.endpoint + 'v3/auth/auth?' +
             querystring.stringify({
@@ -183,14 +185,10 @@ export function fetchSubscriptions(): AsyncEvent {
                 .toArray();
 
             dispatch({
-                type: 'CATEGORIES_FETCHED',
-                categories
-            });
-
-            dispatch({
                 type: 'SUBSCRIPTIONS_FETCHED',
-                subscriptions,
-                fetchedAt: new Date().toISOString()
+                categories,
+                fetchedAt: new Date().toISOString(),
+                subscriptions
             });
         }
     };
@@ -211,9 +209,9 @@ export function fetchFeed(feedId: string): AsyncEvent {
 
         const entries = contents.items.map(item => ({
             entryId: item.id,
-            author: item.author || '',
-            content: item.content ? item.content.content : '',
-            description: item.content ? item.content.content : '',
+            author: item.author,
+            content: (item.content ? item.content.content : null) || (item.summary ? item.summary.content : null),
+            summary: (item.summary ? item.summary.content : null) || (item.content ? item.content.content : null),
             publishedAt: new Date(item.published).toISOString(),
             bookmarks: item.engagement,
             title: item.title,

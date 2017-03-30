@@ -5,7 +5,20 @@ import { findDOMNode } from 'react-dom';
 import getScrollableParent from 'supports/dom/getScrollableParent';
 import throttleEventHandler from 'supports/throttleEventHandler';
 
-export default class AutoHidingHeader extends PureComponent<any, any> {
+interface Props {
+    children?: React.ReactNode;
+    className?: string;
+    getScrollableParent?: (element: Element) => Element;
+    isPinned?: boolean;
+    scrollThrottleTime?: number;
+    tolerance?: number;
+}
+
+interface State {
+    isPinned: boolean;
+}
+
+export default class AutoHidingHeader extends PureComponent<Props, State> {
     static propTypes = {
         children: PropTypes.node.isRequired,
         className: PropTypes.string,
@@ -26,7 +39,7 @@ export default class AutoHidingHeader extends PureComponent<any, any> {
 
     private scrollable: any;
 
-    constructor(props: any, context: any) {
+    constructor(props: Props, context: any) {
         super(props, context);
 
         this.state = {
@@ -52,10 +65,9 @@ export default class AutoHidingHeader extends PureComponent<any, any> {
             const { clientHeight } = findDOMNode(this);
             const scrollTop = this.scrollable.scrollY || this.scrollable.scrollTop || 0;
 
-            this.setState(state => ({
-                ...state,
+            this.setState({
                 isPinned: nextProps.isPinned && scrollTop < clientHeight
-            }));
+            });
 
             this.lastScrollTop = null;
         }
@@ -74,19 +86,17 @@ export default class AutoHidingHeader extends PureComponent<any, any> {
                 const { clientHeight } = findDOMNode(this);
 
                 if (scrollTop < clientHeight || scrollBottom > scrollHeight - clientHeight) {
-                    this.setState(state => ({
-                        ...state,
+                    this.setState({
                         isPinned: true
-                    }));
+                    });
                 } else {
                     const scrollDistance = Math.abs(this.lastScrollTop - scrollTop);
                     const { tolerance } = this.props;
 
                     if (scrollDistance > tolerance) {
-                        this.setState(state => ({
-                            ...state,
+                        this.setState({
                             isPinned: this.lastScrollTop > scrollTop
-                        }));
+                        });
                     }
                 }
             }

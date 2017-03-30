@@ -2,9 +2,13 @@ import React, { PropTypes, PureComponent } from 'react';
 
 import Navbar from 'components/parts/Navbar';
 
-export default class AboutNavbar extends PureComponent<any, any> {
+interface Props {
+    onToggleSidebar: () => void;
+}
+
+export default class AboutNavbar extends PureComponent<Props, {}> {
     static propTypes = {
-        onToggleSidebar: PropTypes.func,
+        onToggleSidebar: PropTypes.func.isRequired,
     };
 
     render() {

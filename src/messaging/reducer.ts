@@ -1,8 +1,15 @@
-import { Category, Credential, Event, Feed, Notification, Preference, State, Subscriptions } from './types';
+import {
+    Credential,
+    Feed,
+    Notification,
+    Preference,
+    State,
+    Subscriptions,
+    SyncEvent
+} from './types';
 
-export default function reducer(state: State, event: Event): State {
+export default function reducer(state: State, event: SyncEvent): State {
     return {
-        categories: reduceCategories(state.categories, event),
         credential: reduceCredential(state.credential, event),
         environment: state.environment,
         feed: reduceFeed(state.feed, event),
@@ -12,17 +19,7 @@ export default function reducer(state: State, event: Event): State {
     };
 }
 
-function reduceCategories(categories: Category[], event: Event): Category[] {
-    switch (event.type) {
-        case 'CATEGORIES_FETCHED':
-            return event.categories;
-
-        default:
-            return categories;
-    }
-}
-
-function reduceCredential(credential: Credential | null, event: Event): Credential | null {
+function reduceCredential(credential: Credential | null, event: SyncEvent): Credential | null {
     switch (event.type) {
         case 'AUTHENTICATED':
             return event.credential;
@@ -32,7 +29,7 @@ function reduceCredential(credential: Credential | null, event: Event): Credenti
     }
 }
 
-function reduceFeed(feed: Feed | null, event: Event): Feed {
+function reduceFeed(feed: Feed | null, event: SyncEvent): Feed {
     switch (event.type) {
         case 'FEED_FETCHING':
             if (feed && feed.feedId === event.feedId) {
@@ -129,7 +126,7 @@ function reduceFeed(feed: Feed | null, event: Event): Feed {
     }
 }
 
-function reduceNotifications(notifications: Notification[], event: Event): Notification[] {
+function reduceNotifications(notifications: Notification[], event: SyncEvent): Notification[] {
     switch (event.type) {
         case 'NOTIFICATION_SENT':
             return [...notifications, event.notification];
@@ -142,7 +139,7 @@ function reduceNotifications(notifications: Notification[], event: Event): Notif
     }
 }
 
-function reducePreference(preference: Preference, event: Event): Preference {
+function reducePreference(preference: Preference, event: SyncEvent): Preference {
     switch (event.type) {
         case 'VIEW_MODE_CHANGED':
             return {
@@ -155,7 +152,7 @@ function reducePreference(preference: Preference, event: Event): Preference {
     }
 }
 
-function reduceSubscriptions(subscriptions: Subscriptions, event: Event): Subscriptions {
+function reduceSubscriptions(subscriptions: Subscriptions, event: SyncEvent): Subscriptions {
     switch (event.type) {
         case 'SUBSCRIPTIONS_FETCHING':
             return {
@@ -165,6 +162,7 @@ function reduceSubscriptions(subscriptions: Subscriptions, event: Event): Subscr
 
         case 'SUBSCRIPTIONS_FETCHED':
             return {
+                categories: event.categories,
                 isLoading: false,
                 items: event.subscriptions,
                 lastUpdatedAt: event.fetchedAt

@@ -3,21 +3,22 @@ import React, { PropTypes, PureComponent } from 'react';
 import classnames from 'classnames';
 
 import Notification from 'components/parts/Notification';
+import bindAction from 'supports/bindAction';
 import connect from 'supports/react/connect';
+import { Notification as NotificationType, State } from 'messaging/types';
 import { dismissNotification } from 'messaging/actions';
 
-@connect()
-export default class Notifications extends PureComponent<any, any> {
+interface Props {
+    onDismissNotification: (id: number) => void;
+    isReversed?: boolean;
+    notifications: NotificationType[];
+}
+
+class Notifications extends PureComponent<Props, {}> {
     static propTypes = {
-        dispatch: PropTypes.func.isRequired,
+        onDismissNotification: PropTypes.func.isRequired,
         isReversed: PropTypes.bool.isRequired,
-        notifications: PropTypes.arrayOf(
-            PropTypes.shape({
-                id: PropTypes.number.isRequired,
-                message: PropTypes.string.isRequired,
-                kind: PropTypes.oneOf(['default', 'positive', 'negative']),
-            })
-        ).isRequired
+        notifications: PropTypes.arrayOf(PropTypes.object).isRequired
     };
 
     static defaultProps = {
@@ -25,9 +26,9 @@ export default class Notifications extends PureComponent<any, any> {
     };
 
     handleClose(id: number) {
-        const { dispatch } = this.props;
+        const { onDismissNotification } = this.props;
 
-        dispatch(dismissNotification(id));
+        onDismissNotification(id);
     }
 
     render() {
@@ -55,3 +56,12 @@ export default class Notifications extends PureComponent<any, any> {
         );
     }
 }
+
+export default connect(
+    (state: State) => ({
+        notifications: state.notifications
+    }),
+    (dispatch) => ({
+        onDismissNotification: bindAction(dismissNotification, dispatch)
+    })
+)(Notifications);

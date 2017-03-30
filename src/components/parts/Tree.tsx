@@ -4,46 +4,59 @@ import TreeBranch from 'components/parts/TreeBranch';
 import TreeLeaf from 'components/parts/TreeLeaf';
 import createChainedFunction from 'supports/createChainedFunction';
 
-export default class Tree extends PureComponent<any, any> {
+interface Props {
+    children?: React.ReactNode;
+    onSelect?: (value: string | number) => void;
+    value?: string | number;
+};
+
+interface State {
+    value: string | number;
+};
+
+export default class Tree extends PureComponent<Props, State> {
     static propTypes = {
         value: PropTypes.string,
         children: PropTypes.node.isRequired,
-        onSelect: PropTypes.func,
+        onSelect: PropTypes.func
     };
 
-    constructor(props: any) {
-        super(props);
+    constructor(props: Props, context: any) {
+        super(props, context);
 
         this.state = {
-            value: props.value,
+            value: props.value
         };
     }
 
-    componentWillReceiveProps(nextProps: any) {
+    componentWillReceiveProps(nextProps: Props) {
         if (this.props.value !== nextProps.value) {
-            this.setState(state => ({ ...state, value: nextProps.value }));
+            this.setState({
+                value: nextProps.value
+            });
         }
     }
 
-    handleSelect(event: React.SyntheticEvent<any>, value: React.Key) {
+    handleSelect(value: React.Key) {
         const { onSelect } = this.props;
 
         if (onSelect) {
-            onSelect(event, value);
+            onSelect(value);
         }
 
-        this.setState(state => ({ ...state, value }));
+        this.setState({
+            value
+        });
     }
 
     renderChild(child: React.ReactElement<any>) {
         if (child != null && (child.type === TreeBranch || child.type === TreeLeaf)) {
             const { value } = this.state;
 
-            const shouldExpand = (child: React.ReactElement<any>) => {
+            const shouldExpand = (child: React.ReactElement<any>): boolean => {
                 return child.type === TreeLeaf
                     ? child.props.value === value
-                    : Children.toArray(child.props.children)
-                        .some(shouldExpand);
+                    : Children.toArray(child.props.children).some(shouldExpand);
             };
 
             return cloneElement(child, {
@@ -51,7 +64,7 @@ export default class Tree extends PureComponent<any, any> {
                 isExpanded: shouldExpand(child),
                 isSelected: child.props.value === value,
                 onSelect: createChainedFunction(
-                    event => this.handleSelect(event, child.key),
+                    this.handleSelect.bind(this, child.key),
                     child.props.onSelect
                 ),
                 children: Children.map(child.props.children, this.renderChild.bind(this))

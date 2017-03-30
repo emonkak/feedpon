@@ -5,7 +5,20 @@ import Closable from 'components/parts/Closable';
 import Menu from 'components/parts/Menu';
 import createChainedFunction from 'supports/createChainedFunction';
 
-export default class Dropdown extends PureComponent<any, any> {
+interface Props {
+    className?: string;
+    isOpened?: boolean;
+    onClose?: () => void;
+    onSelect?: (value: string | number) => void;
+    pullRight?: boolean;
+    toggleButton: React.ReactElement<any>;
+}
+
+interface State {
+    isOpened: boolean;
+}
+
+export default class Dropdown extends PureComponent<Props, State> {
     static propTypes = {
         className: PropTypes.string,
         isOpened: PropTypes.bool.isRequired,
@@ -19,16 +32,15 @@ export default class Dropdown extends PureComponent<any, any> {
         isOpened: false
     };
 
-    constructor(props: any, context: any) {
+    constructor(props: Props, context: any) {
         super(props, context);
 
         this.state = {
-            isOpened: !!props.isOpened,
-            pullRight: false,
+            isOpened: !!props.isOpened
         };
     }
 
-    componentWillReceiveProps(nextProps: any) {
+    componentWillReceiveProps(nextProps: Props) {
         if (this.props.isOpened !== nextProps.isOpened) {
             this.update(nextProps.isOpened);
         }
@@ -61,7 +73,7 @@ export default class Dropdown extends PureComponent<any, any> {
             document.documentElement.classList.remove('dropdown-is-opened');
         }
 
-        this.setState(state => ({ ...state, isOpened }));
+        this.setState({ isOpened });
     }
 
     renderToggleButton() {

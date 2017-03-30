@@ -1,8 +1,9 @@
 import { ExchangeTokenResponse } from 'supports/feedly/types';
 
-export type Event
+export type Event = SyncEvent | AsyncEvent;
+
+export type SyncEvent
     = { type: 'AUTHENTICATED', credential: Credential }
-    | { type: 'CATEGORIES_FETCHED', categories: Category[] }
     | { type: 'ENTRY_READ', entryIds: string[], readAt: string }
     | { type: 'ENTRY_MARKED_AS_READ', entryIds: string[] }
     | { type: 'FEED_FETCHED', feed: Feed }
@@ -11,7 +12,7 @@ export type Event
     | { type: 'NOTIFICATION_SENT', notification: Notification }
     | { type: 'READ_ENTRIES_CLEARED' }
     | { type: 'SUBSCRIPTIONS_FETCHING' }
-    | { type: 'SUBSCRIPTIONS_FETCHED', subscriptions: Subscription[], fetchedAt: string }
+    | { type: 'SUBSCRIPTIONS_FETCHED', subscriptions: Subscription[], categories: Category[], fetchedAt: string }
     | { type: 'VIEW_MODE_CHANGED', viewMode: ViewMode };
 
 export interface AsyncEvent {
@@ -19,7 +20,6 @@ export interface AsyncEvent {
 }
 
 export interface State {
-    categories: Category[];
     credential: Credential | null;
     environment: Environment;
     feed: Feed | null;
@@ -61,11 +61,11 @@ export interface Feed {
 export interface Entry {
     entryId: string;
     title: string;
-    author: string;
+    author?: string;
     url: string;
     origin: Origin;
-    content: string;
-    description: string;
+    content?: string;
+    summary?: string;
     bookmarks: number;
     publishedAt: string;
     markAsRead: boolean;
@@ -82,8 +82,10 @@ export interface Notification {
     id?: string | number;
     dismissAfter?: number;
     message: string;
-    kind: 'default' | 'positive' | 'negative';
+    kind: NotificationKind;
 }
+
+export type NotificationKind = 'default' | 'positive' | 'negative';
 
 export interface Preference {
     viewMode: ViewMode;
@@ -92,8 +94,9 @@ export interface Preference {
 export type ViewMode = 'expanded' | 'collapsible';
 
 export interface Subscriptions {
-    items: Subscription[];
+    categories: Category[];
     isLoading: boolean;
+    items: Subscription[];
     lastUpdatedAt: string | null;
 }
 

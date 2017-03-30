@@ -3,24 +3,38 @@ import React, { PropTypes, PureComponent, cloneElement } from 'react';
 import Entry from 'components/parts/Entry';
 import EntryPlaceholder from 'components/parts/EntryPlaceholder';
 import ScrollSpy from 'components/parts/ScrollSpy';
-import { Entry as EntryType } from 'messaging/types';
+import { Entry as EntryType, ViewMode } from 'messaging/types';
 
 const SCROLL_OFFSET = 48;
 
-export default class EntryList extends PureComponent<any, any> {
+type Props = {
+    entries: EntryType[],
+    isScrolling: boolean,
+    isLoading: boolean,
+    scrollTo: (x: number, y: number) => Promise<void>,
+    viewMode: ViewMode,
+    onMarkAsRead: (entryIds: string[]) => void
+};
+
+type State = {
+    collapsedEntryId: string | null
+};
+
+export default class EntryList extends PureComponent<Props, State> {
     static propTypes = {
         entries: PropTypes.arrayOf(PropTypes.object).isRequired,
-        isScrolling: PropTypes.bool.isRequired,
         isLoading: PropTypes.bool.isRequired,
-        viewMode: PropTypes.oneOf(['expanded', 'collapsible']).isRequired,
-        onMarkAsRead: PropTypes.func
+        isScrolling: PropTypes.bool.isRequired,
+        onMarkAsRead: PropTypes.func,
+        scrollTo: PropTypes.func.isRequired,
+        viewMode: PropTypes.oneOf(['expanded', 'collapsible']).isRequired
     };
 
     private activeEntryId: string;
 
     private scrollElement: HTMLElement;
 
-    constructor(props: any, context: any) {
+    constructor(props: Props, context: any) {
         super(props, context);
 
         this.state = {
@@ -28,16 +42,15 @@ export default class EntryList extends PureComponent<any, any> {
         };
     }
 
-    componentWillReceiveProps(nextProps: any) {
+    componentWillReceiveProps(nextProps: Props) {
         if (nextProps.viewMode !== this.props.viewMode) {
-            this.setState(state => ({
-                ...state,
+            this.setState({
                 collapsedEntryId: null
-            }));
+            });
         }
     }
 
-    componentWillUpdate(nextProps: any, nextState: any) {
+    componentWillUpdate(nextProps: Props, nextState: State) {
         if (nextProps.viewMode !== this.props.viewMode) {
             if (this.activeEntryId != null) {
                 this.scrollElement = document.getElementById('entry--' + this.activeEntryId);
@@ -45,7 +58,7 @@ export default class EntryList extends PureComponent<any, any> {
         }
     }
 
-    componentDidUpdate(prevProps: any, prevState: any) {
+    componentDidUpdate(prevProps: Props, prevState: State) {
         if (this.scrollElement) {
             this.props.scrollTo(0, this.scrollElement.offsetTop - SCROLL_OFFSET);
 
@@ -85,26 +98,24 @@ export default class EntryList extends PureComponent<any, any> {
                 const entry = entries[latestIndex];
 
                 if (entry.readAt == null) {
-                    onMarkAsRead(entry.entryId);
+                    onMarkAsRead([entry.entryId]);
                 }
             }
         }
     }
 
-    handleCollapse(collapsedEntryId: any, collapsedElement: HTMLElement) {
+    handleCollapse(collapsedEntryId: string, collapsedElement: HTMLElement) {
         this.scrollElement = collapsedElement;
 
-        this.setState(state => ({
-            ...state,
+        this.setState({
             collapsedEntryId
-        }));
+        });
     }
 
     handleClose() {
-        this.setState(state => ({
-            ...state,
+        this.setState({
             collapsedEntryId: null
-        }));
+        });
     }
 
     renderEntry(entry: EntryType) {

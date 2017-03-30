@@ -1,22 +1,20 @@
+import { History } from 'history';
 import { PropTypes, PureComponent } from 'react';
-import { routerShape } from 'react-router/lib/PropTypes';
 
 import connect from 'supports/react/connect';
-import { State } from 'messaging/types';
+import { Credential, State } from 'messaging/types';
 
-@connect((state: State) => {
-    return {
-        credential: state.credential
-    };
-})
-export default class AuthenticationRequired extends PureComponent<any, any> {
+interface Props {
+    children: React.ReactElement<any>;
+    credential: Credential;
+    router: History;
+}
+
+class AuthenticationRequired extends PureComponent<Props, {}> {
     static propTypes = {
         children: PropTypes.element.isRequired,
-        credential: PropTypes.shape({
-            authorizedAt: PropTypes.string.isRequired,
-            token: PropTypes.object.isRequired
-        }),
-        router: routerShape
+        credential: PropTypes.object,
+        router: PropTypes.object.isRequired
     };
 
     componentWillMount() {
@@ -39,3 +37,9 @@ export default class AuthenticationRequired extends PureComponent<any, any> {
         return this.props.children;
     }
 }
+
+export default connect(
+    (state: State) => ({
+        credential: state.credential
+    })
+)(AuthenticationRequired);

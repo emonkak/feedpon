@@ -1,16 +1,26 @@
 import React, { PropTypes, PureComponent } from 'react';
 import classnames from 'classnames';
 
-export default class Notification extends PureComponent<any, any> {
+import { NotificationKind } from 'messaging/types';
+
+interface Props {
+    children?: React.ReactNode;
+    isReversed?: boolean;
+    kind?: NotificationKind;
+    onClose: () => void;
+}
+
+export default class Notification extends PureComponent<Props, {}> {
     static propTypes = {
         children: PropTypes.node.isRequired,
         isReversed: PropTypes.bool.isRequired,
-        kind: PropTypes.oneOf(['default', 'positive', 'negative']),
+        kind: PropTypes.oneOf(['default', 'positive', 'negative']).isRequired,
         onClose: PropTypes.func,
     };
 
     static defaultProps = {
-        isReversed: false
+        isReversed: false,
+        kind: 'default'
     };
 
     handleClose(event: React.SyntheticEvent<any>) {
@@ -19,7 +29,7 @@ export default class Notification extends PureComponent<any, any> {
         const { onClose } = this.props;
 
         if (onClose) {
-            onClose(event);
+            onClose();
         }
     }
 

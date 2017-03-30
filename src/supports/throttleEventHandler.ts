@@ -1,6 +1,6 @@
 export default function throttleEventHandler(handler: (event?: Event) => void, throttleTime: number): (event: Event) => void {
     let lastInvoked = 0;
-    let timer = null;
+    let timer: number = null;
 
     return function(event: Event): void {
         const { timeStamp } = event;

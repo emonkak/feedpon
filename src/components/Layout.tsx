@@ -1,22 +1,34 @@
 import React, { PropTypes, PureComponent, cloneElement } from 'react';
 import classnames from 'classnames';
-import { locationShape, routerShape } from 'react-router/lib/PropTypes';
+import { History, Location } from 'history';
 
 import Notifications from 'components/Notifications';
 import Sidebar from 'components/Sidebar';
 import smoothScroll from 'supports/dom/smoothScroll';
 
-export default class Layout extends PureComponent<any, any> {
+interface Props {
+    content: React.ReactElement<any>;
+    location: Location;
+    navbar: React.ReactElement<any>;
+    router: History;
+}
+
+interface State {
+    isScrolling: boolean;
+    sidebarIsOpened: boolean;
+}
+
+export default class Layout extends PureComponent<Props, State> {
     static propTypes = {
         content: PropTypes.element.isRequired,
         navbar: PropTypes.element.isRequired,
-        location: locationShape,
-        router: routerShape,
+        location: PropTypes.object.isRequired,
+        router: PropTypes.object.isRequired,
     };
 
     private unsubscribe: () => void | null;
 
-    constructor(props: any, context: any) {
+    constructor(props: Props, context: any) {
         super(props, context);
 
         this.state = {

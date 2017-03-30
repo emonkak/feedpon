@@ -3,27 +3,34 @@ import React, { PropTypes, PureComponent } from 'react';
 import Dropdown from 'components/parts/Dropdown';
 import MenuItem from 'components/parts/MenuItem';
 import Navbar from 'components/parts/Navbar';
+import bindAction from 'supports/bindAction';
 import connect from 'supports/react/connect';
-import { State, ViewMode } from 'messaging/types';
+import { Feed, State as StateType, ViewMode } from 'messaging/types';
 import { changeViewMode, clearReadEntries } from 'messaging/actions';
 
 const SCROLL_OFFSET = 48;
 
-@connect((state: State) => ({
-    feed: state.feed,
-    viewMode: state.preference.viewMode
-}))
-export default class FeedNavbar extends PureComponent<any, any> {
+interface Props {
+    feed: Feed | null;
+    onChangeViewMode: (viewMode: ViewMode) => void,
+    onClearReadEntries: () => void,
+    onToggleSidebar: () => void,
+    scrollTo: (x: number, y: number) => Promise<void>;
+    viewMode: ViewMode;
+};
+
+class FeedNavbar extends PureComponent<Props, {}> {
     static propTypes = {
-        dispatch: PropTypes.func.isRequired,
         feed: PropTypes.object,
+        onChangeViewMode: PropTypes.func.isRequired,
+        onClearReadEntries: PropTypes.func.isRequired,
         onToggleSidebar: PropTypes.func,
         scrollTo: PropTypes.func.isRequired,
         viewMode: PropTypes.oneOf(['expanded', 'collapsible']).isRequired
     };
 
     handleChangeViewType(viewMode: ViewMode) {
-        this.props.dispatch(changeViewMode(viewMode));
+        this.props.onChangeViewMode(viewMode);
     }
 
     handleMarkEntryAsRead(entryId: string) {
@@ -35,9 +42,9 @@ export default class FeedNavbar extends PureComponent<any, any> {
     }
 
     handleClearReadEntries(entryId: string) {
-        const { scrollTo, dispatch } = this.props;
+        const { onClearReadEntries, scrollTo } = this.props;
 
-        scrollTo(0, 0).then(() => dispatch(clearReadEntries()));
+        scrollTo(0, 0).then(() => onClearReadEntries());
     }
 
     renderTitle() {
@@ -132,3 +139,14 @@ export default class FeedNavbar extends PureComponent<any, any> {
         );
     }
 }
+
+export default connect(
+    (state: StateType) => ({
+        feed: state.feed,
+        viewMode: state.preference.viewMode
+    }),
+    (dispatch) => ({
+        onChangeViewMode: bindAction(changeViewMode, dispatch),
+        onClearReadEntries: bindAction(clearReadEntries, dispatch)
+    })
+)(FeedNavbar);

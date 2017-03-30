@@ -1,86 +1,89 @@
 import React, { PropTypes, PureComponent } from 'react';
+import { Params } from 'react-router/lib/Router';
 
 import Dropdown from 'components/parts/Dropdown';
 import EntryList from 'components/parts/EntryList';
 import MenuItem from 'components/parts/MenuItem';
+import bindAction from 'supports/bindAction';
 import connect from 'supports/react/connect';
-import { State } from 'messaging/types';
+import { Category, Feed as FeedType, State, ViewMode } from 'messaging/types';
 import { fetchFeed, readEntry, saveReadEntries } from 'messaging/actions';
 
-@connect((state: State) => {
-    return {
-        feed: state.feed,
-        categories: state.categories,
-        viewMode: state.preference.viewMode
-    };
-})
-export default class Feed extends PureComponent<any, any> {
+interface Props {
+    categories: Category[];
+    feed: FeedType | null;
+    isScrolling: boolean;
+    onFetchFeed: (feedId: string) => void;
+    onReadEntry: (entryIds: string[], timestamp: Date) => void;
+    onSaveReadEntries: (entryIds: string[]) => void;
+    params: Params;
+    scrollTo: (x: number, y: number) => Promise<void>;
+    viewMode: ViewMode;
+};
+
+class Feed extends PureComponent<Props, {}> {
     static propTypes = {
-        dispatch: PropTypes.func.isRequired,
         categories: PropTypes.array.isRequired,
-        feed: PropTypes.shape({
-            entries: PropTypes.array.isRequired,
-            hasMoreEntries: PropTypes.bool.isRequired,
-            isLoading: PropTypes.bool.isRequired,
-            subscribers: PropTypes.number.isRequired,
-            subscription: PropTypes.object
-        }),
+        feed: PropTypes.object.isRequired,
         isScrolling: PropTypes.bool.isRequired,
+        onFetchFeed: PropTypes.func.isRequired,
+        onReadEntry: PropTypes.func.isRequired,
+        onSaveReadEntries: PropTypes.func.isRequired,
         params: PropTypes.object.isRequired,
         scrollTo: PropTypes.func.isRequired,
         viewMode: PropTypes.oneOf(['expanded', 'collapsible']).isRequired
     };
 
     componentWillMount() {
-        const { dispatch, feed, params } = this.props;
+        const { feed, onFetchFeed, params } = this.props;
 
-        if (!feed || (feed.feedId !== params.feed_id)) {
-            dispatch(fetchFeed(params.feed_id));
+        if (!feed || (feed.feedId !== params['feed_id'])) {
+            onFetchFeed(params['feed_id']);
         }
     }
 
-    componentWillUpdate(nextProps: any, nextState: any) {
+    componentWillUpdate(nextProps: Props, nextState: {}) {
         const { params } = this.props;
 
-        if (params.feed_id !== nextProps.params.feed_id) {
-            const { feed, dispatch } = this.props;
+        if (params['feed_id'] !== nextProps.params['feed_id']) {
+            const { feed, onFetchFeed, onSaveReadEntries } = this.props;
 
-            if (feed && feed.feedId === params.feed_id) {
+            if (feed && feed.feedId === params['feed_id']) {
                 const readEntryIds = feed.entries
                     .filter(entry => !entry.markAsRead && entry.readAt)
                     .map(entry => entry.entryId);
 
-                dispatch(saveReadEntries(readEntryIds));
+                onSaveReadEntries(readEntryIds);
             }
 
-            dispatch(fetchFeed(nextProps.params.feed_id));
+            onFetchFeed(nextProps.params['feed_id']);
         }
     }
 
     componentWillUnmount() {
-        const { dispatch, feed, params } = this.props;
+        const { feed, onSaveReadEntries, params } = this.props;
 
-        if (feed && feed.feedId === params.feed_id) {
+        if (feed && feed.feedId === params['feed_id']) {
             const readEntryIds = feed.entries
                 .filter(entry => !entry.markAsRead && entry.readAt)
                 .map(entry => entry.entryId);
 
-            dispatch(saveReadEntries(readEntryIds));
+            onSaveReadEntries(readEntryIds);
         }
     }
 
     handleMarkEntryAsRead(entryIds: string[]) {
-        const { dispatch } = this.props;
+        const { onReadEntry } = this.props;
 
-        dispatch(readEntry(entryIds, new Date()));
+        onReadEntry(entryIds, new Date());
     }
 
     handleLoadMoreEntries(event: React.SyntheticEvent<any>) {
         event.preventDefault();
 
-        const { dispatch, params } = this.props;
+        const { onFetchFeed, params } = this.props;
 
-        dispatch(fetchFeed(params.feed_id));
+        onFetchFeed(params['feed_id']);
     }
 
     renderHeader() {
@@ -205,3 +208,16 @@ export default class Feed extends PureComponent<any, any> {
         );
     }
 }
+
+export default connect(
+    (state: State) => ({
+        feed: state.feed,
+        categories: state.subscriptions.categories,
+        viewMode: state.preference.viewMode
+    }),
+    (dispatch) => ({
+        onFetchFeed: bindAction(fetchFeed, dispatch),
+        onReadEntry: bindAction(readEntry, dispatch),
+        onSaveReadEntries: bindAction(saveReadEntries, dispatch)
+    })
+)(Feed);

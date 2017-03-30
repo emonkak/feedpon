@@ -1,7 +1,13 @@
 import { PropTypes, PureComponent, cloneElement } from 'react';
 import { findDOMNode } from 'react-dom';
 
-export default class Closable extends PureComponent<any, any> {
+interface Props {
+    children?: React.ReactElement<any>;
+    isDisabled?: boolean;
+    onClose?: () => void;
+}
+
+export default class Closable extends PureComponent<Props, {}> {
     static propTypes = {
         children: PropTypes.element.isRequired,
         isDisabled: PropTypes.bool.isRequired,
@@ -14,7 +20,7 @@ export default class Closable extends PureComponent<any, any> {
 
     private childElement: Element;
 
-    constructor(props: any, context: any) {
+    constructor(props: Props, context: any) {
         super(props, context);
 
         this.handleMouseCapture = this.handleMouseCapture.bind(this);
@@ -70,7 +76,7 @@ export default class Closable extends PureComponent<any, any> {
 
     render() {
         return cloneElement(this.props.children, {
-            ref: (element) => { this.childElement = element },
+            ref: (element: Element) => { this.childElement = element },
         });
     }
 }
