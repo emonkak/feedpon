@@ -19,36 +19,8 @@ const config = {
     module: {
         rules: [
             {
-                test: /\.js$/,
-                include: [path.join(__dirname, 'node_modules', '@emonkak')],
-                use: [
-                    {
-                        loader: 'babel-loader',
-                        options: {
-                            presets: [
-                                ['env', { targets: 'last 1 version' }]
-                            ],
-                            plugins: [
-                                'transform-runtime'
-                            ]
-                        }
-                    }
-                ]
-            },
-            {
                 test: /\.tsx?$/,
                 use: [
-                    {
-                        loader: 'babel-loader',
-                        options: {
-                            presets: [
-                                ['env', { targets: 'last 1 version' }]
-                            ],
-                            plugins: [
-                                'transform-runtime'
-                            ]
-                        }
-                    },
                     'ts-loader'
                 ]
             }
