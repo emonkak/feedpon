@@ -10,6 +10,7 @@ import DashboardNavbar from 'components/DashboardNavbar';
 import Feed from 'components/Feed';
 import FeedNavbar from 'components/FeedNavbar';
 import Layout from 'components/Layout';
+import NotAuthenticated from 'components/NotAuthenticated'
 import Settings from 'components/Settings';
 import SettingsNavbar from 'components/SettingsNavbar';
 
@@ -23,7 +24,9 @@ const routes = (
                 <Route path="settings" components={{ content: Settings, navbar: SettingsNavbar }} />
             </Route>
         </Route>
-        <Route path="authentication" component={Authentication} />
+        <Route component={NotAuthenticated}>
+            <Route path="authentication" component={Authentication} />
+        </Route>
     </Route>
 );
 

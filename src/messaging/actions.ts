@@ -1,69 +1,25 @@
 import querystring from 'querystring';
+import Enumerable from '@emonkak/enumerable';
 
-import rss from 'json/rss.json';
-import { AsyncEvent, Category, Entry, Environment, Event, Notification, Subscription, ViewMode } from './types';
-import { exchangeToken } from 'supports/feedly/api';
+import '@emonkak/enumerable/extensions/join';
+import '@emonkak/enumerable/extensions/select';
+import '@emonkak/enumerable/extensions/selectMany';
 
-const SUBSCRIPTIONS: Subscription[] = [
-    {
-        subscriptionId: 1,
-        categoryId: 1,
-        feedId: '1',
-        title: 'Entry',
-        unreadCount: 123,
-    },
-    {
-        subscriptionId: 2,
-        categoryId: 1,
-        feedId: '2',
-        title: 'Really Very Long Title Entry',
-        unreadCount: 0,
-    },
-    {
-        subscriptionId: 3,
-        categoryId: 1,
-        feedId: '3',
-        title: 'Entry',
-        unreadCount: 1234,
-    },
-    {
-        subscriptionId: 4,
-        categoryId: 2,
-        feedId: '4',
-        title: 'Entry',
-        unreadCount: 123,
-    }
-];
+import {
+    AsyncEvent,
+    Environment,
+    Event,
+    Notification,
+    ViewMode
+} from './types';
 
-const CATEGORIES: Category[] = [
-    {
-        categoryId: 1,
-        feedId: '101',
-        title: 'Bike'
-    },
-    {
-        categoryId: 2,
-        feedId: '102',
-        title: 'Programing'
-    }
-];
-
-const ENTRIES: Entry[] = rss.items.map((item: any, i: number) => ({
-    entryId: item.guid,
-    author: item.author,
-    content: item.content,
-    description: item.description,
-    publishedAt: item.pubDate,
-    bookmarks: [0, 1, 2, 10, 11, 12, 51, 52, 53, 100, 101, 102][i % 12],
-    title: item.title,
-    url: item.link,
-    origin: {
-        feedId: rss.feed.url,
-        title: rss.feed.title,
-        url: rss.feed.link,
-    },
-    markAsRead: false
-}));
+import {
+    allCategories,
+    allSubscriptions,
+    allUnreadCounts,
+    exchangeToken,
+    getStreamContents
+} from 'supports/feedly/api';
 
 const DEFAULT_DISMISS_AFTER = 3000;
 
@@ -188,57 +144,101 @@ export function saveReadEntries(entryIds: string[]): AsyncEvent {
 }
 
 export function fetchSubscriptions(): AsyncEvent {
-    return dispatch => {
+    return async (dispatch, getState) => {
         dispatch({
             type: 'SUBSCRIPTIONS_FETCHING'
         });
 
-        setTimeout(() => {
+        const { environment, credential } = getState();
+
+        if (credential) {
+            const [originalCategories, originalSubscriptions, originalUnreadCounts] = await Promise.all([
+                allCategories(environment.endpoint, credential.token.access_token),
+                allSubscriptions(environment.endpoint, credential.token.access_token),
+                allUnreadCounts(environment.endpoint, credential.token.access_token)
+            ]);
+
+            const categories = originalCategories.map(category => ({
+                categoryId: category.id,
+                feedId: category.id,
+                title: category.label
+            }));
+
+            const subscriptions = new Enumerable(originalSubscriptions)
+                .join(
+                    originalUnreadCounts.unreadcounts,
+                    (subscription) => subscription.id,
+                    (unreadCount) => unreadCount.id,
+                    (subscription, unreadCount) => ({ subscription, unreadCount })
+                )
+                .selectMany(({ subscription, unreadCount }) => {
+                    return subscription.categories.map((category) => ({
+                        subscriptionId: subscription.id,
+                        categoryId: category.id,
+                        feedId: subscription.id,
+                        title: subscription.title || '',
+                        unreadCount: unreadCount.count
+                    }));
+                })
+                .toArray();
+
             dispatch({
                 type: 'CATEGORIES_FETCHED',
-                categories: CATEGORIES
+                categories
             });
 
             dispatch({
                 type: 'SUBSCRIPTIONS_FETCHED',
-                subscriptions: SUBSCRIPTIONS,
+                subscriptions,
                 fetchedAt: new Date().toISOString()
             });
-        }, DELAY);
+        }
     };
 }
 
 export function fetchFeed(feedId: string): AsyncEvent {
-    return (dispatch) => {
+    return async (dispatch, getState) => {
         dispatch({
             type: 'FEED_FETCHING',
             feedId: feedId
         });
 
-        setTimeout(() => {
-            dispatch({
-                type: 'FEED_FETCHED',
-                feed: {
-                    feedId,
-                    title: 'Lorem Ipsum',
-                    description: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-                    subscribers: 123,
-                    entries: ENTRIES.map(entry => ({
-                        ...entry,
-                        entryId: entry.entryId + '.' + Date.now()
-                    })),
-                    hasMoreEntries: true,
-                    isLoading: false,
-                    subscription: SUBSCRIPTIONS[0]
-                }
-            });
-        }, DELAY);
-    };
-}
+        const { environment, credential } = getState();
 
-export function unselectFeed(): Event {
-    return {
-        type: 'FEED_UNSELECTED'
+        const contents = await getStreamContents(environment.endpoint, credential.token.access_token, {
+            streamId: feedId
+        });
+
+        const entries = contents.items.map(item => ({
+            entryId: item.id,
+            author: item.author || '',
+            content: item.content ? item.content.content : '',
+            description: item.content ? item.content.content : '',
+            publishedAt: new Date(item.published).toISOString(),
+            bookmarks: item.engagement,
+            title: item.title,
+            url: item.alternate[0].href,
+            origin: {
+                feedId: item.origin.streamId,
+                title: item.origin.title,
+                url: item.origin.htmlUrl,
+            },
+            markAsRead: !item.unread
+        }));
+
+        dispatch({
+            type: 'FEED_FETCHED',
+            feed: {
+                feedId: contents.id,
+                title: contents.title,
+                description: '',
+                subscribers: 0,
+                entries,
+                hasMoreEntries: !!contents.continuation,
+                isLoading: false,
+                subscription: null
+            }
+        });
     };
 }
 

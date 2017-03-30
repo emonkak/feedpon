@@ -1,7 +1,7 @@
-export default function asyncMiddleware(action: any, next: (action: any) => void, getState: () => any): void {
-    if (typeof action === 'function') {
-        action(next, getState);
+export default function asyncMiddleware(event: any, next: (event: any) => void, getState: () => any): void {
+    if (typeof event === 'function') {
+        event(next, getState);
     } else {
-        next(action);
+        next(event);
     }
 }

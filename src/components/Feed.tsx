@@ -5,7 +5,7 @@ import EntryList from 'components/parts/EntryList';
 import MenuItem from 'components/parts/MenuItem';
 import connect from 'supports/react/connect';
 import { State } from 'messaging/types';
-import { fetchFeed, readEntry, saveReadEntries, unselectFeed } from 'messaging/actions';
+import { fetchFeed, readEntry, saveReadEntries } from 'messaging/actions';
 
 @connect((state: State) => {
     return {
@@ -22,24 +22,30 @@ export default class Feed extends PureComponent<any, any> {
             entries: PropTypes.array.isRequired,
             hasMoreEntries: PropTypes.bool.isRequired,
             isLoading: PropTypes.bool.isRequired,
-            subscription: PropTypes.object.isRequired
+            subscribers: PropTypes.number.isRequired,
+            subscription: PropTypes.object
         }),
         isScrolling: PropTypes.bool.isRequired,
+        params: PropTypes.object.isRequired,
         scrollTo: PropTypes.func.isRequired,
         viewMode: PropTypes.oneOf(['expanded', 'collapsible']).isRequired
     };
 
     componentWillMount() {
-        const { dispatch, params } = this.props;
+        const { dispatch, feed, params } = this.props;
 
-        dispatch(fetchFeed(params.feed_id));
+        if (!feed || (feed.feedId !== params.feed_id)) {
+            dispatch(fetchFeed(params.feed_id));
+        }
     }
 
     componentWillUpdate(nextProps: any, nextState: any) {
-        if (this.props.params.feed_id !== nextProps.params.feed_id) {
+        const { params } = this.props;
+
+        if (params.feed_id !== nextProps.params.feed_id) {
             const { feed, dispatch } = this.props;
 
-            if (feed) {
+            if (feed && feed.feedId === params.feed_id) {
                 const readEntryIds = feed.entries
                     .filter(entry => !entry.markAsRead && entry.readAt)
                     .map(entry => entry.entryId);
@@ -52,17 +58,15 @@ export default class Feed extends PureComponent<any, any> {
     }
 
     componentWillUnmount() {
-        const { feed, dispatch } = this.props;
+        const { dispatch, feed, params } = this.props;
 
-        if (feed) {
+        if (feed && feed.feedId === params.feed_id) {
             const readEntryIds = feed.entries
                 .filter(entry => !entry.markAsRead && entry.readAt)
                 .map(entry => entry.entryId);
 
             dispatch(saveReadEntries(readEntryIds));
         }
-
-        dispatch(unselectFeed());
     }
 
     handleMarkEntryAsRead(entryIds: string[]) {
@@ -82,7 +86,7 @@ export default class Feed extends PureComponent<any, any> {
     renderHeader() {
         const { feed } = this.props;
 
-        if (feed == null) {
+        if (!feed || (feed.isLoading && feed.entries.length === 0)) {
             return (
                 <header className="feed-header">
                     <div className="container">
@@ -99,7 +103,7 @@ export default class Feed extends PureComponent<any, any> {
 
         const { categories } = this.props;
         const isSubscribed = feed.subscription != null;
-        const categoryId = isSubscribed ? feed.subscription.categoryId : null;
+        const categoryId = feed.subscription != null ? feed.subscription.categoryId : null;
 
         const subscribeButton = isSubscribed
             ?  (
@@ -150,7 +154,7 @@ export default class Feed extends PureComponent<any, any> {
         return (
             <EntryList
                 entries={feed ? feed.entries : []}
-                isLoading={!feed}
+                isLoading={!feed || (feed.isLoading && feed.entries.length === 0)}
                 isScrolling={isScrolling}
                 onMarkAsRead={this.handleMarkEntryAsRead.bind(this)}
                 scrollTo={scrollTo}

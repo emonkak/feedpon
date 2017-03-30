@@ -7,7 +7,6 @@ export type Event
     | { type: 'ENTRY_MARKED_AS_READ', entryIds: string[] }
     | { type: 'FEED_FETCHED', feed: Feed }
     | { type: 'FEED_FETCHING', feedId: string }
-    | { type: 'FEED_UNSELECTED' }
     | { type: 'NOTIFICATION_DISMISSED', id: number }
     | { type: 'NOTIFICATION_SENT', notification: Notification }
     | { type: 'READ_ENTRIES_CLEARED' }
@@ -43,16 +42,16 @@ export interface Environment {
 }
 
 export interface Category {
-    categoryId: number;
+    categoryId: string;
     feedId: string,
     title: string;
 }
 
 export interface Feed {
-    entries: Entry[];
     feedId: string;
     title: string;
     description: string;
+    entries: Entry[];
     subscribers: number;
     hasMoreEntries: boolean;
     isLoading: boolean;
@@ -100,8 +99,8 @@ export interface Subscriptions {
 
 export interface Subscription {
     feedId: string,
-    subscriptionId: string | number;
+    subscriptionId: string;
     title: string;
-    categoryId: number;
+    categoryId: string;
     unreadCount: number;
 };

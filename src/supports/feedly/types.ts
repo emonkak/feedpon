@@ -73,28 +73,6 @@ export interface Feed {
 }
 
 // Markers API:
-export interface IMarkersApi {
-    allUnreadCounts(input?: GetUnreadCountsInput): Promise<GetUnreadCountsResponce>;
-
-    markAsReadForEntries(entryId: string): Promise<void>;
-    markAsReadForEntries(entryIds: string[]): Promise<void>;
-
-    markAsReadForFeeds(feedId: string): Promise<void>;
-    markAsReadForFeeds(feedIds: string[]): Promise<void>;
-
-    markAsReadForCetegories(categoryId: string): Promise<void>;
-    markAsReadForCetegories(categoryIds: string[]): Promise<void>;
-
-    keepUnreadForEntries(entryId: string): Promise<void>;
-    keepUnreadForEntries(entryIds: string[]): Promise<void>;
-
-    keepUnreadForFeeds(feedId: string): Promise<void>;
-    keepUnreadForFeeds(feedIds: string[]): Promise<void>;
-
-    keepUnreadForCetegories(categoryId: string): Promise<void>;
-    keepUnreadForCetegories(categoryIds: string[]): Promise<void>;
-}
-
 export interface GetUnreadCountsInput {
     autorefresh?: boolean;
     newerThan?: number;
@@ -127,7 +105,7 @@ export interface GetEntryIdsResponse {
 }
 
 export interface Contents {
-    continuation: string;
+    continuation?: string;
     updated: number;
     alternate: LinkObject[];
     title: string;

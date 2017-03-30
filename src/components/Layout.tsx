@@ -14,6 +14,8 @@ export default class Layout extends PureComponent<any, any> {
         router: routerShape,
     };
 
+    private unsubscribe: () => void | null;
+
     constructor(props: any, context: any) {
         super(props, context);
 
@@ -21,20 +23,18 @@ export default class Layout extends PureComponent<any, any> {
             isScrolling: false,
             sidebarIsOpened: false
         };
-
-        this.handleChangeLocation = this.handleChangeLocation.bind(this);
     }
 
     componentWillMount() {
         const { router } = this.props;
 
-        router.listen(this.handleChangeLocation);
+        this.unsubscribe = router.listen(this.handleChangeLocation.bind(this));
     }
 
     componentWillUnmount() {
-        const { router } = this.props;
-
-        router.unregisterTransitionHook(this.handleChangeLocation);
+        if (this.unsubscribe) {
+            this.unsubscribe();
+        }
     }
 
     handleChangeLocation() {

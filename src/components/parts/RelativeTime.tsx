@@ -27,6 +27,12 @@ export default class RelativeTime extends PureComponent<any, any> {
         this.update();
     }
 
+    componentWillReceiveProps(nextProps: any) {
+        if (this.props.time !== nextProps.time) {
+            this.update();
+        }
+    }
+
     componentWillUnmount() {
         clearInterval(this.timer);
     }

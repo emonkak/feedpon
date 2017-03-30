@@ -47,9 +47,11 @@ export default class Sidebar extends PureComponent<Props, {}> {
     };
 
     componentWillMount() {
-        const { dispatch } = this.props;
+        const { dispatch, lastUpdatedAt } = this.props;
 
-        dispatch(fetchSubscriptions());
+        if (lastUpdatedAt == null) {
+            dispatch(fetchSubscriptions());
+        }
     }
 
     handleSelect(event: React.SyntheticEvent<any>, selectedValue: string, activeType: React.ReactType) {
@@ -74,8 +76,8 @@ export default class Sidebar extends PureComponent<Props, {}> {
         }, 0);
 
         return (
-                <TreeBranch key={`/feeds/${category.feedId}`}
-                            value={`/feeds/${category.feedId}`}
+                <TreeBranch key={`/feeds/${encodeURIComponent(category.feedId)}`}
+                            value={`/feeds/${encodeURIComponent(category.feedId)}`}
                             className={classnames({ 'is-important': totalUnreadCount > 0 })}
                             primaryText={category.title}
                             secondaryText={totalUnreadCount > 0 ? Number(totalUnreadCount).toLocaleString() : null}
@@ -87,8 +89,8 @@ export default class Sidebar extends PureComponent<Props, {}> {
 
     renderSubscription(subscription: Subscription) {
         return (
-            <TreeLeaf key={`/feeds/${subscription.feedId}`}
-                      value={`/feeds/${subscription.feedId}`}
+            <TreeLeaf key={`/feeds/${encodeURIComponent(subscription.feedId)}`}
+                      value={`/feeds/${encodeURIComponent(subscription.feedId)}`}
                       className={classnames({ 'is-important': subscription.unreadCount > 0 })}
                       primaryText={subscription.title}
                       secondaryText={subscription.unreadCount > 0 ? Number(subscription.unreadCount).toLocaleString() : null}

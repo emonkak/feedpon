@@ -43,7 +43,15 @@ function reduceFeed(feed: Feed | null, event: Event): Feed {
                 };
             }
 
-            return null;
+            return {
+                feedId: event.feedId,
+                title: 'Loading...',
+                description: '',
+                entries: [],
+                subscribers: 0,
+                hasMoreEntries: false,
+                isLoading: true
+            };
 
         case 'FEED_FETCHED':
             if (feed) {
@@ -58,9 +66,6 @@ function reduceFeed(feed: Feed | null, event: Event): Feed {
             }
 
             return event.feed;
-
-        case 'FEED_UNSELECTED':
-            return null;
 
         case 'READ_ENTRIES_CLEARED':
             if (feed) {
