@@ -9,7 +9,7 @@ import connect from 'supports/react/connect';
 import { Category, Feed as FeedType, State, ViewMode } from 'messaging/types';
 import { fetchFeed, readEntry, saveReadEntries } from 'messaging/actions';
 
-interface Props {
+interface FeedProps {
     categories: Category[];
     feed: FeedType | null;
     isScrolling: boolean;
@@ -21,7 +21,7 @@ interface Props {
     viewMode: ViewMode;
 };
 
-class Feed extends PureComponent<Props, {}> {
+class Feed extends PureComponent<FeedProps, {}> {
     static propTypes = {
         categories: PropTypes.array.isRequired,
         feed: PropTypes.object.isRequired,
@@ -42,7 +42,7 @@ class Feed extends PureComponent<Props, {}> {
         }
     }
 
-    componentWillUpdate(nextProps: Props, nextState: {}) {
+    componentWillUpdate(nextProps: FeedProps, nextState: {}) {
         const { params } = this.props;
 
         if (params['feed_id'] !== nextProps.params['feed_id']) {

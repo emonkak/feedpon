@@ -3,9 +3,20 @@ import React, { PureComponent } from 'react';
 import Dropdown from 'components/parts/Dropdown';
 import MenuItem from 'components/parts/MenuItem';
 import Modal from 'components/parts/Modal';
+import bindAction from 'supports/bindAction';
+import connect from 'supports/react/connect';
+import { Notification, NotificationKind, State } from 'messaging/types';
 import { sendNotification } from 'messaging/actions';
 
-export default class Dashboard extends PureComponent<any, any> {
+interface DashboardProps {
+    onSendNotification: (notification: Notification) => void;
+}
+
+interface DashboardState {
+    modalIsOpened: boolean;
+}
+
+class Dashboard extends PureComponent<DashboardProps, DashboardState> {
     constructor(props: any, context: any) {
         super(props, context);
 
@@ -15,21 +26,21 @@ export default class Dashboard extends PureComponent<any, any> {
     }
 
     handleOpenModal() {
-        this.setState(state => ({ ...state, modalIsOpened: true }));
+        this.setState({ modalIsOpened: true });
     }
 
     handleCloseModal() {
-        this.setState(state => ({ ...state, modalIsOpened: false }));
+        this.setState({ modalIsOpened: false });
     }
 
-    handleSendNotification(kind: any) {
-        const { dispatch } = this.props;
+    handleSendNotification(kind: NotificationKind) {
+        const { onSendNotification } = this.props;
 
-        dispatch(sendNotification({
+        onSendNotification({
             message: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
             kind,
             dismissAfter: 3000,
-        }));
+        });
     }
 
     render() {
@@ -262,3 +273,10 @@ export default class Dashboard extends PureComponent<any, any> {
         );
     }
 }
+
+export default connect(
+    (state: State) => ({}),
+    (dispatch) => ({
+        onSendNotification: bindAction(sendNotification, dispatch)
+    })
+)(Dashboard);

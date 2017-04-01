@@ -5,12 +5,12 @@ import MenuItem from 'components/parts/MenuItem';
 import Navbar from 'components/parts/Navbar';
 import bindAction from 'supports/bindAction';
 import connect from 'supports/react/connect';
-import { Feed, State as StateType, ViewMode } from 'messaging/types';
+import { Feed, State, ViewMode } from 'messaging/types';
 import { changeViewMode, clearReadEntries } from 'messaging/actions';
 
 const SCROLL_OFFSET = 48;
 
-interface Props {
+interface FeedNavbarProps {
     feed: Feed | null;
     onChangeViewMode: (viewMode: ViewMode) => void,
     onClearReadEntries: () => void,
@@ -19,7 +19,7 @@ interface Props {
     viewMode: ViewMode;
 };
 
-class FeedNavbar extends PureComponent<Props, {}> {
+class FeedNavbar extends PureComponent<FeedNavbarProps, {}> {
     static propTypes = {
         feed: PropTypes.object,
         onChangeViewMode: PropTypes.func.isRequired,
@@ -141,7 +141,7 @@ class FeedNavbar extends PureComponent<Props, {}> {
 }
 
 export default connect(
-    (state: StateType) => ({
+    (state: State) => ({
         feed: state.feed,
         viewMode: state.preference.viewMode
     }),

@@ -6,19 +6,19 @@ import Notifications from 'components/Notifications';
 import Sidebar from 'components/Sidebar';
 import smoothScroll from 'supports/dom/smoothScroll';
 
-interface Props {
+interface LayoutProps {
     content: React.ReactElement<any>;
     location: Location;
     navbar: React.ReactElement<any>;
     router: History;
 }
 
-interface State {
+interface LayoutState {
     isScrolling: boolean;
     sidebarIsOpened: boolean;
 }
 
-export default class Layout extends PureComponent<Props, State> {
+export default class Layout extends PureComponent<LayoutProps, LayoutState> {
     static propTypes = {
         content: PropTypes.element.isRequired,
         navbar: PropTypes.element.isRequired,
@@ -28,7 +28,7 @@ export default class Layout extends PureComponent<Props, State> {
 
     private unsubscribe: () => void | null;
 
-    constructor(props: Props, context: any) {
+    constructor(props: LayoutProps, context: any) {
         super(props, context);
 
         this.state = {

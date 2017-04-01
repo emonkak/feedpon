@@ -8,13 +8,13 @@ import connect from 'supports/react/connect';
 import { Notification as NotificationType, State } from 'messaging/types';
 import { dismissNotification } from 'messaging/actions';
 
-interface Props {
+interface NotificationsProps {
     onDismissNotification: (id: number) => void;
     isReversed?: boolean;
     notifications: NotificationType[];
 }
 
-class Notifications extends PureComponent<Props, {}> {
+class Notifications extends PureComponent<NotificationsProps, {}> {
     static propTypes = {
         onDismissNotification: PropTypes.func.isRequired,
         isReversed: PropTypes.bool.isRequired,

@@ -6,12 +6,12 @@ import connect from 'supports/react/connect';
 import { State } from 'messaging/types';
 import { authenticate } from 'messaging/actions';
 
-interface Props {
+interface AuthenticationProps {
     location: Location;
     onAuthenticate: () => void;
 }
 
-class Authentication extends PureComponent<Props, {}> {
+class Authentication extends PureComponent<AuthenticationProps, {}> {
     static propTypes = {
         location: PropTypes.object.isRequired,
         onAuthenticate: PropTypes.func.isRequired

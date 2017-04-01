@@ -19,7 +19,7 @@ import '@emonkak/enumerable/extensions/groupJoin';
 import '@emonkak/enumerable/extensions/select';
 import '@emonkak/enumerable/extensions/toArray';
 
-interface Props {
+interface SidebarProps {
     categories: Category[];
     isLoading: boolean;
     lastUpdatedAt: string | null;
@@ -29,7 +29,7 @@ interface Props {
     subscriptions: Subscription[];
 }
 
-class Sidebar extends PureComponent<Props, {}> {
+class Sidebar extends PureComponent<SidebarProps, {}> {
     static propTypes = {
         categories: PropTypes.array.isRequired,
         isLoading: PropTypes.bool.isRequired,
