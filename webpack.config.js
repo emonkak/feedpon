@@ -6,7 +6,7 @@ const config = {
         'index': './src/index.tsx'
     },
     output: {
-        path: './public/js',
+        path: path.join(__dirname, 'public', 'js'),
         filename: '[name].js'
     },
     resolve: {

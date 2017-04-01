@@ -34,7 +34,6 @@
   "devDependencies": {
     "@types/chrome": "0.0.44",
     "@types/classnames": "0.0.32",
-    "@types/node": "^7.0.12",
     "@types/react": "^15.0.11",
     "@types/react-addons-css-transition-group": "^15.0.1",
     "@types/react-dom": "^0.14.23",
@@ -46,15 +45,15 @@
     "npm-run-all": "^4.0.1",
     "postcss-cli": "^3.0.0-beta",
     "postcss-cssnext": "^2.9.0",
-    "postcss-csso": "^1.1.2",
+    "postcss-csso": "^2.0.0",
     "postcss-custom-media": "^5.0.1",
     "postcss-import": "^9.1.0",
     "postcss-nesting": "^2.3.1",
     "ts-loader": "^2.0.1",
-    "tslint": "^4.4.2",
+    "tslint": "^5.0.0",
     "typescript": "^2.1.6",
     "uglify-js": "git://github.com/mishoo/UglifyJS2.git#harmony",
-    "uglifyjs-webpack-plugin": "^0.3.0",
+    "uglifyjs-webpack-plugin": "^0.4.0",
     "webpack": "^2.2.1"
   }
 }
