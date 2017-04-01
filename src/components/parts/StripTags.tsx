@@ -4,7 +4,7 @@ import stripTags from 'supports/dom/stripTags';
 
 interface Props {
     className?: string;
-    html?: string;
+    html: string | null;
 }
 
 export default class StripHtml extends PureComponent<Props, {}> {

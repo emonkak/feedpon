@@ -56,15 +56,15 @@ export function revokeToken(endpoint: string, input: feedly.RevokeTokenInput): P
 }
 
 export function allCategories(endpoint: string, accessToken: string): Promise<feedly.Category[]> {
-    return doGet(endpoint, 'v3/categories', null, createAuthHeader(accessToken));
+    return doGet(endpoint, 'v3/categories', {}, createAuthHeader(accessToken));
 }
 
 export function deleteCategory(endpoint: string, accessToken: string, categoryId: string): Promise<string> {
-    return doDelete(endpoint, 'v3/categories/' + categoryId, null, createAuthHeader(accessToken));
+    return doDelete(endpoint, 'v3/categories/' + categoryId, {}, createAuthHeader(accessToken));
 }
 
 export function getFeed(endpoint: string, accessToken: string, feedId: string): Promise<feedly.Feed> {
-    return doGet(endpoint, 'v3/feeds/' + feedId, null, createAuthHeader(accessToken));
+    return doGet(endpoint, 'v3/feeds/' + feedId, {}, createAuthHeader(accessToken));
 }
 
 export function allUnreadCounts(endpoint: string, accessToken: string, input: feedly.GetUnreadCountsInput = {}): Promise<feedly.GetUnreadCountsResponce> {
@@ -128,5 +128,5 @@ export function getStreamContents(endpoint: string, accessToken: string, input: 
 }
 
 export function allSubscriptions(endpoint: string, accessToken: string): Promise<feedly.Subscription[]> {
-    return doGet(endpoint, 'v3/subscriptions', null, createAuthHeader(accessToken));
+    return doGet(endpoint, 'v3/subscriptions', {}, createAuthHeader(accessToken));
 }

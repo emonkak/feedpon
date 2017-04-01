@@ -100,8 +100,8 @@ function createPipeline<TEvent, TState>(middlewares: Middleware<TEvent, TState>[
 }
 
 function toObserver<T>(nextOrObserver: PartialObserver<T> | ((value: T) => void),
-                       error: (errorValue: any) => void,
-                       complete: () => void): Observer<T> {
+                       error?: (errorValue: any) => void,
+                       complete?: () => void): Observer<T> {
     if (typeof nextOrObserver === 'function') {
         return new Observer({ next: nextOrObserver, error, complete });
     } else {

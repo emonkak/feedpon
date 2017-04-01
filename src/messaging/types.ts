@@ -55,21 +55,21 @@ export interface Feed {
     subscribers: number;
     hasMoreEntries: boolean;
     isLoading: boolean;
-    subscription?: Subscription;
+    subscription: Subscription | null;
 }
 
 export interface Entry {
     entryId: string;
     title: string;
-    author?: string;
+    author: string | null;
     url: string;
     origin: Origin;
-    content?: string;
-    summary?: string;
+    content: string | null;
+    summary: string | null;
     bookmarks: number;
     publishedAt: string;
     markAsRead: boolean;
-    readAt?: string;
+    readAt: string | null;
 }
 
 export interface Origin {

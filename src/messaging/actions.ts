@@ -26,7 +26,7 @@ const DELAY = 500;
 
 function observeUrlChanging(window: chrome.windows.Window, callback: (url: string) => void): void {
     function handleUpdateTab(tabId: number, changeInfo: chrome.tabs.TabChangeInfo, tab: chrome.tabs.Tab): void {
-        if (tab.windowId === window.id && tab.status === 'complete') {
+        if (tab.windowId === window.id && tab.status === 'complete' && tab.url != null) {
             callback(tab.url)
         }
     }
@@ -94,8 +94,8 @@ export function authenticate(): AsyncEvent {
                 scope: environment.scope
             });
 
-        chrome.windows.create({ url, type: 'popup' }, (window) => {
-            observeUrlChanging(window, async (url) => {
+        chrome.windows.create({ url, type: 'popup' }, (window: chrome.windows.Window) => {
+            observeUrlChanging(window, (url: string) => {
                 if (url.startsWith(environment.redirectUri)) {
                     chrome.windows.remove(window.id);
 
@@ -203,13 +203,22 @@ export function fetchFeed(feedId: string): AsyncEvent {
 
         const { environment, credential } = getState();
 
+        if (!credential) {
+            sendNotification({
+                message: 'Not authenticated',
+                kind: 'negative'
+            })(dispatch, getState);
+
+            return;
+        }
+
         const contents = await getStreamContents(environment.endpoint, credential.token.access_token, {
             streamId: feedId
         });
 
         const entries = contents.items.map(item => ({
             entryId: item.id,
-            author: item.author,
+            author: item.author || null,
             content: (item.content ? item.content.content : null) || (item.summary ? item.summary.content : null),
             summary: (item.summary ? item.summary.content : null) || (item.content ? item.content.content : null),
             publishedAt: new Date(item.published).toISOString(),
@@ -221,7 +230,8 @@ export function fetchFeed(feedId: string): AsyncEvent {
                 title: item.origin.title,
                 url: item.origin.htmlUrl,
             },
-            markAsRead: !item.unread
+            markAsRead: !item.unread,
+            readAt: null
         }));
 
         dispatch({

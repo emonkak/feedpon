@@ -29,7 +29,7 @@ function reduceCredential(credential: Credential | null, event: SyncEvent): Cred
     }
 }
 
-function reduceFeed(feed: Feed | null, event: SyncEvent): Feed {
+function reduceFeed(feed: Feed | null, event: SyncEvent): Feed | null {
     switch (event.type) {
         case 'FEED_FETCHING':
             if (feed && feed.feedId === event.feedId) {
@@ -47,7 +47,8 @@ function reduceFeed(feed: Feed | null, event: SyncEvent): Feed {
                 entries: [],
                 subscribers: 0,
                 hasMoreEntries: false,
-                isLoading: true
+                isLoading: true,
+                subscription: null
             };
 
         case 'FEED_FETCHED':

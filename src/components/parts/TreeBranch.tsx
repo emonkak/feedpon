@@ -40,7 +40,7 @@ export default class TreeBranch extends PureComponent<Props, State> {
         super(props, context);
 
         this.state = {
-            isExpanded: props.isExpanded,
+            isExpanded: !!props.isExpanded,
         };
     }
 

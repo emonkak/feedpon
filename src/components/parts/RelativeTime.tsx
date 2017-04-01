@@ -26,12 +26,12 @@ export default class RelativeTime extends PureComponent<Props, State> {
         super(props, context);
 
         this.state = {
-            relativeTime: null
+            relativeTime: moment(props.time).fromNow()
         };
     }
 
     componentWillMount() {
-        this.startTimer(this.props.refreshInterval);
+        this.startTimer(this.props.refreshInterval!);
     }
 
     componentWillReceiveProps(nextProps: any) {
@@ -42,7 +42,9 @@ export default class RelativeTime extends PureComponent<Props, State> {
         if (this.props.refreshInterval !== nextProps.refreshInterval) {
             this.stopTimer();
 
-            this.startTimer(nextProps.refreshInterval);
+            this.startTimer(nextProps.refreshInterval!);
+
+            this.refresh();
         }
     }
 
@@ -52,8 +54,6 @@ export default class RelativeTime extends PureComponent<Props, State> {
 
     startTimer(refreshInterval: number) {
         this.timer = setInterval(this.refresh.bind(this), refreshInterval)
-
-        this.refresh();
     }
 
     stopTimer() {

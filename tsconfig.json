@@ -12,6 +12,7 @@
         "noImplicitReturns": true,
         "noImplicitThis": true,
         "noUnusedLocals": true,
+        "strictNullChecks": true,
         "target": "es2015"
     },
     "exclude": [

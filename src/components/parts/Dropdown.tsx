@@ -29,20 +29,21 @@ export default class Dropdown extends PureComponent<Props, State> {
     };
 
     static defaultProps = {
-        isOpened: false
+        isOpened: false,
+        pullRight: false
     };
 
     constructor(props: Props, context: any) {
         super(props, context);
 
         this.state = {
-            isOpened: !!props.isOpened
+            isOpened: props.isOpened!
         };
     }
 
     componentWillReceiveProps(nextProps: Props) {
         if (this.props.isOpened !== nextProps.isOpened) {
-            this.update(nextProps.isOpened);
+            this.update(nextProps.isOpened!);
         }
     }
 
@@ -96,8 +97,8 @@ export default class Dropdown extends PureComponent<Props, State> {
 
         return (
             <div className={classnames('dropdown', className, {
-                'is-opened': isOpened,
-                'is-pull-right': pullRight
+                'is-opened': isOpened!,
+                'is-pull-right': pullRight!
             })}>
                 {this.renderToggleButton()}
                 <Closable

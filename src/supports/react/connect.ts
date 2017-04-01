@@ -1,6 +1,6 @@
 import { ComponentClass, PropTypes, PureComponent, createElement } from 'react';
 
-import Store from 'supports/Store';
+import Store from '../Store';
 
 export default function connect<TStateProps, TDispatchProps>(
     mapStateToProps: (state: any) => TStateProps,
@@ -16,9 +16,9 @@ export default function connect<TStateProps, TDispatchProps>(
                 store: PropTypes.instanceOf(Store).isRequired
             };
 
-            private dispatchProps: TDispatchProps;
+            private dispatchProps: TDispatchProps | null = null;
 
-            private subscription: { unsubscribe: () => void };
+            private subscription: { unsubscribe: () => void } | null = null;
 
             constructor(props: Partial<TProps>, context: any) {
                 super(props, context);
@@ -29,7 +29,8 @@ export default function connect<TStateProps, TDispatchProps>(
             componentWillMount() {
                 const store = this.context.store as Store<any, any>;
 
-                this.dispatchProps = mapDispatchToProps(store.dispatch.bind(store));
+                // XXX: Avoid undefnied
+                this.dispatchProps = mapDispatchToProps!(store.dispatch.bind(store));
 
                 this.subscription = store.subscribe(
                     state => this.setState(mapStateToProps(state))
@@ -37,15 +38,14 @@ export default function connect<TStateProps, TDispatchProps>(
             }
 
             componentWillUnmount() {
-                this.subscription.unsubscribe();
-
-                this.dispatchProps = null;
-                this.subscription = null;
+                if (this.subscription) {
+                    this.subscription.unsubscribe();
+                }
             }
 
             render() {
                 const { children } = this.props;
-                const props = Object.assign({}, this.state, this.dispatchProps, this.props);
+                const props = Object.assign({}, this.state, this.dispatchProps, this.props) as TProps;
 
                 return createElement(component, props, children);
             }

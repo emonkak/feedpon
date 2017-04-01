@@ -75,7 +75,7 @@ export default class Closable extends PureComponent<Props, {}> {
     }
 
     render() {
-        return cloneElement(this.props.children, {
+        return cloneElement(this.props.children as React.ReactElement<any>, {
             ref: (element: Element) => { this.childElement = element },
         });
     }

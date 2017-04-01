@@ -7,7 +7,7 @@ import walkNode from 'supports/dom/walkNode';
 
 interface Props {
     className?: string;
-    html?: string;
+    html: string | null;
 }
 
 export default class CleanHtml extends PureComponent<Props, {}> {

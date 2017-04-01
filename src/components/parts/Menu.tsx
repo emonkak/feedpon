@@ -5,7 +5,7 @@ import createChainedFunction from 'supports/createChainedFunction';
 
 interface Props {
     children?: React.ReactNode;
-    onSelect?: (value: string | number) => void;
+    onSelect: (value: string | number | null) => void;
     pullRight?: boolean;
 }
 
@@ -13,10 +13,11 @@ export default class Menu extends PureComponent<Props, {}> {
     static propTypes = {
         children: PropTypes.node,
         onSelect: PropTypes.func,
-        pullRight: PropTypes.bool.isRequired,
+        pullRight: PropTypes.bool.isRequired
     };
 
     static defaultProps = {
+        onSelect: (key: string | number | null) => {},
         pullRight: false
     };
 
@@ -38,7 +39,7 @@ export default class Menu extends PureComponent<Props, {}> {
 
         return (
             <div className={classnames('menu', {
-                'menu-pull-right': pullRight,
+                'menu-pull-right': pullRight!,
             })}>
                 {Children.map(children, this.renderChild.bind(this))}
             </div>

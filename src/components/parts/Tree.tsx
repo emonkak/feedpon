@@ -11,7 +11,7 @@ interface Props {
 };
 
 interface State {
-    value: string | number;
+    value: string | number | undefined;
 };
 
 export default class Tree extends PureComponent<Props, State> {

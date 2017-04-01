@@ -1,6 +1,6 @@
 import { Children, PropTypes, PureComponent } from 'react';
 
-import Store from 'supports/Store';
+import Store from '../Store';
 
 type Props = {
     store: Store<any, any>

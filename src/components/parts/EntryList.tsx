@@ -30,9 +30,9 @@ export default class EntryList extends PureComponent<Props, State> {
         viewMode: PropTypes.oneOf(['expanded', 'collapsible']).isRequired
     };
 
-    private activeEntryId: string;
+    private activeEntryId: string | null = null;
 
-    private scrollElement: HTMLElement;
+    private scrollElement: HTMLElement | null = null;
 
     constructor(props: Props, context: any) {
         super(props, context);

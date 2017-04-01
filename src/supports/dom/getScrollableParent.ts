@@ -2,7 +2,7 @@ export default function getScrollableParent(el: Element): Element | Window {
     do {
         el = el.parentNode as Element;
 
-        const { overflowX, overflowY } = window.getComputedStyle(el, null);
+        const { overflowX, overflowY } = window.getComputedStyle(el);
 
         if (overflowX === 'auto' ||
             overflowX === 'scroll' ||

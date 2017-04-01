@@ -74,7 +74,7 @@ class Sidebar extends PureComponent<Props, {}> {
                             value={`/feeds/${encodeURIComponent(category.feedId)}`}
                             className={classnames({ 'is-important': totalUnreadCount > 0 })}
                             primaryText={category.title}
-                            secondaryText={totalUnreadCount > 0 ? Number(totalUnreadCount).toLocaleString() : null}>
+                            secondaryText={totalUnreadCount > 0 ? Number(totalUnreadCount).toLocaleString() : ''}>
                 {subscriptions.map(subscription => this.renderSubscription(subscription))}
             </TreeBranch>
         );
@@ -86,7 +86,7 @@ class Sidebar extends PureComponent<Props, {}> {
                       value={`/feeds/${encodeURIComponent(subscription.feedId)}`}
                       className={classnames({ 'is-important': subscription.unreadCount > 0 })}
                       primaryText={subscription.title}
-                      secondaryText={subscription.unreadCount > 0 ? Number(subscription.unreadCount).toLocaleString() : null}
+                      secondaryText={subscription.unreadCount > 0 ? Number(subscription.unreadCount).toLocaleString() : ''}
                       icon={<i className="icon icon-16 icon-file" />} />
         );
     }
