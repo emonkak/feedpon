@@ -1,6 +1,6 @@
-export default function cleanNode(node: Node): void {
+export default function cleanNode(node: Node): boolean {
     if (node.nodeType !== node.ELEMENT_NODE) {
-        return;
+        return true;
     }
 
     const element = node as Element;
@@ -10,14 +10,12 @@ export default function cleanNode(node: Node): void {
             (element as HTMLAnchorElement).target = '_blank';
             break;
 
-        case 'CENTER':
-            (element as HTMLElement).style.textAlign = 'left';
-            break;
-
         case 'FONT':
-            element.removeAttribute("color");
-            element.removeAttribute("face");
-            element.removeAttribute("size");
+            element.removeAttribute('color');
+            element.removeAttribute('face');
+            element.removeAttribute('size');
             break;
     }
+
+    return true;
 }

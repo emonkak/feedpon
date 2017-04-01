@@ -1,8 +1,8 @@
-const TAG_PATTERN = new RegExp('<\/?[^>]+>', 'gi');
+const TAG_PATTERN = /<\/?[^>]+>/gi;
 
-const TRIM_PATTERN = new RegExp('^\s+|\s+$', 'gi');
+const TRIM_PATTERN = /^\s+|\s+$/gi;
 
-const SPACES_PATTERN = new RegExp('\s+', 'gi');
+const SPACES_PATTERN = /\s+/gi;
 
 export default function stripTags(input: string): string {
     return input

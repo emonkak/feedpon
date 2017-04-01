@@ -34,9 +34,7 @@ export default class CleanHtml extends PureComponent<Props, {}> {
 
             for (const child of parsedDocument.body.childNodes) {
                 walkNode(child, (node: Node) => {
-                    cleanNode(node);
-
-                    return sanitizeNode(node);
+                    return sanitizeNode(node) && cleanNode(node);
                 });
             }
 
