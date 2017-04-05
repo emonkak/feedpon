@@ -1,14 +1,16 @@
-import querystring from 'querystring';
 import Enumerable from '@emonkak/enumerable';
 
+import '@emonkak/enumerable/extensions/firstOrDefault';
 import '@emonkak/enumerable/extensions/join';
 import '@emonkak/enumerable/extensions/select';
 import '@emonkak/enumerable/extensions/selectMany';
 
 import {
     AsyncEvent,
-    Event,
+    Entry,
+    Feed,
     Notification,
+    SyncEvent,
     ViewMode
 } from './types';
 
@@ -16,9 +18,19 @@ import {
     allCategories,
     allSubscriptions,
     allUnreadCounts,
+    authCallback,
+    createAuthUrl,
     exchangeToken,
+    getFeed,
     getStreamContents
 } from 'supports/feedly/api';
+
+import {
+    getBookmarkCounts
+} from 'supports/hatena/bookmarkApi';
+getBookmarkCounts
+
+import * as feedly from 'supports/feedly/types';
 
 const DEFAULT_DISMISS_AFTER = 3000;
 
@@ -48,25 +60,22 @@ function observeUrlChanging(window: chrome.windows.Window, callback: (url: strin
 
 export function authenticate(): AsyncEvent {
     return (dispatch, getState) => {
-        async function handleRedirectUrl(urlString: string): Promise<void> {
-            const url = new URL(urlString);
-            const { searchParams } = url as any;  // XXX: Avid the type definition bug
+        const { environment } = getState();
 
-            const error = searchParams.get('error');
-            if (error) {
+        async function handleRedirectUrl(urlString: string): Promise<void> {
+            const response = authCallback(urlString);
+
+            if (response.error) {
                 sendNotification({
-                    message: 'Authentication failed: ' + error,
+                    message: 'Authentication failed: ' + response.error,
                     kind: 'negative'
                 })(dispatch, getState);
 
                 return;
             }
 
-            const { environment } = getState();
-            const code = searchParams.get('code');
-
-            const token = await exchangeToken(environment.endpoint, {
-                code,
+            const token = await exchangeToken({
+                code: response.code,
                 client_id: environment.clientId,
                 client_secret: environment.clientSecret,
                 redirect_uri: environment.redirectUri,
@@ -84,29 +93,28 @@ export function authenticate(): AsyncEvent {
             });
         }
 
-        const { environment } = getState();
-
-        const url = environment.endpoint + 'v3/auth/auth?' +
-            querystring.stringify({
-                client_id: environment.clientId,
-                redirect_uri: environment.redirectUri,
-                response_type: 'code',
-                scope: environment.scope
-            });
+        const url = createAuthUrl({
+            client_id: environment.clientId,
+            redirect_uri: environment.redirectUri,
+            response_type: 'code',
+            scope: environment.scope
+        });
 
         chrome.windows.create({ url, type: 'popup' }, (window: chrome.windows.Window) => {
             observeUrlChanging(window, (url: string) => {
-                if (url.startsWith(environment.redirectUri)) {
-                    chrome.windows.remove(window.id);
-
-                    handleRedirectUrl(url);
+                if (!url.startsWith(environment.redirectUri)) {
+                    return;
                 }
+
+                chrome.windows.remove(window.id);
+
+                handleRedirectUrl(url);
             });
         });
     };
 }
 
-export function readEntry(entryIds: string[], timestamp: Date): Event {
+export function readEntry(entryIds: string[], timestamp: Date): SyncEvent {
     return {
         type: 'ENTRY_READ',
         entryIds,
@@ -114,7 +122,7 @@ export function readEntry(entryIds: string[], timestamp: Date): Event {
     };
 }
 
-export function clearReadEntries(): Event {
+export function clearReadEntries(): SyncEvent {
     return {
         type: 'READ_ENTRIES_CLEARED'
     };
@@ -151,37 +159,38 @@ export function fetchSubscriptions(): AsyncEvent {
             type: 'SUBSCRIPTIONS_FETCHING'
         });
 
-        const { environment, credential } = getState();
+        const { credential } = getState();
 
         if (credential) {
-            const [originalCategories, originalSubscriptions, originalUnreadCounts] = await Promise.all([
-                allCategories(environment.endpoint, credential.token.access_token),
-                allSubscriptions(environment.endpoint, credential.token.access_token),
-                allUnreadCounts(environment.endpoint, credential.token.access_token)
+            const [categoriesResponse, subscriptionsResponse, unreadCountsResponse] = await Promise.all([
+                allCategories(credential.token.access_token),
+                allSubscriptions(credential.token.access_token),
+                allUnreadCounts(credential.token.access_token)
             ]);
 
-            const categories = originalCategories.map(category => ({
+            const categories = categoriesResponse.map(category => ({
                 categoryId: category.id,
                 feedId: category.id,
-                title: category.label
+                label: category.label
             }));
 
-            const subscriptions = new Enumerable(originalSubscriptions)
+            const subscriptions = new Enumerable(subscriptionsResponse)
                 .join(
-                    originalUnreadCounts.unreadcounts,
+                    unreadCountsResponse.unreadcounts,
                     (subscription) => subscription.id,
                     (unreadCount) => unreadCount.id,
                     (subscription, unreadCount) => ({ subscription, unreadCount })
                 )
-                .selectMany(({ subscription, unreadCount }) => {
-                    return subscription.categories.map((category) => ({
+                .selectMany(({ subscription, unreadCount }) =>
+                    subscription.categories.map((category) => ({
                         subscriptionId: subscription.id,
                         categoryId: category.id,
                         feedId: subscription.id,
                         title: subscription.title || '',
+                        iconUrl: subscription.iconUrl || '',
                         unreadCount: unreadCount.count
-                    }));
-                })
+                    }))
+                )
                 .toArray();
 
             dispatch({
@@ -194,6 +203,27 @@ export function fetchSubscriptions(): AsyncEvent {
     };
 }
 
+function entryConverter(item: feedly.Entry): Entry {
+    return {
+        entryId: item.id,
+        author: item.author || '',
+        content: (item.content ? item.content.content : '') || (item.summary ? item.summary.content : ''),
+        summary: (item.summary ? item.summary.content : '') || (item.content ? item.content.content : ''),
+        publishedAt: new Date(item.published).toISOString(),
+        title: item.title,
+        url: item.alternate[0].href,
+        bookmarkUrl: 'http://b.hatena.ne.jp/entry/' + item.alternate[0].href,
+        bookmarkCount: 0,
+        origin: {
+            feedId: item.origin.streamId,
+            title: item.origin.title,
+            url: item.origin.htmlUrl,
+        },
+        markAsRead: !item.unread,
+        readAt: null
+    };
+}
+
 export function fetchFeed(feedId: string): AsyncEvent {
     return async (dispatch, getState) => {
         dispatch({
@@ -201,8 +231,7 @@ export function fetchFeed(feedId: string): AsyncEvent {
             feedId: feedId
         });
 
-        const { environment, credential } = getState();
-
+        const { credential } = getState();
         if (!credential) {
             sendNotification({
                 message: 'Not authenticated',
@@ -212,41 +241,71 @@ export function fetchFeed(feedId: string): AsyncEvent {
             return;
         }
 
-        const contents = await getStreamContents(environment.endpoint, credential.token.access_token, {
-            streamId: feedId
-        });
+        const { subscriptions } = getState();
+        const subscription = new Enumerable(subscriptions.items)
+            .firstOrDefault((subscription) => subscription.subscriptionId === feedId);
 
-        const entries = contents.items.map(item => ({
-            entryId: item.id,
-            author: item.author || null,
-            content: (item.content ? item.content.content : null) || (item.summary ? item.summary.content : null),
-            summary: (item.summary ? item.summary.content : null) || (item.content ? item.content.content : null),
-            publishedAt: new Date(item.published).toISOString(),
-            bookmarks: item.engagement,
-            title: item.title,
-            url: item.alternate[0].href,
-            origin: {
-                feedId: item.origin.streamId,
-                title: item.origin.title,
-                url: item.origin.htmlUrl,
-            },
-            markAsRead: !item.unread,
-            readAt: null
-        }));
+        let feed: Feed | null = null;
 
-        dispatch({
-            type: 'FEED_FETCHED',
-            feed: {
-                feedId: contents.id,
-                title: contents.title,
-                description: '',
-                subscribers: 0,
-                entries,
-                hasMoreEntries: !!contents.continuation,
+        if (feedId.startsWith('feed/')) {
+            const [contentsResponse, feedResponsse] = await Promise.all([
+                getStreamContents(credential.token.access_token, {
+                    streamId: feedId
+                }),
+                getFeed(credential.token.access_token, feedId)
+            ]);
+
+            feed = {
+                feedId,
+                title: feedResponsse.title,
+                description: feedResponsse.description || '',
+                url: feedResponsse.website || '',
+                subscribers: feedResponsse.subscribers,
+                entries: contentsResponse.items.map(entryConverter),
+                hasMoreEntries: !!contentsResponse.continuation,
                 isLoading: false,
-                subscription: null
+                subscription
+            };
+        } else if (feedId.startsWith('user/')) {
+            const category = new Enumerable(subscriptions.categories)
+                .firstOrDefault((category) => category.categoryId === feedId);
+
+            const contentsResponse = await getStreamContents(credential.token.access_token, {
+                streamId: feedId
+            });
+
+            feed = {
+                feedId,
+                title: category ? category.label : '',
+                description: '',
+                url: '',
+                subscribers: 0,
+                entries: contentsResponse.items.map(entryConverter),
+                hasMoreEntries: !!contentsResponse.continuation,
+                isLoading: false,
+                subscription
+            };
+        }
+
+        if (feed) {
+            dispatch({
+                type: 'FEED_FETCHED',
+                feed
+            });
+
+            const entryUrls = feed.entries
+                    .filter((entry) => !!entry.url)
+                    .map((entry) => entry.url);
+
+            if (entryUrls.length > 0) {
+                const bookmarkCounts = await getBookmarkCounts(entryUrls);
+
+                dispatch({
+                    type: 'BOOKMARK_COUNTS_FETCHED',
+                    bookmarkCounts
+                });
             }
-        });
+        }
     };
 }
 
@@ -269,14 +328,14 @@ export function sendNotification(notification: Notification): AsyncEvent {
     };
 }
 
-export function dismissNotification(id: any): Event {
+export function dismissNotification(id: any): SyncEvent {
     return {
         type: 'NOTIFICATION_DISMISSED',
         id
     };
 }
 
-export function changeViewMode(viewMode: ViewMode): Event {
+export function changeViewMode(viewMode: ViewMode): SyncEvent {
     return {
         type: 'VIEW_MODE_CHANGED',
         viewMode

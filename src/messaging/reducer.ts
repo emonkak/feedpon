@@ -31,6 +31,19 @@ function reduceCredential(credential: Credential | null, event: SyncEvent): Cred
 
 function reduceFeed(feed: Feed | null, event: SyncEvent): Feed | null {
     switch (event.type) {
+        case 'BOOKMARK_COUNTS_FETCHED':
+            if (feed) {
+                return {
+                    ...feed,
+                    entries: feed.entries.map(entry => ({
+                        ...entry,
+                        bookmarkCount: event.bookmarkCounts[entry.url] || 0
+                    }))
+                };
+            }
+
+            return null;
+
         case 'FEED_FETCHING':
             if (feed && feed.feedId === event.feedId) {
                 return {
@@ -44,6 +57,7 @@ function reduceFeed(feed: Feed | null, event: SyncEvent): Feed | null {
                 feedId: event.feedId,
                 title: 'Loading...',
                 description: '',
+                url: '',
                 entries: [],
                 subscribers: 0,
                 hasMoreEntries: false,

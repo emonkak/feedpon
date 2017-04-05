@@ -51,9 +51,13 @@ class FeedNavbar extends PureComponent<FeedNavbarProps, {}> {
         const { feed } = this.props;
 
         if (feed) {
-            return (
-                <a className="link-default" href="#">{feed.title}</a>
-            );
+            if (feed.url) {
+                return (
+                    <a className="link-default" href={feed.url} target="_blank">{feed.title}</a>
+                );
+            } else {
+                return feed.title;
+            }
         } else {
             return (
                 <span>Loading...</span>

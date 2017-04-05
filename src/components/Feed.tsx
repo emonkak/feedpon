@@ -122,7 +122,7 @@ class Feed extends PureComponent<FeedProps, {}> {
                         <MenuItem
                             key={category.categoryId}
                             icon={category.categoryId === categoryId ? <i className="icon icon-16 icon-checkmark" /> : null}
-                            primaryText={category.title} />
+                            primaryText={category.label} />
                     ))}
                     <div className="menu-divider" />
                     <MenuItem primaryText="New Category..." />
@@ -138,11 +138,11 @@ class Feed extends PureComponent<FeedProps, {}> {
                 <div className="container">
                     <div className="feed-header-content">
                         <div className="feed-metadata">
-                            <div className="feed-description">{feed.description}</div>
                             <div className="feed-info-list">
-                                <span className="feed-info"><strong>{feed.subscribers}</strong> subscribers</span>
                                 <span className="feed-info"><strong>{feed.entries.length}</strong> entries</span>
+                                <span className="feed-info"><strong>{feed.subscribers}</strong> subscribers</span>
                             </div>
+                            <div className="feed-description">{feed.description}</div>
                         </div>
                         {subscribeButton}
                     </div>

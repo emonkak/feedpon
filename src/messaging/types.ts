@@ -1,11 +1,13 @@
+import { BookmarkCounts } from 'supports/hatena/types';
 import { ExchangeTokenResponse } from 'supports/feedly/types';
 
 export type Event = SyncEvent | AsyncEvent;
 
 export type SyncEvent
     = { type: 'AUTHENTICATED', credential: Credential }
-    | { type: 'ENTRY_READ', entryIds: string[], readAt: string }
+    | { type: 'BOOKMARK_COUNTS_FETCHED', bookmarkCounts: BookmarkCounts }
     | { type: 'ENTRY_MARKED_AS_READ', entryIds: string[] }
+    | { type: 'ENTRY_READ', entryIds: string[], readAt: string }
     | { type: 'FEED_FETCHED', feed: Feed }
     | { type: 'FEED_FETCHING', feedId: string }
     | { type: 'NOTIFICATION_DISMISSED', id: number }
@@ -16,7 +18,7 @@ export type SyncEvent
     | { type: 'VIEW_MODE_CHANGED', viewMode: ViewMode };
 
 export interface AsyncEvent {
-    (dispatch: (event: Event) => void, getState: () => State): void;
+    (dispatch: (event: SyncEvent) => void, getState: () => State): void;
 }
 
 export interface State {
@@ -34,7 +36,6 @@ export interface Credential {
 }
 
 export interface Environment {
-    endpoint: string;
     clientId: string;
     clientSecret: string;
     scope: string;
@@ -44,13 +45,14 @@ export interface Environment {
 export interface Category {
     categoryId: string;
     feedId: string,
-    title: string;
+    label: string;
 }
 
 export interface Feed {
     feedId: string;
     title: string;
     description: string;
+    url: string;
     entries: Entry[];
     subscribers: number;
     hasMoreEntries: boolean;
@@ -61,12 +63,13 @@ export interface Feed {
 export interface Entry {
     entryId: string;
     title: string;
-    author: string | null;
+    author: string;
     url: string;
     origin: Origin;
-    content: string | null;
-    summary: string | null;
-    bookmarks: number;
+    content: string;
+    summary: string;
+    bookmarkCount: number;
+    bookmarkUrl: string;
     publishedAt: string;
     markAsRead: boolean;
     readAt: string | null;
@@ -101,9 +104,10 @@ export interface Subscriptions {
 }
 
 export interface Subscription {
-    feedId: string,
     subscriptionId: string;
-    title: string;
     categoryId: string;
+    feedId: string,
+    title: string;
+    iconUrl: string;
     unreadCount: number;
 };

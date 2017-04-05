@@ -22,18 +22,16 @@ export default class EntryInner extends PureComponent<Props, {}> {
     renderBookmarks() {
         const { entry } = this.props;
 
-        const urlPrefix = 'http://b.hatena.ne.jp/entry/';
-
         return (
             <a
                 className={classnames('entry-info', 'entry-info-bookmarks', {
-                    'is-bookmarked': entry.bookmarks > 0,
-                    'is-popular': entry.bookmarks >= 10,
-                    'is-very-popular': entry.bookmarks >= 20
+                    'is-bookmarked': entry.bookmarkCount > 0,
+                    'is-popular': entry.bookmarkCount >= 10,
+                    'is-very-popular': entry.bookmarkCount >= 20
                 })}
                 target="_blank"
-                href={urlPrefix + entry.url}>
-                <i className="icon icon-align-bottom icon-16 icon-bookmark" />{entry.bookmarks}
+                href={entry.bookmarkUrl}>
+                <i className="icon icon-align-bottom icon-16 icon-bookmark" />{entry.bookmarkCount}
             </a>
         );
     }

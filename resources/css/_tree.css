@@ -59,6 +59,7 @@
   align-items: center;
   flex: 1;
   padding: calc(var(--baseline-height) / 4) 0.5rem;
+  min-height: var(--baseline-height);
 }
 
 .tree-node-icon + .tree-node-label {

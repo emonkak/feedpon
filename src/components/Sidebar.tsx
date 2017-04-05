@@ -73,7 +73,7 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
                 <TreeBranch key={`/feeds/${encodeURIComponent(category.feedId)}`}
                             value={`/feeds/${encodeURIComponent(category.feedId)}`}
                             className={classnames({ 'is-important': totalUnreadCount > 0 })}
-                            primaryText={category.title}
+                            primaryText={category.label}
                             secondaryText={totalUnreadCount > 0 ? Number(totalUnreadCount).toLocaleString() : ''}>
                 {subscriptions.map(subscription => this.renderSubscription(subscription))}
             </TreeBranch>
@@ -81,13 +81,17 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
     }
 
     renderSubscription(subscription: Subscription) {
+        const icon = subscription.iconUrl
+            ? <img alt={subscription.title} src={subscription.iconUrl} width={16} height={16} />
+            : <i className="icon icon-16 icon-file" />;
+
         return (
             <TreeLeaf key={`/feeds/${encodeURIComponent(subscription.feedId)}`}
                       value={`/feeds/${encodeURIComponent(subscription.feedId)}`}
                       className={classnames({ 'is-important': subscription.unreadCount > 0 })}
                       primaryText={subscription.title}
                       secondaryText={subscription.unreadCount > 0 ? Number(subscription.unreadCount).toLocaleString() : ''}
-                      icon={<i className="icon icon-16 icon-file" />} />
+                      icon={icon} />
         );
     }
 

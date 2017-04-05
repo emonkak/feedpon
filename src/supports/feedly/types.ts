@@ -7,6 +7,12 @@ export interface AuthenticateInput {
     state?: string;
 }
 
+export interface AuthenticateResponse {
+    code: string;
+    state?: string;
+    error?: string;
+}
+
 export interface ExchangeTokenInput {
     code: string;
     client_id: string;
@@ -64,12 +70,12 @@ export interface Feed {
     id: string;
     subscribers: number;
     title: string;
-    description: string;
-    language: string;
-    velocity: number;
-    website: string;
-    topics: string[];
-    status: string;
+    description?: string;
+    language?: string;
+    velocity?: number;
+    website?: string;
+    topics?: string[];
+    status?: string;
 }
 
 // Markers API:
@@ -161,7 +167,8 @@ export interface Subscription {
     updated: number;
     velocity: number;
     topics: string[];
-    visualUrl: string;
+    visualUrl?: string;
+    iconUrl?: string;
 }
 
 // Ohters:

@@ -9,11 +9,11 @@ const SCROLL_OFFSET = 48;
 
 type Props = {
     entries: EntryType[],
-    isScrolling: boolean,
     isLoading: boolean,
+    isScrolling: boolean,
+    onMarkAsRead: (entryIds: string[]) => void
     scrollTo: (x: number, y: number) => Promise<void>,
     viewMode: ViewMode,
-    onMarkAsRead: (entryIds: string[]) => void
 };
 
 type State = {
