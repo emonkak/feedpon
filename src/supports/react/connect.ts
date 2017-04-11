@@ -29,7 +29,6 @@ export default function connect<TStateProps, TDispatchProps>(
             componentWillMount() {
                 const store = this.context.store as Store<any, any>;
 
-                // XXX: Avoid undefnied
                 this.dispatchProps = mapDispatchToProps!(store.dispatch.bind(store));
 
                 this.subscription = store.subscribe(

@@ -11,7 +11,8 @@ interface Props {
     isCollapsible?: boolean;
     isExpanded?: boolean;
     onClose?: () => void;
-    onCollapse?: (element: Element) => void;
+    onCollapse?: (entryId: string, element: Element) => void;
+    onFetchComments?: (entryId: string, url: string) => void;
 }
 
 export default class Entry extends PureComponent<Props, {}> {
@@ -21,7 +22,8 @@ export default class Entry extends PureComponent<Props, {}> {
         isCollapsible: PropTypes.bool.isRequired,
         isExpanded: PropTypes.bool.isRequired,
         onClose: PropTypes.func,
-        onCollapse: PropTypes.func
+        onCollapse: PropTypes.func,
+        onFetchComments: PropTypes.func
     };
 
     static defaultProps = {
@@ -35,15 +37,24 @@ export default class Entry extends PureComponent<Props, {}> {
 
         this.handleClose = this.handleClose.bind(this);
         this.handleCollapse = this.handleCollapse.bind(this);
+        this.handleFetchComments = this.handleFetchComments.bind(this);
+    }
+
+    handleFetchComments() {
+        const { onFetchComments, entry } = this.props;
+
+        if (onFetchComments) {
+            onFetchComments(entry.entryId, entry.url);
+        }
     }
 
     handleCollapse(event: React.SyntheticEvent<any>) {
-        const { isCollapsible, isExpanded, onCollapse } = this.props;
+        const { entry, isCollapsible, isExpanded, onCollapse } = this.props;
 
         if (isCollapsible && !isExpanded && onCollapse) {
             event.preventDefault();
 
-            onCollapse(findDOMNode(this));
+            onCollapse(entry.entryId, findDOMNode(this));
         }
     }
 
@@ -72,7 +83,8 @@ export default class Entry extends PureComponent<Props, {}> {
                 <EntryInner
                     entry={entry}
                     onClose={this.handleClose}
-                    onCollapse={this.handleCollapse} />
+                    onCollapse={this.handleCollapse}
+                    onFetchComments={this.handleFetchComments} />
             </article>
         );
     }

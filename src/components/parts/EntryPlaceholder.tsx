@@ -56,9 +56,11 @@ export default class EntryPlaceholder extends React.Component<Props, {}> {
                         </p>
                     </div>
                     <footer className="entry-footer">
-                        <span className="entry-action"><i className="icon icon-20 icon-bookmark"></i></span>
-                        <span className="entry-action"><i className="icon icon-20 icon-external-link"></i></span>
-                        <span className="entry-action"><i className="icon icon-20 icon-share"></i></span>
+                        <div className="entry-action-list">
+                            <span className="entry-action"><i className="icon icon-20 icon-bookmark"></i></span>
+                            <span className="entry-action"><i className="icon icon-20 icon-external-link"></i></span>
+                            <span className="entry-action"><i className="icon icon-20 icon-share"></i></span>
+                        </div>
                     </footer>
                 </div>
             </article>

@@ -1,17 +1,15 @@
-.u-baseline-1 {
-  line-height: var(--baseline-height);
+.u-pull-left {
+  float: left;
 }
 
-.u-baseline-2 {
-  line-height: calc(var(--baseline-height) * 2);
-}
-
-.u-float-right {
+.u-pull-right {
   float: right;
 }
 
-.u-float-left {
-  float: left;
+.u-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .u-text-truncate {

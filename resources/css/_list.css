@@ -20,25 +20,21 @@
 
 .list-group-item {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
   padding: calc(var(--baseline-height) / 4) 1rem;
   color: inherit;
-  border-color: var(--medium-color);
-  border-width: 0;
-  border-style: solid;
   text-decoration: none;
 }
 
 .list-group-item:first-child,
 .list-group-item + .list-group-item {
-  border-top-width: 1px;
+  border-top: 1px solid var(--medium-color);
   padding-top: calc(var(--baseline-height) / 4 - 1px);
 }
 
-.list-group-item:last-child,
-.list-group-item + .list-group-item {
-  border-bottom-width: 1px;
+.list-group-item:last-child {
+  border-bottom: 1px solid var(--medium-color);
   padding-bottom: calc(var(--baseline-height) / 4 - 1px);
 }
 

@@ -2,7 +2,8 @@
   display: inline-flex;
   border-radius: 4px;
   border: 1px solid var(--dark-color);
-  box-shadow: 0px 1px 2px color(var(--default-color) alpha(25%));
+  box-shadow: 0 2px 2px color(var(--default-color) alpha(25%)),
+              0 0 1px color(var(--default-color) alpha(25%));
 }
 
 .nav-item {
@@ -11,9 +12,6 @@
   text-align: center;
   text-decoration: none;
   color: inherit;
-  transition-property: background-color, color;
-  transition-duration: 0.2s;
-  transition-timing-function: ease-in-out;
 }
 
 .nav-item:first-child {

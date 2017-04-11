@@ -71,43 +71,69 @@ class Dashboard extends PureComponent<DashboardProps, DashboardState> {
                 <p><em>Lorem Ipsum</em> is simply dummy text of the printing and typesetting industry. <strong>Lorem Ipsum</strong> has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
 
                 <h2>Navigation</h2>
-                <nav className="nav">
-                    <a className="nav-item" href="#">First</a>
-                    <a className="nav-item is-selected" href="#">Second</a>
-                    <a className="nav-item" href="#">Third</a>
-                </nav>
+                <p>
+                    <nav className="nav">
+                        <a className="nav-item" href="#">First</a>
+                        <a className="nav-item is-selected" href="#">Second</a>
+                        <a className="nav-item" href="#">Third</a>
+                    </nav>
+                </p>
 
                 <h2>Popover</h2>
-                <div className="popover popover-default popover-above">
-                    <h3 className="popover-title">Popover Title</h3>
-                    <p>Popover Content</p>
+                <div className="popover popover-default popover-bottom">
+                    <div className="popover-arrow" />
+                    <div className="popover-content">
+                        <p>Popover Content</p>
+                    </div>
                 </div>
-                <div className="popover popover-default popover-above popover-right">
-                    <h3 className="popover-title">Popover Title</h3>
-                    <p>Popover Content</p>
+                <div className="popover popover-positive popover-bottom">
+                    <div className="popover-arrow" />
+                    <div className="popover-content">
+                        <p>Popover Content</p>
+                    </div>
                 </div>
-                <div className="popover popover-positive popover-below">
-                    <h3 className="popover-title">Popover Title</h3>
-                    <p>Popover Content</p>
+                <div className="popover popover-negative popover-bottom">
+                    <div className="popover-arrow" />
+                    <div className="popover-content">
+                        <p>Popover Content</p>
+                    </div>
                 </div>
-                <div className="popover popover-negative popover-below popover-right">
-                    <h3 className="popover-title">Popover Title</h3>
-                    <p>Popover Content</p>
+                <div className="popover popover-default popover-top">
+                    <div className="popover-arrow" />
+                    <div className="popover-content">
+                        <p>Popover Content</p>
+                    </div>
+                </div>
+                <div className="popover popover-positive popover-top">
+                    <div className="popover-arrow" />
+                    <div className="popover-content">
+                        <p>Popover Content</p>
+                    </div>
+                </div>
+                <div className="popover popover-negative popover-top">
+                    <div className="popover-arrow" />
+                    <div className="popover-content">
+                        <p>Popover Content</p>
+                    </div>
                 </div>
 
                 <h2>Dropdown</h2>
-                <Dropdown toggleButton={<button className="button button-default dropdown-arrow">Dropdown</button>}>
-                    <MenuItem primaryText="First Action"></MenuItem>
-                    <MenuItem primaryText="Second Action"></MenuItem>
-                    <MenuItem primaryText="Third Action"></MenuItem>
-                    <div className="menu-divider"></div>
-                    <MenuItem isDisabled={true} primaryText="Forth Action"></MenuItem>
-                </Dropdown>
+                <p>
+                    <Dropdown toggleButton={<button className="button button-default dropdown-arrow">Dropdown</button>}>
+                        <MenuItem primaryText="First Action"></MenuItem>
+                        <MenuItem primaryText="Second Action"></MenuItem>
+                        <MenuItem primaryText="Third Action"></MenuItem>
+                        <div className="menu-divider"></div>
+                        <MenuItem isDisabled={true} primaryText="Forth Action"></MenuItem>
+                    </Dropdown>
+                </p>
 
                 <h2>Modal</h2>
-                <div className="button-toolbar">
-                    <button className="button button-positive" onClick={this.handleOpenModal.bind(this)}>Launch Modal</button>
-                </div>
+                <p>
+                    <div className="button-toolbar">
+                        <button className="button button-positive" onClick={this.handleOpenModal.bind(this)}>Launch Modal</button>
+                    </div>
+                </p>
                 <Modal isOpened={modalIsOpened} onClose={this.handleCloseModal.bind(this)}>
                     <button className="close" onClick={this.handleCloseModal.bind(this)}></button>
                     <h3 className="modal-title">Modal Title</h3>

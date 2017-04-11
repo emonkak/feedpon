@@ -7,24 +7,33 @@ import { Entry as EntryType, ViewMode } from 'messaging/types';
 
 const SCROLL_OFFSET = 48;
 
-type Props = {
-    entries: EntryType[],
-    isLoading: boolean,
-    isScrolling: boolean,
-    onMarkAsRead: (entryIds: string[]) => void
-    scrollTo: (x: number, y: number) => Promise<void>,
-    viewMode: ViewMode,
-};
+interface Props {
+    entries: EntryType[];
+    isLoading: boolean;
+    isScrolling: boolean;
+    onFetchComments: (entryId: string, url: string) => void;
+    onMarkAsRead: (entryIds: string[]) => void;
+    scrollTo: (x: number, y: number) => Promise<void>;
+    viewMode: ViewMode;
+}
 
-type State = {
-    collapsedEntryId: string | null
-};
+interface State {
+    collapsedEntryId: string | null;
+}
+
+function renderActiveEntry(child: React.ReactElement<any>) {
+    return cloneElement(child, {
+        ...child.props,
+        isActive: true
+    });
+}
 
 export default class EntryList extends PureComponent<Props, State> {
     static propTypes = {
         entries: PropTypes.arrayOf(PropTypes.object).isRequired,
         isLoading: PropTypes.bool.isRequired,
         isScrolling: PropTypes.bool.isRequired,
+        onFetchComments: PropTypes.func,
         onMarkAsRead: PropTypes.func,
         scrollTo: PropTypes.func.isRequired,
         viewMode: PropTypes.oneOf(['expanded', 'collapsible']).isRequired
@@ -40,6 +49,12 @@ export default class EntryList extends PureComponent<Props, State> {
         this.state = {
             collapsedEntryId: null
         };
+
+        this.handleActivate = this.handleActivate.bind(this);
+        this.handleInactivate = this.handleInactivate.bind(this);
+        this.handleCollapse = this.handleCollapse.bind(this);
+        this.handleClose = this.handleClose.bind(this);
+        this.handleFetchComments = this.handleFetchComments.bind(this);
     }
 
     componentWillReceiveProps(nextProps: Props) {
@@ -118,6 +133,14 @@ export default class EntryList extends PureComponent<Props, State> {
         });
     }
 
+    handleFetchComments(entryId: string, url: string) {
+        const { onFetchComments } = this.props;
+
+        if (onFetchComments) {
+            onFetchComments(entryId, url);
+        }
+    }
+
     renderEntry(entry: EntryType) {
         const { collapsedEntryId } = this.state;
         const { viewMode } = this.props;
@@ -130,16 +153,10 @@ export default class EntryList extends PureComponent<Props, State> {
                 isCollapsible={isCollapsible}
                 isExpanded={isExpanded}
                 key={entry.entryId}
-                onClose={this.handleClose.bind(this)}
-                onCollapse={this.handleCollapse.bind(this, entry.entryId)} />
+                onClose={this.handleClose}
+                onCollapse={this.handleCollapse}
+                onFetchComments={this.handleFetchComments} />
         );
-    }
-
-    renderActiveEntry(child: React.ReactElement<any>) {
-        return cloneElement(child, {
-            ...child.props,
-            isActive: true
-        });
     }
 
     render() {
@@ -172,9 +189,9 @@ export default class EntryList extends PureComponent<Props, State> {
                 className="entry-list"
                 isDisabled={isScrolling}
                 marginTop={SCROLL_OFFSET}
-                onActivate={this.handleActivate.bind(this)}
-                onInactivate={this.handleInactivate.bind(this)}
-                renderActiveChild={this.renderActiveEntry.bind(this)}>
+                onActivate={this.handleActivate}
+                onInactivate={this.handleInactivate}
+                renderActiveChild={renderActiveEntry}>
                 {entries.map(this.renderEntry.bind(this))}
             </ScrollSpy>
         );

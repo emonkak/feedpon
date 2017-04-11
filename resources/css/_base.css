@@ -9,7 +9,6 @@
   --light-color: #f8f9fa;
   --medium-light-color: #e9ecef;
   --medium-color: #dee2e6;
-  --medium-dark-color: #ced4da;
   --dark-color: #868e96;
 
   --positive-color: #22b8cf;
@@ -48,17 +47,17 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
+  margin: 0;
   font-weight: 600;
 }
 
-h2, h3, h4, h5, h6 {
-  margin: calc(var(--baseline-height) / 2) 0;
-}
-
 h1 {
-  margin: 0;
   font-size: 2.0rem;
   line-height: calc(var(--baseline-height) * 2);
+}
+
+h2, h3, h4, h5, h6 {
+  margin-bottom: calc(var(--baseline-height) / 2);
 }
 
 h2 {
@@ -92,11 +91,11 @@ hr::before {
   content: "\00a7";
   position: absolute;
   background: var(--default-background-color);
-  top: calc(-var(--baseline-height) / 2);
-  left: calc(50% - 0.75em);
+  left: 50%;
   width: 1.5em;
   text-align: center;
   font-size: 1.5rem;
+  transform: translate(-50%, -50%);
 }
 
 blockquote, dl, figure, form, ol, p, pre, table, ul {

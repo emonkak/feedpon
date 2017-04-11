@@ -1,10 +1,11 @@
 .menu {
   box-sizing: border-box;
   padding: calc(var(--baseline-height) / 4 - 1px) 0;
-  border: 1px solid var(--medium-dark-color);
+  border: 1px solid var(--medium-color);
   border-radius: 4px;
   background-color: var(--default-background-color);
-  box-shadow: 0px 1px 2px color(var(--default-color) alpha(25%));
+  box-shadow: 0 2px 2px color(var(--default-color) alpha(25%)),
+              0 0 1px color(var(--default-color) alpha(25%));
 }
 
 .menu-item {

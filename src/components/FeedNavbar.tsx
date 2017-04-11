@@ -11,7 +11,7 @@ import { changeViewMode, clearReadEntries } from 'messaging/actions';
 const SCROLL_OFFSET = 48;
 
 interface FeedNavbarProps {
-    feed: Feed | null;
+    feed: Feed;
     onChangeViewMode: (viewMode: ViewMode) => void,
     onClearReadEntries: () => void,
     onToggleSidebar: () => void,
@@ -50,18 +50,12 @@ class FeedNavbar extends PureComponent<FeedNavbarProps, {}> {
     renderTitle() {
         const { feed } = this.props;
 
-        if (feed) {
-            if (feed.url) {
-                return (
-                    <a className="link-default" href={feed.url} target="_blank">{feed.title}</a>
-                );
-            } else {
-                return feed.title;
-            }
-        } else {
+        if (feed.url) {
             return (
-                <span>Loading...</span>
+                <a className="link-default" href={feed.url} target="_blank">{feed.title}</a>
             );
+        } else {
+            return feed.title;
         }
     }
 

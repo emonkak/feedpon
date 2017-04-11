@@ -8,6 +8,8 @@ import {
     SyncEvent
 } from './types';
 
+import initialState from './initialState';
+
 export default function reducer(state: State, event: SyncEvent): State {
     return {
         credential: reduceCredential(state.credential, event),
@@ -29,48 +31,52 @@ function reduceCredential(credential: Credential | null, event: SyncEvent): Cred
     }
 }
 
-function reduceFeed(feed: Feed | null, event: SyncEvent): Feed | null {
+function reduceFeed(feed: Feed, event: SyncEvent): Feed {
     switch (event.type) {
         case 'BOOKMARK_COUNTS_FETCHED':
-            if (feed) {
-                return {
-                    ...feed,
-                    entries: feed.entries.map(entry => ({
-                        ...entry,
-                        bookmarkCount: event.bookmarkCounts[entry.url] || 0
-                    }))
-                };
-            }
+            return {
+                ...feed,
+                entries: feed.entries.map(entry => ({
+                    ...entry,
+                    bookmarkCount: event.bookmarkCounts[entry.url] || 0
+                }))
+            };
 
-            return null;
+        case 'COMMENTS_FETCHED':
+            return {
+                ...feed,
+                entries: feed.entries.map(entry => {
+                    if (entry.entryId === event.entryId) {
+                        return {
+                            ...entry,
+                            comments: {
+                                items: event.comments,
+                                isLoaded: true
+                            }
+                        };
+                    }
+
+                    return entry;
+                })
+            };
+
 
         case 'FEED_FETCHING':
-            if (feed && feed.feedId === event.feedId) {
+            if (feed.feedId === event.feedId) {
                 return {
                     ...feed,
-                    hasMoreEntries: false,
+                    continuation: null,
                     isLoading: true
                 };
             }
 
             return {
-                feedId: event.feedId,
-                title: 'Loading...',
-                description: '',
-                url: '',
-                entries: [],
-                subscribers: 0,
-                hasMoreEntries: false,
-                isLoading: true,
-                subscription: null
+                ...initialState.feed,
+                feedId: event.feedId
             };
 
         case 'FEED_FETCHED':
-            if (feed) {
-                if (feed.feedId !== event.feed.feedId) {
-                    return feed;
-                }
-
+            if (feed.feedId === event.feed.feedId) {
                 return {
                     ...event.feed,
                     entries: feed.entries.concat(event.feed.entries)
@@ -80,61 +86,49 @@ function reduceFeed(feed: Feed | null, event: SyncEvent): Feed | null {
             return event.feed;
 
         case 'READ_ENTRIES_CLEARED':
-            if (feed) {
-                return {
-                    ...feed,
-                    entries: feed.entries.map(entry => {
-                        if (entry.markAsRead) {
-                            return entry;
-                        }
+            return {
+                ...feed,
+                entries: feed.entries.map(entry => {
+                    if (entry.markAsRead) {
+                        return entry;
+                    }
 
-                        return {
-                            ...entry,
-                            readAt: null
-                        };
-                    })
-                };
-            }
-
-            return null;
+                    return {
+                        ...entry,
+                        readAt: null
+                    };
+                })
+            };
 
         case 'ENTRY_READ':
-            if (feed) {
-                return {
-                    ...feed,
-                    entries: feed.entries.map(entry => {
-                        if (event.entryIds.indexOf(entry.entryId) === -1) {
-                            return entry;
-                        }
+            return {
+                ...feed,
+                entries: feed.entries.map(entry => {
+                    if (event.entryIds.indexOf(entry.entryId) === -1) {
+                        return entry;
+                    }
 
-                        return {
-                            ...entry,
-                            readAt: event.readAt
-                        };
-                    })
-                };
-            }
-
-            return null;
+                    return {
+                        ...entry,
+                        readAt: event.readAt
+                    };
+                })
+            };
 
         case 'ENTRY_MARKED_AS_READ':
-            if (feed) {
-                return {
-                    ...feed,
-                    entries: feed.entries.map(entry => {
-                        if (event.entryIds.indexOf(entry.entryId) === -1) {
-                            return entry;
-                        }
+            return {
+                ...feed,
+                entries: feed.entries.map(entry => {
+                    if (event.entryIds.indexOf(entry.entryId) === -1) {
+                        return entry;
+                    }
 
-                        return {
-                            ...entry,
-                            markAsRead: true
-                        };
-                    })
-                };
-            }
-
-            return null;
+                    return {
+                        ...entry,
+                        markAsRead: true
+                    };
+                })
+            };
 
         default:
             return feed;

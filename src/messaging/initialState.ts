@@ -8,7 +8,18 @@ const initialState: State = {
         scope: 'https://cloud.feedly.com/subscriptions',
         redirectUri: 'https://www.feedly.com/feedly.html'
     },
-    feed: null,
+    feed: {
+        feedId: null,
+        title: 'Loading...',
+        description: '',
+        url: '',
+        entries: [],
+        subscribers: 0,
+        velocity: 0,
+        continuation: null,
+        isLoading: true,
+        subscription: null
+    },
     notifications: [],
     subscriptions: {
         categories: [],

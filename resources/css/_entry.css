@@ -31,6 +31,10 @@
   & .entry-summary {
     display: none;
   }
+
+  & .entry-action-open {
+    display: none;
+  }
 }
 
 .entry.is-expanded:not(.is-collapsible) {
@@ -64,6 +68,14 @@
   padding-left: 8px;
 }
 
+.entry-action {
+  position: relative;
+}
+
+.entry-action + .entry-action {
+  margin-left: 8px;
+}
+
 .entry-action,
 a.entry-action {
   display: flex;
@@ -78,19 +90,27 @@ a.entry-action {
   transition: border-color 0.2s ease-in-out, color 0.2s ease-in-out;
 }
 
-.entry-action + .entry-action {
-  margin-left: 8px;
-}
-
 a.entry-action:hover {
   color: var(--positive-color);
   border-color: var(--positive-color);
+}
+
+.entry-action.is-selected,
+a.entry-action.is-selected {
+  color: var(--default-background-color);
+  background-color: var(--positive-color);
+  border-color: var(--positive-color);
+}
+
+a.entry-action.is-selected:hover {
+  background-color: color(var(--positive-color) lightness(+5%));
 }
 
 .entry-title {
   margin: 0;
   font-size: inherit;
   font-weight: 600;
+  line-height: inherit;
 }
 
 .entry-title > a {
@@ -114,6 +134,10 @@ a.entry-info:hover {
 
 .entry-info + .entry-info::before {
   content: '\00a0\00b7\00a0';
+}
+
+.entry-info-origin {
+  font-weight: 600;
 }
 
 .entry-info-bookmarks {
@@ -153,7 +177,7 @@ a.entry-info:hover {
   }
 }
 
-.entry-footer {
+.entry-action-list {
   display: flex;
   align-items: center;
   justify-content: center;

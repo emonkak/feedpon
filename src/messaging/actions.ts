@@ -26,7 +26,8 @@ import {
 } from 'supports/feedly/api';
 
 import {
-    getBookmarkCounts
+    getBookmarkCounts,
+    getBookmarkEntry
 } from 'supports/hatena/bookmarkApi';
 getBookmarkCounts
 
@@ -203,7 +204,7 @@ export function fetchSubscriptions(): AsyncEvent {
     };
 }
 
-function entryConverter(item: feedly.Entry): Entry {
+function convertEntry(item: feedly.Entry): Entry {
     return {
         entryId: item.id,
         author: item.author || '',
@@ -212,6 +213,10 @@ function entryConverter(item: feedly.Entry): Entry {
         publishedAt: new Date(item.published).toISOString(),
         title: item.title,
         url: item.alternate[0].href,
+        comments: {
+            isLoaded: false,
+            items: []
+        },
         bookmarkUrl: 'http://b.hatena.ne.jp/entry/' + item.alternate[0].href,
         bookmarkCount: 0,
         origin: {
@@ -261,8 +266,9 @@ export function fetchFeed(feedId: string): AsyncEvent {
                 description: feedResponsse.description || '',
                 url: feedResponsse.website || '',
                 subscribers: feedResponsse.subscribers,
-                entries: contentsResponse.items.map(entryConverter),
-                hasMoreEntries: !!contentsResponse.continuation,
+                velocity: feedResponsse.velocity || 0,
+                entries: contentsResponse.items.map(convertEntry),
+                continuation: contentsResponse.continuation || null,
                 isLoading: false,
                 subscription
             };
@@ -280,8 +286,9 @@ export function fetchFeed(feedId: string): AsyncEvent {
                 description: '',
                 url: '',
                 subscribers: 0,
-                entries: contentsResponse.items.map(entryConverter),
-                hasMoreEntries: !!contentsResponse.continuation,
+                velocity: 0,
+                entries: contentsResponse.items.map(convertEntry),
+                continuation: contentsResponse.continuation || null,
                 isLoading: false,
                 subscription
             };
@@ -309,12 +316,40 @@ export function fetchFeed(feedId: string): AsyncEvent {
     };
 }
 
+export function fetchComments(entryId: string, url: string): AsyncEvent {
+    return async (dispatch) => {
+        const bookmarks = await getBookmarkEntry(url);
+
+        if (bookmarks != null) {
+            const comments = bookmarks.bookmarks
+                .filter((bookmark) => bookmark.comment !== '')
+                .map((bookmark) => ({
+                    user: bookmark.user,
+                    comment: bookmark.comment,
+                    timestamp: bookmark.timestamp
+                }));
+
+            dispatch({
+                type: 'COMMENTS_FETCHED',
+                entryId,
+                comments
+            });
+        } else {
+            dispatch({
+                type: 'COMMENTS_FETCHED',
+                entryId,
+                comments: []
+            });
+        }
+    }
+}
+
 export function sendNotification(notification: Notification): AsyncEvent {
     if (!notification.id) {
         notification.id = Date.now();
     }
 
-    return dispatch => {
+    return (dispatch) => {
         dispatch({
             type: 'NOTIFICATION_SENT',
             notification

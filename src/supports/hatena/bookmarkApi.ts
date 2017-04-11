@@ -8,5 +8,14 @@ export function getBookmarkCounts(urls: string[]): Promise<types.BookmarkCounts>
 
     return fetch(apiUrl)
         .then<Response>(response => response.ok ? response : Promise.reject(response))
-        .then<{ [key: string]: number }>(response => response.json());
+        .then<types.BookmarkCounts>(response => response.json());
+}
+
+export function getBookmarkEntry(url: string): Promise<types.GetEntryResponse | null> {
+    const apiUrl = 'http://b.hatena.ne.jp/entry/jsonlite/?'
+        + querystring.stringify({ url });
+
+    return fetch(apiUrl)
+        .then<Response>(response => response.ok ? response : Promise.reject(response))
+        .then<types.GetEntryResponse>(response => response.json());
 }

@@ -7,12 +7,13 @@ import MenuItem from 'components/parts/MenuItem';
 import bindAction from 'supports/bindAction';
 import connect from 'supports/react/connect';
 import { Category, Feed as FeedType, State, ViewMode } from 'messaging/types';
-import { fetchFeed, readEntry, saveReadEntries } from 'messaging/actions';
+import { fetchComments, fetchFeed, readEntry, saveReadEntries } from 'messaging/actions';
 
 interface FeedProps {
     categories: Category[];
-    feed: FeedType | null;
+    feed: FeedType;
     isScrolling: boolean;
+    onFetchComments: (entryId: string, url: string) => void;
     onFetchFeed: (feedId: string) => void;
     onReadEntry: (entryIds: string[], timestamp: Date) => void;
     onSaveReadEntries: (entryIds: string[]) => void;
@@ -26,6 +27,7 @@ class Feed extends PureComponent<FeedProps, {}> {
         categories: PropTypes.array.isRequired,
         feed: PropTypes.object.isRequired,
         isScrolling: PropTypes.bool.isRequired,
+        onFetchComments: PropTypes.func.isRequired,
         onFetchFeed: PropTypes.func.isRequired,
         onReadEntry: PropTypes.func.isRequired,
         onSaveReadEntries: PropTypes.func.isRequired,
@@ -33,6 +35,14 @@ class Feed extends PureComponent<FeedProps, {}> {
         scrollTo: PropTypes.func.isRequired,
         viewMode: PropTypes.oneOf(['expanded', 'collapsible']).isRequired
     };
+
+    constructor(props: FeedProps, context: any) {
+        super(props, context);
+
+        this.handleFetchComments = this.handleFetchComments.bind(this);
+        this.handleLoadMoreEntries = this.handleLoadMoreEntries.bind(this);
+        this.handleMarkEntryAsRead = this.handleMarkEntryAsRead.bind(this);
+    }
 
     componentWillMount() {
         const { feed, onFetchFeed, params } = this.props;
@@ -48,7 +58,7 @@ class Feed extends PureComponent<FeedProps, {}> {
         if (params['feed_id'] !== nextProps.params['feed_id']) {
             const { feed, onFetchFeed, onSaveReadEntries } = this.props;
 
-            if (feed && feed.feedId === params['feed_id']) {
+            if (feed.feedId === params['feed_id']) {
                 const readEntryIds = feed.entries
                     .filter(entry => !entry.markAsRead && entry.readAt)
                     .map(entry => entry.entryId);
@@ -63,7 +73,7 @@ class Feed extends PureComponent<FeedProps, {}> {
     componentWillUnmount() {
         const { feed, onSaveReadEntries, params } = this.props;
 
-        if (feed && feed.feedId === params['feed_id']) {
+        if (feed.feedId === params['feed_id']) {
             const readEntryIds = feed.entries
                 .filter(entry => !entry.markAsRead && entry.readAt)
                 .map(entry => entry.entryId);
@@ -78,6 +88,12 @@ class Feed extends PureComponent<FeedProps, {}> {
         onReadEntry(entryIds, new Date());
     }
 
+    handleFetchComments(entryId: string, url: string) {
+        const { onFetchComments } = this.props;
+
+        onFetchComments(entryId, url);
+    }
+
     handleLoadMoreEntries(event: React.SyntheticEvent<any>) {
         event.preventDefault();
 
@@ -89,7 +105,7 @@ class Feed extends PureComponent<FeedProps, {}> {
     renderHeader() {
         const { feed } = this.props;
 
-        if (!feed || (feed.isLoading && feed.entries.length === 0)) {
+        if (feed.isLoading && feed.entries.length > 0) {
             return (
                 <header className="feed-header">
                     <div className="container">
@@ -140,6 +156,7 @@ class Feed extends PureComponent<FeedProps, {}> {
                         <div className="feed-metadata">
                             <div className="feed-info-list">
                                 <span className="feed-info"><strong>{feed.entries.length}</strong> entries</span>
+                                <span className="feed-info"><strong>{feed.velocity.toFixed(1)}</strong> entries per week</span>
                                 <span className="feed-info"><strong>{feed.subscribers}</strong> subscribers</span>
                             </div>
                             <div className="feed-description">{feed.description}</div>
@@ -157,9 +174,10 @@ class Feed extends PureComponent<FeedProps, {}> {
         return (
             <EntryList
                 entries={feed ? feed.entries : []}
-                isLoading={!feed || (feed.isLoading && feed.entries.length === 0)}
+                isLoading={feed.isLoading && feed.entries.length === 0}
                 isScrolling={isScrolling}
-                onMarkAsRead={this.handleMarkEntryAsRead.bind(this)}
+                onMarkAsRead={this.handleMarkEntryAsRead}
+                onFetchComments={this.handleFetchComments}
                 scrollTo={scrollTo}
                 viewMode={viewMode} />
         );
@@ -168,23 +186,19 @@ class Feed extends PureComponent<FeedProps, {}> {
     renderFooter() {
         const { feed } = this.props;
 
-        if (feed == null) {
-            return null;
-        }
-
-        if (feed.isLoading) {
+        if (feed.isLoading && feed.entries.length > 0) {
             return (
                 <footer className="feed-footer">
                     <i className="icon icon-32 icon-spinner animation-clockwise-rotation " />
                 </footer>
             );
-        } else if (feed.hasMoreEntries) {
+        } else if (feed.continuation) {
             return (
                 <footer className="feed-footer">
                     <a
                         className="link-default"
                         href="#"
-                        onClick={this.handleLoadMoreEntries.bind(this)}>
+                        onClick={this.handleLoadMoreEntries}>
                         Load more entries...
                     </a>
                 </footer>
@@ -216,6 +230,7 @@ export default connect(
         viewMode: state.preference.viewMode
     }),
     (dispatch) => ({
+        onFetchComments: bindAction(fetchComments, dispatch),
         onFetchFeed: bindAction(fetchFeed, dispatch),
         onReadEntry: bindAction(readEntry, dispatch),
         onSaveReadEntries: bindAction(saveReadEntries, dispatch)

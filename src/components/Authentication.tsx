@@ -24,7 +24,7 @@ class Authentication extends PureComponent<AuthenticationProps, {}> {
     }
 
     render() {
-
+        // TODO: Layout
         return (
             <div className="container">
                 <h1>Authentication</h1>
