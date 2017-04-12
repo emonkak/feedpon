@@ -11,9 +11,10 @@
   z-index: 10;
 }
 
-.entry.is-read {
-  & .entry-title {
-    color: var(--dark-color);
+.entry.is-unread {
+  & .entry-title::after {
+    content: '\00a0*';
+    color: var(--negative-color);
   }
 }
 

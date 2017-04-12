@@ -3,22 +3,19 @@
 @custom-media --lg-viewport (min-width: 980px);
 
 :root {
-  --default-color: #495057;
+  --default-color: #222222;
   --default-background-color: #ffffff;
 
-  --light-color: #f8f9fa;
-  --medium-light-color: #e9ecef;
-  --medium-color: #dee2e6;
-  --dark-color: #868e96;
+  --light-color: #fafafa;
+  --medium-light-color: #ececec;
+  --medium-color: #dfdfdf;
+  --dark-color: #7a7a7a;
 
-  --positive-color: #22b8cf;
-  --positive-light-color: #e3fafc;
+  --positive-color: #0074bf;
+  --positive-light-color: #d6eaf4;
 
-  --negative-color: #ff6b6b;
-  --negative-light-color: #fff5f5;
-
-  --highlight--color: #fcc419;
-  --highlight-light-color: #fff9db;
+  --negative-color: #bf0015;
+  --negative-light-color: #f4d6db;
 
   --font-size: 14px;
   --baseline-height: 24px;
@@ -193,7 +190,7 @@ strong {
 mark {
   font-weight: 600;
   font-style: normal;
-  background-color: var(--highlight-light-color);
+  background-color: var(--positive-light-color);
   padding: 2px;
 }
 

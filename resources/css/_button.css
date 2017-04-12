@@ -10,8 +10,8 @@
   text-decoration: none;
   white-space: nowrap;
   vertical-align: middle;
-  box-shadow: 0 2px 2px color(var(--default-color) alpha(25%)),
-              0 0 1px color(var(--default-color) alpha(25%));
+  box-shadow: 0 2px 2px color(var(--default-color) alpha(20%)),
+              0 0 1px color(var(--default-color) alpha(20%));
   transition-property: background-color, border-color, box-shadow, color, opacity;
   transition-duration: 0.2s;
   transition-timing-function: ease-in-out;
@@ -70,16 +70,21 @@
 }
 
 .button-positive {
-  color: var(--default-background-color);
-  background-color: var(--positive-color);
+  color: var(--positive-color);
+  background-color: var(--default-background-color);
+  border-color: var(--positive-color);
 }
 
 .button-positive:hover {
-  background-color: color(var(--positive-color) lightness(+5%));
+  background-color: var(--positive-color);
+  border-color: transparent;
+  color: var(--default-background-color);
 }
 
 .button-positive:active {
   background-color: color(var(--positive-color) lightness(+5%) alpha(90%));
+  border-color: transparent;
+  color: var(--default-background-color);
 }
 
 .button-positive:focus {
@@ -87,16 +92,21 @@
 }
 
 .button-negative {
-  color: var(--default-background-color);
-  background-color: var(--negative-color);
+  color: var(--negative-color);
+  background-color: var(--default-background-color);
+  border-color: var(--negative-color);
 }
 
 .button-negative:hover {
-  background-color: color(var(--negative-color) lightness(+5%));
+  background-color: var(--negative-color);
+  border-color: transparent;
+  color: var(--default-background-color);
 }
 
 .button-negative:active {
   background-color: color(var(--negative-color) lightness(+5%) alpha(90%));
+  border-color: transparent;
+  color: var(--default-background-color);
 }
 
 .button-negative:focus {
