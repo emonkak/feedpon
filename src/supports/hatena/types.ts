@@ -1,12 +1,12 @@
 export type BookmarkCounts = { [key: string]: number };
 
 export interface GetEntryResponse extends Entry {
-    bookmarks: Bookmark[];
+    bookmarks?: Bookmark[];
 }
 
 export interface Entry {
     count: number;
-    bookmarks: Bookmark[];
+    bookmarks?: Bookmark[];
     url: string;
     eid: number;
     title: string;

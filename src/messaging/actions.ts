@@ -320,7 +320,7 @@ export function fetchComments(entryId: string, url: string): AsyncEvent {
     return async (dispatch) => {
         const bookmarks = await getBookmarkEntry(url);
 
-        if (bookmarks != null) {
+        if (bookmarks && bookmarks.bookmarks) {
             const comments = bookmarks.bookmarks
                 .filter((bookmark) => bookmark.comment !== '')
                 .map((bookmark) => ({
