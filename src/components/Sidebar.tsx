@@ -157,7 +157,7 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
                     {this.renderTree()}
                 </div>
                 <div className="sidebar-group">
-                    <button type="button" className="button button-block button-default">New Subscription</button>
+                    <button type="button" className="button button-block button-outline-default">New Subscription</button>
                 </div>
                 <div className="sidebar-group u-text-center">
                     <ul className="list-inline">

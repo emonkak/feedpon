@@ -58,13 +58,27 @@ class Dashboard extends PureComponent<DashboardProps, DashboardState> {
                 <h2>Button</h2>
                 <p className="button-toolbar">
                     <button className="button button-default" onClick={this.handleSendNotification.bind(this, 'default')}>Default</button>
+                    <button className="button button-invert" onClick={this.handleSendNotification.bind(this, 'default')}>Default</button>
                     <button className="button button-positive" onClick={this.handleSendNotification.bind(this, 'positive')}>Positive</button>
                     <button className="button button-negative" onClick={this.handleSendNotification.bind(this, 'negative')}>Negative</button>
                 </p>
                 <p className="button-toolbar">
+                    <button className="button button-outline-default" onClick={this.handleSendNotification.bind(this, 'default')}>Default</button>
+                    <button className="button button-outline-invert" onClick={this.handleSendNotification.bind(this, 'default')}>Default</button>
+                    <button className="button button-outline-positive" onClick={this.handleSendNotification.bind(this, 'positive')}>Positive</button>
+                    <button className="button button-outline-negative" onClick={this.handleSendNotification.bind(this, 'negative')}>Negative</button>
+                </p>
+                <p className="button-toolbar">
                     <button className="button button-large button-default" onClick={this.handleSendNotification.bind(this, 'default')}>Default</button>
+                    <button className="button button-large button-invert" onClick={this.handleSendNotification.bind(this, 'default')}>Default</button>
                     <button className="button button-large button-positive" onClick={this.handleSendNotification.bind(this, 'positive')}>Positive</button>
                     <button className="button button-large button-negative" onClick={this.handleSendNotification.bind(this, 'negative')}>Negative</button>
+                </p>
+                <p className="button-toolbar">
+                    <button className="button button-large button-outline-default" onClick={this.handleSendNotification.bind(this, 'default')}>Default</button>
+                    <button className="button button-large button-outline-invert" onClick={this.handleSendNotification.bind(this, 'default')}>Default</button>
+                    <button className="button button-large button-outline-positive" onClick={this.handleSendNotification.bind(this, 'positive')}>Positive</button>
+                    <button className="button button-large button-outline-negative" onClick={this.handleSendNotification.bind(this, 'negative')}>Negative</button>
                 </p>
 
                 <h2>Paragraph</h2>
@@ -121,7 +135,7 @@ class Dashboard extends PureComponent<DashboardProps, DashboardState> {
 
                 <h2>Dropdown</h2>
                 <p>
-                    <Dropdown toggleButton={<button className="button button-default dropdown-arrow">Dropdown</button>}>
+                    <Dropdown toggleButton={<button className="button button-outline-default dropdown-arrow">Dropdown</button>}>
                         <MenuItem primaryText="First Action"></MenuItem>
                         <MenuItem primaryText="Second Action"></MenuItem>
                         <MenuItem primaryText="Third Action"></MenuItem>
@@ -142,7 +156,7 @@ class Dashboard extends PureComponent<DashboardProps, DashboardState> {
                     <p>Modal body text goes here.</p>
                     <div className="button-toolbar">
                         <button className="button button-positive">Okay</button>
-                        <button className="button button-invert" onClick={this.handleCloseModal.bind(this)}>Cancel</button>
+                        <button className="button button-outline-invert" onClick={this.handleCloseModal.bind(this)}>Cancel</button>
                     </div>
                 </Modal>
 

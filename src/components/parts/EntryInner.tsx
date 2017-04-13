@@ -226,8 +226,8 @@ export default class EntryInner extends PureComponent<EntryInnerProps, EntryInne
 
             if (entry.fullContents.nextPageUrl) {
                 nextPageButton = entry.fullContents.isLoading
-                    ? <button className="button button-block button-positive" disabled={true}><i className="icon icon-20 icon-spinner animation-clockwise-rotation" /></button> 
-                    : <button className="button button-block button-positive" onClick={this.handleFetchNextFullContent}>Next page</button>;
+                    ? <button className="button button-block button-outline-positive" disabled={true}><i className="icon icon-20 icon-spinner animation-clockwise-rotation" /></button> 
+                    : <button className="button button-block button-outline-positive" onClick={this.handleFetchNextFullContent}>Next page</button>;
             }
 
             return (

@@ -123,7 +123,7 @@ class Feed extends PureComponent<FeedProps, {}> {
             ?  (
                 <Dropdown
                     toggleButton={
-                        <a className="button button-default dropdown-arrow" href="#">
+                        <a className="button button-outline-default dropdown-arrow" href="#">
                             <i className="icon icon-20 icon-settings" />
                         </a>
                     }
@@ -142,7 +142,7 @@ class Feed extends PureComponent<FeedProps, {}> {
                         isDisabled={!isSubscribed}
                         primaryText="Unsubscribe" />
                 </Dropdown>
-            ) : (<a className="button button-positive dropdown-arrow" href="#">Subscribe</a>);
+            ) : (<a className="button button-outline-positive dropdown-arrow" href="#">Subscribe</a>);
 
         return (
             <header className="feed-header">

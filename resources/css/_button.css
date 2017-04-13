@@ -30,96 +30,200 @@
   opacity: 0.65;
 }
 
-.button-default:hover {
+.button-default {
   background-color: var(--default-color);
-  border-color: transparent;
   color: var(--default-background-color);
+
+  &:hover {
+    background-color: color(var(--default-color) lightness(+5%));
+  }
+
+  &:active {
+    background-color: color(var(--default-color) lightness(+5%) alpha(90%));
+  }
+
+  &:focus {
+    box-shadow: 0 0 0 2px color(var(--default-color) alpha(50%));
+  }
+
+  &:disabled {
+    background-color: var(--default-color);
+  }
 }
 
-.button-default:active {
-  background-color: color(var(--default-color) lightness(+5%) alpha(90%));
-  border-color: transparent;
+.button-invert {
+  background-color: var(--default-background-color);
+  color: var(--default-color);
+
+  &:hover {
+    background-color: color(var(--default-background-color) lightness(-5%));
+  }
+
+  &:active {
+    background-color: color(var(--default-background-color) lightness(-5%) alpha(90%));
+  }
+
+  &:focus {
+    box-shadow: 0 0 0 2px color(var(--default-background-color) alpha(50%));
+  }
+
+  &:disabled {
+    background-color: var(--default-background-color);
+  }
+}
+
+.button-positive {
+  background-color: var(--positive-color);
   color: var(--default-background-color);
+
+  &:hover {
+    background-color: color(var(--positive-color) lightness(+5%));
+  }
+
+  &:active {
+    background-color: color(var(--positive-color) lightness(+5%) alpha(90%));
+  }
+
+  &:focus {
+    box-shadow: 0 0 0 2px color(var(--positive-color) alpha(50%));
+  }
+
+  &:disabled {
+    background-color: var(--default-background-color);
+  }
 }
 
-.button-default:focus {
-  box-shadow: 0 0 0 2px color(var(--default-color) alpha(50%));
+.button-negative {
+  background-color: var(--negative-color);
+  color: var(--default-background-color);
+
+  &:hover {
+    background-color: color(var(--negative-color) lightness(+5%));
+  }
+
+  &:active {
+    background-color: color(var(--negative-color) lightness(+5%) alpha(90%));
+  }
+
+  &:focus {
+    box-shadow: 0 0 0 2px color(var(--negative-color) alpha(50%));
+  }
+
+  &:disabled {
+    background-color: var(--default-background-color);
+  }
 }
 
-.button-default,
-.button-default:disabled {
+.button-outline-default {
   background-color: var(--default-background-color);
-  border-color: var(--dark-color);
+  border-color: var(--default-color);
   color: var(--default-color);
+
+  &:hover {
+    background-color: var(--default-color);
+    border-color: transparent;
+    color: var(--default-background-color);
+  }
+
+  &:active {
+    background-color: color(var(--default-color) lightness(+5%) alpha(90%));
+    border-color: transparent;
+    color: var(--default-background-color);
+  }
+
+  &:focus {
+    box-shadow: 0 0 0 2px color(var(--default-color) alpha(50%));
+  }
+
+  &:disabled {
+    background-color: var(--default-background-color);
+    border-color: var(--default-color);
+    color: var(--default-color);
+  }
 }
 
-.button-invert:hover {
-  background-color: var(--default-background-color);
-  border-color: transparent;
-  color: var(--default-color);
-}
-
-.button-invert:active {
-  background-color: color(var(--default-background-color) lightness(+5%) alpha(90%));
-  border-color: transparent;
-  color: var(--default-color);
-}
-
-.button-invert:focus {
-  box-shadow: 0 0 0 2px color(var(--default-background-color) alpha(50%));
-}
-
-.button-invert,
-.button-invert:disabled {
+.button-outline-invert {
   background-color: var(--default-color);
   border-color: var(--default-background-color);
   color: var(--default-background-color);
+
+  &:hover {
+    background-color: var(--default-background-color);
+    border-color: transparent;
+    color: var(--default-color);
+  }
+
+  &:active {
+    background-color: color(var(--default-background-color) lightness(+5%) alpha(90%));
+    border-color: transparent;
+    color: var(--default-color);
+  }
+
+  &:focus {
+    box-shadow: 0 0 0 2px color(var(--default-background-color) alpha(50%));
+  }
+
+  &:disabled {
+    background-color: var(--default-color);
+    border-color: var(--default-background-color);
+    color: var(--default-background-color);
+  }
 }
 
-.button-positive:hover {
-  background-color: var(--positive-color);
-  border-color: transparent;
-  color: var(--default-background-color);
-}
-
-.button-positive:active {
-  background-color: color(var(--positive-color) lightness(+5%) alpha(90%));
-  border-color: transparent;
-  color: var(--default-background-color);
-}
-
-.button-positive:focus {
-  box-shadow: 0 0 0 2px color(var(--positive-color) alpha(80%));
-}
-
-.button-positive,
-.button-positive:disabled {
+.button-outline-positive {
   color: var(--positive-color);
   background-color: var(--default-background-color);
   border-color: var(--positive-color);
+
+  &:hover {
+    background-color: var(--positive-color);
+    border-color: transparent;
+    color: var(--default-background-color);
+  }
+
+  &:active {
+    background-color: color(var(--positive-color) lightness(+5%) alpha(90%));
+    border-color: transparent;
+    color: var(--default-background-color);
+  }
+
+  &:focus {
+    box-shadow: 0 0 0 2px color(var(--positive-color) alpha(50%));
+  }
+
+  &:disabled {
+    color: var(--positive-color);
+    background-color: var(--default-background-color);
+    border-color: var(--positive-color);
+  }
 }
 
-.button-negative:hover {
-  background-color: var(--negative-color);
-  border-color: transparent;
-  color: var(--default-background-color);
-}
-
-.button-negative:active {
-  background-color: color(var(--negative-color) lightness(+5%) alpha(90%));
-  border-color: transparent;
-  color: var(--default-background-color);
-}
-
-.button-negative:focus {
-  box-shadow: 0 0 0 2px color(var(--negative-color) alpha(50%));
-}
-
-.button-negative,
-.button-negative:disabled {
+.button-outline-negative {
   color: var(--negative-color);
   background-color: var(--default-background-color);
   border-color: var(--negative-color);
+
+  &:hover {
+    background-color: var(--negative-color);
+    border-color: transparent;
+    color: var(--default-background-color);
+  }
+
+  &:active {
+    background-color: color(var(--negative-color) lightness(+5%) alpha(90%));
+    border-color: transparent;
+    color: var(--default-background-color);
+  }
+
+  &:focus {
+    box-shadow: 0 0 0 2px color(var(--negative-color) alpha(50%));
+  }
+
+  &:disabled {
+    color: var(--negative-color);
+    background-color: var(--default-background-color);
+    border-color: var(--negative-color);
+  }
 }
 
 .button-block {
