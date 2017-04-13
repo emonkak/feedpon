@@ -186,7 +186,7 @@ class Feed extends PureComponent<FeedProps, {}> {
             if (feed.isLoading) {
                 return (
                     <footer className="feed-footer">
-                        <i className="icon icon-32 icon-spinner" />
+                        <i className="icon icon-32 icon-spinner animation-clockwise-rotation" />
                     </footer>
                 );
             } else {

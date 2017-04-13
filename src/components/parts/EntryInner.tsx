@@ -108,7 +108,7 @@ export default class EntryInner extends PureComponent<EntryInnerProps, EntryInne
         return (
             <nav className="entry-nav">
                 <a className={classnames('entry-action entry-action-fetch-full-content', { 'is-selected': fullContentMode })} href="#" onClick={this.handleToggleFullContent}>
-                    <i className={classnames('icon', 'icon-20', entry.fullContents.isLoading ? 'icon-spinner' : 'icon-page-overview')} />
+                    <i className={classnames('icon', 'icon-20', entry.fullContents.isLoading ? 'icon-spinner animation-clockwise-rotation' : 'icon-page-overview')} />
                 </a>
                 <a className="entry-action entry-action-pin" href="#">
                     <i className="icon icon-20 icon-pin-3" />
@@ -226,7 +226,7 @@ export default class EntryInner extends PureComponent<EntryInnerProps, EntryInne
 
             if (entry.fullContents.nextPageUrl) {
                 nextPageButton = entry.fullContents.isLoading
-                    ? <button className="button button-block button-positive" disabled={true}><i className="icon icon-20 icon-spinner" /></button> 
+                    ? <button className="button button-block button-positive" disabled={true}><i className="icon icon-20 icon-spinner animation-clockwise-rotation" /></button> 
                     : <button className="button button-block button-positive" onClick={this.handleFetchNextFullContent}>Next page</button>;
             }
 
