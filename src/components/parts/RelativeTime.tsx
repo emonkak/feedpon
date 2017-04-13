@@ -36,7 +36,9 @@ export default class RelativeTime extends PureComponent<Props, State> {
 
     componentWillReceiveProps(nextProps: any) {
         if (this.props.time !== nextProps.time) {
-            this.refresh();
+            this.setState({
+                relativeTime: moment(nextProps.time).fromNow()
+            });
         }
 
         if (this.props.refreshInterval !== nextProps.refreshInterval) {
@@ -44,7 +46,9 @@ export default class RelativeTime extends PureComponent<Props, State> {
 
             this.startTimer(nextProps.refreshInterval!);
 
-            this.refresh();
+            this.setState({
+                relativeTime: moment(nextProps.time).fromNow()
+            });
         }
     }
 
@@ -53,7 +57,7 @@ export default class RelativeTime extends PureComponent<Props, State> {
     }
 
     startTimer(refreshInterval: number) {
-        this.timer = setInterval(this.refresh.bind(this), refreshInterval)
+        this.timer = setInterval(this.refresh.bind(this), refreshInterval);
     }
 
     stopTimer() {

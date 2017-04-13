@@ -4,6 +4,7 @@ import {
     Notification,
     Preference,
     State,
+    Siteinfo,
     Subscriptions,
     SyncEvent
 } from './types';
@@ -17,7 +18,8 @@ export default function reducer(state: State, event: SyncEvent): State {
         feed: reduceFeed(state.feed, event),
         notifications: reduceNotifications(state.notifications, event),
         preference: reducePreference(state.preference, event),
-        subscriptions: reduceSubscriptions(state.subscriptions, event)
+        subscriptions: reduceSubscriptions(state.subscriptions, event),
+        siteinfo: reduceSiteinfo(state.siteinfo, event)
     };
 }
 
@@ -62,28 +64,66 @@ function reduceFeed(feed: Feed, event: SyncEvent): Feed {
 
 
         case 'FEED_FETCHING':
-            if (feed.feedId === event.feedId) {
+            if (feed.feedId !== event.feedId) {
                 return {
-                    ...feed,
-                    continuation: null,
+                    ...initialState.feed,
+                    feedId: event.feedId,
                     isLoading: true
                 };
             }
 
             return {
-                ...initialState.feed,
-                feedId: event.feedId
+                ...feed,
+                isLoading: true
             };
 
         case 'FEED_FETCHED':
-            if (feed.feedId === event.feed.feedId) {
-                return {
-                    ...event.feed,
-                    entries: feed.entries.concat(event.feed.entries)
-                };
+            if (feed.feedId !== event.feed.feedId) {
+                return event.feed;
             }
 
-            return event.feed;
+            return {
+                ...event.feed,
+                entries: feed.entries.concat(event.feed.entries)
+            };
+
+        case 'FULL_CONTENT_FETCHING':
+            return {
+                ...feed,
+                entries: feed.entries.map(entry => {
+                    if (entry.entryId !== event.entryId) {
+                        return entry;
+                    }
+
+                    return {
+                        ...entry,
+                        fullContents: {
+                            ...entry.fullContents,
+                            isLoading: true
+                        }
+                    };
+                })
+            };
+
+        case 'FULL_CONTENT_FETCHED':
+            return {
+                ...feed,
+                entries: feed.entries.map(entry => {
+                    if (entry.entryId !== event.entryId) {
+                        return entry;
+                    }
+
+                    return {
+                        ...entry,
+                        fullContents: {
+                            isLoaded: true,
+                            isLoading: false,
+                            items: event.fullContent ? entry.fullContents.items.concat([event.fullContent]) : entry.fullContents.items,
+                            nextPageUrl: event.nextPageUrl
+                        }
+                    };
+                })
+            };
 
         case 'READ_ENTRIES_CLEARED':
             return {
@@ -179,5 +219,15 @@ function reduceSubscriptions(subscriptions: Subscriptions, event: SyncEvent): Su
 
         default:
             return subscriptions;
+    }
+}
+
+function reduceSiteinfo(siteinfo: Siteinfo, event: SyncEvent): Siteinfo {
+    switch (event.type) {
+        case 'SITEINFO_UPDATED':
+            return event.siteinfo;
+
+        default:
+            return siteinfo;
     }
 }

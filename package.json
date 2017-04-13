@@ -38,6 +38,7 @@
     "@types/react-addons-css-transition-group": "^15.0.1",
     "@types/react-dom": "^0.14.23",
     "@types/react-router": "^3.0.4",
+    "@types/text-encoding": "0.0.30",
     "cash-cp": "^0.2.0",
     "cash-rm": "^0.2.0",
     "cssnano": "^3.10.0",

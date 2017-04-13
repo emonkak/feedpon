@@ -29,11 +29,8 @@
     font-size: 1.25rem;
   }
 
-  & .entry-summary {
-    display: none;
-  }
-
-  & .entry-action-open {
+  & .entry-summary,
+  & .entry-action-open-external-link {
     display: none;
   }
 }
@@ -45,15 +42,10 @@
 }
 
 .entry:not(.is-expanded) {
-  & .entry-content {
-    display: none;
-  }
-
-  & .entry-footer {
-    display: none;
-  }
-
-  & .entry-action-close {
+  & .entry-content,
+  & .entry-footer,
+  & .entry-action-close,
+  & .entry-action-fetch-full-content {
     display: none;
   }
 }
@@ -176,6 +168,43 @@ a.entry-info:hover {
     max-width: 100%;
     height: auto;
   }
+}
+
+.entry-page:first-child .entry-page-header {
+  display: none;
+}
+
+.entry-page-header {
+  overflow: hidden;
+  text-align: center;
+}
+
+.entry-page-title {
+  display: inline-block;
+  padding: 0 1rem;
+  margin: var(--baseline-height) 0;
+  position: relative;
+  font-variant: small-caps;
+  text-transform: lowercase;
+}
+
+.entry-page-title::before,
+.entry-page-title::after {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 50%;
+  width: 100vw;
+  height: 1px;
+  background: var(--medium-color);
+}
+
+.entry-page-title::before {
+  right: 100%;
+}
+
+.entry-page-title::after {
+  left: 100%;
 }
 
 .entry-action-list {

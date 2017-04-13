@@ -2,16 +2,17 @@ import React, { PropTypes, PureComponent } from 'react';
 import { findDOMNode } from 'react-dom';
 
 import cleanNode from 'supports/dom/cleanNode';
-import sanitizeNode from 'supports/dom/sanitizeNode';
 import walkNode from 'supports/dom/walkNode';
 
 interface Props {
     className?: string;
+    baseUrl: string;
     html: string | null;
 }
 
 export default class CleanHtml extends PureComponent<Props, {}> {
     static propTypes = {
+        baseUrl: PropTypes.string.isRequired,
         className: PropTypes.string,
         html: PropTypes.string
     };
@@ -25,7 +26,7 @@ export default class CleanHtml extends PureComponent<Props, {}> {
     }
 
     update() {
-        const { html } = this.props;
+        const { baseUrl, html } = this.props;
         const container = findDOMNode(this);
 
         if (html != null) {
@@ -33,9 +34,7 @@ export default class CleanHtml extends PureComponent<Props, {}> {
             const parsedDocument = parser.parseFromString(html, 'text/html');
 
             for (const child of parsedDocument.body.childNodes) {
-                walkNode(child, (node: Node) => {
-                    return sanitizeNode(node) && cleanNode(node);
-                });
+                walkNode(child, (node) => cleanNode(node, baseUrl));
             }
 
             const fragment = document.createDocumentFragment();
@@ -58,4 +57,3 @@ export default class CleanHtml extends PureComponent<Props, {}> {
         );
     }
 }
-

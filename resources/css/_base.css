@@ -144,20 +144,25 @@ table {
   border-spacing: 0;
 }
 
-tbody tr:nth-of-type(odd) {
-  background-color: var(--light-color);
+td,
+th {
+  padding: calc(var(--baseline-height) / 4) 1rem;
+  text-align: left;
 }
 
-thead th {
+.table thead th {
   padding-bottom: calc(var(--baseline-height) / 4 - 2px);
   border-bottom: 2px solid var(--medium-color);
 }
 
-td,
-th {
-  padding: calc(var(--baseline-height) / 4) 1rem calc(var(--baseline-height) / 4 - 1px);
+.table td,
+.table th {
+  padding-bottom: calc(var(--baseline-height) / 4 - 1px);
   border-bottom: 1px solid var(--medium-color);
-  text-align: left;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: var(--light-color);
 }
 
 caption {

@@ -276,6 +276,39 @@ class Dashboard extends PureComponent<DashboardProps, DashboardState> {
                         </tr>
                     </tbody>
                 </table>
+                <table>
+                    <caption>
+                        This is an example table, and this is its caption to describe the contents.
+                    </caption>
+                    <thead>
+                        <tr>
+                            <th>Table heading</th>
+                            <th>Table heading</th>
+                            <th>Table heading</th>
+                            <th>Table heading</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Table cell</td>
+                            <td>Table cell</td>
+                            <td>Table cell</td>
+                            <td>Table cell</td>
+                        </tr>
+                        <tr>
+                            <td>Table cell</td>
+                            <td>Table cell</td>
+                            <td>Table cell</td>
+                            <td>Table cell</td>
+                        </tr>
+                        <tr>
+                            <td>Table cell</td>
+                            <td>Table cell</td>
+                            <td>Table cell</td>
+                            <td>Table cell</td>
+                        </tr>
+                    </tbody>
+                </table>
 
                 <h2>Group List</h2>
                 <div className="list-group">

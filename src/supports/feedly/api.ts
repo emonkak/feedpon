@@ -12,35 +12,35 @@ function createAuthHeader(accessToken: string): { [key: string]: string } {
 
 function doGet<T>(path: string, params?: { [key: string]: any }, headers?: { [key: string]: string }): Promise<T> {
     const url = ENDPOINT + path + (params ? '?' + querystring.stringify(params) : '');
-    const request = new Request(url, {
-        method: 'GET',
-        headers
-    });
-    return fetch(request)
+
+    return fetch(url, {
+            method: 'GET',
+            headers
+        })
         .then<Response>(response => response.ok ? response : Promise.reject(response))
         .then<T>(response => response.json());
 }
 
 function doPost<T>(path: string, data?: { [key: string]: any }, headers?:  { [key: string]: string }): Promise<T> {
     const url = ENDPOINT + path;
-    const request = new Request(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', ...headers },
-        body: data ? JSON.stringify(data) : null
-    });
-    return fetch(request)
+
+    return fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', ...headers },
+            body: data ? JSON.stringify(data) : null
+        })
         .then<Response>(response => response.ok ? response : Promise.reject(response))
         .then<T>(response => response.json());
 }
 
 function doDelete<T>(path: string, data?: { [key: string]: any }, headers?:  { [key: string]: string }): Promise<T> {
     const url = ENDPOINT + path;
-    const request = new Request(url, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json', ...headers },
-        body: data ? JSON.stringify(data) : null
-    });
-    return fetch(request)
+
+    return fetch(url, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json', ...headers },
+            body: data ? JSON.stringify(data) : null
+        })
         .then<Response>(response => response.ok ? response : Promise.reject(response))
         .then<T>(response => response.json());
 }

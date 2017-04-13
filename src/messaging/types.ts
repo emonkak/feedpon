@@ -10,11 +10,14 @@ export type SyncEvent
     | { type: 'ENTRY_READ', entryIds: string[], readAt: string }
     | { type: 'FEED_FETCHED', feed: Feed }
     | { type: 'FEED_FETCHING', feedId: string }
+    | { type: 'FULL_CONTENT_FETCHED', entryId: string, fullContent: FullContent | null, nextPageUrl: string | null }
+    | { type: 'FULL_CONTENT_FETCHING', entryId: string }
     | { type: 'NOTIFICATION_DISMISSED', id: number }
     | { type: 'NOTIFICATION_SENT', notification: Notification }
     | { type: 'READ_ENTRIES_CLEARED' }
-    | { type: 'SUBSCRIPTIONS_FETCHING' }
+    | { type: 'SITEINFO_UPDATED', siteinfo: Siteinfo }
     | { type: 'SUBSCRIPTIONS_FETCHED', subscriptions: Subscription[], categories: Category[], fetchedAt: string }
+    | { type: 'SUBSCRIPTIONS_FETCHING' }
     | { type: 'VIEW_MODE_CHANGED', viewMode: ViewMode };
 
 export interface AsyncEvent {
@@ -28,6 +31,7 @@ export interface State {
     notifications: Notification[];
     preference: Preference;
     subscriptions: Subscriptions;
+    siteinfo: Siteinfo;
 }
 
 export interface Credential {
@@ -67,14 +71,27 @@ export interface Entry {
     author: string;
     url: string;
     origin: Origin;
-    content: string;
     summary: string;
+    content: string;
+    fullContents: FullContents;
     bookmarkCount: number;
     bookmarkUrl: string;
     comments: Comments;
     publishedAt: string;
     markAsRead: boolean;
     readAt: string | null;
+}
+
+export interface FullContents {
+    items: FullContent[];
+    isLoaded: boolean;
+    isLoading: boolean;
+    nextPageUrl: string | null;
+}
+
+export interface FullContent {
+    url: string;
+    content: string;
 }
 
 export interface Comments {
@@ -124,3 +141,14 @@ export interface Subscription {
     iconUrl: string;
     unreadCount: number;
 };
+
+export interface Siteinfo {
+    items: SiteinfoItem[];
+    lastUpdatedAt: string;
+}
+
+export interface SiteinfoItem {
+    url: string;
+    contentPath: string;
+    nextLinkPath: string;
+}

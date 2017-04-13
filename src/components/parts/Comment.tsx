@@ -1,13 +1,13 @@
 import React, { PureComponent } from 'react';
 import monent from 'moment';
 
-import { Comment } from 'messaging/types';
+import { Comment as CommentType } from 'messaging/types';
 
 interface CommentProps {
-    comment: Comment;
+    comment: CommentType;
 }
 
-export default class CommentComponent extends PureComponent<CommentProps, {}> {
+export default class Comment extends PureComponent<CommentProps, {}> {
     render() {
         const { comment } = this.props;
 

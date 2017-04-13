@@ -3,10 +3,11 @@ import React, { PropTypes, PureComponent } from 'react';
 import Dropdown from 'components/parts/Dropdown';
 import MenuItem from 'components/parts/MenuItem';
 import Navbar from 'components/parts/Navbar';
+import RelativeTime from 'components/parts/RelativeTime';
 import bindAction from 'supports/bindAction';
 import connect from 'supports/react/connect';
-import { Feed, State, ViewMode } from 'messaging/types';
-import { changeViewMode, clearReadEntries } from 'messaging/actions';
+import { Feed, Siteinfo, State, ViewMode } from 'messaging/types';
+import { changeViewMode, clearReadEntries, updateSiteinfo } from 'messaging/actions';
 
 const SCROLL_OFFSET = 48;
 
@@ -15,7 +16,9 @@ interface FeedNavbarProps {
     onChangeViewMode: (viewMode: ViewMode) => void,
     onClearReadEntries: () => void,
     onToggleSidebar: () => void,
+    onUpdateSiteinfo: () => void,
     scrollTo: (x: number, y: number) => Promise<void>;
+    siteinfo: Siteinfo;
     viewMode: ViewMode;
 };
 
@@ -24,7 +27,8 @@ class FeedNavbar extends PureComponent<FeedNavbarProps, {}> {
         feed: PropTypes.object,
         onChangeViewMode: PropTypes.func.isRequired,
         onClearReadEntries: PropTypes.func.isRequired,
-        onToggleSidebar: PropTypes.func,
+        onToggleSidebar: PropTypes.func.isRequired,
+        onUpdateSiteinfo: PropTypes.func.isRequired,
         scrollTo: PropTypes.func.isRequired,
         viewMode: PropTypes.oneOf(['expanded', 'collapsible']).isRequired
     };
@@ -45,6 +49,12 @@ class FeedNavbar extends PureComponent<FeedNavbarProps, {}> {
         const { onClearReadEntries, scrollTo } = this.props;
 
         scrollTo(0, 0).then(() => onClearReadEntries());
+    }
+
+    handleUpdateSiteinfo() {
+        const { onUpdateSiteinfo } = this.props;
+
+        onUpdateSiteinfo();
     }
 
     renderTitle() {
@@ -96,7 +106,7 @@ class FeedNavbar extends PureComponent<FeedNavbarProps, {}> {
     }
 
     renderConfigDropdown() {
-        const { viewMode } = this.props;
+        const { siteinfo, viewMode } = this.props;
 
         return (
             <Dropdown
@@ -118,6 +128,11 @@ class FeedNavbar extends PureComponent<FeedNavbarProps, {}> {
                 <MenuItem primaryText="Oldest First" />
                 <div className="menu-divider" />
                 <MenuItem primaryText="Unread only" />
+                <div className="menu-divider" />
+                <MenuItem
+                    onSelect={this.handleUpdateSiteinfo.bind(this)}
+                    primaryText="Update siteinfo"
+                    secondaryText={siteinfo.lastUpdatedAt ? <RelativeTime time={siteinfo.lastUpdatedAt} /> : 'Not updated yet'} />
             </Dropdown>
         );
     }
@@ -141,10 +156,12 @@ class FeedNavbar extends PureComponent<FeedNavbarProps, {}> {
 export default connect(
     (state: State) => ({
         feed: state.feed,
-        viewMode: state.preference.viewMode
+        viewMode: state.preference.viewMode,
+        siteinfo: state.siteinfo
     }),
     (dispatch) => ({
         onChangeViewMode: bindAction(changeViewMode, dispatch),
-        onClearReadEntries: bindAction(clearReadEntries, dispatch)
+        onClearReadEntries: bindAction(clearReadEntries, dispatch),
+        onUpdateSiteinfo: bindAction(updateSiteinfo, dispatch)
     })
 )(FeedNavbar);

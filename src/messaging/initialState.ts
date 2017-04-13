@@ -17,7 +17,7 @@ const initialState: State = {
         subscribers: 0,
         velocity: 0,
         continuation: null,
-        isLoading: true,
+        isLoading: false,
         subscription: null
     },
     notifications: [],
@@ -29,6 +29,10 @@ const initialState: State = {
     },
     preference: {
         viewMode: 'expanded'
+    },
+    siteinfo: {
+        items: [],
+        lastUpdatedAt: ''
     }
 };
 

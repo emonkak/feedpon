@@ -9,7 +9,9 @@ import {
     AsyncEvent,
     Entry,
     Feed,
+    FullContent,
     Notification,
+    Siteinfo,
     SyncEvent,
     ViewMode
 } from './types';
@@ -25,39 +27,16 @@ import {
     getStreamContents
 } from 'supports/feedly/api';
 
-import {
-    getBookmarkCounts,
-    getBookmarkEntry
-} from 'supports/hatena/bookmarkApi';
-getBookmarkCounts
-
 import * as feedly from 'supports/feedly/types';
+import decodeResponseAsText from 'supports/decodeResponseAsText';
+import stripTags from 'supports/stripTags';
+import { LDRFullFeedData, WedataItem }  from 'supports/wedata/types';
+import { getAutoPagerizeItems, getLDRFullFeedItems }  from 'supports/wedata/api';
+import { getBookmarkCounts, getBookmarkEntry } from 'supports/hatena/bookmarkApi';
 
 const DEFAULT_DISMISS_AFTER = 3000;
 
 const DELAY = 500;
-
-function observeUrlChanging(window: chrome.windows.Window, callback: (url: string) => void): void {
-    function handleUpdateTab(tabId: number, changeInfo: chrome.tabs.TabChangeInfo, tab: chrome.tabs.Tab): void {
-        if (tab.windowId === window.id && tab.status === 'complete' && tab.url != null) {
-            callback(tab.url)
-        }
-    }
-
-    function handleRemoveWindow(windowId: number): void {
-        if (windowId === window.id) {
-            unregisterListeners();
-        }
-    }
-
-    function unregisterListeners(): void {
-        chrome.tabs.onUpdated.removeListener(handleUpdateTab);
-        chrome.windows.onRemoved.removeListener(handleRemoveWindow);
-    }
-
-    chrome.tabs.onUpdated.addListener(handleUpdateTab);
-    chrome.windows.onRemoved.addListener(handleRemoveWindow);
-}
 
 export function authenticate(): AsyncEvent {
     return (dispatch, getState) => {
@@ -113,6 +92,28 @@ export function authenticate(): AsyncEvent {
             });
         });
     };
+}
+
+function observeUrlChanging(window: chrome.windows.Window, callback: (url: string) => void): void {
+    function handleUpdateTab(tabId: number, changeInfo: chrome.tabs.TabChangeInfo, tab: chrome.tabs.Tab): void {
+        if (tab.windowId === window.id && tab.status === 'complete' && tab.url != null) {
+            callback(tab.url)
+        }
+    }
+
+    function handleRemoveWindow(windowId: number): void {
+        if (windowId === window.id) {
+            unregisterListeners();
+        }
+    }
+
+    function unregisterListeners(): void {
+        chrome.tabs.onUpdated.removeListener(handleUpdateTab);
+        chrome.windows.onRemoved.removeListener(handleRemoveWindow);
+    }
+
+    chrome.tabs.onUpdated.addListener(handleUpdateTab);
+    chrome.windows.onRemoved.addListener(handleRemoveWindow);
 }
 
 export function readEntry(entryIds: string[], timestamp: Date): SyncEvent {
@@ -208,8 +209,14 @@ function convertEntry(item: feedly.Entry): Entry {
     return {
         entryId: item.id,
         author: item.author || '',
+        summary: stripTags((item.summary ? item.summary.content : '') || (item.content ? item.content.content : '')),
         content: (item.content ? item.content.content : '') || (item.summary ? item.summary.content : ''),
-        summary: (item.summary ? item.summary.content : '') || (item.content ? item.content.content : ''),
+        fullContents: {
+            isLoaded: false,
+            isLoading: false,
+            items: [],
+            nextPageUrl: ''
+        },
         publishedAt: new Date(item.published).toISOString(),
         title: item.title,
         url: item.alternate[0].href,
@@ -253,7 +260,7 @@ export function fetchFeed(feedId: string): AsyncEvent {
         let feed: Feed | null = null;
 
         if (feedId.startsWith('feed/')) {
-            const [contentsResponse, feedResponsse] = await Promise.all([
+            const [contentsResponse, feedResponse] = await Promise.all([
                 getStreamContents(credential.token.access_token, {
                     streamId: feedId
                 }),
@@ -262,11 +269,11 @@ export function fetchFeed(feedId: string): AsyncEvent {
 
             feed = {
                 feedId,
-                title: feedResponsse.title,
-                description: feedResponsse.description || '',
-                url: feedResponsse.website || '',
-                subscribers: feedResponsse.subscribers,
-                velocity: feedResponsse.velocity || 0,
+                title: feedResponse.title,
+                description: feedResponse.description || '',
+                url: feedResponse.website || '',
+                subscribers: feedResponse.subscribers,
+                velocity: feedResponse.velocity || 0,
                 entries: contentsResponse.items.map(convertEntry),
                 continuation: contentsResponse.continuation || null,
                 isLoading: false,
@@ -344,6 +351,98 @@ export function fetchComments(entryId: string, url: string): AsyncEvent {
     }
 }
 
+async function extractFullContent(url: string, siteinfo: Siteinfo): Promise<{ fullContent: FullContent | null, nextPageUrl: string | null }> {
+    const response = await fetch(url);
+
+    if (response.ok) {
+        const responseText = await decodeResponseAsText(response);
+
+        const parser = new DOMParser();
+        const parsedDocument = parser.parseFromString(responseText, 'text/html');
+
+        for (const item of siteinfo.items) {
+            if (matches(item.url, response.url)) {
+                let content = '';
+                let nextPageUrl: string | null = null;
+
+                const contentResult = document.evaluate(
+                    item.contentPath,
+                    parsedDocument.body,
+                    null,
+                    XPathResult.ORDERED_NODE_ITERATOR_TYPE,
+                    null
+                );
+
+                for (
+                    let node = contentResult.iterateNext();
+                    node;
+                    node = contentResult.iterateNext()
+                ) {
+                    if (node instanceof Element) {
+                        content += node.outerHTML;
+                    }
+                }
+
+                if (content) {
+                    if (item.nextLinkPath) {
+                        const nextLinkResult = document.evaluate(
+                            item.nextLinkPath,
+                            parsedDocument.body,
+                            null,
+                            XPathResult.FIRST_ORDERED_NODE_TYPE,
+                            null
+                        );
+
+                        const node = nextLinkResult.singleNodeValue;
+
+                        if (node && node instanceof HTMLElement) {
+                            const urlString = node.getAttribute('href');
+
+                            if (urlString) {
+                                nextPageUrl = new URL(urlString, response.url).toString();
+                            }
+                        }
+                    }
+
+                    return {
+                        fullContent: { content, url: response.url },
+                        nextPageUrl
+                    };
+                }
+            }
+        }
+    }
+
+    return { fullContent: null, nextPageUrl: null };
+}
+
+export function fetchFullContent(entryId: string, url: string): AsyncEvent {
+    return async (dispatch, getState) => {
+        dispatch({
+            type: 'FULL_CONTENT_FETCHING',
+            entryId
+        });
+
+        const { siteinfo } = getState();
+        const { fullContent, nextPageUrl } = await extractFullContent(url, siteinfo);
+
+        dispatch({
+            type: 'FULL_CONTENT_FETCHED',
+            entryId,
+            fullContent,
+            nextPageUrl
+        });
+    }
+}
+
+function matches(pattern: string, str: string): boolean {
+    try {
+        return new RegExp(pattern).test(str);
+    } catch (error) {
+        return false;
+    }
+}
+
 export function sendNotification(notification: Notification): AsyncEvent {
     if (!notification.id) {
         notification.id = Date.now();
@@ -374,5 +473,62 @@ export function changeViewMode(viewMode: ViewMode): SyncEvent {
     return {
         type: 'VIEW_MODE_CHANGED',
         viewMode
+    };
+}
+
+const LDR_FULL_FEED_TYPE_PRIORITIES: { [key: string]: number } = {
+    'SBM': 3,
+    'IND': 2,
+    'INDIVIDUAL': 2,
+    'SUB': 1,
+    'SUBGENERAL': 1,
+    'GEN': 0,
+    'GENERAL': 0
+};
+
+function compareLdrFullFeedItem(x: WedataItem<LDRFullFeedData>, y: WedataItem<LDRFullFeedData>): number {
+    const p1 = LDR_FULL_FEED_TYPE_PRIORITIES[x.data.type];
+    const p2 = LDR_FULL_FEED_TYPE_PRIORITIES[y.data.type];
+    if (p1 === p2) {
+        return 0;
+    }
+    return p1 < p2 ? 1 : -1;
+}
+
+export function updateSiteinfo(): AsyncEvent {
+    return async (dispatch, getState) => {
+        const [autoPagerizeItems, ldrFullFeedItems] = await Promise.all([
+            getAutoPagerizeItems(),
+            getLDRFullFeedItems()
+        ]);
+
+        const primaryItems = autoPagerizeItems
+            .map((item) => ({
+                url: item.data.url,
+                contentPath: item.data.pageElement,
+                nextLinkPath: item.data.nextLink
+            }));
+        const secondaryItems = ldrFullFeedItems
+            .sort(compareLdrFullFeedItem)
+            .map((item) => ({
+                url: item.data.url,
+                contentPath: item.data.xpath,
+                nextLinkPath: ''
+            }));
+
+        const siteinfo = {
+            items: primaryItems.concat(secondaryItems),
+            lastUpdatedAt: new Date().toISOString()
+        };
+
+        dispatch({
+            type: 'SITEINFO_UPDATED',
+            siteinfo
+        });
+
+        sendNotification({
+            message: 'Siteinfo Updated',
+            kind: 'positive'
+        })(dispatch, getState);
     };
 }

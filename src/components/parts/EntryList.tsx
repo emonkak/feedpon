@@ -12,13 +12,14 @@ interface Props {
     isLoading: boolean;
     isScrolling: boolean;
     onFetchComments: (entryId: string, url: string) => void;
+    onFetchFullContent: (entryId: string, url: string) => void;
     onMarkAsRead: (entryIds: string[]) => void;
     scrollTo: (x: number, y: number) => Promise<void>;
     viewMode: ViewMode;
 }
 
 interface State {
-    collapsedEntryId: string | null;
+    expandedEntryId: string | null;
 }
 
 function renderActiveEntry(child: React.ReactElement<any>) {
@@ -47,20 +48,19 @@ export default class EntryList extends PureComponent<Props, State> {
         super(props, context);
 
         this.state = {
-            collapsedEntryId: null
+            expandedEntryId: null
         };
 
         this.handleActivate = this.handleActivate.bind(this);
         this.handleInactivate = this.handleInactivate.bind(this);
-        this.handleCollapse = this.handleCollapse.bind(this);
+        this.handleExpand = this.handleExpand.bind(this);
         this.handleClose = this.handleClose.bind(this);
-        this.handleFetchComments = this.handleFetchComments.bind(this);
     }
 
     componentWillReceiveProps(nextProps: Props) {
         if (nextProps.viewMode !== this.props.viewMode) {
             this.setState({
-                collapsedEntryId: null
+                expandedEntryId: null
             });
         }
     }
@@ -119,33 +119,25 @@ export default class EntryList extends PureComponent<Props, State> {
         }
     }
 
-    handleCollapse(collapsedEntryId: string, collapsedElement: HTMLElement) {
+    handleExpand(expandedEntryId: string, collapsedElement: HTMLElement) {
         this.scrollElement = collapsedElement;
 
         this.setState({
-            collapsedEntryId
+            expandedEntryId
         });
     }
 
     handleClose() {
         this.setState({
-            collapsedEntryId: null
+            expandedEntryId: null
         });
     }
 
-    handleFetchComments(entryId: string, url: string) {
-        const { onFetchComments } = this.props;
-
-        if (onFetchComments) {
-            onFetchComments(entryId, url);
-        }
-    }
-
     renderEntry(entry: EntryType) {
-        const { collapsedEntryId } = this.state;
-        const { viewMode } = this.props;
+        const { expandedEntryId } = this.state;
+        const { onFetchComments, onFetchFullContent, viewMode } = this.props;
         const isCollapsible = viewMode === 'collapsible';
-        const isExpanded = viewMode === 'expanded' || collapsedEntryId === entry.entryId;
+        const isExpanded = viewMode === 'expanded' || expandedEntryId === entry.entryId;
 
         return (
             <Entry
@@ -154,8 +146,9 @@ export default class EntryList extends PureComponent<Props, State> {
                 isExpanded={isExpanded}
                 key={entry.entryId}
                 onClose={this.handleClose}
-                onCollapse={this.handleCollapse}
-                onFetchComments={this.handleFetchComments} />
+                onExpand={this.handleExpand}
+                onFetchComments={onFetchComments}
+                onFetchFullContent={onFetchFullContent} />
         );
     }
 

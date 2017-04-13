@@ -7,7 +7,7 @@ import MenuItem from 'components/parts/MenuItem';
 import bindAction from 'supports/bindAction';
 import connect from 'supports/react/connect';
 import { Category, Feed as FeedType, State, ViewMode } from 'messaging/types';
-import { fetchComments, fetchFeed, readEntry, saveReadEntries } from 'messaging/actions';
+import { fetchComments, fetchFeed, fetchFullContent, readEntry, saveReadEntries } from 'messaging/actions';
 
 interface FeedProps {
     categories: Category[];
@@ -15,6 +15,7 @@ interface FeedProps {
     isScrolling: boolean;
     onFetchComments: (entryId: string, url: string) => void;
     onFetchFeed: (feedId: string) => void;
+    onFetchFullContent: (entryId: string, url: string) => void;
     onReadEntry: (entryIds: string[], timestamp: Date) => void;
     onSaveReadEntries: (entryIds: string[]) => void;
     params: Params;
@@ -28,6 +29,7 @@ class Feed extends PureComponent<FeedProps, {}> {
         feed: PropTypes.object.isRequired,
         isScrolling: PropTypes.bool.isRequired,
         onFetchComments: PropTypes.func.isRequired,
+        onFetchFullContent: PropTypes.func.isRequired,
         onFetchFeed: PropTypes.func.isRequired,
         onReadEntry: PropTypes.func.isRequired,
         onSaveReadEntries: PropTypes.func.isRequired,
@@ -39,7 +41,6 @@ class Feed extends PureComponent<FeedProps, {}> {
     constructor(props: FeedProps, context: any) {
         super(props, context);
 
-        this.handleFetchComments = this.handleFetchComments.bind(this);
         this.handleLoadMoreEntries = this.handleLoadMoreEntries.bind(this);
         this.handleMarkEntryAsRead = this.handleMarkEntryAsRead.bind(this);
     }
@@ -88,12 +89,6 @@ class Feed extends PureComponent<FeedProps, {}> {
         onReadEntry(entryIds, new Date());
     }
 
-    handleFetchComments(entryId: string, url: string) {
-        const { onFetchComments } = this.props;
-
-        onFetchComments(entryId, url);
-    }
-
     handleLoadMoreEntries(event: React.SyntheticEvent<any>) {
         event.preventDefault();
 
@@ -129,7 +124,7 @@ class Feed extends PureComponent<FeedProps, {}> {
                 <Dropdown
                     toggleButton={
                         <a className="button button-default dropdown-arrow" href="#">
-                            <i className="icon icon-align-middle icon-20 icon-settings" />
+                            <i className="icon icon-20 icon-settings" />
                         </a>
                     }
                     pullRight={true}>
@@ -169,15 +164,16 @@ class Feed extends PureComponent<FeedProps, {}> {
     }
 
     renderList() {
-        const { feed, isScrolling, scrollTo, viewMode } = this.props;
+        const { feed, isScrolling, onFetchComments, onFetchFullContent, scrollTo, viewMode } = this.props;
 
         return (
             <EntryList
                 entries={feed ? feed.entries : []}
                 isLoading={feed.isLoading && feed.entries.length === 0}
                 isScrolling={isScrolling}
+                onFetchComments={onFetchComments}
+                onFetchFullContent={onFetchFullContent}
                 onMarkAsRead={this.handleMarkEntryAsRead}
-                onFetchComments={this.handleFetchComments}
                 scrollTo={scrollTo}
                 viewMode={viewMode} />
         );
@@ -186,23 +182,25 @@ class Feed extends PureComponent<FeedProps, {}> {
     renderFooter() {
         const { feed } = this.props;
 
-        if (feed.isLoading && feed.entries.length > 0) {
-            return (
-                <footer className="feed-footer">
-                    <i className="icon icon-32 icon-spinner animation-clockwise-rotation " />
-                </footer>
-            );
-        } else if (feed.continuation) {
-            return (
-                <footer className="feed-footer">
-                    <a
-                        className="link-default"
-                        href="#"
-                        onClick={this.handleLoadMoreEntries}>
-                        Load more entries...
-                    </a>
-                </footer>
-            );
+        if (feed.continuation) {
+            if (feed.isLoading) {
+                return (
+                    <footer className="feed-footer">
+                        <i className="icon icon-32 icon-spinner" />
+                    </footer>
+                );
+            } else {
+                return (
+                    <footer className="feed-footer">
+                        <a
+                            className="link-default"
+                            href="#"
+                            onClick={this.handleLoadMoreEntries}>
+                            Load more entries...
+                        </a>
+                    </footer>
+                );
+            }
         } else {
             return (
                 <footer className="feed-footer">
@@ -232,6 +230,7 @@ export default connect(
     (dispatch) => ({
         onFetchComments: bindAction(fetchComments, dispatch),
         onFetchFeed: bindAction(fetchFeed, dispatch),
+        onFetchFullContent: bindAction(fetchFullContent, dispatch),
         onReadEntry: bindAction(readEntry, dispatch),
         onSaveReadEntries: bindAction(saveReadEntries, dispatch)
     })

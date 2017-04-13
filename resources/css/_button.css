@@ -25,10 +25,9 @@
   text-decoration: none;
 }
 
-.button-default {
-  background-color: var(--default-background-color);
-  border-color: var(--dark-color);
-  color: var(--default-color);
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
 }
 
 .button-default:hover {
@@ -47,10 +46,11 @@
   box-shadow: 0 0 0 2px color(var(--default-color) alpha(50%));
 }
 
-.button-invert {
-  background-color: var(--default-color);
-  border-color: var(--default-background-color);
-  color: var(--default-background-color);
+.button-default,
+.button-default:disabled {
+  background-color: var(--default-background-color);
+  border-color: var(--dark-color);
+  color: var(--default-color);
 }
 
 .button-invert:hover {
@@ -69,10 +69,11 @@
   box-shadow: 0 0 0 2px color(var(--default-background-color) alpha(50%));
 }
 
-.button-positive {
-  color: var(--positive-color);
-  background-color: var(--default-background-color);
-  border-color: var(--positive-color);
+.button-invert,
+.button-invert:disabled {
+  background-color: var(--default-color);
+  border-color: var(--default-background-color);
+  color: var(--default-background-color);
 }
 
 .button-positive:hover {
@@ -91,10 +92,11 @@
   box-shadow: 0 0 0 2px color(var(--positive-color) alpha(80%));
 }
 
-.button-negative {
-  color: var(--negative-color);
+.button-positive,
+.button-positive:disabled {
+  color: var(--positive-color);
   background-color: var(--default-background-color);
-  border-color: var(--negative-color);
+  border-color: var(--positive-color);
 }
 
 .button-negative:hover {
@@ -111,6 +113,13 @@
 
 .button-negative:focus {
   box-shadow: 0 0 0 2px color(var(--negative-color) alpha(50%));
+}
+
+.button-negative,
+.button-negative:disabled {
+  color: var(--negative-color);
+  background-color: var(--default-background-color);
+  border-color: var(--negative-color);
 }
 
 .button-block {
