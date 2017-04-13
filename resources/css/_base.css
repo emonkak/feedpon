@@ -78,21 +78,13 @@ h6 {
 }
 
 hr {
-  position: relative;
+  margin: calc(var(--baseline-height) + 6px) auto;
+  width: 72px;
+  height: 12px;
   border: 0;
-  border-top: 4px double var(--medium-color);
-  margin: calc(var(--baseline-height) - 2px) 0 calc(var(--baseline-height) - 2px);
-}
-
-hr::before {
-  content: "\00a7";
-  position: absolute;
-  background: var(--default-background-color);
-  left: 50%;
-  width: 1.5em;
-  text-align: center;
-  font-size: 1.5rem;
-  transform: translate(-50%, -50%);
+  background-color: var(--medium-color);
+  mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2 1"><circle cx="1" cy="0.5" r="0.5"/></svg>');
+  mask-repeat: repeat;
 }
 
 blockquote, dl, figure, form, ol, p, pre, table, ul {
