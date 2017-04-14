@@ -579,6 +579,7 @@ export function updateSiteinfo(): AsyncEvent<void> {
         ]);
 
         const primaryItems = autoPagerizeItems
+            .slice(0, -1)  // Remove the generic rule
             .map((item) => ({
                 url: item.data.url,
                 contentPath: item.data.pageElement,
