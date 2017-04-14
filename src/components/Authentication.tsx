@@ -1,8 +1,8 @@
 import React, { PropTypes, PureComponent } from 'react';
 import { Location } from 'history';
 
-import bindAction from 'supports/bindAction';
-import connect from 'supports/react/connect';
+import bindAction from 'utils/bindAction';
+import connect from 'utils/react/connect';
 import { State } from 'messaging/types';
 import { authenticate } from 'messaging/actions';
 

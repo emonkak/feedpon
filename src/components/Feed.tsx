@@ -4,8 +4,8 @@ import { Params } from 'react-router/lib/Router';
 import Dropdown from 'components/parts/Dropdown';
 import EntryList from 'components/parts/EntryList';
 import MenuItem from 'components/parts/MenuItem';
-import bindAction from 'supports/bindAction';
-import connect from 'supports/react/connect';
+import bindAction from 'utils/bindAction';
+import connect from 'utils/react/connect';
 import { Category, Feed as FeedType, FeedSpecification, State } from 'messaging/types';
 import { fetchComments, fetchFeed, fetchFullContent, fetchMoreEntries, readEntry, saveReadEntries } from 'messaging/actions';
 

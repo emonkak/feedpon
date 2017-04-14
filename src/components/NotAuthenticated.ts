@@ -1,7 +1,7 @@
 import { History } from 'history';
 import { PropTypes, PureComponent } from 'react';
 
-import connect from 'supports/react/connect';
+import connect from 'utils/react/connect';
 import { Credential, State } from 'messaging/types';
 
 interface Props {

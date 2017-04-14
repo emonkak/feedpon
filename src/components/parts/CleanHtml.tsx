@@ -1,8 +1,8 @@
 import React, { PropTypes, PureComponent } from 'react';
 import { findDOMNode } from 'react-dom';
 
-import cleanNode from 'supports/dom/cleanNode';
-import walkNode from 'supports/dom/walkNode';
+import cleanNode from 'utils/dom/cleanNode';
+import walkNode from 'utils/dom/walkNode';
 
 interface Props {
     className?: string;

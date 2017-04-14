@@ -2,11 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Router, hashHistory } from 'react-router';
 
-import Store from 'supports/Store';
-import StoreContext from 'supports/react/StoreContext';
-import asyncMiddleware from 'supports/middlewares/asyncMiddleware';
+import Store from 'utils/Store';
+import StoreContext from 'utils/react/StoreContext';
+import asyncMiddleware from 'utils/middlewares/asyncMiddleware';
 import initialState from 'messaging/initialState';
-import persistenceMiddleware from 'supports/middlewares/persistenceMiddleware';
+import persistenceMiddleware from 'utils/middlewares/persistenceMiddleware';
 import reducer from 'messaging/reducer';
 import routes from 'components/routes';
 import { Event, State } from 'messaging/types';

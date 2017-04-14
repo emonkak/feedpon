@@ -3,8 +3,8 @@ import React, { PureComponent } from 'react';
 import Dropdown from 'components/parts/Dropdown';
 import MenuItem from 'components/parts/MenuItem';
 import Modal from 'components/parts/Modal';
-import bindAction from 'supports/bindAction';
-import connect from 'supports/react/connect';
+import bindAction from 'utils/bindAction';
+import connect from 'utils/react/connect';
 import { Notification, NotificationKind, State } from 'messaging/types';
 import { sendNotification } from 'messaging/actions';
 

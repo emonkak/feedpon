@@ -2,7 +2,7 @@ import React, { Children, PropTypes, PureComponent, cloneElement } from 'react';
 
 import TreeBranch from 'components/parts/TreeBranch';
 import TreeLeaf from 'components/parts/TreeLeaf';
-import createChainedFunction from 'supports/createChainedFunction';
+import createChainedFunction from 'utils/createChainedFunction';
 
 interface Props {
     children?: React.ReactNode;

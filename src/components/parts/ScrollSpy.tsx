@@ -7,8 +7,8 @@ import '@emonkak/enumerable/extensions/maxBy';
 import '@emonkak/enumerable/extensions/select';
 import '@emonkak/enumerable/extensions/where';
 
-import getScrollableParent from 'supports/dom/getScrollableParent';
-import throttleEventHandler from 'supports/throttleEventHandler';
+import getScrollableParent from 'utils/dom/getScrollableParent';
+import throttleEventHandler from 'utils/throttleEventHandler';
 
 const initialState = {
     activeKey: '',

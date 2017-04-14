@@ -4,8 +4,8 @@ import Dropdown from 'components/parts/Dropdown';
 import MenuItem from 'components/parts/MenuItem';
 import Navbar from 'components/parts/Navbar';
 import RelativeTime from 'components/parts/RelativeTime';
-import bindAction from 'supports/bindAction';
-import connect from 'supports/react/connect';
+import bindAction from 'utils/bindAction';
+import connect from 'utils/react/connect';
 import { Feed, FeedSpecification, FeedView, Siteinfo, State } from 'messaging/types';
 import { changeFeedView, clearReadEntries, fetchFeed, updateSiteinfo } from 'messaging/actions';
 

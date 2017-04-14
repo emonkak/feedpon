@@ -4,7 +4,7 @@ import { History, Location } from 'history';
 
 import Notifications from 'components/Notifications';
 import Sidebar from 'components/Sidebar';
-import smoothScroll from 'supports/dom/smoothScroll';
+import smoothScroll from 'utils/dom/smoothScroll';
 
 interface LayoutProps {
     content: React.ReactElement<any>;

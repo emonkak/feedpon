@@ -2,8 +2,8 @@ import React, { PropTypes, PureComponent } from 'react';
 import classnames from 'classnames';
 import { findDOMNode } from 'react-dom';
 
-import getScrollableParent from 'supports/dom/getScrollableParent';
-import throttleEventHandler from 'supports/throttleEventHandler';
+import getScrollableParent from 'utils/dom/getScrollableParent';
+import throttleEventHandler from 'utils/throttleEventHandler';
 
 interface Props {
     children?: React.ReactNode;

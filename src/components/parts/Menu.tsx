@@ -1,7 +1,7 @@
 import React, { Children, PropTypes, PureComponent, cloneElement } from 'react';
 import classnames from 'classnames';
 
-import createChainedFunction from 'supports/createChainedFunction';
+import createChainedFunction from 'utils/createChainedFunction';
 
 interface Props {
     children?: React.ReactNode;

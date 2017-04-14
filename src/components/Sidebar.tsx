@@ -10,8 +10,8 @@ import Tree from 'components/parts/Tree';
 import TreeBranch from 'components/parts/TreeBranch';
 import TreeHeader from 'components/parts/TreeHeader';
 import TreeLeaf from 'components/parts/TreeLeaf';
-import bindAction from 'supports/bindAction';
-import connect from 'supports/react/connect';
+import bindAction from 'utils/bindAction';
+import connect from 'utils/react/connect';
 import { Category, State, Subscription } from 'messaging/types';
 import { fetchSubscriptions } from 'messaging/actions';
 

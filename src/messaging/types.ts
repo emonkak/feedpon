@@ -1,4 +1,4 @@
-import { ExchangeTokenResponse } from 'supports/feedly/types';
+import { ExchangeTokenResponse } from 'adapters/feedly/types';
 
 export type Dispatcher = (event: Event) => void;
 

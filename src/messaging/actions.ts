@@ -28,14 +28,14 @@ import {
     getFeed,
     getStreamContents,
     refreshToken
-} from 'supports/feedly/api';
+} from 'adapters/feedly/api';
 
-import * as feedly from 'supports/feedly/types';
-import decodeResponseAsText from 'supports/decodeResponseAsText';
-import stripTags from 'supports/stripTags';
-import { LDRFullFeedData, WedataItem }  from 'supports/wedata/types';
-import { getAutoPagerizeItems, getLDRFullFeedItems }  from 'supports/wedata/api';
-import { getBookmarkCounts, getBookmarkEntry } from 'supports/hatena/bookmarkApi';
+import * as feedly from 'adapters/feedly/types';
+import decodeResponseAsText from 'utils/decodeResponseAsText';
+import stripTags from 'utils/stripTags';
+import { LDRFullFeedData, WedataItem }  from 'adapters/wedata/types';
+import { getAutoPagerizeItems, getLDRFullFeedItems }  from 'adapters/wedata/api';
+import { getBookmarkCounts, getBookmarkEntry } from 'adapters/hatena/bookmarkApi';
 
 const DEFAULT_DISMISS_AFTER = 3000;
 

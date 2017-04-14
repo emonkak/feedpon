@@ -3,8 +3,8 @@ import React, { PropTypes, PureComponent } from 'react';
 import classnames from 'classnames';
 
 import Notification from 'components/parts/Notification';
-import bindAction from 'supports/bindAction';
-import connect from 'supports/react/connect';
+import bindAction from 'utils/bindAction';
+import connect from 'utils/react/connect';
 import { Notification as NotificationType, State } from 'messaging/types';
 import { dismissNotification } from 'messaging/actions';
 
