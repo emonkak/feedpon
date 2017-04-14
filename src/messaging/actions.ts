@@ -236,7 +236,7 @@ function convertEntry(item: feedly.Entry): Entry {
     };
 }
 
-export function fetchFeed(feedId: string): AsyncEvent {
+export function fetchFeed(feedId: string, continuation?: string): AsyncEvent {
     return async (dispatch, getState) => {
         dispatch({
             type: 'FEED_FETCHING',
@@ -262,7 +262,8 @@ export function fetchFeed(feedId: string): AsyncEvent {
         if (feedId.startsWith('feed/')) {
             const [contentsResponse, feedResponse] = await Promise.all([
                 getStreamContents(credential.token.access_token, {
-                    streamId: feedId
+                    streamId: feedId,
+                    continuation
                 }),
                 getFeed(credential.token.access_token, feedId)
             ]);
@@ -284,7 +285,8 @@ export function fetchFeed(feedId: string): AsyncEvent {
                 .firstOrDefault((category) => category.categoryId === feedId);
 
             const contentsResponse = await getStreamContents(credential.token.access_token, {
-                streamId: feedId
+                streamId: feedId,
+                continuation
             });
 
             feed = {

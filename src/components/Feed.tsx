@@ -14,7 +14,7 @@ interface FeedProps {
     feed: FeedType;
     isScrolling: boolean;
     onFetchComments: (entryId: string, url: string) => void;
-    onFetchFeed: (feedId: string) => void;
+    onFetchFeed: (feedId: string, continuation?: string) => void;
     onFetchFullContent: (entryId: string, url: string) => void;
     onReadEntry: (entryIds: string[], timestamp: Date) => void;
     onSaveReadEntries: (entryIds: string[]) => void;
@@ -92,9 +92,11 @@ class Feed extends PureComponent<FeedProps, {}> {
     handleLoadMoreEntries(event: React.SyntheticEvent<any>) {
         event.preventDefault();
 
-        const { onFetchFeed, params } = this.props;
+        const { onFetchFeed, feed } = this.props;
 
-        onFetchFeed(params['feed_id']);
+        if (feed.feedId && feed.continuation) {
+            onFetchFeed(feed.feedId, feed.continuation);
+        }
     }
 
     renderHeader() {
