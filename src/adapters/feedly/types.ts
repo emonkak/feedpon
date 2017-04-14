@@ -113,7 +113,7 @@ export interface GetEntryIdsResponse {
 export interface Contents {
     continuation?: string;
     updated: number;
-    alternate: LinkObject[];
+    alternate: Link[];
     title: string;
     id: string;
     direction: string;
@@ -121,41 +121,56 @@ export interface Contents {
 }
 
 export interface Entry {
-    published: number;
-    tags?: EntryTag[];
-    alternate: LinkObject[];
-    updated?: number;
-    title: string;
-    engagement: number;
-    categories: Category[];
     id: string;
+    title: string;
+    content?: Content;
+    summary?: Content;
     author?: string;
-    origin: EntryOrigin;
-    content?: EntryContent;
-    summary?: EntryContent;
-    unread: boolean;
     crawled: number;
+    recrawled?: number;
+    published: number;
+    updated?: number;
+    alternate?: Link[];
+    origin?: Origin;
+    keywords?: string[];
+    visual?: Visual;
+    unread: boolean;
+    tags?: Tag[];
+    categories?: Category[];
+    engagement?: number;
+    actionTimestamp?: number;
+    enclosure?: Link[];
+    fingerprint: string;
+    originId: string;
+    sid?: string;
 }
 
-export interface LinkObject {
+export interface Content {
+    direction: string;
+    content: string;
+}
+
+export interface Link {
     type: string;
     href: string;
 }
 
-export interface EntryTag {
-    id: string;
-    label: string;
-}
-
-export interface EntryOrigin {
+export interface Origin {
     htmlUrl: string;
     title: string;
     streamId: string;
 }
 
-export interface EntryContent {
-    direction: string;
-    content: string;
+export interface Visual {
+    url: string;
+    width: number;
+    height: number;
+    contentType: string;
+}
+
+export interface Tag {
+    id: string;
+    label: string;
 }
 
 // Subscriptions API:

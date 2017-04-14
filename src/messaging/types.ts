@@ -85,7 +85,7 @@ export interface Entry {
     title: string;
     author: string;
     url: string;
-    origin: Origin;
+    origin: Origin | null;
     summary: string;
     content: string;
     fullContents: FullContents;

@@ -247,33 +247,39 @@ function getCredential(): AsyncEvent<Promise<Credential>> {
     };
 }
 
-function convertEntry(item: feedly.Entry): Entry {
+const URL_PATTEN = /^https?:\/\//;
+
+function convertEntry(entry: feedly.Entry): Entry {
+    const url = URL_PATTEN.test(entry.originId)
+        ? entry.originId
+        : (entry.alternate && entry.alternate[0] && entry.alternate[0].href) || '';
+
     return {
-        entryId: item.id,
-        author: item.author || '',
-        summary: stripTags((item.summary ? item.summary.content : '') || (item.content ? item.content.content : '')),
-        content: (item.content ? item.content.content : '') || (item.summary ? item.summary.content : ''),
+        entryId: entry.id,
+        author: entry.author || '',
+        summary: stripTags((entry.summary ? entry.summary.content : '') || (entry.content ? entry.content.content : '')),
+        content: (entry.content ? entry.content.content : '') || (entry.summary ? entry.summary.content : ''),
         fullContents: {
             isLoaded: false,
             isLoading: false,
             items: [],
             nextPageUrl: ''
         },
-        publishedAt: new Date(item.published).toISOString(),
-        title: item.title,
-        url: item.alternate[0].href,
+        publishedAt: new Date(entry.published).toISOString(),
+        title: entry.title,
+        url,
         comments: {
             isLoaded: false,
             items: []
         },
-        bookmarkUrl: 'http://b.hatena.ne.jp/entry/' + item.alternate[0].href,
+        bookmarkUrl: 'http://b.hatena.ne.jp/entry/' + url,
         bookmarkCount: 0,
-        origin: {
-            feedId: item.origin.streamId,
-            title: item.origin.title,
-            url: item.origin.htmlUrl,
-        },
-        markAsRead: !item.unread,
+        origin: entry.origin ? {
+            feedId: entry.origin.streamId,
+            title: entry.origin.title,
+            url: entry.origin.htmlUrl,
+        } : null,
+        markAsRead: !entry.unread,
         readAt: null
     };
 }
