@@ -7,13 +7,15 @@ import '@emonkak/enumerable/extensions/selectMany';
 
 import {
     AsyncEvent,
+    Credential,
     Entry,
     Feed,
+    FeedSpecification,
+    FeedView,
     FullContent,
     Notification,
     Siteinfo,
-    SyncEvent,
-    ViewMode
+    SyncEvent
 } from './types';
 
 import {
@@ -24,7 +26,8 @@ import {
     createAuthUrl,
     exchangeToken,
     getFeed,
-    getStreamContents
+    getStreamContents,
+    refreshToken
 } from 'supports/feedly/api';
 
 import * as feedly from 'supports/feedly/types';
@@ -38,7 +41,7 @@ const DEFAULT_DISMISS_AFTER = 3000;
 
 const DELAY = 500;
 
-export function authenticate(): AsyncEvent {
+export function authenticate(): AsyncEvent<void> {
     return (dispatch, getState) => {
         const { environment } = getState();
 
@@ -130,7 +133,7 @@ export function clearReadEntries(): SyncEvent {
     };
 }
 
-export function saveReadEntries(entryIds: string[]): AsyncEvent {
+export function saveReadEntries(entryIds: string[]): AsyncEvent<void> {
     return (dispatch, getState) => {
         if (entryIds.length === 0) {
             return;
@@ -155,7 +158,7 @@ export function saveReadEntries(entryIds: string[]): AsyncEvent {
     };
 }
 
-export function fetchSubscriptions(): AsyncEvent {
+export function fetchSubscriptions(): AsyncEvent<void> {
     return async (dispatch, getState) => {
         dispatch({
             type: 'SUBSCRIPTIONS_FETCHING'
@@ -205,6 +208,45 @@ export function fetchSubscriptions(): AsyncEvent {
     };
 }
 
+function getCredential(): AsyncEvent<Promise<Credential>> {
+    return async (dispatch, getState) => {
+        let { credential } = getState();
+
+        if (!credential) {
+            throw new Error('Not authenticated');
+        }
+
+        const now = new Date();
+        const expiredAt = new Date(credential.authorizedAt).getTime() + (credential.token.expires_in * 1000);
+        const isExpired = expiredAt < now.getTime() + 1000 * 60;
+
+        if (isExpired) {
+            const { environment } = getState();
+            const token = await refreshToken({
+                refresh_token: credential.token.refresh_token,
+                client_id: environment.clientId,
+                client_secret: environment.clientSecret,
+                grant_type: 'refresh_token'
+            });
+
+            credential = {
+                authorizedAt: now.toISOString(),
+                token: {
+                    ...credential.token,
+                    ...token
+                }
+            }
+
+            dispatch({
+                type: 'AUTHENTICATED',
+                credential
+            });
+        }
+
+        return credential;
+    };
+}
+
 function convertEntry(item: feedly.Entry): Entry {
     return {
         entryId: item.id,
@@ -236,24 +278,24 @@ function convertEntry(item: feedly.Entry): Entry {
     };
 }
 
-export function fetchFeed(feedId: string, continuation?: string): AsyncEvent {
+export function fetchFeed(feedId: string, specification?: FeedSpecification): AsyncEvent<void> {
     return async (dispatch, getState) => {
         dispatch({
             type: 'FEED_FETCHING',
             feedId: feedId
         });
 
-        const { credential } = getState();
-        if (!credential) {
-            sendNotification({
-                message: 'Not authenticated',
-                kind: 'negative'
-            })(dispatch, getState);
+        const { preference, subscriptions } = getState();
 
-            return;
+        if (!specification) {
+            specification = {
+                numEntries: preference.defaultNumEntries,
+                order: preference.defaultEntryOrder,
+                onlyUnread: preference.onlyUnreadEntries
+            };
         }
 
-        const { subscriptions } = getState();
+        const credential = await getCredential()(dispatch, getState);
         const subscription = new Enumerable(subscriptions.items)
             .firstOrDefault((subscription) => subscription.subscriptionId === feedId);
 
@@ -263,7 +305,8 @@ export function fetchFeed(feedId: string, continuation?: string): AsyncEvent {
             const [contentsResponse, feedResponse] = await Promise.all([
                 getStreamContents(credential.token.access_token, {
                     streamId: feedId,
-                    continuation
+                    ranked: specification.order,
+                    unreadOnly: specification.onlyUnread
                 }),
                 getFeed(credential.token.access_token, feedId)
             ]);
@@ -278,7 +321,10 @@ export function fetchFeed(feedId: string, continuation?: string): AsyncEvent {
                 entries: contentsResponse.items.map(convertEntry),
                 continuation: contentsResponse.continuation || null,
                 isLoading: false,
-                subscription
+                isLoaded: true,
+                subscription,
+                specification,
+                view: preference.defaultFeedView
             };
         } else if (feedId.startsWith('user/')) {
             const category = new Enumerable(subscriptions.categories)
@@ -286,7 +332,8 @@ export function fetchFeed(feedId: string, continuation?: string): AsyncEvent {
 
             const contentsResponse = await getStreamContents(credential.token.access_token, {
                 streamId: feedId,
-                continuation
+                ranked: specification.order,
+                unreadOnly: specification.onlyUnread
             });
 
             feed = {
@@ -299,7 +346,10 @@ export function fetchFeed(feedId: string, continuation?: string): AsyncEvent {
                 entries: contentsResponse.items.map(convertEntry),
                 continuation: contentsResponse.continuation || null,
                 isLoading: false,
-                subscription
+                isLoaded: true,
+                subscription,
+                specification,
+                view: preference.defaultFeedView
             };
         }
 
@@ -325,7 +375,31 @@ export function fetchFeed(feedId: string, continuation?: string): AsyncEvent {
     };
 }
 
-export function fetchComments(entryId: string, url: string): AsyncEvent {
+export function fetchMoreEntries(feedId: string, continuation: string, specification: FeedSpecification): AsyncEvent<void> {
+    return async (dispatch, getState) => {
+        dispatch({
+            type: 'MORE_ENTRIES_FETCHING',
+            feedId: feedId
+        });
+
+        const credential = await getCredential()(dispatch, getState);
+        const contentsResponse = await getStreamContents(credential.token.access_token, {
+            streamId: feedId,
+            continuation,
+            ranked: specification.order,
+            unreadOnly: specification.onlyUnread
+        });
+
+        dispatch({
+            type: 'MORE_ENTRIES_FETCHED',
+            feedId,
+            entries: contentsResponse.items.map(convertEntry),
+            continuation: contentsResponse.continuation || null
+        });
+    };
+}
+
+export function fetchComments(entryId: string, url: string): AsyncEvent<void> {
     return async (dispatch) => {
         const bookmarks = await getBookmarkEntry(url);
 
@@ -418,7 +492,7 @@ async function extractFullContent(url: string, siteinfo: Siteinfo): Promise<{ fu
     return { fullContent: null, nextPageUrl: null };
 }
 
-export function fetchFullContent(entryId: string, url: string): AsyncEvent {
+export function fetchFullContent(entryId: string, url: string): AsyncEvent<void> {
     return async (dispatch, getState) => {
         dispatch({
             type: 'FULL_CONTENT_FETCHING',
@@ -445,7 +519,7 @@ function matches(pattern: string, str: string): boolean {
     }
 }
 
-export function sendNotification(notification: Notification): AsyncEvent {
+export function sendNotification(notification: Notification): AsyncEvent<void> {
     if (!notification.id) {
         notification.id = Date.now();
     }
@@ -471,10 +545,10 @@ export function dismissNotification(id: any): SyncEvent {
     };
 }
 
-export function changeViewMode(viewMode: ViewMode): SyncEvent {
+export function changeFeedView(view: FeedView): SyncEvent {
     return {
-        type: 'VIEW_MODE_CHANGED',
-        viewMode
+        type: 'FEED_VIEW_CHANGED',
+        view
     };
 }
 
@@ -497,7 +571,7 @@ function compareLdrFullFeedItem(x: WedataItem<LDRFullFeedData>, y: WedataItem<LD
     return p1 < p2 ? 1 : -1;
 }
 
-export function updateSiteinfo(): AsyncEvent {
+export function updateSiteinfo(): AsyncEvent<void> {
     return async (dispatch, getState) => {
         const [autoPagerizeItems, ldrFullFeedItems] = await Promise.all([
             getAutoPagerizeItems(),

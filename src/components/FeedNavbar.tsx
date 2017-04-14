@@ -6,35 +6,57 @@ import Navbar from 'components/parts/Navbar';
 import RelativeTime from 'components/parts/RelativeTime';
 import bindAction from 'supports/bindAction';
 import connect from 'supports/react/connect';
-import { Feed, Siteinfo, State, ViewMode } from 'messaging/types';
-import { changeViewMode, clearReadEntries, updateSiteinfo } from 'messaging/actions';
+import { Feed, FeedSpecification, FeedView, Siteinfo, State } from 'messaging/types';
+import { changeFeedView, clearReadEntries, fetchFeed, updateSiteinfo } from 'messaging/actions';
 
 const SCROLL_OFFSET = 48;
 
 interface FeedNavbarProps {
     feed: Feed;
-    onChangeViewMode: (viewMode: ViewMode) => void,
+    onChangeFeedView: (view: FeedView) => void,
     onClearReadEntries: () => void,
+    onFetchFeed: (feedId: string, specification?: FeedSpecification) => void;
     onToggleSidebar: () => void,
     onUpdateSiteinfo: () => void,
     scrollTo: (x: number, y: number) => Promise<void>;
     siteinfo: Siteinfo;
-    viewMode: ViewMode;
 };
 
 class FeedNavbar extends PureComponent<FeedNavbarProps, {}> {
     static propTypes = {
         feed: PropTypes.object,
-        onChangeViewMode: PropTypes.func.isRequired,
+        onChangeFeedView: PropTypes.func.isRequired,
         onClearReadEntries: PropTypes.func.isRequired,
+        onFetchFeed: PropTypes.func.isRequired,
         onToggleSidebar: PropTypes.func.isRequired,
         onUpdateSiteinfo: PropTypes.func.isRequired,
-        scrollTo: PropTypes.func.isRequired,
-        viewMode: PropTypes.oneOf(['expanded', 'collapsible']).isRequired
+        scrollTo: PropTypes.func.isRequired
     };
 
-    handleChangeViewType(viewMode: ViewMode) {
-        this.props.onChangeViewMode(viewMode);
+    handleChangeEntryOrder(order: 'newest' | 'oldest') {
+        const { feed, onFetchFeed, scrollTo } = this.props;
+
+        if (feed.feedId) {
+            scrollTo(0, 0);
+
+            onFetchFeed(feed.feedId, {
+                ...feed.specification,
+                order
+            });
+        }
+    }
+
+    handleToggleOnlyUnread() {
+        const { feed, onFetchFeed } = this.props;
+
+        if (feed.feedId) {
+            scrollTo(0, 0);
+
+            onFetchFeed(feed.feedId, {
+                ...feed.specification,
+                onlyUnread: !feed.specification.onlyUnread
+            });
+        }
     }
 
     handleMarkEntryAsRead(entryId: string) {
@@ -69,11 +91,10 @@ class FeedNavbar extends PureComponent<FeedNavbarProps, {}> {
         }
     }
 
-    renderReadEntryDropdown() {
+    renderReadEntriesDropdown() {
         const { feed } = this.props;
 
-        const entries = feed ? feed.entries : [];
-        const readEntries = entries.filter(entry => !!entry.readAt);
+        const readEntries = feed.entries.filter(entry => !!entry.readAt);
 
         return (
             <Dropdown
@@ -86,7 +107,7 @@ class FeedNavbar extends PureComponent<FeedNavbarProps, {}> {
                 }
                 pullRight={true}>
                 <div className="menu-heading">Read entries</div>
-                {readEntries.map((entry, index) => (
+                {readEntries.map((entry) => (
                     <MenuItem 
                         onSelect={this.handleMarkEntryAsRead.bind(this, entry.entryId)}
                         key={entry.entryId}
@@ -99,14 +120,14 @@ class FeedNavbar extends PureComponent<FeedNavbarProps, {}> {
                     primaryText="Clear all read entries" />
                 <div className="menu-divider" />
                 <MenuItem
-                    isDisabled={entries.length === 0}
+                    isDisabled={feed.entries.length === 0}
                     primaryText="Mark all as read" />
             </Dropdown>
         );
     }
 
     renderConfigDropdown() {
-        const { siteinfo, viewMode } = this.props;
+        const { feed, siteinfo, onChangeFeedView } = this.props;
 
         return (
             <Dropdown
@@ -115,23 +136,32 @@ class FeedNavbar extends PureComponent<FeedNavbarProps, {}> {
                 pullRight={true}>
                 <div className="menu-heading">View</div>
                 <MenuItem
-                    icon={viewMode === 'expanded' ? <i className="icon icon-16 icon-checkmark" /> : null}
-                    primaryText="Expanded View"
-                    onSelect={() => this.handleChangeViewType('expanded')} />
+                    icon={feed.view === 'expanded' ? <i className="icon icon-16 icon-checkmark" /> : null}
+                    primaryText="Expanded view"
+                    onSelect={onChangeFeedView.bind(null, 'expanded')} />
                 <MenuItem
-                    icon={viewMode === 'collapsible' ? <i className="icon icon-16 icon-checkmark" /> : null}
-                    primaryText="Collapsible View"
-                    onSelect={() => this.handleChangeViewType('collapsible')} />
+                    icon={feed.view === 'collapsible' ? <i className="icon icon-16 icon-checkmark" /> : null}
+                    primaryText="Collapsible view"
+                    onSelect={onChangeFeedView.bind(null, 'collapsible')} />
                 <div className="menu-divider" />
                 <div className="menu-heading">Order</div>
-                <MenuItem primaryText="Newest First" />
-                <MenuItem primaryText="Oldest First" />
+                <MenuItem
+                    icon={feed.specification.order === 'newest' ? <i className="icon icon-16 icon-checkmark" /> : null}
+                    primaryText="Newest first"
+                    onSelect={this.handleChangeEntryOrder.bind(this, 'newest')} />
+                <MenuItem
+                    icon={feed.specification.order === 'oldest' ? <i className="icon icon-16 icon-checkmark" /> : null}
+                    primaryText="Oldest first"
+                    onSelect={this.handleChangeEntryOrder.bind(this, 'oldest')} />
                 <div className="menu-divider" />
-                <MenuItem primaryText="Unread only" />
+                <MenuItem
+                    icon={feed.specification.onlyUnread ? <i className="icon icon-16 icon-checkmark" /> : null}
+                    primaryText="Only unread"
+                    onSelect={this.handleToggleOnlyUnread.bind(this)} />
                 <div className="menu-divider" />
                 <MenuItem
                     onSelect={this.handleUpdateSiteinfo.bind(this)}
-                    primaryText="Update siteinfo"
+                    primaryText="Update siteinfo..."
                     secondaryText={siteinfo.lastUpdatedAt ? <RelativeTime time={siteinfo.lastUpdatedAt} /> : 'Not updated yet'} />
             </Dropdown>
         );
@@ -146,7 +176,7 @@ class FeedNavbar extends PureComponent<FeedNavbarProps, {}> {
                 <div className="navbar-action">
                     <a href="#"><i className="icon icon-24 icon-refresh" /></a>
                 </div>
-                {this.renderReadEntryDropdown()}
+                {this.renderReadEntriesDropdown()}
                 {this.renderConfigDropdown()}
             </Navbar>
         );
@@ -156,12 +186,12 @@ class FeedNavbar extends PureComponent<FeedNavbarProps, {}> {
 export default connect(
     (state: State) => ({
         feed: state.feed,
-        viewMode: state.preference.viewMode,
         siteinfo: state.siteinfo
     }),
     (dispatch) => ({
-        onChangeViewMode: bindAction(changeViewMode, dispatch),
+        onChangeFeedView: bindAction(changeFeedView, dispatch),
         onClearReadEntries: bindAction(clearReadEntries, dispatch),
+        onFetchFeed: bindAction(fetchFeed, dispatch),
         onUpdateSiteinfo: bindAction(updateSiteinfo, dispatch)
     })
 )(FeedNavbar);

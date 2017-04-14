@@ -99,7 +99,7 @@ export interface UnreadCount {
 export interface GetStreamInput {
     streamId: string;
     count?: number;
-    ranked?: string;
+    ranked?: 'newest' | 'oldest';
     unreadOnly?: boolean;
     newerThan?: number;
     continuation?: string;

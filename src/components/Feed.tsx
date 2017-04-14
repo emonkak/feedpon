@@ -6,21 +6,21 @@ import EntryList from 'components/parts/EntryList';
 import MenuItem from 'components/parts/MenuItem';
 import bindAction from 'supports/bindAction';
 import connect from 'supports/react/connect';
-import { Category, Feed as FeedType, State, ViewMode } from 'messaging/types';
-import { fetchComments, fetchFeed, fetchFullContent, readEntry, saveReadEntries } from 'messaging/actions';
+import { Category, Feed as FeedType, FeedSpecification, State } from 'messaging/types';
+import { fetchComments, fetchFeed, fetchFullContent, fetchMoreEntries, readEntry, saveReadEntries } from 'messaging/actions';
 
 interface FeedProps {
     categories: Category[];
     feed: FeedType;
     isScrolling: boolean;
     onFetchComments: (entryId: string, url: string) => void;
-    onFetchFeed: (feedId: string, continuation?: string) => void;
+    onFetchFeed: (feedId: string, specification?: FeedSpecification) => void;
+    onFetchMoreEntries: (feedId: string, continuation: string, specification: FeedSpecification) => void;
     onFetchFullContent: (entryId: string, url: string) => void;
     onReadEntry: (entryIds: string[], timestamp: Date) => void;
     onSaveReadEntries: (entryIds: string[]) => void;
     params: Params;
     scrollTo: (x: number, y: number) => Promise<void>;
-    viewMode: ViewMode;
 };
 
 class Feed extends PureComponent<FeedProps, {}> {
@@ -34,8 +34,7 @@ class Feed extends PureComponent<FeedProps, {}> {
         onReadEntry: PropTypes.func.isRequired,
         onSaveReadEntries: PropTypes.func.isRequired,
         params: PropTypes.object.isRequired,
-        scrollTo: PropTypes.func.isRequired,
-        viewMode: PropTypes.oneOf(['expanded', 'collapsible']).isRequired
+        scrollTo: PropTypes.func.isRequired
     };
 
     constructor(props: FeedProps, context: any) {
@@ -92,17 +91,17 @@ class Feed extends PureComponent<FeedProps, {}> {
     handleLoadMoreEntries(event: React.SyntheticEvent<any>) {
         event.preventDefault();
 
-        const { onFetchFeed, feed } = this.props;
+        const { onFetchMoreEntries, feed } = this.props;
 
         if (feed.feedId && feed.continuation) {
-            onFetchFeed(feed.feedId, feed.continuation);
+            onFetchMoreEntries(feed.feedId, feed.continuation, feed.specification);
         }
     }
 
     renderHeader() {
         const { feed } = this.props;
 
-        if (feed.isLoading && feed.entries.length > 0) {
+        if (feed.isLoading && !feed.isLoaded) {
             return (
                 <header className="feed-header">
                     <div className="container">
@@ -166,18 +165,18 @@ class Feed extends PureComponent<FeedProps, {}> {
     }
 
     renderList() {
-        const { feed, isScrolling, onFetchComments, onFetchFullContent, scrollTo, viewMode } = this.props;
+        const { feed, isScrolling, onFetchComments, onFetchFullContent, scrollTo } = this.props;
 
         return (
             <EntryList
                 entries={feed ? feed.entries : []}
-                isLoading={feed.isLoading && feed.entries.length === 0}
+                isLoading={feed.isLoading && !feed.isLoaded}
                 isScrolling={isScrolling}
                 onFetchComments={onFetchComments}
                 onFetchFullContent={onFetchFullContent}
                 onMarkAsRead={this.handleMarkEntryAsRead}
                 scrollTo={scrollTo}
-                viewMode={viewMode} />
+                view={feed.view} />
         );
     }
 
@@ -226,12 +225,12 @@ class Feed extends PureComponent<FeedProps, {}> {
 export default connect(
     (state: State) => ({
         feed: state.feed,
-        categories: state.subscriptions.categories,
-        viewMode: state.preference.viewMode
+        categories: state.subscriptions.categories
     }),
     (dispatch) => ({
         onFetchComments: bindAction(fetchComments, dispatch),
         onFetchFeed: bindAction(fetchFeed, dispatch),
+        onFetchMoreEntries: bindAction(fetchMoreEntries, dispatch),
         onFetchFullContent: bindAction(fetchFullContent, dispatch),
         onReadEntry: bindAction(readEntry, dispatch),
         onSaveReadEntries: bindAction(saveReadEntries, dispatch)

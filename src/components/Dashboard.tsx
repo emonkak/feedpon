@@ -132,7 +132,7 @@ class Dashboard extends PureComponent<DashboardProps, DashboardState> {
                 </div>
 
                 <h2>Dropdown</h2>
-                <p>
+                <div className="u-margin-bottom">
                     <Dropdown toggleButton={<button className="button button-outline-default dropdown-arrow">Dropdown</button>}>
                         <MenuItem primaryText="First Action"></MenuItem>
                         <MenuItem primaryText="Second Action"></MenuItem>
@@ -140,7 +140,7 @@ class Dashboard extends PureComponent<DashboardProps, DashboardState> {
                         <div className="menu-divider"></div>
                         <MenuItem isDisabled={true} primaryText="Forth Action"></MenuItem>
                     </Dropdown>
-                </p>
+                </div>
 
                 <h2>Modal</h2>
                 <p className="button-toolbar">

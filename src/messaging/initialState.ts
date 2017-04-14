@@ -18,7 +18,14 @@ const initialState: State = {
         velocity: 0,
         continuation: null,
         isLoading: false,
-        subscription: null
+        isLoaded: false,
+        subscription: null,
+        specification: {
+            numEntries: 20,
+            order: 'newest',
+            onlyUnread: true
+        },
+        view: 'expanded'
     },
     notifications: [],
     subscriptions: {
@@ -28,7 +35,12 @@ const initialState: State = {
         lastUpdatedAt: null
     },
     preference: {
-        viewMode: 'expanded'
+        defaultEntryOrder: 'newest',
+        defaultNumEntries: 20,
+        defaultSubscriptionsOrder: 'newest',
+        defaultFeedView: 'expanded',
+        onlyUnreadEntries: true,
+        onlyUnreadSubscriptions: true,
     },
     siteinfo: {
         items: [],

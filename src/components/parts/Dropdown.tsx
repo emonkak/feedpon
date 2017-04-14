@@ -5,7 +5,7 @@ import Closable from 'components/parts/Closable';
 import Menu from 'components/parts/Menu';
 import createChainedFunction from 'supports/createChainedFunction';
 
-interface Props {
+interface DropdownProps {
     className?: string;
     isOpened?: boolean;
     onClose?: () => void;
@@ -14,11 +14,11 @@ interface Props {
     toggleButton: React.ReactElement<any>;
 }
 
-interface State {
+interface DropdownState {
     isOpened: boolean;
 }
 
-export default class Dropdown extends PureComponent<Props, State> {
+export default class Dropdown extends PureComponent<DropdownProps, DropdownState> {
     static propTypes = {
         className: PropTypes.string,
         isOpened: PropTypes.bool.isRequired,
@@ -30,10 +30,10 @@ export default class Dropdown extends PureComponent<Props, State> {
 
     static defaultProps = {
         isOpened: false,
-        pullRight: false
+        pullRight: false,
     };
 
-    constructor(props: Props, context: any) {
+    constructor(props: DropdownProps, context: any) {
         super(props, context);
 
         this.state = {
@@ -41,7 +41,7 @@ export default class Dropdown extends PureComponent<Props, State> {
         };
     }
 
-    componentWillReceiveProps(nextProps: Props) {
+    componentWillReceiveProps(nextProps: DropdownProps) {
         if (this.props.isOpened !== nextProps.isOpened) {
             this.update(nextProps.isOpened!);
         }
@@ -96,7 +96,7 @@ export default class Dropdown extends PureComponent<Props, State> {
         const { isOpened } = this.state;
 
         return (
-            <span className={classnames('dropdown', className, {
+            <div className={classnames('dropdown', className, {
                 'is-opened': isOpened!,
                 'is-pull-right': pullRight!
             })}>
@@ -108,7 +108,7 @@ export default class Dropdown extends PureComponent<Props, State> {
                         {children}
                     </Menu>
                 </Closable>
-            </span>
+            </div>
         );
     }
 }

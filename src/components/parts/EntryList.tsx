@@ -3,7 +3,7 @@ import React, { PropTypes, PureComponent, cloneElement } from 'react';
 import Entry from 'components/parts/Entry';
 import EntryPlaceholder from 'components/parts/EntryPlaceholder';
 import ScrollSpy from 'components/parts/ScrollSpy';
-import { Entry as EntryType, ViewMode } from 'messaging/types';
+import { Entry as EntryType, FeedView } from 'messaging/types';
 
 const SCROLL_OFFSET = 48;
 
@@ -15,7 +15,7 @@ interface Props {
     onFetchFullContent: (entryId: string, url: string) => void;
     onMarkAsRead: (entryIds: string[]) => void;
     scrollTo: (x: number, y: number) => Promise<void>;
-    viewMode: ViewMode;
+    view: FeedView;
 }
 
 interface State {
@@ -37,7 +37,7 @@ export default class EntryList extends PureComponent<Props, State> {
         onFetchComments: PropTypes.func,
         onMarkAsRead: PropTypes.func,
         scrollTo: PropTypes.func.isRequired,
-        viewMode: PropTypes.oneOf(['expanded', 'collapsible']).isRequired
+        view: PropTypes.oneOf(['expanded', 'collapsible']).isRequired
     };
 
     private activeEntryId: string | null = null;
@@ -58,7 +58,7 @@ export default class EntryList extends PureComponent<Props, State> {
     }
 
     componentWillReceiveProps(nextProps: Props) {
-        if (nextProps.viewMode !== this.props.viewMode) {
+        if (nextProps.view !== this.props.view) {
             this.setState({
                 expandedEntryId: null
             });
@@ -66,7 +66,7 @@ export default class EntryList extends PureComponent<Props, State> {
     }
 
     componentWillUpdate(nextProps: Props, nextState: State) {
-        if (nextProps.viewMode !== this.props.viewMode) {
+        if (nextProps.view !== this.props.view) {
             if (this.activeEntryId != null) {
                 this.scrollElement = document.getElementById('entry--' + this.activeEntryId);
             }
@@ -135,9 +135,9 @@ export default class EntryList extends PureComponent<Props, State> {
 
     renderEntry(entry: EntryType) {
         const { expandedEntryId } = this.state;
-        const { onFetchComments, onFetchFullContent, viewMode } = this.props;
-        const isCollapsible = viewMode === 'collapsible';
-        const isExpanded = viewMode === 'expanded' || expandedEntryId === entry.entryId;
+        const { onFetchComments, onFetchFullContent, view } = this.props;
+        const isCollapsible = view === 'collapsible';
+        const isExpanded = view === 'expanded' || expandedEntryId === entry.entryId;
 
         return (
             <Entry
@@ -153,11 +153,11 @@ export default class EntryList extends PureComponent<Props, State> {
     }
 
     render() {
-        const { isLoading, viewMode } = this.props;
+        const { isLoading, view } = this.props;
 
         if (isLoading) {
-            const isExpanded = viewMode === 'expanded';
-            const isCollapsible = viewMode === 'collapsible';
+            const isExpanded = view === 'expanded';
+            const isCollapsible = view === 'collapsible';
 
             return (
                 <div className="entry-list">

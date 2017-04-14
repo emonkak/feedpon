@@ -74,18 +74,12 @@ function reduceFeed(feed: Feed, event: SyncEvent): Feed {
 
             return {
                 ...feed,
-                isLoading: true
+                isLoading: true,
+                isLoaded: false
             };
 
         case 'FEED_FETCHED':
-            if (feed.feedId !== event.feed.feedId) {
-                return event.feed;
-            }
-
-            return {
-                ...event.feed,
-                entries: feed.entries.concat(event.feed.entries)
-            };
+            return event.feed;
 
         case 'FULL_CONTENT_FETCHING':
             return {
@@ -123,6 +117,34 @@ function reduceFeed(feed: Feed, event: SyncEvent): Feed {
                         }
                     };
                 })
+            };
+
+        case 'FEED_VIEW_CHANGED':
+            return {
+                ...feed,
+                view: event.view
+            };
+
+        case 'MORE_ENTRIES_FETCHING':
+            if (feed.feedId !== event.feedId) {
+                return feed;
+            }
+
+            return {
+                ...feed,
+                isLoading: true
+            };
+
+        case 'MORE_ENTRIES_FETCHED':
+            if (feed.feedId !== event.feedId) {
+                return feed;
+            }
+
+            return {
+                ...feed,
+                continuation: event.continuation,
+                entries: feed.entries.concat(event.entries),
+                isLoading: false
             };
 
         case 'READ_ENTRIES_CLEARED':
@@ -190,12 +212,6 @@ function reduceNotifications(notifications: Notification[], event: SyncEvent): N
 
 function reducePreference(preference: Preference, event: SyncEvent): Preference {
     switch (event.type) {
-        case 'VIEW_MODE_CHANGED':
-            return {
-                ...preference,
-                viewMode: event.viewMode
-            };
-
         default:
             return preference;
     }

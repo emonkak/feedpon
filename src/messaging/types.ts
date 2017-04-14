@@ -1,6 +1,8 @@
 import { ExchangeTokenResponse } from 'supports/feedly/types';
 
-export type Event = SyncEvent | AsyncEvent;
+export type Dispatcher = (event: Event) => void;
+
+export type Event = SyncEvent | AsyncEvent<any>;
 
 export type SyncEvent
     = { type: 'AUTHENTICATED', credential: Credential }
@@ -10,18 +12,20 @@ export type SyncEvent
     | { type: 'ENTRY_READ', entryIds: string[], readAt: string }
     | { type: 'FEED_FETCHED', feed: Feed }
     | { type: 'FEED_FETCHING', feedId: string }
+    | { type: 'FEED_VIEW_CHANGED', view: FeedView }
     | { type: 'FULL_CONTENT_FETCHED', entryId: string, fullContent: FullContent | null, nextPageUrl: string | null }
     | { type: 'FULL_CONTENT_FETCHING', entryId: string }
+    | { type: 'MORE_ENTRIES_FETCHING', feedId: string }
+    | { type: 'MORE_ENTRIES_FETCHED', feedId: string, continuation: string | null, entries: Entry[] }
     | { type: 'NOTIFICATION_DISMISSED', id: number }
     | { type: 'NOTIFICATION_SENT', notification: Notification }
     | { type: 'READ_ENTRIES_CLEARED' }
     | { type: 'SITEINFO_UPDATED', siteinfo: Siteinfo }
     | { type: 'SUBSCRIPTIONS_FETCHED', subscriptions: Subscription[], categories: Category[], fetchedAt: string }
-    | { type: 'SUBSCRIPTIONS_FETCHING' }
-    | { type: 'VIEW_MODE_CHANGED', viewMode: ViewMode };
+    | { type: 'SUBSCRIPTIONS_FETCHING' };
 
-export interface AsyncEvent {
-    (dispatch: (event: SyncEvent) => void, getState: () => State): void;
+export interface AsyncEvent<T> {
+    (dispatch: (event: SyncEvent) => void, getState: () => State): T;
 }
 
 export interface State {
@@ -62,8 +66,19 @@ export interface Feed {
     velocity: number;
     continuation: string | null;
     isLoading: boolean;
+    isLoaded: boolean;
     subscription: Subscription | null;
+    specification: FeedSpecification;
+    view: FeedView;
 }
+
+export interface FeedSpecification {
+    numEntries: number;
+    order: 'newest' | 'oldest';
+    onlyUnread: boolean;
+}
+
+export type FeedView = 'expanded' | 'collapsible';
 
 export interface Entry {
     entryId: string;
@@ -121,10 +136,13 @@ export interface Notification {
 export type NotificationKind = 'default' | 'positive' | 'negative';
 
 export interface Preference {
-    viewMode: ViewMode;
+    defaultEntryOrder: 'newest' | 'oldest';
+    defaultFeedView: FeedView;
+    defaultNumEntries: number;
+    defaultSubscriptionsOrder: 'newest' | 'oldest';
+    onlyUnreadEntries: boolean;
+    onlyUnreadSubscriptions: boolean;
 }
-
-export type ViewMode = 'expanded' | 'collapsible';
 
 export interface Subscriptions {
     categories: Category[];
