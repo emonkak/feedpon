@@ -87,13 +87,11 @@ class Dashboard extends PureComponent<DashboardProps, DashboardState> {
                 <p><em>Lorem Ipsum</em> is simply dummy text of the printing and typesetting industry. <strong>Lorem Ipsum</strong> has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
 
                 <h2>Navigation</h2>
-                <p>
-                    <nav className="nav">
-                        <a className="nav-item" href="#">First</a>
-                        <a className="nav-item is-selected" href="#">Second</a>
-                        <a className="nav-item" href="#">Third</a>
-                    </nav>
-                </p>
+                <nav className="nav">
+                    <a className="nav-item" href="#">First</a>
+                    <a className="nav-item is-selected" href="#">Second</a>
+                    <a className="nav-item" href="#">Third</a>
+                </nav>
 
                 <h2>Popover</h2>
                 <div className="popover popover-default popover-bottom">
@@ -145,10 +143,8 @@ class Dashboard extends PureComponent<DashboardProps, DashboardState> {
                 </p>
 
                 <h2>Modal</h2>
-                <p>
-                    <div className="button-toolbar">
-                        <button className="button button-positive" onClick={this.handleOpenModal.bind(this)}>Launch Modal</button>
-                    </div>
+                <p className="button-toolbar">
+                    <button className="button button-positive" onClick={this.handleOpenModal.bind(this)}>Launch Modal</button>
                 </p>
                 <Modal isOpened={modalIsOpened} onClose={this.handleCloseModal.bind(this)}>
                     <button className="close" onClick={this.handleCloseModal.bind(this)}></button>
