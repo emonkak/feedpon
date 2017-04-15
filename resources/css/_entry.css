@@ -54,38 +54,6 @@
   visibility: visible;
 }
 
-.entry-header {
-  display: flex;
-}
-
-.entry-visual {
-  flex: 0 0 96px;
-  box-sizing: border-box;;
-  margin: 0 1rem 0 0;
-  height: 72px;
-  border: 1px solid var(--medium-color);
-  border-radius: 4px;
-  transition: border-color 0.2s ease-in-out;
-  overflow: hidden;
-}
-
-a.entry-visual:hover {
-  border-color: var(--positive-color);
-}
-
-.entry-visual-image {
-  display: inline-block;
-  object-fit: cover;
-  width: 100%;
-  height: 100%;
-  background-color: var(--medium-color);
-}
-
-.entry-metadata {
-  flex: 1;
-  min-width: 0;
-}
-
 .entry-nav {
   display: flex;
   float: right;

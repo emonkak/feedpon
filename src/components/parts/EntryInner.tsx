@@ -102,28 +102,6 @@ export default class EntryInner extends PureComponent<EntryInnerProps, EntryInne
         }
     }
 
-    renderVisual() {
-        const { entry, entry: { visual } } = this.props;
-
-        if (visual) {
-            return (
-                <a className="entry-visual" href={entry.url} target="_blank">
-                    <img
-                        className="entry-visual-image"
-                        src={visual.url}
-                        width={visual.width}
-                        height={visual.height} />
-                </a>
-            );
-        }
-
-        return (
-            <a className="entry-visual" href={entry.url} target="_blank">
-                <span className="entry-visual-image" />
-            </a>
-        );
-    }
-
     renderNav() {
         const { entry, onClose } = this.props;
         const { fullContentMode } = this.state;
@@ -300,19 +278,16 @@ export default class EntryInner extends PureComponent<EntryInnerProps, EntryInne
         return (
             <div className="container">
                 <header className="entry-header">
-                    {this.renderVisual()}
-                    <div className="entry-metadata">
-                        {this.renderNav()}
-                        {this.renderTitle()}
-                        <div className="entry-info-list">
-                            {this.renderBookmarks()}
-                            {this.renderOrign()}
-                            {this.renderAuthor()}
-                            {this.renderPublishedAt()}
-                        </div>
-                        <div className="entry-summary">{entry.summary}</div>
+                    {this.renderNav()}
+                    {this.renderTitle()}
+                    <div className="entry-info-list">
+                        {this.renderBookmarks()}
+                        {this.renderOrign()}
+                        {this.renderAuthor()}
+                        {this.renderPublishedAt()}
                     </div>
                 </header>
+                <div className="entry-summary">{entry.summary}</div>
                 {this.renderContent()}
                 <footer className="entry-footer">
                     {this.renderActionList()}
