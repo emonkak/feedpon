@@ -66,7 +66,7 @@ export default class Entry extends PureComponent<Props, {}> {
 
         return (
             <article
-                id={'entry--' + entry.entryId}
+                id={'entry-' + entry.entryId}
                 className={classnames('entry', {
                     'is-active': isActive,
                     'is-collapsible': isCollapsible,

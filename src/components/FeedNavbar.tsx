@@ -60,7 +60,7 @@ class FeedNavbar extends PureComponent<FeedNavbarProps, {}> {
     }
 
     handleMarkEntryAsRead(entryId: string) {
-        const scrollElement = document.getElementById('entry--' + entryId);
+        const scrollElement = document.getElementById('entry-' + entryId);
 
         if (scrollElement) {
             this.props.scrollTo(0, scrollElement.offsetTop - SCROLL_OFFSET);
