@@ -125,10 +125,10 @@ pre {
   border-radius: 4px;
 }
 
-pre > * {
-  border: 0;
+pre * {
   padding: 0;
   margin: 0;
+  border: 0;
   background-color: transparent;
 }
 
