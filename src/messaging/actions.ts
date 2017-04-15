@@ -250,9 +250,7 @@ function getCredential(): AsyncEvent<Promise<Credential>> {
 const URL_PATTEN = /^https?:\/\//;
 
 function convertEntry(entry: feedly.Entry): Entry {
-    const url = URL_PATTEN.test(entry.originId)
-        ? entry.originId
-        : (entry.alternate && entry.alternate[0] && entry.alternate[0].href) || '';
+    const url = (entry.alternate && entry.alternate[0] && entry.alternate[0].href) || '';
 
     return {
         entryId: entry.id,
