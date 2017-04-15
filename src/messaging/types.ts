@@ -86,6 +86,7 @@ export interface Entry {
     author: string;
     url: string;
     origin: Origin | null;
+    visual: Visual | null;
     summary: string;
     content: string;
     fullContents: FullContents;
@@ -95,6 +96,18 @@ export interface Entry {
     publishedAt: string;
     markAsRead: boolean;
     readAt: string | null;
+}
+
+export interface Origin {
+    feedId: string;
+    title: string;
+    url: string;
+}
+
+export interface Visual {
+    url: string;
+    width: number;
+    height: number;
 }
 
 export interface FullContents {
@@ -118,12 +131,6 @@ export interface Comment {
     user: string;
     comment: string;
     timestamp: string;
-}
-
-export interface Origin {
-    feedId: string;
-    title: string;
-    url: string;
 }
 
 export interface Notification {

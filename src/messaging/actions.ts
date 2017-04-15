@@ -268,6 +268,11 @@ function convertEntry(entry: feedly.Entry): Entry {
         publishedAt: new Date(entry.published).toISOString(),
         title: entry.title,
         url,
+        visual: entry.visual && URL_PATTEN.test(entry.visual.url) ? {
+            url: entry.visual.url,
+            width: entry.visual.width,
+            height: entry.visual.height
+        } : null,
         comments: {
             isLoaded: false,
             items: []

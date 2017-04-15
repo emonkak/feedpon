@@ -3,6 +3,7 @@ import classnames from 'classnames';
 
 import CleanHtml from 'components/parts/CleanHtml';
 import CommentPopoverContent from 'components/parts/CommentPopoverContent';
+import FullContents from 'components/parts/FullContents';
 import RelativeTime from 'components/parts/RelativeTime';
 import { Entry } from 'messaging/types';
 
@@ -75,7 +76,7 @@ export default class EntryInner extends PureComponent<EntryInnerProps, EntryInne
         });
     }
 
-    handleFetchNextFullContent(event: React.SyntheticEvent<any>) {
+    handleFetchNextFullContent() {
         const { entry, onFetchFullContent } = this.props;
 
         if (entry.fullContents.isLoaded && entry.fullContents.nextPageUrl) {
@@ -99,6 +100,28 @@ export default class EntryInner extends PureComponent<EntryInnerProps, EntryInne
 
             this.setState({ popover: nextPopover });
         }
+    }
+
+    renderVisual() {
+        const { entry, entry: { visual } } = this.props;
+
+        if (visual) {
+            return (
+                <a className="entry-visual" href={entry.url} target="_blank">
+                    <img
+                        className="entry-visual-image"
+                        src={visual.url}
+                        width={visual.width}
+                        height={visual.height} />
+                </a>
+            );
+        }
+
+        return (
+            <a className="entry-visual" href={entry.url} target="_blank">
+                <span className="entry-visual-image" />
+            </a>
+        );
     }
 
     renderNav() {
@@ -194,53 +217,25 @@ export default class EntryInner extends PureComponent<EntryInnerProps, EntryInne
     }
 
     renderContent() {
-        const { entry } = this.props;
+        const { entry, entry: { fullContents } } = this.props;
         const { fullContentMode } = this.state;
 
-        if (fullContentMode && entry.fullContents.isLoaded) {
-            if (entry.fullContents.items.length === 0) {
-                return (
-                    <div className="entry-content">
-                        <div className="message message-positive">
-                            The full content of this entry can not be extracted.
-                        </div>
-                    </div>
-                );
-            }
-
-            const fullContentElements = entry.fullContents.items.map((fullContent, index) =>
-                <section key={index} className="entry-page">
-                    <header className="entry-page-header">
-                        <h2 className="entry-page-title">
-                            <a className="link-default" href={fullContent.url} target="_blank">{'Page ' + (index + 1)}</a>
-                        </h2>
-                    </header>
-                    <CleanHtml
-                        baseUrl={fullContent.url}
-                        className="entry-page-content"
-                        html={fullContent.content} />
-                </section>
-            );
-
-            let nextPageButton: React.ReactElement<any> | null = null;
-
-            if (entry.fullContents.nextPageUrl) {
-                nextPageButton = entry.fullContents.isLoading
-                    ? <button className="button button-block button-outline-positive" disabled={true}><i className="icon icon-20 icon-spinner animation-clockwise-rotation" /></button> 
-                    : <button className="button button-block button-outline-positive" onClick={this.handleFetchNextFullContent}>Next page</button>;
-            }
-
+        if (fullContentMode && fullContents.isLoaded) {
             return (
-                <div className="entry-content">
-                    {fullContentElements}
-                    {nextPageButton}
-                </div>
+                <FullContents
+                    isLoading={fullContents.isLoading}
+                    items={fullContents.items}
+                    nextPageUrl={fullContents.nextPageUrl}
+                    onFetchNext={this.handleFetchNextFullContent} />
+            );
+        } else {
+            return (
+                <CleanHtml
+                    baseUrl={entry.url}
+                    className="entry-content"
+                    html={entry.content} />
             );
         }
-
-        return (
-            <CleanHtml className="entry-content" html={entry.content} baseUrl={entry.url} />
-        );
     }
 
     renderActionList() {
@@ -305,16 +300,19 @@ export default class EntryInner extends PureComponent<EntryInnerProps, EntryInne
         return (
             <div className="container">
                 <header className="entry-header">
-                    {this.renderNav()}
-                    {this.renderTitle()}
-                    <div className="entry-info-list">
-                        {this.renderBookmarks()}
-                        {this.renderOrign()}
-                        {this.renderAuthor()}
-                        {this.renderPublishedAt()}
+                    {this.renderVisual()}
+                    <div className="entry-metadata">
+                        {this.renderNav()}
+                        {this.renderTitle()}
+                        <div className="entry-info-list">
+                            {this.renderBookmarks()}
+                            {this.renderOrign()}
+                            {this.renderAuthor()}
+                            {this.renderPublishedAt()}
+                        </div>
+                        <div className="entry-summary">{entry.summary}</div>
                     </div>
                 </header>
-                <div className="entry-summary">{entry.summary}</div>
                 {this.renderContent()}
                 <footer className="entry-footer">
                     {this.renderActionList()}
