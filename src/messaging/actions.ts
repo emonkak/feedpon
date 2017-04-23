@@ -247,7 +247,7 @@ function getCredential(): AsyncEvent<Promise<Credential>> {
     };
 }
 
-const URL_PATTEN = /^https?:\/\//;
+const URL_PATTERN = /^https?:\/\//;
 
 function convertEntry(entry: feedly.Entry): Entry {
     const url = (entry.alternate && entry.alternate[0] && entry.alternate[0].href) || '';
@@ -266,7 +266,7 @@ function convertEntry(entry: feedly.Entry): Entry {
         publishedAt: new Date(entry.published).toISOString(),
         title: entry.title,
         url,
-        visual: entry.visual && URL_PATTEN.test(entry.visual.url) ? {
+        visual: entry.visual && URL_PATTERN.test(entry.visual.url) ? {
             url: entry.visual.url,
             width: entry.visual.width,
             height: entry.visual.height
