@@ -1,4 +1,10 @@
+import Enumerable from '@emonkak/enumerable'
 import React, { PureComponent, cloneElement } from 'react';
+
+import '@emonkak/enumerable/extensions/select';
+import '@emonkak/enumerable/extensions/takeWhile';
+import '@emonkak/enumerable/extensions/toArray';
+import '@emonkak/enumerable/extensions/where';
 
 import Entry from 'components/parts/Entry';
 import EntryPlaceholder from 'components/parts/EntryPlaceholder';
@@ -24,11 +30,17 @@ interface EntryListState {
     expandedEntryId: string | null;
 }
 
-function renderActiveEntry(child: React.ReactElement<any>) {
-    return cloneElement(child, {
+function renderChild(child: React.ReactElement<any>, isActive: boolean) {
+    return isActive ? cloneElement(child, {
         ...child.props,
-        isActive: true
-    });
+        isActive
+    }) : child;
+}
+
+function renderList(children: React.ReactNode): React.ReactElement<any> {
+    return (
+        <div className="entry-list">{children}</div>
+    );
 }
 
 export default class EntryList extends PureComponent<EntryListProps, EntryListState> {
@@ -73,40 +85,37 @@ export default class EntryList extends PureComponent<EntryListProps, EntryListSt
         }
     }
 
-    handleActivate(activeEntryId: string, activeEntryIndex: number) {
-        this.activeEntryId = activeEntryId;
-
+    handleActivate(activeKey: string) {
         const { onMarkAsRead } = this.props;
 
         if (onMarkAsRead) {
             const { entries } = this.props;
 
-            const readEntryIds = entries
-                .slice(0, activeEntryIndex)
-                .filter(entry => entry.readAt == null)
-                .map(entry => entry.entryId);
+            const readEntryIds = new Enumerable(entries)
+                .takeWhile((entry) => entry.entryId !== activeKey)
+                .where(entry => entry.readAt == null)
+                .select(entry => entry.entryId)
+                .toArray();
 
             if (readEntryIds.length > 0) {
                 onMarkAsRead(readEntryIds);
             }
         }
+
+        this.activeEntryId = activeKey;
     }
 
-    handleInactivate(inactiveEntryId: string, inactiveEntryIndex: number) {
+    handleInactivate(inactiveKey: string) {
         this.activeEntryId = null;
 
         const { onMarkAsRead } = this.props;
 
         if (onMarkAsRead) {
             const { entries } = this.props;
-            const latestIndex = entries.length - 1;
+            const latestEntry = entries[entries.length - 1];
 
-            if (inactiveEntryIndex === latestIndex) {
-                const entry = entries[latestIndex];
-
-                if (entry.readAt == null) {
-                    onMarkAsRead([entry.entryId]);
-                }
+            if (latestEntry.entryId === inactiveKey && latestEntry.readAt == null) {
+                onMarkAsRead([latestEntry.entryId]);
             }
         }
     }
@@ -171,13 +180,13 @@ export default class EntryList extends PureComponent<EntryListProps, EntryListSt
 
         return (
             <ScrollSpy
-                className="entry-list"
                 getScrollableParent={getScrollableParent}
                 isDisabled={isScrolling}
                 marginTop={SCROLL_OFFSET}
                 onActivate={this.handleActivate}
                 onInactivate={this.handleInactivate}
-                renderActiveChild={renderActiveEntry}>
+                renderList={renderList}
+                renderChild={renderChild}>
                 {entries.map(this.renderEntry.bind(this))}
             </ScrollSpy>
         );
