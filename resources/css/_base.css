@@ -12,9 +12,6 @@
   $negative-color: #ee6969;
   $negative-background-color: #fbdbdb;
 
-  $mark-color: #f1a962;
-  $mark-background-color: #f9efc4;
-
   $tint-color: #f7f9fc;
   $light-color: #e8edf2;
   $medium-color: #d3dbe3;
@@ -44,9 +41,6 @@
   --negative-active-color: color($negative-color lightness(+5%) alpha(90%));
   --negative-focus-outline-color: color($negative-color alpha(50%));
 
-  --mark-color: $mark-color;
-  --mark-background-color: $mark-background-color;
-
   --tint-color: $tint-color;
   --light-color: $light-color;
   --medium-color: $medium-color;
@@ -72,7 +66,7 @@
 }
 
 html, body {
-  font-family: -apple-system, 'BlinkMacSystemFont', '.SFNSDisplay-Regular', 'San Francisco Text', 'Segoe UI', 'Helvetica', 'YuGothic', 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, '.SFNSDisplay-Regular', 'San Francisco Text', 'Segoe UI', Helvetica, YuGothic, 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
   font-size: var(--font-size);
   line-height: var(--baseline-height);
   touch-action: manipulation;
@@ -142,20 +136,19 @@ dd {
 }
 
 pre, code, var, samp {
-  font-family: Consolas, Menlo, Monaco, monospace;
+  font-family: 'Operator Mono Book', Consolas, Menlo, Monaco, monospace;
 }
 
 code, var, samp {
   line-height: 1;
-  background-color: var(--positive-background-color);
+  background-color: var(--tint-color);
   padding: 2px 4px;
   border-radius: 4px;
 }
 
 pre {
   background-color: var(--tint-color);
-  border: 1px solid var(--medium-color);
-  padding: calc(var(--baseline-height) / 2 - 1px) calc(1.5rem - 1px);
+  padding: calc(var(--baseline-height) / 2) calc(1.5rem);
   overflow: auto;
   border-radius: 4px;
 }
@@ -239,7 +232,7 @@ strong {
 }
 
 mark {
-  background-color: var(--mark-background-color);
+  background-color: var(--positive-background-color);
   padding: 2px 4px;
   border-radius: 4px;
 }

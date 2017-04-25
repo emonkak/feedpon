@@ -148,15 +148,15 @@
   color: var(--invert-color);
 
   &:hover {
-    background-color: var(--invert-background-color);
+    background-color: var(--invert-color);
     border-color: transparent;
-    color: var(--invert-color);
+    color: var(--invert-background-color);
   }
 
   &:active {
-    background-color: var(--invert-active-hover-color);
+    background-color: var(--invert-active-color);
     border-color: transparent;
-    color: var(--invert-color);
+    color: var(--invert-background-color);
   }
 
   &:focus {

@@ -50,8 +50,8 @@
 }
 
 .modal-dialog {
-  background-color: var(--default-color);
-  color: var(--default-background-color);
+  background-color: var(--invert-background-color);
+  color: var(--invert-color);
   border-radius: 4px;
   padding: var(--baseline-height) 1.5rem;
   margin: 0 0 var(--baseline-height);
