@@ -1,26 +1,20 @@
-import { PropTypes, PureComponent, cloneElement } from 'react';
+import { PureComponent, cloneElement } from 'react';
 import { findDOMNode } from 'react-dom';
 
-interface Props {
+interface ClosableProps {
     children?: React.ReactElement<any>;
     isDisabled?: boolean;
     onClose?: () => void;
 }
 
-export default class Closable extends PureComponent<Props, {}> {
-    static propTypes = {
-        children: PropTypes.element.isRequired,
-        isDisabled: PropTypes.bool.isRequired,
-        onClose: PropTypes.func,
-    };
-
+export default class Closable extends PureComponent<ClosableProps, {}> {
     static defaultProps = {
-        isDisabled: false,
+        isDisabled: false
     }
 
     private childElement: Element;
 
-    constructor(props: Props, context: any) {
+    constructor(props: ClosableProps, context: any) {
         super(props, context);
 
         this.handleMouseCapture = this.handleMouseCapture.bind(this);

@@ -1,11 +1,11 @@
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
 import classnames from 'classnames';
 import { findDOMNode } from 'react-dom';
 
 import EntryInner from 'components/parts/EntryInner';
 import { Entry as EntryType } from 'messaging/types';
 
-interface Props {
+interface EntryProps {
     entry: EntryType;
     isActive?: boolean;
     isCollapsible?: boolean;
@@ -16,25 +16,14 @@ interface Props {
     onFetchFullContent: (entryId: string, url: string) => void;
 }
 
-export default class Entry extends PureComponent<Props, {}> {
-    static propTypes = {
-        entry: PropTypes.object.isRequired,
-        isActive: PropTypes.bool.isRequired,
-        isCollapsible: PropTypes.bool.isRequired,
-        isExpanded: PropTypes.bool.isRequired,
-        onClose: PropTypes.func,
-        onExpand: PropTypes.func,
-        onFetchComments: PropTypes.func,
-        onFetchFullContent: PropTypes.func
-    };
-
+export default class Entry extends PureComponent<EntryProps, {}> {
     static defaultProps = {
         isActive: false,
         isCollapsible: false,
         isExpanded: false
     };
 
-    constructor(props: Props, context: any) {
+    constructor(props: EntryProps, context: any) {
         super(props, context);
 
         this.handleClose = this.handleClose.bind(this);

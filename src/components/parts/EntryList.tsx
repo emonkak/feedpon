@@ -1,13 +1,15 @@
-import React, { PropTypes, PureComponent, cloneElement } from 'react';
+import React, { PureComponent, cloneElement } from 'react';
 
 import Entry from 'components/parts/Entry';
 import EntryPlaceholder from 'components/parts/EntryPlaceholder';
 import ScrollSpy from 'components/parts/ScrollSpy';
 import { Entry as EntryType, FeedView } from 'messaging/types';
 
+import getScrollableParent from 'utils/dom/getScrollableParent';
+
 const SCROLL_OFFSET = 48;
 
-interface Props {
+interface EntryListProps {
     entries: EntryType[];
     isLoading: boolean;
     isScrolling: boolean;
@@ -18,7 +20,7 @@ interface Props {
     view: FeedView;
 }
 
-interface State {
+interface EntryListState {
     expandedEntryId: string | null;
 }
 
@@ -29,22 +31,12 @@ function renderActiveEntry(child: React.ReactElement<any>) {
     });
 }
 
-export default class EntryList extends PureComponent<Props, State> {
-    static propTypes = {
-        entries: PropTypes.arrayOf(PropTypes.object).isRequired,
-        isLoading: PropTypes.bool.isRequired,
-        isScrolling: PropTypes.bool.isRequired,
-        onFetchComments: PropTypes.func,
-        onMarkAsRead: PropTypes.func,
-        scrollTo: PropTypes.func.isRequired,
-        view: PropTypes.oneOf(['expanded', 'collapsible']).isRequired
-    };
-
+export default class EntryList extends PureComponent<EntryListProps, EntryListState> {
     private activeEntryId: string | null = null;
 
     private scrollElement: HTMLElement | null = null;
 
-    constructor(props: Props, context: any) {
+    constructor(props: EntryListProps, context: any) {
         super(props, context);
 
         this.state = {
@@ -57,7 +49,7 @@ export default class EntryList extends PureComponent<Props, State> {
         this.handleClose = this.handleClose.bind(this);
     }
 
-    componentWillReceiveProps(nextProps: Props) {
+    componentWillReceiveProps(nextProps: EntryListProps) {
         if (nextProps.view !== this.props.view) {
             this.setState({
                 expandedEntryId: null
@@ -65,7 +57,7 @@ export default class EntryList extends PureComponent<Props, State> {
         }
     }
 
-    componentWillUpdate(nextProps: Props, nextState: State) {
+    componentWillUpdate(nextProps: EntryListProps, nextState: EntryListState) {
         if (nextProps.view !== this.props.view) {
             if (this.activeEntryId != null) {
                 this.scrollElement = document.getElementById('entry-' + this.activeEntryId);
@@ -73,7 +65,7 @@ export default class EntryList extends PureComponent<Props, State> {
         }
     }
 
-    componentDidUpdate(prevProps: Props, prevState: State) {
+    componentDidUpdate(prevProps: EntryListProps, prevState: EntryListState) {
         if (this.scrollElement) {
             this.props.scrollTo(0, this.scrollElement.offsetTop - SCROLL_OFFSET);
 
@@ -180,6 +172,7 @@ export default class EntryList extends PureComponent<Props, State> {
         return (
             <ScrollSpy
                 className="entry-list"
+                getScrollableParent={getScrollableParent}
                 isDisabled={isScrolling}
                 marginTop={SCROLL_OFFSET}
                 onActivate={this.handleActivate}

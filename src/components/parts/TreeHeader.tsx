@@ -1,14 +1,10 @@
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
 
-interface Props {
+interface TreeHeaderProps {
     children?: React.ReactNode
 }
 
-export default class TreeHeader extends PureComponent<Props, {}> {
-    static propTypes = {
-        children: PropTypes.node
-    };
-
+export default class TreeHeader extends PureComponent<TreeHeaderProps, {}> {
     render() {
         const { children } = this.props;
 

@@ -1,21 +1,15 @@
-import React, { Children, PropTypes, PureComponent, cloneElement } from 'react';
+import React, { Children, PureComponent, cloneElement } from 'react';
 import classnames from 'classnames';
 
 import createChainedFunction from 'utils/createChainedFunction';
 
-interface Props {
+interface MenuProps {
     children?: React.ReactNode;
     onSelect: (value: string | number | null) => void;
     pullRight?: boolean;
 }
 
-export default class Menu extends PureComponent<Props, {}> {
-    static propTypes = {
-        children: PropTypes.node,
-        onSelect: PropTypes.func,
-        pullRight: PropTypes.bool.isRequired
-    };
-
+export default class Menu extends PureComponent<MenuProps, {}> {
     static defaultProps = {
         onSelect: (key: string | number | null) => {},
         pullRight: false

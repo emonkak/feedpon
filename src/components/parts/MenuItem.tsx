@@ -1,6 +1,6 @@
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
 
-interface Props {
+interface MenuItemProps {
     isDisabled?: boolean;
     icon?: React.ReactNode;
     onSelect?: () => void;
@@ -8,15 +8,7 @@ interface Props {
     secondaryText?: React.ReactNode;
 }
 
-export default class MenuItem extends PureComponent<Props, {}> {
-    static propTypes = {
-        isDisabled: PropTypes.bool.isRequired,
-        icon: PropTypes.node,
-        onSelect: PropTypes.func,
-        primaryText: PropTypes.node,
-        secondaryText: PropTypes.node
-    };
-
+export default class MenuItem extends PureComponent<MenuItemProps, {}> {
     static defaultProps = {
         isDisabled: false
     };

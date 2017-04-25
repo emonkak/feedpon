@@ -1,22 +1,16 @@
 import { History } from 'history';
-import { PropTypes, PureComponent } from 'react';
+import { PureComponent } from 'react';
 
 import connect from 'utils/react/connect';
 import { Credential, State } from 'messaging/types';
 
-interface Props {
+interface AuthenticationRequiredProps {
     children: React.ReactElement<any>;
     credential: Credential;
     router: History;
 }
 
-class AuthenticationRequired extends PureComponent<Props, {}> {
-    static propTypes = {
-        children: PropTypes.element.isRequired,
-        credential: PropTypes.object,
-        router: PropTypes.object.isRequired
-    };
-
+class AuthenticationRequired extends PureComponent<AuthenticationRequiredProps, {}> {
     componentWillMount() {
         this.update();
     }

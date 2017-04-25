@@ -1,16 +1,11 @@
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
 
-interface Props {
+interface NavbarProps {
     children?: React.ReactNode;
     onToggleSidebar?: () => void;
 }
 
-export default class Navbar extends PureComponent<Props, {}> {
-    static propTypes = {
-        children: PropTypes.node,
-        onToggleSidebar: PropTypes.func,
-    };
-
+export default class Navbar extends PureComponent<NavbarProps, {}> {
     handleToggleSidebar(event: React.SyntheticEvent<any>) {
         event.preventDefault();
 

@@ -1,17 +1,13 @@
-import { Children, PropTypes, PureComponent } from 'react';
+import PropTypes from 'prop-types';
+import { Children, PureComponent } from 'react';
 
 import Store from '../Store';
 
-type StoreContextProps = {
+interface StoreContextProps {
     store: Store<any, any>
 };
 
 export default class StoreContext extends PureComponent<StoreContextProps, {}> {
-    static propTypes = {
-        store: PropTypes.instanceOf(Store).isRequired,
-        children: PropTypes.element.isRequired
-    };
-
     static childContextTypes = {
         store: PropTypes.instanceOf(Store).isRequired
     };

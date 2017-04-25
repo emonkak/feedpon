@@ -1,4 +1,4 @@
-import React, { PropTypes, PureComponent, cloneElement } from 'react';
+import React, { PureComponent, cloneElement } from 'react';
 import classnames from 'classnames';
 
 import Closable from 'components/parts/Closable';
@@ -19,18 +19,9 @@ interface DropdownState {
 }
 
 export default class Dropdown extends PureComponent<DropdownProps, DropdownState> {
-    static propTypes = {
-        className: PropTypes.string,
-        isOpened: PropTypes.bool.isRequired,
-        onClose: PropTypes.func,
-        onSelect: PropTypes.func,
-        pullRight: PropTypes.bool,
-        toggleButton: PropTypes.element.isRequired
-    };
-
     static defaultProps = {
         isOpened: false,
-        pullRight: false,
+        pullRight: false
     };
 
     constructor(props: DropdownProps, context: any) {

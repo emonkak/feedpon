@@ -1,4 +1,4 @@
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
 import classnames from 'classnames';
 
 import CleanHtml from 'components/parts/CleanHtml';
@@ -23,14 +23,6 @@ interface EntryInnerState {
 }
 
 export default class EntryInner extends PureComponent<EntryInnerProps, EntryInnerState> {
-    static propTypes = {
-        entry: PropTypes.object.isRequired,
-        onClose: PropTypes.func.isRequired,
-        onExpand: PropTypes.func.isRequired,
-        onFetchComments: PropTypes.func.isRequired,
-        onFetchFullContent: PropTypes.func.isRequired
-    };
-
     constructor(props: EntryInnerProps, context: any) {
         super(props, context);
 

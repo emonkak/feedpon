@@ -1,4 +1,5 @@
-import { ComponentClass, PropTypes, PureComponent, createElement } from 'react';
+import PropTypes from 'prop-types';
+import { ComponentClass, PureComponent, createElement } from 'react';
 
 import Store from '../Store';
 

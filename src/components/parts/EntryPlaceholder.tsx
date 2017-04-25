@@ -1,17 +1,12 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
 import classnames from 'classnames';
 
-interface Props {
+interface EntryPlaceholderProps {
     isCollapsible?: boolean;
     isExpanded?: boolean;
 }
 
-export default class EntryPlaceholder extends React.Component<Props, {}> {
-    static propTypes = {
-        isCollapsible: PropTypes.bool.isRequired,
-        isExpanded: PropTypes.bool.isRequired
-    };
-
+export default class EntryPlaceholder extends React.Component<EntryPlaceholderProps, {}> {
     static defaultProps = {
         isCollapsible: false,
         isExpanded: false

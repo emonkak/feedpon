@@ -1,5 +1,5 @@
 import Enumerable from '@emonkak/enumerable';
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
 import classnames from 'classnames';
 import { History } from 'history';
 
@@ -30,16 +30,6 @@ interface SidebarProps {
 }
 
 class Sidebar extends PureComponent<SidebarProps, {}> {
-    static propTypes = {
-        categories: PropTypes.array.isRequired,
-        isLoading: PropTypes.bool.isRequired,
-        lastUpdatedAt: PropTypes.string,
-        onFetchSubscriptions: PropTypes.func.isRequired,
-        router: PropTypes.object.isRequired,
-        selectedValue: PropTypes.string,
-        subscriptions: PropTypes.array.isRequired
-    };
-
     componentWillMount() {
         const { lastUpdatedAt, onFetchSubscriptions } = this.props;
 

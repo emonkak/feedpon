@@ -1,27 +1,21 @@
-import React, { Children, PropTypes, PureComponent, cloneElement } from 'react';
+import React, { Children, PureComponent, cloneElement } from 'react';
 
 import TreeBranch from 'components/parts/TreeBranch';
 import TreeLeaf from 'components/parts/TreeLeaf';
 import createChainedFunction from 'utils/createChainedFunction';
 
-interface Props {
+interface TreeProps {
     children?: React.ReactNode;
     onSelect?: (value: string | number) => void;
     value?: string | number;
 };
 
-interface State {
+interface TreeState {
     value: string | number | undefined;
 };
 
-export default class Tree extends PureComponent<Props, State> {
-    static propTypes = {
-        value: PropTypes.string,
-        children: PropTypes.node.isRequired,
-        onSelect: PropTypes.func
-    };
-
-    constructor(props: Props, context: any) {
+export default class Tree extends PureComponent<TreeProps, TreeState> {
+    constructor(props: TreeProps, context: any) {
         super(props, context);
 
         this.state = {
@@ -29,7 +23,7 @@ export default class Tree extends PureComponent<Props, State> {
         };
     }
 
-    componentWillReceiveProps(nextProps: Props) {
+    componentWillReceiveProps(nextProps: TreeProps) {
         if (this.props.value !== nextProps.value) {
             this.setState({
                 value: nextProps.value

@@ -1,22 +1,16 @@
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
 import { findDOMNode } from 'react-dom';
 
 import cleanNode from 'utils/dom/cleanNode';
 import walkNode from 'utils/dom/walkNode';
 
-interface Props {
+interface CleanHtmlProps {
     className?: string;
     baseUrl: string;
     html: string | null;
 }
 
-export default class CleanHtml extends PureComponent<Props, {}> {
-    static propTypes = {
-        baseUrl: PropTypes.string.isRequired,
-        className: PropTypes.string,
-        html: PropTypes.string
-    };
-
+export default class CleanHtml extends PureComponent<CleanHtmlProps, {}> {
     componentDidMount() {
         this.update();
     }

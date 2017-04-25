@@ -1,4 +1,4 @@
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
 
 import Comment from 'components/parts/Comment';
 import { Comments } from 'messaging/types';
@@ -8,10 +8,6 @@ interface CommentPopoverContentProps {
 }
 
 export default class CommentPopoverContent extends PureComponent<CommentPopoverContentProps, {}> {
-    static propTypes = {
-        comments: PropTypes.object.isRequired
-    };
-
     render() {
         const { comments } = this.props;
 

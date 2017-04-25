@@ -1,4 +1,4 @@
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
 
 import Dropdown from 'components/parts/Dropdown';
 import MenuItem from 'components/parts/MenuItem';
@@ -23,16 +23,6 @@ interface FeedNavbarProps {
 };
 
 class FeedNavbar extends PureComponent<FeedNavbarProps, {}> {
-    static propTypes = {
-        feed: PropTypes.object,
-        onChangeFeedView: PropTypes.func.isRequired,
-        onClearReadEntries: PropTypes.func.isRequired,
-        onFetchFeed: PropTypes.func.isRequired,
-        onToggleSidebar: PropTypes.func.isRequired,
-        onUpdateSiteinfo: PropTypes.func.isRequired,
-        scrollTo: PropTypes.func.isRequired
-    };
-
     handleChangeEntryOrder(order: 'newest' | 'oldest') {
         const { feed, onFetchFeed, scrollTo } = this.props;
 

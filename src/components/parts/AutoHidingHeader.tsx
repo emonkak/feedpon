@@ -1,11 +1,11 @@
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
 import classnames from 'classnames';
 import { findDOMNode } from 'react-dom';
 
 import getScrollableParent from 'utils/dom/getScrollableParent';
 import throttleEventHandler from 'utils/throttleEventHandler';
 
-interface Props {
+interface AutoHidingHeaderProps {
     children?: React.ReactNode;
     className?: string;
     getScrollableParent?: (element: Element) => Element;
@@ -14,20 +14,11 @@ interface Props {
     tolerance?: number;
 }
 
-interface State {
+interface AutoHidingHeaderState {
     isPinned: boolean;
 }
 
-export default class AutoHidingHeader extends PureComponent<Props, State> {
-    static propTypes = {
-        children: PropTypes.node.isRequired,
-        className: PropTypes.string,
-        getScrollableParent: PropTypes.func,
-        isPinned: PropTypes.bool.isRequired,
-        scrollThrottleTime: PropTypes.number.isRequired,
-        tolerance: PropTypes.number.isRequired
-    };
-
+export default class AutoHidingHeader extends PureComponent<AutoHidingHeaderProps, AutoHidingHeaderState> {
     static defaultProps = {
         getScrollableParent,
         isPinned: true,

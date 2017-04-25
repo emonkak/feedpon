@@ -1,9 +1,9 @@
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
 import classnames from 'classnames';
 
 import TreeNode from 'components/parts/TreeNode';
 
-interface Props {
+interface TreeLeafProps {
     className?: string;
     icon?: React.ReactElement<any>;
     isSelected?: boolean;
@@ -13,19 +13,9 @@ interface Props {
     value: string | number;
 }
 
-export default class TreeLeaf extends PureComponent<Props, {}> {
-    static propTypes = {
-        className: PropTypes.string,
-        icon: PropTypes.element,
-        isSelected: PropTypes.bool.isRequired,
-        onSelect: PropTypes.func,
-        primaryText: PropTypes.string.isRequired,
-        secondaryText: PropTypes.string,
-        value: PropTypes.any.isRequired,
-    };
-
+export default class TreeLeaf extends PureComponent<TreeLeafProps, {}> {
     static defaultProps = {
-        isSelected: false,
+        isSelected: false
     }
 
     handleSelect(event: React.SyntheticEvent<any>) {

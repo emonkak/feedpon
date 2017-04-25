@@ -1,5 +1,5 @@
 import Enumerable from '@emonkak/enumerable';
-import React, { Children, PropTypes, PureComponent } from 'react';
+import React, { Children, PureComponent } from 'react';
 import { findDOMNode } from 'react-dom';
 
 import '@emonkak/enumerable/extensions/firstOrDefault';
@@ -7,31 +7,33 @@ import '@emonkak/enumerable/extensions/maxBy';
 import '@emonkak/enumerable/extensions/select';
 import '@emonkak/enumerable/extensions/where';
 
-import getScrollableParent from 'utils/dom/getScrollableParent';
 import throttleEventHandler from 'utils/throttleEventHandler';
 
-const initialState = {
+interface ScrollSpyProps {
+    className?: string;
+    getScrollableParent: (element: Element) => Element | Window;
+    isDisabled?: boolean;
+    marginBottom?: number;
+    marginTop?: number;
+    onActivate?: (key: string | number, index: number) => void;
+    onInactivate?: (key: string | number, index: number) => void;
+    renderActiveChild: (child: React.ReactElement<any>) => React.ReactElement<any>;
+    scrollThrottleTime?: number;
+}
+
+interface ScrollSpyState {
+    activeKey: string | number;
+    activeIndex: number;
+}
+
+const initialState: ScrollSpyState = {
     activeKey: '',
     activeIndex: -1
 };
 
-export default class ScrollSpy extends PureComponent<any, any> {
-    static propTypes = {
-        children: PropTypes.node.isRequired,
-        className: PropTypes.string,
-        getScrollableParent: PropTypes.func.isRequired,
-        isDisabled: PropTypes.bool.isRequired,
-        marginBottom: PropTypes.number.isRequired,
-        marginTop: PropTypes.number.isRequired,
-        onActivate: PropTypes.func,
-        onInactivate: PropTypes.func,
-        renderActiveChild: PropTypes.func.isRequired,
-        scrollThrottleTime: PropTypes.number.isRequired
-    };
-
+export default class ScrollSpy extends PureComponent<ScrollSpyProps, ScrollSpyState> {
     static defaultProps = {
         isDisabled: false,
-        getScrollableParent,
         marginBottom: 0,
         marginTop: 0,
         renderActiveChild: (child: React.ReactElement<any>) => child,
@@ -40,31 +42,35 @@ export default class ScrollSpy extends PureComponent<any, any> {
 
     private readonly registry = new ScrollSpyRegistry();
 
-    private scrollable: any;
+    private scrollable: Element | Window | null = null;
 
-    constructor(props: any, context: any) {
+    constructor(props: ScrollSpyProps, context: any) {
         super(props, context);
 
         this.state = initialState;
 
-        this.handleScroll = throttleEventHandler(this.handleScroll.bind(this), props.scrollThrottleTime);
+        this.handleScroll = throttleEventHandler(this.handleScroll.bind(this), props.scrollThrottleTime!);
     }
 
     componentDidMount() {
-        this.scrollable = this.props.getScrollableParent(findDOMNode(this));
+        const scrollable = this.props.getScrollableParent(findDOMNode(this));
 
-        this.scrollable.addEventListener('scroll', this.handleScroll);
-        this.scrollable.addEventListener('touchmove', this.handleScroll);
+        scrollable.addEventListener('scroll', this.handleScroll);
+        scrollable.addEventListener('touchmove', this.handleScroll);
+
+        this.scrollable = scrollable;
 
         this.update();
     }
 
     componentWillUnmount() {
-        this.scrollable.removeEventListener('scroll', this.handleScroll);
-        this.scrollable.removeEventListener('touchmove', this.handleScroll);
+        if (this.scrollable) {
+            this.scrollable.removeEventListener('scroll', this.handleScroll);
+            this.scrollable.removeEventListener('touchmove', this.handleScroll);
+        }
     }
 
-    componentWillReceiveProps(nextProps: any) {
+    componentWillReceiveProps(nextProps: ScrollSpyProps) {
         if (this.props.isDisabled !== nextProps.isDisabled) {
             if (nextProps.isDisabled) {
                 this.setState(initialState);
@@ -82,11 +88,31 @@ export default class ScrollSpy extends PureComponent<any, any> {
         }
     }
 
-    update() {
+    getScrollState() {
+        let scrollTop = 0;
+        let scrollBottom = 0;
+        let scrollHeight = 0;
+
+        if (this.scrollable instanceof Element) {
+            scrollTop = this.scrollable.scrollTop;
+            scrollBottom = scrollTop + this.scrollable.clientHeight;
+            scrollHeight = this.scrollable.scrollHeight;
+        } else if (this.scrollable instanceof Window) {
+            scrollTop = this.scrollable.scrollY;
+            scrollBottom = scrollTop + this.scrollable.innerHeight;
+            scrollHeight = this.scrollable.document.documentElement.scrollHeight;
+        }
+
         const { marginBottom, marginTop } = this.props;
-        const scrollTop = (this.scrollable.scrollY || this.scrollable.scrollTop || 0) + marginTop;
-        const scrollBottom = scrollTop + (this.scrollable.innerHeight || this.scrollable.clientHeight || 0) - marginBottom;
-        const scrollHeight = (this.scrollable.document ? this.scrollable.document.documentElement : this.scrollable).scrollHeight || 0;
+
+        scrollTop += marginTop || 0;
+        scrollBottom -= marginBottom || 0;
+
+        return { scrollTop, scrollBottom, scrollHeight };
+    }
+
+    update() {
+        const { scrollTop, scrollBottom, scrollHeight } = this.getScrollState();
 
         const { key: activeKey, index: activeIndex } = this.registry.getActiveKeyAndIndex(scrollTop, scrollBottom, scrollHeight);
         const { activeKey: prevActiveKey, activeIndex: prevActiveIndex } = this.state;
@@ -119,21 +145,27 @@ export default class ScrollSpy extends PureComponent<any, any> {
     }
 
     renderChild(child: React.ReactElement<any>, index: number) {
-        const { renderActiveChild } = this.props;
-        const { activeKey } = this.state;
+        const childKey = child.key;
 
-        if (child.key === activeKey) {
-            child = renderActiveChild(child);
+        if (childKey) {
+            const { renderActiveChild } = this.props;
+            const { activeKey } = this.state;
+
+            if (childKey === activeKey) {
+                child = renderActiveChild(child);
+            }
+
+            return (
+                <ScrollSpyChild
+                    index={index}
+                    registry={this.registry}
+                    spyKey={childKey}>
+                    {child}
+                </ScrollSpyChild>
+            );
         }
 
-        return (
-            <ScrollSpyChild
-                index={index}
-                keyForSpy={child.key}
-                registry={this.registry}>
-                {child}
-            </ScrollSpyChild>
-        );
+        return child;
     }
 
     render() {
@@ -147,26 +179,23 @@ export default class ScrollSpy extends PureComponent<any, any> {
     }
 }
 
-class ScrollSpyChild extends PureComponent<any, any> {
-    static propTypes = {
-        children: PropTypes.element.isRequired,
-        index: PropTypes.number.isRequired,
-        keyForSpy: PropTypes.oneOfType([
-            PropTypes.string,
-            PropTypes.number
-        ]).isRequired,
-        registry: PropTypes.shape({
-            register: PropTypes.func.isRequired,
-            unregister: PropTypes.func.isRequired
-        }).isRequired
-    };
+interface ScrollSpyChildProps {
+    index: number;
+    spyKey: string | number;
+    registry: ScrollSpyRegistry;
+}
 
+class ScrollSpyChild extends PureComponent<ScrollSpyChildProps, {}> {
     componentDidMount() {
-        this.props.registry.register(findDOMNode(this), this.props.keyForSpy, this.props.index);
+        const element = findDOMNode(this) as HTMLElement;
+
+        this.props.registry.register(element, this.props.spyKey, this.props.index);
     }
 
     componentWillUnmount() {
-        this.props.registry.unregister(findDOMNode(this));
+        const element = findDOMNode(this) as HTMLElement;
+
+        this.props.registry.unregister(element);
     }
 
     render() {
@@ -174,12 +203,12 @@ class ScrollSpyChild extends PureComponent<any, any> {
     }
 }
 
-type KeyAndIndex = { key: string, index: number };
+type KeyAndIndex = { key: string | number, index: number };
 
 class ScrollSpyRegistry {
     private readonly childKeys: Map<HTMLElement, KeyAndIndex> = new Map();
 
-    register(element: HTMLElement, key: string, index: number): void {
+    register(element: HTMLElement, key: string | number, index: number): void {
         this.childKeys.set(element, { key, index });
     }
 

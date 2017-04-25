@@ -1,4 +1,4 @@
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
 import { Params } from 'react-router/lib/Router';
 
 import Dropdown from 'components/parts/Dropdown';
@@ -24,19 +24,6 @@ interface FeedProps {
 };
 
 class Feed extends PureComponent<FeedProps, {}> {
-    static propTypes = {
-        categories: PropTypes.array.isRequired,
-        feed: PropTypes.object.isRequired,
-        isScrolling: PropTypes.bool.isRequired,
-        onFetchComments: PropTypes.func.isRequired,
-        onFetchFullContent: PropTypes.func.isRequired,
-        onFetchFeed: PropTypes.func.isRequired,
-        onReadEntry: PropTypes.func.isRequired,
-        onSaveReadEntries: PropTypes.func.isRequired,
-        params: PropTypes.object.isRequired,
-        scrollTo: PropTypes.func.isRequired
-    };
-
     constructor(props: FeedProps, context: any) {
         super(props, context);
 

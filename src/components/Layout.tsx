@@ -1,4 +1,4 @@
-import React, { PropTypes, PureComponent, cloneElement } from 'react';
+import React, { PureComponent, cloneElement } from 'react';
 import classnames from 'classnames';
 import { History, Location } from 'history';
 
@@ -19,13 +19,6 @@ interface LayoutState {
 }
 
 export default class Layout extends PureComponent<LayoutProps, LayoutState> {
-    static propTypes = {
-        content: PropTypes.element.isRequired,
-        navbar: PropTypes.element.isRequired,
-        location: PropTypes.object.isRequired,
-        router: PropTypes.object.isRequired,
-    };
-
     private unsubscribe: () => void | null;
 
     constructor(props: LayoutProps, context: any) {

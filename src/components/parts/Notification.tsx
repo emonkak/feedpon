@@ -1,23 +1,16 @@
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
 import classnames from 'classnames';
 
 import { NotificationKind } from 'messaging/types';
 
-interface Props {
+interface NotificationProps {
     children?: React.ReactNode;
     isReversed?: boolean;
     kind?: NotificationKind;
     onClose: () => void;
 }
 
-export default class Notification extends PureComponent<Props, {}> {
-    static propTypes = {
-        children: PropTypes.node.isRequired,
-        isReversed: PropTypes.bool.isRequired,
-        kind: PropTypes.oneOf(['default', 'positive', 'negative']).isRequired,
-        onClose: PropTypes.func,
-    };
-
+export default class Notification extends PureComponent<NotificationProps, {}> {
     static defaultProps = {
         isReversed: false,
         kind: 'default'

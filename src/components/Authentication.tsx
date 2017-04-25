@@ -1,4 +1,4 @@
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
 import { Location } from 'history';
 
 import bindAction from 'utils/bindAction';
@@ -12,11 +12,6 @@ interface AuthenticationProps {
 }
 
 class Authentication extends PureComponent<AuthenticationProps, {}> {
-    static propTypes = {
-        location: PropTypes.object.isRequired,
-        onAuthenticate: PropTypes.func.isRequired
-    };
-
     handleAuthenticate() {
         const { onAuthenticate } = this.props;
 

@@ -1,9 +1,9 @@
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
 import classnames from 'classnames';
 
 import TreeNode from 'components/parts/TreeNode';
 
-interface Props {
+interface TreeBranchProps {
     children?: React.ReactNode;
     className?: string;
     isExpanded?: boolean;
@@ -15,28 +15,16 @@ interface Props {
     value: string | number;
 };
 
-interface State {
+interface TreeBranchState {
     isExpanded: boolean;
 };
 
-export default class TreeBranch extends PureComponent<Props, State> {
-    static propTypes = {
-        children: PropTypes.node.isRequired,
-        className: PropTypes.string,
-        isExpanded: PropTypes.bool,
-        isSelected: PropTypes.bool,
-        onExpand: PropTypes.func,
-        onSelect: PropTypes.func,
-        primaryText: PropTypes.string.isRequired,
-        secondaryText: PropTypes.string,
-        value: PropTypes.any.isRequired,
-    };
-
+export default class TreeBranch extends PureComponent<TreeBranchProps, TreeBranchState> {
     static defaultProps = {
         isExpanded: false,
     }
 
-    constructor(props: Props, context: any) {
+    constructor(props: TreeBranchProps, context: any) {
         super(props, context);
 
         this.state = {
@@ -44,7 +32,7 @@ export default class TreeBranch extends PureComponent<Props, State> {
         };
     }
 
-    componentWillReceiveProps(nextProps: Props) {
+    componentWillReceiveProps(nextProps: TreeBranchProps) {
         if (this.props.isExpanded !== nextProps.isExpanded) {
             this.setState(state => ({
                 ...state,

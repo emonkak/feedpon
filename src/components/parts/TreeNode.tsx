@@ -1,7 +1,7 @@
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
 import classnames from 'classnames';
 
-interface Props {
+interface TreeNodeProps {
     className?: string,
     icon?: React.ReactElement<any>,
     onIconClick?: (event: React.SyntheticEvent<any>) => void;
@@ -10,16 +10,7 @@ interface Props {
     secondaryText?: string;
 }
 
-export default class TreeNode extends PureComponent<Props, {}> {
-    static propTypes = {
-        className: PropTypes.string,
-        icon: PropTypes.element,
-        onIconClick: PropTypes.func,
-        onTextClick: PropTypes.func,
-        primaryText: PropTypes.string.isRequired,
-        secondaryText: PropTypes.string,
-    };
-
+export default class TreeNode extends PureComponent<TreeNodeProps, {}> {
     renderIcon() {
         const { icon, onIconClick } = this.props;
 

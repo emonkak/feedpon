@@ -1,5 +1,5 @@
 import CSSTransitionGroup from 'react-addons-css-transition-group';
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
 import classnames from 'classnames';
 
 import Notification from 'components/parts/Notification';
@@ -15,12 +15,6 @@ interface NotificationsProps {
 }
 
 class Notifications extends PureComponent<NotificationsProps, {}> {
-    static propTypes = {
-        onDismissNotification: PropTypes.func.isRequired,
-        isReversed: PropTypes.bool.isRequired,
-        notifications: PropTypes.arrayOf(PropTypes.object).isRequired
-    };
-
     static defaultProps = {
         isReversed: false
     };

@@ -1,28 +1,23 @@
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
 import moment from 'moment';
 
-interface Props {
+interface RelativeTimeProps {
     time: string;
     refreshInterval?: number;
 }
 
-interface State {
+interface RelativeTimeState {
     relativeTime: string;
 }
 
-export default class RelativeTime extends PureComponent<Props, State> {
-    static propTypes = {
-        time: PropTypes.string.isRequired,
-        refreshInterval: PropTypes.number.isRequired
-    };
-
+export default class RelativeTime extends PureComponent<RelativeTimeProps, RelativeTimeState> {
     static defaultProps = {
         refreshInterval: 1000 * 30
     };
 
-    private timer: number | null;
+    private timer: number | null = null;
 
-    constructor(props: any, context: any) {
+    constructor(props: RelativeTimeProps, context: any) {
         super(props, context);
 
         this.state = {

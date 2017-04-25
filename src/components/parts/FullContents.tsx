@@ -1,4 +1,4 @@
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
 
 import CleanHtml from 'components/parts/CleanHtml';
 import { FullContent } from 'messaging/types';
@@ -11,13 +11,6 @@ interface FullContentsProps {
 }
 
 export default class FullContents extends PureComponent<FullContentsProps, {}> {
-    static propTypes = {
-        isLoading: PropTypes.bool.isRequired,
-        items: PropTypes.arrayOf(PropTypes.object).isRequired,
-        nextPageUrl: PropTypes.string,
-        onFetchNext: PropTypes.func.isRequired
-    };
-
     render() {
         const { isLoading, items, nextPageUrl, onFetchNext } = this.props;
 
