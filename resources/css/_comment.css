@@ -1,6 +1,6 @@
 .comment-list {
   margin: var(--baseline-height) 0;
-  background-color: var(--light-color);
+  background-color: var(--tint-color);
 }
 
 .comment {

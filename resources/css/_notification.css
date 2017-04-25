@@ -16,7 +16,7 @@
   align-items: stretch;
   box-sizing: border-box;
   min-height: var(--navbar-height);
-  background-color: var(--light-color);
+  background-color: var(--tint-color);
   border-bottom: 1px solid var(--medium-color);
 }
 

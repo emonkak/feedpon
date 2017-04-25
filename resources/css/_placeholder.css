@@ -10,7 +10,7 @@
 
 .placeholder {
   display: inline-block;
-  background: linear-gradient(to right, var(--medium-light-color) 0%, var(--medium-color) 15%, var(--medium-light-color) 30%);
+  background: linear-gradient(to right, var(--light-color) 0%, var(--medium-color) 15%, var(--light-color) 30%);
   background-size: 100vw 100%;
   border-radius: 4px;
   line-height: 1;

@@ -43,6 +43,6 @@
 }
 
 a.list-group-item:hover {
-  background-color: var(--light-color);
+  background-color: var(--tint-color);
   text-decoration: none;
 }

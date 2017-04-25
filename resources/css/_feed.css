@@ -1,7 +1,7 @@
 .feed-header {
   position: relative;
   padding: calc(var(--baseline-height) / 2) 0 calc(var(--baseline-height) / 2 - 1px);
-  background-color: var(--light-color);
+  background-color: var(--tint-color);
   border-bottom: 1px solid var(--medium-color);
   z-index: 20;
 }
@@ -31,7 +31,7 @@
   justify-content: center;
   width: 100%;
   height: calc(100vh - var(--navbar-height));
-  background-color: var(--light-color);
+  background-color: var(--tint-color);
   text-align: center;
   font-weight: 600;
 }

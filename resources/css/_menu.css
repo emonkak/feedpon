@@ -18,7 +18,7 @@
 }
 
 .menu-item:not(.is-disabled):hover {
-  background-color: var(--medium-light-color);
+  background-color: var(--light-color);
   text-decoration: none;
 }
 

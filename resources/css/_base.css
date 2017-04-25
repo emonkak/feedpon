@@ -3,21 +3,22 @@
 @custom-media --lg-viewport (min-width: 980px);
 
 :root {
-  --default-color: #222222;
+  --default-color: #203442;
   --default-background-color: #ffffff;
 
-  --light-color: #fafafa;
-  --medium-light-color: #ececec;
-  --medium-color: #dfdfdf;
-  --dark-color: #7a7a7a;
+  --tint-color: #f7f9fc;
+  --light-color: #e8edf2;
+  --medium-color: #d3dbe3;
+  --dark-color: #7e8998;
 
-  --positive-color: #0074bf;
-  --positive-light-color: #d6eaf4;
+  --positive-color: #2eabff;
+  --positive-light-color: #e0f3ff;
 
-  --negative-color: #bf0015;
-  --negative-light-color: #f4d6db;
+  --negative-color: #ee6969;
+  --negative-light-color: #fbdbdb;
 
-  --highlight-color: #f7e799;
+  --mark-color: #f1a962;
+  --mark-light-color: #f9efc4;
 
   --font-size: 14px;
   --baseline-height: 24px;
@@ -89,7 +90,7 @@ hr {
   width: 72px;
   height: 12px;
   border: 0;
-  background-color: var(--medium-color);
+  background-color: var(--light-color);
   mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2 1"><circle cx="1" cy="0.5" r="0.5"/></svg>');
   mask-repeat: repeat;
 }
@@ -118,7 +119,7 @@ code, var, samp {
 }
 
 pre {
-  background-color: var(--light-color);
+  background-color: var(--tint-color);
   border: 1px solid var(--medium-color);
   padding: calc(var(--baseline-height) / 2 - 1px) calc(1.5rem - 1px);
   overflow: auto;
@@ -134,7 +135,7 @@ pre * {
 
 blockquote {
   position: relative;
-  border-left: 4px solid var(--medium-color);
+  border-left: 4px solid var(--light-color);
   padding: calc(var(--baseline-height) / 2) 1.5rem calc(var(--baseline-height) / 2) calc(1.5rem - 4px);
 }
 
@@ -173,11 +174,11 @@ th {
 }
 
 .table-striped tbody tr:nth-of-type(odd) {
-  background-color: var(--light-color);
+  background-color: var(--tint-color);
 }
 
 caption {
-  font-weight: bold;
+  font-weight: 600;
   caption-side: bottom;
   color: var(--dark-color);
   text-align: center;
@@ -204,7 +205,7 @@ strong {
 }
 
 mark {
-  background-color: var(--highlight-color);
+  background-color: var(--mark-light-color);
   padding: 2px 4px;
   border-radius: 4px;
 }

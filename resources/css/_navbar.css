@@ -49,11 +49,11 @@ a.navbar-title:hover {
 }
 
 .navbar-toggle-icon:hover {
-  background-color: var(--light-color);
+  background-color: var(--tint-color);
 }
 
 .navbar-toggle-icon:active {
-  background-color: var(--medium-light-color);
+  background-color: var(--light-color);
 }
 
 .navbar-action {
@@ -71,7 +71,7 @@ a.navbar-title:hover {
 }
 
 .navbar-action:hover {
-  background-color: var(--light-color);
+  background-color: var(--tint-color);
 }
 
 @media (--md-viewport) {

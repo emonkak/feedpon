@@ -6,8 +6,8 @@
 }
 
 .entry.is-active {
-  box-shadow: 0 2px 18px color(var(--default-color) alpha(25%)),
-              0 0 6px color(var(--default-color) alpha(25%));
+  box-shadow: 0 2px 18px color(var(--default-color) alpha(20%)),
+              0 0 6px color(var(--default-color) alpha(20%));
   z-index: 10;
 }
 
@@ -126,6 +126,7 @@ a.entry-info:hover {
 }
 
 .entry-info + .entry-info::before {
+  font-weight: normal;
   content: '\00a0\00b7\00a0';
 }
 
