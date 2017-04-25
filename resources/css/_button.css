@@ -10,8 +10,8 @@
   text-decoration: none;
   white-space: nowrap;
   vertical-align: middle;
-  box-shadow: 0 2px 2px color(var(--default-color) alpha(20%)),
-              0 0 1px color(var(--default-color) alpha(20%));
+  box-shadow: 0 2px 2px var(--shadow-color),
+              0 0 1px var(--shadow-color);
   transition-property: background-color, border-color, box-shadow, color, opacity;
   transition-duration: 0.2s;
   transition-timing-function: ease-in-out;
@@ -35,15 +35,15 @@
   color: var(--default-background-color);
 
   &:hover {
-    background-color: color(var(--default-color) lightness(+5%));
+    background-color: var(--default-hover-color);
   }
 
   &:active {
-    background-color: color(var(--default-color) lightness(+5%) alpha(90%));
+    background-color: var(--default-active-color);
   }
 
   &:focus {
-    box-shadow: 0 0 0 2px color(var(--default-color) alpha(50%));
+    box-shadow: 0 0 0 2px var(default-focus-outline-color);
   }
 
   &:disabled {
@@ -52,23 +52,23 @@
 }
 
 .button-invert {
-  background-color: var(--default-background-color);
-  color: var(--default-color);
+  background-color: var(--invert-color);
+  color: var(--invert-background-color);
 
   &:hover {
-    background-color: color(var(--default-background-color) lightness(-5%));
+    background-color: var(--invert-hover-color);
   }
 
   &:active {
-    background-color: color(var(--default-background-color) lightness(-5%) alpha(90%));
+    background-color: var(--invert-active-hover-color);
   }
 
   &:focus {
-    box-shadow: 0 0 0 2px color(var(--default-background-color) alpha(50%));
+    box-shadow: 0 0 0 2px var(--invert-focus-outline-color);
   }
 
   &:disabled {
-    background-color: var(--default-background-color);
+    background-color: var(--invert-color);
   }
 }
 
@@ -77,19 +77,19 @@
   color: var(--default-background-color);
 
   &:hover {
-    background-color: color(var(--positive-color) lightness(+5%));
+    background-color: var(--positive-hover-color);
   }
 
   &:active {
-    background-color: color(var(--positive-color) lightness(+5%) alpha(90%));
+    background-color: var(--positive-active-color);
   }
 
   &:focus {
-    box-shadow: 0 0 0 2px color(var(--positive-color) alpha(50%));
+    box-shadow: 0 0 0 2px var(--positive-focus-outline-color);
   }
 
   &:disabled {
-    background-color: var(--default-background-color);
+    background-color: var(--positive-color);
   }
 }
 
@@ -98,19 +98,19 @@
   color: var(--default-background-color);
 
   &:hover {
-    background-color: color(var(--negative-color) lightness(+5%));
+    background-color: var(--negative-hover-color);
   }
 
   &:active {
-    background-color: color(var(--negative-color) lightness(+5%) alpha(90%));
+    background-color: var(--negative-active-color);
   }
 
   &:focus {
-    box-shadow: 0 0 0 2px color(var(--negative-color) alpha(50%));
+    box-shadow: 0 0 0 2px var(--negative-focus-outline-color);
   }
 
   &:disabled {
-    background-color: var(--default-background-color);
+    background-color: var(--negative-color);
   }
 }
 
@@ -126,13 +126,13 @@
   }
 
   &:active {
-    background-color: color(var(--default-color) lightness(+5%) alpha(90%));
+    background-color: var(--default-active-color);
     border-color: transparent;
     color: var(--default-background-color);
   }
 
   &:focus {
-    box-shadow: 0 0 0 2px color(var(--default-color) alpha(50%));
+    box-shadow: 0 0 0 2px var(--default-focus-outline-color);
   }
 
   &:disabled {
@@ -143,30 +143,30 @@
 }
 
 .button-outline-invert {
-  background-color: var(--default-color);
-  border-color: var(--default-background-color);
-  color: var(--default-background-color);
+  background-color: var(--invert-background-color);
+  border-color: var(--invert-color);
+  color: var(--invert-color);
 
   &:hover {
-    background-color: var(--default-background-color);
+    background-color: var(--invert-background-color);
     border-color: transparent;
-    color: var(--default-color);
+    color: var(--invert-color);
   }
 
   &:active {
-    background-color: color(var(--default-background-color) lightness(+5%) alpha(90%));
+    background-color: var(--invert-active-hover-color);
     border-color: transparent;
-    color: var(--default-color);
+    color: var(--invert-color);
   }
 
   &:focus {
-    box-shadow: 0 0 0 2px color(var(--default-background-color) alpha(50%));
+    box-shadow: 0 0 0 2px var(--invert-focus-outline-color);
   }
 
   &:disabled {
-    background-color: var(--default-color);
-    border-color: var(--default-background-color);
-    color: var(--default-background-color);
+    background-color: var(--invert-background-color);
+    border-color: var(--invert-color);
+    color: var(--invert-color);
   }
 }
 
@@ -182,13 +182,13 @@
   }
 
   &:active {
-    background-color: color(var(--positive-color) lightness(+5%) alpha(90%));
+    background-color: var(--positive-active-color);
     border-color: transparent;
     color: var(--default-background-color);
   }
 
   &:focus {
-    box-shadow: 0 0 0 2px color(var(--positive-color) alpha(50%));
+    box-shadow: 0 0 0 2px var(--positive-focus-outline-color);
   }
 
   &:disabled {
@@ -210,13 +210,13 @@
   }
 
   &:active {
-    background-color: color(var(--negative-color) lightness(+5%) alpha(90%));
+    background-color: var(--negative-active-color);
     border-color: transparent;
     color: var(--default-background-color);
   }
 
   &:focus {
-    box-shadow: 0 0 0 2px color(var(--negative-color) alpha(50%));
+    box-shadow: 0 0 0 2px var(--negative-focus-outline-color);
   }
 
   &:disabled {

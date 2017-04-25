@@ -2,10 +2,11 @@ const config = {
     plugins: [
         require('postcss-import')(),
         require('postcss-nesting')(),
+        require('postcss-simple-vars')(),
         require('postcss-custom-media')(),
-        require('postcss-cssnext')({
-            "browsers": "last 2 versions",
-            "warnForDuplicates": false,
+        require('postcss-color-function')(),
+        require('autoprefixer')({
+            browsers: 'last 2 versions'
         })
     ]
 }

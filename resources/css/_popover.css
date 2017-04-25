@@ -8,8 +8,8 @@
 
 .popover,
 .popover-arrow::before {
-  box-shadow: 0 2px 2px color(var(--default-color) alpha(20%)),
-              0 0 1px color(var(--default-color) alpha(20%));
+  box-shadow: 0 2px 2px var(--shadow-color),
+              0 0 1px var(--shadow-color);
 }
 
 .popover-arrow {

@@ -27,12 +27,12 @@
 
 .notification-positive {
   color: var(--positive-color);
-  background-color: var(--positive-light-color);
+  background-color: var(--positive-background-color);
 }
 
 .notification-negative {
   color: var(--negative-color);
-  background-color: var(--negative-light-color);
+  background-color: var(--negative-background-color);
 }
 
 .notification-icon {

@@ -6,8 +6,8 @@
 }
 
 .entry.is-active {
-  box-shadow: 0 2px 18px color(var(--default-color) alpha(20%)),
-              0 0 6px color(var(--default-color) alpha(20%));
+  box-shadow: 0 2px 18px var(--shadow-color),
+              0 0 6px var(--shadow-color);
   z-index: 10;
 }
 
@@ -96,7 +96,7 @@ a.entry-action.is-selected {
 }
 
 a.entry-action.is-selected:hover {
-  background-color: color(var(--positive-color) lightness(+5%));
+  background-color: var(--positive-hover-color);
 }
 
 .entry-title {
@@ -148,7 +148,7 @@ a.entry-info:hover {
 }
 
 .entry-info-bookmarks.is-very-popular {
-  background-color: var(--negative-light-color);
+  background-color: var(--negative-background-color);
 }
 
 .entry-summary {
