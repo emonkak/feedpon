@@ -185,8 +185,8 @@ export default class EntryList extends PureComponent<EntryListProps, EntryListSt
                 marginTop={SCROLL_OFFSET}
                 onActivate={this.handleActivate}
                 onInactivate={this.handleInactivate}
-                renderList={renderList}
-                renderChild={renderChild}>
+                renderChild={renderChild}
+                renderList={renderList}>
                 {entries.map(this.renderEntry.bind(this))}
             </ScrollSpy>
         );

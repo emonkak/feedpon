@@ -20,6 +20,6 @@
         "public"
     ],
     "files": [
-      "./src/typings/querystring.d.ts"
+      "./src/typings/index.d.ts"
     ]
 }
