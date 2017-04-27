@@ -11,7 +11,7 @@ interface AuthenticationProps {
     onAuthenticate: () => void;
 }
 
-class Authentication extends PureComponent<AuthenticationProps, {}> {
+class AuthenticationPage extends PureComponent<AuthenticationProps, {}> {
     handleAuthenticate() {
         const { onAuthenticate } = this.props;
 
@@ -40,4 +40,4 @@ export default connect(
     (dispatch) => ({
         onAuthenticate: bindAction(authenticate, dispatch)
     })
-)(Authentication);
+)(AuthenticationPage);

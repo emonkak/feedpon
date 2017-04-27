@@ -18,7 +18,7 @@ interface DashboardState {
     modalIsOpened: boolean;
 }
 
-class Dashboard extends PureComponent<DashboardProps, DashboardState> {
+class DashboardPage extends PureComponent<DashboardProps, DashboardState> {
     constructor(props: any, context: any) {
         super(props, context);
 
@@ -397,4 +397,4 @@ export default connect(
     (dispatch) => ({
         onSendNotification: bindAction(sendNotification, dispatch)
     })
-)(Dashboard);
+)(DashboardPage);
