@@ -9,7 +9,6 @@ export type SyncEvent
     | { type: 'BOOKMARK_COUNTS_FETCHED', bookmarkCounts: { [key: string]: number } }
     | { type: 'COMMENTS_FETCHED', entryId: string, comments: Comment[] }
     | { type: 'ENTRY_MARKED_AS_READ', entryIds: string[] }
-    | { type: 'ENTRY_READ', entryIds: string[], readAt: string }
     | { type: 'FEED_FETCHED', feed: Feed }
     | { type: 'FEED_FETCHING', feedId: string }
     | { type: 'FEED_VIEW_CHANGED', view: FeedView }
@@ -19,7 +18,6 @@ export type SyncEvent
     | { type: 'MORE_ENTRIES_FETCHED', feedId: string, continuation: string | null, entries: Entry[] }
     | { type: 'NOTIFICATION_DISMISSED', id: number }
     | { type: 'NOTIFICATION_SENT', notification: Notification }
-    | { type: 'READ_ENTRIES_CLEARED' }
     | { type: 'SITEINFO_UPDATED', siteinfo: Siteinfo }
     | { type: 'SUBSCRIPTIONS_FETCHED', subscriptions: Subscription[], categories: Category[], fetchedAt: string }
     | { type: 'SUBSCRIPTIONS_FETCHING' };
@@ -95,7 +93,6 @@ export interface Entry {
     comments: Comments;
     publishedAt: string;
     markAsRead: boolean;
-    readAt: string | null;
 }
 
 export interface Origin {

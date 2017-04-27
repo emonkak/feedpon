@@ -8,33 +8,39 @@ import Navbar from 'components/parts/Navbar';
 import bindAction from 'utils/bindAction';
 import connect from 'utils/react/connect';
 import { Category, Feed, FeedSpecification, FeedView, State } from 'messaging/types';
-import { changeFeedView, clearReadEntries, fetchComments, fetchFeed, fetchFullContent, fetchMoreEntries, readEntry, saveReadEntries } from 'messaging/actions';
+import { changeFeedView, fetchComments, fetchFeed, fetchFullContent, fetchMoreEntries, saveReadEntries } from 'messaging/actions';
 
 interface FeedProps {
     categories: Category[];
     feed: Feed;
     isScrolling: boolean;
     onChangeFeedView: (view: FeedView) => void,
-    onClearReadEntries: () => void,
     onFetchComments: (entryId: string, url: string) => void;
     onFetchFeed: (feedId: string, specification?: FeedSpecification) => void;
     onFetchFullContent: (entryId: string, url: string) => void;
     onFetchMoreEntries: (feedId: string, continuation: string, specification: FeedSpecification) => void;
-    onReadEntry: (entryIds: string[], timestamp: Date) => void;
     onSaveReadEntries: (entryIds: string[]) => void;
     onToggleSidebar: () => void,
     params: Params;
     scrollTo: (x: number, y: number) => Promise<void>;
 };
 
+interface FeedState {
+    readEntryIds: Set<string>;
+}
+
 const SCROLL_OFFSET = 48;
 
-class FeedPage extends PureComponent<FeedProps, {}> {
+class FeedComponent extends PureComponent<FeedProps, FeedState> {
     constructor(props: FeedProps, context: any) {
         super(props, context);
 
+        this.state = {
+            readEntryIds: new Set()
+        };
+
         this.handleLoadMoreEntries = this.handleLoadMoreEntries.bind(this);
-        this.handleMarkEntryAsRead = this.handleMarkEntryAsRead.bind(this);
+        this.handleReadEntry = this.handleReadEntry.bind(this);
     }
 
     componentWillMount() {
@@ -47,38 +53,42 @@ class FeedPage extends PureComponent<FeedProps, {}> {
 
     componentWillUpdate(nextProps: FeedProps, nextState: {}) {
         const { params } = this.props;
+        const { readEntryIds } = this.state;
 
         if (params['feed_id'] !== nextProps.params['feed_id']) {
             const { feed, onFetchFeed, onSaveReadEntries } = this.props;
 
             if (feed.feedId === params['feed_id']) {
-                const readEntryIds = feed.entries
-                    .filter(entry => !entry.markAsRead && entry.readAt)
-                    .map(entry => entry.entryId);
-
-                onSaveReadEntries(readEntryIds);
+                onSaveReadEntries([...readEntryIds]);
             }
 
             onFetchFeed(nextProps.params['feed_id']);
         }
     }
 
-    componentWillUnmount() {
-        const { feed, onSaveReadEntries, params } = this.props;
+    componentWillReceiveProps(nextProps: FeedProps) {
+        const { feed } = this.props;
 
-        if (feed.feedId === params['feed_id']) {
-            const readEntryIds = feed.entries
-                .filter(entry => !entry.markAsRead && entry.readAt)
-                .map(entry => entry.entryId);
-
-            onSaveReadEntries(readEntryIds);
+        if (feed.feedId !== nextProps.feed.feedId) {
+            this.setState({
+                readEntryIds: new Set()
+            });
         }
     }
 
-    handleMarkEntryAsRead(entryIds: string[]) {
-        const { onReadEntry } = this.props;
+    componentWillUnmount() {
+        const { feed, onSaveReadEntries, params } = this.props;
+        const { readEntryIds } = this.state;
 
-        onReadEntry(entryIds, new Date());
+        if (feed.feedId === params['feed_id']) {
+            onSaveReadEntries([...readEntryIds]);
+        }
+    }
+
+    handleReadEntry(readEntryIds: string[]) {
+        this.setState((state) => ({
+            readEntryIds: new Set([...state.readEntryIds, ...readEntryIds])
+        }));
     }
 
     handleLoadMoreEntries(event: React.SyntheticEvent<any>) {
@@ -126,15 +136,16 @@ class FeedPage extends PureComponent<FeedProps, {}> {
     }
 
     handleClearReadEntries(entryId: string) {
-        const { onClearReadEntries, scrollTo } = this.props;
+        const { scrollTo } = this.props;
 
-        scrollTo(0, 0).then(() => onClearReadEntries());
+        scrollTo(0, 0).then(() => this.setState({ readEntryIds: new Set() }));
     }
 
     renderReadEntriesDropdown() {
         const { feed } = this.props;
+        const { readEntryIds } = this.state;
 
-        const readEntries = feed.entries.filter(entry => !!entry.readAt);
+        const readEntries = feed.entries.filter(entry => readEntryIds.has(entry.entryId));
 
         return (
             <Dropdown
@@ -297,6 +308,7 @@ class FeedPage extends PureComponent<FeedProps, {}> {
 
     renderEntryList() {
         const { feed, isScrolling, onFetchComments, onFetchFullContent, scrollTo } = this.props;
+        const { readEntryIds } = this.state;
 
         return (
             <EntryList
@@ -305,7 +317,8 @@ class FeedPage extends PureComponent<FeedProps, {}> {
                 isScrolling={isScrolling}
                 onFetchComments={onFetchComments}
                 onFetchFullContent={onFetchFullContent}
-                onMarkAsRead={this.handleMarkEntryAsRead}
+                onRead={this.handleReadEntry}
+                readEntryIds={readEntryIds}
                 scrollTo={scrollTo}
                 view={feed.view} />
         );
@@ -365,12 +378,10 @@ export default connect(
     }),
     (dispatch) => ({
         onChangeFeedView: bindAction(changeFeedView, dispatch),
-        onClearReadEntries: bindAction(clearReadEntries, dispatch),
         onFetchComments: bindAction(fetchComments, dispatch),
         onFetchFeed: bindAction(fetchFeed, dispatch),
         onFetchFullContent: bindAction(fetchFullContent, dispatch),
         onFetchMoreEntries: bindAction(fetchMoreEntries, dispatch),
-        onReadEntry: bindAction(readEntry, dispatch),
         onSaveReadEntries: bindAction(saveReadEntries, dispatch)
     })
-)(FeedPage);
+)(FeedComponent);

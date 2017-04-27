@@ -21,7 +21,8 @@ interface EntryListProps {
     isScrolling: boolean;
     onFetchComments: (entryId: string, url: string) => void;
     onFetchFullContent: (entryId: string, url: string) => void;
-    onMarkAsRead: (entryIds: string[]) => void;
+    onRead: (entryIds: string[]) => void;
+    readEntryIds: Set<string>;
     scrollTo: (x: number, y: number) => Promise<void>;
     view: FeedView;
 }
@@ -86,38 +87,31 @@ export default class EntryList extends PureComponent<EntryListProps, EntryListSt
     }
 
     handleActivate(activeKey: string) {
-        const { onMarkAsRead } = this.props;
+        const { entries, onRead, readEntryIds } = this.props;
 
-        if (onMarkAsRead) {
-            const { entries } = this.props;
+        const newReadEntryIds = new Enumerable(entries)
+            .takeWhile((entry) => entry.entryId !== activeKey)
+            .where((entry) => !readEntryIds.has(entry.entryId))
+            .select((entry) => entry.entryId)
+            .toArray();
 
-            const readEntryIds = new Enumerable(entries)
-                .takeWhile((entry) => entry.entryId !== activeKey)
-                .where(entry => entry.readAt == null)
-                .select(entry => entry.entryId)
-                .toArray();
-
-            if (readEntryIds.length > 0) {
-                onMarkAsRead(readEntryIds);
-            }
+        if (newReadEntryIds.length > 0) {
+            onRead(newReadEntryIds);
         }
 
         this.activeEntryId = activeKey;
     }
 
     handleInactivate(inactiveKey: string) {
-        this.activeEntryId = null;
+        const { entries, onRead, readEntryIds } = this.props;
+        const latestEntry = entries[entries.length - 1];
 
-        const { onMarkAsRead } = this.props;
-
-        if (onMarkAsRead) {
-            const { entries } = this.props;
-            const latestEntry = entries[entries.length - 1];
-
-            if (latestEntry.entryId === inactiveKey && latestEntry.readAt == null) {
-                onMarkAsRead([latestEntry.entryId]);
-            }
+        if (latestEntry.entryId === inactiveKey
+            && !readEntryIds.has(latestEntry.entryId)) {
+            onRead([latestEntry.entryId]);
         }
+
+        this.activeEntryId = null;
     }
 
     handleExpand(expandedEntryId: string, collapsedElement: HTMLElement) {
@@ -135,16 +129,18 @@ export default class EntryList extends PureComponent<EntryListProps, EntryListSt
     }
 
     renderEntry(entry: EntryType) {
+        const { onFetchComments, onFetchFullContent, readEntryIds, view } = this.props;
         const { expandedEntryId } = this.state;
-        const { onFetchComments, onFetchFullContent, view } = this.props;
         const isCollapsible = view === 'collapsible';
         const isExpanded = view === 'expanded' || expandedEntryId === entry.entryId;
+        const isRead = readEntryIds.has(entry.entryId);
 
         return (
             <Entry
                 entry={entry}
                 isCollapsible={isCollapsible}
                 isExpanded={isExpanded}
+                isRead={isRead}
                 key={entry.entryId}
                 onClose={this.handleClose}
                 onExpand={this.handleExpand}

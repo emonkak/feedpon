@@ -148,36 +148,6 @@ function reduceFeed(feed: Feed, event: SyncEvent): Feed {
                 isLoading: false
             };
 
-        case 'READ_ENTRIES_CLEARED':
-            return {
-                ...feed,
-                entries: feed.entries.map(entry => {
-                    if (entry.markAsRead) {
-                        return entry;
-                    }
-
-                    return {
-                        ...entry,
-                        readAt: null
-                    };
-                })
-            };
-
-        case 'ENTRY_READ':
-            return {
-                ...feed,
-                entries: feed.entries.map(entry => {
-                    if (event.entryIds.indexOf(entry.entryId) === -1) {
-                        return entry;
-                    }
-
-                    return {
-                        ...entry,
-                        readAt: event.readAt
-                    };
-                })
-            };
-
         case 'ENTRY_MARKED_AS_READ':
             return {
                 ...feed,

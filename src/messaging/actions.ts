@@ -119,20 +119,6 @@ function observeUrlChanging(window: chrome.windows.Window, callback: (url: strin
     chrome.windows.onRemoved.addListener(handleRemoveWindow);
 }
 
-export function readEntry(entryIds: string[], timestamp: Date): SyncEvent {
-    return {
-        type: 'ENTRY_READ',
-        entryIds,
-        readAt: timestamp.toISOString()
-    };
-}
-
-export function clearReadEntries(): SyncEvent {
-    return {
-        type: 'READ_ENTRIES_CLEARED'
-    };
-}
-
 export function saveReadEntries(entryIds: string[]): AsyncEvent<void> {
     return (dispatch, getState) => {
         if (entryIds.length === 0) {
@@ -282,8 +268,7 @@ function convertEntry(entry: feedly.Entry): Entry {
             title: entry.origin.title,
             url: entry.origin.htmlUrl,
         } : null,
-        markAsRead: !entry.unread,
-        readAt: null
+        markAsRead: !entry.unread
     };
 }
 
