@@ -7,7 +7,7 @@ import MenuItem from 'components/parts/MenuItem';
 import Navbar from 'components/parts/Navbar';
 import bindAction from 'utils/bindAction';
 import connect from 'utils/react/connect';
-import { Category, Feed, FeedSpecification, FeedView, State } from 'messaging/types';
+import { Category, Feed, FeedOptions, FeedView, State } from 'messaging/types';
 import { changeFeedView, fetchComments, fetchFeed, fetchFullContent, fetchMoreEntries, markAsRead } from 'messaging/feed/actions';
 
 interface FeedProps {
@@ -16,9 +16,9 @@ interface FeedProps {
     isScrolling: boolean;
     onChangeFeedView: (view: FeedView) => void,
     onFetchComments: (entryId: string, url: string) => void;
-    onFetchFeed: (feedId: string, specification?: FeedSpecification) => void;
+    onFetchFeed: (feedId: string, options?: FeedOptions) => void;
     onFetchFullContent: (entryId: string, url: string) => void;
-    onFetchMoreEntries: (feedId: string, continuation: string, specification: FeedSpecification) => void;
+    onFetchMoreEntries: (feedId: string, continuation: string, options: FeedOptions) => void;
     onMarkAsRead: (entryIds: string[]) => void;
     onToggleSidebar: () => void,
     params: Params;
@@ -97,7 +97,7 @@ class FeedComponent extends PureComponent<FeedProps, FeedState> {
         const { onFetchMoreEntries, feed } = this.props;
 
         if (feed.feedId && feed.continuation) {
-            onFetchMoreEntries(feed.feedId, feed.continuation, feed.specification);
+            onFetchMoreEntries(feed.feedId, feed.continuation, feed.options);
         }
     }
 
@@ -108,7 +108,7 @@ class FeedComponent extends PureComponent<FeedProps, FeedState> {
             scrollTo(0, 0);
 
             onFetchFeed(feed.feedId, {
-                ...feed.specification,
+                ...feed.options,
                 order
             });
         }
@@ -121,8 +121,8 @@ class FeedComponent extends PureComponent<FeedProps, FeedState> {
             scrollTo(0, 0);
 
             onFetchFeed(feed.feedId, {
-                ...feed.specification,
-                onlyUnread: !feed.specification.onlyUnread
+                ...feed.options,
+                onlyUnread: !feed.options.onlyUnread
             });
         }
     }
@@ -187,26 +187,26 @@ class FeedComponent extends PureComponent<FeedProps, FeedState> {
                 pullRight={true}>
                 <div className="menu-heading">View</div>
                 <MenuItem
-                    icon={feed.view === 'expanded' ? <i className="icon icon-16 icon-checkmark" /> : null}
+                    icon={feed.options.view === 'expanded' ? <i className="icon icon-16 icon-checkmark" /> : null}
                     primaryText="Expanded view"
                     onSelect={onChangeFeedView.bind(null, 'expanded')} />
                 <MenuItem
-                    icon={feed.view === 'collapsible' ? <i className="icon icon-16 icon-checkmark" /> : null}
+                    icon={feed.options.view === 'collapsible' ? <i className="icon icon-16 icon-checkmark" /> : null}
                     primaryText="Collapsible view"
                     onSelect={onChangeFeedView.bind(null, 'collapsible')} />
                 <div className="menu-divider" />
                 <div className="menu-heading">Order</div>
                 <MenuItem
-                    icon={feed.specification.order === 'newest' ? <i className="icon icon-16 icon-checkmark" /> : null}
+                    icon={feed.options.order === 'newest' ? <i className="icon icon-16 icon-checkmark" /> : null}
                     primaryText="Newest first"
                     onSelect={this.handleChangeEntryOrder.bind(this, 'newest')} />
                 <MenuItem
-                    icon={feed.specification.order === 'oldest' ? <i className="icon icon-16 icon-checkmark" /> : null}
+                    icon={feed.options.order === 'oldest' ? <i className="icon icon-16 icon-checkmark" /> : null}
                     primaryText="Oldest first"
                     onSelect={this.handleChangeEntryOrder.bind(this, 'oldest')} />
                 <div className="menu-divider" />
                 <MenuItem
-                    icon={feed.specification.onlyUnread ? <i className="icon icon-16 icon-checkmark" /> : null}
+                    icon={feed.options.onlyUnread ? <i className="icon icon-16 icon-checkmark" /> : null}
                     primaryText="Only unread"
                     onSelect={this.handleToggleOnlyUnread.bind(this)} />
             </Dropdown>
@@ -320,7 +320,7 @@ class FeedComponent extends PureComponent<FeedProps, FeedState> {
                 onRead={this.handleReadEntry}
                 readEntryIds={readEntryIds}
                 scrollTo={scrollTo}
-                view={feed.view} />
+                view={feed.options.view} />
         );
     }
 

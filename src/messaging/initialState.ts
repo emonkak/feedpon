@@ -20,12 +20,12 @@ const initialState: State = {
         isLoading: false,
         isLoaded: false,
         subscription: null,
-        specification: {
+        options: {
             numEntries: 20,
+            onlyUnread: true,
             order: 'newest',
-            onlyUnread: true
-        },
-        view: 'expanded'
+            view: 'expanded'
+        }
     },
     notifications: [],
     subscriptions: {

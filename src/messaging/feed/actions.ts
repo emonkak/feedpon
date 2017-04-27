@@ -7,7 +7,7 @@ import '@emonkak/enumerable/extensions/toArray';
 import * as feedly from 'adapters/feedly/types';
 import decodeResponseAsText from 'utils/decodeResponseAsText';
 import stripTags from 'utils/stripTags';
-import { AsyncEvent, Entry, Feed, FeedSpecification, FeedView, FullContent, Siteinfo, SyncEvent } from 'messaging/types';
+import { AsyncEvent, Entry, FeedOptions, FeedView, FullContent, SiteinfoItem, SyncEvent } from 'messaging/types';
 import { DEFAULT_DISMISS_AFTER, sendNotification } from 'messaging/notification/actions';
 import { getBookmarkCounts, getBookmarkEntry } from 'adapters/hatena/bookmarkApi';
 import { getCredential } from 'messaging/credential/actions';
@@ -15,129 +15,44 @@ import { getFeed, getStreamContents } from 'adapters/feedly/api';
 
 const URL_PATTERN = /^https?:\/\//;
 
-export function markAsRead(entryIds: string[]): AsyncEvent<void> {
-    return (dispatch, getState) => {
-        if (entryIds.length === 0) {
-            return;
-        }
-
-        setTimeout(() => {
-            const message = entryIds.length === 1
-                ? `${entryIds.length} entry is marked as read.`
-                : `${entryIds.length} entries are marked as read.`;
-
-            dispatch({
-                type: 'ENTRY_MARKED_AS_READ',
-                entryIds
-            });
-
-            sendNotification({
-                message,
-                kind: 'positive',
-                dismissAfter: DEFAULT_DISMISS_AFTER
-            })(dispatch, getState);
-        }, 200);
+export function changeFeedView(view: FeedView): SyncEvent {
+    return {
+        type: 'FEED_VIEW_CHANGED',
+        view
     };
 }
 
-export function fetchFeed(feedId: string, specification?: FeedSpecification): AsyncEvent<void> {
+export function fetchFeed(feedId: string, options?: FeedOptions): AsyncEvent<void> {
     return async (dispatch, getState) => {
         dispatch({
             type: 'FEED_FETCHING',
             feedId: feedId
         });
 
-        const { preference, subscriptions } = getState();
+        const { preference } = getState();
 
-        if (!specification) {
-            specification = {
+        if (!options) {
+            options = {
                 numEntries: preference.defaultNumEntries,
                 order: preference.defaultEntryOrder,
-                onlyUnread: preference.onlyUnreadEntries
+                onlyUnread: preference.onlyUnreadEntries,
+                view: preference.defaultFeedView
             };
         }
-
-        const credential = await getCredential()(dispatch, getState);
-        const subscription = new Enumerable(subscriptions.items)
-            .firstOrDefault((subscription) => subscription.subscriptionId === feedId);
-
-        let feed: Feed | null = null;
 
         if (feedId.startsWith('feed/')) {
-            const [contentsResponse, feedResponse] = await Promise.all([
-                getStreamContents(credential.token.access_token, {
-                    streamId: feedId,
-                    ranked: specification.order,
-                    unreadOnly: specification.onlyUnread
-                }),
-                getFeed(credential.token.access_token, feedId)
-            ]);
-
-            feed = {
-                feedId,
-                title: feedResponse.title,
-                description: feedResponse.description || '',
-                url: feedResponse.website || '',
-                subscribers: feedResponse.subscribers,
-                velocity: feedResponse.velocity || 0,
-                entries: contentsResponse.items.map(convertEntry),
-                continuation: contentsResponse.continuation || null,
-                isLoading: false,
-                isLoaded: true,
-                subscription,
-                specification,
-                view: preference.defaultFeedView
-            };
+            await doFetchFeed(feedId, options)(dispatch, getState);
         } else if (feedId.startsWith('user/')) {
-            const category = new Enumerable(subscriptions.categories)
-                .firstOrDefault((category) => category.categoryId === feedId);
-
-            const contentsResponse = await getStreamContents(credential.token.access_token, {
-                streamId: feedId,
-                ranked: specification.order,
-                unreadOnly: specification.onlyUnread
-            });
-
-            feed = {
-                feedId,
-                title: category ? category.label : '',
-                description: '',
-                url: '',
-                subscribers: 0,
-                velocity: 0,
-                entries: contentsResponse.items.map(convertEntry),
-                continuation: contentsResponse.continuation || null,
-                isLoading: false,
-                isLoaded: true,
-                subscription,
-                specification,
-                view: preference.defaultFeedView
-            };
-        }
-
-        if (feed) {
-            dispatch({
-                type: 'FEED_FETCHED',
-                feed
-            });
-
-            const entryUrls = feed.entries
-                    .filter((entry) => !!entry.url)
-                    .map((entry) => entry.url);
-
-            if (entryUrls.length > 0) {
-                const bookmarkCounts = await getBookmarkCounts(entryUrls);
-
-                dispatch({
-                    type: 'BOOKMARK_COUNTS_FETCHED',
-                    bookmarkCounts
-                });
-            }
+            await doFetchCategory(feedId, options)(dispatch, getState);
+        } else if (feedId === 'all') {
+            await doFetchAllCategories(options)(dispatch, getState);
+        } else if (feedId === 'pins') {
+            await doFetchPins(options)(dispatch, getState);
         }
     };
 }
 
-export function fetchMoreEntries(feedId: string, continuation: string, specification: FeedSpecification): AsyncEvent<void> {
+export function fetchMoreEntries(feedId: string, continuation: string, options: FeedOptions): AsyncEvent<void> {
     return async (dispatch, getState) => {
         dispatch({
             type: 'MORE_ENTRIES_FETCHING',
@@ -148,8 +63,8 @@ export function fetchMoreEntries(feedId: string, continuation: string, specifica
         const contentsResponse = await getStreamContents(credential.token.access_token, {
             streamId: feedId,
             continuation,
-            ranked: specification.order,
-            unreadOnly: specification.onlyUnread
+            ranked: options.order,
+            unreadOnly: options.onlyUnread
         });
 
         dispatch({
@@ -196,76 +111,101 @@ export function fetchFullContent(entryId: string, url: string): AsyncEvent<void>
             entryId
         });
 
-        const { siteinfo } = getState();
-        const { fullContent, nextPageUrl } = await extractFullContent(url, siteinfo);
+        const response = await fetch(url);
 
-        dispatch({
-            type: 'FULL_CONTENT_FETCHED',
-            entryId,
-            fullContent,
-            nextPageUrl
-        });
+        if (response.ok) {
+            const responseText = await decodeResponseAsText(response);
+
+            const { siteinfo } = getState();
+            const { fullContent, nextPageUrl } = extractFullContent(response.url, responseText, siteinfo.items);
+
+            dispatch({
+                type: 'FULL_CONTENT_FETCHED',
+                entryId,
+                fullContent,
+                nextPageUrl
+            });
+        }
     }
 }
 
-async function extractFullContent(url: string, siteinfo: Siteinfo): Promise<{ fullContent: FullContent | null, nextPageUrl: string | null }> {
-    const response = await fetch(url);
+export function markAsRead(entryIds: string[]): AsyncEvent<void> {
+    return (dispatch, getState) => {
+        if (entryIds.length === 0) {
+            return;
+        }
 
-    if (response.ok) {
-        const responseText = await decodeResponseAsText(response);
+        setTimeout(() => {
+            const message = entryIds.length === 1
+                ? `${entryIds.length} entry is marked as read.`
+                : `${entryIds.length} entries are marked as read.`;
 
-        const parser = new DOMParser();
-        const parsedDocument = parser.parseFromString(responseText, 'text/html');
+            dispatch({
+                type: 'ENTRY_MARKED_AS_READ',
+                entryIds
+            });
 
-        for (const item of siteinfo.items) {
-            if (matches(item.url, response.url)) {
-                let content = '';
-                let nextPageUrl: string | null = null;
+            sendNotification({
+                message,
+                kind: 'positive',
+                dismissAfter: DEFAULT_DISMISS_AFTER
+            })(dispatch, getState);
+        }, 200);
+    };
+}
 
-                const contentResult = document.evaluate(
-                    item.contentPath,
-                    parsedDocument.body,
-                    null,
-                    XPathResult.ORDERED_NODE_ITERATOR_TYPE,
-                    null
-                );
+function extractFullContent(url: string, htmlString: string, siteinfoItems: SiteinfoItem[]): { fullContent: FullContent | null, nextPageUrl: string | null } {
+    const parser = new DOMParser();
+    const parsedDocument = parser.parseFromString(htmlString, 'text/html');
 
-                for (
-                    let node = contentResult.iterateNext();
-                    node;
-                    node = contentResult.iterateNext()
-                ) {
-                    if (node instanceof Element) {
-                        content += node.outerHTML;
-                    }
+    for (const item of siteinfoItems) {
+        if (tryMatch(item.url, url)) {
+            let content = '';
+            let nextPageUrl: string | null = null;
+
+            const contentResult = document.evaluate(
+                item.contentPath,
+                parsedDocument.body,
+                null,
+                XPathResult.ORDERED_NODE_ITERATOR_TYPE,
+                null
+            );
+
+            for (
+                let node = contentResult.iterateNext();
+                node;
+                node = contentResult.iterateNext()
+            ) {
+                if (node instanceof Element) {
+                    content += node.outerHTML;
                 }
+            }
 
-                if (content) {
-                    if (item.nextLinkPath) {
-                        const nextLinkResult = document.evaluate(
-                            item.nextLinkPath,
-                            parsedDocument.body,
-                            null,
-                            XPathResult.FIRST_ORDERED_NODE_TYPE,
-                            null
-                        );
+            if (content) {
+                if (item.nextLinkPath) {
+                    const nextLinkResult = document.evaluate(
+                        item.nextLinkPath,
+                        parsedDocument.body,
+                        null,
+                        XPathResult.FIRST_ORDERED_NODE_TYPE,
+                        null
+                    );
 
-                        const node = nextLinkResult.singleNodeValue;
+                    const node = nextLinkResult.singleNodeValue;
 
-                        if (node && node instanceof HTMLElement) {
-                            const urlString = node.getAttribute('href');
+                    if (node && node instanceof HTMLElement) {
+                        const urlString = node.getAttribute('href');
 
-                            if (urlString) {
-                                nextPageUrl = new URL(urlString, response.url).toString();
-                            }
+                        if (urlString) {
+                            nextPageUrl = new URL(urlString, url).toString();
                         }
                     }
-
-                    return {
-                        fullContent: { content, url: response.url },
-                        nextPageUrl
-                    };
                 }
+
+                return {
+                    fullContent: { content, url },
+                    nextPageUrl
+                };
             }
         }
     }
@@ -273,18 +213,167 @@ async function extractFullContent(url: string, siteinfo: Siteinfo): Promise<{ fu
     return { fullContent: null, nextPageUrl: null };
 }
 
-function matches(pattern: string, str: string): boolean {
-    try {
-        return new RegExp(pattern).test(str);
-    } catch (error) {
-        return false;
-    }
+function doFetchFeed(feedId: string, options: FeedOptions): AsyncEvent<void> {
+    return async (dispatch, getState) => {
+        const credential = await getCredential()(dispatch, getState);
+        const [contents, feed] = await Promise.all([
+            getStreamContents(credential.token.access_token, {
+                streamId: feedId,
+                ranked: options.order,
+                unreadOnly: options.onlyUnread
+            }),
+            getFeed(credential.token.access_token, feedId)
+        ]);
+
+        const { subscriptions } = getState();
+        const subscription = new Enumerable(subscriptions.items)
+            .firstOrDefault((subscription) => subscription.subscriptionId === feedId);
+
+        const fechedFeed = {
+            feedId,
+            title: feed.title,
+            description: feed.description || '',
+            url: feed.website || '',
+            subscribers: feed.subscribers,
+            velocity: feed.velocity || 0,
+            entries: contents.items.map(convertEntry),
+            continuation: contents.continuation || null,
+            isLoading: false,
+            isLoaded: true,
+            subscription,
+            options
+        };
+
+        dispatch({
+            type: 'FEED_FETCHED',
+            feed: fechedFeed
+        });
+
+        doFetchBookmarkCounts(fechedFeed.entries)(dispatch, getState);
+    };
 }
 
-export function changeFeedView(view: FeedView): SyncEvent {
-    return {
-        type: 'FEED_VIEW_CHANGED',
-        view
+function doFetchCategory(categoryId: string, options: FeedOptions): AsyncEvent<void> {
+    return async (dispatch, getState) => {
+        const credential = await getCredential()(dispatch, getState);
+        const contents = await getStreamContents(credential.token.access_token, {
+            streamId: categoryId,
+            ranked: options.order,
+            unreadOnly: options.onlyUnread
+        });
+
+        const { subscriptions } = getState();
+        const category = new Enumerable(subscriptions.categories)
+            .firstOrDefault((category) => category.categoryId === categoryId);
+
+        const fechedFeed = {
+            feedId: categoryId,
+            title: category ? category.label : '',
+            description: '',
+            url: '',
+            subscribers: 0,
+            velocity: 0,
+            entries: contents.items.map(convertEntry),
+            continuation: contents.continuation || null,
+            isLoading: false,
+            isLoaded: true,
+            subscription: null,
+            options
+        };
+
+        dispatch({
+            type: 'FEED_FETCHED',
+            feed: fechedFeed
+        });
+
+        doFetchBookmarkCounts(fechedFeed.entries)(dispatch, getState);
+    };
+}
+
+function doFetchAllCategories(options: FeedOptions): AsyncEvent<void> {
+    return async (dispatch, getState) => {
+        const credential = await getCredential()(dispatch, getState);
+
+        const streamId = 'user/' + credential.token.id + '/category/global.all';
+        const contents = await getStreamContents(credential.token.access_token, {
+            streamId,
+            ranked: options.order,
+            unreadOnly: options.onlyUnread
+        });
+
+        const fechedFeed = {
+            feedId: streamId,
+            title: 'All',
+            description: '',
+            url: '',
+            subscribers: 0,
+            velocity: 0,
+            entries: contents.items.map(convertEntry),
+            continuation: contents.continuation || null,
+            isLoading: false,
+            isLoaded: true,
+            subscription: null,
+            options
+        }
+
+        dispatch({
+            type: 'FEED_FETCHED',
+            feed: fechedFeed
+        });
+
+        doFetchBookmarkCounts(fechedFeed.entries)(dispatch, getState);
+    };
+}
+
+function doFetchPins(options: FeedOptions): AsyncEvent<void> {
+    return async (dispatch, getState) => {
+        const credential = await getCredential()(dispatch, getState);
+
+        const streamId = 'user/' + credential.token.id + '/tag/global.saved';
+        const contents = await getStreamContents(credential.token.access_token, {
+            streamId,
+            ranked: options.order,
+            unreadOnly: options.onlyUnread
+        });
+
+        const fechedFeed = {
+            feedId: streamId,
+            title: 'Pins',
+            description: '',
+            url: '',
+            subscribers: 0,
+            velocity: 0,
+            entries: contents.items.map(convertEntry),
+            continuation: contents.continuation || null,
+            isLoading: false,
+            isLoaded: true,
+            subscription: null,
+            options
+        }
+
+        dispatch({
+            type: 'FEED_FETCHED',
+            feed: fechedFeed
+        });
+
+        doFetchBookmarkCounts(fechedFeed.entries)(dispatch, getState);
+    };
+}
+
+function doFetchBookmarkCounts(entries: Entry[]): AsyncEvent<void> {
+    return async (dispatch, getState) => {
+        const entryUrls = entries
+            .filter((entry) => !!entry.url)
+            .map((entry) => entry.url);
+
+        if (entryUrls.length > 0) {
+            const bookmarkCounts = await getBookmarkCounts(entryUrls);
+
+            dispatch({
+                type: 'BOOKMARK_COUNTS_FETCHED',
+                bookmarkCounts
+            });
+        }
     };
 }
 
@@ -323,4 +412,12 @@ function convertEntry(entry: feedly.Entry): Entry {
         } : null,
         markAsRead: !entry.unread
     };
+}
+
+function tryMatch(pattern: string, str: string): boolean {
+    try {
+        return new RegExp(pattern).test(str);
+    } catch (error) {
+        return false;
+    }
 }

@@ -2,17 +2,17 @@ import React, { PureComponent } from 'react';
 
 import Navbar from 'components/parts/Navbar';
 
-interface SettingsProps {
+interface PreferenceProps {
     onToggleSidebar: () => void;
 }
 
-export default class SettingsPage extends PureComponent<SettingsProps, {}> {
+export default class PreferencePage extends PureComponent<PreferenceProps, {}> {
     renderNavbar() {
         const { onToggleSidebar } = this.props;
 
         return (
             <Navbar onToggleSidebar={onToggleSidebar}>
-                <div className="navbar-title">Settings</div>
+                <div className="navbar-title">Preference</div>
             </Navbar>
         );
     }
@@ -20,7 +20,7 @@ export default class SettingsPage extends PureComponent<SettingsProps, {}> {
     renderContent() {
         return (
             <div className="container">
-                <h1>Settings</h1>
+                <h1>Preference</h1>
             </div>
         );
     }

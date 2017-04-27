@@ -91,7 +91,10 @@ export default function reducer(feed: Feed, event: SyncEvent): Feed {
         case 'FEED_VIEW_CHANGED':
             return {
                 ...feed,
-                view: event.view
+                options: {
+                    ...feed.options,
+                    view: event.view
+                }
             };
 
         case 'MORE_ENTRIES_FETCHING':

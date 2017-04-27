@@ -8,7 +8,7 @@ import DashboardPage from 'components/DashboardPage';
 import FeedPage from 'components/FeedPage';
 import Layout from 'components/Layout';
 import NotAuthenticated from 'components/NotAuthenticated'
-import SettingsPage from 'components/SettingsPage';
+import PreferencePage from 'components/PreferencePage';
 
 const routes = (
     <Route path="/">
@@ -17,7 +17,7 @@ const routes = (
                 <IndexRoute component={DashboardPage} />
                 <Route path="about" component={AboutPage} />
                 <Route path="feeds/:feed_id" component={FeedPage} />
-                <Route path="settings" component={SettingsPage} />
+                <Route path="preference" component={PreferencePage} />
             </Route>
         </Route>
         <Route component={NotAuthenticated}>

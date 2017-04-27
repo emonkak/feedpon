@@ -66,14 +66,14 @@ export interface Feed {
     isLoading: boolean;
     isLoaded: boolean;
     subscription: Subscription | null;
-    specification: FeedSpecification;
-    view: FeedView;
+    options: FeedOptions;
 }
 
-export interface FeedSpecification {
+export interface FeedOptions {
     numEntries: number;
     order: 'newest' | 'oldest';
     onlyUnread: boolean;
+    view: FeedView;
 }
 
 export type FeedView = 'expanded' | 'collapsible';

@@ -111,7 +111,7 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
                   onSelect={this.handleSelect.bind(this)}>
                 <TreeLeaf key="/" value="/" primaryText="Dashboard" />
                 <TreeLeaf key="/feeds/all/" value="/feeds/all/" primaryText="All" secondaryText={Number(totalUnreadCount).toLocaleString()} />
-                <TreeLeaf key="/feeds/pins/" value="/feeds/pins/" primaryText="Pins" secondaryText="12" />
+                <TreeLeaf key="/feeds/pins/" value="/feeds/pins/" primaryText="Pins" />
                 <TreeHeader>
                     <a className="tree-node-icon" href="#" onClick={this.handleReload.bind(this)}>
                         <i className={classnames('icon', 'icon-16', 'icon-refresh', {
@@ -131,7 +131,7 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
                     </Dropdown>
                 </TreeHeader>
                 {groupedSubscriptions}
-                <TreeLeaf key="/settings/" value="/settings/" primaryText="Settings" />
+                <TreeLeaf key="/preference/" value="/preference/" primaryText="Preference" />
                 <TreeLeaf key="/about/" value="/about/" primaryText="About..." />
             </Tree>
         );
