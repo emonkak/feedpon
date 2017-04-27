@@ -6,25 +6,38 @@ import Store from 'utils/Store';
 import StoreContext from 'utils/react/StoreContext';
 import asyncMiddleware from 'utils/middlewares/asyncMiddleware';
 import initialState from 'messaging/initialState';
-import persistenceMiddleware from 'utils/middlewares/persistenceMiddleware';
 import reducer from 'messaging/reducer';
 import routes from 'components/routes';
+import saveStateMiddleware from 'utils/middlewares/saveStateMiddleware';
 import { Event, State } from 'messaging/types';
 
-const store = new Store<Event, State>(reducer, initialState)
+function saveState(key: string, value: any): void {
+    localStorage.setItem(key, JSON.stringify(value));
+}
+
+const stateKeys = Object.keys(initialState);
+
+const state = stateKeys.reduce((result, key) => {
+    const jsonString = localStorage.getItem(key);
+
+    if (jsonString) {
+        try {
+            result[key] = JSON.parse(jsonString);
+        } catch (_e) {
+        }
+    }
+
+    return result;
+}, {...initialState} as any);
+
+const store = new Store<Event, State>(reducer, state)
     .pipe(asyncMiddleware)
-    .pipe(persistenceMiddleware('state', () => true))
+    .pipe(saveStateMiddleware(stateKeys, saveState))
     .pipe((action, next) => {
         console.log(action);
 
         next(action);
     });
-
-const savedState = localStorage.getItem('state');
-
-if (savedState) {
-    store.replaceState(JSON.parse(savedState));
-}
 
 const element = document.getElementById('app');
 
