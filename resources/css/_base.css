@@ -148,9 +148,10 @@ code, var, samp {
 
 pre {
   background-color: var(--tint-color);
-  padding: calc(var(--baseline-height) / 2) calc(1.5rem);
+  padding: calc(var(--baseline-height) / 2 - 1px) calc(1.5rem - 1px);
   overflow: auto;
   border-radius: 4px;
+  border: 1px solid var(--medium-color);
 }
 
 pre * {
