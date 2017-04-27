@@ -5,13 +5,13 @@ import classnames from 'classnames';
 import Notification from 'components/parts/Notification';
 import bindAction from 'utils/bindAction';
 import connect from 'utils/react/connect';
-import { Notification as NotificationType, State } from 'messaging/types';
-import { dismissNotification } from 'messaging/actions';
+import { Notification as NotificationInterface, State } from 'messaging/types';
+import { dismissNotification } from 'messaging/notification/actions';
 
 interface NotificationsProps {
     onDismissNotification: (id: number) => void;
     isReversed?: boolean;
-    notifications: NotificationType[];
+    notifications: NotificationInterface[];
 }
 
 class Notifications extends PureComponent<NotificationsProps, {}> {

@@ -13,7 +13,7 @@ import TreeLeaf from 'components/parts/TreeLeaf';
 import bindAction from 'utils/bindAction';
 import connect from 'utils/react/connect';
 import { Category, State, Subscription } from 'messaging/types';
-import { fetchSubscriptions } from 'messaging/actions';
+import { fetchSubscriptions } from 'messaging/subscription/actions';
 
 import '@emonkak/enumerable/extensions/groupJoin';
 import '@emonkak/enumerable/extensions/select';

@@ -7,7 +7,7 @@ import Navbar from 'components/parts/Navbar';
 import bindAction from 'utils/bindAction';
 import connect from 'utils/react/connect';
 import { Notification, NotificationKind, State } from 'messaging/types';
-import { sendNotification } from 'messaging/actions';
+import { sendNotification } from 'messaging/notification/actions';
 
 interface DashboardProps {
     onSendNotification: (notification: Notification) => void;

@@ -1,4 +1,4 @@
-import { State } from './types';
+import { State } from 'messaging/types';
 
 const initialState: State = {
     credential: null,

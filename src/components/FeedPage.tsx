@@ -8,7 +8,7 @@ import Navbar from 'components/parts/Navbar';
 import bindAction from 'utils/bindAction';
 import connect from 'utils/react/connect';
 import { Category, Feed, FeedSpecification, FeedView, State } from 'messaging/types';
-import { changeFeedView, fetchComments, fetchFeed, fetchFullContent, fetchMoreEntries, saveReadEntries } from 'messaging/actions';
+import { changeFeedView, fetchComments, fetchFeed, fetchFullContent, fetchMoreEntries, markAsRead } from 'messaging/feed/actions';
 
 interface FeedProps {
     categories: Category[];
@@ -19,7 +19,7 @@ interface FeedProps {
     onFetchFeed: (feedId: string, specification?: FeedSpecification) => void;
     onFetchFullContent: (entryId: string, url: string) => void;
     onFetchMoreEntries: (feedId: string, continuation: string, specification: FeedSpecification) => void;
-    onSaveReadEntries: (entryIds: string[]) => void;
+    onMarkAsRead: (entryIds: string[]) => void;
     onToggleSidebar: () => void,
     params: Params;
     scrollTo: (x: number, y: number) => Promise<void>;
@@ -56,10 +56,10 @@ class FeedComponent extends PureComponent<FeedProps, FeedState> {
         const { readEntryIds } = this.state;
 
         if (params['feed_id'] !== nextProps.params['feed_id']) {
-            const { feed, onFetchFeed, onSaveReadEntries } = this.props;
+            const { feed, onFetchFeed, onMarkAsRead } = this.props;
 
             if (feed.feedId === params['feed_id']) {
-                onSaveReadEntries([...readEntryIds]);
+                onMarkAsRead([...readEntryIds]);
             }
 
             onFetchFeed(nextProps.params['feed_id']);
@@ -77,11 +77,11 @@ class FeedComponent extends PureComponent<FeedProps, FeedState> {
     }
 
     componentWillUnmount() {
-        const { feed, onSaveReadEntries, params } = this.props;
+        const { feed, onMarkAsRead, params } = this.props;
         const { readEntryIds } = this.state;
 
         if (feed.feedId === params['feed_id']) {
-            onSaveReadEntries([...readEntryIds]);
+            onMarkAsRead([...readEntryIds]);
         }
     }
 
@@ -382,6 +382,6 @@ export default connect(
         onFetchFeed: bindAction(fetchFeed, dispatch),
         onFetchFullContent: bindAction(fetchFullContent, dispatch),
         onFetchMoreEntries: bindAction(fetchMoreEntries, dispatch),
-        onSaveReadEntries: bindAction(saveReadEntries, dispatch)
+        onMarkAsRead: bindAction(markAsRead, dispatch)
     })
 )(FeedComponent);
