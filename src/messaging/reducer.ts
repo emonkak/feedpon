@@ -68,7 +68,8 @@ function reduceFeed(feed: Feed, event: SyncEvent): Feed {
                 return {
                     ...initialState.feed,
                     feedId: event.feedId,
-                    isLoading: true
+                    isLoading: true,
+                    isLoaded: false
                 };
             }
 

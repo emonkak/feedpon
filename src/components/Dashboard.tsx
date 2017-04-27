@@ -3,6 +3,7 @@ import React, { PureComponent } from 'react';
 import Dropdown from 'components/parts/Dropdown';
 import MenuItem from 'components/parts/MenuItem';
 import Modal from 'components/parts/Modal';
+import Navbar from 'components/parts/Navbar';
 import bindAction from 'utils/bindAction';
 import connect from 'utils/react/connect';
 import { Notification, NotificationKind, State } from 'messaging/types';
@@ -10,6 +11,7 @@ import { sendNotification } from 'messaging/actions';
 
 interface DashboardProps {
     onSendNotification: (notification: Notification) => void;
+    onToggleSidebar: () => void;
 }
 
 interface DashboardState {
@@ -43,7 +45,17 @@ class Dashboard extends PureComponent<DashboardProps, DashboardState> {
         });
     }
 
-    render() {
+    renderNavbar() {
+        const { onToggleSidebar } = this.props;
+
+        return (
+            <Navbar onToggleSidebar={onToggleSidebar}>
+                <div className="navbar-title">Dashboard</div>
+            </Navbar>
+        );
+    }
+
+    renderContent() {
         const { modalIsOpened } = this.state;
 
         return (
@@ -362,6 +374,19 @@ class Dashboard extends PureComponent<DashboardProps, DashboardState> {
 
                 <h2>Blockquote</h2>
                 <blockquote>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</blockquote>
+            </div>
+        );
+    }
+
+    render() {
+        return (
+            <div className="l-main">
+                <div className="l-main-header">
+                    {this.renderNavbar()}
+                </div>
+                <div className="l-main-content">
+                    {this.renderContent()}
+                </div>
             </div>
         );
     }

@@ -33,10 +33,10 @@ const state = stateKeys.reduce((result, key) => {
 const store = new Store<Event, State>(reducer, state)
     .pipe(asyncMiddleware)
     .pipe(saveStateMiddleware(stateKeys, saveState))
-    .pipe((action, next) => {
-        console.log(action);
-
+    .pipe((action, next, getState) => {
         next(action);
+
+        console.log(action);
     });
 
 const element = document.getElementById('app');

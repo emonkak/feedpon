@@ -1,10 +1,39 @@
 import React, { PureComponent } from 'react';
 
-export default class About extends PureComponent<{}, {}> {
-    render() {
+import Navbar from 'components/parts/Navbar';
+
+interface AboutProps {
+    onToggleSidebar: () => void;
+}
+
+export default class About extends PureComponent<AboutProps, {}> {
+    renderNavbar() {
+        const { onToggleSidebar } = this.props;
+
+        return (
+            <Navbar onToggleSidebar={onToggleSidebar}>
+                <div className="navbar-title">About</div>
+            </Navbar>
+        );
+    }
+
+    renderContent() {
         return (
             <div className="container">
                 <h1>About</h1>
+            </div>
+        );
+    }
+
+    render() {
+        return (
+            <div className="l-main">
+                <div className="l-main-header">
+                    {this.renderNavbar()}
+                </div>
+                <div className="l-main-content">
+                    {this.renderContent()}
+                </div>
             </div>
         );
     }

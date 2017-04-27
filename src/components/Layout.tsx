@@ -7,9 +7,8 @@ import Sidebar from 'components/Sidebar';
 import smoothScroll from 'utils/dom/smoothScroll';
 
 interface LayoutProps {
-    content: React.ReactElement<any>;
+    children: React.ReactElement<any>;
     location: Location;
-    navbar: React.ReactElement<any>;
     router: History;
 }
 
@@ -88,7 +87,7 @@ export default class Layout extends PureComponent<LayoutProps, LayoutState> {
     }
 
     render() {
-        const { content, location, navbar, router } = this.props;
+        const { children, location, router } = this.props;
         const { isScrolling, sidebarIsOpened } = this.state;
 
         const rootClassName = classnames('l-root', {
@@ -100,24 +99,14 @@ export default class Layout extends PureComponent<LayoutProps, LayoutState> {
                 <div className='l-sidebar'>
                     <Sidebar router={router} selectedValue={location.pathname} />
                 </div>
-                <div className="l-main">
-                    <div className="l-main-header">
-                        {cloneElement(navbar, {
-                            isScrolling,
-                            onToggleSidebar: this.handleToggleSidebar.bind(this),
-                            scrollTo: this.scrollTo.bind(this)
-                        })}
-                    </div>
-                    <div className="l-main-notifications">
-                        <Notifications />
-                    </div>
-                    <div className="l-main-content">
-                        {cloneElement(content, {
-                            isScrolling,
-                            scrollTo: this.scrollTo.bind(this)
-                        })}
-                    </div>
+                <div className="l-notifications">
+                    <Notifications />
                 </div>
+                {cloneElement(children, {
+                    isScrolling,
+                    onToggleSidebar: this.handleToggleSidebar.bind(this),
+                    scrollTo: this.scrollTo.bind(this)
+                })}
             </div>
         );
     }

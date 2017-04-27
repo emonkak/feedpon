@@ -28,7 +28,7 @@
 
 .l-root.is-opened .l-main,
 .l-root.is-opened .l-main-header,
-.l-root.is-opened .l-main-notifications {
+.l-root.is-opened .l-notifications {
   padding-left: var(--sidebar-width);
 }
 
@@ -65,7 +65,7 @@
   transition: padding 0.2s ease-in-out;
 }
 
-.l-main-notifications {
+.l-notifications {
   position: fixed;
   top: 0;
   left: 0;
@@ -81,7 +81,7 @@
 
   .l-main,
   .l-main-header,
-  .l-main-notifications {
+  .l-notifications {
     padding-left: var(--sidebar-width);
     box-sizing: border-box;
   }
