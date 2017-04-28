@@ -52,6 +52,7 @@ export interface Category {
     categoryId: string;
     streamId: string,
     label: string;
+    unreadCount: number;
 }
 
 export interface Stream {

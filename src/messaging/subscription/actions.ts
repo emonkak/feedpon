@@ -1,5 +1,6 @@
 import Enumerable from '@emonkak/enumerable';
 
+import '@emonkak/enumerable/extensions/concat';
 import '@emonkak/enumerable/extensions/join';
 import '@emonkak/enumerable/extensions/selectMany';
 import '@emonkak/enumerable/extensions/toArray';
@@ -16,27 +17,46 @@ export function fetchSubscriptions(): AsyncEvent<void> {
         const { credential } = getState();
 
         if (credential) {
-            const [categoriesResponse, subscriptionsResponse, unreadCountsResponse] = await Promise.all([
+            const [feedlyCategories, feedlySubscriptions, feedlyUnreadCounts] = await Promise.all([
                 allCategories(credential.token.access_token),
                 allSubscriptions(credential.token.access_token),
                 allUnreadCounts(credential.token.access_token)
             ]);
 
-            const categories = categoriesResponse.map(category => ({
-                categoryId: category.id,
-                streamId: category.id,
-                label: category.label
-            }));
+            const uncategorizedCategory = {
+                id: 'user/' + credential.token.id + '/category/global.uncategorized',
+                label: 'Uncategorized'
+            };
 
-            const subscriptions = new Enumerable(subscriptionsResponse)
+            const categories = new Enumerable(feedlyCategories)
+                .concat([uncategorizedCategory])
                 .join(
-                    unreadCountsResponse.unreadcounts,
+                    feedlyUnreadCounts.unreadcounts,
+                    (category) => category.id,
+                    (unreadCount) => unreadCount.id,
+                    (category, unreadCount) => ({ category, unreadCount })
+                )
+                .select(({ category, unreadCount }) => ({
+                    categoryId: category.id,
+                    streamId: category.id,
+                    label: category.label,
+                    unreadCount: unreadCount.count
+                }))
+                .toArray();
+
+            const subscriptions = new Enumerable(feedlySubscriptions)
+                .join(
+                    feedlyUnreadCounts.unreadcounts,
                     (subscription) => subscription.id,
                     (unreadCount) => unreadCount.id,
                     (subscription, unreadCount) => ({ subscription, unreadCount })
                 )
-                .selectMany(({ subscription, unreadCount }) =>
-                    subscription.categories.map((category) => ({
+                .selectMany(({ subscription, unreadCount }) => {
+                    const categories = subscription.categories.length > 0
+                        ? subscription.categories
+                        : [uncategorizedCategory];
+
+                    return categories.map((category) => ({
                         subscriptionId: subscription.id,
                         categoryId: category.id,
                         streamId: subscription.id,
@@ -44,13 +64,13 @@ export function fetchSubscriptions(): AsyncEvent<void> {
                         iconUrl: subscription.iconUrl || '',
                         unreadCount: unreadCount.count
                     }))
-                )
+                })
                 .toArray();
 
             dispatch({
                 type: 'SUBSCRIPTIONS_FETCHED',
-                categories,
                 fetchedAt: new Date().toISOString(),
+                categories,
                 subscriptions
             });
         }

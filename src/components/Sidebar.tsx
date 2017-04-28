@@ -55,16 +55,12 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
     }
 
     renderCategory(category: Category, subscriptions: Subscription[]) {
-        const totalUnreadCount = subscriptions.reduce((total, subscription) => {
-            return total + subscription.unreadCount;
-        }, 0);
-
         return (
                 <TreeBranch key={`/streams/${encodeURIComponent(category.streamId)}`}
                             value={`/streams/${encodeURIComponent(category.streamId)}`}
-                            className={classnames({ 'is-important': totalUnreadCount > 0 })}
+                            className={classnames({ 'is-important': category.unreadCount > 0 })}
                             primaryText={category.label}
-                            secondaryText={totalUnreadCount > 0 ? Number(totalUnreadCount).toLocaleString() : ''}>
+                            secondaryText={category.unreadCount > 0 ? Number(category.unreadCount).toLocaleString() : ''}>
                 {subscriptions.map(subscription => this.renderSubscription(subscription))}
             </TreeBranch>
         );
@@ -88,8 +84,8 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
     renderTree() {
         const { categories, isLoading, lastUpdatedAt, selectedValue, subscriptions } = this.props;
 
-        const totalUnreadCount = subscriptions.reduce((total, subscription) => {
-            return total + subscription.unreadCount;
+        const totalUnreadCount = categories.reduce((total, category) => {
+            return total + category.unreadCount;
         }, 0);
 
         const groupedSubscriptions = new Enumerable(categories)
