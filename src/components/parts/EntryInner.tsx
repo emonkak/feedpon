@@ -126,7 +126,7 @@ export default class EntryInner extends PureComponent<EntryInnerProps, EntryInne
                 <a className="entry-action entry-action-open-external-link" href={entry.url} target="_blank">
                     <i className="icon icon-20 icon-external-link" />
                 </a>
-                <button className="entry-action entry-action-close" href="#" onClick={onClose}>
+                <button className="entry-action entry-action-close" onClick={onClose}>
                     <i className="icon icon-16 icon-close" />
                 </button>
             </nav>
@@ -244,7 +244,6 @@ export default class EntryInner extends PureComponent<EntryInnerProps, EntryInne
                 </button>
                 <button
                     className={classnames('entry-action', { 'is-selected': popover === 'share' })}
-                    href="#"
                     onClick={this.handleSwitchSharePopover}>
                     <i className="icon icon-20 icon-share" />
                 </button>

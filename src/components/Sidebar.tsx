@@ -105,16 +105,16 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
                 <TreeLeaf key="/streams/all/" value="/streams/all/" primaryText="All" secondaryText={Number(subscriptions.totalUnreadCount).toLocaleString()} />
                 <TreeLeaf key="/streams/pins/" value="/streams/pins/" primaryText="Pins" />
                 <TreeHeader>
-                    <a className="tree-node-icon" href="#" onClick={this.handleReload.bind(this)}>
+                    <button className="tree-node-icon" disabled={isLoading} onClick={this.handleReload.bind(this)}>
                         <i className={classnames('icon', 'icon-16', 'icon-refresh', {
                             'animation-clockwise-rotation': isLoading
                         })} />
-                    </a>
+                    </button>
                     <span className="tree-node-label">{lastUpdate}</span>
                     <Dropdown
                         pullRight={true}
                         className="tree-node-icon"
-                        toggleButton={<a className="link-default" href="#"><i className="icon icon-16 icon-more" /></a>}>
+                        toggleButton={<button><i className="icon icon-16 icon-more" /></button>}>
                         <div className="menu-heading">Order</div>
                         <MenuItem primaryText="Newest First" />
                         <MenuItem primaryText="Oldest First" />

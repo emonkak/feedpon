@@ -164,10 +164,10 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
             <Dropdown
                 className="navbar-action"
                 toggleButton={
-                    <a href="#">
+                    <button>
                         <i className="icon icon-24 icon-checkmark" />
                         <span className="badge badge-overlap badge-negative">{readEntries.length || ''}</span>
-                    </a>
+                    </button>
                 }
                 pullRight={true}>
                 <div className="menu-heading">Read entries</div>
@@ -197,7 +197,7 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
         return (
             <Dropdown
                 className="navbar-action"
-                toggleButton={<a href="#"><i className="icon icon-24 icon-more" /></a>}
+                toggleButton={<button><i className="icon icon-24 icon-more" /></button>}
                 pullRight={true}>
                 <div className="menu-heading">View</div>
                 <MenuItem
@@ -263,7 +263,7 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
             <Navbar onToggleSidebar={onToggleSidebar}>
                 {this.renderNavbarTitle()}
                 <div className="navbar-action">
-                    <a href="#"><i className="icon icon-24 icon-refresh" /></a>
+                    <button><i className="icon icon-24 icon-refresh" /></button>
                 </div>
                 {this.renderReadEntriesDropdown()}
                 {this.renderConfigDropdown()}
@@ -282,9 +282,9 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
                 ?  (
                     <Dropdown
                         toggleButton={
-                            <a className="button button-outline-default dropdown-arrow" href="#">
+                            <button className="button button-outline-default dropdown-arrow">
                                 <i className="icon icon-20 icon-settings" />
-                            </a>
+                            </button>
                         }
                         pullRight={true}>
                         <div className="menu-heading">Category</div>
@@ -301,7 +301,7 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
                             isDisabled={!subscription}
                             primaryText="Unsubscribe" />
                     </Dropdown>
-                ) : (<a className="button button-outline-positive dropdown-arrow" href="#">Subscribe</a>);
+                ) : (<button className="button button-outline-positive dropdown-arrow">Subscribe</button>);
 
             return (
                 <header className="stream-header">

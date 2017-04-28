@@ -51,7 +51,8 @@
   position: relative;
 }
 
-.navbar-action > a {
+.navbar-action > a,
+.navbar-action > button {
   display: flex;
   align-items: center;
   justify-content: center;

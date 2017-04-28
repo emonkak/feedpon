@@ -79,8 +79,6 @@ a.entry-action {
   height: 36px;
   border: 1px solid var(--medium-color);
   border-radius: 100%;
-  background: none;
-  cursor: pointer;
   transition: border-color 0.2s ease-in-out, color 0.2s ease-in-out;
 }
 

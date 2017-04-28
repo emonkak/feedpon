@@ -249,9 +249,23 @@ input[type="text"]:focus {
 }
 
 button {
+  padding: 0;
+  margin: 0;
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
   font-family: inherit;
   font-size: inherit;
   line-height: inherit;
+}
+
+button:focus {
+  outline: none;
+}
+
+button:disabled {
+  cursor: not-allowed;
 }
 
 button::-moz-focus-inner,
