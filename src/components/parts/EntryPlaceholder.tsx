@@ -23,7 +23,7 @@ export default class EntryPlaceholder extends React.Component<EntryPlaceholderPr
                 <div className="container">
                     <header className="entry-header">
                         <h2 className="entry-title"><span className="placeholder placeholder-animated placeholder-80" /></h2>
-                        <div className="entry-info-list">
+                        <div className="entry-metadata">
                             <span className="placeholder placeholder-animated placeholder-60" />
                         </div>
                     </header>

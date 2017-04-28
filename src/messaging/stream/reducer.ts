@@ -134,6 +134,37 @@ export default function reducer(stream: Stream, event: SyncEvent): Stream {
                 })
             };
 
+        case 'ENTRY_PINNING':
+            return {
+                ...stream,
+                entries: stream.entries.map(entry => {
+                    if (entry.entryId !== event.entryId) {
+                        return entry;
+                    }
+
+                    return {
+                        ...entry,
+                        isPinning: true
+                    };
+                })
+            };
+
+        case 'ENTRY_PINNED':
+            return {
+                ...stream,
+                entries: stream.entries.map(entry => {
+                    if (entry.entryId !== event.entryId) {
+                        return entry;
+                    }
+
+                    return {
+                        ...entry,
+                        isPinning: false,
+                        isPinned: event.isPinned
+                    };
+                })
+            };
+
         default:
             return stream;
     }

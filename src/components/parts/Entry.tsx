@@ -15,6 +15,8 @@ interface EntryProps {
     onExpand: (entryId: string, element: Element) => void;
     onFetchComments: (entryId: string, url: string) => void;
     onFetchFullContent: (entryId: string, url: string) => void;
+    onPin: (entryId: string) => void;
+    onUnpin: (entryId: string) => void;
 }
 
 export default class Entry extends PureComponent<EntryProps, {}> {
@@ -53,7 +55,7 @@ export default class Entry extends PureComponent<EntryProps, {}> {
     }
 
     render() {
-        const { entry, isActive, isCollapsible, isExpanded, isRead, onFetchComments, onFetchFullContent } = this.props;
+        const { entry, isActive, isCollapsible, isExpanded, isRead, onFetchComments, onFetchFullContent, onPin, onUnpin } = this.props;
 
         return (
             <article
@@ -70,7 +72,9 @@ export default class Entry extends PureComponent<EntryProps, {}> {
                     onClose={this.handleClose}
                     onExpand={this.handleExpand}
                     onFetchComments={onFetchComments}
-                    onFetchFullContent={onFetchFullContent} />
+                    onFetchFullContent={onFetchFullContent}
+                    onPin={onPin}
+                    onUnpin={onUnpin} />
             </article>
         );
     }

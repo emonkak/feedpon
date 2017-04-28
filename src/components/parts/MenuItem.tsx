@@ -1,11 +1,12 @@
 import React, { PureComponent } from 'react';
 
 interface MenuItemProps {
-    isDisabled?: boolean;
     icon?: React.ReactNode;
-    onSelect?: () => void;
+    isDisabled?: boolean;
+    onSelect?: (value?: any) => void;
     primaryText?: React.ReactNode;
     secondaryText?: React.ReactNode;
+    value?: any;
 }
 
 export default class MenuItem extends PureComponent<MenuItemProps, {}> {
@@ -16,10 +17,10 @@ export default class MenuItem extends PureComponent<MenuItemProps, {}> {
     handleSelect(event: React.SyntheticEvent<any>) {
         event.preventDefault();
 
-        const { onSelect } = this.props;
+        const { onSelect, value } = this.props;
 
         if (onSelect) {
-            onSelect();
+            onSelect(value);
         }
     }
 

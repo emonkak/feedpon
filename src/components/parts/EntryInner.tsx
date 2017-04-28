@@ -15,11 +15,13 @@ interface EntryInnerProps {
     onExpand: (event: React.SyntheticEvent<any>) => void;
     onFetchComments: (entryId: string, url: string) => void;
     onFetchFullContent: (entryId: string, url: string) => void;
+    onPin: (entryId: string) => void;
+    onUnpin: (entryId: string) => void;
 }
 
 interface EntryInnerState {
     popover: Popover;
-    fullContentMode: boolean;
+    fullContent: boolean;
 }
 
 export default class EntryInner extends PureComponent<EntryInnerProps, EntryInnerState> {
@@ -28,44 +30,14 @@ export default class EntryInner extends PureComponent<EntryInnerProps, EntryInne
 
         this.state = {
             popover: 'none',
-            fullContentMode: false
+            fullContent: false
         };
 
+        this.handleFetchNextFullContent = this.handleFetchNextFullContent.bind(this);
         this.handleSwitchCommentPopover = this.handleSwitchCommentPopover.bind(this);
         this.handleSwitchSharePopover = this.handleSwitchSharePopover.bind(this);
         this.handleToggleFullContent = this.handleToggleFullContent.bind(this);
-        this.handleFetchNextFullContent = this.handleFetchNextFullContent.bind(this);
-    }
-
-    handleSwitchCommentPopover(event: React.SyntheticEvent<any>) {
-        event.preventDefault();
-
-        this.changePopover('comment');
-    }
-
-    handleSwitchSharePopover(event: React.SyntheticEvent<any>) {
-        event.preventDefault();
-
-        this.changePopover('share');
-    }
-
-    handleToggleFullContent(event: React.SyntheticEvent<any>) {
-        event.preventDefault();
-
-        const { entry } = this.props;
-        const { fullContentMode } = this.state;
-
-        if (!fullContentMode) {
-            const { onFetchFullContent } = this.props;
-
-            if (!entry.fullContents.isLoaded) {
-                onFetchFullContent(entry.entryId, entry.url);
-            }
-        }
-
-        this.setState({
-            fullContentMode: !fullContentMode
-        });
+        this.handleTogglePin = this.handleTogglePin.bind(this);
     }
 
     handleFetchNextFullContent() {
@@ -73,6 +45,45 @@ export default class EntryInner extends PureComponent<EntryInnerProps, EntryInne
 
         if (entry.fullContents.isLoaded && entry.fullContents.nextPageUrl) {
             onFetchFullContent(entry.entryId, entry.fullContents.nextPageUrl);
+        }
+    }
+
+    handleSwitchCommentPopover(event: React.SyntheticEvent<any>) {
+        this.changePopover('comment');
+    }
+
+    handleSwitchSharePopover(event: React.SyntheticEvent<any>) {
+        this.changePopover('share');
+    }
+
+    handleToggleFullContent(event: React.SyntheticEvent<any>) {
+        const { entry } = this.props;
+        const { fullContent } = this.state;
+
+        if (!entry.fullContents.isLoading) {
+            if (!fullContent) {
+                const { onFetchFullContent } = this.props;
+
+                if (!entry.fullContents.isLoaded) {
+                    onFetchFullContent(entry.entryId, entry.url);
+                }
+            }
+
+            this.setState({
+                fullContent: !fullContent
+            });
+        }
+    }
+
+    handleTogglePin(event: React.SyntheticEvent<any>) {
+        const { entry, onPin, onUnpin } = this.props;
+
+        if (!entry.isPinning) {
+            if (entry.isPinned) {
+                onUnpin(entry.entryId);
+            } else {
+                onPin(entry.entryId);
+            }
         }
     }
 
@@ -96,22 +107,28 @@ export default class EntryInner extends PureComponent<EntryInnerProps, EntryInne
 
     renderNav() {
         const { entry, onClose } = this.props;
-        const { fullContentMode } = this.state;
+        const { fullContent } = this.state;
 
         return (
             <nav className="entry-nav">
-                <a className={classnames('entry-action entry-action-fetch-full-content', { 'is-selected': fullContentMode })} href="#" onClick={this.handleToggleFullContent}>
-                    <i className={classnames('icon', 'icon-20', entry.fullContents.isLoading ? 'icon-spinner animation-clockwise-rotation' : 'icon-page-overview')} />
-                </a>
-                <a className="entry-action entry-action-pin" href="#">
-                    <i className="icon icon-20 icon-pin-3" />
-                </a>
+                <button
+                    className={classnames('entry-action entry-action-fetch-full-content', { 'is-selected': fullContent })}
+                    onClick={this.handleToggleFullContent}
+                    disabled={entry.fullContents.isLoading}>
+                    <i className={classnames('icon icon-20', entry.fullContents.isLoading ? 'icon-spinner animation-clockwise-rotation' : 'icon-page-overview')} />
+                </button>
+                <button
+                    className={classnames('entry-action entry-action-pin', { 'is-selected': entry.isPinned })}
+                    onClick={this.handleTogglePin}
+                    disabled={entry.isPinning}>
+                    <i className={classnames('icon icon-20', entry.isPinning ? 'icon-spinner animation-clockwise-rotation' : 'icon-pin-3')} />
+                </button>
                 <a className="entry-action entry-action-open-external-link" href={entry.url} target="_blank">
                     <i className="icon icon-20 icon-external-link" />
                 </a>
-                <a className="entry-action entry-action-close" href="#" onClick={onClose}>
+                <button className="entry-action entry-action-close" href="#" onClick={onClose}>
                     <i className="icon icon-16 icon-close" />
-                </a>
+                </button>
             </nav>
         );
     }
@@ -135,7 +152,7 @@ export default class EntryInner extends PureComponent<EntryInnerProps, EntryInne
                     className={classnames('entry-bookmarks', 'link-default', {
                         'is-bookmarked': entry.bookmarkCount > 0,
                         'is-popular': entry.bookmarkCount >= 10,
-                            'is-very-popular': entry.bookmarkCount >= 20
+                        'is-very-popular': entry.bookmarkCount >= 20
                     })}
                     target="_blank"
                     href={entry.bookmarkUrl}>
@@ -194,9 +211,9 @@ export default class EntryInner extends PureComponent<EntryInnerProps, EntryInne
 
     renderContent() {
         const { entry, entry: { fullContents } } = this.props;
-        const { fullContentMode } = this.state;
+        const { fullContent } = this.state;
 
-        if (fullContentMode && fullContents.isLoaded) {
+        if (fullContent && fullContents.isLoaded) {
             return (
                 <FullContents
                     isLoading={fullContents.isLoading}
@@ -220,18 +237,17 @@ export default class EntryInner extends PureComponent<EntryInnerProps, EntryInne
 
         return (
             <div className="entry-action-list">
-                <a
+                <button
                     className={classnames('entry-action', { 'is-selected': popover === 'comment' })}
-                    href="#"
                     onClick={this.handleSwitchCommentPopover}>
                     <i className="icon icon-20 icon-comments" />
-                </a>
-                <a
+                </button>
+                <button
                     className={classnames('entry-action', { 'is-selected': popover === 'share' })}
                     href="#"
                     onClick={this.handleSwitchSharePopover}>
                     <i className="icon icon-20 icon-share" />
-                </a>
+                </button>
                 <a
                     className="entry-action"
                     href={entry.url}

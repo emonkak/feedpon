@@ -23,11 +23,9 @@
   },
   "dependencies": {
     "@emonkak/enumerable": "^2.0.0",
-    "@types/prop-types": "^15.5.1",
     "classnames": "^2.2.5",
     "moment": "^2.17.1",
     "prop-types": "^15.5.8",
-    "querystring": "^0.2.0",
     "react": "^15.4.2",
     "react-addons-css-transition-group": "^15.4.2",
     "react-dom": "^15.4.2",
@@ -36,6 +34,7 @@
   "devDependencies": {
     "@types/chrome": "0.0.46",
     "@types/classnames": "0.0.32",
+    "@types/prop-types": "^15.5.1",
     "@types/react": "^15.0.11",
     "@types/react-addons-css-transition-group": "^15.0.1",
     "@types/react-dom": "^15.5.0",

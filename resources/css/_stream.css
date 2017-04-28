@@ -6,6 +6,7 @@ a.stream-title {
 
 a.stream-title:hover {
   color: var(--positive-color);
+  text-decoration: none;
 }
 
 .stream-unread-count {

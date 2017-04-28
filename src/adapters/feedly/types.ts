@@ -168,11 +168,6 @@ export interface Visual {
     contentType: string;
 }
 
-export interface Tag {
-    id: string;
-    label: string;
-}
-
 // Subscriptions API:
 export interface Subscription {
     id: string;
@@ -186,7 +181,9 @@ export interface Subscription {
     iconUrl?: string;
 }
 
-// Ohters:
-export interface Credential extends ExchangeTokenResponse {
-    authorized: number;
+// Tags API:
+export interface Tag {
+    id: string;
+    label?: string;
+    description?: string;
 }

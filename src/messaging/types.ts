@@ -9,6 +9,8 @@ export type SyncEvent
     | { type: 'BOOKMARK_COUNTS_FETCHED', bookmarkCounts: { [key: string]: number } }
     | { type: 'COMMENTS_FETCHED', entryId: string, comments: Comment[] }
     | { type: 'ENTRY_MARKED_AS_READ', entryIds: string[] }
+    | { type: 'ENTRY_PINNED', entryId: string, isPinned: boolean }
+    | { type: 'ENTRY_PINNING', entryId: string }
     | { type: 'FULL_CONTENT_FETCHED', entryId: string, fullContent: FullContent | null, nextPageUrl: string | null }
     | { type: 'FULL_CONTENT_FETCHING', entryId: string }
     | { type: 'MORE_ENTRIES_FETCHED', streamId: string, continuation: string | null, entries: Entry[] }
@@ -89,16 +91,18 @@ export interface Entry {
     title: string;
     author: string;
     url: string;
-    origin: Origin | null;
-    visual: Visual | null;
     summary: string;
     content: string;
-    fullContents: FullContents;
+    publishedAt: string;
     bookmarkCount: number;
     bookmarkUrl: string;
-    comments: Comments;
-    publishedAt: string;
+    isPinned: boolean;
+    isPinning: boolean;
     markedAsRead: boolean;
+    origin: Origin | null;
+    visual: Visual | null;
+    fullContents: FullContents;
+    comments: Comments;
 }
 
 export interface Origin {

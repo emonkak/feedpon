@@ -1,5 +1,3 @@
-/// <reference path="./querystring.d.ts" />
-
 interface RequestIdleCallback {
     didTimeout: boolean;
     timeRemaining(): number;

@@ -21,6 +21,8 @@ interface EntryListProps {
     isScrolling: boolean;
     onFetchComments: (entryId: string, url: string) => void;
     onFetchFullContent: (entryId: string, url: string) => void;
+    onUnpin: (entryId: string) => void;
+    onPin: (entryId: string) => void;
     onRead: (entryIds: string[]) => void;
     readEntryIds: Set<string>;
     scrollTo: (x: number, y: number) => Promise<void>;
@@ -130,7 +132,7 @@ export default class EntryList extends PureComponent<EntryListProps, EntryListSt
     }
 
     renderEntry(entry: EntryInterface) {
-        const { onFetchComments, onFetchFullContent, readEntryIds, view } = this.props;
+        const { onFetchComments, onFetchFullContent, onPin, onUnpin, readEntryIds, view } = this.props;
         const { expandedEntryId } = this.state;
         const isCollapsible = view === 'collapsible';
         const isExpanded = view === 'expanded' || expandedEntryId === entry.entryId;
@@ -146,7 +148,9 @@ export default class EntryList extends PureComponent<EntryListProps, EntryListSt
                 onClose={this.handleClose}
                 onExpand={this.handleExpand}
                 onFetchComments={onFetchComments}
-                onFetchFullContent={onFetchFullContent} />
+                onFetchFullContent={onFetchFullContent}
+                onPin={onPin}
+                onUnpin={onUnpin} />
         );
     }
 

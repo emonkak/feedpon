@@ -8,21 +8,23 @@ import Navbar from 'components/parts/Navbar';
 import bindAction from 'utils/bindAction';
 import connect from 'utils/react/connect';
 import { Category, State, Stream, StreamOptions, StreamView } from 'messaging/types';
-import { changeStreamView, fetchComments, fetchStream, fetchFullContent, fetchMoreEntries, markAsRead } from 'messaging/stream/actions';
+import { changeStreamView, fetchComments, fetchFullContent, fetchMoreEntries, fetchStream, markAsRead, pinEntry, unpinEntry } from 'messaging/stream/actions';
 
 interface StreamProps {
     categories: Category[];
-    stream: Stream;
     isScrolling: boolean;
     onChangeStreamView: (view: StreamView) => void,
     onFetchComments: (entryId: string, url: string) => void;
-    onFetchStream: (streamId: string, options?: StreamOptions) => void;
     onFetchFullContent: (entryId: string, url: string) => void;
     onFetchMoreEntries: (streamId: string, continuation: string, options: StreamOptions) => void;
+    onFetchStream: (streamId: string, options?: StreamOptions) => void;
     onMarkAsRead: (entryIds: string[]) => void;
+    onPinEntry: (entryId: string) => void;
     onToggleSidebar: () => void,
+    onUnpinEntry: (entryId: string) => void;
     params: Params;
     scrollTo: (x: number, y: number) => Promise<void>;
+    stream: Stream;
 };
 
 interface StreamState {
@@ -39,8 +41,13 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
             readEntryIds: new Set()
         };
 
+        this.handleChangeEntryOrder = this.handleChangeEntryOrder.bind(this);
+        this.handleClearReadEntries = this.handleClearReadEntries.bind(this);
         this.handleLoadMoreEntries = this.handleLoadMoreEntries.bind(this);
+        this.handlePinEntry = this.handlePinEntry.bind(this);
         this.handleReadEntry = this.handleReadEntry.bind(this);
+        this.handleScrollToEntry = this.handleScrollToEntry.bind(this);
+        this.handleToggleOnlyUnread = this.handleToggleOnlyUnread.bind(this);
     }
 
     componentWillMount() {
@@ -85,10 +92,23 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
         }
     }
 
-    handleReadEntry(readEntryIds: string[]) {
-        this.setState((state) => ({
-            readEntryIds: new Set([...state.readEntryIds, ...readEntryIds])
-        }));
+    handleChangeEntryOrder(order: 'newest' | 'oldest') {
+        const { stream, onFetchStream, scrollTo } = this.props;
+
+        if (stream.streamId) {
+            scrollTo(0, 0);
+
+            onFetchStream(stream.streamId, {
+                ...stream.options,
+                order
+            });
+        }
+    }
+
+    handleClearReadEntries() {
+        const { scrollTo } = this.props;
+
+        scrollTo(0, 0).then(() => this.setState({ readEntryIds: new Set() }));
     }
 
     handleLoadMoreEntries(event: React.SyntheticEvent<any>) {
@@ -101,16 +121,23 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
         }
     }
 
-    handleChangeEntryOrder(order: 'newest' | 'oldest') {
-        const { stream, onFetchStream, scrollTo } = this.props;
+    handlePinEntry(entryId: string) {
+        const { onPinEntry } = this.props;
 
-        if (stream.streamId) {
-            scrollTo(0, 0);
+        onPinEntry(entryId);
+    }
 
-            onFetchStream(stream.streamId, {
-                ...stream.options,
-                order
-            });
+    handleReadEntry(readEntryIds: string[]) {
+        this.setState((state) => ({
+            readEntryIds: new Set([...state.readEntryIds, ...readEntryIds])
+        }));
+    }
+
+    handleScrollToEntry(entryId: string) {
+        const scrollElement = document.getElementById('entry-' + entryId);
+
+        if (scrollElement) {
+            this.props.scrollTo(0, scrollElement.offsetTop - SCROLL_OFFSET);
         }
     }
 
@@ -125,20 +152,6 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
                 onlyUnread: !stream.options.onlyUnread
             });
         }
-    }
-
-    handleScrollToEntry(entryId: string) {
-        const scrollElement = document.getElementById('entry-' + entryId);
-
-        if (scrollElement) {
-            this.props.scrollTo(0, scrollElement.offsetTop - SCROLL_OFFSET);
-        }
-    }
-
-    handleClearReadEntries(entryId: string) {
-        const { scrollTo } = this.props;
-
-        scrollTo(0, 0).then(() => this.setState({ readEntryIds: new Set() }));
     }
 
     renderReadEntriesDropdown() {
@@ -159,15 +172,16 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
                 pullRight={true}>
                 <div className="menu-heading">Read entries</div>
                 {readEntries.map((entry) => (
-                    <MenuItem 
-                        onSelect={this.handleScrollToEntry.bind(this, entry.entryId)}
+                    <MenuItem
                         key={entry.entryId}
-                        primaryText={entry.title} />
+                        onSelect={this.handleScrollToEntry}
+                        primaryText={entry.title}
+                        value={entry.entryId} />
                 ))}
                 <div className="menu-divider" />
                 <MenuItem
-                    onSelect={this.handleClearReadEntries.bind(this)}
                     isDisabled={readEntries.length === 0}
+                    onSelect={this.handleClearReadEntries}
                     primaryText="Clear all read entries" />
                 <div className="menu-divider" />
                 <MenuItem
@@ -188,8 +202,9 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
                 <div className="menu-heading">View</div>
                 <MenuItem
                     icon={stream.options.view === 'expanded' ? <i className="icon icon-16 icon-checkmark" /> : null}
+                    onSelect={onChangeStreamView}
                     primaryText="Expanded view"
-                    onSelect={onChangeStreamView.bind(null, 'expanded')} />
+                    value="expanded" />
                 <MenuItem
                     icon={stream.options.view === 'collapsible' ? <i className="icon icon-16 icon-checkmark" /> : null}
                     primaryText="Collapsible view"
@@ -198,17 +213,19 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
                 <div className="menu-heading">Order</div>
                 <MenuItem
                     icon={stream.options.order === 'newest' ? <i className="icon icon-16 icon-checkmark" /> : null}
+                    onSelect={this.handleChangeEntryOrder}
                     primaryText="Newest first"
-                    onSelect={this.handleChangeEntryOrder.bind(this, 'newest')} />
+                    value="newest" />
                 <MenuItem
                     icon={stream.options.order === 'oldest' ? <i className="icon icon-16 icon-checkmark" /> : null}
+                    onSelect={this.handleChangeEntryOrder}
                     primaryText="Oldest first"
-                    onSelect={this.handleChangeEntryOrder.bind(this, 'oldest')} />
+                    value="oldest" />
                 <div className="menu-divider" />
                 <MenuItem
                     icon={stream.options.onlyUnread ? <i className="icon icon-16 icon-checkmark" /> : null}
                     primaryText="Only unread"
-                    onSelect={this.handleToggleOnlyUnread.bind(this)} />
+                    onSelect={this.handleToggleOnlyUnread} />
             </Dropdown>
         );
     }
@@ -293,8 +310,8 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
                             <div className="stream-header-content-left">
                                 <div className="stream-metadata">
                                     <div className="list-inline list-inline-dotted">
-                                        <div className="list-inline-item"><strong>{feed.velocity.toFixed(1)}</strong> entries per week</div>
                                         <div className="list-inline-item"><strong>{feed.subscribers}</strong> subscribers</div>
+                                        <div className="list-inline-item"><strong>{feed.velocity.toFixed(1)}</strong> entries per week</div>
                                     </div>
                                 </div>
                                 <div className="stream-description">{feed.description}</div>
@@ -310,7 +327,7 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
     }
 
     renderEntryList() {
-        const { stream, isScrolling, onFetchComments, onFetchFullContent, scrollTo } = this.props;
+        const { isScrolling, onFetchComments, onFetchFullContent, onPinEntry, onUnpinEntry, scrollTo, stream } = this.props;
         const { readEntryIds } = this.state;
 
         return (
@@ -320,7 +337,9 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
                 isScrolling={isScrolling}
                 onFetchComments={onFetchComments}
                 onFetchFullContent={onFetchFullContent}
+                onPin={onPinEntry}
                 onRead={this.handleReadEntry}
+                onUnpin={onUnpinEntry}
                 readEntryIds={readEntryIds}
                 scrollTo={scrollTo}
                 view={stream.options.view} />
@@ -382,9 +401,11 @@ export default connect(
     (dispatch) => ({
         onChangeStreamView: bindAction(changeStreamView, dispatch),
         onFetchComments: bindAction(fetchComments, dispatch),
-        onFetchStream: bindAction(fetchStream, dispatch),
         onFetchFullContent: bindAction(fetchFullContent, dispatch),
         onFetchMoreEntries: bindAction(fetchMoreEntries, dispatch),
-        onMarkAsRead: bindAction(markAsRead, dispatch)
+        onFetchStream: bindAction(fetchStream, dispatch),
+        onMarkAsRead: bindAction(markAsRead, dispatch),
+        onPinEntry: bindAction(pinEntry, dispatch),
+        onUnpinEntry: bindAction(unpinEntry, dispatch)
     })
 )(StreamPage);

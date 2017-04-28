@@ -24,11 +24,6 @@ export default class CommentPopoverContent extends PureComponent<CommentPopoverC
                         <span className="comment-comment"><span className="placeholder placeholder-animated placeholder-60" /></span>
                         <span className="comment-timestamp"><span className="placeholder placeholder-animated placeholder-20" /></span>
                     </div>
-                    <div className="comment">
-                        <span className="comment-user"><span className="placeholder placeholder-animated placeholder-10" /></span>
-                        <span className="comment-comment"><span className="placeholder placeholder-animated placeholder-60" /></span>
-                        <span className="comment-timestamp"><span className="placeholder placeholder-animated placeholder-20" /></span>
-                    </div>
                 </div>
             );
         }
