@@ -406,7 +406,7 @@ function convertEntry(entry: feedly.Entry): Entry {
             title: entry.origin.title,
             url: entry.origin.htmlUrl,
         } : null,
-        markAsRead: !entry.unread
+        markedAsRead: !entry.unread
     };
 }
 

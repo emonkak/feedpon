@@ -18,6 +18,12 @@
   }
 }
 
+.entry.is-marked-as-read {
+  & .entry-title {
+    color: var(--dark-color);
+  }
+}
+
 .entry.is-expanded {
   padding: var(--baseline-height) 0 calc(var(--baseline-height) - 1px);
 

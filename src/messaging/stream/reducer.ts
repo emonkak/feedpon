@@ -129,7 +129,7 @@ export default function reducer(stream: Stream, event: SyncEvent): Stream {
 
                     return {
                         ...entry,
-                        markAsRead: true
+                        markedAsRead: true
                     };
                 })
             };

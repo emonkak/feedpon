@@ -97,7 +97,7 @@ export interface Entry {
     bookmarkUrl: string;
     comments: Comments;
     publishedAt: string;
-    markAsRead: boolean;
+    markedAsRead: boolean;
 }
 
 export interface Origin {

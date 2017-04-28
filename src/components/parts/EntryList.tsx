@@ -91,7 +91,7 @@ export default class EntryList extends PureComponent<EntryListProps, EntryListSt
 
         const newReadEntryIds = new Enumerable(entries)
             .takeWhile((entry) => entry.entryId !== activeKey)
-            .where((entry) => !readEntryIds.has(entry.entryId))
+            .where((entry) => !entry.markedAsRead && !readEntryIds.has(entry.entryId))
             .select((entry) => entry.entryId)
             .toArray();
 
@@ -107,6 +107,7 @@ export default class EntryList extends PureComponent<EntryListProps, EntryListSt
         const latestEntry = entries[entries.length - 1];
 
         if (latestEntry.entryId === inactiveKey
+            && !latestEntry.markedAsRead
             && !readEntryIds.has(latestEntry.entryId)) {
             onRead([latestEntry.entryId]);
         }
