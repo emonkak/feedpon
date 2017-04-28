@@ -1,4 +1,4 @@
-.feed-header {
+.stream-header {
   position: relative;
   padding: calc(var(--baseline-height) / 2) 0 calc(var(--baseline-height) / 2 - 1px);
   background-color: var(--tint-color);
@@ -6,26 +6,26 @@
   z-index: 20;
 }
 
-.feed-header-content {
+.stream-header-content {
   display: flex;
   align-items: center;
   min-height: calc(var(--baseline-height) * 1.5);
 }
 
-.feed-metadata {
+.stream-metadata {
   flex: 1;
   margin-right: 1.5rem;
 }
 
-.feed-info {
+.stream-info {
   color: var(--dark-color);
 }
 
-.feed-info + .feed-info::before {
+.stream-info + .stream-info::before {
   content: '\00a0\00b7\00a0';
 }
 
-.feed-footer {
+.stream-footer {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -36,7 +36,7 @@
   font-weight: 600;
 }
 
-.feed-footer > a {
+.stream-footer > a {
   display: flex;
   align-items: center;
   justify-content: center;

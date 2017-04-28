@@ -5,10 +5,10 @@ import AboutPage from 'components/AboutPage';
 import AuthenticationPage from 'components/AuthenticationPage';
 import AuthenticationRequired from 'components/AuthenticationRequired';
 import DashboardPage from 'components/DashboardPage';
-import FeedPage from 'components/FeedPage';
 import Layout from 'components/Layout';
 import NotAuthenticated from 'components/NotAuthenticated'
 import PreferencePage from 'components/PreferencePage';
+import StreamPage from 'components/StreamPage';
 
 const routes = (
     <Route path="/">
@@ -16,7 +16,7 @@ const routes = (
             <Route component={Layout}>
                 <IndexRoute component={DashboardPage} />
                 <Route path="about" component={AboutPage} />
-                <Route path="feeds/:feed_id" component={FeedPage} />
+                <Route path="streams/:stream_id" component={StreamPage} />
                 <Route path="preference" component={PreferencePage} />
             </Route>
         </Route>

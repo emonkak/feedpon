@@ -7,7 +7,7 @@ import '@emonkak/enumerable/extensions/toArray';
 import * as feedly from 'adapters/feedly/types';
 import decodeResponseAsText from 'utils/decodeResponseAsText';
 import stripTags from 'utils/stripTags';
-import { AsyncEvent, Entry, FeedOptions, FeedView, FullContent, SiteinfoItem, SyncEvent } from 'messaging/types';
+import { AsyncEvent, Entry, FullContent, SiteinfoItem, StreamOptions, StreamView, SyncEvent } from 'messaging/types';
 import { DEFAULT_DISMISS_AFTER, sendNotification } from 'messaging/notification/actions';
 import { getBookmarkCounts, getBookmarkEntry } from 'adapters/hatena/bookmarkApi';
 import { getCredential } from 'messaging/credential/actions';
@@ -15,18 +15,18 @@ import { getFeed, getStreamContents } from 'adapters/feedly/api';
 
 const URL_PATTERN = /^https?:\/\//;
 
-export function changeFeedView(view: FeedView): SyncEvent {
+export function changeStreamView(view: StreamView): SyncEvent {
     return {
-        type: 'FEED_VIEW_CHANGED',
+        type: 'STREAM_VIEW_CHANGED',
         view
     };
 }
 
-export function fetchFeed(feedId: string, options?: FeedOptions): AsyncEvent<void> {
+export function fetchStream(streamId: string, options?: StreamOptions): AsyncEvent<void> {
     return async (dispatch, getState) => {
         dispatch({
-            type: 'FEED_FETCHING',
-            feedId: feedId
+            type: 'STREAM_FETCHING',
+            streamId
         });
 
         const { preference } = getState();
@@ -36,32 +36,34 @@ export function fetchFeed(feedId: string, options?: FeedOptions): AsyncEvent<voi
                 numEntries: preference.defaultNumEntries,
                 order: preference.defaultEntryOrder,
                 onlyUnread: preference.onlyUnreadEntries,
-                view: preference.defaultFeedView
+                view: preference.defaultStreamView
             };
         }
 
-        if (feedId.startsWith('feed/')) {
-            await doFetchFeed(feedId, options)(dispatch, getState);
-        } else if (feedId.startsWith('user/')) {
-            await doFetchCategory(feedId, options)(dispatch, getState);
-        } else if (feedId === 'all') {
-            await doFetchAllCategories(options)(dispatch, getState);
-        } else if (feedId === 'pins') {
-            await doFetchPins(options)(dispatch, getState);
+        if (streamId.startsWith('feed/')) {
+            await fetchFeedStream(streamId, options)(dispatch, getState);
+        } else if (streamId.startsWith('user/')) {
+            await fetchCategoryStream(streamId, options)(dispatch, getState);
+        } else if (streamId === 'all') {
+            await fetchAllStream(options)(dispatch, getState);
+        } else if (streamId === 'pins') {
+            await fetchPinsStream(options)(dispatch, getState);
         }
     };
 }
 
-export function fetchMoreEntries(feedId: string, continuation: string, options: FeedOptions): AsyncEvent<void> {
+export function fetchMoreEntries(streamId: string, continuation: string, options: StreamOptions): AsyncEvent<void> {
     return async (dispatch, getState) => {
         dispatch({
             type: 'MORE_ENTRIES_FETCHING',
-            feedId: feedId
+            streamId
         });
 
         const credential = await getCredential()(dispatch, getState);
+
+        const feedlyStreamId = toFeedlyStreamId(streamId, credential.token.id);
         const contentsResponse = await getStreamContents(credential.token.access_token, {
-            streamId: feedId,
+            streamId: feedlyStreamId,
             continuation,
             ranked: options.order,
             unreadOnly: options.onlyUnread
@@ -69,7 +71,7 @@ export function fetchMoreEntries(feedId: string, continuation: string, options: 
 
         dispatch({
             type: 'MORE_ENTRIES_FETCHED',
-            feedId,
+            streamId,
             entries: contentsResponse.items.map(convertEntry),
             continuation: contentsResponse.continuation || null
         });
@@ -213,154 +215,148 @@ function extractFullContent(url: string, htmlString: string, siteinfoItems: Site
     return { fullContent: null, nextPageUrl: null };
 }
 
-function doFetchFeed(feedId: string, options: FeedOptions): AsyncEvent<void> {
+function fetchFeedStream(streamId: string, options: StreamOptions): AsyncEvent<void> {
     return async (dispatch, getState) => {
         const credential = await getCredential()(dispatch, getState);
         const [contents, feed] = await Promise.all([
             getStreamContents(credential.token.access_token, {
-                streamId: feedId,
+                streamId,
                 ranked: options.order,
                 unreadOnly: options.onlyUnread
             }),
-            getFeed(credential.token.access_token, feedId)
+            getFeed(credential.token.access_token, streamId)
         ]);
 
         const { subscriptions } = getState();
         const subscription = new Enumerable(subscriptions.items)
-            .firstOrDefault((subscription) => subscription.subscriptionId === feedId);
+            .firstOrDefault((subscription) => subscription.subscriptionId === streamId);
 
-        const fechedFeed = {
-            feedId,
+        const stream = {
+            streamId,
             title: feed.title,
-            description: feed.description || '',
-            url: feed.website || '',
-            subscribers: feed.subscribers,
-            velocity: feed.velocity || 0,
             entries: contents.items.map(convertEntry),
             continuation: contents.continuation || null,
             isLoading: false,
             isLoaded: true,
+            feed: {
+                description: feed.description || '',
+                subscribers: feed.subscribers,
+                url: feed.website || '',
+                velocity: feed.velocity || 0,
+            },
             subscription,
             options
         };
 
         dispatch({
-            type: 'FEED_FETCHED',
-            feed: fechedFeed
+            type: 'STREAM_FETCHED',
+            stream
         });
 
-        doFetchBookmarkCounts(fechedFeed.entries)(dispatch, getState);
+        fetchBookmarkCounts(stream.entries)(dispatch, getState);
     };
 }
 
-function doFetchCategory(categoryId: string, options: FeedOptions): AsyncEvent<void> {
+function fetchCategoryStream(streamId: string, options: StreamOptions): AsyncEvent<void> {
     return async (dispatch, getState) => {
         const credential = await getCredential()(dispatch, getState);
         const contents = await getStreamContents(credential.token.access_token, {
-            streamId: categoryId,
+            streamId,
             ranked: options.order,
             unreadOnly: options.onlyUnread
         });
 
         const { subscriptions } = getState();
-        const category = new Enumerable(subscriptions.categories)
-            .firstOrDefault((category) => category.categoryId === categoryId);
 
-        const fechedFeed = {
-            feedId: categoryId,
+        const category = new Enumerable(subscriptions.categories)
+            .firstOrDefault((category) => category.categoryId === streamId);
+
+        const stream = {
+            streamId,
             title: category ? category.label : '',
-            description: '',
-            url: '',
-            subscribers: 0,
-            velocity: 0,
             entries: contents.items.map(convertEntry),
             continuation: contents.continuation || null,
             isLoading: false,
             isLoaded: true,
+            feed: null,
             subscription: null,
             options
         };
 
         dispatch({
-            type: 'FEED_FETCHED',
-            feed: fechedFeed
+            type: 'STREAM_FETCHED',
+            stream
         });
 
-        doFetchBookmarkCounts(fechedFeed.entries)(dispatch, getState);
+        fetchBookmarkCounts(stream.entries)(dispatch, getState);
     };
 }
 
-function doFetchAllCategories(options: FeedOptions): AsyncEvent<void> {
+function fetchAllStream(options: StreamOptions): AsyncEvent<void> {
     return async (dispatch, getState) => {
         const credential = await getCredential()(dispatch, getState);
 
-        const streamId = 'user/' + credential.token.id + '/category/global.all';
+        const streamId = toFeedlyStreamId('all', credential.token.id);
         const contents = await getStreamContents(credential.token.access_token, {
             streamId,
             ranked: options.order,
             unreadOnly: options.onlyUnread
         });
 
-        const fechedFeed = {
-            feedId: streamId,
+        const stream = {
+            streamId: 'all',
             title: 'All',
-            description: '',
-            url: '',
-            subscribers: 0,
-            velocity: 0,
             entries: contents.items.map(convertEntry),
             continuation: contents.continuation || null,
             isLoading: false,
             isLoaded: true,
+            feed: null,
             subscription: null,
             options
         }
 
         dispatch({
-            type: 'FEED_FETCHED',
-            feed: fechedFeed
+            type: 'STREAM_FETCHED',
+            stream
         });
 
-        doFetchBookmarkCounts(fechedFeed.entries)(dispatch, getState);
+        fetchBookmarkCounts(stream.entries)(dispatch, getState);
     };
 }
 
-function doFetchPins(options: FeedOptions): AsyncEvent<void> {
+function fetchPinsStream(options: StreamOptions): AsyncEvent<void> {
     return async (dispatch, getState) => {
         const credential = await getCredential()(dispatch, getState);
 
-        const streamId = 'user/' + credential.token.id + '/tag/global.saved';
+        const streamId = toFeedlyStreamId('pins', credential.token.id);
         const contents = await getStreamContents(credential.token.access_token, {
             streamId,
             ranked: options.order,
             unreadOnly: options.onlyUnread
         });
 
-        const fechedFeed = {
-            feedId: streamId,
+        const stream = {
+            streamId: 'pins',
             title: 'Pins',
-            description: '',
-            url: '',
-            subscribers: 0,
-            velocity: 0,
             entries: contents.items.map(convertEntry),
             continuation: contents.continuation || null,
             isLoading: false,
             isLoaded: true,
+            feed: null,
             subscription: null,
             options
         }
 
         dispatch({
-            type: 'FEED_FETCHED',
-            feed: fechedFeed
+            type: 'STREAM_FETCHED',
+            stream
         });
 
-        doFetchBookmarkCounts(fechedFeed.entries)(dispatch, getState);
+        fetchBookmarkCounts(stream.entries)(dispatch, getState);
     };
 }
 
-function doFetchBookmarkCounts(entries: Entry[]): AsyncEvent<void> {
+function fetchBookmarkCounts(entries: Entry[]): AsyncEvent<void> {
     return async (dispatch, getState) => {
         const entryUrls = entries
             .filter((entry) => !!entry.url)
@@ -406,7 +402,7 @@ function convertEntry(entry: feedly.Entry): Entry {
         bookmarkUrl: 'http://b.hatena.ne.jp/entry/' + url,
         bookmarkCount: 0,
         origin: entry.origin ? {
-            feedId: entry.origin.streamId,
+            streamId: entry.origin.streamId,
             title: entry.origin.title,
             url: entry.origin.htmlUrl,
         } : null,
@@ -420,4 +416,14 @@ function tryMatch(pattern: string, str: string): boolean {
     } catch (error) {
         return false;
     }
+}
+
+function toFeedlyStreamId(streamId: string, uid: string) {
+    if (streamId === 'all') {
+        return 'user/' + uid + '/category/global.all';
+    }
+    if (streamId === 'all') {
+        return 'user/' + uid + '/tag/global.saved';
+    }
+    return streamId;
 }

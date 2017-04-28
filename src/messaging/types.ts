@@ -9,16 +9,16 @@ export type SyncEvent
     | { type: 'BOOKMARK_COUNTS_FETCHED', bookmarkCounts: { [key: string]: number } }
     | { type: 'COMMENTS_FETCHED', entryId: string, comments: Comment[] }
     | { type: 'ENTRY_MARKED_AS_READ', entryIds: string[] }
-    | { type: 'FEED_FETCHED', feed: Feed }
-    | { type: 'FEED_FETCHING', feedId: string }
-    | { type: 'FEED_VIEW_CHANGED', view: FeedView }
     | { type: 'FULL_CONTENT_FETCHED', entryId: string, fullContent: FullContent | null, nextPageUrl: string | null }
     | { type: 'FULL_CONTENT_FETCHING', entryId: string }
-    | { type: 'MORE_ENTRIES_FETCHING', feedId: string }
-    | { type: 'MORE_ENTRIES_FETCHED', feedId: string, continuation: string | null, entries: Entry[] }
+    | { type: 'MORE_ENTRIES_FETCHED', streamId: string, continuation: string | null, entries: Entry[] }
+    | { type: 'MORE_ENTRIES_FETCHING', streamId: string }
     | { type: 'NOTIFICATION_DISMISSED', id: number }
     | { type: 'NOTIFICATION_SENT', notification: Notification }
     | { type: 'SITEINFO_UPDATED', siteinfo: Siteinfo }
+    | { type: 'STREAM_FETCHED', stream: Stream }
+    | { type: 'STREAM_FETCHING', streamId: string }
+    | { type: 'STREAM_VIEW_CHANGED', view: StreamView }
     | { type: 'SUBSCRIPTIONS_FETCHED', subscriptions: Subscription[], categories: Category[], fetchedAt: string }
     | { type: 'SUBSCRIPTIONS_FETCHING' };
 
@@ -29,11 +29,11 @@ export interface AsyncEvent<T> {
 export interface State {
     credential: Credential | null;
     environment: Environment;
-    feed: Feed;
     notifications: Notification[];
     preference: Preference;
-    subscriptions: Subscriptions;
     siteinfo: Siteinfo;
+    stream: Stream;
+    subscriptions: Subscriptions;
 }
 
 export interface Credential {
@@ -50,33 +50,37 @@ export interface Environment {
 
 export interface Category {
     categoryId: string;
-    feedId: string,
+    streamId: string,
     label: string;
 }
 
-export interface Feed {
-    feedId: string | null;
+export interface Stream {
+    streamId: string | null;
     title: string;
-    description: string;
-    url: string;
     entries: Entry[];
-    subscribers: number;
-    velocity: number;
     continuation: string | null;
     isLoading: boolean;
     isLoaded: boolean;
+    feed: Feed | null;
     subscription: Subscription | null;
-    options: FeedOptions;
+    options: StreamOptions;
 }
 
-export interface FeedOptions {
+export interface StreamOptions {
     numEntries: number;
     order: 'newest' | 'oldest';
     onlyUnread: boolean;
-    view: FeedView;
+    view: StreamView;
 }
 
-export type FeedView = 'expanded' | 'collapsible';
+export type StreamView = 'expanded' | 'collapsible';
+
+export interface Feed {
+    description: string;
+    url: string;
+    subscribers: number;
+    velocity: number;
+}
 
 export interface Entry {
     entryId: string;
@@ -96,7 +100,7 @@ export interface Entry {
 }
 
 export interface Origin {
-    feedId: string;
+    streamId: string;
     title: string;
     url: string;
 }
@@ -141,7 +145,7 @@ export type NotificationKind = 'default' | 'positive' | 'negative';
 
 export interface Preference {
     defaultEntryOrder: 'newest' | 'oldest';
-    defaultFeedView: FeedView;
+    defaultStreamView: StreamView;
     defaultNumEntries: number;
     defaultSubscriptionsOrder: 'newest' | 'oldest';
     onlyUnreadEntries: boolean;
@@ -158,7 +162,7 @@ export interface Subscriptions {
 export interface Subscription {
     subscriptionId: string;
     categoryId: string;
-    feedId: string,
+    streamId: string,
     title: string;
     iconUrl: string;
     unreadCount: number;

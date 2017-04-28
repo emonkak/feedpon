@@ -24,7 +24,7 @@ export function fetchSubscriptions(): AsyncEvent<void> {
 
             const categories = categoriesResponse.map(category => ({
                 categoryId: category.id,
-                feedId: category.id,
+                streamId: category.id,
                 label: category.label
             }));
 
@@ -39,7 +39,7 @@ export function fetchSubscriptions(): AsyncEvent<void> {
                     subscription.categories.map((category) => ({
                         subscriptionId: subscription.id,
                         categoryId: category.id,
-                        feedId: subscription.id,
+                        streamId: subscription.id,
                         title: subscription.title || '',
                         iconUrl: subscription.iconUrl || '',
                         unreadCount: unreadCount.count

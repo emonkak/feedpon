@@ -7,32 +7,32 @@ import MenuItem from 'components/parts/MenuItem';
 import Navbar from 'components/parts/Navbar';
 import bindAction from 'utils/bindAction';
 import connect from 'utils/react/connect';
-import { Category, Feed, FeedOptions, FeedView, State } from 'messaging/types';
-import { changeFeedView, fetchComments, fetchFeed, fetchFullContent, fetchMoreEntries, markAsRead } from 'messaging/feed/actions';
+import { Category, State, Stream, StreamOptions, StreamView } from 'messaging/types';
+import { changeStreamView, fetchComments, fetchStream, fetchFullContent, fetchMoreEntries, markAsRead } from 'messaging/stream/actions';
 
-interface FeedProps {
+interface StreamProps {
     categories: Category[];
-    feed: Feed;
+    stream: Stream;
     isScrolling: boolean;
-    onChangeFeedView: (view: FeedView) => void,
+    onChangeStreamView: (view: StreamView) => void,
     onFetchComments: (entryId: string, url: string) => void;
-    onFetchFeed: (feedId: string, options?: FeedOptions) => void;
+    onFetchStream: (streamId: string, options?: StreamOptions) => void;
     onFetchFullContent: (entryId: string, url: string) => void;
-    onFetchMoreEntries: (feedId: string, continuation: string, options: FeedOptions) => void;
+    onFetchMoreEntries: (streamId: string, continuation: string, options: StreamOptions) => void;
     onMarkAsRead: (entryIds: string[]) => void;
     onToggleSidebar: () => void,
     params: Params;
     scrollTo: (x: number, y: number) => Promise<void>;
 };
 
-interface FeedState {
+interface StreamState {
     readEntryIds: Set<string>;
 }
 
 const SCROLL_OFFSET = 48;
 
-class FeedComponent extends PureComponent<FeedProps, FeedState> {
-    constructor(props: FeedProps, context: any) {
+class StreamPage extends PureComponent<StreamProps, StreamState> {
+    constructor(props: StreamProps, context: any) {
         super(props, context);
 
         this.state = {
@@ -44,32 +44,32 @@ class FeedComponent extends PureComponent<FeedProps, FeedState> {
     }
 
     componentWillMount() {
-        const { feed, onFetchFeed, params } = this.props;
+        const { stream, onFetchStream, params } = this.props;
 
-        if (!feed || (feed.feedId !== params['feed_id'])) {
-            onFetchFeed(params['feed_id']);
+        if (!stream || (stream.streamId !== params['stream_id'])) {
+            onFetchStream(params['stream_id']);
         }
     }
 
-    componentWillUpdate(nextProps: FeedProps, nextState: {}) {
+    componentWillUpdate(nextProps: StreamProps, nextState: {}) {
         const { params } = this.props;
         const { readEntryIds } = this.state;
 
-        if (params['feed_id'] !== nextProps.params['feed_id']) {
-            const { feed, onFetchFeed, onMarkAsRead } = this.props;
+        if (params['stream_id'] !== nextProps.params['stream_id']) {
+            const { stream, onFetchStream, onMarkAsRead } = this.props;
 
-            if (feed.feedId === params['feed_id']) {
+            if (stream.streamId === params['stream_id']) {
                 onMarkAsRead([...readEntryIds]);
             }
 
-            onFetchFeed(nextProps.params['feed_id']);
+            onFetchStream(nextProps.params['stream_id']);
         }
     }
 
-    componentWillReceiveProps(nextProps: FeedProps) {
-        const { feed } = this.props;
+    componentWillReceiveProps(nextProps: StreamProps) {
+        const { stream } = this.props;
 
-        if (feed.feedId !== nextProps.feed.feedId) {
+        if (stream.streamId !== nextProps.stream.streamId) {
             this.setState({
                 readEntryIds: new Set()
             });
@@ -77,10 +77,10 @@ class FeedComponent extends PureComponent<FeedProps, FeedState> {
     }
 
     componentWillUnmount() {
-        const { feed, onMarkAsRead, params } = this.props;
+        const { stream, onMarkAsRead, params } = this.props;
         const { readEntryIds } = this.state;
 
-        if (feed.feedId === params['feed_id']) {
+        if (stream.streamId === params['stream_id']) {
             onMarkAsRead([...readEntryIds]);
         }
     }
@@ -94,35 +94,35 @@ class FeedComponent extends PureComponent<FeedProps, FeedState> {
     handleLoadMoreEntries(event: React.SyntheticEvent<any>) {
         event.preventDefault();
 
-        const { onFetchMoreEntries, feed } = this.props;
+        const { onFetchMoreEntries, stream } = this.props;
 
-        if (feed.feedId && feed.continuation) {
-            onFetchMoreEntries(feed.feedId, feed.continuation, feed.options);
+        if (stream.streamId && stream.continuation) {
+            onFetchMoreEntries(stream.streamId, stream.continuation, stream.options);
         }
     }
 
     handleChangeEntryOrder(order: 'newest' | 'oldest') {
-        const { feed, onFetchFeed, scrollTo } = this.props;
+        const { stream, onFetchStream, scrollTo } = this.props;
 
-        if (feed.feedId) {
+        if (stream.streamId) {
             scrollTo(0, 0);
 
-            onFetchFeed(feed.feedId, {
-                ...feed.options,
+            onFetchStream(stream.streamId, {
+                ...stream.options,
                 order
             });
         }
     }
 
     handleToggleOnlyUnread() {
-        const { feed, onFetchFeed } = this.props;
+        const { stream, onFetchStream } = this.props;
 
-        if (feed.feedId) {
+        if (stream.streamId) {
             scrollTo(0, 0);
 
-            onFetchFeed(feed.feedId, {
-                ...feed.options,
-                onlyUnread: !feed.options.onlyUnread
+            onFetchStream(stream.streamId, {
+                ...stream.options,
+                onlyUnread: !stream.options.onlyUnread
             });
         }
     }
@@ -142,10 +142,10 @@ class FeedComponent extends PureComponent<FeedProps, FeedState> {
     }
 
     renderReadEntriesDropdown() {
-        const { feed } = this.props;
+        const { stream } = this.props;
         const { readEntryIds } = this.state;
 
-        const readEntries = feed.entries.filter(entry => readEntryIds.has(entry.entryId));
+        const readEntries = stream.entries.filter(entry => readEntryIds.has(entry.entryId));
 
         return (
             <Dropdown
@@ -171,14 +171,14 @@ class FeedComponent extends PureComponent<FeedProps, FeedState> {
                     primaryText="Clear all read entries" />
                 <div className="menu-divider" />
                 <MenuItem
-                    isDisabled={feed.entries.length === 0}
+                    isDisabled={stream.entries.length === 0}
                     primaryText="Mark all as read" />
             </Dropdown>
         );
     }
 
     renderConfigDropdown() {
-        const { feed, onChangeFeedView } = this.props;
+        const { stream, onChangeStreamView } = this.props;
 
         return (
             <Dropdown
@@ -187,26 +187,26 @@ class FeedComponent extends PureComponent<FeedProps, FeedState> {
                 pullRight={true}>
                 <div className="menu-heading">View</div>
                 <MenuItem
-                    icon={feed.options.view === 'expanded' ? <i className="icon icon-16 icon-checkmark" /> : null}
+                    icon={stream.options.view === 'expanded' ? <i className="icon icon-16 icon-checkmark" /> : null}
                     primaryText="Expanded view"
-                    onSelect={onChangeFeedView.bind(null, 'expanded')} />
+                    onSelect={onChangeStreamView.bind(null, 'expanded')} />
                 <MenuItem
-                    icon={feed.options.view === 'collapsible' ? <i className="icon icon-16 icon-checkmark" /> : null}
+                    icon={stream.options.view === 'collapsible' ? <i className="icon icon-16 icon-checkmark" /> : null}
                     primaryText="Collapsible view"
-                    onSelect={onChangeFeedView.bind(null, 'collapsible')} />
+                    onSelect={onChangeStreamView.bind(null, 'collapsible')} />
                 <div className="menu-divider" />
                 <div className="menu-heading">Order</div>
                 <MenuItem
-                    icon={feed.options.order === 'newest' ? <i className="icon icon-16 icon-checkmark" /> : null}
+                    icon={stream.options.order === 'newest' ? <i className="icon icon-16 icon-checkmark" /> : null}
                     primaryText="Newest first"
                     onSelect={this.handleChangeEntryOrder.bind(this, 'newest')} />
                 <MenuItem
-                    icon={feed.options.order === 'oldest' ? <i className="icon icon-16 icon-checkmark" /> : null}
+                    icon={stream.options.order === 'oldest' ? <i className="icon icon-16 icon-checkmark" /> : null}
                     primaryText="Oldest first"
                     onSelect={this.handleChangeEntryOrder.bind(this, 'oldest')} />
                 <div className="menu-divider" />
                 <MenuItem
-                    icon={feed.options.onlyUnread ? <i className="icon icon-16 icon-checkmark" /> : null}
+                    icon={stream.options.onlyUnread ? <i className="icon icon-16 icon-checkmark" /> : null}
                     primaryText="Only unread"
                     onSelect={this.handleToggleOnlyUnread.bind(this)} />
             </Dropdown>
@@ -214,14 +214,14 @@ class FeedComponent extends PureComponent<FeedProps, FeedState> {
     }
 
     renderNavbarTitle() {
-        const { feed } = this.props;
+        const { stream } = this.props;
 
-        if (feed.url) {
+        if (stream.feed) {
             return (
-                <a className="link-default" href={feed.url} target="_blank">{feed.title}</a>
+                <a className="link-default" href={stream.feed.url} target="_blank">{stream.title}</a>
             );
         } else {
-            return feed.title;
+            return stream.title;
         }
     }
 
@@ -241,102 +241,89 @@ class FeedComponent extends PureComponent<FeedProps, FeedState> {
     }
 
     renderHeader() {
-        const { feed } = this.props;
+        const { stream } = this.props;
+        const { feed, subscription } = stream;
 
-        if (feed.isLoading && !feed.isLoaded) {
+        if (feed) {
+            const { categories } = this.props;
+
+            const subscribeButton = subscription
+                ?  (
+                    <Dropdown
+                        toggleButton={
+                            <a className="button button-outline-default dropdown-arrow" href="#">
+                                <i className="icon icon-20 icon-settings" />
+                            </a>
+                        }
+                        pullRight={true}>
+                        <div className="menu-heading">Category</div>
+                        {categories.map(category => (
+                            <MenuItem
+                                key={category.categoryId}
+                                icon={category.categoryId === subscription.categoryId ? <i className="icon icon-16 icon-checkmark" /> : null}
+                                primaryText={category.label} />
+                        ))}
+                        <div className="menu-divider" />
+                        <MenuItem primaryText="New Category..." />
+                        <div className="menu-divider" />
+                        <MenuItem
+                            isDisabled={!subscription}
+                            primaryText="Unsubscribe" />
+                    </Dropdown>
+                ) : (<a className="button button-outline-positive dropdown-arrow" href="#">Subscribe</a>);
+
             return (
-                <header className="feed-header">
+                <header className="stream-header">
                     <div className="container">
-                        <div className="feed-header-content">
-                            <div className="feed-metadata">
-                                <span className="placeholder placeholder-animated placeholder-80" />
-                                <span className="placeholder placeholder-animated placeholder-40" />
+                        <div className="stream-header-content">
+                            <div className="stream-metadata">
+                                <div className="stream-info-list">
+                                    <span className="stream-info"><strong>{feed.velocity.toFixed(1)}</strong> entries per week</span>
+                                    <span className="stream-info"><strong>{feed.subscribers}</strong> subscribers</span>
+                                </div>
+                                <div className="stream-description">{feed.description}</div>
                             </div>
+                            {subscribeButton}
                         </div>
                     </div>
                 </header>
             );
         }
 
-        const { categories } = this.props;
-        const isSubscribed = feed.subscription != null;
-        const categoryId = feed.subscription != null ? feed.subscription.categoryId : null;
-
-        const subscribeButton = isSubscribed
-            ?  (
-                <Dropdown
-                    toggleButton={
-                        <a className="button button-outline-default dropdown-arrow" href="#">
-                            <i className="icon icon-20 icon-settings" />
-                        </a>
-                    }
-                    pullRight={true}>
-                    <div className="menu-heading">Category</div>
-                    {categories.map(category => (
-                        <MenuItem
-                            key={category.categoryId}
-                            icon={category.categoryId === categoryId ? <i className="icon icon-16 icon-checkmark" /> : null}
-                            primaryText={category.label} />
-                    ))}
-                    <div className="menu-divider" />
-                    <MenuItem primaryText="New Category..." />
-                    <div className="menu-divider" />
-                    <MenuItem
-                        isDisabled={!isSubscribed}
-                        primaryText="Unsubscribe" />
-                </Dropdown>
-            ) : (<a className="button button-outline-positive dropdown-arrow" href="#">Subscribe</a>);
-
-        return (
-            <header className="feed-header">
-                <div className="container">
-                    <div className="feed-header-content">
-                        <div className="feed-metadata">
-                            <div className="feed-info-list">
-                                <span className="feed-info"><strong>{feed.entries.length}</strong> entries</span>
-                                <span className="feed-info"><strong>{feed.velocity.toFixed(1)}</strong> entries per week</span>
-                                <span className="feed-info"><strong>{feed.subscribers}</strong> subscribers</span>
-                            </div>
-                            <div className="feed-description">{feed.description}</div>
-                        </div>
-                        {subscribeButton}
-                    </div>
-                </div>
-            </header>
-        );
+        return null;
     }
 
     renderEntryList() {
-        const { feed, isScrolling, onFetchComments, onFetchFullContent, scrollTo } = this.props;
+        const { stream, isScrolling, onFetchComments, onFetchFullContent, scrollTo } = this.props;
         const { readEntryIds } = this.state;
 
         return (
             <EntryList
-                entries={feed ? feed.entries : []}
-                isLoading={feed.isLoading && !feed.isLoaded}
+                entries={stream ? stream.entries : []}
+                isLoading={stream.isLoading && !stream.isLoaded}
                 isScrolling={isScrolling}
                 onFetchComments={onFetchComments}
                 onFetchFullContent={onFetchFullContent}
                 onRead={this.handleReadEntry}
                 readEntryIds={readEntryIds}
                 scrollTo={scrollTo}
-                view={feed.options.view} />
+                view={stream.options.view} />
         );
     }
 
     renderFooter() {
-        const { feed } = this.props;
+        const { stream } = this.props;
 
-        if (feed.continuation) {
-            if (feed.isLoading) {
+        if (stream.continuation) {
+            if (stream.isLoading) {
                 return (
-                    <footer className="feed-footer">
+                    <footer className="stream-footer">
                         <i className="icon icon-32 icon-spinner animation-clockwise-rotation" />
                     </footer>
                 );
             } else {
                 return (
-                    <footer className="feed-footer">
+                    <footer className="stream-footer">
                         <a
                             className="link-default"
                             href="#"
@@ -348,7 +335,7 @@ class FeedComponent extends PureComponent<FeedProps, FeedState> {
             }
         } else {
             return (
-                <footer className="feed-footer">
+                <footer className="stream-footer">
                     No more entries here.
                 </footer>
             );
@@ -374,14 +361,14 @@ class FeedComponent extends PureComponent<FeedProps, FeedState> {
 export default connect(
     (state: State) => ({
         categories: state.subscriptions.categories,
-        feed: state.feed
+        stream: state.stream
     }),
     (dispatch) => ({
-        onChangeFeedView: bindAction(changeFeedView, dispatch),
+        onChangeStreamView: bindAction(changeStreamView, dispatch),
         onFetchComments: bindAction(fetchComments, dispatch),
-        onFetchFeed: bindAction(fetchFeed, dispatch),
+        onFetchStream: bindAction(fetchStream, dispatch),
         onFetchFullContent: bindAction(fetchFullContent, dispatch),
         onFetchMoreEntries: bindAction(fetchMoreEntries, dispatch),
         onMarkAsRead: bindAction(markAsRead, dispatch)
     })
-)(FeedComponent);
+)(StreamPage);

@@ -1,12 +1,12 @@
 import initialState from 'messaging/initialState';
-import { Feed, SyncEvent } from 'messaging/types';
+import { Stream, SyncEvent } from 'messaging/types';
 
-export default function reducer(feed: Feed, event: SyncEvent): Feed {
+export default function reducer(stream: Stream, event: SyncEvent): Stream {
     switch (event.type) {
         case 'BOOKMARK_COUNTS_FETCHED':
             return {
-                ...feed,
-                entries: feed.entries.map(entry => ({
+                ...stream,
+                entries: stream.entries.map(entry => ({
                     ...entry,
                     bookmarkCount: event.bookmarkCounts[entry.url] || 0
                 }))
@@ -14,8 +14,8 @@ export default function reducer(feed: Feed, event: SyncEvent): Feed {
 
         case 'COMMENTS_FETCHED':
             return {
-                ...feed,
-                entries: feed.entries.map(entry => {
+                ...stream,
+                entries: stream.entries.map(entry => {
                     if (entry.entryId === event.entryId) {
                         return {
                             ...entry,
@@ -31,29 +31,29 @@ export default function reducer(feed: Feed, event: SyncEvent): Feed {
             };
 
 
-        case 'FEED_FETCHING':
-            if (feed.feedId !== event.feedId) {
+        case 'STREAM_FETCHING':
+            if (stream.streamId !== event.streamId) {
                 return {
-                    ...initialState.feed,
-                    feedId: event.feedId,
+                    ...initialState.stream,
+                    streamId: event.streamId,
                     isLoading: true,
                     isLoaded: false
                 };
             }
 
             return {
-                ...feed,
+                ...stream,
                 isLoading: true,
                 isLoaded: false
             };
 
-        case 'FEED_FETCHED':
-            return event.feed;
+        case 'STREAM_FETCHED':
+            return event.stream;
 
         case 'FULL_CONTENT_FETCHING':
             return {
-                ...feed,
-                entries: feed.entries.map(entry => {
+                ...stream,
+                entries: stream.entries.map(entry => {
                     if (entry.entryId !== event.entryId) {
                         return entry;
                     }
@@ -70,8 +70,8 @@ export default function reducer(feed: Feed, event: SyncEvent): Feed {
 
         case 'FULL_CONTENT_FETCHED':
             return {
-                ...feed,
-                entries: feed.entries.map(entry => {
+                ...stream,
+                entries: stream.entries.map(entry => {
                     if (entry.entryId !== event.entryId) {
                         return entry;
                     }
@@ -88,41 +88,41 @@ export default function reducer(feed: Feed, event: SyncEvent): Feed {
                 })
             };
 
-        case 'FEED_VIEW_CHANGED':
+        case 'STREAM_VIEW_CHANGED':
             return {
-                ...feed,
+                ...stream,
                 options: {
-                    ...feed.options,
+                    ...stream.options,
                     view: event.view
                 }
             };
 
         case 'MORE_ENTRIES_FETCHING':
-            if (feed.feedId !== event.feedId) {
-                return feed;
+            if (stream.streamId !== event.streamId) {
+                return stream;
             }
 
             return {
-                ...feed,
+                ...stream,
                 isLoading: true
             };
 
         case 'MORE_ENTRIES_FETCHED':
-            if (feed.feedId !== event.feedId) {
-                return feed;
+            if (stream.streamId !== event.streamId) {
+                return stream;
             }
 
             return {
-                ...feed,
+                ...stream,
                 continuation: event.continuation,
-                entries: feed.entries.concat(event.entries),
+                entries: stream.entries.concat(event.entries),
                 isLoading: false
             };
 
         case 'ENTRY_MARKED_AS_READ':
             return {
-                ...feed,
-                entries: feed.entries.map(entry => {
+                ...stream,
+                entries: stream.entries.map(entry => {
                     if (event.entryIds.indexOf(entry.entryId) === -1) {
                         return entry;
                     }
@@ -135,6 +135,6 @@ export default function reducer(feed: Feed, event: SyncEvent): Feed {
             };
 
         default:
-            return feed;
+            return stream;
     }
 }

@@ -8,17 +8,14 @@ const initialState: State = {
         scope: 'https://cloud.feedly.com/subscriptions',
         redirectUri: 'https://www.feedly.com/feedly.html'
     },
-    feed: {
-        feedId: null,
+    stream: {
+        streamId: null,
         title: 'Loading...',
-        description: '',
-        url: '',
         entries: [],
-        subscribers: 0,
-        velocity: 0,
         continuation: null,
         isLoading: false,
         isLoaded: false,
+        feed: null,
         subscription: null,
         options: {
             numEntries: 20,
@@ -38,7 +35,7 @@ const initialState: State = {
         defaultEntryOrder: 'newest',
         defaultNumEntries: 20,
         defaultSubscriptionsOrder: 'newest',
-        defaultFeedView: 'expanded',
+        defaultStreamView: 'expanded',
         onlyUnreadEntries: true,
         onlyUnreadSubscriptions: true,
     },

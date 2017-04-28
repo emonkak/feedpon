@@ -78,10 +78,6 @@ export function revokeToken(input: types.RevokeTokenInput): Promise<types.Revoke
     return doPost('v3/auth/token', input);
 }
 
-export function getCategory(accessToken: string, categoryId: string): Promise<types.Category> {
-    return doGet('v3/categories/' + encodeURIComponent(categoryId), {}, createAuthHeader(accessToken));
-}
-
 export function allCategories(accessToken: string): Promise<types.Category[]> {
     return doGet('v3/categories', {}, createAuthHeader(accessToken));
 }

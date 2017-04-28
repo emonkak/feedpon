@@ -60,8 +60,8 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
         }, 0);
 
         return (
-                <TreeBranch key={`/feeds/${encodeURIComponent(category.feedId)}`}
-                            value={`/feeds/${encodeURIComponent(category.feedId)}`}
+                <TreeBranch key={`/streams/${encodeURIComponent(category.streamId)}`}
+                            value={`/streams/${encodeURIComponent(category.streamId)}`}
                             className={classnames({ 'is-important': totalUnreadCount > 0 })}
                             primaryText={category.label}
                             secondaryText={totalUnreadCount > 0 ? Number(totalUnreadCount).toLocaleString() : ''}>
@@ -76,8 +76,8 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
             : <i className="icon icon-16 icon-file" />;
 
         return (
-            <TreeLeaf key={`/feeds/${encodeURIComponent(subscription.feedId)}`}
-                      value={`/feeds/${encodeURIComponent(subscription.feedId)}`}
+            <TreeLeaf key={`/streams/${encodeURIComponent(subscription.streamId)}`}
+                      value={`/streams/${encodeURIComponent(subscription.streamId)}`}
                       className={classnames({ 'is-important': subscription.unreadCount > 0 })}
                       primaryText={subscription.title}
                       secondaryText={subscription.unreadCount > 0 ? Number(subscription.unreadCount).toLocaleString() : ''}
@@ -110,8 +110,8 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
             <Tree value={selectedValue}
                   onSelect={this.handleSelect.bind(this)}>
                 <TreeLeaf key="/" value="/" primaryText="Dashboard" />
-                <TreeLeaf key="/feeds/all/" value="/feeds/all/" primaryText="All" secondaryText={Number(totalUnreadCount).toLocaleString()} />
-                <TreeLeaf key="/feeds/pins/" value="/feeds/pins/" primaryText="Pins" />
+                <TreeLeaf key="/streams/all/" value="/streams/all/" primaryText="All" secondaryText={Number(totalUnreadCount).toLocaleString()} />
+                <TreeLeaf key="/streams/pins/" value="/streams/pins/" primaryText="Pins" />
                 <TreeHeader>
                     <a className="tree-node-icon" href="#" onClick={this.handleReload.bind(this)}>
                         <i className={classnames('icon', 'icon-16', 'icon-refresh', {
