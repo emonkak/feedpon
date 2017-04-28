@@ -1,3 +1,23 @@
+.stream-title,
+a.stream-title {
+  color: inherit;
+  font-weight: 600;
+}
+
+a.stream-title:hover {
+  color: var(--positive-color);
+}
+
+.stream-unread-count {
+  color: var(--dark-color);
+  font-weight: 400;
+}
+
+.stream-unread-count::before {
+  content: '\00a0\00b7\00a0';
+  color: var(--dark-color);
+}
+
 .stream-header {
   position: relative;
   padding: calc(var(--baseline-height) / 2) 0 calc(var(--baseline-height) / 2 - 1px);
@@ -9,20 +29,15 @@
 .stream-header-content {
   display: flex;
   align-items: center;
-  min-height: calc(var(--baseline-height) * 1.5);
 }
 
-.stream-metadata {
+.stream-header-content-left {
   flex: 1;
   margin-right: 1.5rem;
 }
 
-.stream-info {
+.stream-metadata {
   color: var(--dark-color);
-}
-
-.stream-info + .stream-info::before {
-  content: '\00a0\00b7\00a0';
 }
 
 .stream-footer {

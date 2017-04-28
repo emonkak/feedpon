@@ -1,5 +1,5 @@
 .link-default {
-  color: var(--default-color);
+  color: inherit;
   text-decoration: none;
 }
 

@@ -67,11 +67,17 @@ export function fetchSubscriptions(): AsyncEvent<void> {
                 })
                 .toArray();
 
+            const totalUnreadCount = categories.reduce(
+                (total, category) => total + category.unreadCount,
+                0
+            );
+
             dispatch({
                 type: 'SUBSCRIPTIONS_FETCHED',
                 fetchedAt: new Date().toISOString(),
                 categories,
-                subscriptions
+                subscriptions,
+                totalUnreadCount
             });
         }
     };

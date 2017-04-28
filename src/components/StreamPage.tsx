@@ -215,14 +215,28 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
 
     renderNavbarTitle() {
         const { stream } = this.props;
+        const { readEntryIds } = this.state;
 
-        if (stream.feed) {
-            return (
-                <a className="link-default" href={stream.feed.url} target="_blank">{stream.title}</a>
+        const unreadCount = stream.unreadCount > 0
+            ? (
+                <span className="stream-unread-count u-text-truncate">{stream.unreadCount - readEntryIds.size} unread entries</span>
+            )
+            : null;
+
+        const title = stream.feed
+            ? (
+                <a className="stream-title u-text-truncate" href={stream.feed.url} target="_blank">{stream.title}</a>
+            )
+            : (
+                <span className="stream-title u-text-truncate">{stream.title}</span>
             );
-        } else {
-            return stream.title;
-        }
+
+        return (
+            <div className="navbar-title">
+                {title}
+                {unreadCount}
+            </div>
+        );
     }
 
     renderNavbar() {
@@ -230,7 +244,7 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
 
         return (
             <Navbar onToggleSidebar={onToggleSidebar}>
-                <div className="navbar-title" href="#">{this.renderNavbarTitle()}</div>
+                {this.renderNavbarTitle()}
                 <div className="navbar-action">
                     <a href="#"><i className="icon icon-24 icon-refresh" /></a>
                 </div>
@@ -276,10 +290,12 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
                 <header className="stream-header">
                     <div className="container">
                         <div className="stream-header-content">
-                            <div className="stream-metadata">
-                                <div className="stream-info-list">
-                                    <span className="stream-info"><strong>{feed.velocity.toFixed(1)}</strong> entries per week</span>
-                                    <span className="stream-info"><strong>{feed.subscribers}</strong> subscribers</span>
+                            <div className="stream-header-content-left">
+                                <div className="stream-metadata">
+                                    <div className="list-inline list-inline-dotted">
+                                        <div className="list-inline-item"><strong>{feed.velocity.toFixed(1)}</strong> entries per week</div>
+                                        <div className="list-inline-item"><strong>{feed.subscribers}</strong> subscribers</div>
+                                    </div>
                                 </div>
                                 <div className="stream-description">{feed.description}</div>
                             </div>

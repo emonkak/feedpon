@@ -121,40 +121,28 @@ a.entry-action.is-selected:hover {
   color: var(--positive-color);
 }
 
-.entry-info,
-a.entry-info {
-  color: var(--dark-color);
-  text-decoration: none;
-}
-
-a.entry-info:hover {
-  color: var(--positive-color);
-}
-
-.entry-info + .entry-info::before {
-  font-weight: normal;
-  content: '\00a0\00b7\00a0';
+.entry-metadata {
   color: var(--dark-color);
 }
 
-.entry-info-origin {
+.entry-origin {
   font-weight: 600;
 }
 
-.entry-info-bookmarks {
+.entry-bookmarks {
   padding: 2px;
   border-radius: 4px;
 }
 
-.entry-info-bookmarks.is-bookmarked {
+.entry-bookmarks.is-bookmarked {
   color: var(--negative-color);
 }
 
-.entry-info-bookmarks.is-popular {
+.entry-bookmarks.is-popular {
   font-weight: 600;
 }
 
-.entry-info-bookmarks.is-very-popular {
+.entry-bookmarks.is-very-popular {
   background-color: var(--negative-background-color);
 }
 

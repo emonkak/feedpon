@@ -121,7 +121,7 @@ export default class EntryInner extends PureComponent<EntryInnerProps, EntryInne
 
         return (
             <h2 className="entry-title">
-            <a target="_blank" href={entry.url} onClick={onExpand}>{entry.title}</a>
+                <a target="_blank" href={entry.url} onClick={onExpand}>{entry.title}</a>
             </h2>
         );
     }
@@ -130,16 +130,18 @@ export default class EntryInner extends PureComponent<EntryInnerProps, EntryInne
         const { entry } = this.props;
 
         return (
-            <a
-                className={classnames('entry-info', 'entry-info-bookmarks', {
-                    'is-bookmarked': entry.bookmarkCount > 0,
-                    'is-popular': entry.bookmarkCount >= 10,
-                    'is-very-popular': entry.bookmarkCount >= 20
-                })}
-                target="_blank"
-                href={entry.bookmarkUrl}>
-                <i className="icon icon-16 icon-bookmark" />{entry.bookmarkCount > 0 ? entry.bookmarkCount : ''}
-            </a>
+            <div className="list-inline-item">
+                <a
+                    className={classnames('entry-bookmarks', 'link-default', {
+                        'is-bookmarked': entry.bookmarkCount > 0,
+                        'is-popular': entry.bookmarkCount >= 10,
+                            'is-very-popular': entry.bookmarkCount >= 20
+                    })}
+                    target="_blank"
+                    href={entry.bookmarkUrl}>
+                        <i className="icon icon-16 icon-bookmark" />{entry.bookmarkCount > 0 ? entry.bookmarkCount : ''}
+                </a>
+            </div>
         );
     }
 
@@ -148,12 +150,14 @@ export default class EntryInner extends PureComponent<EntryInnerProps, EntryInne
 
         if (entry.origin) {  // FIXME: If same origin
             return (
-                <a
-                    className="entry-info entry-info-origin"
-                    target="_blank"
-                    href={entry.origin.url}>
-                    {entry.origin.title}
-                </a>
+                <div className="list-inline-item">
+                    <a
+                        className="entry-origin link-default"
+                        target="_blank"
+                        href={entry.origin.url}>
+                        {entry.origin.title}
+                    </a>
+                </div>
             );
         }
 
@@ -165,7 +169,9 @@ export default class EntryInner extends PureComponent<EntryInnerProps, EntryInne
 
         if (entry.author) {
             return (
-                <span className="entry-info entry-info-author">by {entry.author}</span>
+                <div className="list-inline-item">
+                    <span className="entry-author">by {entry.author}</span>
+                </div>
             );
         }
 
@@ -177,9 +183,9 @@ export default class EntryInner extends PureComponent<EntryInnerProps, EntryInne
 
         if (entry.publishedAt) {
             return (
-                <span className="entry-info entry-info-published-at">
-                    <RelativeTime time={entry.publishedAt} />
-                </span>
+                <div className="list-inline-item">
+                    <RelativeTime className="entry-published-at" time={entry.publishedAt} />
+                </div>
             );
         }
 
@@ -272,11 +278,13 @@ export default class EntryInner extends PureComponent<EntryInnerProps, EntryInne
                 <header className="entry-header">
                     {this.renderNav()}
                     {this.renderTitle()}
-                    <div className="entry-info-list">
-                        {this.renderBookmarks()}
-                        {this.renderOrign()}
-                        {this.renderAuthor()}
-                        {this.renderPublishedAt()}
+                    <div className="entry-metadata">
+                        <div className="list-inline list-inline-dotted">
+                            {this.renderBookmarks()}
+                            {this.renderOrign()}
+                            {this.renderAuthor()}
+                            {this.renderPublishedAt()}
+                        </div>
                     </div>
                 </header>
                 <div className="entry-summary">{entry.summary}</div>

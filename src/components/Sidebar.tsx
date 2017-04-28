@@ -12,7 +12,7 @@ import TreeHeader from 'components/parts/TreeHeader';
 import TreeLeaf from 'components/parts/TreeLeaf';
 import bindAction from 'utils/bindAction';
 import connect from 'utils/react/connect';
-import { Category, State, Subscription } from 'messaging/types';
+import { Category, State, Subscriptions, Subscription } from 'messaging/types';
 import { fetchSubscriptions } from 'messaging/subscription/actions';
 
 import '@emonkak/enumerable/extensions/groupJoin';
@@ -26,7 +26,7 @@ interface SidebarProps {
     onFetchSubscriptions: () => void;
     router: History;
     selectedValue?: string;
-    subscriptions: Subscription[];
+    subscriptions: Subscriptions;
 }
 
 class Sidebar extends PureComponent<SidebarProps, {}> {
@@ -84,13 +84,9 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
     renderTree() {
         const { categories, isLoading, lastUpdatedAt, selectedValue, subscriptions } = this.props;
 
-        const totalUnreadCount = categories.reduce((total, category) => {
-            return total + category.unreadCount;
-        }, 0);
-
         const groupedSubscriptions = new Enumerable(categories)
             .groupJoin(
-                subscriptions,
+                subscriptions.items,
                 category => category.categoryId,
                 subscription => subscription.categoryId,
                 (category, subscriptions) => ({ category, subscriptions })
@@ -106,7 +102,7 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
             <Tree value={selectedValue}
                   onSelect={this.handleSelect.bind(this)}>
                 <TreeLeaf key="/" value="/" primaryText="Dashboard" />
-                <TreeLeaf key="/streams/all/" value="/streams/all/" primaryText="All" secondaryText={Number(totalUnreadCount).toLocaleString()} />
+                <TreeLeaf key="/streams/all/" value="/streams/all/" primaryText="All" secondaryText={Number(subscriptions.totalUnreadCount).toLocaleString()} />
                 <TreeLeaf key="/streams/pins/" value="/streams/pins/" primaryText="Pins" />
                 <TreeHeader>
                     <a className="tree-node-icon" href="#" onClick={this.handleReload.bind(this)}>
@@ -146,7 +142,7 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
                     <button type="button" className="button button-block button-outline-default">New Subscription</button>
                 </div>
                 <div className="sidebar-group u-text-center">
-                    <ul className="list-inline">
+                    <ul className="list-inline list-inline-slashed">
                         <li className="list-inline-item"><a href="#">emonkak@gmail.com</a></li>
                         <li className="list-inline-item"><a href="#">Logout</a></li>
                     </ul>
@@ -159,7 +155,7 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
 export default connect(
     (state: State) => ({
         categories: state.subscriptions.categories,
-        subscriptions: state.subscriptions.items,
+        subscriptions: state.subscriptions,
         isLoading: state.subscriptions.isLoading,
         lastUpdatedAt: state.subscriptions.lastUpdatedAt
     }),

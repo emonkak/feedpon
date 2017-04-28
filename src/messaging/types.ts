@@ -19,7 +19,7 @@ export type SyncEvent
     | { type: 'STREAM_FETCHED', stream: Stream }
     | { type: 'STREAM_FETCHING', streamId: string }
     | { type: 'STREAM_VIEW_CHANGED', view: StreamView }
-    | { type: 'SUBSCRIPTIONS_FETCHED', subscriptions: Subscription[], categories: Category[], fetchedAt: string }
+    | { type: 'SUBSCRIPTIONS_FETCHED', subscriptions: Subscription[], categories: Category[], totalUnreadCount: number, fetchedAt: string }
     | { type: 'SUBSCRIPTIONS_FETCHING' };
 
 export interface AsyncEvent<T> {
@@ -60,6 +60,7 @@ export interface Stream {
     title: string;
     entries: Entry[];
     continuation: string | null;
+    unreadCount: number;
     isLoading: boolean;
     isLoaded: boolean;
     feed: Feed | null;
@@ -157,6 +158,7 @@ export interface Subscriptions {
     categories: Category[];
     isLoading: boolean;
     items: Subscription[];
+    totalUnreadCount: number;
     lastUpdatedAt: string | null;
 }
 

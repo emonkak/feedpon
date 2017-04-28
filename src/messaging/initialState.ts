@@ -13,6 +13,7 @@ const initialState: State = {
         title: 'Loading...',
         entries: [],
         continuation: null,
+        unreadCount: 0,
         isLoading: false,
         isLoaded: false,
         feed: null,
@@ -29,7 +30,8 @@ const initialState: State = {
         categories: [],
         isLoading: false,
         items: [],
-        lastUpdatedAt: null
+        lastUpdatedAt: null,
+        totalUnreadCount: 0
     },
     preference: {
         defaultEntryOrder: 'newest',

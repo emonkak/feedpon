@@ -236,6 +236,7 @@ function fetchFeedStream(streamId: string, options: StreamOptions): AsyncEvent<v
             title: feed.title,
             entries: contents.items.map(convertEntry),
             continuation: contents.continuation || null,
+            unreadCount: subscription ? subscription.unreadCount : 0,
             isLoading: false,
             isLoaded: true,
             feed: {
@@ -275,6 +276,7 @@ function fetchCategoryStream(streamId: string, options: StreamOptions): AsyncEve
             streamId,
             title: category ? category.label : '',
             entries: contents.items.map(convertEntry),
+            unreadCount: category ? category.unreadCount : 0,
             continuation: contents.continuation || null,
             isLoading: false,
             isLoaded: true,
@@ -295,7 +297,6 @@ function fetchCategoryStream(streamId: string, options: StreamOptions): AsyncEve
 function fetchAllStream(options: StreamOptions): AsyncEvent<void> {
     return async (dispatch, getState) => {
         const credential = await getCredential()(dispatch, getState);
-
         const streamId = toFeedlyStreamId('all', credential.token.id);
         const contents = await getStreamContents(credential.token.access_token, {
             streamId,
@@ -303,10 +304,13 @@ function fetchAllStream(options: StreamOptions): AsyncEvent<void> {
             unreadOnly: options.onlyUnread
         });
 
+        const { subscriptions } = getState();
+
         const stream = {
             streamId: 'all',
             title: 'All',
             entries: contents.items.map(convertEntry),
+            unreadCount: subscriptions.totalUnreadCount,
             continuation: contents.continuation || null,
             isLoading: false,
             isLoaded: true,
@@ -339,13 +343,14 @@ function fetchPinsStream(options: StreamOptions): AsyncEvent<void> {
             streamId: 'pins',
             title: 'Pins',
             entries: contents.items.map(convertEntry),
+            unreadCount: 0,
             continuation: contents.continuation || null,
             isLoading: false,
             isLoaded: true,
             feed: null,
             subscription: null,
             options
-        }
+        };
 
         dispatch({
             type: 'STREAM_FETCHED',
