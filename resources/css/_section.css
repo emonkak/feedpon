@@ -1,0 +1,3 @@
+.section + .section {
+  margin-top: calc(var(--baseline-height) * 2);
+}

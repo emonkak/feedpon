@@ -123,7 +123,7 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
                     </Dropdown>
                 </TreeHeader>
                 {groupedSubscriptions}
-                <TreeLeaf key="/preference/" value="/preference/" primaryText="Preference" />
+                <TreeLeaf key="/settings/" value="/settings/" primaryText="Settings" />
                 <TreeLeaf key="/about/" value="/about/" primaryText="About..." />
             </Tree>
         );

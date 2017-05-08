@@ -11,8 +11,6 @@ import EntryPlaceholder from 'components/parts/EntryPlaceholder';
 import ScrollSpy from 'components/parts/ScrollSpy';
 import { Entry as EntryInterface, StreamView } from 'messaging/types';
 
-import getScrollableParent from 'utils/dom/getScrollableParent';
-
 const SCROLL_OFFSET = 48;
 
 interface EntryListProps {
@@ -181,7 +179,6 @@ export default class EntryList extends PureComponent<EntryListProps, EntryListSt
 
         return (
             <ScrollSpy
-                getScrollableParent={getScrollableParent}
                 isDisabled={isScrolling}
                 marginTop={SCROLL_OFFSET}
                 onActivate={this.handleActivate}

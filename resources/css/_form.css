@@ -19,3 +19,7 @@ input.search-box {
   padding: calc(var(--baseline-height) / 4) calc(var(--baseline-height) / 4) calc(var(--baseline-height) / 4 - 2px);
   width: 100%;
 }
+
+.form-group + .form-group {
+  margin-top: var(--baseline-height);
+}

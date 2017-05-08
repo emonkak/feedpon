@@ -8,7 +8,6 @@
 @import './_container.css';
 @import './_dropdown.css';
 @import './_entry.css';
-@import './_stream.css';
 @import './_icon.css';
 @import './_layout.css';
 @import './_link.css';
@@ -21,7 +20,10 @@
 @import './_notification.css';
 @import './_placeholder.css';
 @import './_popover.css';
+@import './_section.css';
 @import './_sidebar.css';
+@import './_stream.css';
+@import './_table.css';
 @import './_tree.css';
 
 @import './_utils.css';

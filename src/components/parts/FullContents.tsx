@@ -6,13 +6,12 @@ import { FullContent } from 'messaging/types';
 interface FullContentsProps {
     isLoading: boolean;
     items: FullContent[];
-    nextPageUrl: string | null;
     onFetchNext: () => void;
 }
 
 export default class FullContents extends PureComponent<FullContentsProps, {}> {
     render() {
-        const { isLoading, items, nextPageUrl, onFetchNext } = this.props;
+        const { isLoading, items, onFetchNext } = this.props;
 
         if (items.length === 0) {
             return (
@@ -38,9 +37,11 @@ export default class FullContents extends PureComponent<FullContentsProps, {}> {
             </section>
         );
 
+        const latestItem = items[items.length - 1];
+
         let nextPageButton: React.ReactElement<any> | null = null;
 
-        if (nextPageUrl) {
+        if (latestItem && latestItem.nextPageUrl) {
             nextPageButton = isLoading
                 ? <button className="button button-block button-outline-positive" disabled={true}><i className="icon icon-20 icon-spinner animation-clockwise-rotation" /></button> 
                 : <button className="button button-block button-outline-positive" onClick={onFetchNext}>Next page</button>;
@@ -54,4 +55,3 @@ export default class FullContents extends PureComponent<FullContentsProps, {}> {
         );
     }
 }
-

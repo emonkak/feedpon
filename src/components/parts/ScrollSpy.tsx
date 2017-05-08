@@ -11,7 +11,7 @@ import createChainedFunction from 'utils/createChainedFunction';
 import throttleEventHandler from 'utils/throttleEventHandler';
 
 interface ScrollSpyProps {
-    getScrollableParent: (element: Element) => Element | Window;
+    getScrollableParent?: (element: Element) => Element | Window;
     isDisabled?: boolean;
     marginBottom?: number;
     marginTop?: number;
@@ -33,6 +33,7 @@ const initialState: ScrollSpyState = {
 
 export default class ScrollSpy extends PureComponent<ScrollSpyProps, ScrollSpyState> {
     static defaultProps = {
+        getScrollableParent: (element: Element) => window,
         isDisabled: false,
         marginBottom: 0,
         marginTop: 0,
@@ -52,7 +53,7 @@ export default class ScrollSpy extends PureComponent<ScrollSpyProps, ScrollSpySt
     }
 
     componentDidMount() {
-        this.scrollable = this.props.getScrollableParent(findDOMNode(this));
+        this.scrollable = this.props.getScrollableParent!(findDOMNode(this));
         this.scrollable.addEventListener('scroll', this.handleScroll, { passive: true } as any);
         this.scrollable.addEventListener('touchmove', this.handleScroll, { passive: true } as any);
 
@@ -74,29 +75,22 @@ export default class ScrollSpy extends PureComponent<ScrollSpyProps, ScrollSpySt
         }
     }
 
-    getScrollRectangle() {
-        let scrollTop = 0;
-        let scrollHeight = 0;
-        let scrollableHeight = 0;
+    getScrollRect() {
+        let top = 0;
+        let height = 0;
 
         if (this.scrollable instanceof Element) {
-            scrollTop = this.scrollable.scrollTop;
-            scrollHeight = this.scrollable.clientHeight;
-            scrollableHeight = this.scrollable.scrollHeight;
+            top = this.scrollable.scrollTop;
+            height = this.scrollable.clientHeight;
         } else if (this.scrollable instanceof Window) {
-            scrollTop = this.scrollable.scrollY;
-            scrollHeight = this.scrollable.innerHeight;
-            scrollableHeight = this.scrollable.document.documentElement.scrollHeight;
+            top = this.scrollable.scrollY;
+            height = this.scrollable.innerHeight;
         }
 
-        return { scrollTop, scrollHeight, scrollableHeight };
+        return { top, height };
     }
 
-    getActiveKey(scrollTop: number, scrollBottom: number, scrollableHeight: number): React.Key | null {
-        if (scrollBottom === scrollableHeight) {
-            return null;
-        }
-
+    getActiveKey(scrollTop: number, scrollBottom: number): React.Key | null {
         return new Enumerable(this.childKeys)
             .where(([_key, element]) => {
                 const offsetTop = element.offsetTop;
@@ -123,12 +117,11 @@ export default class ScrollSpy extends PureComponent<ScrollSpyProps, ScrollSpySt
 
     update() {
         const { marginBottom, marginTop } = this.props;
-        const { scrollTop, scrollHeight, scrollableHeight } = this.getScrollRectangle();
+        const { top, height } = this.getScrollRect();
 
         const nextActiveKey = this.getActiveKey(
-            scrollTop + (marginTop || 0),
-            scrollTop + scrollHeight - (marginBottom || 0),
-            scrollableHeight
+            top + (marginTop || 0),
+            top + height - (marginBottom || 0)
         );
         const { activeKey } = this.state;
 

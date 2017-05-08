@@ -81,8 +81,7 @@ export default function reducer(stream: Stream, event: SyncEvent): Stream {
                         fullContents: {
                             isLoaded: true,
                             isLoading: false,
-                            items: event.fullContent ? entry.fullContents.items.concat([event.fullContent]) : entry.fullContents.items,
-                            nextPageUrl: event.nextPageUrl
+                            items: event.fullContent ? entry.fullContents.items.concat([event.fullContent]) : entry.fullContents.items
                         }
                     };
                 })

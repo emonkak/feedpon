@@ -24,7 +24,7 @@
 
 .menu-item.is-disabled {
   color: var(--dark-color);
-  cursor: not-allowed;
+  cursor: default;
 }
 
 .menu-item-icon {

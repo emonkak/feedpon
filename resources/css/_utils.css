@@ -34,6 +34,12 @@
   overflow: hidden;
 }
 
+.u-text-wrap {
+  word-wrap: break-word;
+  word-break: break-all;
+  white-space: normal;
+}
+
 .u-text-nowrap {
   white-space: nowrap;
 }

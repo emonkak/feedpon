@@ -8,6 +8,21 @@ const initialState: State = {
         scope: 'https://cloud.feedly.com/subscriptions',
         redirectUri: 'https://www.feedly.com/feedly.html'
     },
+    notifications: [],
+    settings: {
+        defaultEntryOrder: 'newest',
+        defaultNumEntries: 20,
+        defaultSubscriptionOrder: 'newest',
+        defaultStreamView: 'expanded',
+        onlyUnreadEntries: true,
+        onlyUnreadSubscriptions: true,
+    },
+    siteinfo: {
+        isLoading: false,
+        items: [],
+        userItems: [],
+        lastUpdatedAt: ''
+    },
     stream: {
         streamId: null,
         title: 'Loading...',
@@ -25,25 +40,12 @@ const initialState: State = {
             view: 'expanded'
         }
     },
-    notifications: [],
     subscriptions: {
         categories: [],
         isLoading: false,
         items: [],
         lastUpdatedAt: null,
         totalUnreadCount: 0
-    },
-    preference: {
-        defaultEntryOrder: 'newest',
-        defaultNumEntries: 20,
-        defaultSubscriptionsOrder: 'newest',
-        defaultStreamView: 'expanded',
-        onlyUnreadEntries: true,
-        onlyUnreadSubscriptions: true,
-    },
-    siteinfo: {
-        items: [],
-        lastUpdatedAt: ''
     }
 };
 

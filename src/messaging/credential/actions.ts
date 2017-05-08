@@ -10,10 +10,10 @@ export function authenticate(): AsyncEvent<void> {
             const response = authCallback(urlString);
 
             if (response.error) {
-                sendNotification({
-                    message: 'Authentication failed: ' + response.error,
-                    kind: 'negative'
-                })(dispatch, getState);
+                sendNotification(
+                    'Authentication failed: ' + response.error,
+                    'negative'
+                )(dispatch, getState);
 
                 return;
             }

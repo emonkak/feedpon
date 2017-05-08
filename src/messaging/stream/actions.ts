@@ -8,7 +8,7 @@ import * as feedly from 'adapters/feedly/types';
 import decodeResponseAsText from 'utils/decodeResponseAsText';
 import stripTags from 'utils/stripTags';
 import { AsyncEvent, Entry, FullContent, SiteinfoItem, StreamOptions, StreamView, SyncEvent } from 'messaging/types';
-import { DEFAULT_DISMISS_AFTER, sendNotification } from 'messaging/notification/actions';
+import { sendNotification } from 'messaging/notification/actions';
 import { getBookmarkCounts, getBookmarkEntry } from 'adapters/hatena/bookmarkApi';
 import { getCredential } from 'messaging/credential/actions';
 import { getFeed, getStreamContents, setTag, unsetTag } from 'adapters/feedly/api';
@@ -29,14 +29,14 @@ export function fetchStream(streamId: string, options?: StreamOptions): AsyncEve
             streamId
         });
 
-        const { preference } = getState();
+        const { settings } = getState();
 
         if (!options) {
             options = {
-                numEntries: preference.defaultNumEntries,
-                order: preference.defaultEntryOrder,
-                onlyUnread: preference.onlyUnreadEntries,
-                view: preference.defaultStreamView
+                numEntries: settings.defaultNumEntries,
+                order: settings.defaultEntryOrder,
+                onlyUnread: settings.onlyUnreadEntries,
+                view: settings.defaultStreamView
             };
         }
 
@@ -118,13 +118,13 @@ export function fetchFullContent(entryId: string, url: string): AsyncEvent<void>
             const responseText = await decodeResponseAsText(response);
 
             const { siteinfo } = getState();
-            const { fullContent, nextPageUrl } = extractFullContent(response.url, responseText, siteinfo.items);
+            const fullContent = extractFullContent(response.url, responseText, siteinfo.userItems) ||
+                                extractFullContent(response.url, responseText, siteinfo.items);
 
             dispatch({
                 type: 'FULL_CONTENT_FETCHED',
                 entryId,
-                fullContent,
-                nextPageUrl
+                fullContent
             });
         }
     }
@@ -146,11 +146,10 @@ export function markAsRead(entryIds: string[]): AsyncEvent<void> {
                 entryIds
             });
 
-            sendNotification({
+            sendNotification(
                 message,
-                kind: 'positive',
-                dismissAfter: DEFAULT_DISMISS_AFTER
-            })(dispatch, getState);
+                'positive'
+            )(dispatch, getState);
         }, 200);
     };
 }
@@ -195,12 +194,12 @@ export function unpinEntry(entryId: string): AsyncEvent<void> {
     };
 }
 
-function extractFullContent(url: string, htmlString: string, siteinfoItems: SiteinfoItem[]): { fullContent: FullContent | null, nextPageUrl: string | null } {
+function extractFullContent(url: string, htmlString: string, siteinfoItems: SiteinfoItem[]): FullContent | null {
     const parser = new DOMParser();
     const parsedDocument = parser.parseFromString(htmlString, 'text/html');
 
     for (const item of siteinfoItems) {
-        if (tryMatch(item.url, url)) {
+        if (tryMatch(item.urlPattern, url)) {
             let content = '';
             let nextPageUrl: string | null = null;
 
@@ -243,15 +242,12 @@ function extractFullContent(url: string, htmlString: string, siteinfoItems: Site
                     }
                 }
 
-                return {
-                    fullContent: { content, url },
-                    nextPageUrl
-                };
+                return { content, url, nextPageUrl };
             }
         }
     }
 
-    return { fullContent: null, nextPageUrl: null };
+    return null;
 }
 
 function fetchFeedStream(streamId: string, options: StreamOptions): AsyncEvent<void> {
@@ -445,8 +441,7 @@ function convertEntry(entry: feedly.Entry): Entry {
         fullContents: {
             isLoaded: false,
             isLoading: false,
-            items: [],
-            nextPageUrl: ''
+            items: []
         },
         comments: {
             isLoaded: false,
@@ -464,11 +459,12 @@ function tryMatch(pattern: string, str: string): boolean {
 }
 
 function toFeedlyStreamId(streamId: string, uid: string) {
-    if (streamId === 'all') {
-        return `user/${uid}/category/global.all`;
+    switch (streamId) {
+        case 'all':
+            return `user/${uid}/category/global.all`;
+        case 'pins':
+            return `user/${uid}/tag/global.saved`;
+        default:
+            return streamId;
     }
-    if (streamId === 'pins') {
-        return `user/${uid}/tag/global.saved`;
-    }
-    return streamId;
 }

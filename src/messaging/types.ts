@@ -11,18 +11,21 @@ export type SyncEvent
     | { type: 'ENTRY_MARKED_AS_READ', entryIds: string[] }
     | { type: 'ENTRY_PINNED', entryId: string, isPinned: boolean }
     | { type: 'ENTRY_PINNING', entryId: string }
-    | { type: 'FULL_CONTENT_FETCHED', entryId: string, fullContent: FullContent | null, nextPageUrl: string | null }
+    | { type: 'FULL_CONTENT_FETCHED', entryId: string, fullContent: FullContent | null }
     | { type: 'FULL_CONTENT_FETCHING', entryId: string }
     | { type: 'MORE_ENTRIES_FETCHED', streamId: string, continuation: string | null, entries: Entry[] }
     | { type: 'MORE_ENTRIES_FETCHING', streamId: string }
     | { type: 'NOTIFICATION_DISMISSED', id: number }
     | { type: 'NOTIFICATION_SENT', notification: Notification }
-    | { type: 'SITEINFO_UPDATED', siteinfo: Siteinfo }
+    | { type: 'SITEINFO_UPDATED', items: SiteinfoItem[], updatedAt: string }
+    | { type: 'SITEINFO_UPDATING' }
     | { type: 'STREAM_FETCHED', stream: Stream }
     | { type: 'STREAM_FETCHING', streamId: string }
     | { type: 'STREAM_VIEW_CHANGED', view: StreamView }
     | { type: 'SUBSCRIPTIONS_FETCHED', subscriptions: Subscription[], categories: Category[], totalUnreadCount: number, fetchedAt: string }
-    | { type: 'SUBSCRIPTIONS_FETCHING' };
+    | { type: 'SUBSCRIPTIONS_FETCHING' }
+    | { type: 'USER_SITEINFO_ITEM_ADDED', item: SiteinfoItem }
+    | { type: 'USER_SITEINFO_ITEM_REMOVED', id: string };
 
 export interface AsyncEvent<T> {
     (dispatch: (event: SyncEvent) => void, getState: () => State): T;
@@ -32,7 +35,7 @@ export interface State {
     credential: Credential | null;
     environment: Environment;
     notifications: Notification[];
-    preference: Preference;
+    settings: Settings;
     siteinfo: Siteinfo;
     stream: Stream;
     subscriptions: Subscriptions;
@@ -121,12 +124,12 @@ export interface FullContents {
     items: FullContent[];
     isLoaded: boolean;
     isLoading: boolean;
-    nextPageUrl: string | null;
 }
 
 export interface FullContent {
     url: string;
     content: string;
+    nextPageUrl: string | null;
 }
 
 export interface Comments {
@@ -141,19 +144,19 @@ export interface Comment {
 }
 
 export interface Notification {
-    id?: string | number;
-    dismissAfter?: number;
+    id: string | number;
+    dismissAfter: number;
     message: string;
     kind: NotificationKind;
 }
 
 export type NotificationKind = 'default' | 'positive' | 'negative';
 
-export interface Preference {
+export interface Settings {
     defaultEntryOrder: 'newest' | 'oldest';
     defaultStreamView: StreamView;
     defaultNumEntries: number;
-    defaultSubscriptionsOrder: 'newest' | 'oldest';
+    defaultSubscriptionOrder: 'newest' | 'oldest';
     onlyUnreadEntries: boolean;
     onlyUnreadSubscriptions: boolean;
 }
@@ -177,11 +180,15 @@ export interface Subscription {
 
 export interface Siteinfo {
     items: SiteinfoItem[];
+    userItems: SiteinfoItem[];
     lastUpdatedAt: string;
+    isLoading: boolean;
 }
 
 export interface SiteinfoItem {
-    url: string;
+    id: string;
+    name: string;
+    urlPattern: string;
     contentPath: string;
     nextLinkPath: string;
 }

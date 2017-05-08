@@ -5,26 +5,25 @@ import createChainedFunction from 'utils/createChainedFunction';
 
 interface MenuProps {
     children?: React.ReactNode;
-    onSelect: (value: string | number | null) => void;
+    onSelect: (value?: any) => void;
     pullRight?: boolean;
 }
 
 export default class Menu extends PureComponent<MenuProps, {}> {
     static defaultProps = {
-        onSelect: (key: string | number | null) => {},
+        onSelect: (value?: any) => {},
         pullRight: false
     };
 
     renderChild(child: React.ReactElement<any>) {
         const { onSelect } = this.props;
-        const childKey = child.key;
 
         return cloneElement(child, {
             ...child.props,
             onSelect: createChainedFunction(
                 child.props.onSelect,
-                () => onSelect(childKey)
-            ),
+                onSelect
+            )
         });
     }
 

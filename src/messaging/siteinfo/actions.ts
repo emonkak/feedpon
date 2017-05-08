@@ -1,6 +1,7 @@
-import { AsyncEvent } from 'messaging/types';
+import { AsyncEvent, SiteinfoItem, SyncEvent } from 'messaging/types';
 import { LDRFullFeedData, WedataItem }  from 'adapters/wedata/types';
 import { getAutoPagerizeItems, getLDRFullFeedItems }  from 'adapters/wedata/api';
+import { sendNotification } from 'messaging/notification/actions';
 
 const LDR_FULL_FEED_TYPE_PRIORITIES: { [key: string]: number } = {
     'SBM': 3,
@@ -12,8 +13,26 @@ const LDR_FULL_FEED_TYPE_PRIORITIES: { [key: string]: number } = {
     'GENERAL': 0
 };
 
+export function addSiteinfoItem(item: SiteinfoItem): SyncEvent {
+    return {
+        type: 'USER_SITEINFO_ITEM_ADDED',
+        item
+    };
+}
+
+export function removeSiteinfoItem(id: string): SyncEvent {
+    return {
+        type: 'USER_SITEINFO_ITEM_REMOVED',
+        id
+    };
+}
+
 export function updateSiteinfo(): AsyncEvent<void> {
     return async (dispatch, getState) => {
+        dispatch({
+            type: 'SITEINFO_UPDATING'
+        });
+
         const [autoPagerizeItems, ldrFullFeedItems] = await Promise.all([
             getAutoPagerizeItems(),
             getLDRFullFeedItems()
@@ -22,32 +41,32 @@ export function updateSiteinfo(): AsyncEvent<void> {
         const primaryItems = autoPagerizeItems
             .slice(0, -1)  // Remove the generic rule
             .map((item) => ({
-                url: item.data.url,
+                id: item.resource_url,
+                name: item.name,
+                urlPattern: item.data.url,
                 contentPath: item.data.pageElement,
                 nextLinkPath: item.data.nextLink
             }));
         const secondaryItems = ldrFullFeedItems
             .sort(compareLdrFullFeedItem)
             .map((item) => ({
-                url: item.data.url,
+                id: item.resource_url,
+                name: item.name,
+                urlPattern: item.data.url,
                 contentPath: item.data.xpath,
                 nextLinkPath: ''
             }));
 
-        const siteinfo = {
-            items: primaryItems.concat(secondaryItems),
-            lastUpdatedAt: new Date().toISOString()
-        };
-
         dispatch({
             type: 'SITEINFO_UPDATED',
-            siteinfo
+            items: primaryItems.concat(secondaryItems),
+            updatedAt: new Date().toISOString()
         });
 
-        sendNotification({
-            message: 'Siteinfo Updated',
-            kind: 'positive'
-        })(dispatch, getState);
+        sendNotification(
+            'Siteinfo Updated',
+            'positive'
+        )(dispatch, getState);
     };
 }
 

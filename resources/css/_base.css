@@ -136,7 +136,7 @@ dd {
 }
 
 pre, code, var, samp {
-  font-family: 'Operator Mono Book', Consolas, Menlo, Monaco, monospace;
+  font-family: Consolas, Menlo, Monaco, monospace;
 }
 
 code, var, samp {
@@ -144,6 +144,10 @@ code, var, samp {
   background-color: var(--tint-color);
   padding: 2px 4px;
   border-radius: 4px;
+}
+
+code:empty, var:empty, samp:empty {
+  padding: 0;
 }
 
 pre {
@@ -188,21 +192,7 @@ td,
 th {
   padding: calc(var(--baseline-height) / 4) 1rem;
   text-align: left;
-}
-
-.table thead th {
-  padding-bottom: calc(var(--baseline-height) / 4 - 2px);
-  border-bottom: 2px solid var(--medium-color);
-}
-
-.table td,
-.table th {
-  padding-bottom: calc(var(--baseline-height) / 4 - 1px);
-  border-bottom: 1px solid var(--medium-color);
-}
-
-.table-striped tbody tr:nth-of-type(odd) {
-  background-color: var(--tint-color);
+  vertical-align: top;
 }
 
 caption {
@@ -265,7 +255,7 @@ button:focus {
 }
 
 button:disabled {
-  cursor: not-allowed;
+  cursor: default;
 }
 
 button::-moz-focus-inner,

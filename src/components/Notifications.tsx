@@ -9,9 +9,9 @@ import { Notification as NotificationInterface, State } from 'messaging/types';
 import { dismissNotification } from 'messaging/notification/actions';
 
 interface NotificationsProps {
-    onDismissNotification: (id: number) => void;
     isReversed?: boolean;
     notifications: NotificationInterface[];
+    onDismissNotification: (id: number) => void;
 }
 
 class Notifications extends PureComponent<NotificationsProps, {}> {
@@ -19,14 +19,8 @@ class Notifications extends PureComponent<NotificationsProps, {}> {
         isReversed: false
     };
 
-    handleClose(id: number) {
-        const { onDismissNotification } = this.props;
-
-        onDismissNotification(id);
-    }
-
     render() {
-        const { isReversed, notifications } = this.props;
+        const { onDismissNotification, isReversed, notifications } = this.props;
 
         return (
             <CSSTransitionGroup
@@ -37,14 +31,12 @@ class Notifications extends PureComponent<NotificationsProps, {}> {
                 transitionName="notification"
                 transitionEnterTimeout={200}
                 transitionLeaveTimeout={200}>
-                {notifications.map(({ id, kind, message }: any) =>
+                {notifications.map((notification) =>
                     <Notification
+                        notification={notification}
                         isReversed={isReversed}
-                        key={id}
-                        kind={kind}
-                        onClose={this.handleClose.bind(this, id)}>
-                        {message}
-                    </Notification>
+                        key={notification.id}
+                        onClose={onDismissNotification} />
                 )}
             </CSSTransitionGroup>
         );

@@ -6,11 +6,11 @@ import Modal from 'components/parts/Modal';
 import Navbar from 'components/parts/Navbar';
 import bindAction from 'utils/bindAction';
 import connect from 'utils/react/connect';
-import { Notification, NotificationKind, State } from 'messaging/types';
+import { NotificationKind, State } from 'messaging/types';
 import { sendNotification } from 'messaging/notification/actions';
 
 interface DashboardProps {
-    onSendNotification: (notification: Notification) => void;
+    onSendNotification: (message: string, kind: NotificationKind, dismissAfter?: number) => void;
     onToggleSidebar: () => void;
 }
 
@@ -38,11 +38,10 @@ class DashboardPage extends PureComponent<DashboardProps, DashboardState> {
     handleSendNotification(kind: NotificationKind) {
         const { onSendNotification } = this.props;
 
-        onSendNotification({
-            message: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-            kind,
-            dismissAfter: 3000,
-        });
+        onSendNotification(
+            'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
+            kind
+        );
     }
 
     renderNavbar() {

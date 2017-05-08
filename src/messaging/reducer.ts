@@ -10,10 +10,10 @@ export default function reducer(state: State, event: SyncEvent): State {
     return {
         credential: credentialReducer(state.credential, event),
         environment: state.environment,
-        stream: streamReducer(state.stream, event),
         notifications: notificationsReducer(state.notifications, event),
-        preference: state.preference,
-        subscriptions: subscriptionsReducer(state.subscriptions, event),
-        siteinfo: siteinfoReducer(state.siteinfo, event)
+        settings: state.settings,
+        siteinfo: siteinfoReducer(state.siteinfo, event),
+        stream: streamReducer(state.stream, event),
+        subscriptions: subscriptionsReducer(state.subscriptions, event)
     };
 }

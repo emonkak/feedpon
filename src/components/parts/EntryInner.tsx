@@ -43,8 +43,12 @@ export default class EntryInner extends PureComponent<EntryInnerProps, EntryInne
     handleFetchNextFullContent() {
         const { entry, onFetchFullContent } = this.props;
 
-        if (entry.fullContents.isLoaded && entry.fullContents.nextPageUrl) {
-            onFetchFullContent(entry.entryId, entry.fullContents.nextPageUrl);
+        if (entry.fullContents.isLoaded) {
+            const latestFullContent = entry.fullContents.items[entry.fullContents.items.length - 1];
+
+            if (latestFullContent && latestFullContent.nextPageUrl) {
+                onFetchFullContent(entry.entryId, latestFullContent.nextPageUrl);
+            }
         }
     }
 
@@ -218,7 +222,6 @@ export default class EntryInner extends PureComponent<EntryInnerProps, EntryInne
                 <FullContents
                     isLoading={fullContents.isLoading}
                     items={fullContents.items}
-                    nextPageUrl={fullContents.nextPageUrl}
                     onFetchNext={this.handleFetchNextFullContent} />
             );
         } else {
