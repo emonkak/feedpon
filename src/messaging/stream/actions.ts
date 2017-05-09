@@ -1,9 +1,3 @@
-import Enumerable from '@emonkak/enumerable';
-
-import '@emonkak/enumerable/extensions/firstOrDefault';
-import '@emonkak/enumerable/extensions/select';
-import '@emonkak/enumerable/extensions/toArray';
-
 import * as feedly from 'adapters/feedly/types';
 import decodeResponseAsText from 'utils/decodeResponseAsText';
 import stripTags from 'utils/stripTags';
@@ -263,8 +257,8 @@ function fetchFeedStream(streamId: string, options: StreamOptions): AsyncEvent<v
         ]);
 
         const { subscriptions } = getState();
-        const subscription = new Enumerable(subscriptions.items)
-            .firstOrDefault((subscription) => subscription.subscriptionId === streamId);
+        const subscription = subscriptions.items
+            .find((subscription) => subscription.subscriptionId === streamId) || null;
 
         const stream = {
             streamId,
@@ -304,8 +298,8 @@ function fetchCategoryStream(streamId: string, options: StreamOptions): AsyncEve
 
         const { subscriptions } = getState();
 
-        const category = new Enumerable(subscriptions.categories)
-            .firstOrDefault((category) => category.categoryId === streamId);
+        const category = subscriptions.categories
+            .find((category) => category.categoryId === streamId) || null;
 
         const stream = {
             streamId,
