@@ -17,18 +17,18 @@ interface EntryListProps {
     entries: EntryInterface[];
     isLoading: boolean;
     isScrolling: boolean;
-    onFetchComments: (entryId: string, url: string) => void;
-    onFetchFullContent: (entryId: string, url: string) => void;
-    onUnpin: (entryId: string) => void;
-    onPin: (entryId: string) => void;
-    onRead: (entryIds: string[]) => void;
-    readEntryIds: Set<string>;
+    onFetchComments: (entryId: string | number, url: string) => void;
+    onFetchFullContent: (entryId: string | number, url: string) => void;
+    onUnpin: (entryId: string | number) => void;
+    onPin: (entryId: string | number) => void;
+    onRead: (entryIds: (string | number)[]) => void;
+    readEntryIds: Set<string | number>;
     scrollTo: (x: number, y: number) => Promise<void>;
     view: StreamView;
 }
 
 interface EntryListState {
-    expandedEntryId: string | null;
+    expandedEntryId: string | number | null;
 }
 
 function renderChild(child: React.ReactElement<any>, isActive: boolean) {

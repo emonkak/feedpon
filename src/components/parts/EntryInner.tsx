@@ -13,10 +13,10 @@ interface EntryInnerProps {
     entry: Entry;
     onClose: (event: React.SyntheticEvent<any>) => void;
     onExpand: (event: React.SyntheticEvent<any>) => void;
-    onFetchComments: (entryId: string, url: string) => void;
-    onFetchFullContent: (entryId: string, url: string) => void;
-    onPin: (entryId: string) => void;
-    onUnpin: (entryId: string) => void;
+    onFetchComments: (entryId: string | number, url: string) => void;
+    onFetchFullContent: (entryId: string | number, url: string) => void;
+    onPin: (entryId: string | number) => void;
+    onUnpin: (entryId: string | number) => void;
 }
 
 interface EntryInnerState {

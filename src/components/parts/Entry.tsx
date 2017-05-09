@@ -12,11 +12,11 @@ interface EntryProps {
     isExpanded?: boolean;
     isRead?: boolean;
     onClose: () => void;
-    onExpand: (entryId: string, element: Element) => void;
-    onFetchComments: (entryId: string, url: string) => void;
-    onFetchFullContent: (entryId: string, url: string) => void;
-    onPin: (entryId: string) => void;
-    onUnpin: (entryId: string) => void;
+    onExpand: (entryId: string | number, element: Element) => void;
+    onFetchComments: (entryId: string | number, url: string) => void;
+    onFetchFullContent: (entryId: string | number, url: string) => void;
+    onPin: (entryId: string | number) => void;
+    onUnpin: (entryId: string | number) => void;
 }
 
 export default class Entry extends PureComponent<EntryProps, {}> {

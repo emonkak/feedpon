@@ -7,12 +7,12 @@ export type Event = SyncEvent | AsyncEvent<any>;
 export type SyncEvent
     = { type: 'AUTHENTICATED', credential: Credential }
     | { type: 'BOOKMARK_COUNTS_FETCHED', bookmarkCounts: { [key: string]: number } }
-    | { type: 'COMMENTS_FETCHED', entryId: string, comments: Comment[] }
-    | { type: 'ENTRY_MARKED_AS_READ', entryIds: string[] }
-    | { type: 'ENTRY_PINNED', entryId: string, isPinned: boolean }
-    | { type: 'ENTRY_PINNING', entryId: string }
-    | { type: 'FULL_CONTENT_FETCHED', entryId: string, fullContent: FullContent | null }
-    | { type: 'FULL_CONTENT_FETCHING', entryId: string }
+    | { type: 'COMMENTS_FETCHED', entryId: string | number, comments: Comment[] }
+    | { type: 'ENTRY_MARKED_AS_READ', entryIds: (string | number)[] }
+    | { type: 'ENTRY_PINNED', entryId: string | number, isPinned: boolean }
+    | { type: 'ENTRY_PINNING', entryId: string | number }
+    | { type: 'FULL_CONTENT_FETCHED', entryId: string | number, fullContent: FullContent | null }
+    | { type: 'FULL_CONTENT_FETCHING', entryId: string | number }
     | { type: 'MORE_ENTRIES_FETCHED', streamId: string, continuation: string | null, entries: Entry[] }
     | { type: 'MORE_ENTRIES_FETCHING', streamId: string }
     | { type: 'NOTIFICATION_DISMISSED', id: number }
@@ -54,7 +54,7 @@ export interface Environment {
 }
 
 export interface Category {
-    categoryId: string;
+    categoryId: string | number;
     streamId: string;
     label: string;
     unreadCount: number;
@@ -91,7 +91,7 @@ export interface Feed {
 }
 
 export interface Entry {
-    entryId: string;
+    entryId: string | number;
     title: string;
     author: string;
     url: string;
@@ -171,8 +171,8 @@ export interface Subscriptions {
 }
 
 export interface Subscription {
-    subscriptionId: string;
-    categoryId: string;
+    subscriptionId: string | number;
+    categoryId: string | number;
     streamId: string;
     title: string;
     iconUrl: string;

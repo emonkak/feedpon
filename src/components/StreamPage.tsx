@@ -14,21 +14,21 @@ interface StreamProps {
     categories: Category[];
     isScrolling: boolean;
     onChangeStreamView: (view: StreamView) => void,
-    onFetchComments: (entryId: string, url: string) => void;
-    onFetchFullContent: (entryId: string, url: string) => void;
+    onFetchComments: (entryId: string | number, url: string) => void;
+    onFetchFullContent: (entryId: string | number, url: string) => void;
     onFetchMoreEntries: (streamId: string, continuation: string, options: StreamOptions) => void;
     onFetchStream: (streamId: string, options?: StreamOptions) => void;
-    onMarkAsRead: (entryIds: string[]) => void;
-    onPinEntry: (entryId: string) => void;
+    onMarkAsRead: (entryIds: (string | number)[]) => void;
+    onPinEntry: (entryId: string | number) => void;
     onToggleSidebar: () => void,
-    onUnpinEntry: (entryId: string) => void;
+    onUnpinEntry: (entryId: string | number) => void;
     params: Params;
     scrollTo: (x: number, y: number) => Promise<void>;
     stream: Stream;
 };
 
 interface StreamState {
-    readEntryIds: Set<string>;
+    readEntryIds: Set<string | number>;
 }
 
 const SCROLL_OFFSET = 48;
