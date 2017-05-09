@@ -1,7 +1,7 @@
 import * as feedly from 'adapters/feedly/types';
 import decodeResponseAsText from 'utils/decodeResponseAsText';
 import stripTags from 'utils/stripTags';
-import { AsyncEvent, Entry, FullContent, SiteinfoItem, StreamOptions, StreamView, SyncEvent } from 'messaging/types';
+import { AsyncEvent, Entry, FullContent, StreamOptions, StreamView, SyncEvent } from 'messaging/types';
 import { sendNotification } from 'messaging/notification/actions';
 import { getBookmarkCounts, getBookmarkEntry } from 'adapters/hatena/bookmarkApi';
 import { getCredential } from 'messaging/credential/actions';
@@ -110,10 +110,27 @@ export function fetchFullContent(entryId: string, url: string): AsyncEvent<void>
 
         if (response.ok) {
             const responseText = await decodeResponseAsText(response);
+            const responseUrl = response.url;
 
             const { siteinfo } = getState();
-            const fullContent = extractFullContent(response.url, responseText, siteinfo.userItems) ||
-                                extractFullContent(response.url, responseText, siteinfo.items);
+
+            const parser = new DOMParser();
+            const parsedDocument = parser.parseFromString(responseText, 'text/html');
+
+            let fullContent = null;
+
+            for (const item of siteinfo.userItems.concat(siteinfo.items)) {
+                if (tryMatch(item.urlPattern, responseUrl)) {
+                    try {
+                        fullContent = extractFullContent(parsedDocument, responseUrl, item.contentPath, item.nextLinkPath);
+
+                        if (fullContent !== null) {
+                            break;
+                        }
+                    } catch (e) {
+                    }
+                }
+            }
 
             dispatch({
                 type: 'FULL_CONTENT_FETCHED',
@@ -188,57 +205,51 @@ export function unpinEntry(entryId: string): AsyncEvent<void> {
     };
 }
 
-function extractFullContent(url: string, htmlString: string, siteinfoItems: SiteinfoItem[]): FullContent | null {
-    const parser = new DOMParser();
-    const parsedDocument = parser.parseFromString(htmlString, 'text/html');
+function extractFullContent(contentDocument: Document, url: string, contentPath: string, nextLinkPath: string | null = null): FullContent | null {
+    let content = '';
 
-    for (const item of siteinfoItems) {
-        if (tryMatch(item.urlPattern, url)) {
-            let content = '';
-            let nextPageUrl: string | null = null;
+    const contentResult = document.evaluate(
+        contentPath,
+        contentDocument.body,
+        null,
+        XPathResult.ORDERED_NODE_ITERATOR_TYPE,
+        null
+    );
 
-            const contentResult = document.evaluate(
-                item.contentPath,
-                parsedDocument.body,
+    for (
+        let node = contentResult.iterateNext();
+        node;
+        node = contentResult.iterateNext()
+    ) {
+        if (node instanceof Element) {
+            content += node.outerHTML;
+        }
+    }
+
+    if (content) {
+        let nextPageUrl: string | null = null;
+
+        if (nextLinkPath) {
+            const nextLinkResult = document.evaluate(
+                nextLinkPath,
+                contentDocument.body,
                 null,
-                XPathResult.ORDERED_NODE_ITERATOR_TYPE,
+                XPathResult.FIRST_ORDERED_NODE_TYPE,
                 null
             );
 
-            for (
-                let node = contentResult.iterateNext();
-                node;
-                node = contentResult.iterateNext()
-            ) {
-                if (node instanceof Element) {
-                    content += node.outerHTML;
+            const node = nextLinkResult.singleNodeValue;
+
+            if (node && node instanceof HTMLElement) {
+                const urlString = node.getAttribute('href');
+
+                if (urlString) {
+                    nextPageUrl = new URL(urlString, url).toString();
                 }
-            }
-
-            if (content) {
-                if (item.nextLinkPath) {
-                    const nextLinkResult = document.evaluate(
-                        item.nextLinkPath,
-                        parsedDocument.body,
-                        null,
-                        XPathResult.FIRST_ORDERED_NODE_TYPE,
-                        null
-                    );
-
-                    const node = nextLinkResult.singleNodeValue;
-
-                    if (node && node instanceof HTMLElement) {
-                        const urlString = node.getAttribute('href');
-
-                        if (urlString) {
-                            nextPageUrl = new URL(urlString, url).toString();
-                        }
-                    }
-                }
-
-                return { content, url, nextPageUrl };
             }
         }
+
+        return { content, url, nextPageUrl };
     }
 
     return null;
