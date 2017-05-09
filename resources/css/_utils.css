@@ -52,6 +52,18 @@
   font-size: 0.875rem;
 }
 
+.u-text-muted {
+  color: var(--dark-color);
+}
+
+.u-text-positive {
+  color: var(--positive-color);
+}
+
+.u-text-negative {
+  color: var(--negative-color);
+}
+
 .u-none {
   display: none;
 }

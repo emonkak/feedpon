@@ -66,6 +66,15 @@ class DashboardPage extends PureComponent<DashboardProps, DashboardState> {
                 <h5>Heading level 5</h5>
                 <h6>Heading level 6</h6>
 
+                <h2>Colors</h2>
+                <p>
+                    <span className="u-text-muted">Fusce dapibus, tellus ac cursus commodo, tortor mauris nibh.</span>
+                    <br />
+                    <span className="u-text-positive">Nullam id dolor id nibh ultricies vehicula ut id elit.</span>
+                    <br />
+                    <span className="u-text-negative">Duis mollis, est non commodo luctus, nisi erat porttitor ligula.</span>
+                </p>
+
                 <h2>Button</h2>
                 <p className="button-toolbar">
                     <button className="button button-default" onClick={this.handleSendNotification.bind(this, 'default')}>Default</button>

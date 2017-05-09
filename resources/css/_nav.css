@@ -5,14 +5,18 @@
   border: 1px solid var(--default-color);
   box-shadow: 0 2px 2px var(--shadow-color),
               0 0 1px var(--shadow-color);
+  max-width: 100%;
 }
 
 .nav-item {
-  flex: 1;
   padding: calc(var(--baseline-height) / 4 - 1px) 1.5rem;
+  min-height: var(--baseline-height);
+  color: inherit;
   text-align: center;
   text-decoration: none;
-  color: inherit;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .nav-item:first-child {

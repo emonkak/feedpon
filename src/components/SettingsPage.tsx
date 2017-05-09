@@ -68,10 +68,18 @@ export default class SettingsPage extends PureComponent<SettingsProps, {}> {
                     initialValue={initialValue}
                     onSelect={this.handleSelect}
                     renderContent={renderNavContent}>
-                    <NavItem value="general">General</NavItem>
-                    <NavItem value="keyboard">Keyboard</NavItem>
-                    <NavItem value="subscription">Subscription</NavItem>
-                    <NavItem value="siteinfo">Siteinfo</NavItem>
+                    <NavItem value="general" title="General">
+                        <i className="u-sm-inline-block u-md-none icon icon-20 icon-settings" /><span className="u-sm-none u-md-inline">General</span>
+                    </NavItem>
+                    <NavItem value="keyboard" title="Keyboard">
+                        <i className="u-sm-inline-block u-md-none icon icon-20 icon-keyboard" /><span className="u-sm-none u-md-inline">Keyboard</span>
+                    </NavItem>
+                    <NavItem value="subscription" title="Subscription">
+                        <i className="u-sm-inline-block u-md-none icon icon-20 icon-folder" /><span className="u-sm-none u-md-inline">Subscription</span>
+                    </NavItem>
+                    <NavItem value="siteinfo" title="Siteinfo">
+                        <i className="u-sm-inline-block u-md-none icon icon-20 icon-database" /><span className="u-sm-none u-md-inline">Siteinfo</span>
+                    </NavItem>
                 </Nav>
             </div>
         );

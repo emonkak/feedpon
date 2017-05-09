@@ -4,6 +4,7 @@ import classnames from 'classnames';
 interface NavItemProps {
     isSelected?: boolean;
     onSelect?: (value: any) => void;
+    title?: string;
     value: any;
 }
 
@@ -29,12 +30,13 @@ export default class NavItem extends PureComponent<NavItemProps, {}> {
     }
 
     render() {
-        const { children, isSelected } = this.props;
+        const { children, isSelected, title } = this.props;
 
         return (
             <a
                 className={classnames('nav-item', { 'is-selected': isSelected })}
                 href="#"
+                title={title}
                 onClick={this.handleSelect}>
                 {children}
             </a>
