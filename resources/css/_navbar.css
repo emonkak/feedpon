@@ -21,6 +21,7 @@
   padding: 0 1.5rem 0 0;
   min-width: 0;
   color: inherit;
+  font-weight: 600;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
