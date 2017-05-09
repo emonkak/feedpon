@@ -4,8 +4,8 @@ import { Children, PureComponent } from 'react';
 import Store from '../Store';
 
 interface StoreContextProps {
-    store: Store<any, any>
-};
+    store: Store<any, any>;
+}
 
 export default class StoreContext extends PureComponent<StoreContextProps, {}> {
     static childContextTypes = {

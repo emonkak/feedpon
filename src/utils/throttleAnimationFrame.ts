@@ -2,7 +2,7 @@ export default function throttleAnimationFrame(handler: (...args: any[]) => void
     let request: number | null = null;
 
     return (...args: any[]) => {
-        if (request == null) {
+        if (request === null) {
             request = window.requestAnimationFrame(() => {
                 handler(...args);
 

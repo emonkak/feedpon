@@ -4,17 +4,17 @@ type Middleware<TEvent, TState> = (event: TEvent, next: Delegate<TEvent>, getSta
 
 type Reducer<TEvent, TState> = (state: TState, event: TEvent) => TState;
 
-type Subscription = {
-    unsubscribe(): void,
-    readonly closed: boolean,
-};
+interface Subscription {
+    unsubscribe(): void;
+    readonly closed: boolean;
+}
 
-type PartialObserver<T> = {
-    start?: (subscription : Subscription) => void;
-    next?: (value: T) => void,
-    error?: (errorValue: any) => void,
-    complete?: () => void,
-};
+interface PartialObserver<T> {
+    start?: (subscription: Subscription) => void;
+    next?: (value: T) => void;
+    error?: (errorValue: any) => void;
+    complete?: () => void;
+}
 
 const $$observable = (Symbol as any).observable || '@@observable';
 

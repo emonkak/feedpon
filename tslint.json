@@ -28,7 +28,14 @@
             true,
             "always"
         ],
-        "triple-equals": false,
+        "trailing-comma": [
+          true,
+          {
+            "multiline": "never",
+            "singleline": "never"
+          }
+        ],
+        "triple-equals": [true, "allow-null-check"],
         "typedef-whitespace": [
             true,
             {

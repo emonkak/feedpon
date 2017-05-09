@@ -5,9 +5,9 @@ import connect from 'utils/react/connect';
 import { Credential, State } from 'messaging/types';
 
 interface NotAuthenticatedProps {
-    children: React.ReactElement<any>,
-    credential: Credential,
-    router: History
+    children: React.ReactElement<any>;
+    credential: Credential;
+    router: History;
 }
 
 class NotAuthenticated extends PureComponent<NotAuthenticatedProps, {}> {

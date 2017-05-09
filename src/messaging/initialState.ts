@@ -15,7 +15,7 @@ const initialState: State = {
         defaultSubscriptionOrder: 'newest',
         defaultStreamView: 'expanded',
         onlyUnreadEntries: true,
-        onlyUnreadSubscriptions: true,
+        onlyUnreadSubscriptions: true
     },
     siteinfo: {
         isLoading: false,

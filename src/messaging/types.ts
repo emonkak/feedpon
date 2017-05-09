@@ -55,7 +55,7 @@ export interface Environment {
 
 export interface Category {
     categoryId: string;
-    streamId: string,
+    streamId: string;
     label: string;
     unreadCount: number;
 }
@@ -172,11 +172,11 @@ export interface Subscriptions {
 export interface Subscription {
     subscriptionId: string;
     categoryId: string;
-    streamId: string,
+    streamId: string;
     title: string;
     iconUrl: string;
     unreadCount: number;
-};
+}
 
 export interface Siteinfo {
     items: SiteinfoItem[];

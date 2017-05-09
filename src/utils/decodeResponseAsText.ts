@@ -9,7 +9,7 @@ export default async function decodeResponseAsText(response: Response): Promise<
     const decoder = new TextDecoder(encoding);
     const bytes = new Uint8Array(buffer);
     return decoder.decode(bytes);
-};
+}
 
 function detectEncodingFromHeaders(headers: Headers): string | null {
     const contentType = headers.get('Content-Type');

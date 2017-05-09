@@ -7,7 +7,7 @@ export default function throttleEventHandler(handler: (event?: Event) => void, t
         const elapsedTime = timeStamp - lastInvoked;
 
         if (elapsedTime < throttleTime) {
-            if (timer == null) {
+            if (timer === null) {
                 const delay = throttleTime - elapsedTime;
 
                 timer = setTimeout(() => {
@@ -18,7 +18,7 @@ export default function throttleEventHandler(handler: (event?: Event) => void, t
                 }, delay);
             }
         } else {
-            if (timer != null) {
+            if (timer !== null) {
                 clearTimeout(timer);
 
                 timer = null;

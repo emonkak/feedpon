@@ -85,7 +85,7 @@ export function getCredential(): AsyncEvent<Promise<Credential>> {
                     ...credential.token,
                     ...token
                 }
-            }
+            };
 
             dispatch({
                 type: 'AUTHENTICATED',
@@ -100,7 +100,7 @@ export function getCredential(): AsyncEvent<Promise<Credential>> {
 function observeUrlChanging(window: chrome.windows.Window, callback: (url: string) => void): void {
     function handleUpdateTab(tabId: number, changeInfo: chrome.tabs.TabChangeInfo, tab: chrome.tabs.Tab): void {
         if (tab.windowId === window.id && tab.status === 'complete' && tab.url != null) {
-            callback(tab.url)
+            callback(tab.url);
         }
     }
 

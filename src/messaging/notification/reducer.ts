@@ -6,7 +6,7 @@ export default function reducer(notifications: Notification[], event: SyncEvent)
             return [...notifications, event.notification];
 
         case 'NOTIFICATION_DISMISSED':
-            return notifications.filter(notification => notification.id !== event.id)
+            return notifications.filter(notification => notification.id !== event.id);
 
         default:
             return notifications;

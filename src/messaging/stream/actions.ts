@@ -96,7 +96,7 @@ export function fetchComments(entryId: string, url: string): AsyncEvent<void> {
                 comments: []
             });
         }
-    }
+    };
 }
 
 export function fetchFullContent(entryId: string, url: string): AsyncEvent<void> {
@@ -121,7 +121,7 @@ export function fetchFullContent(entryId: string, url: string): AsyncEvent<void>
                 fullContent
             });
         }
-    }
+    };
 }
 
 export function markAsRead(entryIds: string[]): AsyncEvent<void> {
@@ -164,7 +164,7 @@ export function pinEntry(entryId: string): AsyncEvent<void> {
             type: 'ENTRY_PINNED',
             entryId,
             isPinned: true
-        })
+        });
     };
 }
 
@@ -184,7 +184,7 @@ export function unpinEntry(entryId: string): AsyncEvent<void> {
             type: 'ENTRY_PINNED',
             entryId,
             isPinned: false
-        })
+        });
     };
 }
 
@@ -272,7 +272,7 @@ function fetchFeedStream(streamId: string, options: StreamOptions): AsyncEvent<v
                 description: feed.description || '',
                 subscribers: feed.subscribers,
                 url: feed.website || '',
-                velocity: feed.velocity || 0,
+                velocity: feed.velocity || 0
             },
             subscription,
             options
@@ -346,7 +346,7 @@ function fetchAllStream(options: StreamOptions): AsyncEvent<void> {
             feed: null,
             subscription: null,
             options
-        }
+        };
 
         dispatch({
             type: 'STREAM_FETCHED',
@@ -425,7 +425,7 @@ function convertEntry(entry: feedly.Entry): Entry {
         origin: entry.origin ? {
             streamId: entry.origin.streamId,
             title: entry.origin.title,
-            url: entry.origin.htmlUrl,
+            url: entry.origin.htmlUrl
         } : null,
         visual: entry.visual && URL_PATTERN.test(entry.visual.url) ? {
             url: entry.visual.url,

@@ -7,7 +7,7 @@ export function sendNotification(message: string, kind: NotificationKind, dismis
         id: Date.now(),
         message,
         kind,
-        dismissAfter,
+        dismissAfter
     };
 
     return (dispatch) => {

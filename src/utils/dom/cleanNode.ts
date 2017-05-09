@@ -28,7 +28,7 @@ const HTML_ATTRS = new Set(['abbr', 'accesskey', 'align', 'alt', 'autoplay', 'ax
 const VAILD_ATTRS = new Set([
     ...HTML_ATTRS,
     ...SRCSET_ATTRS,
-    ...URI_ATTRS,
+    ...URI_ATTRS
 ]);
 
 const SAFE_URL_PATTERN = /^(?:(?:https?|mailto|ftp|tel|file):|[^&:/?#]*(?:[/?#]|$))/gi;

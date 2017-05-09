@@ -63,7 +63,7 @@ export function fetchSubscriptions(): AsyncEvent<void> {
                         title: subscription.title || '',
                         iconUrl: subscription.iconUrl || '',
                         unreadCount: unreadCount.count
-                    }))
+                    }));
                 })
                 .toArray();
 
