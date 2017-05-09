@@ -71,7 +71,7 @@ function qualifySrcset(srcsetString: string, baseUrlString: string): string {
 }
 
 function sanitizeUrl(urlString: string): string {
-    return urlString.match(SAFE_URL_PATTERN) || urlString.match(DATA_URL_PATTERN)
+    return SAFE_URL_PATTERN.test(urlString) || DATA_URL_PATTERN.test(urlString)
         ? urlString
         : 'javascript:void(0)';
 }
