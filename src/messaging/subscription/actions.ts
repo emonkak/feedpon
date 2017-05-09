@@ -1,6 +1,7 @@
 import Enumerable from '@emonkak/enumerable';
 
 import '@emonkak/enumerable/extensions/concat';
+import '@emonkak/enumerable/extensions/groupJoin';
 import '@emonkak/enumerable/extensions/join';
 import '@emonkak/enumerable/extensions/selectMany';
 import '@emonkak/enumerable/extensions/toArray';
@@ -28,22 +29,6 @@ export function fetchSubscriptions(): AsyncEvent<void> {
                 label: 'Uncategorized'
             };
 
-            const categories = new Enumerable(feedlyCategories)
-                .concat([uncategorizedCategory])
-                .join(
-                    feedlyUnreadCounts.unreadcounts,
-                    (category) => category.id,
-                    (unreadCount) => unreadCount.id,
-                    (category, unreadCount) => ({ category, unreadCount })
-                )
-                .select(({ category, unreadCount }) => ({
-                    categoryId: category.id,
-                    streamId: category.id,
-                    label: category.label,
-                    unreadCount: unreadCount.count
-                }))
-                .toArray();
-
             const subscriptions = new Enumerable(feedlySubscriptions)
                 .join(
                     feedlyUnreadCounts.unreadcounts,
@@ -65,6 +50,29 @@ export function fetchSubscriptions(): AsyncEvent<void> {
                         unreadCount: unreadCount.count
                     }));
                 })
+                .toArray();
+
+            const categories = new Enumerable(feedlyCategories)
+                .concat([uncategorizedCategory])
+                .join(
+                    feedlyUnreadCounts.unreadcounts,
+                    (category) => category.id,
+                    (unreadCount) => unreadCount.id,
+                    (category, unreadCount) => ({ category, unreadCount })
+                )
+                .groupJoin(
+                    subscriptions,
+                    ({ category }) => category.id,
+                    (subscription) => subscription.categoryId,
+                    ({ category, unreadCount }, subscriptions) => ({ category, unreadCount, subscriptions })
+                )
+                .select(({ category, unreadCount, subscriptions }) => ({
+                    categoryId: category.id,
+                    streamId: category.id,
+                    label: category.label,
+                    unreadCount: unreadCount.count,
+                    subscriptions
+                }))
                 .toArray();
 
             const totalUnreadCount = categories.reduce(

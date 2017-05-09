@@ -1,4 +1,3 @@
-import Enumerable from '@emonkak/enumerable';
 import React, { PureComponent } from 'react';
 import classnames from 'classnames';
 import { History } from 'history';
@@ -15,12 +14,7 @@ import connect from 'utils/react/connect';
 import { Category, State, Subscriptions, Subscription } from 'messaging/types';
 import { fetchSubscriptions } from 'messaging/subscription/actions';
 
-import '@emonkak/enumerable/extensions/groupJoin';
-import '@emonkak/enumerable/extensions/select';
-import '@emonkak/enumerable/extensions/toArray';
-
 interface SidebarProps {
-    categories: Category[];
     isLoading: boolean;
     lastUpdatedAt: string | null;
     onFetchSubscriptions: () => void;
@@ -54,14 +48,14 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
         }
     }
 
-    renderCategory(category: Category, subscriptions: Subscription[]) {
+    renderCategory(category: Category) {
         return (
                 <TreeBranch key={`/streams/${encodeURIComponent(category.streamId)}`}
                             value={`/streams/${encodeURIComponent(category.streamId)}`}
                             className={classnames({ 'is-important': category.unreadCount > 0 })}
                             primaryText={category.label}
                             secondaryText={category.unreadCount > 0 ? Number(category.unreadCount).toLocaleString() : ''}>
-                {subscriptions.map(subscription => this.renderSubscription(subscription))}
+                {category.subscriptions.map(subscription => this.renderSubscription(subscription))}
             </TreeBranch>
         );
     }
@@ -82,17 +76,10 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
     }
 
     renderTree() {
-        const { categories, isLoading, lastUpdatedAt, selectedValue, subscriptions } = this.props;
+        const { isLoading, lastUpdatedAt, selectedValue, subscriptions } = this.props;
 
-        const groupedSubscriptions = new Enumerable(categories)
-            .groupJoin(
-                subscriptions.items,
-                category => category.categoryId,
-                subscription => subscription.categoryId,
-                (category, subscriptions) => ({ category, subscriptions })
-            )
-            .select(({ category, subscriptions }) => this.renderCategory(category, subscriptions))
-            .toArray();
+        const categories = subscriptions.categories
+            .map((category) => this.renderCategory(category));
 
         const lastUpdate = lastUpdatedAt
             ? <span>Updated <RelativeTime time={lastUpdatedAt} /></span>
@@ -122,7 +109,7 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
                         <MenuItem primaryText="Unread only" />
                     </Dropdown>
                 </TreeHeader>
-                {groupedSubscriptions}
+                {categories}
                 <TreeLeaf key="/settings/" value="/settings/" primaryText="Settings" />
                 <TreeLeaf key="/about/" value="/about/" primaryText="About..." />
             </Tree>
@@ -154,7 +141,6 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
 
 export default connect(
     (state: State) => ({
-        categories: state.subscriptions.categories,
         subscriptions: state.subscriptions,
         isLoading: state.subscriptions.isLoading,
         lastUpdatedAt: state.subscriptions.lastUpdatedAt
