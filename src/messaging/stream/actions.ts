@@ -430,7 +430,7 @@ function convertEntry(entry: feedly.Entry): Entry {
         publishedAt: new Date(entry.published).toISOString(),
         bookmarkUrl: 'http://b.hatena.ne.jp/entry/' + url,
         bookmarkCount: 0,
-        isPinned: entry.tags ? entry.tags.some(tag => tag.id.endsWith('tag/global.saved')) : false,
+        isPinned: entry.tags ? entry.tags.some((tag) => tag.id.endsWith('tag/global.saved')) : false,
         isPinning: false,
         markedAsRead: !entry.unread,
         origin: entry.origin ? {

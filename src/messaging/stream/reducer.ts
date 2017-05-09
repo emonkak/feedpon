@@ -6,7 +6,7 @@ export default function reducer(stream: Stream, event: SyncEvent): Stream {
         case 'BOOKMARK_COUNTS_FETCHED':
             return {
                 ...stream,
-                entries: stream.entries.map(entry => ({
+                entries: stream.entries.map((entry) => ({
                     ...entry,
                     bookmarkCount: event.bookmarkCounts[entry.url] || 0
                 }))
@@ -15,7 +15,7 @@ export default function reducer(stream: Stream, event: SyncEvent): Stream {
         case 'COMMENTS_FETCHED':
             return {
                 ...stream,
-                entries: stream.entries.map(entry => {
+                entries: stream.entries.map((entry) => {
                     if (entry.entryId === event.entryId) {
                         return {
                             ...entry,
@@ -53,7 +53,7 @@ export default function reducer(stream: Stream, event: SyncEvent): Stream {
         case 'FULL_CONTENT_FETCHING':
             return {
                 ...stream,
-                entries: stream.entries.map(entry => {
+                entries: stream.entries.map((entry) => {
                     if (entry.entryId !== event.entryId) {
                         return entry;
                     }
@@ -71,7 +71,7 @@ export default function reducer(stream: Stream, event: SyncEvent): Stream {
         case 'FULL_CONTENT_FETCHED':
             return {
                 ...stream,
-                entries: stream.entries.map(entry => {
+                entries: stream.entries.map((entry) => {
                     if (entry.entryId !== event.entryId) {
                         return entry;
                     }
@@ -121,7 +121,7 @@ export default function reducer(stream: Stream, event: SyncEvent): Stream {
         case 'ENTRY_MARKED_AS_READ':
             return {
                 ...stream,
-                entries: stream.entries.map(entry => {
+                entries: stream.entries.map((entry) => {
                     if (event.entryIds.indexOf(entry.entryId) === -1) {
                         return entry;
                     }
@@ -136,7 +136,7 @@ export default function reducer(stream: Stream, event: SyncEvent): Stream {
         case 'ENTRY_PINNING':
             return {
                 ...stream,
-                entries: stream.entries.map(entry => {
+                entries: stream.entries.map((entry) => {
                     if (entry.entryId !== event.entryId) {
                         return entry;
                     }
@@ -151,7 +151,7 @@ export default function reducer(stream: Stream, event: SyncEvent): Stream {
         case 'ENTRY_PINNED':
             return {
                 ...stream,
-                entries: stream.entries.map(entry => {
+                entries: stream.entries.map((entry) => {
                     if (entry.entryId !== event.entryId) {
                         return entry;
                     }

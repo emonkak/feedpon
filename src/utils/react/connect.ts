@@ -33,7 +33,7 @@ export default function connect<TStateProps, TDispatchProps>(
                 this.dispatchProps = mapDispatchToProps!(store.dispatch.bind(store));
 
                 this.subscription = store.subscribe(
-                    state => this.setState(mapStateToProps(state))
+                    (state) => this.setState(mapStateToProps(state))
                 );
             }
 

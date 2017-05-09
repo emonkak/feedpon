@@ -63,7 +63,7 @@ function qualifyUrl(urlString: string, baseUrlString: string): string {
 function qualifySrcset(srcsetString: string, baseUrlString: string): string {
     return srcsetString
         .split(',')
-        .map(url => {
+        .map((url) => {
             const [first, second] = url.trim().split(' ', 2);
             return qualifyUrl(first, baseUrlString) + ' ' + (second || '');
         })
@@ -79,7 +79,7 @@ function sanitizeUrl(urlString: string): string {
 function sanitizeSrcset(srcsetString: string): string {
     return srcsetString
         .split(',')
-        .map(url => {
+        .map((url) => {
             const [first, second] = url.trim().split(' ', 2);
             return sanitizeUrl(first.trim()) + ' ' + (second || '');
         })

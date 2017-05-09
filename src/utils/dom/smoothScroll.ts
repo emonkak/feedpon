@@ -32,7 +32,7 @@ function start(
     x: number,
     y: number
 ): Promise<void> {
-    return new Promise<any>(resolve => {
+    return new Promise<any>((resolve) => {
         function step() {
             const time = window.performance.now();
             const elapsed = Math.min(1.0, (time - startTime) / SCROLL_TIME);

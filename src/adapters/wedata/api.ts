@@ -6,8 +6,8 @@ export function getItems<T>(databaseName: string): Promise<types.WedataItem<T>[]
     const requestUrl = ENDPOINT + 'databases/' + databaseName + '/items_all.json';
 
     return fetch(requestUrl)
-        .then<Response>(response => response.ok ? response : Promise.reject(response))
-        .then<types.WedataItem<T>[]>(response => response.json());
+        .then<Response>((response) => response.ok ? response : Promise.reject(response))
+        .then<types.WedataItem<T>[]>((response) => response.json());
 }
 
 export function getAutoPagerizeItems(): Promise<types.WedataItem<types.AutoPagerizeData>[]> {

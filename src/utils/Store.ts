@@ -46,7 +46,7 @@ export default class Store<TEvent, TState> {
 
     replaceState(nextState: TState): void {
         this.state = nextState;
-        this.observers.forEach(observer => observer.next(nextState));
+        this.observers.forEach((observer) => observer.next(nextState));
     }
 
     pipe(middleware: Middleware<TEvent, TState>): this {

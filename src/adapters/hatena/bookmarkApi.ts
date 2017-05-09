@@ -6,8 +6,8 @@ export function getBookmarkCounts(urls: string[]): Promise<types.BookmarkCounts>
         + toQueryString({ url: urls });
 
     return fetch(requestUrl)
-        .then<Response>(response => response.ok ? response : Promise.reject(response))
-        .then<types.BookmarkCounts>(response => response.json());
+        .then<Response>((response) => response.ok ? response : Promise.reject(response))
+        .then<types.BookmarkCounts>((response) => response.json());
 }
 
 export function getBookmarkEntry(url: string): Promise<types.GetEntryResponse | null> {
@@ -15,6 +15,6 @@ export function getBookmarkEntry(url: string): Promise<types.GetEntryResponse | 
         + toQueryString({ url });
 
     return fetch(requestUrl)
-        .then<Response>(response => response.ok ? response : Promise.reject(response))
-        .then<types.GetEntryResponse>(response => response.json());
+        .then<Response>((response) => response.ok ? response : Promise.reject(response))
+        .then<types.GetEntryResponse>((response) => response.json());
 }
