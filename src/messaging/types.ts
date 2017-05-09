@@ -144,7 +144,7 @@ export interface Comment {
 }
 
 export interface Notification {
-    id: string | number;
+    id: number;
     dismissAfter: number;
     message: string;
     kind: NotificationKind;
@@ -186,7 +186,7 @@ export interface Siteinfo {
 }
 
 export interface SiteinfoItem {
-    id: string;
+    id: string | number;
     name: string;
     urlPattern: string;
     contentPath: string;

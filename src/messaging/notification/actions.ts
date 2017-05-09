@@ -18,7 +18,7 @@ export function sendNotification(message: string, kind: NotificationKind, dismis
     };
 }
 
-export function dismissNotification(id: any): SyncEvent {
+export function dismissNotification(id: number): SyncEvent {
     return {
         type: 'NOTIFICATION_DISMISSED',
         id

@@ -458,7 +458,7 @@ function tryMatch(pattern: string, str: string): boolean {
     }
 }
 
-function toFeedlyStreamId(streamId: string, uid: string) {
+function toFeedlyStreamId(streamId: string, uid: string): string {
     switch (streamId) {
         case 'all':
             return `user/${uid}/category/global.all`;

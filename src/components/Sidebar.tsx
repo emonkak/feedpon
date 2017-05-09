@@ -133,7 +133,7 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
         return (
             <nav className="sidebar">
                 <div className="sidebar-group">
-                    <input type="text" className="search-box" placeholder="Search for feeds ..." />
+                    <input type="text" className="form-search-box" placeholder="Search for feeds ..." />
                 </div>
                 <div className="sidebar-group">
                     {this.renderTree()}

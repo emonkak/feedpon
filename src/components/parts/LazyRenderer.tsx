@@ -8,7 +8,7 @@ import throttleAnimationFrame from 'utils/throttleAnimationFrame';
 interface LazyRendererProps {
     assumedItemHeight: number;
     getHeight?: (element: HTMLElement) => number;
-    getKey: (item: any) => string;
+    getKey: (item: any) => string | number;
     getScrollableParent?: (element: Element) => Element | Window;
     items: any[];
     offscreenToViewportRatio?: number;

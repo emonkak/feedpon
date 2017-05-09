@@ -192,7 +192,7 @@ td,
 th {
   padding: calc(var(--baseline-height) / 4) 1rem;
   text-align: left;
-  vertical-align: top;
+  vertical-align: middle;
 }
 
 caption {
@@ -228,10 +228,34 @@ mark {
   border-radius: 4px;
 }
 
+fieldset {
+  margin: 0 0 var(--baseline-height);
+  padding: calc(var(--baseline-height) / 2 - 1px) calc(1.5rem - 1px) var(--baseline-height);
+  border: 1px solid var(--medium-color);
+  border-radius: 4px;
+  background-color: var(--tint-color);
+}
+
+legend {
+  margin: 0;
+  padding: 0 0.5rem;
+  color: var(--dark-color);
+  font-weight: 600;
+}
+
 input {
+  padding: 0;
+  margin: 0;
+  border: 0;
   font-family: inherit;
   font-size: inherit;
   line-height: inherit;
+  color: inherit;
+  background: none;
+}
+
+input[type="text"] {
+  box-sizing: border-box;
 }
 
 input[type="text"]:focus {
