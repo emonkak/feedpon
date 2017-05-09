@@ -236,7 +236,7 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
 
         const unreadCount = stream.unreadCount > 0
             ? (
-                <span className="stream-unread-count u-text-truncate">{stream.unreadCount - readEntryIds.size} unread entries</span>
+                <span className="stream-unread-count">{stream.unreadCount - readEntryIds.size} unread entries</span>
             )
             : null;
 
