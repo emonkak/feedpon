@@ -11,6 +11,16 @@
   z-index: 10;
 }
 
+.entry.is-pinned {
+  box-shadow: 6px 0 0 var(--positive-background-color) inset;
+}
+
+.entry.is-pinned.is-active {
+  box-shadow: 6px 0 0 var(--positive-background-color) inset,
+              0 2px 18px var(--shadow-color),
+              0 0 6px var(--shadow-color);
+}
+
 .entry.is-unread {
   & .entry-title::after {
     content: '\00a0*';
@@ -22,6 +32,10 @@
   & .entry-title {
     color: var(--dark-color);
   }
+}
+
+.entry.is-collapsible:not(.is-expanded) {
+  cursor: pointer;
 }
 
 .entry.is-expanded {
@@ -54,10 +68,6 @@
   & .entry-action-fetch-full-content {
     display: none;
   }
-}
-
-.entry.is-collapsible:not(.is-expanded) {
-  cursor: pointer;
 }
 
 .entry:hover .entry-nav {

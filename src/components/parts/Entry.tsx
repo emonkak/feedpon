@@ -69,8 +69,9 @@ export default class Entry extends PureComponent<EntryProps, {}> {
                     'is-active': isActive,
                     'is-collapsible': isCollapsible,
                     'is-expanded': isExpanded,
+                    'is-marked-as-read': entry.markedAsRead,
+                    'is-pinned': entry.isPinned,
                     'is-unread': !entry.markedAsRead && !isRead,
-                    'is-marked-as-read': entry.markedAsRead
                 })}>
                 <EntryInner
                     entry={entry}

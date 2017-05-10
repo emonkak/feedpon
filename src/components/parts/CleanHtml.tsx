@@ -21,19 +21,19 @@ export default class CleanHtml extends PureComponent<CleanHtmlProps, {}> {
 
     update() {
         const { baseUrl, html } = this.props;
-        const container = findDOMNode(this);
 
         if (html != null) {
             const parser = new DOMParser();
             const parsedDocument = parser.parseFromString(html, 'text/html');
+            const fragment = document.createDocumentFragment();
 
             for (const child of parsedDocument.body.childNodes) {
                 walkNode(child, (node) => cleanNode(node, baseUrl));
+
+                fragment.appendChild(child);
             }
 
-            const fragment = document.createDocumentFragment();
-
-            fragment.appendChild(parsedDocument.documentElement);
+            const container = findDOMNode(this);
 
             if (container.firstChild) {
                 container.replaceChild(fragment, container.firstChild);
