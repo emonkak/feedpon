@@ -31,7 +31,7 @@ const VAILD_ATTRS = new Set([
     ...URI_ATTRS
 ]);
 
-const SAFE_URL_PATTERN = /^(?:(?:https?|mailto|ftp|tel|file):|[^&:/?#]*(?:[/?#]|$))/gi;
+const SAFE_URL_PATTERN = /^(?:(?:https?|mailto|ftp|tel|file):|[^&:/?#]*(?:[/?#]|$))/i;
 
 const DATA_URL_PATTERN =
     /^data:(?:image\/(?:bmp|gif|jpeg|jpg|png|tiff|webp)|video\/(?:mpeg|mp4|ogg|webm)|audio\/(?:mp3|oga|ogg|opus));base64,[a-z0-9+\/]+=*$/i;
@@ -56,7 +56,7 @@ function qualifyUrl(urlString: string, baseUrlString: string): string {
     try {
         return new URL(urlString, baseUrlString).toString();
     } catch (error) {
-        return 'javascript:void(0)';
+        return urlString;
     }
 }
 
@@ -73,7 +73,7 @@ function qualifySrcset(srcsetString: string, baseUrlString: string): string {
 function sanitizeUrl(urlString: string): string {
     return SAFE_URL_PATTERN.test(urlString) || DATA_URL_PATTERN.test(urlString)
         ? urlString
-        : 'javascript:void(0)';
+        : 'unsafe:' + urlString;
 }
 
 function sanitizeSrcset(srcsetString: string): string {

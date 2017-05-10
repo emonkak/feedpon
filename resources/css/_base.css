@@ -209,7 +209,7 @@ a {
   text-decoration-skip: ink;
 }
 
-a:hover {
+a[href]:hover {
   text-decoration: underline;
 }
 
