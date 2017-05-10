@@ -282,8 +282,7 @@ function fetchFeedStream(streamId: string, options: StreamOptions): AsyncEvent<v
             feed: {
                 description: feed.description || '',
                 subscribers: feed.subscribers,
-                url: feed.website || '',
-                velocity: feed.velocity || 0
+                url: feed.website || ''
             },
             subscription,
             options

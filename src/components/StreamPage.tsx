@@ -272,14 +272,12 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
     }
 
     renderHeader() {
-        const { stream } = this.props;
-        const { feed, subscription } = stream;
+        const { categories, stream } = this.props;
+        const { entries, feed, subscription } = stream;
 
         if (feed) {
-            const { categories } = this.props;
-
             const subscribeButton = subscription
-                ?  (
+                ? (
                     <Dropdown
                         toggleButton={
                             <button className="button button-outline-default dropdown-arrow">
@@ -310,8 +308,8 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
                             <div className="stream-header-content-left">
                                 <div className="stream-metadata">
                                     <div className="list-inline list-inline-dotted">
+                                        <div className="list-inline-item"><strong>{entries.length}</strong> entries</div>
                                         <div className="list-inline-item"><strong>{feed.subscribers}</strong> subscribers</div>
-                                        <div className="list-inline-item"><strong>{feed.velocity.toFixed(1)}</strong> entries per week</div>
                                     </div>
                                 </div>
                                 <div className="stream-description">{feed.description}</div>

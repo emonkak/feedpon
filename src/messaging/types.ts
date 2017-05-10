@@ -87,7 +87,6 @@ export interface Feed {
     description: string;
     url: string;
     subscribers: number;
-    velocity: number;
 }
 
 export interface Entry {
