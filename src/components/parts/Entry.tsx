@@ -38,9 +38,14 @@ export default class Entry extends PureComponent<EntryProps, {}> {
         const { entry, isCollapsible, isExpanded, onExpand } = this.props;
 
         if (isCollapsible && !isExpanded && onExpand) {
-            event.preventDefault();
+            const target = event.target as HTMLElement;
 
-            onExpand(entry.entryId, findDOMNode(this));
+            if (target === event.currentTarget
+                || (!target.closest('a') && !target.closest('button'))) {
+                event.preventDefault();
+
+                onExpand(entry.entryId, findDOMNode(this));
+            }
         }
     }
 

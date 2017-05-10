@@ -47,8 +47,6 @@ function renderList(children: React.ReactNode): React.ReactElement<any> {
 export default class EntryList extends PureComponent<EntryListProps, EntryListState> {
     private activeEntryId: string | null = null;
 
-    private scrollElement: HTMLElement | null = null;
-
     constructor(props: EntryListProps, context: any) {
         super(props, context);
 
@@ -70,19 +68,21 @@ export default class EntryList extends PureComponent<EntryListProps, EntryListSt
         }
     }
 
-    componentWillUpdate(nextProps: EntryListProps, nextState: EntryListState) {
-        if (nextProps.view !== this.props.view) {
-            if (this.activeEntryId != null) {
-                this.scrollElement = document.getElementById('entry-' + this.activeEntryId);
-            }
-        }
-    }
-
     componentDidUpdate(prevProps: EntryListProps, prevState: EntryListState) {
-        if (this.scrollElement) {
-            this.props.scrollTo(0, this.scrollElement.offsetTop - SCROLL_OFFSET);
+        let scrollElement: HTMLElement | null = null;
 
-            this.scrollElement = null;
+        if (this.state.expandedEntryId !== prevState.expandedEntryId && this.state.expandedEntryId) {
+            scrollElement = document.getElementById('entry-' + this.state.expandedEntryId);
+        }
+
+        if (this.props.view !== prevProps.view && this.activeEntryId) {
+            scrollElement = document.getElementById('entry-' + this.activeEntryId);
+        }
+
+        if (scrollElement) {
+            const { scrollTo } = this.props;
+
+            scrollTo(0, scrollElement.offsetTop - SCROLL_OFFSET);
         }
     }
 
@@ -116,17 +116,11 @@ export default class EntryList extends PureComponent<EntryListProps, EntryListSt
     }
 
     handleExpand(expandedEntryId: string, collapsedElement: HTMLElement) {
-        this.scrollElement = collapsedElement;
-
-        this.setState({
-            expandedEntryId
-        });
+        this.setState({ expandedEntryId });
     }
 
     handleClose() {
-        this.setState({
-            expandedEntryId: null
-        });
+        this.setState({ expandedEntryId: null });
     }
 
     renderEntry(entry: EntryInterface) {

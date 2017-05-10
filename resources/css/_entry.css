@@ -56,6 +56,10 @@
   }
 }
 
+.entry.is-collapsible:not(.is-expanded) {
+  cursor: pointer;
+}
+
 .entry:hover .entry-nav {
   visibility: visible;
 }

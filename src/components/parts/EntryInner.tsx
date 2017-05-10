@@ -289,10 +289,10 @@ export default class EntryInner extends PureComponent<EntryInnerProps, EntryInne
     }
 
     render() {
-        const { entry } = this.props;
+        const { entry, onExpand } = this.props;
 
         return (
-            <div className="container">
+            <div className="container" onClick={onExpand}>
                 <header className="entry-header">
                     {this.renderNav()}
                     {this.renderTitle()}
