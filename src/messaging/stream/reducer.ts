@@ -36,6 +36,7 @@ export default function reducer(stream: Stream, event: SyncEvent): Stream {
                 return {
                     ...initialState.stream,
                     streamId: event.streamId,
+                    continuation: null,
                     isLoading: true,
                     isLoaded: false
                 };

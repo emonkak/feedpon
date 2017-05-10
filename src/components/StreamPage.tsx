@@ -46,6 +46,7 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
         this.handleLoadMoreEntries = this.handleLoadMoreEntries.bind(this);
         this.handlePinEntry = this.handlePinEntry.bind(this);
         this.handleReadEntry = this.handleReadEntry.bind(this);
+        this.handleReloadEntries = this.handleReloadEntries.bind(this);
         this.handleScrollToEntry = this.handleScrollToEntry.bind(this);
         this.handleToggleOnlyUnread = this.handleToggleOnlyUnread.bind(this);
     }
@@ -131,6 +132,16 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
         this.setState((state) => ({
             readEntryIds: new Set([...state.readEntryIds, ...readEntryIds])
         }));
+    }
+
+    handleReloadEntries() {
+        const { onFetchStream, stream } = this.props;
+
+        if (stream.streamId) {
+            scrollTo(0, 0);
+
+            onFetchStream(stream.streamId);
+        }
     }
 
     handleScrollToEntry(entryId: string) {
@@ -263,7 +274,7 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
             <Navbar onToggleSidebar={onToggleSidebar}>
                 {this.renderNavbarTitle()}
                 <div className="navbar-action">
-                    <button><i className="icon icon-24 icon-refresh" /></button>
+                    <button onClick={this.handleReloadEntries}><i className="icon icon-24 icon-refresh" /></button>
                 </div>
                 {this.renderReadEntriesDropdown()}
                 {this.renderConfigDropdown()}
