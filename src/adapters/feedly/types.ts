@@ -75,7 +75,7 @@ export interface Feed {
     velocity?: number;
     website?: string;
     topics?: string[];
-    status?: string;
+    status?: "dead" | "dead.flooded";
 }
 
 // Markers API:
@@ -93,6 +93,31 @@ export interface UnreadCount {
     count: number;
     updated: number;
     id: string;
+}
+
+// Search API:
+export interface SearchInput {
+    query: string;
+    count?: number;
+    locale?: string;
+}
+
+export interface SearchResponse {
+    hint: string;
+    related: string[];
+    results: SearchResult[];
+}
+
+export interface SearchResult {
+    feedId: string;
+    subscribers: number;
+    title: string;
+    description?: string;
+    language?: string;
+    velocity?: number;
+    website?: string;
+    visualUrl?: string;
+    lastUpdated?: number;
 }
 
 // Streams API:

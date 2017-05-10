@@ -6,12 +6,6 @@
   color: var(--default-color);
 }
 
-.popover,
-.popover-arrow::before {
-  box-shadow: 0 2px 2px var(--shadow-color),
-              0 0 1px var(--shadow-color);
-}
-
 .popover-arrow {
   display: block;
   position: absolute;

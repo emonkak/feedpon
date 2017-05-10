@@ -46,7 +46,3 @@
   border-right: 0.25rem solid transparent;
   border-left: 0.25rem solid transparent;
 }
-
-.dropdown-is-opened {
-  overflow: hidden;
-}

@@ -7,6 +7,7 @@ import AuthenticationRequired from 'components/AuthenticationRequired';
 import DashboardPage from 'components/DashboardPage';
 import Layout from 'components/Layout';
 import NotAuthenticated from 'components/NotAuthenticated'
+import SearchPage from 'components/SearchPage';
 import SettingsPage from 'components/SettingsPage';
 import StreamPage from 'components/StreamPage';
 
@@ -16,9 +17,10 @@ const routes = (
             <Route component={Layout}>
                 <IndexRoute component={DashboardPage} />
                 <Route path="about" component={AboutPage} />
-                <Route path="streams/:stream_id" component={StreamPage} />
+                <Route path="search" component={SearchPage} />
                 <Route path="settings" component={SettingsPage} />
                 <Route path="settings/:setting_id" component={SettingsPage} />
+                <Route path="streams/:stream_id" component={StreamPage} />
             </Route>
         </Route>
         <Route component={NotAuthenticated}>

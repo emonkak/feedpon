@@ -2,6 +2,12 @@ import { State } from 'messaging/types';
 
 const initialState: State = {
     credential: null,
+    search: {
+        feeds: [],
+        isLoading: false,
+        isLoaded: false,
+        query: ''
+    },
     environment: {
         clientId: 'feedly',
         clientSecret: '0XP4XQ07VVMDWBKUHTJM4WUQ',
@@ -32,7 +38,6 @@ const initialState: State = {
         isLoading: false,
         isLoaded: false,
         feed: null,
-        subscription: null,
         options: {
             numEntries: 20,
             onlyUnread: true,

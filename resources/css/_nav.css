@@ -3,8 +3,6 @@
   margin: var(--baseline-height) 0;
   border-radius: 4px;
   border: 1px solid var(--default-color);
-  box-shadow: 0 2px 2px var(--shadow-color),
-              0 0 1px var(--shadow-color);
   max-width: 100%;
 }
 

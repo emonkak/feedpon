@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import classnames from 'classnames';
 import { History } from 'history';
+import { Link } from 'react-router';
 
 import Dropdown from 'components/parts/Dropdown';
 import MenuItem from 'components/parts/MenuItem';
@@ -35,7 +36,7 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
     handleSelect(selectedValue: string) {
         const { router } = this.props;
 
-        router.replace(selectedValue);
+        router.push(selectedValue);
     }
 
     handleReload(event: React.SyntheticEvent<any>) {
@@ -126,7 +127,7 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
                     {this.renderTree()}
                 </div>
                 <div className="sidebar-group">
-                    <button type="button" className="button button-block button-outline-default">New Subscription</button>
+                    <Link className="button button-block button-outline-default" to="/search">New Subscription</Link>
                 </div>
                 <div className="sidebar-group u-text-center">
                     <ul className="list-inline list-inline-slashed">

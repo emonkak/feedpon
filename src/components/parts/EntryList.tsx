@@ -6,15 +6,15 @@ import '@emonkak/enumerable/extensions/takeWhile';
 import '@emonkak/enumerable/extensions/toArray';
 import '@emonkak/enumerable/extensions/where';
 
-import Entry from 'components/parts/Entry';
+import EntryComponent from 'components/parts/Entry';
 import EntryPlaceholder from 'components/parts/EntryPlaceholder';
 import ScrollSpy from 'components/parts/ScrollSpy';
-import { Entry as EntryInterface, StreamView } from 'messaging/types';
+import { Entry, StreamView } from 'messaging/types';
 
 const SCROLL_OFFSET = 48;
 
 interface EntryListProps {
-    entries: EntryInterface[];
+    entries: Entry[];
     isLoading: boolean;
     isScrolling: boolean;
     onFetchComments: (entryId: string | number, url: string) => void;
@@ -123,7 +123,7 @@ export default class EntryList extends PureComponent<EntryListProps, EntryListSt
         this.setState({ expandedEntryId: null });
     }
 
-    renderEntry(entry: EntryInterface) {
+    renderEntry(entry: Entry) {
         const { onFetchComments, onFetchFullContent, onPin, onUnpin, readEntryIds, view } = this.props;
         const { expandedEntryId } = this.state;
         const isCollapsible = view === 'collapsible';
@@ -131,7 +131,7 @@ export default class EntryList extends PureComponent<EntryListProps, EntryListSt
         const isRead = readEntryIds.has(entry.entryId);
 
         return (
-            <Entry
+            <EntryComponent
                 entry={entry}
                 isCollapsible={isCollapsible}
                 isExpanded={isExpanded}

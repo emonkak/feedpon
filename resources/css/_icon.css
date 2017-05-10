@@ -109,6 +109,10 @@
   mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M 6 4 L 6 5 L 6 27 L 6 28 L 7 28 L 25 28 L 26 28 L 26 27 L 26 5 L 26 4 L 25 4 L 7 4 L 6 4 z M 8 6 L 24 6 L 24 11 L 8 11 L 8 6 z M 8 13 L 24 13 L 24 19 L 8 19 L 8 13 z M 8 21 L 24 21 L 24 26 L 8 26 L 8 21 z"/></svg>');
 }
 
+.icon-plus-math {
+  mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M 15 5 L 15 15 L 5 15 L 5 17 L 15 17 L 15 27 L 17 27 L 17 17 L 27 17 L 27 15 L 17 15 L 17 5 L 15 5 z"/></svg>');
+}
+
 .icon-16 {
   width: 16px;
   height: 16px;

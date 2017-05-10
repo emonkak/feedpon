@@ -1,15 +1,15 @@
 import React, { PureComponent } from 'react';
 import classnames from 'classnames';
 
-import { Notification as NotificationInterface } from 'messaging/types';
+import { Notification } from 'messaging/types';
 
 interface NotificationProps {
-    notification: NotificationInterface;
+    notification: Notification;
     isReversed?: boolean;
     onClose: (id: string | number) => void;
 }
 
-export default class Notification extends PureComponent<NotificationProps, {}> {
+export default class NotificationComponent extends PureComponent<NotificationProps, {}> {
     static defaultProps = {
         isReversed: false
     };

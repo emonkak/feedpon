@@ -7,11 +7,11 @@
 }
 
 .u-margin-left {
-  margin-left: 1.5rem;
+  margin-left: 0.5rem;
 }
 
 .u-margin-right {
-  margin-right: 1.5rem;
+  margin-right: 0.5rem;
 }
 
 .u-pull-left {
@@ -26,6 +26,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.u-full-width {
+  width: 100%;
 }
 
 .u-text-truncate {
@@ -44,8 +48,40 @@
   white-space: nowrap;
 }
 
+.u-text-left {
+  text-align: left;
+}
+
 .u-text-center {
   text-align: center;
+}
+
+.u-text-right {
+  text-align: center;
+}
+
+.u-text-h1 {
+  font-size: 2rem;
+}
+
+.u-text-h2 {
+  font-size: 1.5rem;
+}
+
+.u-text-h3 {
+  font-size: 1.375rem;
+}
+
+.u-text-h4 {
+  font-size: 1.25rem;
+}
+
+.u-text-h5 {
+  font-size: 1.125rem;
+}
+
+.u-text-h6 {
+  font-size: 1rem;
 }
 
 .u-text-small {
@@ -62,10 +98,6 @@
 
 .u-text-negative {
   color: var(--negative-color);
-}
-
-.u-none {
-  display: none;
 }
 
 @media (--sm-viewport) {

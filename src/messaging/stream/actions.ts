@@ -270,30 +270,32 @@ function fetchFeedStream(streamId: string, options: StreamOptions): AsyncEvent<v
         const { subscriptions } = getState();
         const subscription = subscriptions.items
             .find((subscription) => subscription.subscriptionId === streamId) || null;
-
-        const stream = {
-            streamId,
-            title: feed.title,
-            entries: contents.items.map(convertEntry),
-            continuation: contents.continuation || null,
-            unreadCount: subscription ? subscription.unreadCount : 0,
-            isLoading: false,
-            isLoaded: true,
-            feed: {
-                description: feed.description || '',
-                subscribers: feed.subscribers,
-                url: feed.website || ''
-            },
-            subscription,
-            options
-        };
+        const entries = contents.items.map(convertEntry);
 
         dispatch({
             type: 'STREAM_FETCHED',
-            stream
+            stream: {
+                streamId,
+                title: feed.title,
+                entries,
+                continuation: contents.continuation || null,
+                unreadCount: subscription ? subscription.unreadCount : 0,
+                isLoading: false,
+                isLoaded: true,
+                feed: {
+                    feedId: feed.id,
+                    streamId: feed.id,
+                    title: feed.title,
+                    description: feed.description || '',
+                    url: feed.website || '',
+                    subscribers: feed.subscribers,
+                    subscription
+                },
+                options
+            }
         });
 
-        fetchBookmarkCounts(stream.entries)(dispatch, getState);
+        fetchBookmarkCounts(entries)(dispatch, getState);
     };
 }
 
@@ -310,26 +312,24 @@ function fetchCategoryStream(streamId: string, options: StreamOptions): AsyncEve
 
         const category = subscriptions.categories
             .find((category) => category.categoryId === streamId) || null;
-
-        const stream = {
-            streamId,
-            title: category ? category.label : '',
-            entries: contents.items.map(convertEntry),
-            unreadCount: category ? category.unreadCount : 0,
-            continuation: contents.continuation || null,
-            isLoading: false,
-            isLoaded: true,
-            feed: null,
-            subscription: null,
-            options
-        };
+        const entries = contents.items.map(convertEntry);
 
         dispatch({
             type: 'STREAM_FETCHED',
-            stream
+            stream: {
+                streamId,
+                title: category ? category.label : '',
+                entries,
+                unreadCount: category ? category.unreadCount : 0,
+                continuation: contents.continuation || null,
+                isLoading: false,
+                isLoaded: true,
+                feed: null,
+                options
+            }
         });
 
-        fetchBookmarkCounts(stream.entries)(dispatch, getState);
+        fetchBookmarkCounts(entries)(dispatch, getState);
     };
 }
 
@@ -344,26 +344,24 @@ function fetchAllStream(options: StreamOptions): AsyncEvent<void> {
         });
 
         const { subscriptions } = getState();
-
-        const stream = {
-            streamId: 'all',
-            title: 'All',
-            entries: contents.items.map(convertEntry),
-            unreadCount: subscriptions.totalUnreadCount,
-            continuation: contents.continuation || null,
-            isLoading: false,
-            isLoaded: true,
-            feed: null,
-            subscription: null,
-            options
-        };
+        const entries = contents.items.map(convertEntry);
 
         dispatch({
             type: 'STREAM_FETCHED',
-            stream
+            stream: {
+                streamId: 'all',
+                title: 'All',
+                entries,
+                unreadCount: subscriptions.totalUnreadCount,
+                continuation: contents.continuation || null,
+                isLoading: false,
+                isLoaded: true,
+                feed: null,
+                options
+            }
         });
 
-        fetchBookmarkCounts(stream.entries)(dispatch, getState);
+        fetchBookmarkCounts(entries)(dispatch, getState);
     };
 }
 
@@ -377,25 +375,24 @@ function fetchPinsStream(options: StreamOptions): AsyncEvent<void> {
             unreadOnly: options.onlyUnread
         });
 
-        const stream = {
-            streamId: 'pins',
-            title: 'Pins',
-            entries: contents.items.map(convertEntry),
-            unreadCount: 0,
-            continuation: contents.continuation || null,
-            isLoading: false,
-            isLoaded: true,
-            feed: null,
-            subscription: null,
-            options
-        };
+        const entries = contents.items.map(convertEntry);
 
         dispatch({
             type: 'STREAM_FETCHED',
-            stream
+            stream: {
+                streamId: 'pins',
+                title: 'Pins',
+                entries,
+                unreadCount: 0,
+                continuation: contents.continuation || null,
+                isLoading: false,
+                isLoaded: true,
+                feed: null,
+                options
+            }
         });
 
-        fetchBookmarkCounts(stream.entries)(dispatch, getState);
+        fetchBookmarkCounts(entries)(dispatch, getState);
     };
 }
 

@@ -167,9 +167,9 @@ export default class ScrollSpy extends PureComponent<ScrollSpyProps, ScrollSpySt
             const { renderChild } = this.props;
             const { activeKey } = this.state;
 
-            const ref = (element: React.ReactInstance) => {
-                if (element) {
-                    childKeys.set(childKey, findDOMNode<HTMLElement>(element));
+            const ref = (child: React.ReactInstance) => {
+                if (child) {
+                    childKeys.set(childKey, findDOMNode<HTMLElement>(child));
                 } else {
                     childKeys.delete(childKey);
                 }
@@ -178,6 +178,7 @@ export default class ScrollSpy extends PureComponent<ScrollSpyProps, ScrollSpySt
             child = renderChild(child, childKey === activeKey);
 
             return cloneElement(child, {
+                ...child.props,
                 ref: createChainedFunction(ref, (child as any).ref)
             });
         }

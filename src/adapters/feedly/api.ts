@@ -104,6 +104,11 @@ export function keepUnreadForCetegories(accessToken: string, categoryIds: string
     }, createAuthHeader(accessToken));
 }
 
+// Search API:
+export function searchFeeds(accessToken: string, input: types.SearchInput): Promise<types.SearchResponse> {
+    return doGet('v3/search/feeds', input, createAuthHeader(accessToken));
+}
+
 // Streams API:
 export function getStreamIds(accessToken: string, input: types.GetStreamInput): Promise<types.GetEntryIdsResponse> {
     return doGet('v3/streams/ids', input, createAuthHeader(accessToken));

@@ -176,15 +176,16 @@ export default class LazyRenderer extends PureComponent<LazyRendererProps, LazyR
         const child = renderItem(item, index + startIndex);
         const key = getKey(item);
 
-        const ref = (element: React.ReactInstance) => {
-            if (element) {
-                this.elements[key] = findDOMNode<HTMLElement>(element);
+        const ref = (child: React.ReactInstance) => {
+            if (child) {
+                this.elements[key] = findDOMNode<HTMLElement>(child);
             } else {
                 delete this.elements[key];
             }
         };
 
         return cloneElement(child, {
+            ...child.props,
             ref: createChainedFunction(ref, (child as any).ref)
         });
     }

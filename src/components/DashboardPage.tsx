@@ -49,7 +49,7 @@ class DashboardPage extends PureComponent<DashboardProps, DashboardState> {
 
         return (
             <Navbar onToggleSidebar={onToggleSidebar}>
-                <div className="navbar-title">Dashboard</div>
+                <h1 className="navbar-title">Dashboard</h1>
             </Navbar>
         );
     }
@@ -59,12 +59,25 @@ class DashboardPage extends PureComponent<DashboardProps, DashboardState> {
 
         return (
             <div className="container">
-                <h1>Heading level 1</h1>
-                <h2>Heading level 2</h2>
-                <h3>Heading level 3</h3>
-                <h4>Heading level 4</h4>
-                <h5>Heading level 5</h5>
-                <h6>Heading level 6</h6>
+                <h1>Heading</h1>
+                <div>
+                    <h1>Heading level 1</h1>
+                    <h2>Heading level 2</h2>
+                    <h3>Heading level 3</h3>
+                    <h4>Heading level 4</h4>
+                    <h5>Heading level 5</h5>
+                    <h6>Heading level 6</h6>
+                </div>
+
+                <h1>Display</h1>
+                <div>
+                    <h1 className="display-1">Display level 1</h1>
+                    <h2 className="display-2">Display level 2</h2>
+                    <h3 className="display-3">Display level 3</h3>
+                    <h4 className="display-4">Display level 4</h4>
+                    <h5 className="display-5">Display level 5</h5>
+                    <h6 className="display-6">Display level 6</h6>
+                </div>
 
                 <h2>Colors</h2>
                 <p>

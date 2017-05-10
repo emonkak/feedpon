@@ -1,0 +1,12 @@
+.feed-title {
+  font-weight: 600;
+}
+
+.feed-description {
+  color: var(--dark-color);
+}
+
+.feed-subscribers {
+  color: var(--dark-color);
+  font-size: 0.875rem;
+}

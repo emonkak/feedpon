@@ -2,15 +2,15 @@ import CSSTransitionGroup from 'react-addons-css-transition-group';
 import React, { PureComponent } from 'react';
 import classnames from 'classnames';
 
-import Notification from 'components/parts/Notification';
+import NotificationComponent from 'components/parts/Notification';
 import bindAction from 'utils/bindAction';
 import connect from 'utils/react/connect';
-import { Notification as NotificationInterface, State } from 'messaging/types';
+import { Notification, State } from 'messaging/types';
 import { dismissNotification } from 'messaging/notification/actions';
 
 interface NotificationsProps {
     isReversed?: boolean;
-    notifications: NotificationInterface[];
+    notifications: Notification[];
     onDismissNotification: (id: number) => void;
 }
 
@@ -32,7 +32,7 @@ class Notifications extends PureComponent<NotificationsProps, {}> {
                 transitionEnterTimeout={200}
                 transitionLeaveTimeout={200}>
                 {notifications.map((notification) =>
-                    <Notification
+                    <NotificationComponent
                         notification={notification}
                         isReversed={isReversed}
                         key={notification.id}

@@ -67,6 +67,7 @@
 
 html, body {
   font-family: -apple-system, BlinkMacSystemFont, '.SFNSDisplay-Regular', 'San Francisco Text', 'Segoe UI', Helvetica, YuGothic, 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+  font-weight: 400;
   font-size: var(--font-size);
   line-height: var(--baseline-height);
   touch-action: manipulation;
@@ -80,17 +81,13 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  margin: 0;
+  margin: calc(var(--baseline-height) / 2) 0 calc(var(--baseline-height) / 2);
   font-weight: 600;
 }
 
 h1 {
   font-size: 2.0rem;
   line-height: calc(var(--baseline-height) * 2);
-}
-
-h2, h3, h4, h5, h6 {
-  margin-bottom: calc(var(--baseline-height) / 2);
 }
 
 h2 {
@@ -217,6 +214,10 @@ em {
   font-style: italic;
 }
 
+small {
+  font-size: 0.875rem;
+}
+
 strong {
   font-weight: 600;
   font-style: normal;
@@ -243,39 +244,34 @@ legend {
   font-weight: 600;
 }
 
-input {
-  padding: 0;
-  margin: 0;
-  border: 0;
-  font-family: inherit;
-  font-size: inherit;
-  line-height: inherit;
-  color: inherit;
-  background: none;
-}
-
-input[type="text"] {
-  box-sizing: border-box;
-}
-
-input[type="text"]:focus {
+input:focus,
+button:focus {
   outline: none;
 }
 
-button {
+input {
+  box-sizing: border-box;
   padding: 0;
   margin: 0;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
   background: none;
-  border: none;
+  border: 0;
   color: inherit;
+}
+
+button {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
   cursor: pointer;
   font-family: inherit;
   font-size: inherit;
   line-height: inherit;
-}
-
-button:focus {
-  outline: none;
+  background: none;
+  border: none;
+  color: inherit;
 }
 
 button:disabled {

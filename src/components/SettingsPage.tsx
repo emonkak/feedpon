@@ -53,19 +53,19 @@ export default class SettingsPage extends PureComponent<SettingsProps, {}> {
 
         return (
             <Navbar onToggleSidebar={onToggleSidebar}>
-                <div className="navbar-title">Settings</div>
+                <h1 className="navbar-title">Settings</h1>
             </Navbar>
         );
     }
 
     renderContent() {
         const { params } = this.props;
-        const initialValue = params['setting_id'] || 'general';
+        const value = params['setting_id'] || 'general';
 
         return (
             <div className="container">
                 <Nav
-                    initialValue={initialValue}
+                    value={value}
                     onSelect={this.handleSelect}
                     renderContent={renderNavContent}>
                     <NavItem value="general" title="General">

@@ -30,11 +30,14 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
         this.state = {
             isOpened: props.isOpened!
         };
+
+        this.handleClose = this.handleClose.bind(this);
+        this.handleToggle = this.handleToggle.bind(this);
     }
 
     componentWillReceiveProps(nextProps: DropdownProps) {
         if (this.props.isOpened !== nextProps.isOpened) {
-            this.update(nextProps.isOpened!);
+            this.setMenu(nextProps.isOpened!);
         }
     }
 
@@ -45,7 +48,7 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
             onClose();
         }
 
-        this.update(false);
+        this.setMenu(false);
     }
 
     handleToggle(event: React.SyntheticEvent<any>) {
@@ -53,18 +56,10 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
 
         const { isOpened } = this.state;
 
-        this.update(!isOpened);
+        this.setMenu(!isOpened);
     }
 
-    update(isOpened: boolean) {
-        if (isOpened) {
-            document.body.classList.add('dropdown-is-opened');
-            document.documentElement.classList.add('dropdown-is-opened');
-        } else {
-            document.body.classList.remove('dropdown-is-opened');
-            document.documentElement.classList.remove('dropdown-is-opened');
-        }
-
+    setMenu(isOpened: boolean) {
         this.setState({ isOpened });
     }
 
@@ -75,7 +70,7 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
             ...toggleButton.props,
             onClick: createChainedFunction(
                 toggleButton.props.onClick,
-                this.handleToggle.bind(this)
+                this.handleToggle
             ),
         };
 

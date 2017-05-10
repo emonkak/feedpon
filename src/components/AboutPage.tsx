@@ -12,7 +12,7 @@ export default class AboutPage extends PureComponent<AboutProps, {}> {
 
         return (
             <Navbar onToggleSidebar={onToggleSidebar}>
-                <div className="navbar-title">About</div>
+                <h1 className="navbar-title">About</h1>
             </Navbar>
         );
     }

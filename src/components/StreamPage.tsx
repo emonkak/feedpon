@@ -5,6 +5,7 @@ import Dropdown from 'components/parts/Dropdown';
 import EntryList from 'components/parts/EntryList';
 import MenuItem from 'components/parts/MenuItem';
 import Navbar from 'components/parts/Navbar';
+import SubscribeButton from 'components/parts/SubscribeButton';
 import bindAction from 'utils/bindAction';
 import connect from 'utils/react/connect';
 import { Category, State, Stream, StreamOptions, StreamView } from 'messaging/types';
@@ -48,7 +49,9 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
         this.handleReadEntry = this.handleReadEntry.bind(this);
         this.handleReloadEntries = this.handleReloadEntries.bind(this);
         this.handleScrollToEntry = this.handleScrollToEntry.bind(this);
+        this.handleSubscribe = this.handleSubscribe.bind(this);
         this.handleToggleOnlyUnread = this.handleToggleOnlyUnread.bind(this);
+        this.handleUnsubscribe = this.handleUnsubscribe.bind(this);
     }
 
     componentWillMount() {
@@ -152,6 +155,9 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
         }
     }
 
+    handleSubscribe(categoryIds: (string | number)[]) {
+    }
+
     handleToggleOnlyUnread() {
         const { stream, onFetchStream } = this.props;
 
@@ -163,6 +169,9 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
                 onlyUnread: !stream.options.onlyUnread
             });
         }
+    }
+
+    handleUnsubscribe() {
     }
 
     renderReadEntriesDropdown() {
@@ -260,10 +269,10 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
             );
 
         return (
-            <div className="navbar-title">
+            <h1 className="navbar-title">
                 {title}
                 {unreadCount}
-            </div>
+            </h1>
         );
     }
 
@@ -284,34 +293,9 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
 
     renderHeader() {
         const { categories, stream } = this.props;
-        const { entries, feed, subscription } = stream;
+        const { entries, feed } = stream;
 
         if (feed) {
-            const subscribeButton = subscription
-                ? (
-                    <Dropdown
-                        toggleButton={
-                            <button className="button button-outline-default dropdown-arrow">
-                                <i className="icon icon-20 icon-settings" />
-                            </button>
-                        }
-                        pullRight={true}>
-                        <div className="menu-heading">Category</div>
-                        {categories.map(category => (
-                            <MenuItem
-                                key={category.categoryId}
-                                icon={category.categoryId === subscription.categoryId ? <i className="icon icon-16 icon-checkmark" /> : null}
-                                primaryText={category.label} />
-                        ))}
-                        <div className="menu-divider" />
-                        <MenuItem primaryText="New Category..." />
-                        <div className="menu-divider" />
-                        <MenuItem
-                            isDisabled={!subscription}
-                            primaryText="Unsubscribe" />
-                    </Dropdown>
-                ) : (<button className="button button-outline-positive dropdown-arrow">Subscribe</button>);
-
             return (
                 <header className="stream-header">
                     <div className="container">
@@ -325,7 +309,11 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
                                 </div>
                                 <div className="stream-description">{feed.description}</div>
                             </div>
-                            {subscribeButton}
+                            <SubscribeButton
+                                categories={categories}
+                                subscription={feed.subscription}
+                                onSubscribe={this.handleSubscribe}
+                                onUnsubscribe={this.handleUnsubscribe}/>
                         </div>
                     </div>
                 </header>

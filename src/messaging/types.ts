@@ -11,6 +11,8 @@ export type SyncEvent
     | { type: 'ENTRY_MARKED_AS_READ', entryIds: (string | number)[] }
     | { type: 'ENTRY_PINNED', entryId: string | number, isPinned: boolean }
     | { type: 'ENTRY_PINNING', entryId: string | number }
+    | { type: 'FEED_SEARCHED', query: string, feeds: Feed[] }
+    | { type: 'FEED_SEARCHING', query: string }
     | { type: 'FULL_CONTENT_FETCHED', entryId: string | number, fullContent: FullContent | null }
     | { type: 'FULL_CONTENT_FETCHING', entryId: string | number }
     | { type: 'MORE_ENTRIES_FETCHED', streamId: string, continuation: string | null, entries: Entry[] }
@@ -33,6 +35,7 @@ export interface AsyncEvent<T> {
 
 export interface State {
     credential: Credential | null;
+    search: Search;
     environment: Environment;
     notifications: Notification[];
     settings: Settings;
@@ -44,6 +47,14 @@ export interface State {
 export interface Credential {
     authorizedAt: string;
     token: ExchangeTokenResponse;
+}
+
+
+export interface Search {
+    feeds: Feed[];
+    isLoading: boolean;
+    isLoaded: boolean;
+    query: string;
 }
 
 export interface Environment {
@@ -70,7 +81,6 @@ export interface Stream {
     isLoading: boolean;
     isLoaded: boolean;
     feed: Feed | null;
-    subscription: Subscription | null;
     options: StreamOptions;
 }
 
@@ -84,9 +94,13 @@ export interface StreamOptions {
 export type StreamView = 'expanded' | 'collapsible';
 
 export interface Feed {
+    feedId: string | number;
+    streamId: string;
+    title: string;
     description: string;
     url: string;
     subscribers: number;
+    subscription: Subscription | null;
 }
 
 export interface Entry {
@@ -171,8 +185,9 @@ export interface Subscriptions {
 
 export interface Subscription {
     subscriptionId: string | number;
-    categoryId: string | number;
+    feedId: string | number;
     streamId: string;
+    categoryIds: (string | number)[];
     title: string;
     iconUrl: string;
     unreadCount: number;

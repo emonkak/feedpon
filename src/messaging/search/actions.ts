@@ -1,0 +1,47 @@
+import Enumerable from '@emonkak/enumerable';
+
+import '@emonkak/enumerable/extensions/groupJoin';
+import '@emonkak/enumerable/extensions/toArray';
+
+import { AsyncEvent } from 'messaging/types';
+import { getCredential } from 'messaging/credential/actions';
+import { searchFeeds as feedlySearchFeeds } from 'adapters/feedly/api';
+
+export function searchFeeds(query: string): AsyncEvent<void> {
+    return async (dispatch, getState) => {
+        dispatch({
+            type: 'FEED_SEARCHING',
+            query
+        });
+
+        const credential = await getCredential()(dispatch, getState);
+        const searchResult = await feedlySearchFeeds(credential.token.id, {
+            query,
+            count: 20
+        });
+
+        const { subscriptions } = getState();
+        const feeds = new Enumerable(searchResult.results)
+            .groupJoin(
+                subscriptions.items,
+                (feed) => feed.feedId,
+                (subscription) => subscription.feedId,
+                (feed, subscriptions) => ({
+                    feedId: feed.feedId,
+                    streamId: feed.feedId,
+                    title: feed.title,
+                    description: feed.description || '',
+                    url: feed.website || '',
+                    subscribers: feed.subscribers,
+                    subscription: subscriptions[0] || null
+                })
+            )
+            .toArray();
+
+        dispatch({
+            type: 'FEED_SEARCHED',
+            query,
+            feeds
+        });
+    };
+}

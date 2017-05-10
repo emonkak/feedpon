@@ -18,10 +18,13 @@
   flex: 1;
   display: flex;
   align-items: center;
+  margin: 0;
   padding: 0 1.5rem 0 0;
   min-width: 0;
   color: inherit;
+  font-size: inherit;
   font-weight: 600;
+  line-height: inherit;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;

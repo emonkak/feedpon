@@ -4,22 +4,28 @@ import createChainedFunction from 'utils/createChainedFunction';
 
 interface NavProps {
     children?: React.ReactNode;
-    initialValue?: any;
+    value?: string;
     onSelect?: (value: any) => void;
     renderContent: (value: any) => React.ReactChild;
 }
 
 interface NavState {
-    value: any;
+    value: string | null;
 }
 
 export default class Nav extends PureComponent<NavProps, NavState> {
     constructor(props: NavProps, context: any) {
         super(props, context);
 
-        this.state = { value: props.initialValue };
+        this.state = { value: props.value || null };
 
         this.handleSelect = this.handleSelect.bind(this);
+    }
+
+    componentWillReceiveProps(nextProps: NavProps) {
+        if (this.props.value !== nextProps.value) {
+            this.setState({ value: nextProps.value || null });
+        }
     }
 
     handleSelect(value: any) {

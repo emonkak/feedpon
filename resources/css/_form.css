@@ -10,11 +10,11 @@
   border: 1px solid var(--medium-color);
   border-radius: 4px;
   transition: border-color ease-in-out 0.2s, box-shadow ease-in-out 0.2s;
-  z-index: 1;
 }
 
 .form-control:focus {
   box-shadow: 0 0 1px 1px var(--default-focus-outline-color);
+  z-index: 1;
 }
 
 .form-control.has-success {
@@ -40,7 +40,7 @@
   color: var(--negative-color);
 }
 
-.form-control-group {
+.input-group {
   display: flex;
   position: relative;
   width: 100%;
@@ -58,22 +58,24 @@
   white-space: nowrap;
 }
 
-.form-control-addon:not(:last-child) {
+.form-control:not(:last-child) {
   border-right: 0;
 }
 
-.form-control-group .form-control:not(:last-child),
-.form-control-addon:not(:last-child) {
+.form-control-addon:not(:last-child),
+.input-group .button:not(:last-child),
+.input-group .form-control:not(:last-child) {
   border-bottom-right-radius: 0;
   border-top-right-radius: 0;
 }
 
-.form-control-addon:not(:first-child) {
+.form-control:not(:first-child) {
   border-left: 0;
 }
 
-.form-control-group .form-control:not(:first-child),
-.form-control-addon:not(:first-child) {
+.form-control-addon:not(:first-child),
+.input-group .button:not(:first-child),
+.input-group .form-control:not(:first-child) {
   border-bottom-left-radius: 0;
   border-top-left-radius: 0;
 }
