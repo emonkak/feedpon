@@ -10,7 +10,7 @@
 
 .display-1 {
   font-size: 2.5rem;
-  line-height: calc(var(--baseline-height) * 3);
+  line-height: calc(var(--baseline-height) * 2);
 }
 
 .display-2 {
@@ -20,7 +20,6 @@
 
 .display-3 {
   font-size: 1.5rem;
-  line-height: calc(var(--baseline-height) * 2);
 }
 
 .display-4 {

@@ -162,7 +162,7 @@ class SiteinfoSettings extends PureComponent<SiteinfoProps, {}> {
                     <h1>Shared siteinfo</h1>
                     <p>
                         <strong>{siteinfo.items.length}</strong> siteinfo items are available.
-                        They are updated at <strong><RelativeTime time={siteinfo.lastUpdatedAt} /></strong>.
+                        Last update was <strong><RelativeTime time={siteinfo.lastUpdatedAt} /></strong>.
                     </p>
                     <p>
                         {updateButton}

@@ -38,8 +38,8 @@ export default class FeedComponent extends PureComponent<FeedProps, {}> {
             <li className="list-group-item">
                 <div className="u-margin-right">
                     <Link className="feed-title link-default" to={`/streams/${encodeURIComponent(feed.streamId)}`}>{feed.title}</Link>
-                    <div className="feed-description">{feed.description}</div>
                     <div className="feed-subscribers"><strong>{feed.subscribers}</strong> subscribers</div>
+                    <div className="feed-description">{feed.description}</div>
                 </div>
                 <SubscribeButton
                     categories={categories}
