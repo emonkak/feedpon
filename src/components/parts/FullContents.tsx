@@ -27,7 +27,7 @@ export default class FullContents extends PureComponent<FullContentsProps, {}> {
             <section key={index} className="entry-page">
                 <header className="entry-page-header">
                     <h2 className="entry-page-title">
-                        <a className="link-default" href={fullContent.url} target="_blank">{'Page ' + (index + 1)}</a>
+                        <a className="link-soft" href={fullContent.url} target="_blank">{'Page ' + (index + 1)}</a>
                     </h2>
                 </header>
                 <CleanHtml

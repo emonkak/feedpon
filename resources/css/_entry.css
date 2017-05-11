@@ -1,7 +1,7 @@
 .entry {
   position: relative;
   padding: calc(var(--baseline-height) / 2) 0 calc(var(--baseline-height) / 2 - 1px);
-  border-bottom: 1px solid var(--medium-color);
+  border-bottom: 1px solid var(--medium-dark-color);
   transition: box-shadow 0.2s ease-in-out;
 }
 
@@ -91,7 +91,7 @@ a.entry-action {
   color: inherit;
   width: 36px;
   height: 36px;
-  border: 1px solid var(--medium-color);
+  border: 1px solid var(--medium-dark-color);
   border-radius: 100%;
   transition: color 0.2s ease-in-out,
               background-color 0.2s ease-in-out,
@@ -150,10 +150,6 @@ a.entry-action.is-selected {
   color: var(--dark-color);
 }
 
-.entry-origin {
-  font-weight: 600;
-}
-
 .entry-bookmarks {
   padding: 2px;
   border-radius: 4px;
@@ -165,9 +161,6 @@ a.entry-action.is-selected {
 
 .entry-bookmarks.is-popular {
   font-weight: 600;
-}
-
-.entry-bookmarks.is-very-popular {
   background-color: var(--negative-background-color);
 }
 
@@ -217,7 +210,7 @@ a.entry-action.is-selected {
   top: 50%;
   width: 100vw;
   height: 1px;
-  background: var(--medium-color);
+  background: var(--medium-dark-color);
 }
 
 .entry-page-title::before {

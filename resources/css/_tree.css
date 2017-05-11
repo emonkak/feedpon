@@ -18,7 +18,7 @@
 }
 
 .tree-node:hover {
-  background-color: var(--light-color);
+  background-color: var(--medium-light-color);
 }
 
 .tree-node.is-important {

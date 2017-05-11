@@ -93,7 +93,6 @@ class DashboardPage extends PureComponent<DashboardProps, DashboardState> {
                     <button className="button button-default" onClick={this.handleSendNotification.bind(this, 'default')}>Default</button>
                     <button className="button button-positive" onClick={this.handleSendNotification.bind(this, 'positive')}>Positive</button>
                     <button className="button button-negative" onClick={this.handleSendNotification.bind(this, 'negative')}>Negative</button>
-                    <button className="button button-invert" onClick={this.handleSendNotification.bind(this, 'default')}>Default</button>
                 </p>
 
                 <h2>Outline Button</h2>
@@ -101,7 +100,6 @@ class DashboardPage extends PureComponent<DashboardProps, DashboardState> {
                     <button className="button button-outline-default" onClick={this.handleSendNotification.bind(this, 'default')}>Default</button>
                     <button className="button button-outline-positive" onClick={this.handleSendNotification.bind(this, 'positive')}>Positive</button>
                     <button className="button button-outline-negative" onClick={this.handleSendNotification.bind(this, 'negative')}>Negative</button>
-                    <button className="button button-outline-invert" onClick={this.handleSendNotification.bind(this, 'default')}>Default</button>
                 </p>
 
                 <h2>Disabled Button</h2>
@@ -109,7 +107,6 @@ class DashboardPage extends PureComponent<DashboardProps, DashboardState> {
                     <button className="button button-default" disabled>Default</button>
                     <button className="button button-positive" disabled>Positive</button>
                     <button className="button button-negative" disabled>Negative</button>
-                    <button className="button button-invert" disabled>Default</button>
                 </p>
 
                 <h2>Disabled Outline Button</h2>
@@ -117,7 +114,6 @@ class DashboardPage extends PureComponent<DashboardProps, DashboardState> {
                     <button className="button button-outline-default" disabled>Default</button>
                     <button className="button button-outline-positive" disabled>Positive</button>
                     <button className="button button-outline-negative" disabled>Negative</button>
-                    <button className="button button-outline-invert" disabled>Default</button>
                 </p>
 
                 <h2>Large Button</h2>
@@ -125,7 +121,6 @@ class DashboardPage extends PureComponent<DashboardProps, DashboardState> {
                     <button className="button button-large button-default" onClick={this.handleSendNotification.bind(this, 'default')}>Default</button>
                     <button className="button button-large button-positive" onClick={this.handleSendNotification.bind(this, 'positive')}>Positive</button>
                     <button className="button button-large button-negative" onClick={this.handleSendNotification.bind(this, 'negative')}>Negative</button>
-                    <button className="button button-large button-invert" onClick={this.handleSendNotification.bind(this, 'default')}>Default</button>
                 </p>
 
                 <h2>Large Outline Button</h2>
@@ -133,7 +128,6 @@ class DashboardPage extends PureComponent<DashboardProps, DashboardState> {
                     <button className="button button-large button-outline-default" onClick={this.handleSendNotification.bind(this, 'default')}>Default</button>
                     <button className="button button-large button-outline-positive" onClick={this.handleSendNotification.bind(this, 'positive')}>Positive</button>
                     <button className="button button-large button-outline-negative" onClick={this.handleSendNotification.bind(this, 'negative')}>Negative</button>
-                    <button className="button button-large button-outline-invert" onClick={this.handleSendNotification.bind(this, 'default')}>Default</button>
                 </p>
 
                 <h2>Paragraph</h2>
@@ -207,7 +201,7 @@ class DashboardPage extends PureComponent<DashboardProps, DashboardState> {
                     <p>Modal body text goes here.</p>
                     <div className="button-toolbar">
                         <button className="button button-positive">Okay</button>
-                        <button className="button button-outline-invert" onClick={this.handleCloseModal.bind(this)}>Cancel</button>
+                        <button className="button button-outline-default" onClick={this.handleCloseModal.bind(this)}>Cancel</button>
                     </div>
                 </Modal>
 

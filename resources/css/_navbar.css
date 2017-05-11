@@ -1,6 +1,6 @@
 .navbar {
   box-sizing: border-box;
-  border-bottom: 1px solid var(--medium-color);
+  border-bottom: 1px solid var(--medium-dark-color);
   background-color: var(--default-background-color);
   height: var(--navbar-height);
   backface-visibility: hidden;
@@ -39,16 +39,16 @@
   color: inherit;
   text-decoration: none;
   text-align: center;
-  border-right: 1px solid var(--medium-color);
+  border-right: 1px solid var(--medium-dark-color);
   margin-right: 1.5em;
 }
 
 .navbar-toggle-icon:hover {
-  background-color: var(--tint-color);
+  background-color: var(--light-color);
 }
 
 .navbar-toggle-icon:active {
-  background-color: var(--light-color);
+  background-color: var(--medium-light-color);
 }
 
 .navbar-action {
@@ -67,7 +67,7 @@
 }
 
 .navbar-action:hover {
-  background-color: var(--tint-color);
+  background-color: var(--light-color);
 }
 
 @media (--md-viewport) {

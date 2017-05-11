@@ -39,11 +39,11 @@ function renderUserTable(children: React.ReactNode, aboveSpace: number, belowSpa
             <thead>
                 <tr>
                     <th>#</th>
-                    <th>Name</th>
-                    <th>URL pattern</th>
-                    <th>Content path</th>
-                    <th>Next link path</th>
-                    <th>Actions</th>
+                    <th style={{ width: '20%' }}>Name</th>
+                    <th style={{ width: '20%' }}>URL pattern</th>
+                    <th style={{ width: '20%' }}>Content path</th>
+                    <th style={{ width: '20%' }}>Next link path</th>
+                    <th style={{ width: '20%' }}>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -61,10 +61,10 @@ function renderSharedTable(children: React.ReactNode, aboveSpace: number, belowS
             <thead>
                 <tr>
                     <th>#</th>
-                    <th>Name</th>
-                    <th>URL pattern</th>
-                    <th>Content path</th>
-                    <th>Next link path</th>
+                    <th style={{ width: '25%' }}>Name</th>
+                    <th style={{ width: '25%' }}>URL pattern</th>
+                    <th style={{ width: '25%' }}>Content path</th>
+                    <th style={{ width: '25%' }}>Next link path</th>
                 </tr>
             </thead>
             <tbody>
@@ -99,10 +99,10 @@ class UserSiteinfoItemRow extends PureComponent<UserSiteinfoItemRowProps, {}> {
         return (
             <tr className={classnames({ 'is-even': index % 2 === 0, 'is-odd': index % 2 === 1 })}>
                 <td className="u-text-nowrap">{index + 1}</td>
-                <td style={{ width: '20%' }} className="u-text-wrap">{item.name}</td>
-                <td style={{ width: '20%' }} className="u-text-wrap"><code>{item.urlPattern}</code></td>
-                <td style={{ width: '20%' }} className="u-text-wrap"><code>{item.contentPath}</code></td>
-                <td style={{ width: '20%' }} className="u-text-wrap"><code>{item.nextLinkPath}</code></td>
+                <td className="u-text-wrap">{item.name}</td>
+                <td className="u-text-wrap"><code>{item.urlPattern}</code></td>
+                <td className="u-text-wrap"><code>{item.contentPath}</code></td>
+                <td className="u-text-wrap"><code>{item.nextLinkPath}</code></td>
                 <td className="u-text-nowrap"><button className="button button-outline-negative" onClick={this.handleRemove}>Remove</button></td>
             </tr>
         );
@@ -116,10 +116,10 @@ class SharedSiteinfoItemRow extends PureComponent<SharedSiteinfoItemRowProps, {}
         return (
             <tr className={classnames({ 'is-even': index % 2 === 0, 'is-odd': index % 2 === 1 })}>
                 <td className="u-text-nowrap">{index + 1}</td>
-                <td style={{ width: '25%' }} className="u-text-wrap">{item.name}</td>
-                <td style={{ width: '25%' }} className="u-text-wrap"><code>{item.urlPattern}</code></td>
-                <td style={{ width: '25%' }} className="u-text-wrap"><code>{item.contentPath}</code></td>
-                <td style={{ width: '25%' }} className="u-text-wrap"><code>{item.nextLinkPath}</code></td>
+                <td className="u-text-wrap">{item.name}</td>
+                <td className="u-text-wrap"><code>{item.urlPattern}</code></td>
+                <td className="u-text-wrap"><code>{item.contentPath}</code></td>
+                <td className="u-text-wrap"><code>{item.nextLinkPath}</code></td>
             </tr>
         );
     }

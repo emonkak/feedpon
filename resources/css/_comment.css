@@ -1,6 +1,6 @@
 .comment-list {
   margin: var(--baseline-height) 0;
-  background-color: var(--tint-color);
+  background-color: var(--light-color);
 }
 
 .comment {
@@ -9,7 +9,7 @@
 
 .comment + .comment {
   padding-top: calc(var(--baseline-height) / 4 - 1px);
-  border-top: 1px solid var(--medium-color);
+  border-top: 1px solid var(--medium-dark-color);
 }
 
 .comment-user {

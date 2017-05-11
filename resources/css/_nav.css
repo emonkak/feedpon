@@ -26,7 +26,7 @@
 }
 
 .nav-item:hover {
-  background-color: var(--tint-color);
+  background-color: var(--light-color);
   text-decoration: none;
 }
 
@@ -37,5 +37,5 @@
 
 .nav-item:active,
 .nav-item.is-selected {
-  background-color: var(--light-color);
+  background-color: var(--medium-light-color);
 }

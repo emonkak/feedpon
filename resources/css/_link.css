@@ -1,9 +1,20 @@
-.link-default {
+.link-soft {
   color: inherit;
   text-decoration: none;
 }
 
-.link-default:hover {
+.link-soft:hover {
+  color: var(--positive-color);
+  text-decoration: none;
+}
+
+.link-strong {
+  color: inherit;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.link-strong:hover {
   color: var(--positive-color);
   text-decoration: none;
 }

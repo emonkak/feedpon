@@ -16,12 +16,12 @@
   align-items: stretch;
   box-sizing: border-box;
   min-height: var(--navbar-height);
-  background-color: var(--tint-color);
-  border-bottom: 1px solid var(--medium-color);
+  background-color: var(--light-color);
+  border-bottom: 1px solid var(--medium-dark-color);
 }
 
 .notification-reversed {
-  border-top: 1px solid var(--medium-color);
+  border-top: 1px solid var(--medium-dark-color);
   border-bottom: 0;
 }
 

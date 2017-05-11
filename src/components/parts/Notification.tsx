@@ -71,7 +71,7 @@ export default class NotificationComponent extends PureComponent<NotificationPro
                 <div className="notification-content">
                     {notification.message}
                 </div>
-                <a className="notification-icon link-default" href="#" onClick={this.handleClose}>
+                <a className="notification-icon link-soft" href="#" onClick={this.handleClose}>
                     <i className="icon icon-16 icon-delete" />
                 </a>
             </div>

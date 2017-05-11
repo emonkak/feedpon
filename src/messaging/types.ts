@@ -49,7 +49,6 @@ export interface Credential {
     token: ExchangeTokenResponse;
 }
 
-
 export interface Search {
     feeds: Feed[];
     isLoading: boolean;

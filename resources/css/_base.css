@@ -3,8 +3,12 @@
 @custom-media --lg-viewport (min-width: 980px);
 
 :root {
-  $default-color: #203442;
-  $default-background-color: #ffffff;
+  $x-light-color: #ffffff;
+  $light-color: #f7f9fc;
+  $medium-light-color: #e8edf2;
+  $medium-dark-color: #d3dbe3;
+  $dark-color: #7e8998;
+  $x-dark-color: #203442;
 
   $positive-color: #2eabff;
   $positive-background-color: #e0f3ff;
@@ -12,22 +16,11 @@
   $negative-color: #ee6969;
   $negative-background-color: #fbdbdb;
 
-  $tint-color: #f7f9fc;
-  $light-color: #e8edf2;
-  $medium-color: #d3dbe3;
-  $dark-color: #7e8998;
-
-  --default-color: $default-color;
-  --default-background-color: $default-background-color;
-  --default-hover-color: color($default-color lightness(+5%));
-  --default-active-color: color($default-color lightness(+5%) alpha(90%));
-  --default-focus-outline-color: color($default-color alpha(50%));
-
-  --invert-color: $default-background-color;
-  --invert-background-color: $default-color;
-  --invert-hover-color: color($default-background-color lightness(-5%));
-  --invert-active-color: color($default-background-color lightness(-5%) alpha(90%));
-  --invert-focus-outline-color: color($default-background-color alpha(50%));
+  --default-color: $x-dark-color;
+  --default-background-color: $x-light-color;
+  --default-hover-color: color($x-dark-color lightness(+5%));
+  --default-active-color: color($x-dark-color lightness(+5%) alpha(90%));
+  --default-focus-outline-color: color($x-dark-color alpha(50%));
 
   --positive-color: $positive-color;
   --positive-background-color: $positive-background-color;
@@ -41,14 +34,13 @@
   --negative-active-color: color($negative-color lightness(+5%) alpha(90%));
   --negative-focus-outline-color: color($negative-color alpha(50%));
 
-  --tint-color: $tint-color;
   --light-color: $light-color;
-  --medium-color: $medium-color;
+  --medium-light-color: $medium-light-color;
+  --medium-dark-color: $medium-dark-color;
   --dark-color: $dark-color;
 
-  --shadow-color: color($default-color alpha(20%));
+  --shadow-color: color($x-dark-color alpha(20%));
 
-  --font-size: 14px;
   --baseline-height: 24px;
   --navbar-height: 48px;
   --sidebar-width: 288px;
@@ -56,7 +48,7 @@
 }
 
 * {
-  -webkit-tap-highlight-color: transparent;
+  -webkit-tap-highmedium-light-color: transparent;
   -webkit-touch-callout: none;
 }
 
@@ -66,11 +58,12 @@
 }
 
 html, body {
-  font-family: -apple-system, BlinkMacSystemFont, '.SFNSDisplay-Regular', 'San Francisco Text', 'Segoe UI', Helvetica, YuGothic, 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+  font-family: 'Lato', 'Segoe UI', Helvetica, YuGothic, 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
   font-weight: 400;
-  font-size: var(--font-size);
+  font-size: 14px;
   line-height: var(--baseline-height);
   touch-action: manipulation;
+  -webkit-font-smoothing: antialiased;
   -webkit-text-size-adjust: 100%;
 }
 
@@ -81,7 +74,7 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  margin: calc(var(--baseline-height) / 2) 0 calc(var(--baseline-height) / 2);
+  margin: var(--baseline-height) 0 calc(var(--baseline-height) / 2);
   font-weight: 600;
 }
 
@@ -115,7 +108,7 @@ hr {
   width: 72px;
   height: 12px;
   border: 0;
-  background-color: var(--light-color);
+  background-color: var(--medium-light-color);
   mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2 1"><circle cx="1" cy="0.5" r="0.5"/></svg>');
   mask-repeat: repeat;
 }
@@ -138,7 +131,7 @@ pre, code, var, samp {
 
 code, var, samp {
   line-height: 1;
-  background-color: var(--tint-color);
+  background-color: var(--light-color);
   padding: 2px 4px;
   border-radius: 4px;
 }
@@ -148,11 +141,11 @@ code:empty, var:empty, samp:empty {
 }
 
 pre {
-  background-color: var(--tint-color);
+  background-color: var(--light-color);
   padding: calc(var(--baseline-height) / 2 - 1px) calc(1.5rem - 1px);
   overflow: auto;
   border-radius: 4px;
-  border: 1px solid var(--medium-color);
+  border: 1px solid var(--medium-dark-color);
 }
 
 pre * {
@@ -164,7 +157,7 @@ pre * {
 
 blockquote {
   position: relative;
-  border-left: 4px solid var(--light-color);
+  border-left: 4px solid var(--medium-light-color);
   padding: calc(var(--baseline-height) / 2) 1.5rem calc(var(--baseline-height) / 2) calc(1.5rem - 4px);
 }
 
@@ -185,8 +178,7 @@ table {
   border-spacing: 0;
 }
 
-td,
-th {
+td, th {
   padding: calc(var(--baseline-height) / 4) 1rem;
   text-align: left;
   vertical-align: middle;
@@ -232,9 +224,9 @@ mark {
 fieldset {
   margin: 0 0 var(--baseline-height);
   padding: calc(var(--baseline-height) / 2 - 1px) calc(1.5rem - 1px) var(--baseline-height);
-  border: 1px solid var(--medium-color);
+  border: 1px solid var(--medium-dark-color);
   border-radius: 4px;
-  background-color: var(--tint-color);
+  background-color: var(--light-color);
 }
 
 legend {

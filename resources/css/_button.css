@@ -42,27 +42,6 @@
   }
 }
 
-.button-invert {
-  background-color: var(--invert-color);
-  color: var(--invert-background-color);
-
-  &:hover {
-    background-color: var(--invert-hover-color);
-  }
-
-  &:active {
-    background-color: var(--invert-active-hover-color);
-  }
-
-  &:focus {
-    box-shadow: 0 0 0 2px var(--invert-focus-outline-color);
-  }
-
-  &:disabled {
-    background-color: var(--invert-color);
-  }
-}
-
 .button-positive {
   background-color: var(--positive-color);
   color: var(--default-background-color);
@@ -130,34 +109,6 @@
     background-color: var(--default-background-color);
     border-color: var(--default-color);
     color: var(--default-color);
-  }
-}
-
-.button-outline-invert {
-  background-color: var(--invert-background-color);
-  border-color: var(--invert-color);
-  color: var(--invert-color);
-
-  &:hover {
-    background-color: var(--invert-color);
-    border-color: transparent;
-    color: var(--invert-background-color);
-  }
-
-  &:active {
-    background-color: var(--invert-active-color);
-    border-color: transparent;
-    color: var(--invert-background-color);
-  }
-
-  &:focus {
-    box-shadow: 0 0 0 2px var(--invert-focus-outline-color);
-  }
-
-  &:disabled {
-    background-color: var(--invert-background-color);
-    border-color: var(--invert-color);
-    color: var(--invert-color);
   }
 }
 

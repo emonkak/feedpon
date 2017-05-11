@@ -153,10 +153,9 @@ export default class EntryInner extends PureComponent<EntryInnerProps, EntryInne
         return (
             <div className="list-inline-item">
                 <a
-                    className={classnames('entry-bookmarks', 'link-default', {
+                    className={classnames('entry-bookmarks', 'link-soft', {
                         'is-bookmarked': entry.bookmarkCount > 0,
-                        'is-popular': entry.bookmarkCount >= 10,
-                        'is-very-popular': entry.bookmarkCount >= 20
+                        'is-popular': entry.bookmarkCount >= 10
                     })}
                     target="_blank"
                     href={entry.bookmarkUrl}>
@@ -173,7 +172,7 @@ export default class EntryInner extends PureComponent<EntryInnerProps, EntryInne
             return (
                 <div className="list-inline-item">
                     <a
-                        className="entry-origin link-default"
+                        className="link-strong"
                         target="_blank"
                         href={entry.origin.url}>
                         {entry.origin.title}

@@ -34,12 +34,12 @@
 
 .list-group-item:first-child,
 .list-group-item + .list-group-item {
-  border-top: 1px solid var(--medium-color);
+  border-top: 1px solid var(--medium-dark-color);
   padding-top: calc(var(--baseline-height) / 4 - 1px);
 }
 
 .list-group-item:last-child {
-  border-bottom: 1px solid var(--medium-color);
+  border-bottom: 1px solid var(--medium-dark-color);
   padding-bottom: calc(var(--baseline-height) / 4 - 1px);
 }
 
@@ -48,6 +48,6 @@
 }
 
 a.list-group-item:hover {
-  background-color: var(--tint-color);
+  background-color: var(--light-color);
   text-decoration: none;
 }

@@ -357,7 +357,7 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
                 return (
                     <footer className="stream-footer">
                         <a
-                            className="link-default"
+                            className="link-strong"
                             href="#"
                             onClick={this.handleLoadMoreEntries}>
                             Load more entries...
