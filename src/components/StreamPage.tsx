@@ -300,7 +300,7 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
                 <header className="stream-header">
                     <div className="container">
                         <div className="stream-header-content">
-                            <div className="stream-header-content-left">
+                            <div className="u-margin-right">
                                 <div className="stream-metadata">
                                     <div className="list-inline list-inline-dotted">
                                         <div className="list-inline-item"><strong>{entries.length}</strong> entries</div>

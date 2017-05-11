@@ -30,11 +30,7 @@ a.stream-title:hover {
 .stream-header-content {
   display: flex;
   align-items: center;
-}
-
-.stream-header-content-left {
-  flex: 1;
-  margin-right: 1.5rem;
+  justify-content: space-between;
 }
 
 .stream-metadata {
