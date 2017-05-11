@@ -3,7 +3,7 @@ import React, { PureComponent } from 'react';
 import classnames from 'classnames';
 
 import NotificationComponent from 'components/parts/Notification';
-import bindAction from 'utils/bindAction';
+import bindActions from 'utils/bindActions';
 import connect from 'utils/react/connect';
 import { Notification, State } from 'messaging/types';
 import { dismissNotification } from 'messaging/notification/actions';
@@ -11,7 +11,7 @@ import { dismissNotification } from 'messaging/notification/actions';
 interface NotificationsProps {
     isReversed?: boolean;
     notifications: Notification[];
-    onDismissNotification: (id: number) => void;
+    onDismissNotification: typeof dismissNotification;
 }
 
 class Notifications extends PureComponent<NotificationsProps, {}> {
@@ -47,7 +47,7 @@ export default connect(
     (state: State) => ({
         notifications: state.notifications
     }),
-    (dispatch) => ({
-        onDismissNotification: bindAction(dismissNotification, dispatch)
-    })
+    (dispatch) => bindActions({
+        onDismissNotification: dismissNotification
+    }, dispatch)
 )(Notifications);

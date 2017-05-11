@@ -4,13 +4,13 @@ import Dropdown from 'components/parts/Dropdown';
 import MenuItem from 'components/parts/MenuItem';
 import Modal from 'components/parts/Modal';
 import Navbar from 'components/parts/Navbar';
-import bindAction from 'utils/bindAction';
+import bindActions from 'utils/bindActions';
 import connect from 'utils/react/connect';
 import { NotificationKind, State } from 'messaging/types';
 import { sendNotification } from 'messaging/notification/actions';
 
 interface DashboardProps {
-    onSendNotification: (message: string, kind: NotificationKind, dismissAfter?: number) => void;
+    onSendNotification: typeof sendNotification;
     onToggleSidebar: () => void;
 }
 
@@ -415,7 +415,7 @@ class DashboardPage extends PureComponent<DashboardProps, DashboardState> {
 
 export default connect(
     (state: State) => ({}),
-    (dispatch) => ({
-        onSendNotification: bindAction(sendNotification, dispatch)
-    })
+    (dispatch) => bindActions({
+        onSendNotification: sendNotification
+    }, dispatch)
 )(DashboardPage);

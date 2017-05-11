@@ -3,14 +3,14 @@ import React, { PureComponent } from 'react';
 import FeedComponent from 'components/parts/Feed';
 import FeedPlaceholder from 'components/parts/FeedPlaceholder';
 import Navbar from 'components/parts/Navbar';
-import bindAction from 'utils/bindAction';
+import bindActions from 'utils/bindActions';
 import connect from 'utils/react/connect';
 import { Category, Search, State } from 'messaging/types';
 import { searchFeeds } from 'messaging/search/actions';
 
 interface SearchProps {
     categories: Category[];
-    onSearchFeeds: (query: string) => void;
+    onSearchFeeds: typeof searchFeeds;
     onToggleSidebar: () => void;
     search: Search;
 }
@@ -136,7 +136,7 @@ export default connect(
         categories: state.subscriptions.categories,
         search: state.search
     }),
-    (dispatch) => ({
-        onSearchFeeds: bindAction(searchFeeds, dispatch)
-    })
+    (dispatch) => bindActions({
+        onSearchFeeds: searchFeeds
+    }, dispatch)
 )(SearchPage);

@@ -4,7 +4,7 @@ import classnames from 'classnames';
 import LazyRenderer from 'components/parts/LazyRenderer';
 import RelativeTime from 'components/parts/RelativeTime';
 import SiteinfoForm from 'components/parts/SiteinfoForm';
-import bindAction from 'utils/bindAction';
+import bindActions from 'utils/bindActions';
 import connect from 'utils/react/connect';
 import { State, Siteinfo, SiteinfoItem } from 'messaging/types';
 import { addSiteinfoItem, removeSiteinfoItem, updateSiteinfo } from 'messaging/siteinfo/actions';
@@ -21,9 +21,9 @@ interface SharedSiteinfoItemRowProps {
 }
 
 interface SiteinfoProps {
-    onAddSiteinfoItem: (item: SiteinfoItem) => void;
-    onRemoveSiteinfoItem: (id: string) => void;
-    onUpdateSiteinfo: () => void;
+    onAddSiteinfoItem: typeof addSiteinfoItem;
+    onRemoveSiteinfoItem: typeof removeSiteinfoItem;
+    onUpdateSiteinfo: typeof updateSiteinfo;
     siteinfo: Siteinfo;
 }
 
@@ -186,9 +186,9 @@ export default connect(
     (state: State) => ({
         siteinfo: state.siteinfo
     }),
-    (dispatch) => ({
-        onAddSiteinfoItem: bindAction(addSiteinfoItem, dispatch),
-        onRemoveSiteinfoItem: bindAction(removeSiteinfoItem, dispatch),
-        onUpdateSiteinfo: bindAction(updateSiteinfo, dispatch)
-    })
+    (dispatch) => bindActions({
+        onAddSiteinfoItem: addSiteinfoItem,
+        onRemoveSiteinfoItem: removeSiteinfoItem,
+        onUpdateSiteinfo: updateSiteinfo
+    }, dispatch)
 )(SiteinfoSettings);

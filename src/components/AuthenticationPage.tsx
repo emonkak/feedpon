@@ -1,14 +1,14 @@
 import React, { PureComponent } from 'react';
 import { Location } from 'history';
 
-import bindAction from 'utils/bindAction';
+import bindActions from 'utils/bindActions';
 import connect from 'utils/react/connect';
 import { State } from 'messaging/types';
 import { authenticate } from 'messaging/credential/actions';
 
 interface AuthenticationProps {
     location: Location;
-    onAuthenticate: () => void;
+    onAuthenticate: typeof authenticate;
 }
 
 class AuthenticationPage extends PureComponent<AuthenticationProps, {}> {
@@ -37,7 +37,7 @@ class AuthenticationPage extends PureComponent<AuthenticationProps, {}> {
 
 export default connect(
     (state: State) => ({}),
-    (dispatch) => ({
-        onAuthenticate: bindAction(authenticate, dispatch)
-    })
+    (dispatch) => bindActions({
+        onAuthenticate: authenticate
+    }, dispatch)
 )(AuthenticationPage);

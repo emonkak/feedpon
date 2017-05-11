@@ -141,7 +141,7 @@ export function fetchFullContent(entryId: string, url: string): AsyncEvent<void>
     };
 }
 
-export function markAsRead(entryIds: string[]): AsyncEvent<void> {
+export function markAsRead(entryIds: (string | number)[]): AsyncEvent<void> {
     return (dispatch, getState) => {
         if (entryIds.length === 0) {
             return;

@@ -6,23 +6,23 @@ import EntryList from 'components/parts/EntryList';
 import MenuItem from 'components/parts/MenuItem';
 import Navbar from 'components/parts/Navbar';
 import SubscribeButton from 'components/parts/SubscribeButton';
-import bindAction from 'utils/bindAction';
+import bindActions from 'utils/bindActions';
 import connect from 'utils/react/connect';
-import { Category, State, Stream, StreamOptions, StreamView } from 'messaging/types';
+import { Category, State, Stream } from 'messaging/types';
 import { changeStreamView, fetchComments, fetchFullContent, fetchMoreEntries, fetchStream, markAsRead, pinEntry, unpinEntry } from 'messaging/stream/actions';
 
 interface StreamProps {
     categories: Category[];
     isScrolling: boolean;
-    onChangeStreamView: (view: StreamView) => void,
-    onFetchComments: (entryId: string | number, url: string) => void;
-    onFetchFullContent: (entryId: string | number, url: string) => void;
-    onFetchMoreEntries: (streamId: string, continuation: string, options: StreamOptions) => void;
-    onFetchStream: (streamId: string, options?: StreamOptions) => void;
-    onMarkAsRead: (entryIds: (string | number)[]) => void;
-    onPinEntry: (entryId: string | number) => void;
+    onChangeStreamView: typeof changeStreamView,
+    onFetchComments: typeof fetchComments;
+    onFetchFullContent: typeof fetchFullContent;
+    onFetchMoreEntries: typeof fetchMoreEntries;
+    onFetchStream: typeof fetchStream;
+    onMarkAsRead: typeof markAsRead;
+    onPinEntry: typeof pinEntry;
     onToggleSidebar: () => void,
-    onUnpinEntry: (entryId: string | number) => void;
+    onUnpinEntry: typeof unpinEntry;
     params: Params;
     scrollTo: (x: number, y: number) => Promise<void>;
     stream: Stream;
@@ -395,14 +395,14 @@ export default connect(
         categories: state.subscriptions.categories,
         stream: state.stream
     }),
-    (dispatch) => ({
-        onChangeStreamView: bindAction(changeStreamView, dispatch),
-        onFetchComments: bindAction(fetchComments, dispatch),
-        onFetchFullContent: bindAction(fetchFullContent, dispatch),
-        onFetchMoreEntries: bindAction(fetchMoreEntries, dispatch),
-        onFetchStream: bindAction(fetchStream, dispatch),
-        onMarkAsRead: bindAction(markAsRead, dispatch),
-        onPinEntry: bindAction(pinEntry, dispatch),
-        onUnpinEntry: bindAction(unpinEntry, dispatch)
-    })
+    (dispatch) => bindActions({
+        onChangeStreamView: changeStreamView,
+        onFetchComments: fetchComments,
+        onFetchFullContent: fetchFullContent,
+        onFetchMoreEntries: fetchMoreEntries,
+        onFetchStream: fetchStream,
+        onMarkAsRead: markAsRead,
+        onPinEntry: pinEntry,
+        onUnpinEntry: unpinEntry
+    }, dispatch)
 )(StreamPage);

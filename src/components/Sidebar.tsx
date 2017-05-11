@@ -3,14 +3,14 @@ import { History, Location } from 'history';
 import { Link } from 'react-router';
 
 import SidebarTree from 'components/parts/SidebarTree';
-import bindAction from 'utils/bindAction';
+import bindActions from 'utils/bindActions';
 import connect from 'utils/react/connect';
 import { State, Subscriptions } from 'messaging/types';
 import { fetchSubscriptions } from 'messaging/subscription/actions';
 
 interface SidebarProps {
     location: Location;
-    onFetchSubscriptions: () => void;
+    onFetchSubscriptions: typeof fetchSubscriptions;
     router: History;
     subscriptions: Subscriptions;
 }
@@ -77,7 +77,7 @@ export default connect(
     (state: State) => ({
         subscriptions: state.subscriptions,
     }),
-    (dispatch) => ({
-        onFetchSubscriptions: bindAction(fetchSubscriptions, dispatch)
-    })
+    (dispatch) => bindActions({
+        onFetchSubscriptions: fetchSubscriptions
+    }, dispatch)
 )(Sidebar);
