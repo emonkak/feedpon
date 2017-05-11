@@ -38,6 +38,8 @@ export default class LazyRenderer extends PureComponent<LazyRendererProps, LazyR
 
     private scrollable: Element | Window;
 
+    private heightChanged = false;
+
     constructor(props: LazyRendererProps, context: any) {
         super(props, context);
 
@@ -111,6 +113,7 @@ export default class LazyRenderer extends PureComponent<LazyRendererProps, LazyR
         }
 
         this.heights = heights;
+        this.heightChanged = isChanged;
 
         return isChanged;
     }
@@ -160,13 +163,17 @@ export default class LazyRenderer extends PureComponent<LazyRendererProps, LazyR
     }
 
     handleScroll(event: Event) {
+        if (this.heightChanged) {
+            this.heightChanged = false;
+            return;
+        }
+
         this.updateScrollPosition();
     }
 
     handleUpdateHeight() {
-        if (this.updateHeights()) {
-            this.updateScrollPosition();
-        }
+        this.updateHeights();
+        this.updateScrollPosition();
     }
 
     renderItem(item: any, index: number): React.ReactElement<any> {
