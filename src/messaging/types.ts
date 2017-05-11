@@ -24,7 +24,7 @@ export type SyncEvent
     | { type: 'STREAM_FETCHED', stream: Stream }
     | { type: 'STREAM_FETCHING', streamId: string }
     | { type: 'STREAM_VIEW_CHANGED', view: StreamView }
-    | { type: 'SUBSCRIPTIONS_FETCHED', subscriptions: Subscription[], categories: Category[], totalUnreadCount: number, fetchedAt: string }
+    | { type: 'SUBSCRIPTIONS_FETCHED', subscriptions: Subscription[], categories: Category[], fetchedAt: string }
     | { type: 'SUBSCRIPTIONS_FETCHING' }
     | { type: 'USER_SITEINFO_ITEM_ADDED', item: SiteinfoItem }
     | { type: 'USER_SITEINFO_ITEM_REMOVED', id: string };
@@ -69,7 +69,6 @@ export interface Category {
     streamId: string;
     label: string;
     unreadCount: number;
-    subscriptions: Subscription[];
 }
 
 export interface Stream {
@@ -179,13 +178,11 @@ export interface Subscriptions {
     categories: Category[];
     isLoading: boolean;
     items: Subscription[];
-    totalUnreadCount: number;
     lastUpdatedAt: string | null;
 }
 
 export interface Subscription {
     subscriptionId: string | number;
-    feedId: string | number;
     streamId: string;
     categoryIds: (string | number)[];
     title: string;

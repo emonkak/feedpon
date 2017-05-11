@@ -31,14 +31,13 @@ class Tree extends PureComponent<TreeProps, {}> {
         }
     }
 
-
     renderChild(child: React.ReactElement<any>) {
         if (child) {
             if (child.type === TreeBranch) {
                 const { selectedValue } = this.props;
                 const shouldExpand = (child: React.ReactElement<any>): boolean => {
-                    return (child.type === TreeLeaf && child.props.value === selectedValue) ||
-                           (child.type === TreeBranch && Children.toArray(child.props.children).some(shouldExpand));
+                    return (child.type === TreeLeaf && child.props.value === selectedValue)
+                            || (child.type === TreeBranch && Children.toArray(child.props.children).some(shouldExpand));
                 };
 
                 return cloneElement(child, {
@@ -67,9 +66,9 @@ class Tree extends PureComponent<TreeProps, {}> {
         const { children } = this.props;
 
         return (
-            <ol className="tree">
+            <div className="tree">
                 {Children.map(children, this.renderChild.bind(this))}
-            </ol>
+            </div>
         );
     }
 }
@@ -193,7 +192,7 @@ export class TreeBranch extends PureComponent<TreeBranchProps, TreeBranchState> 
         const { isExpanded } = this.state;
 
         return (
-            <li>
+            <div className="tree-branch">
                 <div className={classnames('tree-node', className, { 'is-selected': value === selectedValue, 'is-expanded': isExpanded } )}>
                     <a className="tree-node-icon" href="#" onClick={this.handleExpand}>
                         {isExpanded ? <i className="icon icon-16 icon-angle-down" /> : <i className="icon icon-16 icon-angle-right" />}
@@ -206,7 +205,7 @@ export class TreeBranch extends PureComponent<TreeBranchProps, TreeBranchState> 
                 <Tree isExpanded={isExpanded}
                       selectedValue={selectedValue}
                       onSelect={onSelect}>{children}</Tree>
-            </li>
+            </div>
         );
     }
 }
@@ -249,18 +248,18 @@ export class TreeLeaf extends PureComponent<TreeLeafProps, {}> {
         const { className, href, icon, isSelected, primaryText, secondaryText, title } = this.props;
 
         return (
-            <li>
+            <div className="tree-leaf">
                 <a className={classnames('tree-node', className, { 'is-selected': isSelected } )}
-                   href={href}
-                   title={title}
-                   onClick={this.handleSelect}>
+                    href={href}
+                    title={title}
+                    onClick={this.handleSelect}>
                     {icon ? <span className="tree-node-icon">{icon}</span> : null}
                     <span className="tree-node-label">
                         <span className="tree-node-primary-text">{primaryText}</span>
                         <span className="tree-node-secondary-text">{secondaryText}</span>
                     </span>
                 </a>
-            </li>
+            </div>
         );
     }
 }
@@ -274,11 +273,9 @@ export class TreeHeader extends PureComponent<TreeHeaderProps, {}> {
         const { children } = this.props;
 
         return (
-            <li>
-                <div className="tree-header">
-                    {children}
-                </div>
-            </li>
+            <div className="tree-header">
+                {children}
+            </div>
         );
     }
 }

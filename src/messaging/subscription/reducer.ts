@@ -13,7 +13,6 @@ export default function reducer(subscriptions: Subscriptions, event: SyncEvent):
                 categories: event.categories,
                 isLoading: false,
                 items: event.subscriptions,
-                totalUnreadCount: event.totalUnreadCount,
                 lastUpdatedAt: event.fetchedAt
             };
 

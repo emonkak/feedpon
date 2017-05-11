@@ -49,8 +49,7 @@ const initialState: State = {
         categories: [],
         isLoading: false,
         items: [],
-        lastUpdatedAt: null,
-        totalUnreadCount: 0
+        lastUpdatedAt: null
     }
 };
 

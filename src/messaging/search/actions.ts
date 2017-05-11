@@ -25,7 +25,7 @@ export function searchFeeds(query: string): AsyncEvent<void> {
             .groupJoin(
                 subscriptions.items,
                 (feed) => feed.feedId,
-                (subscription) => subscription.feedId,
+                (subscription) => subscription.streamId,
                 (feed, subscriptions) => ({
                     feedId: feed.feedId,
                     streamId: feed.feedId,

@@ -346,13 +346,18 @@ function fetchAllStream(options: StreamOptions): AsyncEvent<void> {
         const { subscriptions } = getState();
         const entries = contents.items.map(convertEntry);
 
+        const totalUnreadCount = subscriptions.categories.reduce(
+            (total, category) => total + category.unreadCount,
+            0
+        );
+
         dispatch({
             type: 'STREAM_FETCHED',
             stream: {
                 streamId: 'all',
                 title: 'All',
                 entries,
-                unreadCount: subscriptions.totalUnreadCount,
+                unreadCount: totalUnreadCount,
                 continuation: contents.continuation || null,
                 isLoading: false,
                 isLoaded: true,

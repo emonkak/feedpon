@@ -77,7 +77,7 @@ a.tree-node-label {
 .tree-header {
   display: flex;
   align-items: stretch;
-  padding: calc(var(--baseline-height) / 2 - 1px) 0 0;
+  margin: calc(var(--baseline-height) / 2 - 1px) 0 0;
   border-bottom: 1px solid var(--default-color);
   border-radius: 0;
   color: var(--default-color);
