@@ -1,5 +1,6 @@
 .button {
   display: inline-block;
+  box-sizing: border-box;
   padding: calc(var(--baseline-height) / 4 - 1px) 1rem;
   border: 1px solid transparent;
   border-radius: 4px;
@@ -218,6 +219,7 @@
 
 .button-block {
   display: block;
+  width: 100%;
 }
 
 .button-large {

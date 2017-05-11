@@ -4,6 +4,7 @@
 
 .form-control {
   display: block;
+  box-sizing: border-box;
   width: 100%;
   padding: calc(var(--baseline-height) / 4 - 1px) calc(0.5rem - 1px);
   background-color: var(--default-background-color);
