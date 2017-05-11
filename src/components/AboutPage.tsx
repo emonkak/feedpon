@@ -20,7 +20,7 @@ export default class AboutPage extends PureComponent<AboutProps, {}> {
     renderContent() {
         return (
             <div className="container">
-                <h1>About</h1>
+                <h1 className="display-1">About</h1>
             </div>
         );
     }

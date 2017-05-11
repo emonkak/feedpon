@@ -22,7 +22,7 @@ class AuthenticationPage extends PureComponent<AuthenticationProps, {}> {
         // TODO: Layout
         return (
             <div className="container">
-                <h1>Authentication</h1>
+                <h1 className="display-1">Authentication</h1>
 
                 <button
                     type="button"

@@ -148,7 +148,7 @@ class SiteinfoSettings extends PureComponent<SiteinfoProps, {}> {
         return (
             <div>
                 <section className="section">
-                    <h1>User siteinfo</h1>
+                    <h1 className="display-1">User siteinfo</h1>
                     <SiteinfoForm onSubmit={onAddSiteinfoItem} />
                     <LazyRenderer
                         assumedItemHeight={ASSUMED_ITEM_HEIGHT}
@@ -159,7 +159,7 @@ class SiteinfoSettings extends PureComponent<SiteinfoProps, {}> {
                 </section>
 
                 <section className="section">
-                    <h1>Shared siteinfo</h1>
+                    <h1 className="display-1">Shared siteinfo</h1>
                     <p>
                         <strong>{siteinfo.items.length}</strong> siteinfo items are available.
                         Last update was <strong><RelativeTime time={siteinfo.lastUpdatedAt} /></strong>.

@@ -7,7 +7,7 @@ class SubscriptionSettings extends PureComponent<any, any> {
     render() {
         return (
             <div>
-                <h1>Subscription</h1>
+                <h1 className="display-1">Subscription</h1>
             </div>
         );
     }

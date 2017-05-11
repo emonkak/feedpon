@@ -7,7 +7,7 @@ class GeneralSettings extends PureComponent<any, any> {
     render() {
         return (
             <div>
-                <h1>General</h1>
+                <h1 className="display-1">General</h1>
             </div>
         );
     }

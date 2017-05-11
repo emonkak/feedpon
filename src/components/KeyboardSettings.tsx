@@ -7,7 +7,7 @@ class KeyboardSettings extends PureComponent<any, any> {
     render() {
         return (
             <div>
-                <h1>Keyboard</h1>
+                <h1 className="display-1">Keyboard</h1>
             </div>
         );
     }
