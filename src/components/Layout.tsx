@@ -97,7 +97,7 @@ export default class Layout extends PureComponent<LayoutProps, LayoutState> {
         return (
             <div className={rootClassName} onClick={this.handleCloseSidebar.bind(this)}>
                 <div className='l-sidebar'>
-                    <Sidebar router={router} selectedValue={location.pathname} />
+                    <Sidebar router={router} location={location} />
                 </div>
                 <div className="l-notifications">
                     <Notifications />

@@ -1,15 +1,12 @@
 import React, { PureComponent } from 'react';
 import classnames from 'classnames';
-import { History } from 'history';
+import { History, Location } from 'history';
 import { Link } from 'react-router';
 
 import Dropdown from 'components/parts/Dropdown';
 import MenuItem from 'components/parts/MenuItem';
 import RelativeTime from 'components/parts/RelativeTime';
-import Tree from 'components/parts/Tree';
-import TreeBranch from 'components/parts/TreeBranch';
-import TreeHeader from 'components/parts/TreeHeader';
-import TreeLeaf from 'components/parts/TreeLeaf';
+import { TreeBranch, TreeHeader, TreeLeaf, TreeRoot } from 'components/parts/Tree';
 import bindAction from 'utils/bindAction';
 import connect from 'utils/react/connect';
 import { Category, State, Subscriptions, Subscription } from 'messaging/types';
@@ -18,9 +15,9 @@ import { fetchSubscriptions } from 'messaging/subscription/actions';
 interface SidebarProps {
     isLoading: boolean;
     lastUpdatedAt: string | null;
+    location: Location;
     onFetchSubscriptions: () => void;
     router: History;
-    selectedValue?: string;
     subscriptions: Subscriptions;
 }
 
@@ -51,7 +48,7 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
 
     renderCategory(category: Category) {
         return (
-                <TreeBranch key={`/streams/${encodeURIComponent(category.streamId)}`}
+                <TreeBranch key={category.categoryId}
                             value={`/streams/${encodeURIComponent(category.streamId)}`}
                             className={classnames({ 'is-important': category.unreadCount > 0 })}
                             primaryText={category.label}
@@ -67,7 +64,7 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
             : <i className="icon icon-16 icon-file" />;
 
         return (
-            <TreeLeaf key={`/streams/${encodeURIComponent(subscription.streamId)}`}
+            <TreeLeaf key={subscription.subscriptionId}
                       value={`/streams/${encodeURIComponent(subscription.streamId)}`}
                       className={classnames({ 'is-important': subscription.unreadCount > 0 })}
                       primaryText={subscription.title}
@@ -77,7 +74,7 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
     }
 
     renderTree() {
-        const { isLoading, lastUpdatedAt, selectedValue, subscriptions } = this.props;
+        const { isLoading, lastUpdatedAt, location, subscriptions } = this.props;
 
         const categories = subscriptions.categories
             .map((category) => this.renderCategory(category));
@@ -87,11 +84,11 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
             : 'Not updated yet';
 
         return (
-            <Tree value={selectedValue}
-                  onSelect={this.handleSelect.bind(this)}>
-                <TreeLeaf key="/" value="/" primaryText="Dashboard" />
-                <TreeLeaf key="/streams/all/" value="/streams/all/" primaryText="All" secondaryText={Number(subscriptions.totalUnreadCount).toLocaleString()} />
-                <TreeLeaf key="/streams/pins/" value="/streams/pins/" primaryText="Pins" />
+            <TreeRoot selectedValue={location.pathname}
+                      onSelect={this.handleSelect.bind(this)}>
+                <TreeLeaf value="/" primaryText="Dashboard" />
+                <TreeLeaf value="/streams/all/" primaryText="All" secondaryText={Number(subscriptions.totalUnreadCount).toLocaleString()} />
+                <TreeLeaf value="/streams/pins/" primaryText="Pins" />
                 <TreeHeader>
                     <button className="tree-node-icon" disabled={isLoading} onClick={this.handleReload.bind(this)}>
                         <i className={classnames('icon', 'icon-16', 'icon-refresh', {
@@ -111,9 +108,9 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
                     </Dropdown>
                 </TreeHeader>
                 {categories}
-                <TreeLeaf key="/settings/" value="/settings/" primaryText="Settings" />
-                <TreeLeaf key="/about/" value="/about/" primaryText="About..." />
-            </Tree>
+                <TreeLeaf value="/settings/" primaryText="Settings" />
+                <TreeLeaf value="/about/" primaryText="About..." />
+            </TreeRoot>
         );
     }
 
