@@ -186,7 +186,7 @@ export default class LazyRenderer extends PureComponent<LazyRendererProps, LazyR
 
         return cloneElement(child, {
             ...child.props,
-            ref: createChainedFunction(ref, (child as any).ref)
+            ref: createChainedFunction((child as any).ref, ref)
         });
     }
 

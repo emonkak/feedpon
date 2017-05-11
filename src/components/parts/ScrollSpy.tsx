@@ -179,7 +179,7 @@ export default class ScrollSpy extends PureComponent<ScrollSpyProps, ScrollSpySt
 
             return cloneElement(child, {
                 ...child.props,
-                ref: createChainedFunction(ref, (child as any).ref)
+                ref: createChainedFunction((child as any).ref, ref)
             });
         }
 

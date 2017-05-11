@@ -1,6 +1,8 @@
 import React, { Children, PureComponent, cloneElement } from 'react';
 import classnames from 'classnames';
 
+import createChainedFunction from 'utils/createChainedFunction';
+
 interface TreeProps {
     children?: React.ReactNode;
     isExpanded: boolean;
@@ -42,7 +44,7 @@ class Tree extends PureComponent<TreeProps, {}> {
                 return cloneElement(child, {
                     ...child.props,
                     isExpanded: child.props.isExpanded || shouldExpand(child),
-                    onSelect: this.handleSelect,
+                    onSelect: createChainedFunction(child.props.onSelect, this.handleSelect),
                     selectedValue
                 });
             }
@@ -53,7 +55,7 @@ class Tree extends PureComponent<TreeProps, {}> {
                 return cloneElement(child, {
                     ...child.props,
                     isSelected: child.props.value === selectedValue,
-                    onSelect: this.handleSelect
+                    onSelect: createChainedFunction(child.props.onSelect, this.handleSelect)
                 });
             }
         }
