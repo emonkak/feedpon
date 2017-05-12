@@ -268,9 +268,9 @@ function fetchFeedStream(streamId: string, options: StreamOptions): AsyncEvent<v
         ]);
 
         const { subscriptions } = getState();
-        const subscription = subscriptions.items
-            .find((subscription) => subscription.subscriptionId === streamId) || null;
         const entries = contents.items.map(convertEntry);
+        const subscription = subscriptions.items
+            .find((subscription) => subscription.streamId === streamId) || null;
 
         dispatch({
             type: 'STREAM_FETCHED',
@@ -279,7 +279,6 @@ function fetchFeedStream(streamId: string, options: StreamOptions): AsyncEvent<v
                 title: feed.title,
                 entries,
                 continuation: contents.continuation || null,
-                unreadCount: subscription ? subscription.unreadCount : 0,
                 isLoading: false,
                 isLoaded: true,
                 feed: {
@@ -288,9 +287,11 @@ function fetchFeedStream(streamId: string, options: StreamOptions): AsyncEvent<v
                     title: feed.title,
                     description: feed.description || '',
                     url: feed.website || '',
+                    iconUrl: feed.iconUrl || '',
                     subscribers: feed.subscribers,
-                    subscription
+                    isSubscribing: false
                 },
+                subscription,
                 options
             }
         });
@@ -314,17 +315,18 @@ function fetchCategoryStream(streamId: string, options: StreamOptions): AsyncEve
             .find((category) => category.categoryId === streamId) || null;
         const entries = contents.items.map(convertEntry);
 
+
         dispatch({
             type: 'STREAM_FETCHED',
             stream: {
                 streamId,
                 title: category ? category.label : '',
                 entries,
-                unreadCount: category ? category.unreadCount : 0,
                 continuation: contents.continuation || null,
                 isLoading: false,
                 isLoaded: true,
                 feed: null,
+                subscription: null,
                 options
             }
         });
@@ -346,22 +348,18 @@ function fetchAllStream(options: StreamOptions): AsyncEvent<void> {
         const { subscriptions } = getState();
         const entries = contents.items.map(convertEntry);
 
-        const totalUnreadCount = subscriptions.categories.reduce(
-            (total, category) => total + category.unreadCount,
-            0
-        );
-
         dispatch({
             type: 'STREAM_FETCHED',
             stream: {
                 streamId: 'all',
                 title: 'All',
                 entries,
-                unreadCount: totalUnreadCount,
+                unreadCount: subscriptions.totalUnreadCount,
                 continuation: contents.continuation || null,
                 isLoading: false,
                 isLoaded: true,
                 feed: null,
+                subscription: null,
                 options
             }
         });
@@ -393,6 +391,7 @@ function fetchPinsStream(options: StreamOptions): AsyncEvent<void> {
                 isLoading: false,
                 isLoaded: true,
                 feed: null,
+                subscription: null,
                 options
             }
         });

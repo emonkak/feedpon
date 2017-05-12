@@ -1,8 +1,7 @@
-import { PureComponent, cloneElement } from 'react';
+import { Children, PureComponent } from 'react';
 import { findDOMNode } from 'react-dom';
 
 interface ClosableProps {
-    children?: React.ReactElement<any>;
     isDisabled?: boolean;
     onClose?: () => void;
 }
@@ -11,8 +10,6 @@ export default class Closable extends PureComponent<ClosableProps, {}> {
     static defaultProps = {
         isDisabled: false
     }
-
-    private childElement: Element;
 
     constructor(props: ClosableProps, context: any) {
         super(props, context);
@@ -24,9 +21,9 @@ export default class Closable extends PureComponent<ClosableProps, {}> {
         const { onClose } = this.props;
 
         if (onClose) {
-            const childNode = findDOMNode(this.childElement);
+            const node = findDOMNode(this);
 
-            if (!childNode.contains(event.target as Node)) {
+            if (!node.contains(event.target as Node)) {
                 onClose();
             }
         }
@@ -69,8 +66,6 @@ export default class Closable extends PureComponent<ClosableProps, {}> {
     }
 
     render() {
-        return cloneElement(this.props.children as React.ReactElement<any>, {
-            ref: (element: Element) => { this.childElement = element },
-        });
+        return Children.only(this.props.children);
     }
 }

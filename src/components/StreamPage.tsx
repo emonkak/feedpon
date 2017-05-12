@@ -3,13 +3,14 @@ import { Params } from 'react-router/lib/Router';
 
 import Dropdown from 'components/parts/Dropdown';
 import EntryList from 'components/parts/EntryList';
-import MenuItem from 'components/parts/MenuItem';
 import Navbar from 'components/parts/Navbar';
 import SubscribeButton from 'components/parts/SubscribeButton';
 import bindActions from 'utils/bindActions';
 import connect from 'utils/react/connect';
 import { Category, State, Stream } from 'messaging/types';
+import { MenuItem } from 'components/parts/Menu';
 import { changeStreamView, fetchComments, fetchFullContent, fetchMoreEntries, fetchStream, markAsRead, pinEntry, unpinEntry } from 'messaging/stream/actions';
+import { subscribeFeed, unsubscribeFeed } from 'messaging/subscription/actions';
 
 interface StreamProps {
     categories: Category[];
@@ -21,8 +22,10 @@ interface StreamProps {
     onFetchStream: typeof fetchStream;
     onMarkAsRead: typeof markAsRead;
     onPinEntry: typeof pinEntry;
+    onSubscribeFeed: typeof subscribeFeed;
     onToggleSidebar: () => void,
     onUnpinEntry: typeof unpinEntry;
+    onUnsubscribeFeed: typeof unsubscribeFeed;
     params: Params;
     scrollTo: (x: number, y: number) => Promise<void>;
     stream: Stream;
@@ -49,9 +52,7 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
         this.handleReadEntry = this.handleReadEntry.bind(this);
         this.handleReloadEntries = this.handleReloadEntries.bind(this);
         this.handleScrollToEntry = this.handleScrollToEntry.bind(this);
-        this.handleSubscribe = this.handleSubscribe.bind(this);
         this.handleToggleOnlyUnread = this.handleToggleOnlyUnread.bind(this);
-        this.handleUnsubscribe = this.handleUnsubscribe.bind(this);
     }
 
     componentWillMount() {
@@ -155,9 +156,6 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
         }
     }
 
-    handleSubscribe(categoryIds: (string | number)[]) {
-    }
-
     handleToggleOnlyUnread() {
         const { stream, onFetchStream } = this.props;
 
@@ -169,9 +167,6 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
                 onlyUnread: !stream.options.onlyUnread
             });
         }
-    }
-
-    handleUnsubscribe() {
     }
 
     renderReadEntriesDropdown() {
@@ -252,27 +247,13 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
 
     renderNavbarTitle() {
         const { stream } = this.props;
-        const { readEntryIds } = this.state;
-
-        const unreadCount = stream.unreadCount > 0
-            ? (
-                <span className="stream-unread-count">{stream.unreadCount - readEntryIds.size} unread entries</span>
-            )
-            : null;
 
         const title = stream.feed
-            ? (
-                <a className="stream-title u-text-truncate" href={stream.feed.url} target="_blank">{stream.title}</a>
-            )
-            : (
-                <span className="stream-title u-text-truncate">{stream.title}</span>
-            );
+            ? <a className="stream-title u-text-truncate" href={stream.feed.url} target="_blank">{stream.title}</a>
+            : <span className="stream-title u-text-truncate">{stream.title}</span>;
 
         return (
-            <h1 className="navbar-title">
-                {title}
-                {unreadCount}
-            </h1>
+            <h1 className="navbar-title">{title}</h1>
         );
     }
 
@@ -292,10 +273,11 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
     }
 
     renderHeader() {
-        const { categories, stream } = this.props;
-        const { entries, feed } = stream;
+        const { stream } = this.props;
 
-        if (feed) {
+        if (stream.feed) {
+            const { categories, onSubscribeFeed, onUnsubscribeFeed } = this.props;
+
             return (
                 <header className="stream-header">
                     <div className="container">
@@ -303,17 +285,18 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
                             <div className="u-margin-right">
                                 <div className="stream-metadata">
                                     <div className="list-inline list-inline-dotted">
-                                        <div className="list-inline-item"><strong>{entries.length}</strong> entries</div>
-                                        <div className="list-inline-item"><strong>{feed.subscribers}</strong> subscribers</div>
+                                        <div className="list-inline-item"><strong>{stream.entries.length}</strong> entries</div>
+                                        <div className="list-inline-item"><strong>{stream.feed.subscribers}</strong> subscribers</div>
                                     </div>
                                 </div>
-                                <div className="stream-description">{feed.description}</div>
+                                <div className="stream-description">{stream.feed.description}</div>
                             </div>
                             <SubscribeButton
                                 categories={categories}
-                                subscription={feed.subscription}
-                                onSubscribe={this.handleSubscribe}
-                                onUnsubscribe={this.handleUnsubscribe}/>
+                                feed={stream.feed}
+                                onSubscribe={onSubscribeFeed}
+                                onUnsubscribe={onUnsubscribeFeed}
+                                subscription={stream.subscription} />
                         </div>
                     </div>
                 </header>
@@ -403,6 +386,8 @@ export default connect(
         onFetchStream: fetchStream,
         onMarkAsRead: markAsRead,
         onPinEntry: pinEntry,
-        onUnpinEntry: unpinEntry
+        onSubscribeFeed: subscribeFeed,
+        onUnpinEntry: unpinEntry,
+        onUnsubscribeFeed: unsubscribeFeed
     }, dispatch)
 )(StreamPage);

@@ -32,31 +32,29 @@ class Tree extends PureComponent<TreeProps, {}> {
     }
 
     renderChild(child: React.ReactElement<any>) {
-        if (child) {
-            if (child.type === TreeBranch) {
-                const { selectedValue } = this.props;
-                const shouldExpand = (child: React.ReactElement<any>): boolean => {
-                    return (child.type === TreeLeaf && child.props.value === selectedValue)
-                            || (child.type === TreeBranch && Children.toArray(child.props.children).some(shouldExpand));
-                };
+        if (child.type === TreeBranch) {
+            const { selectedValue } = this.props;
+            const shouldExpand = (child: React.ReactElement<any>): boolean => {
+                return (child.type === TreeLeaf && child.props.value === selectedValue)
+                        || (child.type === TreeBranch && Children.toArray(child.props.children).some(shouldExpand));
+            };
 
-                return cloneElement(child, {
-                    ...child.props,
-                    isExpanded: child.props.isExpanded || shouldExpand(child),
-                    onSelect: createChainedFunction(child.props.onSelect, this.handleSelect),
-                    selectedValue
-                });
-            }
+            return cloneElement(child, {
+                ...child.props,
+                isExpanded: child.props.isExpanded || shouldExpand(child),
+                onSelect: createChainedFunction(child.props.onSelect, this.handleSelect),
+                selectedValue
+            });
+        }
 
-            if (child.type === TreeLeaf) {
-                const { selectedValue } = this.props;
+        if (child.type === TreeLeaf) {
+            const { selectedValue } = this.props;
 
-                return cloneElement(child, {
-                    ...child.props,
-                    isSelected: child.props.value === selectedValue,
-                    onSelect: createChainedFunction(child.props.onSelect, this.handleSelect)
-                });
-            }
+            return cloneElement(child, {
+                ...child.props,
+                isSelected: child.props.value === selectedValue,
+                onSelect: createChainedFunction(child.props.onSelect, this.handleSelect)
+            });
         }
 
         return child;
@@ -264,18 +262,10 @@ export class TreeLeaf extends PureComponent<TreeLeafProps, {}> {
     }
 }
 
-interface TreeHeaderProps {
-    children?: React.ReactNode
-}
-
-export class TreeHeader extends PureComponent<TreeHeaderProps, {}> {
-    render() {
-        const { children } = this.props;
-
-        return (
-            <div className="tree-header">
-                {children}
-            </div>
-        );
-    }
+export const TreeHeader: React.StatelessComponent<{}> = ({ children }) => {
+    return (
+        <div className="tree-header">
+            {children}
+        </div>
+    );
 }

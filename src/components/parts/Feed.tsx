@@ -2,37 +2,19 @@ import React, { PureComponent } from 'react';
 import { Link } from 'react-router';
 
 import SubscribeButton from 'components/parts/SubscribeButton';
-import { Category, Feed } from 'messaging/types';
+import { Category, Feed, Subscription } from 'messaging/types';
 
 interface FeedProps {
     categories: Category[];
     feed: Feed;
-    onSubscribe: (feedId: string | number, categoryIds: (string | number)[]) => void;
+    onSubscribe: (feed: Feed, categoryIds: (string | number)[]) => void;
     onUnsubscribe: (feedId: string | number) => void;
+    subscription: Subscription | null;
 }
 
 export default class FeedComponent extends PureComponent<FeedProps, {}> {
-    constructor(props: FeedProps, context: any) {
-        super(props, context);
-
-        this.handleSubscribe = this.handleSubscribe.bind(this);
-        this.handleUnsubscribe = this.handleUnsubscribe.bind(this);
-    }
-
-    handleSubscribe(categoryIds: (string | number)[]) {
-        const { feed, onSubscribe } = this.props;
-
-        onSubscribe(feed.feedId, categoryIds);
-    }
-
-    handleUnsubscribe() {
-        const { feed, onUnsubscribe } = this.props;
-
-        onUnsubscribe(feed.feedId);
-    }
-
     render() {
-        const { categories, feed } = this.props;
+        const { categories, feed, onSubscribe, onUnsubscribe, subscription } = this.props;
 
         return (
             <li className="list-group-item">
@@ -42,10 +24,11 @@ export default class FeedComponent extends PureComponent<FeedProps, {}> {
                     <div className="u-text-muted">{feed.description}</div>
                 </div>
                 <SubscribeButton
+                    feed={feed}
                     categories={categories}
-                    onSubscribe={this.handleSubscribe}
-                    onUnsubscribe={this.handleUnsubscribe}
-                    subscription={feed.subscription} />
+                    onSubscribe={onSubscribe}
+                    onUnsubscribe={onUnsubscribe}
+                    subscription={subscription} />
             </li>
         );
     }

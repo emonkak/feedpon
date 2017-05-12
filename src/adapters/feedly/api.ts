@@ -38,7 +38,7 @@ export function revokeToken(input: types.RevokeTokenInput): Promise<types.Revoke
 }
 
 // Categories API:
-export function allCategories(accessToken: string): Promise<types.Category[]> {
+export function getCategories(accessToken: string): Promise<types.Category[]> {
     return doGet('v3/categories', {}, createAuthHeader(accessToken));
 }
 
@@ -52,7 +52,7 @@ export function getFeed(accessToken: string, feedId: string): Promise<types.Feed
 }
 
 // Markers API:
-export function allUnreadCounts(accessToken: string, input: types.GetUnreadCountsInput = {}): Promise<types.GetUnreadCountsResponce> {
+export function getUnreadCounts(accessToken: string, input: types.GetUnreadCountsInput = {}): Promise<types.GetUnreadCountsResponce> {
     return doGet('v3/markers/counts', input, createAuthHeader(accessToken));
 }
 
@@ -119,8 +119,17 @@ export function getStreamContents(accessToken: string, input: types.GetStreamInp
 }
 
 // Subscriptions API:
-export function allSubscriptions(accessToken: string): Promise<types.Subscription[]> {
+export function getSubscriptions(accessToken: string): Promise<types.Subscription[]> {
     return doGet('v3/subscriptions', {}, createAuthHeader(accessToken));
+}
+
+export function subscribeFeed(accessToken: string, input: types.SubscribeFeedInput): Promise<void> {
+    return doPost<void>('v3/subscriptions', input, createAuthHeader(accessToken));
+}
+
+export function unsubscribeFeed(accessToken: string, feedId: string): Promise<void> {
+    const url = 'v3/subscriptions/' + encodeURIComponent(feedId);
+    return doDelete<void>(url, {}, createAuthHeader(accessToken));
 }
 
 // Tags API:

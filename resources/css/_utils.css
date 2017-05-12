@@ -14,6 +14,10 @@
   margin-right: 0.5rem;
 }
 
+.u-margin-remove {
+  margin: 0;
+}
+
 .u-pull-left {
   float: left;
 }

@@ -13,7 +13,27 @@ export default function reducer(subscriptions: Subscriptions, event: SyncEvent):
                 categories: event.categories,
                 isLoading: false,
                 items: event.subscriptions,
-                lastUpdatedAt: event.fetchedAt
+                lastUpdatedAt: event.fetchedAt,
+                totalUnreadCount: event.subscriptions.reduce(
+                    (total, subscription) => total + subscription.unreadCount,
+                    0
+                )
+            };
+
+        case 'FEED_SUBSCRIBED':
+            return {
+                ...subscriptions,
+                items: subscriptions.items
+                    .filter((subscription) => subscription.feedId !== event.feedId)
+                    .concat([event.subscription])
+            };
+
+        case 'FEED_UNSUBSCRIBED':
+            return {
+                ...subscriptions,
+                items: subscriptions.items.filter(
+                    (subscription) => subscription.feedId !== event.feedId
+                )
             };
 
         default:

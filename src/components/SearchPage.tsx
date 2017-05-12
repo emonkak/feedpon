@@ -1,18 +1,27 @@
 import React, { PureComponent } from 'react';
+import Enumerable from '@emonkak/enumerable';
+
+import '@emonkak/enumerable/extensions/groupJoin';
+import '@emonkak/enumerable/extensions/select';
+import '@emonkak/enumerable/extensions/toArray';
 
 import FeedComponent from 'components/parts/Feed';
 import FeedPlaceholder from 'components/parts/FeedPlaceholder';
 import Navbar from 'components/parts/Navbar';
 import bindActions from 'utils/bindActions';
 import connect from 'utils/react/connect';
-import { Category, Search, State } from 'messaging/types';
+import { Category, Search, State, Subscription } from 'messaging/types';
 import { searchFeeds } from 'messaging/search/actions';
+import { subscribeFeed, unsubscribeFeed } from 'messaging/subscription/actions';
 
 interface SearchProps {
     categories: Category[];
     onSearchFeeds: typeof searchFeeds;
+    onSubscribeFeed: typeof subscribeFeed;
     onToggleSidebar: () => void;
+    onUnsubscribeFeed: typeof unsubscribeFeed;
     search: Search;
+    subscriptions: Subscription[];
 }
 
 class SearchPage extends PureComponent<SearchProps, {}> {
@@ -22,8 +31,6 @@ class SearchPage extends PureComponent<SearchProps, {}> {
         super(props, context);
 
         this.handleSearch = this.handleSearch.bind(this);
-        this.handleSubscribe = this.handleSubscribe.bind(this);
-        this.handleUnsubscribe = this.handleUnsubscribe.bind(this);
     }
 
     handleSearch(event: React.SyntheticEvent<any>) {
@@ -34,14 +41,6 @@ class SearchPage extends PureComponent<SearchProps, {}> {
 
             onSearchFeeds(this.searchInput.value);
         }
-    }
-
-    handleSubscribe(feedId: number, categoryIds: (string | number)[]) {
-        console.log({ feedId, categoryIds });
-    }
-
-    handleUnsubscribe(feedId: number) {
-        console.log({ feedId });
     }
 
     renderNavbar() {
@@ -80,18 +79,26 @@ class SearchPage extends PureComponent<SearchProps, {}> {
             );
         }
 
-        const { categories } = this.props;
+        const { categories, onSubscribeFeed, onUnsubscribeFeed, subscriptions } = this.props;
+
+        const feeds = new Enumerable(search.feeds)
+            .groupJoin(
+                subscriptions,
+                (feed) => feed.feedId,
+                (subscription) => subscription.feedId,
+                (feed, subscriptions) => ({ feed, subscription: subscriptions[0] || null })
+            )
+            .select(({ feed, subscription }) =>
+                <FeedComponent key={feed.feedId}
+                               categories={categories}
+                               feed={feed}
+                               subscription={subscription}
+                               onSubscribe={onSubscribeFeed}
+                               onUnsubscribe={onUnsubscribeFeed} />)
+            .toArray();
 
         return (
-            <ol className="list-group">
-                {search.feeds.map((feed) =>
-                    <FeedComponent
-                        key={feed.feedId}
-                        categories={categories}
-                        feed={feed}
-                        onSubscribe={this.handleSubscribe}
-                        onUnsubscribe={this.handleUnsubscribe} />)}
-            </ol>
+            <ol className="list-group">{feeds}</ol>
         );
     }
 
@@ -134,9 +141,12 @@ class SearchPage extends PureComponent<SearchProps, {}> {
 export default connect(
     (state: State) => ({
         categories: state.subscriptions.categories,
-        search: state.search
+        search: state.search,
+        subscriptions: state.subscriptions.items
     }),
     (dispatch) => bindActions({
-        onSearchFeeds: searchFeeds
+        onSearchFeeds: searchFeeds,
+        onSubscribeFeed: subscribeFeed,
+        onUnsubscribeFeed: unsubscribeFeed
     }, dispatch)
 )(SearchPage);

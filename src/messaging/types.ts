@@ -13,6 +13,9 @@ export type SyncEvent
     | { type: 'ENTRY_PINNING', entryId: string | number }
     | { type: 'FEED_SEARCHED', query: string, feeds: Feed[] }
     | { type: 'FEED_SEARCHING', query: string }
+    | { type: 'FEED_SUBSCRIBED', feedId: string | number, subscription: Subscription }
+    | { type: 'FEED_SUBSCRIBING', feedId: string | number }
+    | { type: 'FEED_UNSUBSCRIBED', feedId: string | number }
     | { type: 'FULL_CONTENT_FETCHED', entryId: string | number, fullContent: FullContent | null }
     | { type: 'FULL_CONTENT_FETCHING', entryId: string | number }
     | { type: 'MORE_ENTRIES_FETCHED', streamId: string, continuation: string | null, entries: Entry[] }
@@ -67,7 +70,6 @@ export interface Category {
     categoryId: string | number;
     streamId: string;
     label: string;
-    unreadCount: number;
 }
 
 export interface Stream {
@@ -75,10 +77,10 @@ export interface Stream {
     title: string;
     entries: Entry[];
     continuation: string | null;
-    unreadCount: number;
     isLoading: boolean;
     isLoaded: boolean;
     feed: Feed | null;
+    subscription: Subscription | null;
     options: StreamOptions;
 }
 
@@ -97,8 +99,9 @@ export interface Feed {
     title: string;
     description: string;
     url: string;
+    iconUrl: string;
     subscribers: number;
-    subscription: Subscription | null;
+    isSubscribing: boolean;
 }
 
 export interface Entry {
@@ -178,10 +181,12 @@ export interface Subscriptions {
     isLoading: boolean;
     items: Subscription[];
     lastUpdatedAt: string | null;
+    totalUnreadCount: number;
 }
 
 export interface Subscription {
     subscriptionId: string | number;
+    feedId: string | number;
     streamId: string;
     categoryIds: (string | number)[];
     title: string;

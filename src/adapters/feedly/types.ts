@@ -76,6 +76,13 @@ export interface Feed {
     website?: string;
     topics?: string[];
     status?: "dead" | "dead.flooded";
+
+    // Undocumented properties:
+    contentType: string;
+    coverColor: string;
+    iconUrl?: string;
+    partial: boolean;
+    visualUrl?: string;
 }
 
 // Markers API:
@@ -118,6 +125,20 @@ export interface SearchResult {
     website?: string;
     visualUrl?: string;
     lastUpdated?: number;
+
+    // Undocumented properties:
+    art: number;
+    contentType: string;
+    coverColor: string;
+    coverage: number;
+    coverageScore: number;
+    deliciousTags: string[];
+    estimatedEngagement: number;
+    hint: string;
+    iconUrl?: string;
+    partial: boolean;
+    scheme: string;
+    score: number;
 }
 
 // Streams API:
@@ -133,6 +154,12 @@ export interface GetStreamInput {
 export interface GetEntryIdsResponse {
     ids: string[];
     continuation: string;
+}
+
+export interface SubscribeFeedInput {
+    categories: { id: string, label?: string }[];
+    id: string;
+    title?: string;
 }
 
 export interface Contents {

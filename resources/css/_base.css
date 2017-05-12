@@ -58,7 +58,7 @@
 }
 
 html, body {
-  font-family: 'Lato', 'Segoe UI', Helvetica, YuGothic, 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, '.SFNSDisplay-Regular', 'San Francisco Text', 'Segoe UI', Helvetica, YuGothic, 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
   font-weight: 400;
   font-size: 14px;
   line-height: var(--baseline-height);

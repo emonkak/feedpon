@@ -165,6 +165,51 @@ export default function reducer(stream: Stream, event: SyncEvent): Stream {
                 })
             };
 
+        case 'SUBSCRIPTIONS_FETCHED':
+            return {
+                ...stream,
+                subscription: event.subscriptions
+                    .find((subscription) => subscription.streamId === stream.streamId) || stream.subscription
+            };
+
+        case 'FEED_SUBSCRIBING':
+            if (!(stream.feed && stream.feed.feedId === event.feedId)) {
+                return stream;
+            }
+            return {
+                ...stream,
+                feed: {
+                    ...stream.feed,
+                    isSubscribing: true
+                }
+            };
+
+        case 'FEED_SUBSCRIBED':
+            if (!(stream.feed && stream.feed.feedId === event.feedId)) {
+                return stream;
+            }
+            return {
+                ...stream,
+                feed: {
+                    ...stream.feed,
+                    isSubscribing: false
+                },
+                subscription: event.subscription
+            };
+
+        case 'FEED_UNSUBSCRIBED':
+            if (!(stream.feed && stream.feed.feedId === event.feedId)) {
+                return stream;
+            }
+            return {
+                ...stream,
+                feed: {
+                    ...stream.feed,
+                    isSubscribing: false
+                },
+                subscription: null,
+            };
+
         default:
             return stream;
     }

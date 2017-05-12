@@ -32,8 +32,10 @@ export function searchFeeds(query: string): AsyncEvent<void> {
                     title: feed.title,
                     description: feed.description || '',
                     url: feed.website || '',
+                    iconUrl: feed.iconUrl || '',
                     subscribers: feed.subscribers,
-                    subscription: subscriptions[0] || null
+                    subscription: subscriptions[0] || null,
+                    isSubscribing: false
                 })
             )
             .toArray();

@@ -2,9 +2,9 @@ import React, { PureComponent } from 'react';
 import classnames from 'classnames';
 
 import Dropdown from 'components/parts/Dropdown';
-import MenuItem from 'components/parts/MenuItem';
 import RelativeTime from 'components/parts/RelativeTime';
 import { Category, Subscription, Subscriptions } from 'messaging/types';
+import { MenuItem } from 'components/parts/Menu';
 import { TreeBranch, TreeHeader, TreeLeaf, TreeRoot } from 'components/parts/Tree';
 
 interface SidebarTreeProps {
@@ -14,15 +14,25 @@ interface SidebarTreeProps {
     subscriptions: Subscriptions;
 }
 
+const UNCATEGORIZED = Symbol();
+
 export default class SidebarTree extends PureComponent<SidebarTreeProps, {}> {
     renderCategory(category: Category, subscriptions: Subscription[]) {
+        const children = [];
+        let unreadCount = 0;
+
+        for (const subscription of subscriptions) {
+            children.push(this.renderSubscription(subscription));
+            unreadCount += subscription.unreadCount;
+        }
+
         return (
                 <TreeBranch key={category.categoryId}
                             value={`/streams/${encodeURIComponent(category.streamId)}`}
-                            className={classnames({ 'is-important': category.unreadCount > 0 })}
+                            className={classnames({ 'is-important': unreadCount > 0 })}
                             primaryText={category.label}
-                            secondaryText={category.unreadCount > 0 ? Number(category.unreadCount).toLocaleString() : ''}>
-                {subscriptions.map(this.renderSubscription.bind(this))}
+                            secondaryText={unreadCount > 0 ? Number(unreadCount).toLocaleString() : ''}>
+                {children}
             </TreeBranch>
         );
     }
@@ -43,20 +53,19 @@ export default class SidebarTree extends PureComponent<SidebarTreeProps, {}> {
     }
 
     render() {
-        const { onReload, onSelect, subscriptions } = this.props;
+        const { onReload, onSelect, selectedValue, subscriptions } = this.props;
 
         const lastUpdate = subscriptions.lastUpdatedAt
             ? <span>Updated <RelativeTime time={subscriptions.lastUpdatedAt} /></span>
             : 'Not updated yet';
 
-        const totalUnreadCount = subscriptions.categories.reduce(
-            (total, category) => total + category.unreadCount,
-            0
-        );
+        const groupedSubscriptions = subscriptions.items
+            .reduce<{ [key: string]: Subscription[] }>((group, subscription) => {
+                const categoryIds = subscription.categoryIds.length > 0
+                    ? subscription.categoryIds
+                    : [UNCATEGORIZED];
 
-        const groupedSubscriptions: { [key: string]: Subscription[] } =
-            subscriptions.items.reduce((group: { [key: string]: Subscription[] }, subscription: Subscription) => {
-                for (const categoryId of subscription.categoryIds) {
+                for (const categoryId of categoryIds) {
                     if (group[categoryId]) {
                         group[categoryId].push(subscription);
                     } else {
@@ -66,18 +75,21 @@ export default class SidebarTree extends PureComponent<SidebarTreeProps, {}> {
                 return group;
             }, {});
 
-        const categoryNodes = subscriptions.categories.map((category) => this.renderCategory(
-            category,
-            groupedSubscriptions[category.categoryId] || []
-        ));
+        const userCategories = subscriptions.categories
+            .map((category) => this.renderCategory(
+                category,
+                groupedSubscriptions[category.categoryId] || []
+            ));
+        const uncategorizedSubscriptions = (groupedSubscriptions[UNCATEGORIZED] || [])
+            .map(this.renderSubscription.bind(this));
 
         return (
-            <TreeRoot selectedValue={location.pathname}
+            <TreeRoot selectedValue={selectedValue}
                       onSelect={onSelect}>
                 <TreeLeaf value="/" primaryText="Dashboard" />
                 <TreeLeaf value="/streams/all/"
                           primaryText="All"
-                          secondaryText={Number(totalUnreadCount).toLocaleString()} />
+                          secondaryText={Number(subscriptions.totalUnreadCount).toLocaleString()} />
                 <TreeLeaf value="/streams/pins/" primaryText="Pins" />
                 <TreeHeader>
                     <button className="tree-node-icon"
@@ -98,7 +110,8 @@ export default class SidebarTree extends PureComponent<SidebarTreeProps, {}> {
                         <MenuItem primaryText="Unread only" />
                     </Dropdown>
                 </TreeHeader>
-                {categoryNodes}
+                {userCategories}
+                {uncategorizedSubscriptions}
                 <TreeLeaf value="/settings/" primaryText="Settings" />
                 <TreeLeaf value="/about/" primaryText="About..." />
             </TreeRoot>

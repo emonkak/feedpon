@@ -34,10 +34,10 @@ const initialState: State = {
         title: 'Loading...',
         entries: [],
         continuation: null,
-        unreadCount: 0,
         isLoading: false,
         isLoaded: false,
         feed: null,
+        subscription: null,
         options: {
             numEntries: 20,
             onlyUnread: true,
@@ -49,7 +49,8 @@ const initialState: State = {
         categories: [],
         isLoading: false,
         items: [],
-        lastUpdatedAt: null
+        lastUpdatedAt: null,
+        totalUnreadCount: 0
     }
 };
 

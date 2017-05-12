@@ -2,8 +2,8 @@ import React, { PureComponent, cloneElement } from 'react';
 import classnames from 'classnames';
 
 import Closable from 'components/parts/Closable';
-import Menu from 'components/parts/Menu';
 import createChainedFunction from 'utils/createChainedFunction';
+import { Menu } from 'components/parts/Menu';
 
 interface DropdownProps {
     className?: string;
@@ -105,7 +105,7 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
                 <Closable
                     onClose={this.handleClose}
                     isDisabled={!isOpened}>
-                    <Menu onSelect={this.handleSelect}>
+                    <Menu onSelect={this.handleSelect} onClose={this.handleClose}>
                         {children}
                     </Menu>
                 </Closable>

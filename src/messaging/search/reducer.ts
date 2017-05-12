@@ -22,6 +22,48 @@ export default function reducer(search: Search, event: SyncEvent) {
                 query: event.query
             };
 
+        case 'FEED_SUBSCRIBING':
+            return {
+                ...search,
+                feeds: search.feeds.map((feed) => {
+                    if (feed.feedId !== event.feedId) {
+                        return feed;
+                    }
+                    return {
+                        ...feed,
+                        isSubscribing: true
+                    };
+                })
+            };
+
+        case 'FEED_SUBSCRIBED':
+            return {
+                ...search,
+                feeds: search.feeds.map((feed) => {
+                    if (feed.feedId !== event.feedId) {
+                        return feed;
+                    }
+                    return {
+                        ...feed,
+                        isSubscribing: false
+                    };
+                })
+            };
+
+        case 'FEED_UNSUBSCRIBED':
+            return {
+                ...search,
+                feeds: search.feeds.map((feed) => {
+                    if (feed.feedId !== event.feedId) {
+                        return feed;
+                    }
+                    return {
+                        ...feed,
+                        isSubscribing: false
+                    };
+                })
+            };
+
         default:
             return search;
     }
