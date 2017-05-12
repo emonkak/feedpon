@@ -60,8 +60,8 @@ interface MenuItemProps {
     icon?: React.ReactNode;
     isDisabled?: boolean;
     onSelect?: (value?: any) => void;
-    primaryText?: React.ReactNode;
-    secondaryText?: React.ReactNode;
+    primaryText: string;
+    secondaryText?: string;
     value?: any;
 }
 
@@ -84,25 +84,23 @@ export class MenuItem extends PureComponent<MenuItemProps, {}> {
         const { icon, isDisabled, primaryText, secondaryText } = this.props;
 
         const iconElement = icon ? <span className="menu-item-icon">{icon}</span> : null;
-
-        const labelElement =
-            <div className="menu-item-label">
-                {primaryText ? <span className="menu-item-primary-text">{primaryText}</span> : null}
-                {secondaryText ? <span className="menu-item-secondary-text">{secondaryText}</span> : null}
-            </div>;
+        const primaryTextElement = <span className="menu-item-primary-text">{primaryText}</span>;
+        const secondaryTextElement = <span className="menu-item-secondary-text">{secondaryText}</span>;
 
         if (isDisabled) {
             return (
                 <div className="menu-item is-disabled">
                     {iconElement}
-                    {labelElement}
+                    {primaryTextElement}
+                    {secondaryTextElement}
                 </div>
             );
         } else {
             return (
                 <a className="menu-item" href="#" onClick={this.handleSelect.bind(this)}>
                     {iconElement}
-                    {labelElement}
+                    {primaryTextElement}
+                    {secondaryTextElement}
                 </a>
             );
         }

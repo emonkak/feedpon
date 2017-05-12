@@ -245,24 +245,21 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
         );
     }
 
-    renderNavbarTitle() {
-        const { stream } = this.props;
+    renderNavbar() {
+        const { stream, onToggleSidebar } = this.props;
 
         const title = stream.feed
             ? <a className="stream-title u-text-truncate" href={stream.feed.url} target="_blank">{stream.title}</a>
             : <span className="stream-title u-text-truncate">{stream.title}</span>;
 
         return (
-            <h1 className="navbar-title">{title}</h1>
-        );
-    }
-
-    renderNavbar() {
-        const { onToggleSidebar } = this.props;
-
-        return (
             <Navbar onToggleSidebar={onToggleSidebar}>
-                {this.renderNavbarTitle()}
+                <h1 className="navbar-title">
+                    {title}
+                    <span className="stream-title-additional">
+                        {stream.entries.length} entries
+                    </span>
+                </h1>
                 <div className="navbar-action">
                     <button onClick={this.handleReloadEntries}><i className="icon icon-24 icon-refresh" /></button>
                 </div>
@@ -283,13 +280,10 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
                     <div className="container">
                         <div className="stream-header-content">
                             <div className="u-margin-right">
-                                <div className="stream-metadata">
-                                    <div className="list-inline list-inline-dotted">
-                                        <div className="list-inline-item"><strong>{stream.entries.length}</strong> entries</div>
-                                        <div className="list-inline-item"><strong>{stream.feed.subscribers}</strong> subscribers</div>
-                                    </div>
+                                <div className="list-inline list-inline-dotted">
+                                    <div className="list-inline-item u-text-muted">{stream.feed.subscribers} subscribers</div>
                                 </div>
-                                <div className="stream-description">{stream.feed.description}</div>
+                                <div>{stream.feed.description}</div>
                             </div>
                             <SubscribeButton
                                 categories={categories}

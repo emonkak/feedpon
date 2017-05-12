@@ -9,12 +9,12 @@ a.stream-title:hover {
   text-decoration: none;
 }
 
-.stream-unread-count {
+.stream-title-additional {
   color: var(--dark-color);
   font-weight: 400;
 }
 
-.stream-unread-count::before {
+.stream-title-additional::before {
   content: '\00a0\00b7\00a0';
   color: var(--dark-color);
 }
