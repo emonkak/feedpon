@@ -11,18 +11,15 @@ export default function walkNode(node: Node, callback: (node: Node) => boolean):
             parentNode: Node | null
         } = currentNode;
 
-        if (walk) {
-            walk = callback(currentNode)
-        }
-
         if (walk && (currentNode = firstChild)) {
+            walk = callback(currentNode)
             depth++;
         } else if (currentNode = nextSibling) {
-            walk = true;
+            walk = callback(currentNode)
         } else {
             currentNode = parentNode;
-            depth--;
             walk = false;
+            depth--;
         }
     } while (depth > 0 && currentNode);
 }
