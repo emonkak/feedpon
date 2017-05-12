@@ -9,7 +9,7 @@ interface DropdownProps {
     className?: string;
     isOpened?: boolean;
     onClose?: () => void;
-    onSelect?: (value: string | number) => void;
+    onSelect?: (value?: any) => void;
     pullRight?: boolean;
     toggleButton: React.ReactElement<any>;
 }
@@ -32,6 +32,7 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
         };
 
         this.handleClose = this.handleClose.bind(this);
+        this.handleSelect = this.handleSelect.bind(this);
         this.handleToggle = this.handleToggle.bind(this);
     }
 
@@ -46,6 +47,20 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
 
         if (onClose) {
             onClose();
+        }
+
+        this.setMenu(false);
+    }
+
+    handleSelect(value?: any) {
+        const { onClose, onSelect } = this.props;
+
+        if (onClose) {
+            onClose();
+        }
+
+        if (onSelect) {
+            onSelect(value);
         }
 
         this.setMenu(false);
@@ -78,7 +93,7 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
     }
 
     render() {
-        const { children, className, onSelect, pullRight } = this.props;
+        const { children, className, pullRight } = this.props;
         const { isOpened } = this.state;
 
         return (
@@ -88,9 +103,9 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
             })}>
                 {this.renderToggleButton()}
                 <Closable
-                    onClose={this.handleClose.bind(this)}
+                    onClose={this.handleClose}
                     isDisabled={!isOpened}>
-                    <Menu onSelect={createChainedFunction(onSelect, this.handleClose.bind(this))}>
+                    <Menu onSelect={this.handleSelect}>
                         {children}
                     </Menu>
                 </Closable>
