@@ -144,7 +144,7 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
         if (stream.streamId) {
             scrollTo(0, 0);
 
-            onFetchStream(stream.streamId);
+            onFetchStream(stream.streamId, stream.options);
         }
     }
 
