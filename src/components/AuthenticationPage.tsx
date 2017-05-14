@@ -1,8 +1,8 @@
 import React, { PureComponent } from 'react';
 import { Location } from 'history';
 
-import bindActions from 'utils/bindActions';
-import connect from 'utils/react/connect';
+import bindActions from 'utils/flux/bindActions';
+import connect from 'utils/flux/react/connect';
 import { State } from 'messaging/types';
 import { authenticate } from 'messaging/credential/actions';
 

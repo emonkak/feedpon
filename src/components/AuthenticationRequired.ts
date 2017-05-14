@@ -1,7 +1,7 @@
 import { History } from 'history';
 import { PureComponent } from 'react';
 
-import connect from 'utils/react/connect';
+import connect from 'utils/flux/react/connect';
 import { Credential, State } from 'messaging/types';
 
 interface AuthenticationRequiredProps {

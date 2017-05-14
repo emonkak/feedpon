@@ -2,14 +2,13 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Router, hashHistory } from 'react-router';
 
-import Store from 'utils/Store';
-import StoreContext from 'utils/react/StoreContext';
-import asyncMiddleware from 'utils/middlewares/asyncMiddleware';
+import StoreProvider from 'utils/flux/react/StoreProvider';
+import asyncMiddleware from 'utils/flux/middlewares/asyncMiddleware';
+import createStore from 'utils/flux/createStore';
 import initialState from 'messaging/initialState';
 import reducer from 'messaging/reducer';
 import routes from 'components/routes';
-import saveStateMiddleware from 'utils/middlewares/saveStateMiddleware';
-import { Event, State } from 'messaging/types';
+import saveStateMiddleware from 'utils/flux/middlewares/saveStateMiddleware';
 
 function saveState(key: string, value: any): void {
     localStorage.setItem(key, JSON.stringify(value));
@@ -30,21 +29,22 @@ const state = stateKeys.reduce((result, key) => {
     return result;
 }, {...initialState} as any);
 
-const store = new Store<Event, State>(reducer, state)
-    .pipe(asyncMiddleware)
-    .pipe(saveStateMiddleware(stateKeys, saveState))
-    .pipe((action, next, getState) => {
+const store = createStore(reducer, state, [
+    asyncMiddleware,
+    saveStateMiddleware(stateKeys, saveState),
+    ((action, next, context) => {
         next(action);
 
         console.log(action);
-    });
+    })
+]);
 
 const element = document.getElementById('app');
 
 ReactDOM.render((
-    <StoreContext store={store}>
+    <StoreProvider store={store}>
         <Router history={hashHistory}>
             {routes}
         </Router>
-    </StoreContext>
+    </StoreProvider>
 ), element);

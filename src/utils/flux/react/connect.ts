@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { ComponentClass, PureComponent, createElement } from 'react';
 
-import Store from '../Store';
+import { Store } from '../types';
 
 export default function connect<TStateProps, TDispatchProps>(
     mapStateToProps: (state: any) => TStateProps,
@@ -11,41 +11,55 @@ export default function connect<TStateProps, TDispatchProps>(
         mapDispatchToProps = (dispatch) => ({}) as any;
     }
 
-    return <TProps extends TStateProps & TDispatchProps>(component: ComponentClass<TProps>): ComponentClass<Partial<TProps>> => {
+    return <TProps extends TStateProps & TDispatchProps>(
+        component: ComponentClass<TProps>
+    ): ComponentClass<Partial<TProps>> => {
         return class StoreSubscriber extends PureComponent<Partial<TProps>, TStateProps> {
             static contextTypes = {
-                store: PropTypes.instanceOf(Store).isRequired
+                store: PropTypes.shape({
+                    getState: PropTypes.func.isRequired,
+                    replaceState: PropTypes.func.isRequired,
+                    dispatch: PropTypes.func.isRequired,
+                    subscribe: PropTypes.func.isRequired
+                }).isRequired
             };
+
+            context: { store: Store<any, any> };
 
             private dispatchProps: TDispatchProps | null = null;
 
-            private subscription: { unsubscribe: () => void } | null = null;
+            private subscription: (() => void) | null = null;
 
             constructor(props: Partial<TProps>, context: any) {
                 super(props, context);
 
-                this.state = mapStateToProps(context.store.state);
+                this.state = mapStateToProps(context.store.getState());
             }
 
             componentWillMount() {
-                const store = this.context.store as Store<any, any>;
+                const store = this.context.store;
 
-                this.dispatchProps = mapDispatchToProps!(store.dispatch.bind(store));
-
+                this.dispatchProps = mapDispatchToProps!(store.dispatch);
                 this.subscription = store.subscribe(
-                    (state) => this.setState(mapStateToProps(state))
+                    (state: any) => this.setState(mapStateToProps(state))
                 );
             }
 
             componentWillUnmount() {
                 if (this.subscription) {
-                    this.subscription.unsubscribe();
+                    this.subscription();
+                    this.subscription = null;
                 }
             }
 
             render() {
                 const { children } = this.props;
-                const props = Object.assign({}, this.state, this.dispatchProps, this.props) as TProps;
+                const props = Object.assign(
+                    {},
+                    this.state,
+                    this.dispatchProps,
+                    this.props
+                ) as TProps;
 
                 return createElement(component, props, children);
             }

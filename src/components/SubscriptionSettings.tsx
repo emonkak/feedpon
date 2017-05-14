@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 
-import connect from 'utils/react/connect';
+import connect from 'utils/flux/react/connect';
 import { State } from 'messaging/types';
 
 class SubscriptionSettings extends PureComponent<any, any> {

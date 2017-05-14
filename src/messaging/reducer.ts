@@ -1,6 +1,6 @@
 import { State, SyncEvent } from 'messaging/types';
 
-import combineReducers from 'utils/combineReducers';
+import combineReducers from 'utils/flux/combineReducers';
 import credentialReducer from 'messaging/credential/reducer';
 import notificationsReducer from 'messaging/notification/reducer';
 import searchReducer from 'messaging/search/reducer';

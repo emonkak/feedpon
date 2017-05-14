@@ -1,5 +1,7 @@
-export default function saveStateMiddleware(keysToSave: string[], saveState: (key: string, value: any) => void): (action: any, next: (action: any) => void, getState: () => any) => void {
-    let queue: {[key: string]: any} = {};
+import { Middleware } from '../types';
+
+export default function saveStateMiddleware(keysToSave: string[], saveState: (key: string, value: any) => void): Middleware<any, any> {
+    let queue: { [key: string]: any } = {};
     let request: number | null = null;
 
     function processQueue() {
@@ -11,7 +13,7 @@ export default function saveStateMiddleware(keysToSave: string[], saveState: (ke
         request = null;
     }
 
-    return (action, next, getState) => {
+    return (action, next, { getState }) => {
         const state = getState();
 
         next(action);

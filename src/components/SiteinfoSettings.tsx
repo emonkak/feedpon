@@ -4,8 +4,8 @@ import classnames from 'classnames';
 import LazyRenderer from 'components/parts/LazyRenderer';
 import RelativeTime from 'components/parts/RelativeTime';
 import SiteinfoForm from 'components/parts/SiteinfoForm';
-import bindActions from 'utils/bindActions';
-import connect from 'utils/react/connect';
+import bindActions from 'utils/flux/bindActions';
+import connect from 'utils/flux/react/connect';
 import { State, Siteinfo, SiteinfoItem } from 'messaging/types';
 import { addSiteinfoItem, removeSiteinfoItem, updateSiteinfo } from 'messaging/siteinfo/actions';
 
