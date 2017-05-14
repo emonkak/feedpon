@@ -38,7 +38,7 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
 
     componentWillReceiveProps(nextProps: DropdownProps) {
         if (this.props.isOpened !== nextProps.isOpened) {
-            this.setMenu(nextProps.isOpened!);
+            this.setState({ isOpened: nextProps.isOpened! });
         }
     }
 
@@ -49,7 +49,7 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
             onClose();
         }
 
-        this.setMenu(false);
+        this.setState({ isOpened: false });
     }
 
     handleSelect(value?: any) {
@@ -63,7 +63,7 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
             onSelect(value);
         }
 
-        this.setMenu(false);
+        this.setState({ isOpened: false });
     }
 
     handleToggle(event: React.SyntheticEvent<any>) {
@@ -71,11 +71,7 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
 
         const { isOpened } = this.state;
 
-        this.setMenu(!isOpened);
-    }
-
-    setMenu(isOpened: boolean) {
-        this.setState({ isOpened });
+        this.setState({ isOpened: !isOpened });
     }
 
     renderToggleButton() {
@@ -86,7 +82,7 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
             onClick: createChainedFunction(
                 toggleButton.props.onClick,
                 this.handleToggle
-            ),
+            )
         };
 
         return cloneElement(toggleButton, props);
