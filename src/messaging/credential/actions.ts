@@ -2,7 +2,7 @@ import { AsyncEvent, Credential } from 'messaging/types';
 import { sendNotification } from 'messaging/notification/actions';
 import { authCallback, createAuthUrl, exchangeToken, refreshToken } from 'adapters/feedly/api';
 
-export function authenticate(): AsyncEvent<void> {
+export function authenticate(): AsyncEvent {
     return (dispatch, getState) => {
         const { environment } = getState();
 

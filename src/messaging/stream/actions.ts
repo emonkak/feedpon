@@ -1,7 +1,7 @@
 import * as feedly from 'adapters/feedly/types';
 import decodeResponseAsText from 'utils/decodeResponseAsText';
 import stripTags from 'utils/stripTags';
-import { AsyncEvent, Entry, FullContent, StreamOptions, StreamView, SyncEvent } from 'messaging/types';
+import { AsyncEvent, Entry, FullContent, Stream, StreamOptions, StreamView, Event } from 'messaging/types';
 import { sendNotification } from 'messaging/notification/actions';
 import { getBookmarkCounts, getBookmarkEntry } from 'adapters/hatena/bookmarkApi';
 import { getCredential } from 'messaging/credential/actions';
@@ -9,14 +9,14 @@ import { getFeed, getStreamContents, setTag, unsetTag } from 'adapters/feedly/ap
 
 const URL_PATTERN = /^https?:\/\//;
 
-export function changeStreamView(view: StreamView): SyncEvent {
+export function changeStreamView(view: StreamView): Event {
     return {
         type: 'STREAM_VIEW_CHANGED',
         view
     };
 }
 
-export function fetchStream(streamId: string, options?: StreamOptions): AsyncEvent<void> {
+export function fetchStream(streamId: string, options?: StreamOptions): AsyncEvent {
     return async (dispatch, getState) => {
         dispatch({
             type: 'STREAM_FETCHING',
@@ -34,28 +34,51 @@ export function fetchStream(streamId: string, options?: StreamOptions): AsyncEve
             };
         }
 
+        let stream: Stream | null = null;
+
         if (streamId.startsWith('feed/')) {
-            await fetchFeedStream(streamId, options)(dispatch, getState);
+            stream = await fetchFeedStream(streamId, options)(dispatch, getState);
         } else if (streamId.startsWith('user/')) {
-            await fetchCategoryStream(streamId, options)(dispatch, getState);
+            stream = await fetchCategoryStream(streamId, options)(dispatch, getState);
         } else if (streamId === 'all') {
-            await fetchAllStream(options)(dispatch, getState);
+            stream = await fetchAllStream(options)(dispatch, getState);
         } else if (streamId === 'pins') {
-            await fetchPinsStream(options)(dispatch, getState);
+            stream = await fetchPinsStream(options)(dispatch, getState);
+        }
+
+        if (stream) {
+            dispatch({
+                type: 'STREAM_FETCHED',
+                stream
+            });
+
+            const entryUrls = stream.entries
+                .filter((entry) => !!entry.url)
+                .map((entry) => entry.url);
+
+            if (entryUrls.length > 0) {
+                const bookmarkCounts = await getBookmarkCounts(entryUrls);
+
+                dispatch({
+                    type: 'BOOKMARK_COUNTS_FETCHED',
+                    bookmarkCounts
+                });
+            }
         }
     };
 }
 
-export function fetchMoreEntries(streamId: string, continuation: string, options: StreamOptions): AsyncEvent<void> {
+export function fetchMoreEntries(streamId: string, continuation: string, options: StreamOptions): AsyncEvent {
     return async (dispatch, getState) => {
         dispatch({
             type: 'MORE_ENTRIES_FETCHING',
             streamId
         });
 
-        const credential = await getCredential()(dispatch, getState);
-        const feedlyStreamId = toFeedlyStreamId(streamId, credential.token.id);
-        const contentsResponse = await getStreamContents(credential.token.access_token, {
+        const { token } = await getCredential()(dispatch, getState);
+        const feedlyStreamId = toFeedlyStreamId(streamId, token.id);
+
+        const contentsResponse = await getStreamContents(token.access_token, {
             streamId: feedlyStreamId,
             continuation,
             ranked: options.order,
@@ -71,7 +94,7 @@ export function fetchMoreEntries(streamId: string, continuation: string, options
     };
 }
 
-export function fetchComments(entryId: string, url: string): AsyncEvent<void> {
+export function fetchComments(entryId: string, url: string): AsyncEvent {
     return async (dispatch) => {
         const bookmarks = await getBookmarkEntry(url);
 
@@ -99,7 +122,7 @@ export function fetchComments(entryId: string, url: string): AsyncEvent<void> {
     };
 }
 
-export function fetchFullContent(entryId: string, url: string): AsyncEvent<void> {
+export function fetchFullContent(entryId: string, url: string): AsyncEvent {
     return async (dispatch, getState) => {
         dispatch({
             type: 'FULL_CONTENT_FETCHING',
@@ -141,7 +164,7 @@ export function fetchFullContent(entryId: string, url: string): AsyncEvent<void>
     };
 }
 
-export function markAsRead(entryIds: (string | number)[]): AsyncEvent<void> {
+export function markAsRead(entryIds: (string | number)[]): AsyncEvent {
     return (dispatch, getState) => {
         if (entryIds.length === 0) {
             return;
@@ -165,17 +188,17 @@ export function markAsRead(entryIds: (string | number)[]): AsyncEvent<void> {
     };
 }
 
-export function pinEntry(entryId: string): AsyncEvent<void> {
+export function pinEntry(entryId: string): AsyncEvent {
     return async (dispatch, getState) => {
         dispatch({
             type: 'ENTRY_PINNING',
             entryId
         });
 
-        const credential = await getCredential()(dispatch, getState);
-        const tagId = toFeedlyStreamId('pins', credential.token.id);
+        const { token } = await getCredential()(dispatch, getState);
+        const tagId = toFeedlyStreamId('pins', token.id);
 
-        await setTag(credential.token.access_token, [entryId], [tagId]);
+        await setTag(token.access_token, [entryId], [tagId]);
 
         dispatch({
             type: 'ENTRY_PINNED',
@@ -185,17 +208,17 @@ export function pinEntry(entryId: string): AsyncEvent<void> {
     };
 }
 
-export function unpinEntry(entryId: string): AsyncEvent<void> {
+export function unpinEntry(entryId: string): AsyncEvent {
     return async (dispatch, getState) => {
         dispatch({
             type: 'ENTRY_PINNING',
             entryId
         });
 
-        const credential = await getCredential()(dispatch, getState);
-        const tagId = toFeedlyStreamId('pins', credential.token.id);
+        const { token } = await getCredential()(dispatch, getState);
+        const tagId = toFeedlyStreamId('pins', token.id);
 
-        await unsetTag(credential.token.access_token, [entryId], [tagId]);
+        await unsetTag(token.access_token, [entryId], [tagId]);
 
         dispatch({
             type: 'ENTRY_PINNED',
@@ -205,7 +228,12 @@ export function unpinEntry(entryId: string): AsyncEvent<void> {
     };
 }
 
-function extractFullContent(contentDocument: Document, url: string, contentPath: string, nextLinkPath: string | null = null): FullContent | null {
+function extractFullContent(
+    contentDocument: Document,
+    url: string,
+    contentPath: string,
+    nextLinkPath: string | null
+): FullContent | null {
     let content = '';
 
     const contentResult = document.evaluate(
@@ -255,165 +283,125 @@ function extractFullContent(contentDocument: Document, url: string, contentPath:
     return null;
 }
 
-function fetchFeedStream(streamId: string, options: StreamOptions): AsyncEvent<void> {
+function fetchFeedStream(streamId: string, options: StreamOptions): AsyncEvent<Promise<Stream>> {
     return async (dispatch, getState) => {
-        const credential = await getCredential()(dispatch, getState);
+        const { token } = await getCredential()(dispatch, getState);
+
         const [contents, feed] = await Promise.all([
-            getStreamContents(credential.token.access_token, {
+            getStreamContents(token.access_token, {
                 streamId,
                 ranked: options.order,
                 unreadOnly: options.onlyUnread
             }),
-            getFeed(credential.token.access_token, streamId)
+            getFeed(token.access_token, streamId)
         ]);
 
         const { subscriptions } = getState();
-        const entries = contents.items.map(convertEntry);
         const subscription = subscriptions.items
             .find((subscription) => subscription.streamId === streamId) || null;
 
-        dispatch({
-            type: 'STREAM_FETCHED',
-            stream: {
-                streamId,
+        return {
+            streamId,
+            title: feed.title,
+            entries: contents.items.map(convertEntry),
+            continuation: contents.continuation || null,
+            isLoading: false,
+            isLoaded: true,
+            feed: {
+                feedId: feed.id,
+                streamId: feed.id,
                 title: feed.title,
-                entries,
-                continuation: contents.continuation || null,
-                isLoading: false,
-                isLoaded: true,
-                feed: {
-                    feedId: feed.id,
-                    streamId: feed.id,
-                    title: feed.title,
-                    description: feed.description || '',
-                    url: feed.website || '',
-                    iconUrl: feed.iconUrl || '',
-                    subscribers: feed.subscribers,
-                    isSubscribing: false
-                },
-                subscription,
-                options
-            }
-        });
-
-        fetchBookmarkCounts(entries)(dispatch, getState);
+                description: feed.description || '',
+                url: feed.website || '',
+                iconUrl: feed.iconUrl || '',
+                subscribers: feed.subscribers,
+                isSubscribing: false
+            },
+            subscription,
+            options
+        };
     };
 }
 
-function fetchCategoryStream(streamId: string, options: StreamOptions): AsyncEvent<void> {
+function fetchCategoryStream(streamId: string, options: StreamOptions): AsyncEvent<Promise<Stream>> {
     return async (dispatch, getState) => {
-        const credential = await getCredential()(dispatch, getState);
-        const contents = await getStreamContents(credential.token.access_token, {
+        const { token } = await getCredential()(dispatch, getState);
+
+        const contents = await getStreamContents(token.access_token, {
             streamId,
             ranked: options.order,
             unreadOnly: options.onlyUnread
         });
 
         const { subscriptions } = getState();
-
         const category = subscriptions.categories
-            .find((category) => category.categoryId === streamId) || null;
-        const entries = contents.items.map(convertEntry);
+            .find((category) => category.streamId === streamId) || null;
 
-
-        dispatch({
-            type: 'STREAM_FETCHED',
-            stream: {
-                streamId,
-                title: category ? category.label : '',
-                entries,
-                continuation: contents.continuation || null,
-                isLoading: false,
-                isLoaded: true,
-                feed: null,
-                subscription: null,
-                options
-            }
-        });
-
-        fetchBookmarkCounts(entries)(dispatch, getState);
+        return {
+            streamId,
+            title: category ? category.label : '',
+            entries: contents.items.map(convertEntry),
+            continuation: contents.continuation || null,
+            isLoading: false,
+            isLoaded: true,
+            feed: null,
+            subscription: null,
+            options
+        };
     };
 }
 
-function fetchAllStream(options: StreamOptions): AsyncEvent<void> {
+function fetchAllStream(options: StreamOptions): AsyncEvent<Promise<Stream>> {
     return async (dispatch, getState) => {
-        const credential = await getCredential()(dispatch, getState);
-        const streamId = toFeedlyStreamId('all', credential.token.id);
-        const contents = await getStreamContents(credential.token.access_token, {
+        const { token } = await getCredential()(dispatch, getState);
+
+        const streamId = toFeedlyStreamId('all', token.id);
+        const contents = await getStreamContents(token.access_token, {
             streamId,
             ranked: options.order,
             unreadOnly: options.onlyUnread
         });
 
         const { subscriptions } = getState();
-        const entries = contents.items.map(convertEntry);
 
-        dispatch({
-            type: 'STREAM_FETCHED',
-            stream: {
-                streamId: 'all',
-                title: 'All',
-                entries,
-                unreadCount: subscriptions.totalUnreadCount,
-                continuation: contents.continuation || null,
-                isLoading: false,
-                isLoaded: true,
-                feed: null,
-                subscription: null,
-                options
-            }
-        });
-
-        fetchBookmarkCounts(entries)(dispatch, getState);
+        return {
+            streamId: 'all',
+            title: 'All',
+            entries: contents.items.map(convertEntry),
+            unreadCount: subscriptions.totalUnreadCount,
+            continuation: contents.continuation || null,
+            isLoading: false,
+            isLoaded: true,
+            feed: null,
+            subscription: null,
+            options
+        };
     };
 }
 
-function fetchPinsStream(options: StreamOptions): AsyncEvent<void> {
+function fetchPinsStream(options: StreamOptions): AsyncEvent<Promise<Stream>> {
     return async (dispatch, getState) => {
-        const credential = await getCredential()(dispatch, getState);
-        const streamId = toFeedlyStreamId('pins', credential.token.id);
-        const contents = await getStreamContents(credential.token.access_token, {
+        const { token } = await getCredential()(dispatch, getState);
+
+        const streamId = toFeedlyStreamId('pins', token.id);
+        const contents = await getStreamContents(token.access_token, {
             streamId,
             ranked: options.order,
             unreadOnly: options.onlyUnread
         });
 
-        const entries = contents.items.map(convertEntry);
-
-        dispatch({
-            type: 'STREAM_FETCHED',
-            stream: {
-                streamId: 'pins',
-                title: 'Pins',
-                entries,
-                unreadCount: 0,
-                continuation: contents.continuation || null,
-                isLoading: false,
-                isLoaded: true,
-                feed: null,
-                subscription: null,
-                options
-            }
-        });
-
-        fetchBookmarkCounts(entries)(dispatch, getState);
-    };
-}
-
-function fetchBookmarkCounts(entries: Entry[]): AsyncEvent<void> {
-    return async (dispatch, getState) => {
-        const entryUrls = entries
-            .filter((entry) => !!entry.url)
-            .map((entry) => entry.url);
-
-        if (entryUrls.length > 0) {
-            const bookmarkCounts = await getBookmarkCounts(entryUrls);
-
-            dispatch({
-                type: 'BOOKMARK_COUNTS_FETCHED',
-                bookmarkCounts
-            });
-        }
+        return {
+            streamId: 'pins',
+            title: 'Pins',
+            entries: contents.items.map(convertEntry),
+            unreadCount: 0,
+            continuation: contents.continuation || null,
+            isLoading: false,
+            isLoaded: true,
+            feed: null,
+            subscription: null,
+            options
+        };
     };
 }
 

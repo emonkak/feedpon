@@ -5,6 +5,7 @@
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "jsx": "react",
+        "lib": ["es2016", "dom"],
         "module": "es2015",
         "moduleResolution": "node",
         "noFallthroughCasesInSwitch": true,

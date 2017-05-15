@@ -1,6 +1,6 @@
-import { Credential, SyncEvent } from 'messaging/types';
+import { Credential, Event } from 'messaging/types';
 
-export default function reduceCredential(credential: Credential | null, event: SyncEvent): Credential | null {
+export default function reduceCredential(credential: Credential | null, event: Event): Credential | null {
     switch (event.type) {
         case 'AUTHENTICATED':
             return event.credential;

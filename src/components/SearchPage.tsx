@@ -12,10 +12,11 @@ import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
 import { Category, Search, State, Subscription } from 'messaging/types';
 import { searchFeeds } from 'messaging/search/actions';
-import { subscribeFeed, unsubscribeFeed } from 'messaging/subscription/actions';
+import { createCategory, subscribeFeed, unsubscribeFeed } from 'messaging/subscription/actions';
 
 interface SearchProps {
     categories: Category[];
+    onCreateCategory: typeof createCategory;
     onSearchFeeds: typeof searchFeeds;
     onSubscribeFeed: typeof subscribeFeed;
     onToggleSidebar: () => void;
@@ -79,7 +80,7 @@ class SearchPage extends PureComponent<SearchProps, {}> {
             );
         }
 
-        const { categories, onSubscribeFeed, onUnsubscribeFeed, subscriptions } = this.props;
+        const { categories, onCreateCategory, onSubscribeFeed, onUnsubscribeFeed, subscriptions } = this.props;
 
         const feeds = new Enumerable(search.feeds)
             .groupJoin(
@@ -93,6 +94,7 @@ class SearchPage extends PureComponent<SearchProps, {}> {
                                categories={categories}
                                feed={feed}
                                subscription={subscription}
+                               onCreateCategory={onCreateCategory}
                                onSubscribe={onSubscribeFeed}
                                onUnsubscribe={onUnsubscribeFeed} />)
             .toArray();
@@ -145,6 +147,7 @@ export default connect(
         subscriptions: state.subscriptions.items
     }),
     (dispatch) => bindActions({
+        onCreateCategory: createCategory,
         onSearchFeeds: searchFeeds,
         onSubscribeFeed: subscribeFeed,
         onUnsubscribeFeed: unsubscribeFeed

@@ -157,7 +157,7 @@ export interface GetEntryIdsResponse {
 }
 
 export interface SubscribeFeedInput {
-    categories: { id: string, label?: string }[];
+    categories: Category[];
     id: string;
     title?: string;
 }

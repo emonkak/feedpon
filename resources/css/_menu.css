@@ -64,6 +64,7 @@ a.menu-item.is-disabled {
 }
 
 .menu-form {
+  margin: 0;
   padding: calc(var(--baseline-height) / 4)
            24px
            calc(var(--baseline-height) / 4)

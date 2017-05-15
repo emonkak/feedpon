@@ -1,6 +1,6 @@
-import { Notification, SyncEvent } from '../types';
+import { Notification, Event } from '../types';
 
-export default function reducer(notifications: Notification[], event: SyncEvent): Notification[] {
+export default function reducer(notifications: Notification[], event: Event): Notification[] {
     switch (event.type) {
         case 'NOTIFICATION_SENT':
             return [...notifications, event.notification];

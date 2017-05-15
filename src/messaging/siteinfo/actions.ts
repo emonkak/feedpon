@@ -1,4 +1,4 @@
-import { AsyncEvent, SiteinfoItem, SyncEvent } from 'messaging/types';
+import { AsyncEvent, SiteinfoItem, Event } from 'messaging/types';
 import { LDRFullFeedData, WedataItem }  from 'adapters/wedata/types';
 import { getAutoPagerizeItems, getLDRFullFeedItems }  from 'adapters/wedata/api';
 import { sendNotification } from 'messaging/notification/actions';
@@ -13,21 +13,21 @@ const LDR_FULL_FEED_TYPE_PRIORITIES: { [key: string]: number } = {
     'GENERAL': 0
 };
 
-export function addSiteinfoItem(item: SiteinfoItem): SyncEvent {
+export function addSiteinfoItem(item: SiteinfoItem): Event {
     return {
         type: 'USER_SITEINFO_ITEM_ADDED',
         item
     };
 }
 
-export function removeSiteinfoItem(id: string): SyncEvent {
+export function removeSiteinfoItem(id: string): Event {
     return {
         type: 'USER_SITEINFO_ITEM_REMOVED',
         id
     };
 }
 
-export function updateSiteinfo(): AsyncEvent<void> {
+export function updateSiteinfo(): AsyncEvent {
     return async (dispatch, getState) => {
         dispatch({
             type: 'SITEINFO_UPDATING'

@@ -1,7 +1,24 @@
-import { Subscriptions, SyncEvent } from 'messaging/types';
+import Enumerable from '@emonkak/enumerable';
 
-export default function reducer(subscriptions: Subscriptions, event: SyncEvent): Subscriptions {
+import '@emonkak/enumerable/extensions/distinct';
+import '@emonkak/enumerable/extensions/startWith';
+import '@emonkak/enumerable/extensions/toArray';
+import '@emonkak/enumerable/extensions/orderBy';
+
+import { Subscriptions, Event } from 'messaging/types';
+
+export default function reducer(subscriptions: Subscriptions, event: Event): Subscriptions {
     switch (event.type) {
+        case 'CATEGORY_CREATED':
+            return {
+                ...subscriptions,
+                categories: new Enumerable(subscriptions.categories)
+                    .startWith(event.category)
+                    .distinct((category) => category.categoryId)
+                    .orderBy((category) => category.label)
+                    .toArray()
+            };
+
         case 'SUBSCRIPTIONS_FETCHING':
             return {
                 ...subscriptions,

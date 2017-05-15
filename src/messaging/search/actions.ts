@@ -7,7 +7,7 @@ import { AsyncEvent } from 'messaging/types';
 import { getCredential } from 'messaging/credential/actions';
 import { searchFeeds as feedlySearchFeeds } from 'adapters/feedly/api';
 
-export function searchFeeds(query: string): AsyncEvent<void> {
+export function searchFeeds(query: string): AsyncEvent {
     return async (dispatch, getState) => {
         dispatch({
             type: 'FEED_SEARCHING',

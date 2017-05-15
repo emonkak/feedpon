@@ -1,6 +1,6 @@
-import { Search, SyncEvent } from 'messaging/types';
+import { Search, Event } from 'messaging/types';
 
-export default function reducer(search: Search, event: SyncEvent) {
+export default function reducer(search: Search, event: Event) {
     switch (event.type) {
         case 'FEED_SEARCHING':
             return {

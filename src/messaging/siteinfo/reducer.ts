@@ -1,6 +1,6 @@
-import { Siteinfo, SyncEvent } from 'messaging/types';
+import { Siteinfo, Event } from 'messaging/types';
 
-export default function reducer(siteinfo: Siteinfo, event: SyncEvent): Siteinfo {
+export default function reducer(siteinfo: Siteinfo, event: Event): Siteinfo {
     switch (event.type) {
         case 'SITEINFO_UPDATING':
             return {

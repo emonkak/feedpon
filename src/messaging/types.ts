@@ -1,12 +1,9 @@
-import { ExchangeTokenResponse } from 'adapters/feedly/types';
-
 export type Dispatcher = (event: Event) => void;
 
-export type Event = SyncEvent | AsyncEvent<any>;
-
-export type SyncEvent
+export type Event
     = { type: 'AUTHENTICATED', credential: Credential }
     | { type: 'BOOKMARK_COUNTS_FETCHED', bookmarkCounts: { [key: string]: number } }
+    | { type: 'CATEGORY_CREATED', category: Category }
     | { type: 'COMMENTS_FETCHED', entryId: string | number, comments: Comment[] }
     | { type: 'ENTRY_MARKED_AS_READ', entryIds: (string | number)[] }
     | { type: 'ENTRY_PINNED', entryId: string | number, isPinned: boolean }
@@ -32,9 +29,7 @@ export type SyncEvent
     | { type: 'USER_SITEINFO_ITEM_ADDED', item: SiteinfoItem }
     | { type: 'USER_SITEINFO_ITEM_REMOVED', id: string };
 
-export interface AsyncEvent<T> {
-    (dispatch: (event: SyncEvent) => void, getState: () => State): T;
-}
+export type AsyncEvent<TResult = void> = (dispatch: Dispatcher, getState: () => State) => TResult;
 
 export interface State {
     credential: Credential | null;
@@ -49,7 +44,7 @@ export interface State {
 
 export interface Credential {
     authorizedAt: string;
-    token: ExchangeTokenResponse;
+    token: any;
 }
 
 export interface Search {
@@ -67,7 +62,7 @@ export interface Environment {
 }
 
 export interface Category {
-    categoryId: string | number;
+    categoryId: string;
     streamId: string;
     label: string;
 }
@@ -188,7 +183,7 @@ export interface Subscription {
     subscriptionId: string | number;
     feedId: string | number;
     streamId: string;
-    categoryIds: (string | number)[];
+    labels: string[];
     title: string;
     iconUrl: string;
     unreadCount: number;

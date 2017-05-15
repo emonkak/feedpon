@@ -1,4 +1,4 @@
-import { State, SyncEvent } from 'messaging/types';
+import { State, Event } from 'messaging/types';
 
 import combineReducers from 'utils/flux/combineReducers';
 import credentialReducer from 'messaging/credential/reducer';
@@ -8,7 +8,7 @@ import siteinfoReducer from 'messaging/siteinfo/reducer';
 import streamReducer from 'messaging/stream/reducer';
 import subscriptionsReducer from 'messaging/subscription/reducer';
 
-export default combineReducers<State, SyncEvent>({
+export default combineReducers<State, Event>({
     credential: credentialReducer,
     environment: (state, event) => state,
     notifications: notificationsReducer,

@@ -7,14 +7,15 @@ import { Category, Feed, Subscription } from 'messaging/types';
 interface FeedProps {
     categories: Category[];
     feed: Feed;
-    onSubscribe: (feed: Feed, categoryIds: (string | number)[]) => void;
+    onCreateCategory: (label: string, callback: (category: Category) => void) => void;
+    onSubscribe: (feed: Feed, labels: string[]) => void;
     onUnsubscribe: (feedId: string | number) => void;
     subscription: Subscription | null;
 }
 
 export default class FeedComponent extends PureComponent<FeedProps, {}> {
     render() {
-        const { categories, feed, onSubscribe, onUnsubscribe, subscription } = this.props;
+        const { categories, feed, onCreateCategory, onSubscribe, onUnsubscribe, subscription } = this.props;
 
         return (
             <li className="list-group-item">
@@ -26,6 +27,7 @@ export default class FeedComponent extends PureComponent<FeedProps, {}> {
                 <SubscribeButton
                     feed={feed}
                     categories={categories}
+                    onCreateCategory={onCreateCategory}
                     onSubscribe={onSubscribe}
                     onUnsubscribe={onUnsubscribe}
                     subscription={subscription} />

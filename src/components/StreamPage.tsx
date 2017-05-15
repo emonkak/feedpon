@@ -10,12 +10,13 @@ import connect from 'utils/flux/react/connect';
 import { Category, State, Stream } from 'messaging/types';
 import { MenuItem } from 'components/parts/Menu';
 import { changeStreamView, fetchComments, fetchFullContent, fetchMoreEntries, fetchStream, markAsRead, pinEntry, unpinEntry } from 'messaging/stream/actions';
-import { subscribeFeed, unsubscribeFeed } from 'messaging/subscription/actions';
+import { createCategory, subscribeFeed, unsubscribeFeed } from 'messaging/subscription/actions';
 
 interface StreamProps {
     categories: Category[];
     isScrolling: boolean;
     onChangeStreamView: typeof changeStreamView,
+    onCreateCategory: typeof createCategory;
     onFetchComments: typeof fetchComments;
     onFetchFullContent: typeof fetchFullContent;
     onFetchMoreEntries: typeof fetchMoreEntries;
@@ -273,7 +274,7 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
         const { stream } = this.props;
 
         if (stream.feed) {
-            const { categories, onSubscribeFeed, onUnsubscribeFeed } = this.props;
+            const { categories, onCreateCategory, onSubscribeFeed, onUnsubscribeFeed } = this.props;
 
             return (
                 <header className="stream-header">
@@ -288,6 +289,7 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
                             <SubscribeButton
                                 categories={categories}
                                 feed={stream.feed}
+                                onCreateCategory={onCreateCategory}
                                 onSubscribe={onSubscribeFeed}
                                 onUnsubscribe={onUnsubscribeFeed}
                                 subscription={stream.subscription} />
@@ -374,6 +376,7 @@ export default connect(
     }),
     (dispatch) => bindActions({
         onChangeStreamView: changeStreamView,
+        onCreateCategory: createCategory,
         onFetchComments: fetchComments,
         onFetchFullContent: fetchFullContent,
         onFetchMoreEntries: fetchMoreEntries,

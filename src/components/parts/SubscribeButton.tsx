@@ -6,50 +6,63 @@ import { Category, Feed, Subscription } from 'messaging/types';
 import { MenuForm, MenuItem } from 'components/parts/Menu';
 
 interface SubscribeButtonProps {
-    feed: Feed;
     categories: Category[];
-    onSubscribe: (feed: Feed, categoryIds: (string | number)[]) => void;
+    feed: Feed;
+    onCreateCategory: (label: string, callback: (category: Category) => void) => void;
+    onSubscribe: (feed: Feed, labels: string[]) => void;
     onUnsubscribe: (feedId: string | number) => void;
     subscription: Subscription | null;
 }
 
 export default class SubscribeButton extends PureComponent<SubscribeButtonProps, {}> {
-    private categoryNameInput: HTMLInputElement;
+    private categoryLabelInput: HTMLInputElement | null;
 
     constructor(props: SubscribeButtonProps, context: any) {
         super(props, context);
 
-        this.handleCategorize = this.handleCategorize.bind(this);
+        this.handleAddToCategory = this.handleAddToCategory.bind(this);
         this.handleCreateCategory = this.handleCreateCategory.bind(this);
+        this.handleRemoveFromCategory = this.handleRemoveFromCategory.bind(this);
         this.handleUnsubscribe = this.handleUnsubscribe.bind(this);
     }
 
-    handleCategorize(selectedCategoryId: string | number) {
+    handleAddToCategory(selectedLabel: string) {
         const { feed, onSubscribe, subscription } = this.props;
 
-        if (subscription) {
-            const { categoryIds } = subscription;
-            const isAdded = categoryIds.indexOf(selectedCategoryId) === -1;
+        const selectedLabels = subscription
+            ? subscription.labels.concat([selectedLabel])
+            : [selectedLabel];
 
-            const subscribedCategoryIds = isAdded
-                ? categoryIds.concat([selectedCategoryId])
-                : categoryIds.filter((categoryId) => categoryId !== selectedCategoryId);
+        onSubscribe(feed, selectedLabels);
+    }
 
-            onSubscribe(feed, subscribedCategoryIds);
-        } else {
-            const subscribedCategoryIds = [selectedCategoryId];
+    handleCreateCategory() {
+        if (this.categoryLabelInput) {
+            const { feed, onCreateCategory, onSubscribe, subscription } = this.props;
+            const label = this.categoryLabelInput.value;
 
-            onSubscribe(feed, subscribedCategoryIds);
+            const selectedLabels = subscription
+                ? subscription.labels.concat([label])
+                : [label];
+
+            onCreateCategory(label, (category) => onSubscribe(feed, selectedLabels));
         }
+    }
+
+    handleRemoveFromCategory(selectedLabel: string) {
+        const { feed, onSubscribe, subscription } = this.props;
+
+        const selectedLabels = subscription
+            ? subscription.labels.filter((label) => label !== selectedLabel)
+            : [selectedLabel];
+
+        onSubscribe(feed, selectedLabels);
     }
 
     handleUnsubscribe() {
         const { feed, onUnsubscribe } = this.props;
 
         onUnsubscribe(feed.feedId);
-    }
-
-    handleCreateCategory() {
     }
 
     renderToggleButton() {
@@ -81,13 +94,13 @@ export default class SubscribeButton extends PureComponent<SubscribeButtonProps,
     renderCategoryMenuItem(category: Category) {
         const { subscription } = this.props;
 
-        const isAdded = subscription && subscription.categoryIds.indexOf(category.categoryId) !== -1;
+        const isAdded = subscription && subscription.labels.indexOf(category.label) !== -1;
 
         return (
-            <MenuItem value={category.categoryId}
+            <MenuItem value={category.label}
                       key={category.categoryId}
                       icon={isAdded ? <i className="icon icon-16 icon-checkmark" /> : null}
-                      onSelect={this.handleCategorize}
+                      onSelect={isAdded ? this.handleRemoveFromCategory : this.handleAddToCategory}
                       primaryText={category.label} />
         );
     }
@@ -106,10 +119,9 @@ export default class SubscribeButton extends PureComponent<SubscribeButtonProps,
                 <MenuForm onSubmit={this.handleCreateCategory}>
                     <div className="input-group">
                         <input type="text"
-                                className="form-control"
-                                style={{ width: '12rem' }}
-                                placeholder="Category label"
-                                ref={(ref) => this.categoryNameInput = ref} />
+                               className="form-control"
+                               style={{ width: '12rem' }}
+                               ref={(ref) => this.categoryLabelInput = ref} />
                         <button type="submit" className="button button-positive">OK</button>
                     </div>
                 </MenuForm>

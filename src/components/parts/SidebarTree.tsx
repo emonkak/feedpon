@@ -61,24 +61,25 @@ export default class SidebarTree extends PureComponent<SidebarTreeProps, {}> {
 
         const groupedSubscriptions = subscriptions.items
             .reduce<{ [key: string]: Subscription[] }>((group, subscription) => {
-                const categoryIds = subscription.categoryIds.length > 0
-                    ? subscription.categoryIds
+                const labels = subscription.labels.length > 0
+                    ? subscription.labels
                     : [UNCATEGORIZED];
 
-                for (const categoryId of categoryIds) {
-                    if (group[categoryId]) {
-                        group[categoryId].push(subscription);
+                for (const label of labels) {
+                    if (group[label]) {
+                        group[label].push(subscription);
                     } else {
-                        group[categoryId] = [subscription];
+                        group[label] = [subscription];
                     }
                 }
                 return group;
             }, {});
 
         const userCategories = subscriptions.categories
+            .filter((category) => !!groupedSubscriptions[category.label])
             .map((category) => this.renderCategory(
                 category,
-                groupedSubscriptions[category.categoryId] || []
+                groupedSubscriptions[category.label]
             ));
         const uncategorizedSubscriptions = (groupedSubscriptions[UNCATEGORIZED] || [])
             .map(this.renderSubscription.bind(this));

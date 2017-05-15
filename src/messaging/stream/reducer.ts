@@ -1,7 +1,7 @@
 import initialState from 'messaging/initialState';
-import { Stream, SyncEvent } from 'messaging/types';
+import { Stream, Event } from 'messaging/types';
 
-export default function reducer(stream: Stream, event: SyncEvent): Stream {
+export default function reducer(stream: Stream, event: Event): Stream {
     switch (event.type) {
         case 'BOOKMARK_COUNTS_FETCHED':
             return {

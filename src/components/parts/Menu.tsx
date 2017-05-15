@@ -132,11 +132,9 @@ export class MenuForm extends PureComponent<MenuFormProps, {}> {
         const { children } = this.props;
 
         return (
-            <div className="menu-form">
-                <form className="u-margin-remove" onSubmit={this.handleSubmit}>
-                    {children}
-                </form>
-            </div>
+            <form className="menu-form" onSubmit={this.handleSubmit}>
+                {children}
+            </form>
         );
     }
 }
