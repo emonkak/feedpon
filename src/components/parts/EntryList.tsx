@@ -1,5 +1,5 @@
 import Enumerable from '@emonkak/enumerable'
-import React, { PureComponent, cloneElement } from 'react';
+import React, { PureComponent } from 'react';
 
 import '@emonkak/enumerable/extensions/select';
 import '@emonkak/enumerable/extensions/takeWhile';
@@ -29,19 +29,6 @@ interface EntryListProps {
 
 interface EntryListState {
     expandedEntryId: string | number | null;
-}
-
-function renderChild(child: React.ReactElement<any>, isActive: boolean) {
-    return isActive ? cloneElement(child, {
-        ...child.props,
-        isActive
-    }) : child;
-}
-
-function renderList(children: React.ReactNode): React.ReactElement<any> {
-    return (
-        <div className="entry-list">{children}</div>
-    );
 }
 
 export default class EntryList extends PureComponent<EntryListProps, EntryListState> {
@@ -177,10 +164,15 @@ export default class EntryList extends PureComponent<EntryListProps, EntryListSt
                 marginTop={SCROLL_OFFSET}
                 onActivate={this.handleActivate}
                 onInactivate={this.handleInactivate}
-                renderChild={renderChild}
                 renderList={renderList}>
                 {entries.map(this.renderEntry.bind(this))}
             </ScrollSpy>
         );
     }
+}
+
+function renderList(children: React.ReactNode): React.ReactElement<any> {
+    return (
+        <div className="entry-list">{children}</div>
+    );
 }

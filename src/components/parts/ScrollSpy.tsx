@@ -11,13 +11,13 @@ import createChainedFunction from 'utils/createChainedFunction';
 import throttleEventHandler from 'utils/throttleEventHandler';
 
 interface ScrollSpyProps {
+    activeProp?: string;
     getScrollableParent?: (element: Element) => Element | Window;
     isDisabled?: boolean;
     marginBottom?: number;
     marginTop?: number;
     onActivate?: (key: React.Key) => void;
     onInactivate?: (key: React.Key) => void;
-    renderChild: (child: React.ReactElement<any>, isActive: boolean) => React.ReactElement<any>;
     renderList: (children: React.ReactNode) => React.ReactElement<any>;
     scrollThrottleTime?: number;
     style?: React.CSSProperties;
@@ -33,6 +33,7 @@ const initialState: ScrollSpyState = {
 
 export default class ScrollSpy extends PureComponent<ScrollSpyProps, ScrollSpyState> {
     static defaultProps = {
+        activeProp: 'isActive',
         getScrollableParent: (element: Element) => window,
         isDisabled: false,
         marginBottom: 0,
@@ -40,7 +41,7 @@ export default class ScrollSpy extends PureComponent<ScrollSpyProps, ScrollSpySt
         scrollThrottleTime: 100
     };
 
-    private readonly childKeys: Map<React.Key, HTMLElement> = new Map();
+    private readonly childElements: Map<React.Key, HTMLElement> = new Map();
 
     private scrollable: Element | Window;
 
@@ -91,7 +92,7 @@ export default class ScrollSpy extends PureComponent<ScrollSpyProps, ScrollSpySt
     }
 
     getActiveKey(scrollTop: number, scrollBottom: number): React.Key | null {
-        return new Enumerable(this.childKeys)
+        return new Enumerable(this.childElements)
             .where(([_key, element]) => {
                 const offsetTop = element.offsetTop;
                 const offsetBottom = offsetTop + element.offsetHeight;
@@ -163,24 +164,24 @@ export default class ScrollSpy extends PureComponent<ScrollSpyProps, ScrollSpySt
         const childKey = child.key;
 
         if (childKey) {
-            const { childKeys } = this;
-            const { renderChild } = this.props;
+            const { activeProp } = this.props;
             const { activeKey } = this.state;
 
-            const ref = (child: React.ReactInstance) => {
+            const ref = (instance: React.ReactInstance) => {
                 if (child) {
-                    childKeys.set(childKey, findDOMNode<HTMLElement>(child));
+                    this.childElements.set(childKey, findDOMNode<HTMLElement>(instance));
                 } else {
-                    childKeys.delete(childKey);
+                    this.childElements.delete(childKey);
                 }
             };
 
-            child = renderChild(child, childKey === activeKey);
-
-            return cloneElement(child, {
+            const props = {
                 ...child.props,
+                [activeProp!]: childKey === activeKey,
                 ref: createChainedFunction((child as any).ref, ref)
-            });
+            };
+
+            return cloneElement(child, props);
         }
 
         return child;
