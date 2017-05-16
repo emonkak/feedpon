@@ -1,20 +1,17 @@
-function emptyFunction() {
+export default function createChainedFunction(...funcs: (((...args: any[]) => any) | undefined | null)[]): (...args: any[]) => void {
+    return funcs
+        .filter(func => func != null)
+        .reduce<((...args: any[]) => void)>((acc, func) => {
+            if (acc === emptyFunction) {
+                return func!;
+            }
+
+            return function chainedFunction(this: any, ...args) {
+                acc.apply(this, args);
+                func!.apply(this, args);
+            };
+        }, emptyFunction);
 }
 
-export default function createChainedFunction(...fs: (((...args: any[]) => any) | undefined | null)[]): (...args: any[]) => void {
-    const gs = fs.filter(f => !!f);
-
-    if (gs.length === 0) {
-        return emptyFunction;
-    }
-
-    if (gs.length === 1) {
-        return gs[0]!;
-    }
-
-    return function chainedFunction(...args: any[]) {
-        for (const g of gs) {
-            g!(...args);
-        }
-    };
+function emptyFunction() {
 }
