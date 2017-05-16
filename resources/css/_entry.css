@@ -181,7 +181,7 @@ a.entry-action.is-selected {
 .entry-content img,
 .entry-content video {
   max-width: 100%;
-  height: auto;
+  object-fit: cover;
 }
 
 .entry-page:first-child .entry-page-header {
