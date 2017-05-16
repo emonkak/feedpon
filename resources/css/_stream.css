@@ -9,16 +9,6 @@ a.stream-title:hover {
   text-decoration: none;
 }
 
-.stream-title-additional {
-  color: var(--dark-color);
-  font-weight: 400;
-}
-
-.stream-title-additional::before {
-  content: '\00a0\00b7\00a0';
-  color: var(--dark-color);
-}
-
 .stream-header {
   position: relative;
   padding: calc(var(--baseline-height) / 2) 0 calc(var(--baseline-height) / 2 - 1px);

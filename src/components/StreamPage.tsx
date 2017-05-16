@@ -257,9 +257,6 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
             <Navbar onToggleSidebar={onToggleSidebar}>
                 <h1 className="navbar-title">
                     {title}
-                    <span className="stream-title-additional">
-                        {stream.entries.length} entries
-                    </span>
                 </h1>
                 <div className="navbar-action">
                     <button onClick={this.handleReloadEntries}><i className="icon icon-24 icon-refresh" /></button>
