@@ -23,6 +23,7 @@ export default class SubscribeButton extends PureComponent<SubscribeButtonProps,
         this.handleAddToCategory = this.handleAddToCategory.bind(this);
         this.handleCreateCategory = this.handleCreateCategory.bind(this);
         this.handleRemoveFromCategory = this.handleRemoveFromCategory.bind(this);
+        this.handleUncategorize = this.handleUncategorize.bind(this);
         this.handleUnsubscribe = this.handleUnsubscribe.bind(this);
     }
 
@@ -34,6 +35,12 @@ export default class SubscribeButton extends PureComponent<SubscribeButtonProps,
             : [selectedLabel];
 
         onSubscribe(feed, selectedLabels);
+    }
+
+    handleUncategorize() {
+        const { feed, onSubscribe } = this.props;
+
+        onSubscribe(feed, []);
     }
 
     handleCreateCategory() {
@@ -108,12 +115,18 @@ export default class SubscribeButton extends PureComponent<SubscribeButtonProps,
     render() {
         const { categories, subscription } = this.props;
 
+        const isUncategorized = !!subscription && subscription.labels.length === 0;
+
         return (
             <Dropdown
                 toggleButton={this.renderToggleButton()}
                 pullRight={true}>
                 <div className="menu-heading">Category</div>
                 {categories.map(this.renderCategoryMenuItem.bind(this))}
+                <MenuItem icon={isUncategorized ? <i className="icon icon-16 icon-checkmark" /> : null}
+                          isDisabled={isUncategorized}
+                          onSelect={this.handleUncategorize}
+                          primaryText="Uncategorized" />
                 <div className="menu-divider" />
                 <div className="menu-heading">New category</div>
                 <MenuForm onSubmit={this.handleCreateCategory}>
