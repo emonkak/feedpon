@@ -84,7 +84,7 @@ export default class Autocomplete extends PureComponent<AutoCompleteProps, Autoc
                 break;
 
             case 'Escape':
-                this.handleClose();
+                this.queryInput.focus();
                 break;
         }
     }

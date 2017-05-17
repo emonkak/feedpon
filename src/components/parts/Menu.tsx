@@ -126,7 +126,8 @@ export class MenuItem extends PureComponent<MenuItemProps, {}> {
 
         if (isDisabled) {
             return (
-                <div className="menu-item is-disabled">
+                <div className="menu-item is-disabled"
+                     title={primaryText}>
                     {iconElement}
                     {primaryTextElement}
                     {secondaryTextElement}
@@ -134,7 +135,10 @@ export class MenuItem extends PureComponent<MenuItemProps, {}> {
             );
         } else {
             return (
-                <a className="menu-item" href="#" onClick={this.handleSelect.bind(this)}>
+                <a className="menu-item"
+                   title={primaryText}
+                   href="#"
+                   onClick={this.handleSelect.bind(this)}>
                     {iconElement}
                     {primaryTextElement}
                     {secondaryTextElement}

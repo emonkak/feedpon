@@ -47,13 +47,13 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
             return [];
         }
 
-        const normalizedQuery = query.toLowerCase();
+        const splittedQueries = query.toLowerCase().split(/\s+/);
 
         return new Enumerable(subscriptions.items)
-            .where((subscription) =>
-                subscription.title.toLowerCase().includes(normalizedQuery) ||
-                subscription.url.toLowerCase().includes(normalizedQuery)
-            )
+            .where((subscription) => {
+                const text = (subscription.title + ' ' + subscription.url).toLowerCase();
+                return splittedQueries.every(query => text.includes(query));
+            })
             .take(10)
             .toArray();
     }
