@@ -185,6 +185,7 @@ export interface Subscription {
     streamId: string;
     labels: string[];
     title: string;
+    url: string;
     iconUrl: string;
     unreadCount: number;
 }

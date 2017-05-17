@@ -36,6 +36,7 @@ export function fetchSubscriptions(): AsyncEvent {
                 feedId: subscription.id,
                 labels: subscription.categories.map((category) => category.label),
                 title: subscription.title || '',
+                url: subscription.website || '',
                 iconUrl: subscription.iconUrl || '',
                 unreadCount: unreadCount.count
             }))
@@ -117,6 +118,7 @@ export function subscribeFeed(feed: Feed, labels: string[]): AsyncEvent {
                 feedId: feed.feedId,
                 labels: categories.map(category => category.label),
                 title: feed.title,
+                url: feed.url,
                 iconUrl: feed.iconUrl,
                 unreadCount: unreadCount ? unreadCount.count : 0
             }

@@ -5,7 +5,7 @@ import { findDOMNode } from 'react-dom';
 import createChainedFunction from 'utils/createChainedFunction';
 
 interface MenuProps {
-    children?: React.ReactNode;
+    className?: string;
     onClose?: () => void;
     onKeyDown?: (event: React.KeyboardEvent<any>) => void;
     onSelect?: (value?: any) => void;
@@ -82,10 +82,10 @@ export class Menu extends PureComponent<MenuProps, {}> {
     }
 
     render() {
-        const { children, onKeyDown, pullRight } = this.props;
+        const { children, className, onKeyDown, pullRight } = this.props;
 
         return (
-            <div className={classnames('menu', { 'menu-pull-right': pullRight! })}
+            <div className={classnames(className, 'menu', { 'menu-pull-right': pullRight! })}
                  onKeyDown={onKeyDown}>
                 {Children.map(children, this.renderChild.bind(this))}
             </div>

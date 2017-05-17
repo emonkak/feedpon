@@ -127,6 +127,7 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
                     onClose={this.handleClose}
                     isDisabled={!isOpened}>
                     <Menu ref={(ref) => this.menu = ref}
+                          className="dropdown-menu"
                           onKeyDown={this.handleKeyDown}
                           onSelect={this.handleSelect}
                           onClose={this.handleClose}>

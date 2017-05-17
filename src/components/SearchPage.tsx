@@ -16,7 +16,7 @@ import { Category, Search, State, Subscription } from 'messaging/types';
 import { searchFeeds } from 'messaging/search/actions';
 import { createCategory, subscribeFeed, unsubscribeFeed } from 'messaging/subscription/actions';
 
-interface SearchProps {
+interface SearchPageProps {
     categories: Category[];
     onCreateCategory: typeof createCategory;
     onSearchFeeds: typeof searchFeeds;
@@ -29,25 +29,43 @@ interface SearchProps {
     subscriptions: Subscription[];
 }
 
-class SearchPage extends PureComponent<SearchProps, {}> {
-    private searchInput: HTMLInputElement | null = null;
+class SearchPage extends PureComponent<SearchPageProps, {}> {
+    private searchInput: HTMLInputElement;
 
-    constructor(props: SearchProps, context: {}) {
+    constructor(props: SearchPageProps, context: {}) {
         super(props, context);
 
         this.handleSearch = this.handleSearch.bind(this);
     }
 
+    componentWillMount() {
+        const { onSearchFeeds, params, search } = this.props;
+
+        if (params['query'] && params['query'] !== search.query) {
+            onSearchFeeds(params['query']);
+        }
+    }
+
+    componentWillReceiveProps(nextProps: SearchPageProps) {
+        const { onSearchFeeds, search } = nextProps;
+
+        if (nextProps.params['query'] && nextProps.params['query'] !== search.query) {
+            this.searchInput.value = nextProps.params['query'];
+
+            onSearchFeeds(nextProps.params['query']);
+        }
+    }
+
     handleSearch(event: React.SyntheticEvent<any>) {
         event.preventDefault();
 
-        if (this.searchInput && this.searchInput.value) {
+        if (this.searchInput.value) {
             const { onSearchFeeds, router } = this.props;
-            const query  = this.searchInput.value;
-
-            router.replace('/search/' + encodeURIComponent(query));
+            const query = this.searchInput.value;
 
             onSearchFeeds(query);
+
+            router.replace('/search/' + encodeURIComponent(query));
         }
     }
 
@@ -56,13 +74,17 @@ class SearchPage extends PureComponent<SearchProps, {}> {
 
         return (
             <Navbar onToggleSidebar={onToggleSidebar}>
-                <div className="navbar-title">Search for feeds</div>
+                <div className="navbar-title">Search</div>
             </Navbar>
         );
     }
 
     renderFeeds() {
-        const { search } = this.props;
+        const { params, search } = this.props;
+
+        if (params['query'] !== search.query) {
+            return null;
+        }
 
         if (search.isLoading) {
             return (
@@ -85,11 +107,6 @@ class SearchPage extends PureComponent<SearchProps, {}> {
             return (
                 <p>Your search "<strong>{search.query}</strong>" did not match any feeds.</p>
             );
-        }
-
-        const { params } = this.props;
-        if (search.query !== params['query']) {
-            return null;
         }
 
         const { categories, onCreateCategory, onSubscribeFeed, onUnsubscribeFeed, subscriptions } = this.props;
@@ -123,10 +140,11 @@ class SearchPage extends PureComponent<SearchProps, {}> {
                 <h1 className="display-1">Search for feeds to subscribe</h1>
                 <form onSubmit={this.handleSearch}>
                     <div className="input-group">
-                        <input ref={(element) => this.searchInput = element}
+                        <input autoFocus
+                               ref={(element) => this.searchInput = element}
                                className="form-control"
                                type="search"
-                               defaultValue={params['query'] ? decodeURIComponent(params['query']) : ''}
+                               defaultValue={params['query'] || ''}
                                placeholder="Search by title, URL, or topic" />
                         <button className="button button-positive" type="submit">Search</button>
                     </div>
