@@ -3,12 +3,12 @@ export default function bindActions<T extends { [key: string]: Function }>(actio
 
     for (const key of Object.keys(actions)) {
         const action = actions[key];
-        const bindedAction = (...args: any[]) => {
-            const event = action(...args);
+
+        bindedActions[key] = function bindedAction(this: any, ...args: any[]) {
+            const event = action.apply(this, args);
             dispatch(event);
             return event;
         };
-        bindedActions[key] = bindedAction;
     }
 
     return bindedActions as T;

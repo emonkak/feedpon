@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import classnames from 'classnames';
 
-import LazyRenderer from 'components/parts/LazyRenderer';
+import LazyList from 'components/parts/LazyList';
 import RelativeTime from 'components/parts/RelativeTime';
 import SiteinfoForm from 'components/parts/SiteinfoForm';
 import bindActions from 'utils/flux/bindActions';
@@ -150,7 +150,7 @@ class SiteinfoSettings extends PureComponent<SiteinfoProps, {}> {
                 <section className="section">
                     <h1 className="display-1">User siteinfo</h1>
                     <SiteinfoForm onSubmit={onAddSiteinfoItem} />
-                    <LazyRenderer
+                    <LazyList
                         assumedItemHeight={ASSUMED_ITEM_HEIGHT}
                         getKey={getKey}
                         items={siteinfo.userItems}
@@ -167,7 +167,7 @@ class SiteinfoSettings extends PureComponent<SiteinfoProps, {}> {
                     <p>
                         {updateButton}
                     </p>
-                    <LazyRenderer
+                    <LazyList
                         assumedItemHeight={ASSUMED_ITEM_HEIGHT}
                         getKey={getKey}
                         items={siteinfo.items}

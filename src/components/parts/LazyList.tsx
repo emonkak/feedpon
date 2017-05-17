@@ -5,7 +5,7 @@ import createChainedFunction from 'utils/createChainedFunction';
 import throttleEventHandler from 'utils/throttleEventHandler';
 import throttleAnimationFrame from 'utils/throttleAnimationFrame';
 
-interface LazyRendererProps {
+interface LazyListProps {
     assumedItemHeight: number;
     getHeight?: (element: HTMLElement) => number;
     getKey: (item: any) => string | number;
@@ -17,14 +17,14 @@ interface LazyRendererProps {
     scrollThrottleTime?: number;
 }
 
-interface LazyRendererState {
+interface LazyListState {
     aboveSpace: number;
     belowSpace: number;
     startIndex: number;
     endIndex: number;
 }
 
-export default class LazyRenderer extends PureComponent<LazyRendererProps, LazyRendererState> {
+export default class LazyList extends PureComponent<LazyListProps, LazyListState> {
     static defaultProps = {
         getScrollableParent: (element: Element) => window,
         getHeight: (element: HTMLElement) => element.offsetHeight,
@@ -40,7 +40,7 @@ export default class LazyRenderer extends PureComponent<LazyRendererProps, LazyR
 
     private heightChanged = false;
 
-    constructor(props: LazyRendererProps, context: any) {
+    constructor(props: LazyListProps, context: any) {
         super(props, context);
 
         this.state = {
@@ -63,7 +63,7 @@ export default class LazyRenderer extends PureComponent<LazyRendererProps, LazyR
         this.handleUpdateHeight();
     }
 
-    componentDidUpdate(prevProps: LazyRendererProps, prevState: LazyRendererState) {
+    componentDidUpdate(prevProps: LazyListProps, prevState: LazyListState) {
         if (this.props.items !== prevProps.items
             || this.state.startIndex !== prevState.startIndex
             || this.state.endIndex !== prevState.endIndex) {
@@ -78,25 +78,25 @@ export default class LazyRenderer extends PureComponent<LazyRendererProps, LazyR
     }
 
     getScrollRect() {
-        let top = 0;
-        let height = 0;
+        let scrollTop = 0;
+        let scrollHeight = 0;
 
         if (this.scrollable instanceof Element) {
-            top = this.scrollable.scrollTop!;
-            height = this.scrollable.clientHeight;
+            scrollTop = this.scrollable.scrollTop!;
+            scrollHeight = this.scrollable.clientHeight;
         } else if (this.scrollable instanceof Window) {
-            top = this.scrollable.scrollY;
-            height = this.scrollable.innerHeight;
+            scrollTop = this.scrollable.scrollY;
+            scrollHeight = this.scrollable.innerHeight;
         }
 
-        return { top, height };
+        return { scrollTop, scrollHeight };
     }
 
     updateHeights() {
         const { assumedItemHeight, getHeight, getKey, items } = this.props;
 
         let heights: { [key: string]: number } = {};
-        let isChanged = false;
+        let hasChanged = false;
 
         for (const item of items) {
             const key = getKey(item);
@@ -108,19 +108,19 @@ export default class LazyRenderer extends PureComponent<LazyRendererProps, LazyR
             heights[key] = height;
 
             if (height !== this.heights[key]) {
-                isChanged = true;
+                hasChanged = true;
             }
         }
 
         this.heights = heights;
-        this.heightChanged = isChanged;
+        this.heightChanged = hasChanged;
 
-        return isChanged;
+        return hasChanged;
     }
 
     updateScrollPosition() {
         const { assumedItemHeight, getKey, items, offscreenToViewportRatio } = this.props;
-        const { top: scrollTop, height: scrollHeight } = this.getScrollRect();
+        const { scrollTop, scrollHeight } = this.getScrollRect();
 
         const effectiveTop = scrollTop - (scrollHeight * offscreenToViewportRatio!);
         const effectiveBottom = scrollTop + scrollHeight + (scrollHeight * offscreenToViewportRatio!);
@@ -172,8 +172,9 @@ export default class LazyRenderer extends PureComponent<LazyRendererProps, LazyR
     }
 
     handleUpdateHeight() {
-        this.updateHeights();
-        this.updateScrollPosition();
+        if (this.updateHeights()) {
+            this.updateScrollPosition();
+        }
     }
 
     renderItem(item: any, index: number): React.ReactElement<any> {

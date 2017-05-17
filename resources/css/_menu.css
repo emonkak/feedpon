@@ -20,13 +20,9 @@ a.menu-item {
   min-height: var(--baseline-height);
 }
 
-.menu-item:not(.is-disabled):hover {
+.menu-item:not(.is-disabled):hover,
+.menu-item:focus {
   background-color: var(--medium-light-color);
-}
-
-.menu-item:not(.is-disabled):focus {
-  background-color: var(--positive-color);
-  color: var(--default-background-color);
 }
 
 .menu-item.is-disabled,
