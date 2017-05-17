@@ -24,6 +24,8 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
         pullRight: false
     };
 
+    private menu: Menu;
+
     constructor(props: DropdownProps, context: any) {
         super(props, context);
 
@@ -32,6 +34,7 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
         };
 
         this.handleClose = this.handleClose.bind(this);
+        this.handleKeyDown = this.handleKeyDown.bind(this);
         this.handleSelect = this.handleSelect.bind(this);
         this.handleToggle = this.handleToggle.bind(this);
     }
@@ -50,6 +53,24 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
         }
 
         this.setState({ isOpened: false });
+    }
+
+    handleKeyDown(event: React.KeyboardEvent<any>) {
+        switch (event.key) {
+            case 'ArrowUp':
+                event.preventDefault();
+                this.menu.focusPrevious();
+                break;
+
+            case 'ArrowDown':
+                event.preventDefault();
+                this.menu.focusNext();
+                break;
+
+            case 'Escape':
+                this.handleClose();
+                break;
+        }
     }
 
     handleSelect(value?: any) {
@@ -82,6 +103,10 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
             onClick: createChainedFunction(
                 toggleButton.props.onClick,
                 this.handleToggle
+            ),
+            onKeyDown: createChainedFunction(
+                toggleButton.props.onKeyDown,
+                this.handleKeyDown
             )
         };
 
@@ -101,7 +126,10 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
                 <Closable
                     onClose={this.handleClose}
                     isDisabled={!isOpened}>
-                    <Menu onSelect={this.handleSelect} onClose={this.handleClose}>
+                    <Menu ref={(ref) => this.menu = ref}
+                          onKeyDown={this.handleKeyDown}
+                          onSelect={this.handleSelect}
+                          onClose={this.handleClose}>
                         {children}
                     </Menu>
                 </Closable>

@@ -1,12 +1,14 @@
 import React, { Children, PureComponent, cloneElement } from 'react';
 import classnames from 'classnames';
+import { findDOMNode } from 'react-dom';
 
 import createChainedFunction from 'utils/createChainedFunction';
 
 interface MenuProps {
     children?: React.ReactNode;
-    onSelect?: (value?: any) => void;
     onClose?: () => void;
+    onKeyDown?: (event: React.KeyboardEvent<any>) => void;
+    onSelect?: (value?: any) => void;
     pullRight?: boolean;
 }
 
@@ -14,6 +16,42 @@ export class Menu extends PureComponent<MenuProps, {}> {
     static defaultProps = {
         pullRight: false
     };
+
+    focusPrevious() {
+        const { activeIndex, elements } = this.getFocusableElements();
+
+        if (elements.length > 0) {
+            const previousIndex = activeIndex > 0 ? activeIndex - 1 : elements.length - 1;
+            const previousElement = elements[previousIndex];
+
+            if (previousElement instanceof HTMLElement) {
+                previousElement.focus();
+            }
+        }
+    }
+
+    focusNext() {
+        const { activeIndex, elements } = this.getFocusableElements();
+
+        if (elements.length > 0) {
+            const nextIndex = activeIndex < elements.length - 1 ? activeIndex + 1 : 0;
+            const nextElement = elements[nextIndex];
+
+            if (nextElement instanceof HTMLElement) {
+                nextElement.focus();
+            }
+        }
+    }
+
+    getFocusableElements() {
+        const container = findDOMNode(this);
+        const elements = Array.from(container.querySelectorAll('.menu-item:not(.is-disabled)'));
+
+        const { activeElement } = document;
+        const activeIndex = elements.findIndex((el) => el.contains(activeElement));
+
+        return { activeIndex, elements };
+    }
 
     renderChild(child: React.ReactElement<any>) {
         if (child.type === MenuItem) {
@@ -44,12 +82,11 @@ export class Menu extends PureComponent<MenuProps, {}> {
     }
 
     render() {
-        const { children, pullRight } = this.props;
+        const { children, onKeyDown, pullRight } = this.props;
 
         return (
-            <div className={classnames('menu', {
-                'menu-pull-right': pullRight!,
-            })}>
+            <div className={classnames('menu', { 'menu-pull-right': pullRight! })}
+                 onKeyDown={onKeyDown}>
                 {Children.map(children, this.renderChild.bind(this))}
             </div>
         );
@@ -116,6 +153,7 @@ export class MenuForm extends PureComponent<MenuFormProps, {}> {
         super(props, context);
 
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleKeyDown = this.handleKeyDown.bind(this);
     }
 
     handleSubmit(event: React.SyntheticEvent<any>) {
@@ -128,11 +166,17 @@ export class MenuForm extends PureComponent<MenuFormProps, {}> {
         }
     }
 
+    handleKeyDown(event: React.KeyboardEvent<any>) {
+        event.stopPropagation();
+    }
+
     render() {
         const { children } = this.props;
 
         return (
-            <form className="menu-form" onSubmit={this.handleSubmit}>
+            <form className="menu-form"
+                  onKeyDown={this.handleKeyDown}
+                  onSubmit={this.handleSubmit}>
                 {children}
             </form>
         );

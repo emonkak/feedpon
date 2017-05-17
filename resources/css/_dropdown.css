@@ -29,12 +29,6 @@
   transition-delay: 0s;
 }
 
-@media (--md-viewport) {
-  .dropdown > .menu {
-    max-width: 480px;
-  }
-}
-
 .dropdown-arrow::after {
   content: '';
   display: inline-block;

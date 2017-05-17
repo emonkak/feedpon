@@ -24,6 +24,11 @@ a.menu-item {
   background-color: var(--medium-light-color);
 }
 
+.menu-item:not(.is-disabled):focus {
+  background-color: var(--positive-color);
+  color: var(--default-background-color);
+}
+
 .menu-item.is-disabled,
 a.menu-item.is-disabled {
   color: var(--dark-color);
