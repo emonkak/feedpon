@@ -1,5 +1,7 @@
-import React, { PureComponent } from 'react';
 import Enumerable from '@emonkak/enumerable';
+import React, { PureComponent } from 'react';
+import { History } from 'history';
+import { Params } from 'react-router/lib/Router';
 
 import '@emonkak/enumerable/extensions/groupJoin';
 import '@emonkak/enumerable/extensions/select';
@@ -21,6 +23,8 @@ interface SearchProps {
     onSubscribeFeed: typeof subscribeFeed;
     onToggleSidebar: () => void;
     onUnsubscribeFeed: typeof unsubscribeFeed;
+    params: Params;
+    router: History;
     search: Search;
     subscriptions: Subscription[];
 }
@@ -38,9 +42,12 @@ class SearchPage extends PureComponent<SearchProps, {}> {
         event.preventDefault();
 
         if (this.searchInput && this.searchInput.value) {
-            const { onSearchFeeds } = this.props;
+            const { onSearchFeeds, router } = this.props;
+            const query  = this.searchInput.value;
 
-            onSearchFeeds(this.searchInput.value);
+            router.replace('/search/' + encodeURIComponent(query));
+
+            onSearchFeeds(query);
         }
     }
 
@@ -80,8 +87,12 @@ class SearchPage extends PureComponent<SearchProps, {}> {
             );
         }
 
-        const { categories, onCreateCategory, onSubscribeFeed, onUnsubscribeFeed, subscriptions } = this.props;
+        const { params } = this.props;
+        if (search.query !== params['query']) {
+            return null;
+        }
 
+        const { categories, onCreateCategory, onSubscribeFeed, onUnsubscribeFeed, subscriptions } = this.props;
         const feeds = new Enumerable(search.feeds)
             .groupJoin(
                 subscriptions,
@@ -105,19 +116,18 @@ class SearchPage extends PureComponent<SearchProps, {}> {
     }
 
     renderContent() {
-        const { search } = this.props;
+        const { params } = this.props;
 
         return (
             <div className="container">
                 <h1 className="display-1">Search for feeds to subscribe</h1>
                 <form onSubmit={this.handleSearch}>
                     <div className="input-group">
-                        <input
-                            ref={(element) => this.searchInput = element}
-                            className="form-control"
-                            type="search"
-                            defaultValue={search.query}
-                            placeholder="Search by title, URL, or topic" />
+                        <input ref={(element) => this.searchInput = element}
+                               className="form-control"
+                               type="search"
+                               defaultValue={params['query'] ? decodeURIComponent(params['query']) : ''}
+                               placeholder="Search by title, URL, or topic" />
                         <button className="button button-positive" type="submit">Search</button>
                     </div>
                 </form>

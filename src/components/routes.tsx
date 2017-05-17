@@ -17,7 +17,7 @@ const routes = (
             <Route component={Layout}>
                 <IndexRoute component={DashboardPage} />
                 <Route path="about" component={AboutPage} />
-                <Route path="search" component={SearchPage} />
+                <Route path="search(/:query)" component={SearchPage} />
                 <Route path="settings" component={SettingsPage} />
                 <Route path="settings/:setting_id" component={SettingsPage} />
                 <Route path="streams/:stream_id" component={StreamPage} />
