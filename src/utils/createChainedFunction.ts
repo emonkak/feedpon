@@ -1,6 +1,6 @@
 export default function createChainedFunction(...funcs: (((...args: any[]) => any) | undefined | null)[]): (...args: any[]) => void {
     return funcs
-        .filter(func => func != null)
+        .filter((func) => func != null)
         .reduce<((...args: any[]) => void)>((acc, func) => {
             if (acc === emptyFunction) {
                 return func!;

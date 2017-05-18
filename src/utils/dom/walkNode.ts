@@ -12,7 +12,7 @@ export default function walkNode(node: Node, callback: (node: Node) => boolean):
         } = currentNode;
 
         if (walk && depth > 0) {
-            walk = callback(currentNode)
+            walk = callback(currentNode);
         }
 
         if (walk && firstChild) {

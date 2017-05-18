@@ -75,7 +75,7 @@ export interface Feed {
     velocity?: number;
     website?: string;
     topics?: string[];
-    status?: "dead" | "dead.flooded";
+    status?: 'dead' | 'dead.flooded';
 
     // Undocumented properties:
     contentType: string;

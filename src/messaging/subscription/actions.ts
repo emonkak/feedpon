@@ -107,7 +107,7 @@ export function subscribeFeed(feed: Feed, labels: string[]): AsyncEvent {
             streamId: feed.streamId
         });
         const unreadCount = unreadCounts.unreadcounts
-            .find(unreadCount => unreadCount.id === feed.streamId);
+            .find((unreadCount) => unreadCount.id === feed.streamId);
 
         dispatch({
             type: 'FEED_SUBSCRIBED',
@@ -116,7 +116,7 @@ export function subscribeFeed(feed: Feed, labels: string[]): AsyncEvent {
                 subscriptionId: feed.feedId,
                 streamId: feed.streamId,
                 feedId: feed.feedId,
-                labels: categories.map(category => category.label),
+                labels: categories.map((category) => category.label),
                 title: feed.title,
                 url: feed.url,
                 iconUrl: feed.iconUrl,

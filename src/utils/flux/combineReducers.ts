@@ -5,7 +5,7 @@ export default function combineReducer<TState, TEvent>(reducers: { [P in keyof T
 
         for (const key of Object.keys(reducers) as (keyof TState)[]) {
             const reducer = reducers[key];
-            const prevStateForKey = state[key]
+            const prevStateForKey = state[key];
             const nextStateForKey = reducer(state[key], event);
 
             nextState[key] = nextStateForKey;

@@ -207,7 +207,7 @@ export default function reducer(stream: Stream, event: Event): Stream {
                     ...stream.feed,
                     isSubscribing: false
                 },
-                subscription: null,
+                subscription: null
             };
 
         default:
