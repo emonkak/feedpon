@@ -49,7 +49,18 @@ export default function reducer(stream: Stream, event: Event): Stream {
             };
 
         case 'STREAM_FETCHED':
-            return event.stream;
+            return {
+                streamId: event.streamId,
+                title: event.title,
+                entries: event.entries,
+                continuation: event.continuation,
+                feed: event.feed,
+                subscription: event.subscription,
+                options: event.options,
+                isLoading: false,
+                isLoaded: true,
+                version: stream.version
+            };
 
         case 'FULL_CONTENT_FETCHING':
             return {

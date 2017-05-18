@@ -8,7 +8,7 @@ import '@emonkak/enumerable/extensions/toArray';
 
 import * as feedly from 'adapters/feedly/api';
 import { AsyncEvent, Category, Feed } from 'messaging/types';
-import { getCredential } from 'messaging/credential/actions';
+import { getFeedlyToken } from 'messaging/credential/actions';
 
 export function fetchSubscriptions(): AsyncEvent {
     return async (dispatch, getState) => {
@@ -16,11 +16,11 @@ export function fetchSubscriptions(): AsyncEvent {
             type: 'SUBSCRIPTIONS_FETCHING'
         });
 
-        const credential = await getCredential()(dispatch, getState);
+        const token = await dispatch(getFeedlyToken());
 
         const [feedlySubscriptions, feedlyUnreadCounts] = await Promise.all([
-            feedly.getSubscriptions(credential.token.access_token),
-            feedly.getUnreadCounts(credential.token.access_token)
+            feedly.getSubscriptions(token.access_token),
+            feedly.getUnreadCounts(token.access_token)
         ]);
 
         const subscriptions = new Enumerable(feedlySubscriptions)
@@ -66,7 +66,7 @@ export function fetchSubscriptions(): AsyncEvent {
 
 export function createCategory(label: string, callback: (category: Category) => void): AsyncEvent {
     return async (dispatch, getState) => {
-        const { token } = await getCredential()(dispatch, getState);
+        const token = await dispatch(getFeedlyToken());
 
         const id = `user/${token.id}/category/${label}`;
         const category = {
@@ -91,7 +91,7 @@ export function subscribeFeed(feed: Feed, labels: string[]): AsyncEvent {
             feedId: feed.feedId
         });
 
-        const { token } = await getCredential()(dispatch, getState);
+        const token = await dispatch(getFeedlyToken());
 
         const categories = labels.map((label) => ({
             id: `user/${token.id}/category/${label}`,
@@ -133,7 +133,7 @@ export function unsubscribeFeed(feedId: string | number): AsyncEvent {
             feedId
         });
 
-        const { token } = await getCredential()(dispatch, getState);
+        const token = await dispatch(getFeedlyToken());
 
         await feedly.unsubscribeFeed(token.access_token, feedId as string);
 

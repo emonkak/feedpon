@@ -1,7 +1,10 @@
-export type Dispatcher = (event: Event) => void;
+export interface Dispatcher {
+    (event: Event): Event;
+    <TResult>(event: AsyncEvent<TResult>): TResult;
+}
 
 export type Event
-    = { type: 'AUTHENTICATED', credential: Credential }
+    = { type: 'AUTHENTICATED', authorizedAt: string, token: any }
     | { type: 'BOOKMARK_COUNTS_FETCHED', bookmarkCounts: { [key: string]: number } }
     | { type: 'CATEGORY_CREATED', category: Category }
     | { type: 'COMMENTS_FETCHED', entryId: string | number, comments: Comment[] }
@@ -21,7 +24,7 @@ export type Event
     | { type: 'NOTIFICATION_SENT', notification: Notification }
     | { type: 'SITEINFO_UPDATED', items: SiteinfoItem[], updatedAt: string }
     | { type: 'SITEINFO_UPDATING' }
-    | { type: 'STREAM_FETCHED', stream: Stream }
+    | { type: 'STREAM_FETCHED', streamId: string, title: string, entries: Entry[], continuation: string | null, feed: Feed | null, subscription: Subscription | null, options: StreamOptions  }
     | { type: 'STREAM_FETCHING', streamId: string }
     | { type: 'STREAM_VIEW_CHANGED', view: StreamView }
     | { type: 'SUBSCRIPTIONS_FETCHED', subscriptions: Subscription[], categories: Category[], fetchedAt: string }
@@ -29,29 +32,34 @@ export type Event
     | { type: 'USER_SITEINFO_ITEM_ADDED', item: SiteinfoItem }
     | { type: 'USER_SITEINFO_ITEM_REMOVED', id: string };
 
-export type AsyncEvent<TResult = void> = (dispatch: Dispatcher, getState: () => State) => TResult;
+export type AsyncEvent<TResult = void> = (dispatch: Dispatcher, getState: () => State, context: Context) => TResult;
 
 export interface State {
-    credential: Credential | null;
+    credential: Credential;
+    notifications: Notifications;
     search: Search;
-    environment: Environment;
-    notifications: Notification[];
     settings: Settings;
     siteinfo: Siteinfo;
     stream: Stream;
     subscriptions: Subscriptions;
 }
 
+export interface Context {
+    environment: Environment;
+}
+
 export interface Credential {
-    authorizedAt: string;
-    token: any;
+    authorizedAt: string | null;
+    token: object | null;
+    version: number;
 }
 
 export interface Search {
     feeds: Feed[];
-    isLoading: boolean;
     isLoaded: boolean;
+    isLoading: boolean;
     query: string;
+    version: number;
 }
 
 export interface Environment {
@@ -77,6 +85,7 @@ export interface Stream {
     feed: Feed | null;
     subscription: Subscription | null;
     options: StreamOptions;
+    version: number;
 }
 
 export interface StreamOptions {
@@ -153,6 +162,11 @@ export interface Comment {
     timestamp: string;
 }
 
+export interface Notifications {
+    items: Notification[];
+    version: number;
+}
+
 export interface Notification {
     id: number;
     dismissAfter: number;
@@ -169,6 +183,7 @@ export interface Settings {
     defaultSubscriptionOrder: 'newest' | 'oldest';
     onlyUnreadEntries: boolean;
     onlyUnreadSubscriptions: boolean;
+    version: number;
 }
 
 export interface Subscriptions {
@@ -177,6 +192,7 @@ export interface Subscriptions {
     items: Subscription[];
     lastUpdatedAt: string | null;
     totalUnreadCount: number;
+    version: number;
 }
 
 export interface Subscription {
@@ -195,6 +211,7 @@ export interface Siteinfo {
     userItems: SiteinfoItem[];
     lastUpdatedAt: string;
     isLoading: boolean;
+    version: number;
 }
 
 export interface SiteinfoItem {

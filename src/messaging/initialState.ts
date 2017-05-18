@@ -1,33 +1,37 @@
 import { State } from 'messaging/types';
 
 const initialState: State = {
-    credential: null,
+    credential: {
+        authorizedAt: null,
+        token: null,
+        version: 1
+    },
     search: {
         feeds: [],
-        isLoading: false,
         isLoaded: false,
-        query: ''
+        isLoading: false,
+        query: '',
+        version: 1
     },
-    environment: {
-        clientId: 'feedly',
-        clientSecret: '0XP4XQ07VVMDWBKUHTJM4WUQ',
-        scope: 'https://cloud.feedly.com/subscriptions',
-        redirectUri: 'https://www.feedly.com/feedly.html'
+    notifications: {
+        items: [],
+        version: 1
     },
-    notifications: [],
     settings: {
         defaultEntryOrder: 'newest',
         defaultNumEntries: 20,
         defaultSubscriptionOrder: 'newest',
         defaultStreamView: 'expanded',
         onlyUnreadEntries: true,
-        onlyUnreadSubscriptions: true
+        onlyUnreadSubscriptions: true,
+        version: 1
     },
     siteinfo: {
         isLoading: false,
         items: [],
         userItems: [],
-        lastUpdatedAt: ''
+        lastUpdatedAt: '',
+        version: 1
     },
     stream: {
         streamId: null,
@@ -43,14 +47,16 @@ const initialState: State = {
             onlyUnread: true,
             order: 'newest',
             view: 'expanded'
-        }
+        },
+        version: 1
     },
     subscriptions: {
         categories: [],
         isLoading: false,
         items: [],
         lastUpdatedAt: null,
-        totalUnreadCount: 0
+        totalUnreadCount: 0,
+        version: 1
     }
 };
 

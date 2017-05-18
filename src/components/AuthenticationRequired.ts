@@ -22,7 +22,7 @@ class AuthenticationRequired extends PureComponent<AuthenticationRequiredProps, 
     update() {
         const { credential, router } = this.props;
 
-        if (!credential) {
+        if (!credential.token) {
             router.replace('/authentication');
         }
     }

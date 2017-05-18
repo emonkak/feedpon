@@ -7,35 +7,59 @@ import asyncMiddleware from 'utils/flux/middlewares/asyncMiddleware';
 import createStore from 'utils/flux/createStore';
 import initialState from 'messaging/initialState';
 import reducer from 'messaging/reducer';
+import restoreState from 'utils/restoreState';
 import routes from 'components/routes';
 import saveStateMiddleware from 'utils/flux/middlewares/saveStateMiddleware';
+import { State } from 'messaging/types';
 
-function saveState(key: string, value: any): void {
+function saveItem(key: string, value: any): void {
     localStorage.setItem(key, JSON.stringify(value));
 }
 
-const stateKeys = Object.keys(initialState);
-
-const state = stateKeys.reduce((result, key) => {
+function restoreItem(key: string): any {
     const jsonString = localStorage.getItem(key);
 
-    if (jsonString) {
+    if (typeof jsonString === 'string' && jsonString !== '') {
         try {
-            result[key] = JSON.parse(jsonString);
+            return JSON.parse(jsonString);
         } catch (_e) {
         }
     }
 
-    return result;
-}, {...initialState} as any);
+    return null;
+}
+
+const versions = {
+    credential: initialState.credential.version,
+    notifications: initialState.notifications.version,
+    search: initialState.search.version,
+    settings: initialState.settings.version,
+    siteinfo: initialState.siteinfo.version,
+    stream: initialState.stream.version,
+    subscriptions: initialState.subscriptions.version
+};
+
+const state = {
+    ...initialState,
+    ...restoreState<State>(versions, restoreItem)
+};
+
+const context = {
+    environment: {
+        clientId: 'feedly',
+        clientSecret: '0XP4XQ07VVMDWBKUHTJM4WUQ',
+        scope: 'https://cloud.feedly.com/subscriptions',
+        redirectUri: 'https://www.feedly.com/feedly.html'
+    }
+};
 
 const store = createStore(reducer, state, [
-    asyncMiddleware,
-    saveStateMiddleware(stateKeys, saveState),
-    ((action, next, context) => {
-        next(action);
-
+    asyncMiddleware(context),
+    saveStateMiddleware(Object.keys(versions), saveItem),
+    ((action, next) => {
         console.log(action);
+
+        next(action);
     })
 ]);
 

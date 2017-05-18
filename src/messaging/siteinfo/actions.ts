@@ -63,10 +63,10 @@ export function updateSiteinfo(): AsyncEvent {
             updatedAt: new Date().toISOString()
         });
 
-        sendNotification(
+        dispatch(sendNotification(
             'Siteinfo Updated',
             'positive'
-        )(dispatch, getState);
+        ));
     };
 }
 

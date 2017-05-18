@@ -45,7 +45,7 @@ class Notifications extends PureComponent<NotificationsProps, {}> {
 
 export default connect(
     (state: State) => ({
-        notifications: state.notifications
+        notifications: state.notifications.items
     }),
     (dispatch) => bindActions({
         onDismissNotification: dismissNotification

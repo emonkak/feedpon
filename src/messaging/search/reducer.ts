@@ -7,7 +7,8 @@ export default function reducer(search: Search, event: Event) {
                 feeds: [],
                 isLoading: true,
                 isLoaded: false,
-                query: event.query
+                query: event.query,
+                version: search.version
             };
 
         case 'FEED_SEARCHED':
@@ -19,7 +20,8 @@ export default function reducer(search: Search, event: Event) {
                 feeds: event.feeds,
                 isLoading: false,
                 isLoaded: true,
-                query: event.query
+                query: event.query,
+                version: search.version
             };
 
         case 'FEED_SUBSCRIBING':

@@ -22,7 +22,7 @@ class NotAuthenticated extends PureComponent<NotAuthenticatedProps, {}> {
     update() {
         const { credential, router } = this.props;
 
-        if (credential) {
+        if (credential.token) {
             router.replace('/');
         }
     }

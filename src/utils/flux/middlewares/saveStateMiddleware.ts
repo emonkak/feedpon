@@ -1,19 +1,19 @@
 import { Middleware } from '../types';
 
-export default function saveStateMiddleware(keysToSave: string[], saveState: (key: string, value: any) => void): Middleware<any, any> {
+export default function saveStateMiddlewareFactory(keysToSave: string[], save: (key: string, value: any) => void): Middleware<any, any> {
     let queue: { [key: string]: any } = {};
     let request: number | null = null;
 
     function processQueue() {
         for (const key of Object.keys(queue)) {
-            saveState(key, queue[key]);
+            save(key, queue[key]);
         }
 
         queue = {};
         request = null;
     }
 
-    return (action, next, { getState }) => {
+    return function saveStateMiddleware(action, next, { getState }) {
         const state = getState();
 
         next(action);

@@ -1,24 +1,23 @@
-import { AsyncEvent, Credential } from 'messaging/types';
+import * as feedly from 'adapters/feedly/types';
+import * as feedlyApi from 'adapters/feedly/api';
+import { AsyncEvent } from 'messaging/types';
 import { sendNotification } from 'messaging/notification/actions';
-import { authCallback, createAuthUrl, exchangeToken, refreshToken } from 'adapters/feedly/api';
 
 export function authenticate(): AsyncEvent {
-    return (dispatch, getState) => {
-        const { environment } = getState();
-
+    return (dispatch, getState, { environment }) => {
         async function handleRedirectUrl(urlString: string): Promise<void> {
-            const response = authCallback(urlString);
+            const response = feedlyApi.authCallback(urlString);
 
             if (response.error) {
-                sendNotification(
+                dispatch(sendNotification(
                     'Authentication failed: ' + response.error,
                     'negative'
-                )(dispatch, getState);
+                ));
 
                 return;
             }
 
-            const token = await exchangeToken({
+            const token = await feedlyApi.exchangeToken({
                 code: response.code,
                 client_id: environment.clientId,
                 client_secret: environment.clientSecret,
@@ -26,18 +25,14 @@ export function authenticate(): AsyncEvent {
                 grant_type: 'authorization_code'
             });
 
-            const credential = {
-                authorizedAt: new Date().toISOString(),
-                token
-            };
-
             dispatch({
                 type: 'AUTHENTICATED',
-                credential
+                authorizedAt: new Date().toISOString(),
+                token
             });
         }
 
-        const url = createAuthUrl({
+        const url = feedlyApi.createAuthUrl({
             client_id: environment.clientId,
             redirect_uri: environment.redirectUri,
             response_type: 'code',
@@ -58,42 +53,41 @@ export function authenticate(): AsyncEvent {
     };
 }
 
-export function getCredential(): AsyncEvent<Promise<Credential>> {
-    return async (dispatch, getState) => {
+export function getFeedlyToken(): AsyncEvent<Promise<feedly.ExchangeTokenResponse>> {
+    return async (dispatch, getState, { environment }) => {
         let { credential } = getState();
 
-        if (!credential) {
+        if (!credential.token || !credential.authorizedAt) {
             throw new Error('Not authenticated');
         }
 
+        let token = credential.token as feedly.ExchangeTokenResponse;
+
         const now = new Date();
-        const expiredAt = new Date(credential.authorizedAt).getTime() + (credential.token.expires_in * 1000);
+        const expiredAt = new Date(credential.authorizedAt).getTime() + (token.expires_in * 1000);
         const isExpired = expiredAt < now.getTime() + 1000 * 60;
 
         if (isExpired) {
-            const { environment } = getState();
-            const token = await refreshToken({
-                refresh_token: credential.token.refresh_token,
+            const refreshToken = await feedlyApi.refreshToken({
+                refresh_token: token.refresh_token,
                 client_id: environment.clientId,
                 client_secret: environment.clientSecret,
                 grant_type: 'refresh_token'
             });
 
-            credential = {
-                authorizedAt: now.toISOString(),
-                token: {
-                    ...credential.token,
-                    ...token
-                }
+            token = {
+                ...token,
+                ...refreshToken
             };
 
             dispatch({
                 type: 'AUTHENTICATED',
-                credential
+                authorizedAt: now.toISOString(),
+                token
             });
         }
 
-        return credential;
+        return token;
     };
 }
 

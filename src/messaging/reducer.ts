@@ -10,7 +10,6 @@ import subscriptionsReducer from 'messaging/subscription/reducer';
 
 export default combineReducers<State, Event>({
     credential: credentialReducer,
-    environment: (state, event) => state,
     notifications: notificationsReducer,
     search: searchReducer,
     settings: (state, event) => state,

@@ -34,7 +34,8 @@ export default function reducer(subscriptions: Subscriptions, event: Event): Sub
                 totalUnreadCount: event.subscriptions.reduce(
                     (total, subscription) => total + subscription.unreadCount,
                     0
-                )
+                ),
+                version: subscriptions.version
             };
 
         case 'FEED_SUBSCRIBED':

@@ -4,7 +4,7 @@ import '@emonkak/enumerable/extensions/groupJoin';
 import '@emonkak/enumerable/extensions/toArray';
 
 import { AsyncEvent } from 'messaging/types';
-import { getCredential } from 'messaging/credential/actions';
+import { getFeedlyToken } from 'messaging/credential/actions';
 import { searchFeeds as feedlySearchFeeds } from 'adapters/feedly/api';
 
 export function searchFeeds(query: string): AsyncEvent {
@@ -14,8 +14,8 @@ export function searchFeeds(query: string): AsyncEvent {
             query
         });
 
-        const credential = await getCredential()(dispatch, getState);
-        const searchResult = await feedlySearchFeeds(credential.token.id, {
+        const token = await dispatch(getFeedlyToken());
+        const searchResult = await feedlySearchFeeds(token.id, {
             query,
             count: 20
         });
