@@ -49,10 +49,14 @@ class SearchPage extends PureComponent<SearchPageProps, {}> {
     componentWillReceiveProps(nextProps: SearchPageProps) {
         const { onSearchFeeds, search } = nextProps;
 
-        if (nextProps.params['query'] && nextProps.params['query'] !== search.query) {
-            this.searchInput.value = nextProps.params['query'];
+        if (nextProps.params['query'] !== search.query) {
+            const query = nextProps.params['query'] || '';
 
-            onSearchFeeds(nextProps.params['query']);
+            this.searchInput.value = query;
+
+            if (query) {
+                onSearchFeeds(query);
+            }
         }
     }
 
