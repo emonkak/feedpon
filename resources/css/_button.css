@@ -34,7 +34,7 @@
   }
 
   &:focus {
-    box-shadow: 0 0 0 2px var(default-focus-outline-color);
+    box-shadow: 0 0 0 2px var(--default-focus-outline-color);
   }
 
   &:disabled {
