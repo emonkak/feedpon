@@ -12,6 +12,7 @@ export type Event
     | { type: 'ENTRY_PINNED', entryId: string | number, isPinned: boolean }
     | { type: 'ENTRY_PINNING', entryId: string | number }
     | { type: 'ENTRY_PINNING_FAILED', entryId: string | number }
+    | { type: 'ENTRY_URLS_EXPANDED', urls: { [key: string]: string } }
     | { type: 'FEED_SEARCHED', query: string, feeds: Feed[] }
     | { type: 'FEED_SEARCHING', query: string }
     | { type: 'FEED_SEARCHING_FAILED', query: string }
@@ -141,7 +142,6 @@ export interface Entry {
     content: string;
     publishedAt: number;
     bookmarkCount: number;
-    bookmarkUrl: string;
     isPinned: boolean;
     isPinning: boolean;
     markedAsRead: boolean;
@@ -203,9 +203,10 @@ export type NotificationKind = 'default' | 'positive' | 'negative';
 
 export interface Settings {
     defaultEntriesOrder: 'newest' | 'oldest';
-    defaultStreamView: StreamView;
     defaultNumEntries: number;
+    defaultStreamView: StreamView;
     onlyUnreadEntries: boolean;
+    trackingUrlPatterns: string[];
     version: number;
 }
 

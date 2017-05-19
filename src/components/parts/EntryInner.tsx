@@ -160,7 +160,7 @@ export default class EntryInner extends PureComponent<EntryInnerProps, EntryInne
                         'is-popular': entry.bookmarkCount >= 10
                     })}
                     target="_blank"
-                    href={entry.bookmarkUrl}>
+                    href={'http://b.hatena.ne.jp/entry/' + entry.url}>
                         <i className="icon icon-16 icon-bookmark" />{entry.bookmarkCount > 0 ? entry.bookmarkCount : ''}
                 </a>
             </div>

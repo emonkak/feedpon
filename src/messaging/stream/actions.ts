@@ -1,6 +1,7 @@
 import * as bookmarkApi from 'adapters/hatena/bookmarkApi';
 import * as feedly from 'adapters/feedly/types';
 import * as feedlyApi from 'adapters/feedly/api';
+import PromiseQueue from 'utils/PromiseQueue';
 import decodeResponseAsText from 'utils/decodeResponseAsText';
 import stripTags from 'utils/stripTags';
 import { AsyncEvent, Entry, Event, FullContent, Stream, StreamOptions, StreamView } from 'messaging/types';
@@ -44,7 +45,13 @@ export function fetchStream(streamId: string, options?: StreamOptions): AsyncEve
         }
 
         if (stream) {
-            await dispatch(fetchBookmarkCounts(stream.entries));
+            const urls = stream.entries
+                .filter((entry) => !!entry.url)
+                .map((entry) => entry.url);
+
+            const expandedUrls = await dispatch(expandUrls(urls));
+
+            await dispatch(fetchBookmarkCounts(expandedUrls));
         }
     };
 }
@@ -86,7 +93,13 @@ export function fetchMoreEntries(streamId: string, continuation: string, options
             throw error;
         }
 
-        await dispatch(fetchBookmarkCounts(entries));
+        const urls = entries
+            .filter((entry) => !!entry.url)
+            .map((entry) => entry.url);
+
+        const expandedUrls = await dispatch(expandUrls(urls));
+
+        await dispatch(fetchBookmarkCounts(expandedUrls));
     };
 }
 
@@ -285,14 +298,10 @@ function fetchPinsStream(options: StreamOptions): AsyncEvent<Stream> {
     };
 }
 
-function fetchBookmarkCounts(entries: Entry[]): AsyncEvent {
+function fetchBookmarkCounts(urls: string[]): AsyncEvent {
     return async (dispatch, getState) => {
-        const entryUrls = entries
-            .filter((entry) => !!entry.url)
-            .map((entry) => entry.url);
-
-        if (entryUrls.length > 0) {
-            const bookmarkCounts = await bookmarkApi.getBookmarkCounts(entryUrls);
+        if (urls.length > 0) {
+            const bookmarkCounts = await bookmarkApi.getBookmarkCounts(urls);
 
             dispatch({
                 type: 'BOOKMARK_COUNTS_FETCHED',
@@ -313,7 +322,6 @@ function convertEntry(entry: feedly.Entry): Entry {
         summary: stripTags((entry.summary ? entry.summary.content : '') || (entry.content ? entry.content.content : '')),
         content: (entry.content ? entry.content.content : '') || (entry.summary ? entry.summary.content : ''),
         publishedAt: entry.published,
-        bookmarkUrl: 'http://b.hatena.ne.jp/entry/' + url,
         bookmarkCount: 0,
         isPinned: entry.tags ? entry.tags.some((tag) => tag.id.endsWith('tag/global.saved')) : false,
         isPinning: false,
@@ -563,6 +571,44 @@ export function unpinEntry(entryId: string): AsyncEvent {
 
             throw error;
         }
+    };
+}
+
+function expandUrls(urls: string[]): AsyncEvent<string[]> {
+    return async (dispatch, getState) => {
+        const { settings: { trackingUrlPatterns } } = getState();
+        const trackingUrls = urls
+            .filter((url) => trackingUrlPatterns.some((pattern) => tryMatch(pattern, url)));
+
+        if (trackingUrls.length === 0) {
+            return urls;
+        }
+
+        const queue = new PromiseQueue(8);
+
+        for (const url of trackingUrls) {
+            queue.enqueue(async () => {
+                const response = await fetch(url, {
+                    cache: 'force-cache',
+                    method: 'HEAD'
+                });
+                return { url, redirectUrl: response.url };
+            });
+        }
+
+        const { results } = await queue.getResults();
+
+        const expandedUrls = results.reduce<{ [key: string]: string }>((acc, { url, redirectUrl }) => {
+            acc[url] = redirectUrl;
+            return acc;
+        }, {});
+
+        dispatch({
+            type: 'ENTRY_URLS_EXPANDED',
+            urls: expandedUrls
+        });
+
+        return urls.map(url => expandedUrls[url] || url);
     };
 }
 

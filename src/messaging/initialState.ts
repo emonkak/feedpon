@@ -22,6 +22,10 @@ const initialState: State = {
         defaultNumEntries: 20,
         defaultStreamView: 'expanded',
         onlyUnreadEntries: true,
+        trackingUrlPatterns: [
+            '^http://feedproxy\.google\.com',
+            '^http://rss\.rssad\.jp'
+        ],
         version: 1
     },
     siteinfo: {

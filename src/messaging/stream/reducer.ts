@@ -310,6 +310,23 @@ export default function reducer(streams: Streams, event: Event): Streams {
                 }
             };
 
+        case 'ENTRY_URLS_EXPANDED':
+            return {
+                ...streams,
+                current: {
+                    ...streams.current,
+                    entries: streams.current.entries.map((entry) => {
+                        if (!event.urls[entry.url]) {
+                            return entry;
+                        }
+                        return {
+                            ...entry,
+                            url: event.urls[entry.url]
+                        };
+                    })
+                }
+            };
+
         case 'SUBSCRIPTIONS_FETCHED': {
             if (!streams.current.subscription) {
                 return streams;
