@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
 import classnames from 'classnames';
+import { Link } from 'react-router';
 
 import CleanHtml from 'components/parts/CleanHtml';
 import CommentPopoverContent from 'components/parts/CommentPopoverContent';
@@ -17,6 +18,7 @@ interface EntryInnerProps {
     onFetchFullContent: (entryId: string | number, url: string) => void;
     onPin: (entryId: string | number) => void;
     onUnpin: (entryId: string | number) => void;
+    sameOrigin: boolean;
 }
 
 interface EntryInnerState {
@@ -166,17 +168,15 @@ export default class EntryInner extends PureComponent<EntryInnerProps, EntryInne
     }
 
     renderOrign() {
-        const { entry } = this.props;
+        const { entry, sameOrigin } = this.props;
 
-        if (entry.origin) {  // FIXME: If same origin
+        if (!sameOrigin && entry.origin) {
             return (
                 <div className="list-inline-item">
-                    <a
-                        className="link-strong"
-                        target="_blank"
-                        href={entry.origin.url}>
+                    <Link className="link-strong"
+                          to={'streams/' + encodeURIComponent(entry.origin.streamId)}>
                         {entry.origin.title}
-                    </a>
+                    </Link>
                 </div>
             );
         }

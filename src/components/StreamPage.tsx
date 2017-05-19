@@ -328,6 +328,7 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
                 onRead={this.handleReadEntry}
                 onUnpin={onUnpinEntry}
                 readEntryIds={readEntryIds}
+                sameOrigin={!!stream.feed}
                 scrollTo={scrollTo}
                 view={stream.options.view} />
         );
