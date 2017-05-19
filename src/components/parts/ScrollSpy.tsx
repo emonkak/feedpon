@@ -12,6 +12,7 @@ import throttleEventHandler from 'utils/throttleEventHandler';
 
 interface ScrollSpyProps {
     activeProp?: string;
+    getKey: (child: React.ReactElement<any>) => React.Key;
     getScrollableParent?: (element: Element) => Element | Window;
     isDisabled?: boolean;
     marginBottom?: number;
@@ -161,30 +162,23 @@ export default class ScrollSpy extends PureComponent<ScrollSpyProps, ScrollSpySt
     }
 
     renderChild(child: React.ReactElement<any>) {
-        const childKey = child.key;
+        const { getKey, activeProp } = this.props;
+        const { activeKey } = this.state;
 
-        if (childKey) {
-            const { activeProp } = this.props;
-            const { activeKey } = this.state;
+        const key = getKey(child);
+        const ref = (instance: React.ReactInstance) => {
+            if (child) {
+                this.childElements.set(key, findDOMNode<HTMLElement>(instance));
+            } else {
+                this.childElements.delete(key);
+            }
+        };
 
-            const ref = (instance: React.ReactInstance) => {
-                if (child) {
-                    this.childElements.set(childKey, findDOMNode<HTMLElement>(instance));
-                } else {
-                    this.childElements.delete(childKey);
-                }
-            };
-
-            const props = {
-                ...child.props,
-                [activeProp!]: childKey === activeKey,
-                ref: createChainedFunction((child as any).ref, ref)
-            };
-
-            return cloneElement(child, props);
-        }
-
-        return child;
+        return cloneElement(child, {
+            ...child.props,
+            [activeProp!]: key === activeKey,
+            ref: createChainedFunction((child as any).ref, ref)
+        });
     }
 
     render() {

@@ -160,6 +160,7 @@ export default class EntryList extends PureComponent<EntryListProps, EntryListSt
 
         return (
             <ScrollSpy
+                getKey={getKey}
                 isDisabled={isScrolling}
                 marginTop={SCROLL_OFFSET}
                 onActivate={this.handleActivate}
@@ -175,4 +176,8 @@ function renderList(children: React.ReactNode): React.ReactElement<any> {
     return (
         <div className="entry-list">{children}</div>
     );
+}
+
+function getKey(child: React.ReactElement<any>): string {
+    return child.props.entry.entryId;
 }
