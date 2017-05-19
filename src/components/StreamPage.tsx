@@ -221,6 +221,8 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
     renderConfigDropdown() {
         const { stream } = this.props;
 
+        const checkmarkIcon = <i className="icon icon-16 icon-checkmark" />;
+
         return (
             <Dropdown
                 className="navbar-action"
@@ -228,30 +230,30 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
                 pullRight={true}>
                 <div className="menu-heading">View</div>
                 <MenuItem
-                    icon={stream.options.view === 'expanded' ? <i className="icon icon-16 icon-checkmark" /> : null}
+                    icon={stream.options.view === 'expanded' ? checkmarkIcon : null}
                     onSelect={this.handleChangeStreamView}
                     primaryText="Expanded view"
                     value="expanded" />
                 <MenuItem
-                    icon={stream.options.view === 'collapsible' ? <i className="icon icon-16 icon-checkmark" /> : null}
+                    icon={stream.options.view === 'collapsible' ? checkmarkIcon : null}
                     primaryText="Collapsible view"
                     onSelect={this.handleChangeStreamView}
                     value="collapsible" />
                 <div className="menu-divider" />
                 <div className="menu-heading">Order</div>
                 <MenuItem
-                    icon={stream.options.order === 'newest' ? <i className="icon icon-16 icon-checkmark" /> : null}
+                    icon={stream.options.order === 'newest' ? checkmarkIcon : null}
                     onSelect={this.handleChangeEntryOrder}
                     primaryText="Newest first"
                     value="newest" />
                 <MenuItem
-                    icon={stream.options.order === 'oldest' ? <i className="icon icon-16 icon-checkmark" /> : null}
+                    icon={stream.options.order === 'oldest' ? checkmarkIcon : null}
                     onSelect={this.handleChangeEntryOrder}
                     primaryText="Oldest first"
                     value="oldest" />
                 <div className="menu-divider" />
                 <MenuItem
-                    icon={stream.options.onlyUnread ? <i className="icon icon-16 icon-checkmark" /> : null}
+                    icon={stream.options.onlyUnread ? checkmarkIcon : null}
                     primaryText="Only unread"
                     onSelect={this.handleToggleOnlyUnread} />
             </Dropdown>

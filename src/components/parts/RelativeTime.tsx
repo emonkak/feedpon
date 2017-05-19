@@ -4,7 +4,7 @@ import moment from 'moment';
 interface RelativeTimeProps {
     className?: string;
     refreshInterval?: number;
-    time: string;
+    time: number;
 }
 
 interface RelativeTimeState {
@@ -75,7 +75,7 @@ export default class RelativeTime extends PureComponent<RelativeTimeProps, Relat
         const { relativeTime } = this.state;
 
         return (
-            <time className={className} dateTime={time} title={moment(time).format('llll')}>
+            <time className={className} dateTime={new Date(time).toISOString()} title={moment(time).format('llll')}>
                 {relativeTime}
             </time>
         );

@@ -27,7 +27,7 @@ export function authenticate(): AsyncEvent {
 
             dispatch({
                 type: 'AUTHENTICATED',
-                authorizedAt: new Date().toISOString(),
+                authorizedAt: Date.now(),
                 token
             });
         }
@@ -57,15 +57,15 @@ export function getFeedlyToken(): AsyncEvent<feedly.ExchangeTokenResponse> {
     return async (dispatch, getState, { environment }) => {
         let { credential } = getState();
 
-        if (!credential.token || !credential.authorizedAt) {
+        if (!credential.token) {
             throw new Error('Not authenticated');
         }
 
         let token = credential.token as feedly.ExchangeTokenResponse;
 
-        const now = new Date();
-        const expiredAt = new Date(credential.authorizedAt).getTime() + (token.expires_in * 1000);
-        const isExpired = expiredAt < now.getTime() + 1000 * 60;
+        const now = Date.now();
+        const expiredAt = credential.authorizedAt + (token.expires_in * 1000);
+        const isExpired = expiredAt < now + 1000 * 60;
 
         if (isExpired) {
             const refreshToken = await feedlyApi.refreshToken({
@@ -82,7 +82,7 @@ export function getFeedlyToken(): AsyncEvent<feedly.ExchangeTokenResponse> {
 
             dispatch({
                 type: 'AUTHENTICATED',
-                authorizedAt: now.toISOString(),
+                authorizedAt: now,
                 token
             });
         }

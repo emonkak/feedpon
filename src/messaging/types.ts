@@ -1,6 +1,6 @@
 export type Event
     = { type: 'APPLICATION_INITIALIZED' }
-    | { type: 'AUTHENTICATED', authorizedAt: string, token: any }
+    | { type: 'AUTHENTICATED', authorizedAt: number, token: any }
     | { type: 'BOOKMARK_COUNTS_FETCHED', bookmarkCounts: { [key: string]: number } }
     | { type: 'CATEGORY_CREATED', category: Category }
     | { type: 'CATEGORY_CREATING' }
@@ -27,16 +27,18 @@ export type Event
     | { type: 'MORE_ENTRIES_FETCHING_FAILED', streamId: string }
     | { type: 'NOTIFICATION_DISMISSED', id: number }
     | { type: 'NOTIFICATION_SENT', notification: Notification }
-    | { type: 'SITEINFO_UPDATED', items: SiteinfoItem[], updatedAt: string }
+    | { type: 'SITEINFO_UPDATED', items: SiteinfoItem[], updatedAt: number }
     | { type: 'SITEINFO_UPDATING' }
     | { type: 'SITEINFO_UPDATING_FAILED' }
     | { type: 'STREAM_FETCHED', stream: Stream  }
     | { type: 'STREAM_FETCHING', streamId: string }
     | { type: 'STREAM_FETCHING_FAILED', streamId: string }
     | { type: 'STREAM_VIEW_CHANGED', streamId: string, view: StreamView }
-    | { type: 'SUBSCRIPTIONS_FETCHED', subscriptions: Subscription[], categories: Category[], fetchedAt: string }
+    | { type: 'SUBSCRIPTIONS_FETCHED', subscriptions: Subscription[], categories: Category[], fetchedAt: number }
     | { type: 'SUBSCRIPTIONS_FETCHING' }
     | { type: 'SUBSCRIPTIONS_FETCHING_FAILED' }
+    | { type: 'SUBSCRIPTIONS_ORDER_CHANGED', order: SubscriptionOrder }
+    | { type: 'SUBSCRIPTIONS_UNREAD_VIEWING_CHANGED', onlyUnread: boolean }
     | { type: 'USER_SITEINFO_ITEM_ADDED', item: SiteinfoItem }
     | { type: 'USER_SITEINFO_ITEM_REMOVED', id: string };
 
@@ -62,7 +64,7 @@ export interface Context {
 }
 
 export interface Credential {
-    authorizedAt: string | null;
+    authorizedAt: number;
     token: object | null;
     version: number;
 }
@@ -137,7 +139,7 @@ export interface Entry {
     url: string;
     summary: string;
     content: string;
-    publishedAt: string;
+    publishedAt: number;
     bookmarkCount: number;
     bookmarkUrl: string;
     isPinned: boolean;
@@ -200,12 +202,10 @@ export interface Notification {
 export type NotificationKind = 'default' | 'positive' | 'negative';
 
 export interface Settings {
-    defaultEntryOrder: 'newest' | 'oldest';
+    defaultEntriesOrder: 'newest' | 'oldest';
     defaultStreamView: StreamView;
     defaultNumEntries: number;
-    defaultSubscriptionOrder: 'newest' | 'oldest';
     onlyUnreadEntries: boolean;
-    onlyUnreadSubscriptions: boolean;
     version: number;
 }
 
@@ -213,26 +213,31 @@ export interface Subscriptions {
     categories: Categories;
     isLoading: boolean;
     items: Subscription[];
-    lastUpdatedAt: string | null;
+    lastUpdatedAt: number;
+    onlyUnread: boolean;
+    order: SubscriptionOrder;
     totalUnreadCount: number;
     version: number;
 }
 
 export interface Subscription {
-    subscriptionId: string | number;
     feedId: string | number;
-    streamId: string;
-    labels: string[];
-    title: string;
-    url: string;
     iconUrl: string;
+    labels: string[];
+    streamId: string;
+    subscriptionId: string | number;
+    title: string;
     unreadCount: number;
+    updatedAt: number;
+    url: string;
 }
+
+export type SubscriptionOrder = 'title' | 'newest' | 'oldest';
 
 export interface Siteinfo {
     items: SiteinfoItem[];
     userItems: SiteinfoItem[];
-    lastUpdatedAt: string | null;
+    lastUpdatedAt: number;
     isLoading: boolean;
     version: number;
 }

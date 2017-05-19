@@ -25,7 +25,7 @@ export function fetchStream(streamId: string, options?: StreamOptions): AsyncEve
 
             options = {
                 numEntries: settings.defaultNumEntries,
-                order: settings.defaultEntryOrder,
+                order: settings.defaultEntriesOrder,
                 onlyUnread: settings.onlyUnreadEntries,
                 view: settings.defaultStreamView
             };
@@ -312,7 +312,7 @@ function convertEntry(entry: feedly.Entry): Entry {
         url,
         summary: stripTags((entry.summary ? entry.summary.content : '') || (entry.content ? entry.content.content : '')),
         content: (entry.content ? entry.content.content : '') || (entry.summary ? entry.summary.content : ''),
-        publishedAt: new Date(entry.published).toISOString(),
+        publishedAt: entry.published,
         bookmarkUrl: 'http://b.hatena.ne.jp/entry/' + url,
         bookmarkCount: 0,
         isPinned: entry.tags ? entry.tags.some((tag) => tag.id.endsWith('tag/global.saved')) : false,

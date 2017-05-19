@@ -7,7 +7,7 @@ import '@emonkak/enumerable/extensions/selectMany';
 import '@emonkak/enumerable/extensions/toArray';
 
 import * as feedly from 'adapters/feedly/api';
-import { AsyncEvent, Category, Feed } from 'messaging/types';
+import { AsyncEvent, Category, Event, Feed, SubscriptionOrder } from 'messaging/types';
 import { getFeedlyToken } from 'messaging/credential/actions';
 
 export function fetchSubscriptions(): AsyncEvent {
@@ -39,7 +39,8 @@ export function fetchSubscriptions(): AsyncEvent {
                     title: subscription.title || '',
                     url: subscription.website || '',
                     iconUrl: subscription.iconUrl || '',
-                    unreadCount: unreadCount.count
+                    unreadCount: unreadCount.count,
+                    updatedAt: unreadCount.updated
                 }))
                 .toArray();
 
@@ -58,7 +59,7 @@ export function fetchSubscriptions(): AsyncEvent {
 
             dispatch({
                 type: 'SUBSCRIPTIONS_FETCHED',
-                fetchedAt: new Date().toISOString(),
+                fetchedAt: Date.now(),
                 categories,
                 subscriptions
             });
@@ -133,7 +134,8 @@ export function subscribeFeed(feed: Feed, labels: string[]): AsyncEvent {
                     title: feed.title,
                     url: feed.url,
                     iconUrl: feed.iconUrl,
-                    unreadCount: unreadCount ? unreadCount.count : 0
+                    unreadCount: unreadCount ? unreadCount.count : 0,
+                    updatedAt: unreadCount ? unreadCount.updated : 0
                 }
             });
         } catch (error) {
@@ -171,5 +173,19 @@ export function unsubscribeFeed(feedId: string | number): AsyncEvent {
 
             throw error;
         }
+    };
+}
+
+export function changeSubscriptionOrder(order: SubscriptionOrder): Event {
+    return {
+        type: 'SUBSCRIPTIONS_ORDER_CHANGED',
+        order
+    };
+}
+
+export function changeUnreadViewing(onlyUnread: boolean): Event {
+    return {
+        type: 'SUBSCRIPTIONS_UNREAD_VIEWING_CHANGED',
+        onlyUnread
     };
 }

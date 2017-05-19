@@ -143,7 +143,7 @@ class SiteinfoSettings extends PureComponent<SiteinfoProps, {}> {
             Update siteinfo...
         </button>;
 
-        const lastUpdate = siteinfo.lastUpdatedAt
+        const lastUpdate = siteinfo.lastUpdatedAt > 0
             ? <p><strong>{siteinfo.items.length}</strong> siteinfo items are available. Last update was <strong><RelativeTime time={siteinfo.lastUpdatedAt} /></strong>.</p>
             : <p>Not update yet.</p>;
 

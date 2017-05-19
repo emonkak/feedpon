@@ -3,19 +3,17 @@ import classnames from 'classnames';
 
 import Dropdown from 'components/parts/Dropdown';
 import RelativeTime from 'components/parts/RelativeTime';
-import { Category, Subscription } from 'messaging/types';
+import { Category, Subscription, SubscriptionOrder, Subscriptions } from 'messaging/types';
 import { MenuItem } from 'components/parts/Menu';
 import { TreeBranch, TreeHeader, TreeLeaf, TreeRoot } from 'components/parts/Tree';
 
 interface SidebarTreeProps {
-    categories: Category[];
-    isLoading: boolean;
-    lastUpdatedAt: string | null;
+    onChangeSubscriptionOrder: (order: SubscriptionOrder) => void;
+    onChangeUnreadViewing: (onlyUnread: boolean) => void;
     onReload: () => void;
     onSelect: (value: string) => void;
     selectedValue?: string;
-    subscriptions: Subscription[];
-    totalUnreadCount: number;
+    subscriptions: Subscriptions;
 }
 
 const UNCATEGORIZED = Symbol();
@@ -57,13 +55,14 @@ export default class SidebarTree extends PureComponent<SidebarTreeProps, {}> {
     }
 
     render() {
-        const { categories, isLoading, lastUpdatedAt, onReload, onSelect, selectedValue, subscriptions, totalUnreadCount } = this.props;
+        const { onChangeSubscriptionOrder, onChangeUnreadViewing, onReload, onSelect, selectedValue, subscriptions } = this.props;
 
-        const lastUpdate = lastUpdatedAt
-            ? <span>Updated <RelativeTime time={lastUpdatedAt} /></span>
+        const lastUpdate = subscriptions.lastUpdatedAt > 0
+            ? <span>Updated <RelativeTime time={subscriptions.lastUpdatedAt} /></span>
             : 'Not updated yet';
 
-        const groupedSubscriptions = subscriptions
+        const groupedSubscriptions = subscriptions.items
+            .filter((subscription) => !subscriptions.onlyUnread || subscription.unreadCount > 0)
             .reduce<{ [key: string]: Subscription[] }>((group, subscription) => {
                 const labels = subscription.labels.length > 0
                     ? subscription.labels
@@ -79,7 +78,7 @@ export default class SidebarTree extends PureComponent<SidebarTreeProps, {}> {
                 return group;
             }, {});
 
-        const userCategories = categories
+        const userCategories = subscriptions.categories.items
             .filter((category) => !!groupedSubscriptions[category.label])
             .map((category) => this.renderCategory(
                 category,
@@ -88,20 +87,22 @@ export default class SidebarTree extends PureComponent<SidebarTreeProps, {}> {
         const uncategorizedSubscriptions = (groupedSubscriptions[UNCATEGORIZED] || [])
             .map(this.renderSubscription.bind(this));
 
+        const checkmarkIcon = <i className="icon icon-16 icon-checkmark" />;
+
         return (
             <TreeRoot selectedValue={selectedValue}
                       onSelect={onSelect}>
                 <TreeLeaf value="/" primaryText="Dashboard" />
                 <TreeLeaf value="/streams/all/"
                           primaryText="All"
-                          secondaryText={Number(totalUnreadCount).toLocaleString()} />
+                          secondaryText={Number(subscriptions.totalUnreadCount).toLocaleString()} />
                 <TreeLeaf value="/streams/pins/" primaryText="Pins" />
                 <TreeHeader>
                     <button className="tree-node-icon"
-                            disabled={isLoading}
+                            disabled={subscriptions.isLoading}
                             onClick={onReload}>
                         <i className={classnames('icon', 'icon-16', 'icon-refresh', {
-                            'animation-clockwise-rotation': isLoading
+                            'animation-clockwise-rotation': subscriptions.isLoading
                         })} />
                     </button>
                     <span className="tree-node-label">{lastUpdate}</span>
@@ -109,10 +110,23 @@ export default class SidebarTree extends PureComponent<SidebarTreeProps, {}> {
                               className="tree-node-icon"
                               toggleButton={<button><i className="icon icon-16 icon-more" /></button>}>
                         <div className="menu-heading">Order</div>
-                        <MenuItem primaryText="Newest First" />
-                        <MenuItem primaryText="Oldest First" />
+                        <MenuItem icon={subscriptions.order === 'title' ? checkmarkIcon : null}
+                                  onSelect={onChangeSubscriptionOrder}
+                                  primaryText="Title"
+                                  value="title" />
+                        <MenuItem icon={subscriptions.order === 'newest' ? checkmarkIcon : null}
+                                  onSelect={onChangeSubscriptionOrder}
+                                  primaryText="Newest First"
+                                  value="newest" />
+                        <MenuItem icon={subscriptions.order === 'oldest' ? checkmarkIcon : null}
+                                  onSelect={onChangeSubscriptionOrder}
+                                  primaryText="Oldest First"
+                                  value="oldest" />
                         <div className="menu-divider" />
-                        <MenuItem primaryText="Unread only" />
+                        <MenuItem icon={subscriptions.onlyUnread ? checkmarkIcon : null}
+                                  onSelect={onChangeUnreadViewing}
+                                  primaryText="Only unread"
+                                  value={!subscriptions.onlyUnread} />
                     </Dropdown>
                 </TreeHeader>
                 {userCategories}

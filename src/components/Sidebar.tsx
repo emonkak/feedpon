@@ -7,10 +7,12 @@ import SidebarTree from 'components/parts/SidebarTree';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
 import { State, Subscriptions } from 'messaging/types';
-import { fetchSubscriptions } from 'messaging/subscription/actions';
+import { changeSubscriptionOrder, changeUnreadViewing, fetchSubscriptions } from 'messaging/subscription/actions';
 
 interface SidebarProps {
     location: Location;
+    onChangeSubscriptionOrder: typeof changeSubscriptionOrder;
+    onChangeUnreadViewing: typeof changeUnreadViewing;
     onFetchSubscriptions: typeof fetchSubscriptions;
     router: History;
     subscriptions: Subscriptions;
@@ -28,7 +30,7 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
     componentWillMount() {
         const { subscriptions, onFetchSubscriptions } = this.props;
 
-        if (subscriptions.lastUpdatedAt == null) {
+        if (subscriptions.lastUpdatedAt === 0) {
             onFetchSubscriptions();
         }
     }
@@ -54,7 +56,7 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
     }
 
     render() {
-        const { location, subscriptions } = this.props;
+        const { location, onChangeSubscriptionOrder, onChangeUnreadViewing, subscriptions } = this.props;
 
         return (
             <nav className="sidebar">
@@ -64,14 +66,12 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
                                     subscriptions={subscriptions.items} />
                 </div>
                 <div className="sidebar-group">
-                    <SidebarTree categories={subscriptions.categories.items}
-                                 isLoading={subscriptions.isLoading}
-                                 lastUpdatedAt={subscriptions.lastUpdatedAt}
+                    <SidebarTree onChangeSubscriptionOrder={onChangeSubscriptionOrder}
+                                 onChangeUnreadViewing={onChangeUnreadViewing}
                                  onReload={this.handleReload}
                                  onSelect={this.handleSelect}
                                  selectedValue={location.pathname}
-                                 subscriptions={subscriptions.items}
-                                 totalUnreadCount={subscriptions.totalUnreadCount} />
+                                 subscriptions={subscriptions} />
                 </div>
                 <div className="sidebar-group">
                     <Link className="button button-block button-outline-default" to="/search">New Subscription</Link>
@@ -92,6 +92,8 @@ export default connect(
         subscriptions: state.subscriptions,
     }),
     (dispatch) => bindActions({
+        onChangeSubscriptionOrder: changeSubscriptionOrder,
+        onChangeUnreadViewing: changeUnreadViewing,
         onFetchSubscriptions: fetchSubscriptions
     }, dispatch)
 )(Sidebar);

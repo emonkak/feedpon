@@ -39,7 +39,7 @@ export function updateSiteinfo(): AsyncEvent {
             dispatch({
                 type: 'SITEINFO_UPDATED',
                 items: items,
-                updatedAt: new Date().toISOString()
+                updatedAt: Date.now()
             });
 
             dispatch(sendNotification(
@@ -60,7 +60,7 @@ export function getSiteinfoItems(): AsyncEvent<SiteinfoItem[]> {
     return async (dispatch, getState) => {
         const { siteinfo } = getState();
 
-        if (siteinfo.lastUpdatedAt) {
+        if (siteinfo.lastUpdatedAt > 0) {
             return siteinfo.userItems.concat(siteinfo.items);
         }
 
@@ -74,7 +74,7 @@ export function getSiteinfoItems(): AsyncEvent<SiteinfoItem[]> {
             dispatch({
                 type: 'SITEINFO_UPDATED',
                 items: items,
-                updatedAt: new Date().toISOString()
+                updatedAt: Date.now()
             });
 
             return siteinfo.userItems.concat(items);

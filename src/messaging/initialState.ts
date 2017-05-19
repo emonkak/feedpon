@@ -2,7 +2,7 @@ import { State } from 'messaging/types';
 
 const initialState: State = {
     credential: {
-        authorizedAt: null,
+        authorizedAt: 0,
         token: null,
         version: 1
     },
@@ -18,19 +18,17 @@ const initialState: State = {
         version: 1
     },
     settings: {
-        defaultEntryOrder: 'newest',
+        defaultEntriesOrder: 'newest',
         defaultNumEntries: 20,
-        defaultSubscriptionOrder: 'newest',
         defaultStreamView: 'expanded',
         onlyUnreadEntries: true,
-        onlyUnreadSubscriptions: true,
         version: 1
     },
     siteinfo: {
         isLoading: false,
         items: [],
         userItems: [],
-        lastUpdatedAt: null,
+        lastUpdatedAt: 0,
         version: 1
     },
     streams: {
@@ -59,7 +57,9 @@ const initialState: State = {
         },
         isLoading: false,
         items: [],
-        lastUpdatedAt: null,
+        lastUpdatedAt: 0,
+        onlyUnread: true,
+        order: 'title',
         totalUnreadCount: 0,
         version: 1
     }
