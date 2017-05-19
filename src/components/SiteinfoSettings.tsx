@@ -33,7 +33,7 @@ function getKey(item: SiteinfoItem) {
     return item.id;
 }
 
-function renderUserTable(children: React.ReactNode, aboveSpace: number, belowSpace: number) {
+function renderUserTable(children: React.ReactNode) {
     return (
         <table className="table table-filled">
             <thead>
@@ -47,9 +47,7 @@ function renderUserTable(children: React.ReactNode, aboveSpace: number, belowSpa
                 </tr>
             </thead>
             <tbody>
-                <tr style={{ height: aboveSpace }} />
                 {children}
-                <tr style={{ height: belowSpace }} />
             </tbody>
         </table>
     );
@@ -145,25 +143,21 @@ class SiteinfoSettings extends PureComponent<SiteinfoProps, {}> {
             Update siteinfo...
         </button>;
 
+        const lastUpdate = siteinfo.lastUpdatedAt
+            ? <p><strong>{siteinfo.items.length}</strong> siteinfo items are available. Last update was <strong><RelativeTime time={siteinfo.lastUpdatedAt} /></strong>.</p>
+            : <p>Not update yet.</p>;
+
         return (
             <div>
                 <section className="section">
                     <h1 className="display-1">User siteinfo</h1>
                     <SiteinfoForm onSubmit={onAddSiteinfoItem} />
-                    <LazyList
-                        assumedItemHeight={ASSUMED_ITEM_HEIGHT}
-                        getKey={getKey}
-                        items={siteinfo.userItems}
-                        renderItem={this.renderUserItem}
-                        renderList={renderUserTable} />
+                    {renderUserTable(siteinfo.userItems.map(this.renderUserItem))}
                 </section>
 
                 <section className="section">
                     <h1 className="display-1">Shared siteinfo</h1>
-                    <p>
-                        <strong>{siteinfo.items.length}</strong> siteinfo items are available.
-                        Last update was <strong><RelativeTime time={siteinfo.lastUpdatedAt} /></strong>.
-                    </p>
+                    {lastUpdate}
                     <p>
                         {updateButton}
                     </p>

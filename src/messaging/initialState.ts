@@ -30,7 +30,7 @@ const initialState: State = {
         isLoading: false,
         items: [],
         userItems: [],
-        lastUpdatedAt: '',
+        lastUpdatedAt: null,
         version: 1
     },
     streams: {

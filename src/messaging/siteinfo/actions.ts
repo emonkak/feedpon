@@ -34,33 +34,11 @@ export function updateSiteinfo(): AsyncEvent {
         });
 
         try {
-            const [autoPagerizeItems, ldrFullFeedItems] = await Promise.all([
-                getAutoPagerizeItems(),
-                getLDRFullFeedItems()
-            ]);
-
-            const primaryItems = autoPagerizeItems
-                .slice(0, -1)  // Remove the generic rule
-                .map((item) => ({
-                    id: item.resource_url,
-                    name: item.name,
-                    urlPattern: item.data.url,
-                    contentPath: item.data.pageElement,
-                    nextLinkPath: item.data.nextLink
-                }));
-            const secondaryItems = ldrFullFeedItems
-                .sort(compareLdrFullFeedItem)
-                .map((item) => ({
-                    id: item.resource_url,
-                    name: item.name,
-                    urlPattern: item.data.url,
-                    contentPath: item.data.xpath,
-                    nextLinkPath: ''
-                }));
+            const items = await fetchSiteinfoItems();
 
             dispatch({
                 type: 'SITEINFO_UPDATED',
-                items: primaryItems.concat(secondaryItems),
+                items: items,
                 updatedAt: new Date().toISOString()
             });
 
@@ -76,6 +54,67 @@ export function updateSiteinfo(): AsyncEvent {
             throw error;
         }
     };
+}
+
+export function getSiteinfoItems(): AsyncEvent<SiteinfoItem[]> {
+    return async (dispatch, getState) => {
+        const { siteinfo } = getState();
+
+        if (siteinfo.lastUpdatedAt) {
+            return siteinfo.userItems.concat(siteinfo.items);
+        }
+
+        dispatch({
+            type: 'SITEINFO_UPDATING'
+        });
+
+        try {
+            const items = await fetchSiteinfoItems();
+
+            dispatch({
+                type: 'SITEINFO_UPDATED',
+                items: items,
+                updatedAt: new Date().toISOString()
+            });
+
+            return siteinfo.userItems.concat(items);
+        } catch (error) {
+            dispatch({
+                type: 'SITEINFO_UPDATING_FAILED'
+            });
+
+            throw error;
+        }
+    };
+}
+
+async function fetchSiteinfoItems(): Promise<SiteinfoItem[]> {
+    const [autoPagerizeItems, ldrFullFeedItems] = await Promise.all([
+        getAutoPagerizeItems(),
+        getLDRFullFeedItems()
+    ]);
+
+    const primaryItems = autoPagerizeItems
+        .slice(0, -1)  // Remove the generic rule
+        .map((item) => ({
+            id: item.resource_url,
+            name: item.name,
+            urlPattern: item.data.url,
+            contentPath: item.data.pageElement,
+            nextLinkPath: item.data.nextLink
+        }));
+
+    const secondaryItems = ldrFullFeedItems
+        .sort(compareLdrFullFeedItem)
+        .map((item) => ({
+            id: item.resource_url,
+            name: item.name,
+            urlPattern: item.data.url,
+            contentPath: item.data.xpath,
+            nextLinkPath: ''
+        }));
+
+    return primaryItems.concat(secondaryItems);
 }
 
 function compareLdrFullFeedItem(x: WedataItem<LDRFullFeedData>, y: WedataItem<LDRFullFeedData>): number {

@@ -231,7 +231,7 @@ export interface Subscription {
 export interface Siteinfo {
     items: SiteinfoItem[];
     userItems: SiteinfoItem[];
-    lastUpdatedAt: string;
+    lastUpdatedAt: string | null;
     isLoading: boolean;
     version: number;
 }

@@ -5,6 +5,7 @@ import decodeResponseAsText from 'utils/decodeResponseAsText';
 import stripTags from 'utils/stripTags';
 import { AsyncEvent, Entry, Event, FullContent, Stream, StreamOptions, StreamView } from 'messaging/types';
 import { getFeedlyToken } from 'messaging/credential/actions';
+import { getSiteinfoItems } from 'messaging/siteinfo/actions';
 import { sendNotification } from 'messaging/notification/actions';
 
 const URL_PATTERN = /^https?:\/\//;
@@ -390,9 +391,9 @@ export function fetchFullContent(entryId: string, url: string): AsyncEvent {
                 const responseText = await decodeResponseAsText(response);
                 const parsedDocument = new DOMParser().parseFromString(responseText, 'text/html');
 
-                const { siteinfo } = getState();
+                const siteinfoItems = await dispatch(getSiteinfoItems());
 
-                for (const item of siteinfo.userItems.concat(siteinfo.items)) {
+                for (const item of siteinfoItems) {
                     if (tryMatch(item.urlPattern, response.url)) {
                         fullContent = extractFullContent(parsedDocument, response.url, item.contentPath, item.nextLinkPath);
 
