@@ -2,6 +2,21 @@ import { Search, Event } from 'messaging/types';
 
 export default function reducer(search: Search, event: Event) {
     switch (event.type) {
+        case 'APPLICATION_INITIALIZED':
+            return {
+                ...search,
+                isLoading: false,
+                feeds: search.feeds.map((feed) => {
+                    if (!feed.isSubscribing) {
+                        return feed;
+                    }
+                    return {
+                        ...feed,
+                        isSubscribing: false
+                    };
+                })
+            }
+
         case 'FEED_SEARCHING':
             return {
                 feeds: [],

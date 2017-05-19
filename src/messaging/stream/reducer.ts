@@ -3,6 +3,32 @@ import { Streams, Event } from 'messaging/types';
 
 export default function reducer(streams: Streams, event: Event): Streams {
     switch (event.type) {
+        case 'APPLICATION_INITIALIZED':
+            return {
+                ...streams,
+                current: {
+                    ...streams.current,
+                    entries: streams.current.entries.map((entry) => {
+                        if (!(entry.isPinning || entry.comments.isLoading || entry.fullContents.isLoading)) {
+                            return entry;
+                        }
+                        return {
+                            ...entry,
+                            isPinning: false,
+                            comments: {
+                                ...entry.comments,
+                                isLoading: false
+                            },
+                            fullContents: {
+                                ...entry.fullContents,
+                                isLoading: false
+                            }
+                        };
+                    })
+                },
+                isLoading: false
+            }
+
         case 'BOOKMARK_COUNTS_FETCHED':
             return {
                 ...streams,

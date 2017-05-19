@@ -24,7 +24,7 @@ function restoreItem(key: string): any {
     if (typeof jsonString === 'string' && jsonString !== '') {
         try {
             return JSON.parse(jsonString);
-        } catch (_e) {
+        } catch (_error) {
         }
     }
 
@@ -83,3 +83,17 @@ ReactDOM.render((
         </Router>
     </StoreProvider>
 ), element);
+
+function handleReadyStateChange() {
+    if (document.readyState === 'complete') {
+        store.dispatch({
+            type: 'APPLICATION_INITIALIZED'
+        });
+
+        document.removeEventListener('readystatechange', handleReadyStateChange);
+    }
+}
+
+document.addEventListener('readystatechange', handleReadyStateChange);
+
+handleReadyStateChange();

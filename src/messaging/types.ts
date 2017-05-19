@@ -1,5 +1,6 @@
 export type Event
-    = { type: 'AUTHENTICATED', authorizedAt: string, token: any }
+    = { type: 'APPLICATION_INITIALIZED' }
+    | { type: 'AUTHENTICATED', authorizedAt: string, token: any }
     | { type: 'BOOKMARK_COUNTS_FETCHED', bookmarkCounts: { [key: string]: number } }
     | { type: 'CATEGORY_CREATED', category: Category }
     | { type: 'CATEGORY_CREATING' }

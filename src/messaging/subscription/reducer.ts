@@ -9,6 +9,16 @@ import { Subscriptions, Event } from 'messaging/types';
 
 export default function reducer(subscriptions: Subscriptions, event: Event): Subscriptions {
     switch (event.type) {
+        case 'APPLICATION_INITIALIZED':
+            return {
+                ...subscriptions,
+                categories: {
+                    isCreating: false,
+                    items: subscriptions.categories.items
+                },
+                isLoading: false
+            };
+
         case 'CATEGORY_CREATING':
             return {
                 ...subscriptions,

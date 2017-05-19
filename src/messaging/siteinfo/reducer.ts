@@ -2,6 +2,12 @@ import { Siteinfo, Event } from 'messaging/types';
 
 export default function reducer(siteinfo: Siteinfo, event: Event): Siteinfo {
     switch (event.type) {
+        case 'APPLICATION_INITIALIZED':
+            return {
+                ...siteinfo,
+                isLoading: false
+            };
+
         case 'SITEINFO_UPDATING':
             return {
                 ...siteinfo,
