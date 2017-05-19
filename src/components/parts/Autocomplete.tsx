@@ -1,4 +1,4 @@
-import React, { PureComponent, cloneElement } from 'react';
+import React, { Children, PureComponent, cloneElement } from 'react';
 import classnames from 'classnames';
 
 import Closable from 'components/parts/Closable';
@@ -15,6 +15,8 @@ interface AutoCompleteProps {
     onSelect?: (value?: any) => void;
     onSubmit?: (query: string) => void;
     renderCandidate: (candidate: any, query: string) => React.ReactElement<any>;
+    renderHeadItems?: (query: string) => React.ReactNode;
+    renderTailItems?: (query: string) => React.ReactNode;
 }
 
 interface AutocompleteState {
@@ -24,8 +26,10 @@ interface AutocompleteState {
 
 export default class Autocomplete extends PureComponent<AutoCompleteProps, AutocompleteState> {
     static defaultProps = {
+        completeDebounceTime: 100,
         isOpened: false,
-        completeDebounceTime: 100
+        renderHeadItems: () => null,
+        renderTailItems: () => null
     };
 
     private menu: Menu;
@@ -136,8 +140,12 @@ export default class Autocomplete extends PureComponent<AutoCompleteProps, Autoc
     }
 
     render() {
-        const { getCandidates, renderCandidate } = this.props;
+        const { getCandidates, renderCandidate, renderHeadItems, renderTailItems } = this.props;
         const { isOpened, query } = this.state;
+
+        const candidates = getCandidates(query);
+        const headItems = renderHeadItems!(query);
+        const tailItems = renderTailItems!(query);
 
         return (
             <Closable
@@ -155,7 +163,11 @@ export default class Autocomplete extends PureComponent<AutoCompleteProps, Autoc
                           onKeyDown={this.handleKeyDown}
                           onSelect={this.handleSelect}
                           onClose={this.handleClose}>
-                        {getCandidates(query).map((candidate) => renderCandidate(candidate, query))}
+                        {headItems}
+                        {candidates.length && Children.count(headItems) ? <div className="menu-divider" /> : null}
+                        {candidates.map((candidate) => renderCandidate(candidate, query))}
+                        {candidates.length && Children.count(tailItems) ? <div className="menu-divider" /> : null}
+                        {tailItems}
                     </Menu>
                 </div>
             </Closable>

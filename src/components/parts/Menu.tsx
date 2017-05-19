@@ -87,7 +87,7 @@ export class Menu extends PureComponent<MenuProps, {}> {
         return (
             <div className={classnames(className, 'menu', { 'menu-pull-right': pullRight! })}
                  onKeyDown={onKeyDown}>
-                {Children.map(children, this.renderChild.bind(this))}
+                {Children.toArray(children).map(this.renderChild, this)}
             </div>
         );
     }

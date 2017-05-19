@@ -59,7 +59,7 @@ export default class Nav extends PureComponent<NavProps, NavState> {
             <div>
                 <header className="u-text-center">
                     <nav className="nav">
-                        {Children.map(children, this.renderChild.bind(this))}
+                        {Children.toArray(children).map(this.renderChild, this)}
                     </nav>
                 </header>
                 {renderContent(value)}

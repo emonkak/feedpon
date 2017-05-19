@@ -65,7 +65,7 @@ class Tree extends PureComponent<TreeProps, {}> {
 
         return (
             <div className="tree">
-                {Children.map(children, this.renderChild.bind(this))}
+                {Children.toArray(children).map(this.renderChild.bind(this))}
             </div>
         );
     }

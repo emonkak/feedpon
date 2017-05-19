@@ -190,6 +190,6 @@ export default class ScrollSpy extends PureComponent<ScrollSpyProps, ScrollSpySt
     render() {
         const { renderList, children } = this.props;
 
-        return renderList(Children.map(children, this.renderChild.bind(this)));
+        return renderList(Children.toArray(children).map(this.renderChild.bind(this)));
     }
 }
