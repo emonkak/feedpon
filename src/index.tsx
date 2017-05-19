@@ -5,12 +5,14 @@ import { Router, hashHistory } from 'react-router';
 import StoreProvider from 'utils/flux/react/StoreProvider';
 import asyncMiddleware from 'utils/flux/middlewares/asyncMiddleware';
 import createStore from 'utils/flux/createStore';
+import errorHandlingMiddleware from 'utils/flux/middlewares/errorHandlingMiddleware';
 import initialState from 'messaging/initialState';
 import reducer from 'messaging/reducer';
 import restoreState from 'utils/restoreState';
 import routes from 'components/routes';
 import saveStateMiddleware from 'utils/flux/middlewares/saveStateMiddleware';
 import { State } from 'messaging/types';
+import { sendNotification } from 'messaging/notification/actions';
 
 function saveItem(key: string, value: any): void {
     localStorage.setItem(key, JSON.stringify(value));
@@ -35,7 +37,7 @@ const versions = {
     search: initialState.search.version,
     settings: initialState.settings.version,
     siteinfo: initialState.siteinfo.version,
-    stream: initialState.stream.version,
+    streams: initialState.streams.version,
     subscriptions: initialState.subscriptions.version
 };
 
@@ -54,6 +56,15 @@ const context = {
 };
 
 const store = createStore(reducer, state, [
+    errorHandlingMiddleware((error, dispatch, getState) => {
+        console.error(error);
+
+        dispatch(sendNotification(
+            'Error occured: ' + error,
+            'negative',
+            0
+        ));
+    }),
     asyncMiddleware(context),
     saveStateMiddleware(Object.keys(versions), saveItem),
     ((action, next) => {

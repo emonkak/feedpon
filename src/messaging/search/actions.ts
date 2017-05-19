@@ -14,36 +14,45 @@ export function searchFeeds(query: string): AsyncEvent {
             query
         });
 
-        const token = await dispatch(getFeedlyToken());
-        const searchResult = await feedlySearchFeeds(token.id, {
-            query,
-            count: 20
-        });
+        try {
+            const token = await dispatch(getFeedlyToken());
+            const searchResult = await feedlySearchFeeds(token.id, {
+                query,
+                count: 20
+            });
 
-        const { subscriptions } = getState();
-        const feeds = new Enumerable(searchResult.results)
-            .groupJoin(
-                subscriptions.items,
-                (feed) => feed.feedId,
-                (subscription) => subscription.streamId,
-                (feed, subscriptions) => ({
-                    feedId: feed.feedId,
-                    streamId: feed.feedId,
-                    title: feed.title,
-                    description: feed.description || '',
-                    url: feed.website || '',
-                    iconUrl: feed.iconUrl || '',
-                    subscribers: feed.subscribers,
-                    subscription: subscriptions[0] || null,
-                    isSubscribing: false
-                })
-            )
-            .toArray();
+            const { subscriptions } = getState();
+            const feeds = new Enumerable(searchResult.results)
+                .groupJoin(
+                    subscriptions.items,
+                    (feed) => feed.feedId,
+                    (subscription) => subscription.streamId,
+                    (feed, subscriptions) => ({
+                        feedId: feed.feedId,
+                        streamId: feed.feedId,
+                        title: feed.title,
+                        description: feed.description || '',
+                        url: feed.website || '',
+                        iconUrl: feed.iconUrl || '',
+                        subscribers: feed.subscribers,
+                        subscription: subscriptions[0] || null,
+                        isSubscribing: false
+                    })
+                )
+                .toArray();
 
-        dispatch({
-            type: 'FEED_SEARCHED',
-            query,
-            feeds
-        });
+            dispatch({
+                type: 'FEED_SEARCHED',
+                query,
+                feeds
+            });
+        } catch (error) {
+            dispatch({
+                type: 'FEED_SEARCHING_FAILED',
+                query
+            });
+
+            throw error;
+        }
     };
 }

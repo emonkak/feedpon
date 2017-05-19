@@ -9,7 +9,7 @@ function asyncMiddlewareFactory<TState, TEvent>(context: any = {}): Middleware<T
                 return next(event);
             }
         };
-        dispatch(event);
+        return dispatch(event);
     };
 }
 

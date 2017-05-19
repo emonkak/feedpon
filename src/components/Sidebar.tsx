@@ -91,10 +91,14 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
                                   renderCandidate={renderCandidate} />
                 </div>
                 <div className="sidebar-group">
-                    <SidebarTree onReload={this.handleReload}
+                    <SidebarTree categories={subscriptions.categories.items}
+                                 isLoading={subscriptions.isLoading}
+                                 lastUpdatedAt={subscriptions.lastUpdatedAt}
+                                 onReload={this.handleReload}
                                  onSelect={this.handleSelect}
                                  selectedValue={location.pathname}
-                                 subscriptions={subscriptions} />
+                                 subscriptions={subscriptions.items}
+                                 totalUnreadCount={subscriptions.totalUnreadCount} />
                 </div>
                 <div className="sidebar-group">
                     <Link className="button button-block button-outline-default" to="/search">New Subscription</Link>

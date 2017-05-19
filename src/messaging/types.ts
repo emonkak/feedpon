@@ -1,38 +1,50 @@
-export interface Dispatcher {
-    (event: Event): Event;
-    <TResult>(event: AsyncEvent<TResult>): TResult;
-}
-
 export type Event
     = { type: 'AUTHENTICATED', authorizedAt: string, token: any }
     | { type: 'BOOKMARK_COUNTS_FETCHED', bookmarkCounts: { [key: string]: number } }
     | { type: 'CATEGORY_CREATED', category: Category }
+    | { type: 'CATEGORY_CREATING' }
+    | { type: 'CATEGORY_CREATING_FAILED' }
     | { type: 'COMMENTS_FETCHED', entryId: string | number, comments: Comment[] }
+    | { type: 'COMMENTS_FETCHING', entryId: string | number }
+    | { type: 'COMMENTS_FETCHING_FAILED', entryId: string | number }
     | { type: 'ENTRY_MARKED_AS_READ', entryIds: (string | number)[] }
     | { type: 'ENTRY_PINNED', entryId: string | number, isPinned: boolean }
     | { type: 'ENTRY_PINNING', entryId: string | number }
+    | { type: 'ENTRY_PINNING_FAILED', entryId: string | number }
     | { type: 'FEED_SEARCHED', query: string, feeds: Feed[] }
     | { type: 'FEED_SEARCHING', query: string }
+    | { type: 'FEED_SEARCHING_FAILED', query: string }
     | { type: 'FEED_SUBSCRIBED', feedId: string | number, subscription: Subscription }
     | { type: 'FEED_SUBSCRIBING', feedId: string | number }
+    | { type: 'FEED_SUBSCRIBING_FAILED', feedId: string | number }
     | { type: 'FEED_UNSUBSCRIBED', feedId: string | number }
-    | { type: 'FULL_CONTENT_FETCHED', entryId: string | number, fullContent: FullContent | null }
+    | { type: 'FULL_CONTENT_FETCHED', entryId: string | number, fullContent: FullContent }
     | { type: 'FULL_CONTENT_FETCHING', entryId: string | number }
+    | { type: 'FULL_CONTENT_FETCHING_FAILED', entryId: string | number }
     | { type: 'MORE_ENTRIES_FETCHED', streamId: string, continuation: string | null, entries: Entry[] }
     | { type: 'MORE_ENTRIES_FETCHING', streamId: string }
+    | { type: 'MORE_ENTRIES_FETCHING_FAILED', streamId: string }
     | { type: 'NOTIFICATION_DISMISSED', id: number }
     | { type: 'NOTIFICATION_SENT', notification: Notification }
     | { type: 'SITEINFO_UPDATED', items: SiteinfoItem[], updatedAt: string }
     | { type: 'SITEINFO_UPDATING' }
-    | { type: 'STREAM_FETCHED', streamId: string, title: string, entries: Entry[], continuation: string | null, feed: Feed | null, subscription: Subscription | null, options: StreamOptions  }
+    | { type: 'SITEINFO_UPDATING_FAILED' }
+    | { type: 'STREAM_FETCHED', stream: Stream  }
     | { type: 'STREAM_FETCHING', streamId: string }
-    | { type: 'STREAM_VIEW_CHANGED', view: StreamView }
+    | { type: 'STREAM_FETCHING_FAILED', streamId: string }
+    | { type: 'STREAM_VIEW_CHANGED', streamId: string, view: StreamView }
     | { type: 'SUBSCRIPTIONS_FETCHED', subscriptions: Subscription[], categories: Category[], fetchedAt: string }
     | { type: 'SUBSCRIPTIONS_FETCHING' }
+    | { type: 'SUBSCRIPTIONS_FETCHING_FAILED' }
     | { type: 'USER_SITEINFO_ITEM_ADDED', item: SiteinfoItem }
     | { type: 'USER_SITEINFO_ITEM_REMOVED', id: string };
 
-export type AsyncEvent<TResult = void> = (dispatch: Dispatcher, getState: () => State, context: Context) => TResult;
+export type AsyncEvent<TResult = void> = (dispatch: Dispatcher, getState: () => State, context: Context) => Promise<TResult>;
+
+export interface Dispatcher {
+    (event: Event): Event;
+    <TResult>(event: AsyncEvent<TResult>): TResult;
+}
 
 export interface State {
     credential: Credential;
@@ -40,7 +52,7 @@ export interface State {
     search: Search;
     settings: Settings;
     siteinfo: Siteinfo;
-    stream: Stream;
+    streams: Streams;
     subscriptions: Subscriptions;
 }
 
@@ -69,10 +81,22 @@ export interface Environment {
     redirectUri: string;
 }
 
+export interface Categories {
+    isCreating: boolean;
+    items: Category[];
+}
+
 export interface Category {
     categoryId: string;
     streamId: string;
     label: string;
+}
+
+export interface Streams {
+    current: Stream;
+    isLoaded: boolean;
+    isLoading: boolean;
+    version: number;
 }
 
 export interface Stream {
@@ -80,12 +104,9 @@ export interface Stream {
     title: string;
     entries: Entry[];
     continuation: string | null;
-    isLoading: boolean;
-    isLoaded: boolean;
     feed: Feed | null;
     subscription: Subscription | null;
     options: StreamOptions;
-    version: number;
 }
 
 export interface StreamOptions {
@@ -153,6 +174,7 @@ export interface FullContent {
 
 export interface Comments {
     isLoaded: boolean;
+    isLoading: boolean;
     items: Comment[];
 }
 
@@ -187,7 +209,7 @@ export interface Settings {
 }
 
 export interface Subscriptions {
-    categories: Category[];
+    categories: Categories;
     isLoading: boolean;
     items: Subscription[];
     lastUpdatedAt: string | null;

@@ -1,20 +1,16 @@
-import { AsyncEvent, NotificationKind, Event } from '../types';
+import { Event, NotificationKind } from '../types';
 
 const DEFAULT_DISMISS_AFTER = 3000;
 
-export function sendNotification(message: string, kind: NotificationKind, dismissAfter: number = DEFAULT_DISMISS_AFTER): AsyncEvent {
-    return (dispatch) => {
-        const notification = {
+export function sendNotification(message: string, kind: NotificationKind, dismissAfter: number = DEFAULT_DISMISS_AFTER): Event {
+    return {
+        type: 'NOTIFICATION_SENT',
+        notification: {
             id: Date.now(),
             message,
             kind,
             dismissAfter
-        };
-
-        dispatch({
-            type: 'NOTIFICATION_SENT',
-            notification
-        });
+        }
     };
 }
 

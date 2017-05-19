@@ -9,14 +9,35 @@ import { Subscriptions, Event } from 'messaging/types';
 
 export default function reducer(subscriptions: Subscriptions, event: Event): Subscriptions {
     switch (event.type) {
+        case 'CATEGORY_CREATING':
+            return {
+                ...subscriptions,
+                categories: {
+                    isCreating: true,
+                    items: subscriptions.categories.items
+                }
+            };
+
+        case 'CATEGORY_CREATING_FAILED':
+            return {
+                ...subscriptions,
+                categories: {
+                    isCreating: false,
+                    items: subscriptions.categories.items
+                }
+            };
+
         case 'CATEGORY_CREATED':
             return {
                 ...subscriptions,
-                categories: new Enumerable(subscriptions.categories)
-                    .startWith(event.category)
-                    .distinct((category) => category.categoryId)
-                    .orderBy((category) => category.label)
-                    .toArray()
+                categories: {
+                    isCreating: false,
+                    items: new Enumerable(subscriptions.categories.items)
+                        .startWith(event.category)
+                        .distinct((category) => category.categoryId)
+                        .orderBy((category) => category.label)
+                        .toArray()
+                }
             };
 
         case 'SUBSCRIPTIONS_FETCHING':
@@ -25,9 +46,18 @@ export default function reducer(subscriptions: Subscriptions, event: Event): Sub
                 isLoading: true
             };
 
+        case 'SUBSCRIPTIONS_FETCHING_FAILED':
+            return {
+                ...subscriptions,
+                isLoading: false
+            };
+
         case 'SUBSCRIPTIONS_FETCHED':
             return {
-                categories: event.categories,
+                categories: {
+                    isCreating: subscriptions.categories.isCreating,
+                    items: event.categories
+                },
                 isLoading: false,
                 items: event.subscriptions,
                 lastUpdatedAt: event.fetchedAt,

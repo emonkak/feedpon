@@ -174,7 +174,7 @@ class SearchPage extends PureComponent<SearchPageProps, {}> {
 
 export default connect(
     (state: State) => ({
-        categories: state.subscriptions.categories,
+        categories: state.subscriptions.categories.items,
         search: state.search,
         subscriptions: state.subscriptions.items
     }),

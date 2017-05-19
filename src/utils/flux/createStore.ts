@@ -43,9 +43,10 @@ export default function createStore<TState, TEvent>(
         };
     }
 
-    function finalize(event: TEvent): void {
+    function finalize(event: TEvent): TEvent {
         const nextState = reducer(state, event);
         replaceState(nextState);
+        return event;
     }
 
     return context;

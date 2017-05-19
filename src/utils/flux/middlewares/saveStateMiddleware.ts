@@ -13,10 +13,10 @@ export default function saveStateMiddlewareFactory(keysToSave: string[], save: (
         request = null;
     }
 
-    return function saveStateMiddleware(action, next, { getState }) {
+    return function saveStateMiddleware(event, next, { getState }) {
         const state = getState();
 
-        next(action);
+        const result = next(event);
 
         const nextState = getState();
 
@@ -32,5 +32,7 @@ export default function saveStateMiddlewareFactory(keysToSave: string[], save: (
         if (shouldSave && request === null) {
             request = window.requestIdleCallback(processQueue);
         }
+
+        return result;
     };
 }

@@ -7,13 +7,15 @@ import Navbar from 'components/parts/Navbar';
 import SubscribeButton from 'components/parts/SubscribeButton';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
-import { Category, State, Stream } from 'messaging/types';
+import { Category, State, Stream, StreamView } from 'messaging/types';
 import { MenuItem } from 'components/parts/Menu';
 import { changeStreamView, fetchComments, fetchFullContent, fetchMoreEntries, fetchStream, markAsRead, pinEntry, unpinEntry } from 'messaging/stream/actions';
 import { createCategory, subscribeFeed, unsubscribeFeed } from 'messaging/subscription/actions';
 
 interface StreamProps {
     categories: Category[];
+    isLoaded: boolean;
+    isLoading: boolean;
     isScrolling: boolean;
     onChangeStreamView: typeof changeStreamView,
     onCreateCategory: typeof createCategory;
@@ -47,6 +49,7 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
         };
 
         this.handleChangeEntryOrder = this.handleChangeEntryOrder.bind(this);
+        this.handleChangeStreamView = this.handleChangeStreamView.bind(this);
         this.handleClearReadEntries = this.handleClearReadEntries.bind(this);
         this.handleLoadMoreEntries = this.handleLoadMoreEntries.bind(this);
         this.handlePinEntry = this.handlePinEntry.bind(this);
@@ -108,6 +111,14 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
                 ...stream.options,
                 order
             });
+        }
+    }
+
+    handleChangeStreamView(view: StreamView) {
+        const { onChangeStreamView, stream } = this.props;
+
+        if (stream.streamId) {
+            onChangeStreamView(stream.streamId, view);
         }
     }
 
@@ -208,7 +219,7 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
     }
 
     renderConfigDropdown() {
-        const { stream, onChangeStreamView } = this.props;
+        const { stream } = this.props;
 
         return (
             <Dropdown
@@ -218,13 +229,14 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
                 <div className="menu-heading">View</div>
                 <MenuItem
                     icon={stream.options.view === 'expanded' ? <i className="icon icon-16 icon-checkmark" /> : null}
-                    onSelect={onChangeStreamView}
+                    onSelect={this.handleChangeStreamView}
                     primaryText="Expanded view"
                     value="expanded" />
                 <MenuItem
                     icon={stream.options.view === 'collapsible' ? <i className="icon icon-16 icon-checkmark" /> : null}
                     primaryText="Collapsible view"
-                    onSelect={onChangeStreamView.bind(null, 'collapsible')} />
+                    onSelect={this.handleChangeStreamView}
+                    value="collapsible" />
                 <div className="menu-divider" />
                 <div className="menu-heading">Order</div>
                 <MenuItem
@@ -300,13 +312,13 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
     }
 
     renderEntryList() {
-        const { isScrolling, onFetchComments, onFetchFullContent, onPinEntry, onUnpinEntry, scrollTo, stream } = this.props;
+        const { isLoaded, isLoading, isScrolling, onFetchComments, onFetchFullContent, onPinEntry, onUnpinEntry, scrollTo, stream } = this.props;
         const { readEntryIds } = this.state;
 
         return (
             <EntryList
                 entries={stream ? stream.entries : []}
-                isLoading={stream.isLoading && !stream.isLoaded}
+                isLoading={isLoading && !isLoaded}
                 isScrolling={isScrolling}
                 onFetchComments={onFetchComments}
                 onFetchFullContent={onFetchFullContent}
@@ -320,10 +332,10 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
     }
 
     renderFooter() {
-        const { stream } = this.props;
+        const { isLoading, stream } = this.props;
 
         if (stream.continuation) {
-            if (stream.isLoading) {
+            if (isLoading) {
                 return (
                     <footer className="stream-footer">
                         <i className="icon icon-32 icon-spinner animation-clockwise-rotation" />
@@ -368,8 +380,10 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
 
 export default connect(
     (state: State) => ({
-        categories: state.subscriptions.categories,
-        stream: state.stream
+        categories: state.subscriptions.categories.items,
+        isLoaded: state.streams.isLoaded,
+        isLoading: state.streams.isLoading,
+        stream: state.streams.current
     }),
     (dispatch) => bindActions({
         onChangeStreamView: changeStreamView,

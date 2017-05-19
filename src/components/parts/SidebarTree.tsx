@@ -3,15 +3,19 @@ import classnames from 'classnames';
 
 import Dropdown from 'components/parts/Dropdown';
 import RelativeTime from 'components/parts/RelativeTime';
-import { Category, Subscription, Subscriptions } from 'messaging/types';
+import { Category, Subscription } from 'messaging/types';
 import { MenuItem } from 'components/parts/Menu';
 import { TreeBranch, TreeHeader, TreeLeaf, TreeRoot } from 'components/parts/Tree';
 
 interface SidebarTreeProps {
+    categories: Category[];
+    isLoading: boolean;
+    lastUpdatedAt: string | null;
     onReload: () => void;
     onSelect: (value: string) => void;
     selectedValue?: string;
-    subscriptions: Subscriptions;
+    subscriptions: Subscription[];
+    totalUnreadCount: number;
 }
 
 const UNCATEGORIZED = Symbol();
@@ -53,13 +57,13 @@ export default class SidebarTree extends PureComponent<SidebarTreeProps, {}> {
     }
 
     render() {
-        const { onReload, onSelect, selectedValue, subscriptions } = this.props;
+        const { categories, isLoading, lastUpdatedAt, onReload, onSelect, selectedValue, subscriptions, totalUnreadCount } = this.props;
 
-        const lastUpdate = subscriptions.lastUpdatedAt
-            ? <span>Updated <RelativeTime time={subscriptions.lastUpdatedAt} /></span>
+        const lastUpdate = lastUpdatedAt
+            ? <span>Updated <RelativeTime time={lastUpdatedAt} /></span>
             : 'Not updated yet';
 
-        const groupedSubscriptions = subscriptions.items
+        const groupedSubscriptions = subscriptions
             .reduce<{ [key: string]: Subscription[] }>((group, subscription) => {
                 const labels = subscription.labels.length > 0
                     ? subscription.labels
@@ -75,7 +79,7 @@ export default class SidebarTree extends PureComponent<SidebarTreeProps, {}> {
                 return group;
             }, {});
 
-        const userCategories = subscriptions.categories
+        const userCategories = categories
             .filter((category) => !!groupedSubscriptions[category.label])
             .map((category) => this.renderCategory(
                 category,
@@ -90,14 +94,14 @@ export default class SidebarTree extends PureComponent<SidebarTreeProps, {}> {
                 <TreeLeaf value="/" primaryText="Dashboard" />
                 <TreeLeaf value="/streams/all/"
                           primaryText="All"
-                          secondaryText={Number(subscriptions.totalUnreadCount).toLocaleString()} />
+                          secondaryText={Number(totalUnreadCount).toLocaleString()} />
                 <TreeLeaf value="/streams/pins/" primaryText="Pins" />
                 <TreeHeader>
                     <button className="tree-node-icon"
-                            disabled={subscriptions.isLoading}
+                            disabled={isLoading}
                             onClick={onReload}>
                         <i className={classnames('icon', 'icon-16', 'icon-refresh', {
-                            'animation-clockwise-rotation': subscriptions.isLoading
+                            'animation-clockwise-rotation': isLoading
                         })} />
                     </button>
                     <span className="tree-node-label">{lastUpdate}</span>

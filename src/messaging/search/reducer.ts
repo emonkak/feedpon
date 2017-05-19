@@ -5,9 +5,18 @@ export default function reducer(search: Search, event: Event) {
         case 'FEED_SEARCHING':
             return {
                 feeds: [],
-                isLoading: true,
                 isLoaded: false,
+                isLoading: true,
                 query: event.query,
+                version: search.version
+            };
+
+        case 'FEED_SEARCHING_FAILED':
+            return {
+                feeds: search.feeds,
+                isLoaded: true,
+                isLoading: false,
+                query: search.query,
                 version: search.version
             };
 
@@ -18,8 +27,8 @@ export default function reducer(search: Search, event: Event) {
 
             return {
                 feeds: event.feeds,
-                isLoading: false,
                 isLoaded: true,
+                isLoading: false,
                 query: event.query,
                 version: search.version
             };
@@ -39,19 +48,7 @@ export default function reducer(search: Search, event: Event) {
             };
 
         case 'FEED_SUBSCRIBED':
-            return {
-                ...search,
-                feeds: search.feeds.map((feed) => {
-                    if (feed.feedId !== event.feedId) {
-                        return feed;
-                    }
-                    return {
-                        ...feed,
-                        isSubscribing: false
-                    };
-                })
-            };
-
+        case 'FEED_SUBSCRIBING_FAILED':
         case 'FEED_UNSUBSCRIBED':
             return {
                 ...search,

@@ -1,227 +1,376 @@
 import initialState from 'messaging/initialState';
-import { Stream, Event } from 'messaging/types';
+import { Streams, Event } from 'messaging/types';
 
-export default function reducer(stream: Stream, event: Event): Stream {
+export default function reducer(streams: Streams, event: Event): Streams {
     switch (event.type) {
         case 'BOOKMARK_COUNTS_FETCHED':
             return {
-                ...stream,
-                entries: stream.entries.map((entry) => ({
-                    ...entry,
-                    bookmarkCount: event.bookmarkCounts[entry.url] || 0
-                }))
+                ...streams,
+                current: {
+                    ...streams.current,
+                    entries: streams.current.entries.map((entry) => ({
+                        ...entry,
+                        bookmarkCount: event.bookmarkCounts[entry.url] || 0
+                    }))
+                }
+            };
+
+        case 'COMMENTS_FETCHING':
+            return {
+                ...streams,
+                current: {
+                    ...streams.current,
+                    entries: streams.current.entries.map((entry) => {
+                        if (entry.entryId !== event.entryId) {
+                            return entry;
+                        }
+                        return {
+                            ...entry,
+                            comments: {
+                                isLoaded: false,
+                                isLoading: true,
+                                items: []
+                            }
+                        };
+                    })
+                }
+            };
+
+        case 'COMMENTS_FETCHING_FAILED':
+            return {
+                ...streams,
+                current: {
+                    ...streams.current,
+                    entries: streams.current.entries.map((entry) => {
+                        if (entry.entryId !== event.entryId) {
+                            return entry;
+                        }
+                        return {
+                            ...entry,
+                            comments: {
+                                isLoaded: true,
+                                isLoading: false,
+                                items: []
+                            }
+                        };
+                    })
+                }
             };
 
         case 'COMMENTS_FETCHED':
             return {
-                ...stream,
-                entries: stream.entries.map((entry) => {
-                    if (entry.entryId === event.entryId) {
+                ...streams,
+                current: {
+                    ...streams.current,
+                    entries: streams.current.entries.map((entry) => {
+                        if (entry.entryId !== event.entryId) {
+                            return entry;
+                        }
                         return {
                             ...entry,
                             comments: {
-                                items: event.comments,
-                                isLoaded: true
+                                isLoaded: true,
+                                isLoading: false,
+                                items: event.comments
                             }
                         };
-                    }
-
-                    return entry;
-                })
+                    })
+                }
             };
 
-
         case 'STREAM_FETCHING':
-            if (stream.streamId !== event.streamId) {
-                return {
-                    ...initialState.stream,
-                    streamId: event.streamId,
-                    continuation: null,
-                    isLoading: true,
-                    isLoaded: false
-                };
-            }
-
             return {
-                ...stream,
+                current: initialState.streams.current,
+                isLoaded: false,
                 isLoading: true,
-                isLoaded: false
+                version: streams.version
+            };
+
+        case 'STREAM_FETCHING_FAILED':
+            return {
+                current: streams.current,
+                isLoaded: true,
+                isLoading: false,
+                version: streams.version
             };
 
         case 'STREAM_FETCHED':
             return {
-                streamId: event.streamId,
-                title: event.title,
-                entries: event.entries,
-                continuation: event.continuation,
-                feed: event.feed,
-                subscription: event.subscription,
-                options: event.options,
-                isLoading: false,
+                current: event.stream,
                 isLoaded: true,
-                version: stream.version
+                isLoading: false,
+                version: streams.version
             };
 
         case 'FULL_CONTENT_FETCHING':
             return {
-                ...stream,
-                entries: stream.entries.map((entry) => {
-                    if (entry.entryId !== event.entryId) {
-                        return entry;
-                    }
-
-                    return {
-                        ...entry,
-                        fullContents: {
-                            ...entry.fullContents,
-                            isLoading: true
+                ...streams,
+                current: {
+                    ...streams.current,
+                    entries: streams.current.entries.map((entry) => {
+                        if (entry.entryId !== event.entryId) {
+                            return entry;
                         }
-                    };
-                })
+                        return {
+                            ...entry,
+                            fullContents: {
+                                ...entry.fullContents,
+                                isLoading: true
+                            }
+                        };
+                    })
+                }
+            };
+
+        case 'FULL_CONTENT_FETCHING_FAILED':
+            return {
+                ...streams,
+                current: {
+                    ...streams.current,
+                    entries: streams.current.entries.map((entry) => {
+                        if (entry.entryId !== event.entryId) {
+                            return entry;
+                        }
+                        return {
+                            ...entry,
+                            fullContents: {
+                                ...entry.fullContents,
+                                isLoaded: true,
+                                isLoading: false
+                            }
+                        };
+                    })
+                }
             };
 
         case 'FULL_CONTENT_FETCHED':
             return {
-                ...stream,
-                entries: stream.entries.map((entry) => {
-                    if (entry.entryId !== event.entryId) {
-                        return entry;
-                    }
-
-                    return {
-                        ...entry,
-                        fullContents: {
-                            isLoaded: true,
-                            isLoading: false,
-                            items: event.fullContent ? entry.fullContents.items.concat([event.fullContent]) : entry.fullContents.items
+                ...streams,
+                current: {
+                    ...streams.current,
+                    entries: streams.current.entries.map((entry) => {
+                        if (entry.entryId !== event.entryId) {
+                            return entry;
                         }
-                    };
-                })
+                        return {
+                            ...entry,
+                            fullContents: {
+                                isLoaded: true,
+                                isLoading: false,
+                                items: entry.fullContents.items.concat([event.fullContent])
+                            }
+                        };
+                    })
+                }
             };
 
         case 'STREAM_VIEW_CHANGED':
+            if (streams.current.streamId !== event.streamId) {
+                return streams;
+            }
+
             return {
-                ...stream,
-                options: {
-                    ...stream.options,
-                    view: event.view
+                ...streams,
+                current: {
+                    ...streams.current,
+                    options: {
+                        ...streams.current.options,
+                        view: event.view
+                    }
                 }
             };
 
         case 'MORE_ENTRIES_FETCHING':
-            if (stream.streamId !== event.streamId) {
-                return stream;
+            if (streams.current.streamId !== event.streamId) {
+                return streams;
             }
 
             return {
-                ...stream,
+                ...streams,
                 isLoading: true
             };
 
-        case 'MORE_ENTRIES_FETCHED':
-            if (stream.streamId !== event.streamId) {
-                return stream;
+        case 'MORE_ENTRIES_FETCHING_FAILED':
+            if (streams.current.streamId !== event.streamId) {
+                return streams;
             }
 
             return {
-                ...stream,
-                continuation: event.continuation,
-                entries: stream.entries.concat(event.entries),
+                ...streams,
                 isLoading: false
+            };
+
+        case 'MORE_ENTRIES_FETCHED':
+            if (streams.current.streamId !== event.streamId) {
+                return streams;
+            }
+
+            return {
+                ...streams,
+                current: {
+                    ...streams.current,
+                    continuation: event.continuation,
+                    entries: streams.current.entries.concat(event.entries)
+                },
+                isLoading: false,
             };
 
         case 'ENTRY_MARKED_AS_READ':
             return {
-                ...stream,
-                entries: stream.entries.map((entry) => {
-                    if (event.entryIds.indexOf(entry.entryId) === -1) {
-                        return entry;
-                    }
-
-                    return {
-                        ...entry,
-                        markedAsRead: true
-                    };
-                })
+                ...streams,
+                current: {
+                    ...streams.current,
+                    entries: streams.current.entries.map((entry) => {
+                        if (!event.entryIds.includes(entry.entryId)) {
+                            return entry;
+                        }
+                        return {
+                            ...entry,
+                            markedAsRead: true
+                        };
+                    })
+                }
             };
 
         case 'ENTRY_PINNING':
             return {
-                ...stream,
-                entries: stream.entries.map((entry) => {
-                    if (entry.entryId !== event.entryId) {
-                        return entry;
-                    }
+                ...streams,
+                current: {
+                    ...streams.current,
+                    entries: streams.current.entries.map((entry) => {
+                        if (entry.entryId !== event.entryId) {
+                            return entry;
+                        }
+                        return {
+                            ...entry,
+                            isPinning: true
+                        };
+                    })
+                }
+            };
 
-                    return {
-                        ...entry,
-                        isPinning: true
-                    };
-                })
+        case 'ENTRY_PINNING_FAILED':
+            return {
+                ...streams,
+                current: {
+                    ...streams.current,
+                    entries: streams.current.entries.map((entry) => {
+                        if (entry.entryId !== event.entryId) {
+                            return entry;
+                        }
+                        return {
+                            ...entry,
+                            isPinning: false
+                        };
+                    })
+                }
             };
 
         case 'ENTRY_PINNED':
             return {
-                ...stream,
-                entries: stream.entries.map((entry) => {
-                    if (entry.entryId !== event.entryId) {
-                        return entry;
-                    }
-
-                    return {
-                        ...entry,
-                        isPinning: false,
-                        isPinned: event.isPinned
-                    };
-                })
+                ...streams,
+                current: {
+                    ...streams.current,
+                    entries: streams.current.entries.map((entry) => {
+                        if (entry.entryId !== event.entryId) {
+                            return entry;
+                        }
+                        return {
+                            ...entry,
+                            isPinning: false,
+                            isPinned: event.isPinned
+                        };
+                    })
+                }
             };
 
-        case 'SUBSCRIPTIONS_FETCHED':
+        case 'SUBSCRIPTIONS_FETCHED': {
+            if (!streams.current.subscription) {
+                return streams;
+            }
+
+            const subscription = event.subscriptions
+                .find((subscription) => subscription.streamId === streams.current.streamId);
+
+            if (!subscription) {
+                return streams;
+            }
+
             return {
-                ...stream,
-                subscription: event.subscriptions
-                    .find((subscription) => subscription.streamId === stream.streamId) || stream.subscription
+                ...streams,
+                current: {
+                    ...streams.current,
+                    subscription
+                }
             };
+        }
 
         case 'FEED_SUBSCRIBING':
-            if (!(stream.feed && stream.feed.feedId === event.feedId)) {
-                return stream;
+            if (!(streams.current.feed && streams.current.feed.feedId === event.feedId)) {
+                return streams;
             }
+
             return {
-                ...stream,
-                feed: {
-                    ...stream.feed,
-                    isSubscribing: true
+                ...streams,
+                current: {
+                    ...streams.current,
+                    feed: {
+                        ...streams.current.feed,
+                        isSubscribing: true
+                    }
+                }
+            };
+
+        case 'FEED_SUBSCRIBING_FAILED':
+            if (!(streams.current.feed && streams.current.feed.feedId === event.feedId)) {
+                return streams;
+            }
+
+            return {
+                ...streams,
+                current: {
+                    ...streams.current,
+                    feed: {
+                        ...streams.current.feed,
+                        isSubscribing: false
+                    }
                 }
             };
 
         case 'FEED_SUBSCRIBED':
-            if (!(stream.feed && stream.feed.feedId === event.feedId)) {
-                return stream;
+            if (!(streams.current.feed && streams.current.feed.feedId === event.feedId)) {
+                return streams;
             }
+
             return {
-                ...stream,
-                feed: {
-                    ...stream.feed,
-                    isSubscribing: false
-                },
-                subscription: event.subscription
+                ...streams,
+                current: {
+                    ...streams.current,
+                    feed: {
+                        ...streams.current.feed,
+                        isSubscribing: false
+                    },
+                    subscription: event.subscription
+                }
             };
 
         case 'FEED_UNSUBSCRIBED':
-            if (!(stream.feed && stream.feed.feedId === event.feedId)) {
-                return stream;
+            if (!(streams.current.feed && streams.current.feed.feedId === event.feedId)) {
+                return streams;
             }
             return {
-                ...stream,
-                feed: {
-                    ...stream.feed,
-                    isSubscribing: false
-                },
-                subscription: null
+                ...streams,
+                current: {
+                    ...streams.current,
+                    feed: {
+                        ...streams.current.feed,
+                        isSubscribing: false
+                    },
+                    subscription: null
+                }
             };
 
         default:
-            return stream;
+            return streams;
     }
 }

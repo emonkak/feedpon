@@ -33,25 +33,30 @@ const initialState: State = {
         lastUpdatedAt: '',
         version: 1
     },
-    stream: {
-        streamId: null,
-        title: 'Loading...',
-        entries: [],
-        continuation: null,
+    streams: {
+        current: {
+            streamId: null,
+            title: 'Loading...',
+            entries: [],
+            continuation: null,
+            feed: null,
+            subscription: null,
+            options: {
+                numEntries: 20,
+                onlyUnread: true,
+                order: 'newest',
+                view: 'expanded'
+            }
+        },
         isLoading: false,
         isLoaded: false,
-        feed: null,
-        subscription: null,
-        options: {
-            numEntries: 20,
-            onlyUnread: true,
-            order: 'newest',
-            view: 'expanded'
-        },
         version: 1
     },
     subscriptions: {
-        categories: [],
+        categories: {
+            isCreating: false,
+            items: []
+        },
         isLoading: false,
         items: [],
         lastUpdatedAt: null,

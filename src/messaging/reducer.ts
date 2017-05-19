@@ -5,7 +5,7 @@ import credentialReducer from 'messaging/credential/reducer';
 import notificationsReducer from 'messaging/notification/reducer';
 import searchReducer from 'messaging/search/reducer';
 import siteinfoReducer from 'messaging/siteinfo/reducer';
-import streamReducer from 'messaging/stream/reducer';
+import streamsReducer from 'messaging/stream/reducer';
 import subscriptionsReducer from 'messaging/subscription/reducer';
 
 export default combineReducers<State, Event>({
@@ -14,6 +14,6 @@ export default combineReducers<State, Event>({
     search: searchReducer,
     settings: (state, event) => state,
     siteinfo: siteinfoReducer,
-    stream: streamReducer,
+    streams: streamsReducer,
     subscriptions: subscriptionsReducer
 });

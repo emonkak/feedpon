@@ -33,40 +33,48 @@ export function updateSiteinfo(): AsyncEvent {
             type: 'SITEINFO_UPDATING'
         });
 
-        const [autoPagerizeItems, ldrFullFeedItems] = await Promise.all([
-            getAutoPagerizeItems(),
-            getLDRFullFeedItems()
-        ]);
+        try {
+            const [autoPagerizeItems, ldrFullFeedItems] = await Promise.all([
+                getAutoPagerizeItems(),
+                getLDRFullFeedItems()
+            ]);
 
-        const primaryItems = autoPagerizeItems
-            .slice(0, -1)  // Remove the generic rule
-            .map((item) => ({
-                id: item.resource_url,
-                name: item.name,
-                urlPattern: item.data.url,
-                contentPath: item.data.pageElement,
-                nextLinkPath: item.data.nextLink
-            }));
-        const secondaryItems = ldrFullFeedItems
-            .sort(compareLdrFullFeedItem)
-            .map((item) => ({
-                id: item.resource_url,
-                name: item.name,
-                urlPattern: item.data.url,
-                contentPath: item.data.xpath,
-                nextLinkPath: ''
-            }));
+            const primaryItems = autoPagerizeItems
+                .slice(0, -1)  // Remove the generic rule
+                .map((item) => ({
+                    id: item.resource_url,
+                    name: item.name,
+                    urlPattern: item.data.url,
+                    contentPath: item.data.pageElement,
+                    nextLinkPath: item.data.nextLink
+                }));
+            const secondaryItems = ldrFullFeedItems
+                .sort(compareLdrFullFeedItem)
+                .map((item) => ({
+                    id: item.resource_url,
+                    name: item.name,
+                    urlPattern: item.data.url,
+                    contentPath: item.data.xpath,
+                    nextLinkPath: ''
+                }));
 
-        dispatch({
-            type: 'SITEINFO_UPDATED',
-            items: primaryItems.concat(secondaryItems),
-            updatedAt: new Date().toISOString()
-        });
+            dispatch({
+                type: 'SITEINFO_UPDATED',
+                items: primaryItems.concat(secondaryItems),
+                updatedAt: new Date().toISOString()
+            });
 
-        dispatch(sendNotification(
-            'Siteinfo Updated',
-            'positive'
-        ));
+            dispatch(sendNotification(
+                'Siteinfo Updated',
+                'positive'
+            ));
+        } catch (error) {
+            dispatch({
+                type: 'SITEINFO_UPDATING_FAILED'
+            });
+
+            throw error;
+        }
     };
 }
 

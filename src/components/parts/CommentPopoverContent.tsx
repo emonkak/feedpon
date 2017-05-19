@@ -11,7 +11,7 @@ export default class CommentPopoverContent extends PureComponent<CommentPopoverC
     render() {
         const { comments } = this.props;
 
-        if (!comments.isLoaded) {
+        if (comments.isLoading) {
             return (
                 <div className="popover-content">
                     <div className="comment">
