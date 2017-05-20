@@ -585,19 +585,29 @@ function expandUrls(urls: string[]): AsyncEvent<string[]> {
         }
 
         const queue = new PromiseQueue(8);
+        const cache = await caches.open('trackingUrls');
 
         for (const url of trackingUrls) {
             queue.enqueue(async () => {
-                const response = await fetch(url, {
-                    cache: 'force-cache',
+                const request = new Request(url, {
                     method: 'HEAD'
                 });
+
+                const cachedResponse = await cache.match(request, {
+                    ignoreMethod: true
+                });
+                if (cachedResponse) {
+                    return { url, redirectUrl: cachedResponse.url };
+                } 
+
+                const response = await fetch(request);
+                await cache.put(url, response);
+
                 return { url, redirectUrl: response.url };
             });
         }
 
         const { results } = await queue.getResults();
-
         const expandedUrls = results.reduce<{ [key: string]: string }>((acc, { url, redirectUrl }) => {
             acc[url] = redirectUrl;
             return acc;
