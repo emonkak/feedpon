@@ -99,8 +99,8 @@ class UserSiteinfoItemRow extends PureComponent<UserSiteinfoItemRowProps, {}> {
                 <td className="u-text-nowrap">{index + 1}</td>
                 <td className="u-text-wrap">{item.name}</td>
                 <td className="u-text-wrap"><code>{item.urlPattern}</code></td>
-                <td className="u-text-wrap"><code>{item.contentPath}</code></td>
-                <td className="u-text-wrap"><code>{item.nextLinkPath}</code></td>
+                <td className="u-text-wrap"><code>{item.contentExpression}</code></td>
+                <td className="u-text-wrap"><code>{item.nextLinkExpression}</code></td>
                 <td className="u-text-nowrap"><button className="button button-outline-negative" onClick={this.handleRemove}>Remove</button></td>
             </tr>
         );
@@ -116,8 +116,8 @@ class SharedSiteinfoItemRow extends PureComponent<SharedSiteinfoItemRowProps, {}
                 <td className="u-text-nowrap">{index + 1}</td>
                 <td className="u-text-wrap">{item.name}</td>
                 <td className="u-text-wrap"><code>{item.urlPattern}</code></td>
-                <td className="u-text-wrap"><code>{item.contentPath}</code></td>
-                <td className="u-text-wrap"><code>{item.nextLinkPath}</code></td>
+                <td className="u-text-wrap"><code>{item.contentExpression}</code></td>
+                <td className="u-text-wrap"><code>{item.nextLinkExpression}</code></td>
             </tr>
         );
     }

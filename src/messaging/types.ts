@@ -247,6 +247,6 @@ export interface SiteinfoItem {
     id: string | number;
     name: string;
     urlPattern: string;
-    contentPath: string;
-    nextLinkPath: string;
+    contentExpression: string;
+    nextLinkExpression: string;
 }

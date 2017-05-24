@@ -403,7 +403,7 @@ export function fetchFullContent(entryId: string, url: string): AsyncEvent {
 
                 for (const item of siteinfoItems) {
                     if (tryMatch(item.urlPattern, response.url)) {
-                        fullContent = extractFullContent(parsedDocument, response.url, item.contentPath, item.nextLinkPath);
+                        fullContent = extractFullContent(parsedDocument, response.url, item.contentExpression, item.nextLinkExpression);
 
                         if (fullContent) {
                             break;
@@ -438,11 +438,11 @@ export function fetchFullContent(entryId: string, url: string): AsyncEvent {
 function extractFullContent(
     contentDocument: Document,
     url: string,
-    contentPath: string,
-    nextLinkPath: string | null
+    contentExpression: string,
+    nextLinkExpression: string | null
 ): FullContent | null {
     const contentResult = tryEvaluate(
-        contentPath,
+        contentExpression,
         contentDocument.body,
         null,
         XPathResult.ORDERED_NODE_ITERATOR_TYPE,
@@ -466,9 +466,9 @@ function extractFullContent(
         }
     }
 
-    if (nextLinkPath) {
+    if (nextLinkExpression) {
         const nextLinkResult = tryEvaluate(
-            nextLinkPath,
+            nextLinkExpression,
             contentDocument.body,
             null,
             XPathResult.FIRST_ORDERED_NODE_TYPE,

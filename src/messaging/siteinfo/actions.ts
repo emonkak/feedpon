@@ -100,8 +100,8 @@ async function fetchSiteinfoItems(): Promise<SiteinfoItem[]> {
             id: item.resource_url,
             name: item.name,
             urlPattern: item.data.url,
-            contentPath: item.data.pageElement,
-            nextLinkPath: item.data.nextLink
+            contentExpression: item.data.pageElement,
+            nextLinkExpression: item.data.nextLink
         }));
 
     const secondaryItems = ldrFullFeedItems
@@ -110,8 +110,8 @@ async function fetchSiteinfoItems(): Promise<SiteinfoItem[]> {
             id: item.resource_url,
             name: item.name,
             urlPattern: item.data.url,
-            contentPath: item.data.xpath,
-            nextLinkPath: ''
+            contentExpression: item.data.xpath,
+            nextLinkExpression: ''
         }));
 
     return primaryItems.concat(secondaryItems);

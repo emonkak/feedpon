@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
-// import classnames from 'classnames';
 
+import InputControl from 'components/parts/InputControl';
 import { SiteinfoItem } from 'messaging/types';
 
 interface SiteinfoFormProps {
@@ -10,8 +10,8 @@ interface SiteinfoFormProps {
 interface SiteinfoFormState {
     name: string;
     urlPattern: string;
-    contentPath: string;
-    nextLinkPath: string;
+    contentExpression: string;
+    nextLinkExpression: string;
 }
 
 export default class SiteinfoForm extends PureComponent<SiteinfoFormProps, SiteinfoFormState> {
@@ -21,8 +21,8 @@ export default class SiteinfoForm extends PureComponent<SiteinfoFormProps, Sitei
         this.state = {
             name: '',
             urlPattern: '',
-            contentPath: '',
-            nextLinkPath: ''
+            contentExpression: '',
+            nextLinkExpression: ''
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -33,14 +33,21 @@ export default class SiteinfoForm extends PureComponent<SiteinfoFormProps, Sitei
         event.preventDefault();
 
         const { onSubmit } = this.props;
-        const { name, urlPattern, contentPath, nextLinkPath } = this.state;
+        const { name, urlPattern, contentExpression, nextLinkExpression } = this.state;
 
         onSubmit({
             id: Date.now(),
             name,
             urlPattern,
-            contentPath,
-            nextLinkPath
+            contentExpression,
+            nextLinkExpression
+        });
+
+        this.setState({
+            name: '',
+            urlPattern: '',
+            contentExpression: '',
+            nextLinkExpression: ''
         });
     }
 
@@ -54,7 +61,7 @@ export default class SiteinfoForm extends PureComponent<SiteinfoFormProps, Sitei
     }
 
     render() {
-        const { name, urlPattern, contentPath, nextLinkPath } = this.state;
+        const { name, urlPattern, contentExpression, nextLinkExpression } = this.state;
 
         return (
             <form onSubmit={this.handleSubmit}>
@@ -63,25 +70,51 @@ export default class SiteinfoForm extends PureComponent<SiteinfoFormProps, Sitei
                     <div className="form-group">
                         <label>
                             <span className="form-control-label is-required">Name</span>
-                            <input className="form-control" type="text" name="name" value={name} onChange={this.handleChange} required />
+                            <InputControl
+                                type="text"
+                                name="name"
+                                value={name}
+                                onChange={this.handleChange}
+                                required />
                         </label>
                     </div>
                     <div className="form-group">
                         <label>
                             <span className="form-control-label is-required">URL pattern</span>
-                            <input className="form-control" type="text" name="urlPattern" value={urlPattern} onChange={this.handleChange} required />
+                            <InputControl
+                                validations={[{ message: 'Invalid regular expression.', rule: isValidPattern }]}
+                                type="text"
+                                name="urlPattern"
+                                value={urlPattern}
+                                onChange={this.handleChange}
+                                required />
+                            <span className="u-text-muted">The regular expression for the url.</span>
                         </label>
                     </div>
                     <div className="form-group">
                         <label>
-                            <span className="form-control-label is-required">Content path</span>
-                            <input className="form-control" type="text" name="contentPath" value={contentPath} onChange={this.handleChange} required />
+                            <span className="form-control-label is-required">Content expression</span>
+                            <InputControl
+                                validations={[{ message: 'Invalid XPath expression.', rule: isValidXPath }]}
+                                type="text"
+                                name="contentExpression"
+                                value={contentExpression}
+                                onChange={this.handleChange}
+                                required />
+                            <span className="u-text-muted">The XPath expression to the element representing the content.</span>
                         </label>
                     </div>
                     <div className="form-group">
                         <label>
-                            <span className="form-control-label is-required">Next link path</span>
-                            <input className="form-control" type="text" name="nextLinkPath" value={nextLinkPath} onChange={this.handleChange} required />
+                            <span className="form-control-label">Next link expression</span>
+                            <InputControl
+                                validations={[{ message: 'Invalid XPath expression.', rule: isValidXPath }]}
+                                type="text"
+                                name="nextLinkExpression"
+                                value={nextLinkExpression}
+                                onChange={this.handleChange}
+                                required />
+                            <span className="u-text-muted">The XPath expression to the anchor element representing the next link.</span>
                         </label>
                     </div>
                     <div className="form-group">
@@ -90,5 +123,22 @@ export default class SiteinfoForm extends PureComponent<SiteinfoFormProps, Sitei
                 </fieldset>
             </form>
         );
+    }
+}
+
+function isValidXPath(expression: string): boolean {
+    try {
+        const resolver = document.createNSResolver(document);
+        return !!document.createExpression(expression, resolver);
+    } catch (_error) {
+        return false;
+    }
+}
+
+function isValidPattern(pattern: string): boolean {
+    try {
+        return !!new RegExp(pattern);
+    } catch (_error) {
+        return false;
     }
 }
