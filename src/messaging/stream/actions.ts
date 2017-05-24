@@ -441,8 +441,6 @@ function extractFullContent(
     contentPath: string,
     nextLinkPath: string | null
 ): FullContent | null {
-    let content = '';
-
     const contentResult = tryEvaluate(
         contentPath,
         contentDocument.body,
@@ -451,43 +449,42 @@ function extractFullContent(
         null
     );
 
-    if (contentResult) {
-        for (
-            let node = contentResult.iterateNext();
-            node;
-            node = contentResult.iterateNext()
-        ) {
-            if (node instanceof Element) {
-                content += node.outerHTML;
+    if (!contentResult) {
+        return null;
+    }
+
+    let content = '';
+    let nextPageUrl = null;
+
+    for (
+        let node = contentResult.iterateNext();
+        node;
+        node = contentResult.iterateNext()
+    ) {
+        if (node instanceof Element) {
+            content += node.outerHTML;
+        }
+    }
+
+    if (nextLinkPath) {
+        const nextLinkResult = tryEvaluate(
+            nextLinkPath,
+            contentDocument.body,
+            null,
+            XPathResult.FIRST_ORDERED_NODE_TYPE,
+            null
+        );
+
+        if (nextLinkResult && nextLinkResult.singleNodeValue instanceof Element) {
+            const href = nextLinkResult.singleNodeValue.getAttribute('href');
+
+            if (href) {
+                nextPageUrl = new URL(href, url).toString();
             }
         }
     }
 
-    if (content) {
-        let nextPageUrl = null;
-
-        if (nextLinkPath) {
-            const nextLinkResult = tryEvaluate(
-                nextLinkPath,
-                contentDocument.body,
-                null,
-                XPathResult.FIRST_ORDERED_NODE_TYPE,
-                null
-            );
-
-            if (nextLinkResult) {
-                const node = nextLinkResult.singleNodeValue;
-
-                if (node instanceof HTMLAnchorElement && node.href) {
-                    nextPageUrl = new URL(node.href, url).toString();
-                }
-            }
-        }
-
-        return { content, url, nextPageUrl };
-    }
-
-    return null;
+    return { content, url, nextPageUrl };
 }
 
 export function markAsRead(entryIds: (string | number)[]): AsyncEvent {
