@@ -3,7 +3,7 @@ import classnames from 'classnames';
 import { Link } from 'react-router';
 
 import CleanHtml from 'components/parts/CleanHtml';
-import CommentPopoverContent from 'components/parts/CommentPopoverContent';
+import CommentList from 'components/parts/CommentList';
 import FullContents from 'components/parts/FullContents';
 import RelativeTime from 'components/parts/RelativeTime';
 import { Entry } from 'messaging/types';
@@ -150,7 +150,7 @@ export default class EntryInner extends PureComponent<EntryInnerProps, EntryInne
                         'is-popular': entry.bookmarkCount >= 10
                     })}
                     target="_blank"
-                    href={'http://b.hatena.ne.jp/entry/' + entry.url}>
+                    href={'http://b.hatena.ne.jp/entry/' + encodeURIComponent(entry.url)}>
                         <i className="icon icon-16 icon-bookmark" />{entry.bookmarkCount > 0 ? entry.bookmarkCount : ''}
                 </a>
             </div>
@@ -232,7 +232,7 @@ export default class EntryInner extends PureComponent<EntryInnerProps, EntryInne
                 <button
                     className={classnames('entry-action', { 'is-selected': popover === 'comment' })}
                     onClick={this.handleSwitchCommentPopover}>
-                    <i className="icon icon-20 icon-comments" />
+                    <i className={classnames('icon icon-20', entry.comments.isLoading ? 'icon-spinner animation-clockwise-rotation' : 'icon-comments')} />
                 </button>
                 <button
                     className={classnames('entry-action', { 'is-selected': popover === 'share' })}
@@ -253,28 +253,76 @@ export default class EntryInner extends PureComponent<EntryInnerProps, EntryInne
         const { popover } = this.state;
 
         switch (popover) {
-            case 'comment': {
-                const { entry } = this.props;
-
-                return (
-                    <div className="popover popover-default popover-bottom">
-                        <div className="popover-arrow" style={{ left: 'calc(50% - 44px)' }} />
-                        <CommentPopoverContent comments={entry.comments} />
-                    </div>
-                );
-            }
+            case 'comment': 
+                return this.renderCommentPopover();
 
             case 'share':
-                return (
-                    <div className="popover popover-default popover-bottom">
-                        <div className="popover-arrow" style={{ left: '50%' }} />
-                        <div className="popover-content">Share...</div>
-                    </div>
-                );
+                return this.renderSharePopover();
 
             default:
                 return null;
         }
+    }
+
+    renderCommentPopover() {
+        const { entry } = this.props;
+
+        if (!entry.comments.isLoaded) {
+            return null;
+        }
+
+        return (
+            <div className="popover popover-default popover-bottom">
+                <div className="popover-arrow" style={{ left: 'calc(50% - 44px)' }} />
+                <div className="popover-content">
+                    <CommentList comments={entry.comments.items} />
+                </div>
+            </div>
+        );
+    }
+
+    renderSharePopover() {
+        const { entry } = this.props;
+
+        return (
+            <div className="popover popover-default popover-bottom">
+                <div className="popover-arrow" style={{ left: '50%' }} />
+                <div className="popover-content">
+                    <div className="social-button-list">
+                        <a className="social-button link-soft"
+                           target="_blank"
+                           title="Share to Twitter"
+                           href={'https://twitter.com/intent/tweet?text=' + encodeURIComponent(entry.title + ' ' + entry.url)}>
+                            <i className="icon icon-24 icon-twitter" />
+                        </a>
+                        <a className="social-button link-soft"
+                           target="_blank"
+                           title="Share to Facebook"
+                           href={'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(entry.url)}>
+                            <i className="icon icon-24 icon-facebook" />
+                        </a>
+                        <a className="social-button link-soft"
+                           target="_blank"
+                           title="Save to Hatena Bookmark"
+                           href={'http://b.hatena.ne.jp/entry/' + encodeURIComponent(entry.url)}>
+                            <i className="icon icon-24 icon-hatena-bookmark" />
+                        </a>
+                        <a className="social-button link-soft"
+                           target="_blank"
+                           title="Save to Pocket"
+                           href={'https://getpocket.com/save?url=' + encodeURIComponent(entry.url) + "&title=" + encodeURIComponent(entry.title)}>
+                            <i className="icon icon-24 icon-pocket" />
+                        </a>
+                        <a className="social-button link-soft"
+                           target="_blank"
+                           title="Save to Instapaper"
+                           href={'http://www.instapaper.com/text?u=' + encodeURIComponent(entry.url)}>
+                            <i className="icon icon-24 icon-instapaper" />
+                        </a>
+                    </div>
+                </div>
+            </div>
+        );
     }
 
     render() {
