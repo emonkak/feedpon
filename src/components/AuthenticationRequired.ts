@@ -12,15 +12,15 @@ interface AuthenticationRequiredProps {
 
 class AuthenticationRequired extends PureComponent<AuthenticationRequiredProps, {}> {
     componentWillMount() {
-        this.update();
+        this.update(this.props);
     }
 
-    componentWillUpdate() {
-        this.update();
+    componentWillUpdate(nextProps: AuthenticationRequiredProps, nextState: {}) {
+        this.update(nextProps);
     }
 
-    update() {
-        const { credential, router } = this.props;
+    update(props: AuthenticationRequiredProps) {
+        const { credential, router } = props;
 
         if (!credential.token) {
             router.replace('/authentication');

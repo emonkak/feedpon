@@ -12,15 +12,15 @@ interface NotAuthenticatedProps {
 
 class NotAuthenticated extends PureComponent<NotAuthenticatedProps, {}> {
     componentWillMount() {
-        this.update();
+        this.update(this.props);
     }
 
-    componentWillUpdate() {
-        this.update();
+    componentWillUpdate(nextProps: NotAuthenticatedProps, nextState: {}) {
+        this.update(nextProps);
     }
 
-    update() {
-        const { credential, router } = this.props;
+    update(props: NotAuthenticatedProps) {
+        const { credential, router } = props;
 
         if (credential.token) {
             router.replace('/');

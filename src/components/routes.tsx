@@ -9,6 +9,7 @@ import Layout from 'components/Layout';
 import NotAuthenticated from 'components/NotAuthenticated'
 import SearchPage from 'components/SearchPage';
 import SettingsPage from 'components/SettingsPage';
+import SingleLayout from 'components/SingleLayout';
 import StreamPage from 'components/StreamPage';
 
 const routes = (
@@ -24,7 +25,9 @@ const routes = (
             </Route>
         </Route>
         <Route component={NotAuthenticated}>
-            <Route path="authentication" component={AuthenticationPage} />
+            <Route component={SingleLayout}>
+                <Route path="authentication" component={AuthenticationPage} />
+            </Route>
         </Route>
     </Route>
 );

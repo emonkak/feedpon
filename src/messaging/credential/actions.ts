@@ -42,12 +42,14 @@ export function authenticate(): AsyncEvent {
         chrome.windows.create({ url, type: 'popup' }, (window: chrome.windows.Window) => {
             observeUrlChanging(window, (url: string) => {
                 if (!url.startsWith(environment.redirectUri)) {
-                    return;
+                    return false;
                 }
 
                 chrome.windows.remove(window.id);
 
                 handleRedirectUrl(url);
+
+                return true;
             });
         });
     };
@@ -80,6 +82,8 @@ export function getFeedlyToken(): AsyncEvent<feedly.ExchangeTokenResponse> {
                 ...refreshToken
             };
 
+            debugger;
+
             dispatch({
                 type: 'AUTHENTICATED',
                 authorizedAt: now,
@@ -91,10 +95,12 @@ export function getFeedlyToken(): AsyncEvent<feedly.ExchangeTokenResponse> {
     };
 }
 
-function observeUrlChanging(window: chrome.windows.Window, callback: (url: string) => void): void {
+function observeUrlChanging(window: chrome.windows.Window, callback: (url: string) => boolean): void {
     function handleUpdateTab(tabId: number, changeInfo: chrome.tabs.TabChangeInfo, tab: chrome.tabs.Tab): void {
         if (tab.windowId === window.id && tab.status === 'complete' && tab.url != null) {
-            callback(tab.url);
+            if (callback(tab.url)) {
+                unregisterListeners();
+            }
         }
     }
 

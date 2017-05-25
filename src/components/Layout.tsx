@@ -52,7 +52,9 @@ export default class Layout extends PureComponent<LayoutProps, LayoutState> {
     }
 
     handleCloseSidebar(event: React.SyntheticEvent<any>) {
-        if (event.target === event.currentTarget){
+        const { sidebarIsOpened } = this.state;
+
+        if (sidebarIsOpened && event.target === event.currentTarget){
             this.refreshSidebar(false);
         }
     }
