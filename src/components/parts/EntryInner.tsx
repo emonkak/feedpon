@@ -111,6 +111,29 @@ export default class EntryInner extends PureComponent<EntryInnerProps, EntryInne
         }
     }
 
+    renderVisual() {
+        const { entry } = this.props;
+
+        if (!entry.visual) {
+            return (
+                <a className="entry-visual" href={entry.url} target="_blank">
+                    <span className="entry-visual-image" />
+                </a>
+            );
+        }
+
+        return (
+            <a className="entry-visual" href={entry.url} target="_blank">
+                <img
+                    className="entry-visual-image"
+                    src={entry.visual.url}
+                    width={entry.visual.width}
+                    height={entry.visual.height} />
+            </a>
+        );
+
+    }
+
     renderNav() {
         const { entry, onClose } = this.props;
         const { fullContent } = this.state;
@@ -139,16 +162,6 @@ export default class EntryInner extends PureComponent<EntryInnerProps, EntryInne
         );
     }
 
-    renderTitle() {
-        const { entry, onExpand } = this.props;
-
-        return (
-            <h2 className="entry-title">
-                <a target="_blank" href={entry.url} onClick={onExpand}>{entry.title}</a>
-            </h2>
-        );
-    }
-
     renderBookmarks() {
         const { entry } = this.props;
 
@@ -170,46 +183,46 @@ export default class EntryInner extends PureComponent<EntryInnerProps, EntryInne
     renderOrign() {
         const { entry, sameOrigin } = this.props;
 
-        if (!sameOrigin && entry.origin) {
-            return (
-                <div className="list-inline-item">
-                    <Link className="link-strong"
-                          to={'streams/' + encodeURIComponent(entry.origin.streamId)}>
-                        {entry.origin.title}
-                    </Link>
-                </div>
-            );
+        if (sameOrigin || !entry.origin) {
+            return null;
         }
 
-        return null;
+        return (
+            <div className="list-inline-item">
+                <Link className="link-strong"
+                        to={'streams/' + encodeURIComponent(entry.origin.streamId)}>
+                    {entry.origin.title}
+                </Link>
+            </div>
+        );
     }
 
     renderAuthor() {
         const { entry } = this.props;
 
-        if (entry.author) {
-            return (
-                <div className="list-inline-item">
-                    <span className="entry-author">by {entry.author}</span>
-                </div>
-            );
+        if (!entry.author) {
+            return null;
         }
 
-        return null;
+        return (
+            <div className="list-inline-item">
+                <span className="entry-author">by {entry.author}</span>
+            </div>
+        );
     }
 
     renderPublishedAt() {
         const { entry } = this.props;
 
-        if (entry.publishedAt) {
-            return (
-                <div className="list-inline-item">
-                    <RelativeTime className="entry-published-at" time={entry.publishedAt} />
-                </div>
-            );
+        if (!entry.publishedAt) {
+            return null;
         }
 
-        return null;
+        return (
+            <div className="list-inline-item">
+                <RelativeTime className="entry-published-at" time={entry.publishedAt} />
+            </div>
+        );
     }
 
     renderContent() {
@@ -293,18 +306,27 @@ export default class EntryInner extends PureComponent<EntryInnerProps, EntryInne
         return (
             <div className="container" onClick={onExpand}>
                 <header className="entry-header">
-                    {this.renderNav()}
-                    {this.renderTitle()}
-                    <div className="entry-metadata">
-                        <div className="list-inline list-inline-dotted">
-                            {this.renderBookmarks()}
-                            {this.renderOrign()}
-                            {this.renderAuthor()}
-                            {this.renderPublishedAt()}
+                    <div className="u-flex">
+                        <div>
+                            {this.renderVisual()}
+                        </div>
+                        <div className="u-flex-grow-1 u-flex-fitted">
+                            {this.renderNav()}
+                            <h2 className="entry-title">
+                                <a target="_blank" href={entry.url} onClick={onExpand}>{entry.title}</a>
+                            </h2>
+                            <div className="u-text-muted">
+                                <div className="list-inline list-inline-dotted">
+                                    {this.renderBookmarks()}
+                                    {this.renderOrign()}
+                                    {this.renderAuthor()}
+                                    {this.renderPublishedAt()}
+                                </div>
+                            </div>
+                            <div className="entry-summary">{entry.summary}</div>
                         </div>
                     </div>
                 </header>
-                <div className="entry-summary">{entry.summary}</div>
                 {this.renderContent()}
                 <footer className="entry-footer">
                     {this.renderActionList()}

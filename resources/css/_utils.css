@@ -104,6 +104,19 @@
   color: var(--negative-color);
 }
 
+.u-flex {
+  display: flex;
+}
+
+.u-flex-fitted {
+  min-width: 0;
+  min-height: 0;
+}
+
+.u-flex-grow-1 {
+  flex-grow: 1;
+}
+
 @media (--sm-viewport) {
   .u-sm-none {
     display: none !important;
