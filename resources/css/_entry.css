@@ -45,10 +45,6 @@
     margin-bottom: var(--baseline-height);
   }
 
-  & .entry-visual {
-    display: none;
-  }
-
   & .entry-title {
     font-size: 1.25rem;
   }
@@ -76,33 +72,6 @@
 
 .entry:hover .entry-nav {
   visibility: visible;
-}
-
-.entry-visual {
-  display: block;
-  box-sizing: border-box;;
-  margin-right: 1rem;
-  border: 1px solid transparent;
-  border-radius: 4px;
-  width: 96px;
-  height: 72px;
-  overflow: hidden;
-}
-
-a.entry-visual {
-  transition: border-color 0.2s ease-in-out;
-}
-
-a.entry-visual:hover {
-  border-color: var(--positive-color);
-}
-
-.entry-visual-image {
-  display: inline-block;
-  object-fit: cover;
-  width: 100%;
-  height: 100%;
-  background-color: var(--medium-light-color);
 }
 
 .entry-nav {

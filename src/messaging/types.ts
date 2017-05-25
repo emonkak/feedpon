@@ -146,7 +146,6 @@ export interface Entry {
     isPinning: boolean;
     markedAsRead: boolean;
     origin: Origin | null;
-    visual: Visual | null;
     fullContents: FullContents;
     comments: Comments;
 }

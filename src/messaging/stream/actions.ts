@@ -9,8 +9,6 @@ import { getFeedlyToken } from 'messaging/credential/actions';
 import { getSiteinfoItems } from 'messaging/siteinfo/actions';
 import { sendNotification } from 'messaging/notification/actions';
 
-const URL_PATTERN = /^https?:\/\//;
-
 export function changeStreamView(streamId: string, view: StreamView): Event {
     return {
         type: 'STREAM_VIEW_CHANGED',
@@ -330,11 +328,6 @@ function convertEntry(entry: feedly.Entry): Entry {
             streamId: entry.origin.streamId,
             title: entry.origin.title,
             url: entry.origin.htmlUrl
-        } : null,
-        visual: entry.visual && URL_PATTERN.test(entry.visual.url) ? {
-            url: entry.visual.url,
-            width: entry.visual.width,
-            height: entry.visual.height
         } : null,
         fullContents: {
             isLoaded: false,

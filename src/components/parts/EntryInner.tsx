@@ -111,29 +111,6 @@ export default class EntryInner extends PureComponent<EntryInnerProps, EntryInne
         }
     }
 
-    renderVisual() {
-        const { entry } = this.props;
-
-        if (!entry.visual) {
-            return (
-                <a className="entry-visual" href={entry.url} target="_blank">
-                    <span className="entry-visual-image" />
-                </a>
-            );
-        }
-
-        return (
-            <a className="entry-visual" href={entry.url} target="_blank">
-                <img
-                    className="entry-visual-image"
-                    src={entry.visual.url}
-                    width={entry.visual.width}
-                    height={entry.visual.height} />
-            </a>
-        );
-
-    }
-
     renderNav() {
         const { entry, onClose } = this.props;
         const { fullContent } = this.state;
@@ -306,28 +283,21 @@ export default class EntryInner extends PureComponent<EntryInnerProps, EntryInne
         return (
             <div className="container" onClick={onExpand}>
                 <header className="entry-header">
-                    <div className="u-flex">
-                        <div>
-                            {this.renderVisual()}
-                        </div>
-                        <div className="u-flex-grow-1 u-flex-fitted">
-                            {this.renderNav()}
-                            <h2 className="entry-title">
-                                <a target="_blank" href={entry.url} onClick={onExpand}>{entry.title}</a>
-                            </h2>
-                            <div className="u-text-muted">
-                                <div className="list-inline list-inline-dotted">
-                                    {this.renderBookmarks()}
-                                    {this.renderOrign()}
-                                    {this.renderAuthor()}
-                                    {this.renderPublishedAt()}
-                                </div>
-                            </div>
-                            <div className="entry-summary">{entry.summary}</div>
+                    {this.renderNav()}
+                    <h2 className="entry-title">
+                        <a target="_blank" href={entry.url} onClick={onExpand}>{entry.title}</a>
+                    </h2>
+                    <div className="u-text-muted">
+                        <div className="list-inline list-inline-dotted">
+                            {this.renderBookmarks()}
+                            {this.renderOrign()}
+                            {this.renderAuthor()}
+                            {this.renderPublishedAt()}
                         </div>
                     </div>
                 </header>
                 {this.renderContent()}
+                <div className="entry-summary">{entry.summary}</div>
                 <footer className="entry-footer">
                     {this.renderActionList()}
                     {this.renderPopover()}
