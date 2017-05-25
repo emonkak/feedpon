@@ -53,7 +53,7 @@ export default class Modal extends PureComponent<ModalProps, {}> {
                 <div className={classnames('modal', { 'is-opened': isOpened })}
                      onClick={this.handleClick.bind(this)}>
                     <div className="modal-dialog">
-                        {children}
+                        {isOpened ? children : null}
                     </div>
                 </div>
             </div>
