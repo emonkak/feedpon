@@ -5,7 +5,7 @@ interface RelativeTimeProps {
     className?: string;
     locales?: string[];
     refreshInterval?: number;
-    time: number;
+    time: Date | number;
 }
 
 interface RelativeTimeState {
@@ -14,7 +14,7 @@ interface RelativeTimeState {
 
 export default class RelativeTime extends PureComponent<RelativeTimeProps, RelativeTimeState> {
     static defaultProps = {
-        refreshInterval: 1000 * 30
+        refreshInterval: 1000 * 60
     };
 
     private timer: number | null = null;
@@ -36,6 +36,10 @@ export default class RelativeTime extends PureComponent<RelativeTimeProps, Relat
     }
 
     componentWillReceiveProps(nextProps: any) {
+        if (this.props.locales !== nextProps.locales) {
+            this.formatter = new IntlRelativeFormat(nextProps.locales);
+        }
+
         if (this.props.time !== nextProps.time) {
             this.setState({
                 relativeTime: this.formatter.format(nextProps.time)
@@ -79,8 +83,10 @@ export default class RelativeTime extends PureComponent<RelativeTimeProps, Relat
         const { className, time } = this.props;
         const { relativeTime } = this.state;
 
+        const date = typeof time === 'number' ? new Date(time) : time;
+
         return (
-            <time className={className} dateTime={new Date(time).toISOString()} title={new Date(time).toLocaleString()}>
+            <time className={className} dateTime={date.toISOString()} title={date.toLocaleString()}>
                 {relativeTime}
             </time>
         );
