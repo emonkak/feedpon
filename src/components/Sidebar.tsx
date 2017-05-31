@@ -74,7 +74,7 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
                                  subscriptions={subscriptions} />
                 </div>
                 <div className="sidebar-group">
-                    <Link className="button button-block button-outline-default" to="/search">New Subscription</Link>
+                    <Link className="button button-block button-outline-default" to="/search/">New Subscription</Link>
                 </div>
                 <div className="sidebar-group u-text-center">
                     <ul className="list-inline list-inline-slashed">
