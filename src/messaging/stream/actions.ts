@@ -4,7 +4,7 @@ import * as feedlyApi from 'adapters/feedly/api';
 import PromiseQueue from 'utils/PromiseQueue';
 import decodeResponseAsText from 'utils/decodeResponseAsText';
 import stripTags from 'utils/stripTags';
-import { AsyncEvent, Entry, Event, FullContent, Stream, StreamOptions, StreamView } from 'messaging/types';
+import { AsyncEvent, Entry, Event, Stream, StreamOptions, StreamView } from 'messaging/types';
 import { getFeedlyToken } from 'messaging/credential/actions';
 import { getSiteinfoItems } from 'messaging/siteinfo/actions';
 import { sendNotification } from 'messaging/notification/actions';
@@ -383,9 +383,10 @@ export function fetchFullContent(entryId: string, url: string): AsyncEvent {
             entryId
         });
 
-        try {
-            let fullContent = null;
+        let content = '';
+        let nextPageUrl = '';
 
+        try {
             const response = await fetch(url);
 
             if (response.ok) {
@@ -396,20 +397,30 @@ export function fetchFullContent(entryId: string, url: string): AsyncEvent {
 
                 for (const item of siteinfoItems) {
                     if (tryMatch(item.urlPattern, response.url)) {
-                        fullContent = extractFullContent(parsedDocument, response.url, item.contentExpression, item.nextLinkExpression);
+                        if (!content) {
+                            content = extractContent(parsedDocument, response.url, item.contentExpression);
+                        }
 
-                        if (fullContent) {
+                        if (!nextPageUrl && item.nextLinkExpression) {
+                            nextPageUrl = extractNextPageUrl(parsedDocument, response.url, item.nextLinkExpression);
+                        }
+
+                        if (content && nextPageUrl) {
                             break;
                         }
                     }
                 }
             }
 
-            if (fullContent) {
+            if (content) {
                 dispatch({
                     type: 'FULL_CONTENT_FETCHED',
                     entryId,
-                    fullContent
+                    fullContent: {
+                        url: response.url,
+                        content,
+                        nextPageUrl
+                    }
                 });
             } else {
                 dispatch({
@@ -428,12 +439,9 @@ export function fetchFullContent(entryId: string, url: string): AsyncEvent {
     };
 }
 
-function extractFullContent(
-    contentDocument: Document,
-    url: string,
-    contentExpression: string,
-    nextLinkExpression: string | null
-): FullContent | null {
+function extractContent(contentDocument: Document, url: string, contentExpression: string): string {
+    let content = '';
+
     const contentResult = tryEvaluate(
         contentExpression,
         contentDocument.body,
@@ -442,42 +450,39 @@ function extractFullContent(
         null
     );
 
-    if (!contentResult) {
-        return null;
-    }
-
-    let content = '';
-    let nextPageUrl = null;
-
-    for (
-        let node = contentResult.iterateNext();
-        node;
-        node = contentResult.iterateNext()
-    ) {
-        if (node instanceof Element) {
-            content += node.outerHTML;
-        }
-    }
-
-    if (nextLinkExpression) {
-        const nextLinkResult = tryEvaluate(
-            nextLinkExpression,
-            contentDocument.body,
-            null,
-            XPathResult.FIRST_ORDERED_NODE_TYPE,
-            null
-        );
-
-        if (nextLinkResult && nextLinkResult.singleNodeValue instanceof Element) {
-            const href = nextLinkResult.singleNodeValue.getAttribute('href');
-
-            if (href) {
-                nextPageUrl = new URL(href, url).toString();
+    if (contentResult) {
+        for (
+            let node = contentResult.iterateNext();
+            node;
+            node = contentResult.iterateNext()
+        ) {
+            if (node instanceof Element) {
+                content += node.outerHTML;
             }
         }
     }
 
-    return { content, url, nextPageUrl };
+    return content;
+}
+
+function extractNextPageUrl(contentDocument: Document, url: string, nextLinkExpression: string): string {
+    const nextLinkResult = tryEvaluate(
+        nextLinkExpression,
+        contentDocument.body,
+        null,
+        XPathResult.FIRST_ORDERED_NODE_TYPE,
+        null
+    );
+
+    if (nextLinkResult && nextLinkResult.singleNodeValue instanceof Element) {
+        const href = nextLinkResult.singleNodeValue.getAttribute('href');
+
+        if (href) {
+            return new URL(href, url).toString();
+        }
+    }
+
+    return '';
 }
 
 export function markAsRead(entryIds: (string | number)[]): AsyncEvent {

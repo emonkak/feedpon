@@ -172,7 +172,7 @@ export interface FullContents {
 export interface FullContent {
     url: string;
     content: string;
-    nextPageUrl: string | null;
+    nextPageUrl: string;
 }
 
 export interface Comments {

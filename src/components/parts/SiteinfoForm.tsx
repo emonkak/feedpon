@@ -112,8 +112,7 @@ export default class SiteinfoForm extends PureComponent<SiteinfoFormProps, Sitei
                                 type="text"
                                 name="nextLinkExpression"
                                 value={nextLinkExpression}
-                                onChange={this.handleChange}
-                                required />
+                                onChange={this.handleChange} />
                             <span className="u-text-muted">The XPath expression to the anchor element representing the next link.</span>
                         </label>
                     </div>
