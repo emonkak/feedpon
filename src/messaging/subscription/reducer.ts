@@ -72,7 +72,7 @@ export default function reducer(subscriptions: Subscriptions, event: Event): Sub
                     items: event.categories
                 },
                 isLoading: false,
-                items: Array.from(event.subscriptions).sort(createSubscriptionComparer(subscriptions.order)),
+                items: event.subscriptions.slice().sort(createSubscriptionComparer(subscriptions.order)),
                 lastUpdatedAt: event.fetchedAt,
                 totalUnreadCount: event.subscriptions.reduce(
                     (total, subscription) => total + subscription.unreadCount,
@@ -83,7 +83,7 @@ export default function reducer(subscriptions: Subscriptions, event: Event): Sub
         case 'SUBSCRIPTIONS_ORDER_CHANGED':
             return {
                 ...subscriptions,
-                items: Array.from(subscriptions.items).sort(createSubscriptionComparer(event.order)),
+                items: subscriptions.items.slice().sort(createSubscriptionComparer(event.order)),
                 order: event.order
             };
 
