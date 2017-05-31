@@ -1,8 +1,9 @@
+import IntlRelativeFormat from 'intl-relativeformat';
 import React, { PureComponent } from 'react';
-import moment from 'moment';
 
 interface RelativeTimeProps {
     className?: string;
+    locales?: string[];
     refreshInterval?: number;
     time: number;
 }
@@ -18,11 +19,15 @@ export default class RelativeTime extends PureComponent<RelativeTimeProps, Relat
 
     private timer: number | null = null;
 
+    private formatter: IntlRelativeFormat;
+
     constructor(props: RelativeTimeProps, context: any) {
         super(props, context);
 
+        this.formatter = new IntlRelativeFormat(props.locales);
+
         this.state = {
-            relativeTime: moment(props.time).fromNow()
+            relativeTime: this.formatter.format(props.time)
         };
     }
 
@@ -33,7 +38,7 @@ export default class RelativeTime extends PureComponent<RelativeTimeProps, Relat
     componentWillReceiveProps(nextProps: any) {
         if (this.props.time !== nextProps.time) {
             this.setState({
-                relativeTime: moment(nextProps.time).fromNow()
+                relativeTime: this.formatter.format(nextProps.time)
             });
         }
 
@@ -43,7 +48,7 @@ export default class RelativeTime extends PureComponent<RelativeTimeProps, Relat
             this.startTimer(nextProps.refreshInterval!);
 
             this.setState({
-                relativeTime: moment(nextProps.time).fromNow()
+                relativeTime: this.formatter.format(nextProps.time)
             });
         }
     }
@@ -66,7 +71,7 @@ export default class RelativeTime extends PureComponent<RelativeTimeProps, Relat
         const { time } = this.props;
 
         this.setState({
-            relativeTime: moment(time).fromNow()
+            relativeTime: this.formatter.format(time)
         });
     }
 
@@ -75,7 +80,7 @@ export default class RelativeTime extends PureComponent<RelativeTimeProps, Relat
         const { relativeTime } = this.state;
 
         return (
-            <time className={className} dateTime={new Date(time).toISOString()} title={moment(time).format('llll')}>
+            <time className={className} dateTime={new Date(time).toISOString()} title={new Date(time).toLocaleString()}>
                 {relativeTime}
             </time>
         );

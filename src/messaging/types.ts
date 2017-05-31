@@ -58,6 +58,7 @@ export interface State {
     siteinfo: Siteinfo;
     streams: Streams;
     subscriptions: Subscriptions;
+    version: string;
 }
 
 export interface Context {

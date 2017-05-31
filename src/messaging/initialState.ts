@@ -66,7 +66,8 @@ const initialState: State = {
         order: 'title',
         totalUnreadCount: 0,
         version: 1
-    }
+    },
+    version: '0.0.0'
 };
 
 export default initialState;

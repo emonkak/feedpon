@@ -1,5 +1,4 @@
 import React, { PureComponent } from 'react';
-import monent from 'moment';
 
 import { Comment as CommentType } from 'messaging/types';
 
@@ -15,7 +14,7 @@ export default class Comment extends PureComponent<CommentProps, {}> {
             <div className="comment">
                 <span className="comment-user">{comment.user}</span>
                 <span className="comment-comment">{comment.comment}</span>
-                <time className="comment-timestamp">{monent(new Date(comment.timestamp)).format('L')}</time>
+                <time className="comment-timestamp">{new Date(comment.timestamp).toLocaleDateString()}</time>
             </div>
         );
     }

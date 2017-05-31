@@ -1,3 +1,5 @@
+/// <reference path="./intl-relativeformat.d.ts" />
+
 interface RequestIdleCallback {
     didTimeout: boolean;
     timeRemaining(): number;

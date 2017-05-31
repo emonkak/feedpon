@@ -132,7 +132,7 @@ export default class SidebarTree extends PureComponent<SidebarTreeProps, {}> {
                 {userCategories}
                 {uncategorizedSubscriptions}
                 <TreeLeaf value="/settings/" primaryText="Settings" />
-                <TreeLeaf value="/about/" primaryText="About..." />
+                <TreeLeaf value="/about/" primaryText="About" />
             </TreeRoot>
         );
     }

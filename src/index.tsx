@@ -11,7 +11,6 @@ import reducer from 'messaging/reducer';
 import restoreState from 'utils/restoreState';
 import routes from 'components/routes';
 import saveStateMiddleware from 'utils/flux/middlewares/saveStateMiddleware';
-import { State } from 'messaging/types';
 import { sendNotification } from 'messaging/notification/actions';
 
 function saveItem(key: string, value: any): void {
@@ -43,7 +42,7 @@ const versions = {
 
 const state = {
     ...initialState,
-    ...restoreState<State>(versions, restoreItem)
+    ...restoreState(versions, restoreItem)
 };
 
 const context = {
