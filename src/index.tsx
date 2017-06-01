@@ -42,7 +42,8 @@ const versions = {
 
 const state = {
     ...initialState,
-    ...restoreState(versions, restoreItem)
+    ...restoreState(versions, restoreItem),
+    version: chrome.runtime.getManifest().version
 };
 
 const context = {
