@@ -7,7 +7,7 @@ import stripTags from 'utils/stripTags';
 import { AsyncEvent, Entry, Event, Stream, StreamOptions, StreamView } from 'messaging/types';
 import { getFeedlyToken } from 'messaging/credential/actions';
 import { getSiteinfoItems } from 'messaging/siteinfo/actions';
-import { sendNotification } from 'messaging/notification/actions';
+import { sendNotification } from 'messaging/notifications/actions';
 
 export function changeStreamView(streamId: string, view: StreamView): Event {
     return {
@@ -20,13 +20,13 @@ export function changeStreamView(streamId: string, view: StreamView): Event {
 export function fetchStream(streamId: string, options?: StreamOptions): AsyncEvent {
     return async (dispatch, getState) => {
         if (!options) {
-            const { settings } = getState();
+            const { streamSettings } = getState();
 
             options = {
-                numEntries: settings.defaultNumEntries,
-                order: settings.defaultEntriesOrder,
-                onlyUnread: settings.onlyUnreadEntries,
-                view: settings.defaultStreamView
+                numEntries: streamSettings.defaultNumEntries,
+                order: streamSettings.defaultEntryOrder,
+                onlyUnread: streamSettings.onlyUnreadEntries,
+                view: streamSettings.defaultStreamView
             };
         }
 
@@ -571,9 +571,9 @@ export function unpinEntry(entryId: string): AsyncEvent {
 
 function expandUrls(urls: string[]): AsyncEvent<string[]> {
     return async (dispatch, getState) => {
-        const { settings: { trackingUrlPatterns } } = getState();
+        const { trackingUrlSettings: { patterns } } = getState();
         const trackingUrls = urls
-            .filter((url) => trackingUrlPatterns.some((pattern) => tryMatch(pattern, url)));
+            .filter((url) => patterns.some((pattern) => tryMatch(pattern, url)));
 
         if (trackingUrls.length === 0) {
             return urls;

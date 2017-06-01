@@ -1,7 +1,7 @@
 import { AsyncEvent, SiteinfoItem, Event } from 'messaging/types';
 import { LDRFullFeedData, WedataItem }  from 'adapters/wedata/types';
 import { getAutoPagerizeItems, getLDRFullFeedItems }  from 'adapters/wedata/api';
-import { sendNotification } from 'messaging/notification/actions';
+import { sendNotification } from 'messaging/notifications/actions';
 
 const LDR_FULL_FEED_TYPE_PRIORITIES: { [key: string]: number } = {
     'SBM': 3,

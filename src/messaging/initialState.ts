@@ -17,14 +17,17 @@ const initialState: State = {
         items: [],
         version: 1
     },
-    settings: {
-        defaultEntriesOrder: 'newest',
+    streamSettings: {
+        defaultEntryOrder: 'newest',
         defaultNumEntries: 20,
         defaultStreamView: 'expanded',
         onlyUnreadEntries: true,
-        trackingUrlPatterns: [
-            '^http://feedproxy\.google\.com',
-            '^http://rss\.rssad\.jp'
+        version: 1
+    },
+    trackingUrlSettings: {
+        patterns: [
+            '^http://feedproxy\\.google\\.com/',
+            '^http://rss\\.rssad\\.jp/'
         ],
         version: 1
     },

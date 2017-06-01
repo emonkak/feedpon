@@ -29,53 +29,57 @@ interface SiteinfoProps {
 
 const ASSUMED_ITEM_HEIGHT = 72;  // baseline height * 3
 
-function getKey(item: SiteinfoItem) {
-    return item.id;
-}
+class SiteinfoSettings extends PureComponent<SiteinfoProps, {}> {
+    constructor(props: SiteinfoProps, context: any) {
+        super(props, context);
 
-function renderUserTable(children: React.ReactNode) {
-    return (
-        <table className="table table-filled">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th style={{ width: '20%' }}>Name</th>
-                    <th style={{ width: '20%' }}>URL pattern</th>
-                    <th style={{ width: '20%' }}>Content path</th>
-                    <th style={{ width: '20%' }}>Next link path</th>
-                    <th style={{ width: '20%' }}>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {children}
-            </tbody>
-        </table>
-    );
-}
+        this.renderUserItem = this.renderUserItem.bind(this);
+    }
 
-function renderSharedTable(children: React.ReactNode, aboveSpace: number, belowSpace: number) {
-    return (
-        <table className="table table-filled">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th style={{ width: '25%' }}>Name</th>
-                    <th style={{ width: '25%' }}>URL pattern</th>
-                    <th style={{ width: '25%' }}>Content path</th>
-                    <th style={{ width: '25%' }}>Next link path</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr style={{ height: aboveSpace }} />
-                {children}
-                <tr style={{ height: belowSpace }} />
-            </tbody>
-        </table>
-    );
-}
+    renderUserItem(item: SiteinfoItem, index: number) {
+        const { onRemoveSiteinfoItem } = this.props;
 
-function renderSharedItem(item: SiteinfoItem, index: number) {
-    return <SharedSiteinfoItemRow key={item.id} item={item} index={index} />;
+        return <UserSiteinfoItemRow key={item.id} item={item} index={index} onRemove={onRemoveSiteinfoItem} />;
+    }
+
+    render() {
+        const { onAddSiteinfoItem, onUpdateSiteinfo, siteinfo } = this.props;
+
+        const updateButton = <button className="button button-positive" onClick={onUpdateSiteinfo} disabled={siteinfo.isLoading}>
+            Update siteinfo...
+        </button>;
+
+        const lastUpdate = siteinfo.lastUpdatedAt > 0
+            ? <p><strong>{siteinfo.items.length}</strong> siteinfo items are available. Last update was <strong><RelativeTime time={siteinfo.lastUpdatedAt} /></strong>.</p>
+            : <p>Not update yet.</p>;
+
+        return (
+            <div>
+                <section className="section">
+                    <h1 className="display-1">User siteinfo</h1>
+                    <SiteinfoForm onAdd={onAddSiteinfoItem} />
+                    <div className="table-responsive">
+                        {renderUserTable(siteinfo.userItems.map(this.renderUserItem))}
+                    </div>
+                </section>
+
+                <section className="section">
+                    <h1 className="display-1">Shared siteinfo</h1>
+                    {lastUpdate}
+                    <p>{updateButton}</p>
+                    <div className="table-responsive">
+                        <LazyList
+                            assumedItemHeight={ASSUMED_ITEM_HEIGHT}
+                            getKey={getKey}
+                            items={siteinfo.items}
+                            renderItem={renderSharedItem}
+                            renderList={renderSharedTable} />
+                    </div>
+                    <p>{updateButton}</p>
+                </section>
+            </div>
+        );
+    }
 }
 
 class UserSiteinfoItemRow extends PureComponent<UserSiteinfoItemRowProps, {}> {
@@ -123,57 +127,53 @@ class SharedSiteinfoItemRow extends PureComponent<SharedSiteinfoItemRowProps, {}
     }
 }
 
-class SiteinfoSettings extends PureComponent<SiteinfoProps, {}> {
-    constructor(props: SiteinfoProps, context: any) {
-        super(props, context);
+function getKey(item: SiteinfoItem) {
+    return item.id;
+}
 
-        this.renderUserItem = this.renderUserItem.bind(this);
-    }
+function renderUserTable(children: React.ReactNode) {
+    return (
+        <table className="table table-filled">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th style={{ width: '20%' }}>Name</th>
+                    <th style={{ width: '20%' }}>URL</th>
+                    <th style={{ width: '20%' }}>Content</th>
+                    <th style={{ width: '20%' }}>Next link</th>
+                    <th style={{ width: '20%' }}>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {children}
+            </tbody>
+        </table>
+    );
+}
 
-    renderUserItem(item: SiteinfoItem, index: number) {
-        const { onRemoveSiteinfoItem } = this.props;
+function renderSharedTable(children: React.ReactNode, aboveSpace: number, belowSpace: number) {
+    return (
+        <table className="table table-filled table-responsive">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th style={{ width: '25%' }}>Name</th>
+                    <th style={{ width: '25%' }}>URL</th>
+                    <th style={{ width: '25%' }}>Content</th>
+                    <th style={{ width: '25%' }}>Next link</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr style={{ height: aboveSpace }} />
+                {children}
+                <tr style={{ height: belowSpace }} />
+            </tbody>
+        </table>
+    );
+}
 
-        return <UserSiteinfoItemRow key={item.id} item={item} index={index} onRemove={onRemoveSiteinfoItem} />;
-    }
-
-    render() {
-        const { onAddSiteinfoItem, onUpdateSiteinfo, siteinfo } = this.props;
-
-        const updateButton = <button className="button button-positive" onClick={onUpdateSiteinfo} disabled={siteinfo.isLoading}>
-            Update siteinfo...
-        </button>;
-
-        const lastUpdate = siteinfo.lastUpdatedAt > 0
-            ? <p><strong>{siteinfo.items.length}</strong> siteinfo items are available. Last update was <strong><RelativeTime time={siteinfo.lastUpdatedAt} /></strong>.</p>
-            : <p>Not update yet.</p>;
-
-        return (
-            <div>
-                <section className="section">
-                    <h1 className="display-1">User siteinfo</h1>
-                    <SiteinfoForm onSubmit={onAddSiteinfoItem} />
-                    {renderUserTable(siteinfo.userItems.map(this.renderUserItem))}
-                </section>
-
-                <section className="section">
-                    <h1 className="display-1">Shared siteinfo</h1>
-                    {lastUpdate}
-                    <p>
-                        {updateButton}
-                    </p>
-                    <LazyList
-                        assumedItemHeight={ASSUMED_ITEM_HEIGHT}
-                        getKey={getKey}
-                        items={siteinfo.items}
-                        renderItem={renderSharedItem}
-                        renderList={renderSharedTable} />
-                    <p>
-                        {updateButton}
-                    </p>
-                </section>
-            </div>
-        );
-    }
+function renderSharedItem(item: SiteinfoItem, index: number) {
+    return <SharedSiteinfoItemRow key={item.id} item={item} index={index} />;
 }
 
 export default connect(

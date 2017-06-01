@@ -78,7 +78,7 @@ export default class InputControl extends PureComponent<InputControlProps, Input
             <input
                 {...restProps}
                 ref={(element) => this.inputElement = element}
-                className={classnames(className, 'form-control', {
+                className={classnames(className, {
                     'has-success': status === 'valid',
                     'has-error': status === 'invalid'
                 })}

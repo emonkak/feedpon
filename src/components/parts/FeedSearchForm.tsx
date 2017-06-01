@@ -43,7 +43,7 @@ export default class FeedSearchForm extends PureComponent<FeedSearchFormProps, {
         const { onSearch, onSelect } = this.props;
 
         return (
-            <Autocomplete inputControl={<input type="search" className="form-search-box" placeholder="Search for feeds ..." />}
+            <Autocomplete inputControl={<input type="search" className="input-search-box" placeholder="Search for feeds ..." />}
                           getCandidates={this.handleComplete}
                           onSubmit={onSearch}
                           onSelect={onSelect}

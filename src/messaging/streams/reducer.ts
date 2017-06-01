@@ -1,4 +1,3 @@
-import initialState from 'messaging/initialState';
 import { Streams, Event } from 'messaging/types';
 
 export default function reducer(streams: Streams, event: Event): Streams {
@@ -106,7 +105,7 @@ export default function reducer(streams: Streams, event: Event): Streams {
 
         case 'STREAM_FETCHING':
             return {
-                current: initialState.streams.current,
+                current: streams.current,
                 isLoaded: false,
                 isLoading: true,
                 version: streams.version

@@ -2,22 +2,19 @@ import React from 'react';
 import classnames from 'classnames';
 
 interface EntryPlaceholderProps {
-    isCollapsible?: boolean;
     isExpanded?: boolean;
 }
 
 export default class EntryPlaceholder extends React.Component<EntryPlaceholderProps, {}> {
     static defaultProps = {
-        isCollapsible: false,
         isExpanded: false
     };
 
     render() {
-        const { isCollapsible, isExpanded } = this.props;
+        const { isExpanded } = this.props;
 
         return (
             <article className={classnames('entry', {
-                'is-collapsible': isCollapsible,
                 'is-expanded': isExpanded
             })}>
                 <div className="container">

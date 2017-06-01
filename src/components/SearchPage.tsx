@@ -14,7 +14,7 @@ import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
 import { Category, Search, State, Subscription } from 'messaging/types';
 import { searchFeeds } from 'messaging/search/actions';
-import { createCategory, subscribeFeed, unsubscribeFeed } from 'messaging/subscription/actions';
+import { createCategory, subscribeFeed, unsubscribeFeed } from 'messaging/subscriptions/actions';
 
 interface SearchPageProps {
     categories: Category[];

@@ -7,7 +7,7 @@ import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
 import { MenuItem } from 'components/parts/Menu';
 import { NotificationKind, State } from 'messaging/types';
-import { sendNotification } from 'messaging/notification/actions';
+import { sendNotification } from 'messaging/notifications/actions';
 
 interface DashboardProps {
     onSendNotification: typeof sendNotification;

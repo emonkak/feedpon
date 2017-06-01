@@ -7,10 +7,10 @@ import Navbar from 'components/parts/Navbar';
 import SubscribeButton from 'components/parts/SubscribeButton';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
-import { Category, State, Stream, StreamView } from 'messaging/types';
+import { Category, EntryOrder, State, Stream, StreamView } from 'messaging/types';
 import { MenuItem } from 'components/parts/Menu';
-import { changeStreamView, fetchComments, fetchFullContent, fetchMoreEntries, fetchStream, markAsRead, pinEntry, unpinEntry } from 'messaging/stream/actions';
-import { createCategory, subscribeFeed, unsubscribeFeed } from 'messaging/subscription/actions';
+import { changeStreamView, fetchComments, fetchFullContent, fetchMoreEntries, fetchStream, markAsRead, pinEntry, unpinEntry } from 'messaging/streams/actions';
+import { createCategory, subscribeFeed, unsubscribeFeed } from 'messaging/subscriptions/actions';
 
 interface StreamProps {
     categories: Category[];
@@ -101,7 +101,7 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
         }
     }
 
-    handleChangeEntryOrder(order: 'newest' | 'oldest') {
+    handleChangeEntryOrder(order: EntryOrder) {
         const { stream, onFetchStream, scrollTo } = this.props;
 
         if (stream.streamId) {

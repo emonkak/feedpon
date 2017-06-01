@@ -7,7 +7,7 @@ import SidebarTree from 'components/parts/SidebarTree';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
 import { State, Subscriptions } from 'messaging/types';
-import { changeSubscriptionOrder, changeUnreadViewing, fetchSubscriptions } from 'messaging/subscription/actions';
+import { changeSubscriptionOrder, changeUnreadViewing, fetchSubscriptions } from 'messaging/subscriptions/actions';
 
 interface SidebarProps {
     location: Location;

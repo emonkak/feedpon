@@ -2,13 +2,14 @@ import React, { PureComponent } from 'react';
 import { History } from 'history';
 import { Params } from 'react-router/lib/Router';
 
-import GeneralSettings from 'components/GeneralSettings';
 import KeyboardSettings from 'components/KeyboardSettings';
 import Nav from 'components/parts/Nav';
 import NavItem from 'components/parts/NavItem';
 import Navbar from 'components/parts/Navbar';
 import SiteinfoSettings from 'components/SiteinfoSettings';
+import StreamSettings from 'components/StreamSettings';
 import SubscriptionSettings from 'components/SubscriptionSettings';
+import TrackingUrlSettings from 'components/TrackingUrlSettings';
 
 interface SettingsProps {
     onToggleSidebar: () => void;
@@ -19,19 +20,30 @@ interface SettingsProps {
 function renderNavContent(value: string) {
     switch (value) {
         case 'general':
-            return <GeneralSettings />;
+            return (
+                <div>
+                    <StreamSettings />
+                    <TrackingUrlSettings />
+                </div>
+            );
 
         case 'keyboard':
-            return <KeyboardSettings />;
+            return (
+                <KeyboardSettings />
+            );
 
         case 'subscription':
-            return <SubscriptionSettings />;
+            return (
+                <SubscriptionSettings />
+            );
 
         case 'siteinfo':
-            return <SiteinfoSettings />;
+            return (
+                <SiteinfoSettings />
+            );
 
         default:
-            return '';
+            return null;
     }
 }
 

@@ -6,7 +6,7 @@ interface NavProps {
     children?: React.ReactNode;
     value?: string;
     onSelect?: (value: any) => void;
-    renderContent: (value: any) => React.ReactChild;
+    renderContent: (value: any) => React.ReactNode;
 }
 
 interface NavState {
@@ -57,7 +57,7 @@ export default class Nav extends PureComponent<NavProps, NavState> {
 
         return (
             <div>
-                <header className="u-text-center">
+                <header className="nav-header">
                     <nav className="nav">
                         {Children.toArray(children).map(this.renderChild, this)}
                     </nav>

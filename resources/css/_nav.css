@@ -1,9 +1,13 @@
 .nav {
   display: inline-flex;
-  margin: var(--baseline-height) 0;
   border-radius: 4px;
   border: 1px solid var(--default-color);
   max-width: 100%;
+}
+
+.nav-header {
+  margin: var(--baseline-height) 0;
+  text-align: center;
 }
 
 .nav-item {

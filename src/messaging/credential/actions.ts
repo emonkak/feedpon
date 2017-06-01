@@ -1,7 +1,7 @@
 import * as feedly from 'adapters/feedly/types';
 import * as feedlyApi from 'adapters/feedly/api';
 import { AsyncEvent } from 'messaging/types';
-import { sendNotification } from 'messaging/notification/actions';
+import { sendNotification } from 'messaging/notifications/actions';
 
 export function authenticate(): AsyncEvent {
     return async (dispatch, getState, { environment }) => {

@@ -6,7 +6,7 @@ import NotificationComponent from 'components/parts/Notification';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
 import { Notification, State } from 'messaging/types';
-import { dismissNotification } from 'messaging/notification/actions';
+import { dismissNotification } from 'messaging/notifications/actions';
 
 interface NotificationsProps {
     isReversed?: boolean;

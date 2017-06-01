@@ -11,7 +11,7 @@ import reducer from 'messaging/reducer';
 import restoreState from 'utils/restoreState';
 import routes from 'components/routes';
 import saveStateMiddleware from 'utils/flux/middlewares/saveStateMiddleware';
-import { sendNotification } from 'messaging/notification/actions';
+import { sendNotification } from 'messaging/notifications/actions';
 
 function saveItem(key: string, value: any): void {
     localStorage.setItem(key, JSON.stringify(value));
@@ -34,10 +34,11 @@ const versions = {
     credential: initialState.credential.version,
     notifications: initialState.notifications.version,
     search: initialState.search.version,
-    settings: initialState.settings.version,
     siteinfo: initialState.siteinfo.version,
+    streamSettings: initialState.streamSettings.version,
     streams: initialState.streams.version,
-    subscriptions: initialState.subscriptions.version
+    subscriptions: initialState.subscriptions.version,
+    trackingUrlSettings: initialState.trackingUrlSettings.version
 };
 
 const state = {

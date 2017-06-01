@@ -34,12 +34,15 @@ export type Event
     | { type: 'STREAM_FETCHED', stream: Stream  }
     | { type: 'STREAM_FETCHING', streamId: string }
     | { type: 'STREAM_FETCHING_FAILED', streamId: string }
+    | { type: 'STREAM_SETTINGS_CHANGED', defaultEntryOrder: EntryOrder, defaultNumEntries: number, defaultStreamView: StreamView, onlyUnreadEntries: boolean }
     | { type: 'STREAM_VIEW_CHANGED', streamId: string, view: StreamView }
     | { type: 'SUBSCRIPTIONS_FETCHED', subscriptions: Subscription[], categories: Category[], fetchedAt: number }
     | { type: 'SUBSCRIPTIONS_FETCHING' }
     | { type: 'SUBSCRIPTIONS_FETCHING_FAILED' }
     | { type: 'SUBSCRIPTIONS_ORDER_CHANGED', order: SubscriptionOrder }
     | { type: 'SUBSCRIPTIONS_UNREAD_VIEWING_CHANGED', onlyUnread: boolean }
+    | { type: 'TRACKING_URL_PATTERN_ADDED', pattern: string }
+    | { type: 'TRACKING_URL_PATTERN_REMOVED', pattern: string }
     | { type: 'USER_SITEINFO_ITEM_ADDED', item: SiteinfoItem }
     | { type: 'USER_SITEINFO_ITEM_REMOVED', id: string };
 
@@ -54,10 +57,11 @@ export interface State {
     credential: Credential;
     notifications: Notifications;
     search: Search;
-    settings: Settings;
     siteinfo: Siteinfo;
+    streamSettings: StreamSettings;
     streams: Streams;
     subscriptions: Subscriptions;
+    trackingUrlSettings: TrackingUrlSettings;
     version: string;
 }
 
@@ -116,7 +120,7 @@ export interface Stream {
 
 export interface StreamOptions {
     numEntries: number;
-    order: 'newest' | 'oldest';
+    order: EntryOrder;
     onlyUnread: boolean;
     view: StreamView;
 }
@@ -201,12 +205,18 @@ export interface Notification {
 
 export type NotificationKind = 'default' | 'positive' | 'negative';
 
-export interface Settings {
-    defaultEntriesOrder: 'newest' | 'oldest';
+export interface StreamSettings {
+    defaultEntryOrder: EntryOrder;
     defaultNumEntries: number;
     defaultStreamView: StreamView;
     onlyUnreadEntries: boolean;
-    trackingUrlPatterns: string[];
+    version: number;
+}
+
+export type EntryOrder = 'newest' | 'oldest';
+
+export interface TrackingUrlSettings {
+    patterns: string[];
     version: number;
 }
 
