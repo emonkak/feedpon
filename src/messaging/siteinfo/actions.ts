@@ -94,17 +94,7 @@ async function fetchSiteinfoItems(): Promise<SiteinfoItem[]> {
         getLDRFullFeedItems()
     ]);
 
-    const primaryItems = ldrFullFeedItems
-        .sort(compareLdrFullFeedItem)
-        .map((item) => ({
-            id: item.resource_url,
-            name: item.name,
-            urlPattern: item.data.url,
-            contentExpression: item.data.xpath,
-            nextLinkExpression: ''
-        }));
-
-    const secondaryItems = autoPagerizeItems
+    const primaryItems = autoPagerizeItems
         .slice(0, -1)  // Remove the generic rule
         .map((item) => ({
             id: item.resource_url,
@@ -112,6 +102,16 @@ async function fetchSiteinfoItems(): Promise<SiteinfoItem[]> {
             urlPattern: item.data.url,
             contentExpression: item.data.pageElement,
             nextLinkExpression: item.data.nextLink
+        }));
+
+    const secondaryItems = ldrFullFeedItems
+        .sort(compareLdrFullFeedItem)
+        .map((item) => ({
+            id: item.resource_url,
+            name: item.name,
+            urlPattern: item.data.url,
+            contentExpression: item.data.xpath,
+            nextLinkExpression: ''
         }));
 
     return primaryItems.concat(secondaryItems);
