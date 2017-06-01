@@ -267,15 +267,11 @@ export default class EntryInner extends PureComponent<EntryInnerProps, EntryInne
     renderCommentPopover() {
         const { entry } = this.props;
 
-        if (!entry.comments.isLoaded) {
-            return null;
-        }
-
         return (
             <div className="popover popover-default popover-bottom">
                 <div className="popover-arrow" style={{ left: 'calc(50% - 44px)' }} />
                 <div className="popover-content">
-                    <CommentList comments={entry.comments.items} />
+                    <CommentList isLoading={entry.comments.isLoading} comments={entry.comments.items} />
                 </div>
             </div>
         );
