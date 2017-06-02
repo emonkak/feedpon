@@ -44,7 +44,8 @@ export type Event
     | { type: 'TRACKING_URL_PATTERN_ADDED', pattern: string }
     | { type: 'TRACKING_URL_PATTERN_REMOVED', pattern: string }
     | { type: 'USER_SITEINFO_ITEM_ADDED', item: SiteinfoItem }
-    | { type: 'USER_SITEINFO_ITEM_REMOVED', id: string };
+    | { type: 'USER_SITEINFO_ITEM_REMOVED', id: string | number }
+    | { type: 'USER_SITEINFO_ITEM_UPDATED', item: SiteinfoItem };
 
 export type AsyncEvent<TResult = void> = (dispatch: Dispatcher, getState: () => State, context: Context) => Promise<TResult>;
 

@@ -24,9 +24,7 @@
 }
 
 .list-group-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  display: block;
   padding: calc(var(--baseline-height) / 4) 1rem;
   color: inherit;
   text-decoration: none;

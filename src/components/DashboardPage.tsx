@@ -136,11 +136,13 @@ class DashboardPage extends PureComponent<DashboardProps, DashboardState> {
                 <p><em>Lorem Ipsum</em> is simply dummy text of the printing and typesetting industry. <strong>Lorem Ipsum</strong> has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
 
                 <h2>Navigation</h2>
-                <nav className="nav">
-                    <a className="nav-item" href="#">First</a>
-                    <a className="nav-item is-selected" href="#">Second</a>
-                    <a className="nav-item" href="#">Third</a>
-                </nav>
+                <div className="u-margin-bottom">
+                    <nav className="nav">
+                        <a className="nav-item" href="#">First</a>
+                        <a className="nav-item is-selected" href="#">Second</a>
+                        <a className="nav-item" href="#">Third</a>
+                    </nav>
+                </div>
 
                 <h2>Popover</h2>
                 <div className="popover popover-default popover-bottom">
@@ -197,12 +199,12 @@ class DashboardPage extends PureComponent<DashboardProps, DashboardState> {
                 </p>
                 <Modal isOpened={modalIsOpened} onClose={this.handleCloseModal.bind(this)}>
                     <button className="close" onClick={this.handleCloseModal.bind(this)}></button>
-                    <h1 className="u-margin-remove display-2">Modal Title</h1>
+                    <h1 className="modal-title">Modal Title</h1>
                     <p>Modal body text goes here.</p>
-                    <div className="button-toolbar">
+                    <p className="button-toolbar">
                         <button className="button button-positive">Okay</button>
                         <button className="button button-outline-default" onClick={this.handleCloseModal.bind(this)}>Cancel</button>
-                    </div>
+                    </p>
                 </Modal>
 
                 <h2>Message</h2>
@@ -377,13 +379,11 @@ class DashboardPage extends PureComponent<DashboardProps, DashboardState> {
                         <div className="u-text-truncate">
                             The standard Lorem Ipsum passage, used since the 1500s
                         </div>
-                        <div className="u-text-nowrap">1 hour ago</div>
                     </a>
                     <a className="list-group-item" href="#">
                         <div className="u-text-truncate">
                             The standard Lorem Ipsum passage, used since the 1500s
                         </div>
-                        <div className="u-text-nowrap">1 hour ago</div>
                     </a>
                 </div>
 

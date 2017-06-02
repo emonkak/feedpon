@@ -31,7 +31,15 @@ export default function reducer(siteinfo: Siteinfo, event: Event): Siteinfo {
         case 'USER_SITEINFO_ITEM_ADDED':
             return {
                 ...siteinfo,
-                userItems: siteinfo.userItems.concat([event.item])
+                userItems: [...siteinfo.userItems, event.item]
+            };
+
+        case 'USER_SITEINFO_ITEM_UPDATED':
+            return {
+                ...siteinfo,
+                userItems: siteinfo.userItems.map(
+                    (item) => item.id === event.item.id ? event.item : item
+                )
             };
 
         case 'USER_SITEINFO_ITEM_REMOVED':

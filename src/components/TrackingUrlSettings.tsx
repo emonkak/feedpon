@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
 
+import ConfirmButton from 'components/parts/ConfirmButton';
 import TrackingUrlPatternForm from 'components/parts/TrackingUrlPatternForm';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
@@ -65,7 +66,13 @@ class TrackingUrlPatternItem extends PureComponent<TrackingUrlPatternItemProps, 
         return (
             <li className="list-group-item">
                 <code>{pattern}</code>
-                <button className="u-text-negative u-pull-right close" onClick={this.handleRemove} />
+                <ConfirmButton
+                    className="u-pull-right close"
+                    message="Are you sure you want to delete this pattern?"
+                    okClassName="button-outline-negative"
+                    okLabel="Delete"
+                    onConfirm={this.handleRemove}
+                    title={`Delete "${pattern}"`} />
             </li>
         )
     }

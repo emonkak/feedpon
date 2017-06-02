@@ -178,7 +178,10 @@
   font-size: 1.25rem;
 }
 
-.button-toolbar .button + .button {
+.button-toolbar > .button + .button,
+.button-toolbar > .button + .button-toolbar,
+.button-toolbar > .button-toolbar + .button,
+.button-toolbar > .button-toolbar + .button-toolbar {
   margin-left: 0.5rem;
 }
 

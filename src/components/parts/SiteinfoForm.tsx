@@ -4,7 +4,9 @@ import InputControl from 'components/parts/InputControl';
 import { SiteinfoItem } from 'messaging/types';
 
 interface SiteinfoFormProps {
-    onAdd(item: SiteinfoItem): void;
+    item?: SiteinfoItem;
+    legend: string;
+    onSubmit: (item: SiteinfoItem) => void;
 }
 
 interface SiteinfoFormState {
@@ -18,12 +20,21 @@ export default class SiteinfoForm extends PureComponent<SiteinfoFormProps, Sitei
     constructor(props: SiteinfoFormProps, context: any) {
         super(props, context);
 
-        this.state = {
-            name: '',
-            urlPattern: '',
-            contentExpression: '',
-            nextLinkExpression: ''
-        };
+        if (props.item) {
+            this.state = {
+                name: props.item.name,
+                urlPattern: props.item.urlPattern,
+                contentExpression: props.item.contentExpression,
+                nextLinkExpression: props.item.nextLinkExpression
+            };
+        } else {
+            this.state = {
+                name: '',
+                urlPattern: '',
+                contentExpression: '',
+                nextLinkExpression: ''
+            };
+        }
 
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -32,23 +43,25 @@ export default class SiteinfoForm extends PureComponent<SiteinfoFormProps, Sitei
     handleSubmit(event: React.SyntheticEvent<any>) {
         event.preventDefault();
 
-        const { onAdd } = this.props;
+        const { item, onSubmit } = this.props;
         const { name, urlPattern, contentExpression, nextLinkExpression } = this.state;
 
-        onAdd({
-            id: Date.now(),
+        onSubmit({
+            id: item ? item.id : Date.now(),
             name,
             urlPattern,
             contentExpression,
             nextLinkExpression
         });
 
-        this.setState({
-            name: '',
-            urlPattern: '',
-            contentExpression: '',
-            nextLinkExpression: ''
-        });
+        if (!item) {
+            this.setState({
+                name: '',
+                urlPattern: '',
+                contentExpression: '',
+                nextLinkExpression: ''
+            });
+        }
     }
 
     handleChange(event: React.SyntheticEvent<any>) {
@@ -61,16 +74,17 @@ export default class SiteinfoForm extends PureComponent<SiteinfoFormProps, Sitei
     }
 
     render() {
-        const { name, urlPattern, contentExpression, nextLinkExpression } = this.state;
+        const { children, legend } = this.props;
+        const { contentExpression, name, nextLinkExpression, urlPattern } = this.state;
 
         return (
             <form onSubmit={this.handleSubmit}>
                 <fieldset>
-                    <legend>New user siteinfo</legend>
+                    <legend>{legend}</legend>
                     <div className="form-group">
                         <label>
                             <span className="form-group-heading form-required">Name</span>
-                            <input
+                            <InputControl
                                 className="form-control"
                                 type="text"
                                 name="name"
@@ -121,7 +135,7 @@ export default class SiteinfoForm extends PureComponent<SiteinfoFormProps, Sitei
                         <span className="u-text-muted">The XPath expression to the anchor element representing the next link.</span>
                     </div>
                     <div className="form-group">
-                        <button className="button button-outline-positive" type="submit">Add</button>
+                        {children}
                     </div>
                 </fieldset>
             </form>
@@ -145,3 +159,4 @@ function isValidPattern(pattern: string): boolean {
         return false;
     }
 }
+

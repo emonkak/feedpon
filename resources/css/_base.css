@@ -74,7 +74,7 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  margin: var(--baseline-height) 0 calc(var(--baseline-height) / 2);
+  margin: 0 0 calc(var(--baseline-height) / 2);
   font-weight: 600;
 }
 
@@ -119,6 +119,7 @@ blockquote, dl, figure, form, ol, p, pre, table, ul {
 
 dt {
   font-weight: 600;
+  color: var(--dark-color);
 }
 
 dd {
@@ -222,18 +223,20 @@ mark {
 }
 
 fieldset {
-  margin: 0 0 var(--baseline-height);
-  padding: calc(var(--baseline-height) / 2 - 1px) calc(1.5rem - 1px) calc(var(--baseline-height) / 2);
-  border: 1px solid var(--medium-dark-color);
-  border-radius: 4px;
-  background-color: var(--light-color);
+  margin: 0;
+  padding: 0;
+  border: 0;
 }
 
 legend {
-  margin: 0;
-  padding: 0 0.5rem;
+  display: block;
+  margin: 0 0 calc(var(--baseline-height) / 2 - 1px);
+  padding: 0;
+  border: 0;
+  width: 100%;;
+  border-bottom: 1px solid var(--medium-dark-color);
   color: var(--dark-color);
-  font-weight: 600;
+  font-weight: bold;
 }
 
 input:focus,

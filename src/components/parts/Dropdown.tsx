@@ -118,7 +118,7 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
         const { isOpened } = this.state;
 
         return (
-            <div className={classnames('dropdown', className, {
+            <span className={classnames('button-toolbar dropdown', className, {
                 'is-opened': isOpened!,
                 'is-pull-right': pullRight!
             })}>
@@ -134,7 +134,7 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
                         {children}
                     </Menu>
                 </Closable>
-            </div>
+            </span>
         );
     }
 }

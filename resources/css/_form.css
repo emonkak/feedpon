@@ -1,3 +1,12 @@
+.form-legend {
+  display: block;
+  margin: 0 0 calc(var(--baseline-height) / 2 - 1px);
+  width: 100%;;
+  border-bottom: 1px solid var(--medium-dark-color);
+  color: var(--dark-color);
+  font-weight: bold;
+}
+
 .form-group {
   margin-bottom: calc(var(--baseline-height) / 2);
 }
@@ -83,22 +92,26 @@
   position: relative;
   width: 100%;
 
-  & .form-control:not(:first-child) {
+  & > .button-toolbar:not(:first-child) > .button:first-of-type,
+  & > .form-control:not(:first-child) {
     border-left: 0;
   }
 
-  & .form-control:not(:last-child) {
+  & > .button-toolbar:not(:last-child) > .button:last-of-type,
+  & > .form-control:not(:last-child) {
     border-right: 0;
   }
 
-  & .button:not(:last-child),
-  & .form-control:not(:last-child) {
+  & > .button:not(:last-child),
+  & > .button-toolbar:not(:last-child) > .button:last-of-type,
+  & > .form-control:not(:last-child) {
     border-bottom-right-radius: 0;
     border-top-right-radius: 0;
   }
 
-  & .button:not(:first-child),
-  & .form-control:not(:first-child) {
+  & > .button:not(:first-child),
+  & > .button-toolbar:not(:first-child) > .button:first-of-type,
+  & > .form-control:not(:first-child) {
     border-bottom-left-radius: 0;
     border-top-left-radius: 0;
   }

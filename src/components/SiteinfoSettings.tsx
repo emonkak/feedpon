@@ -1,45 +1,54 @@
 import React, { PureComponent } from 'react';
-import classnames from 'classnames';
 
+import ConfirmButton from 'components/parts/ConfirmButton';
 import LazyList from 'components/parts/LazyList';
+import Modal from 'components/parts/Modal';
 import RelativeTime from 'components/parts/RelativeTime';
 import SiteinfoForm from 'components/parts/SiteinfoForm';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
 import { State, Siteinfo, SiteinfoItem } from 'messaging/types';
-import { addSiteinfoItem, removeSiteinfoItem, updateSiteinfo } from 'messaging/siteinfo/actions';
-
-interface UserSiteinfoItemRowProps {
-    item: SiteinfoItem;
-    index: number;
-    onRemove: (id: string | number) => void;
-}
-
-interface SharedSiteinfoItemRowProps {
-    item: SiteinfoItem;
-    index: number;
-}
+import { addSiteinfoItem, removeSiteinfoItem, updateSiteinfo, updateSiteinfoItem } from 'messaging/siteinfo/actions';
 
 interface SiteinfoProps {
     onAddSiteinfoItem: typeof addSiteinfoItem;
     onRemoveSiteinfoItem: typeof removeSiteinfoItem;
     onUpdateSiteinfo: typeof updateSiteinfo;
+    onUpdateSiteinfoItem: typeof updateSiteinfoItem;
     siteinfo: Siteinfo;
 }
 
-const ASSUMED_ITEM_HEIGHT = 72;  // baseline height * 3
+interface UserSiteinfoItemProps {
+    item: SiteinfoItem;
+    onRemove: typeof removeSiteinfoItem;
+    onUpdate: typeof updateSiteinfoItem;
+}
+
+interface UserSiteinfoItemState {
+    isEditing: boolean;
+}
+
+interface SharedSiteinfoItemRowProps {
+    item: SiteinfoItem;
+}
+
+const ASSUMED_ITEM_HEIGHT = 24 * 7;
 
 class SiteinfoSettings extends PureComponent<SiteinfoProps, {}> {
     constructor(props: SiteinfoProps, context: any) {
         super(props, context);
-
-        this.renderUserItem = this.renderUserItem.bind(this);
     }
 
-    renderUserItem(item: SiteinfoItem, index: number) {
-        const { onRemoveSiteinfoItem } = this.props;
+    renderUserItem(item: SiteinfoItem) {
+        const { onRemoveSiteinfoItem, onUpdateSiteinfoItem } = this.props;
 
-        return <UserSiteinfoItemRow key={item.id} item={item} index={index} onRemove={onRemoveSiteinfoItem} />;
+        return (
+            <UserSiteinfoItem
+                key={item.id}
+                item={item}
+                onRemove={onRemoveSiteinfoItem}
+                onUpdate={onUpdateSiteinfoItem} />
+        );
     }
 
     render() {
@@ -57,17 +66,31 @@ class SiteinfoSettings extends PureComponent<SiteinfoProps, {}> {
             <div>
                 <section className="section">
                     <h1 className="display-1">User siteinfo</h1>
-                    <SiteinfoForm onAdd={onAddSiteinfoItem} />
-                    <div className="table-responsive">
-                        {renderUserTable(siteinfo.userItems.map(this.renderUserItem))}
+                    <div className="well">
+                        <SiteinfoForm legend="New item" onSubmit={onAddSiteinfoItem}>
+                            <button className="button button-outline-positive" type="submit">Add</button>
+                        </SiteinfoForm>
+                    </div>
+                    <div className="u-responsive">
+                        <table className="table table-filled">
+                            <thead>
+                                <tr>
+                                    <th className="u-text-nowrap" style={{ width: '35%' }}>Name</th>
+                                    <th className="u-text-nowrap" style={{ width: '20%' }}>URL pattern</th>
+                                    <th className="u-text-nowrap" style={{ width: '15%' }}>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {siteinfo.userItems.map(this.renderUserItem, this)}
+                            </tbody>
+                        </table>
                     </div>
                 </section>
-
                 <section className="section">
                     <h1 className="display-1">Shared siteinfo</h1>
                     {lastUpdate}
                     <p>{updateButton}</p>
-                    <div className="table-responsive">
+                    <div className="u-responsive">
                         <LazyList
                             assumedItemHeight={ASSUMED_ITEM_HEIGHT}
                             getKey={getKey}
@@ -82,11 +105,26 @@ class SiteinfoSettings extends PureComponent<SiteinfoProps, {}> {
     }
 }
 
-class UserSiteinfoItemRow extends PureComponent<UserSiteinfoItemRowProps, {}> {
-    constructor(props: UserSiteinfoItemRowProps, context: any) {
+class UserSiteinfoItem extends PureComponent<UserSiteinfoItemProps, UserSiteinfoItemState> {
+    constructor(props: UserSiteinfoItemProps, context: any) {
         super(props, context);
 
+        this.handleCancelEditing = this.handleCancelEditing.bind(this);
+        this.handleEdit = this.handleEdit.bind(this);
         this.handleRemove = this.handleRemove.bind(this);
+        this.handleSave = this.handleSave.bind(this);
+
+        this.state = {
+            isEditing: false
+        };
+    }
+
+    handleEdit() {
+        this.setState({ isEditing: true });
+    }
+
+    handleCancelEditing() {
+        this.setState({ isEditing: false });
     }
 
     handleRemove() {
@@ -95,34 +133,72 @@ class UserSiteinfoItemRow extends PureComponent<UserSiteinfoItemRowProps, {}> {
         onRemove(item.id);
     }
 
+    handleSave(item: SiteinfoItem) {
+        const { onUpdate } = this.props;
+
+        onUpdate(item);
+
+        this.setState({ isEditing: false });
+    }
+
     render() {
-        const { index, item } = this.props;
+        const { item } = this.props;
+        const { isEditing } = this.state;
 
         return (
-            <tr className={classnames({ 'is-even': index % 2 === 0, 'is-odd': index % 2 === 1 })}>
-                <td className="u-text-nowrap">{index + 1}</td>
-                <td className="u-text-wrap">{item.name}</td>
-                <td className="u-text-wrap"><code>{item.urlPattern}</code></td>
-                <td className="u-text-wrap"><code>{item.contentExpression}</code></td>
-                <td className="u-text-wrap"><code>{item.nextLinkExpression}</code></td>
-                <td className="u-text-nowrap"><button className="button button-outline-negative" onClick={this.handleRemove}>Remove</button></td>
+            <tr>
+                <td>{item.name}</td>
+                <td><code>{item.urlPattern}</code></td>
+                <td>
+                    <div className="button-toolbar u-text-nowrap">
+                        <button className="button button-outline-default" onClick={this.handleEdit}>
+                            <i className="icon icon-16 icon-edit" />
+                        </button>
+                        <ConfirmButton
+                            className="button button-outline-negative"
+                            message="Are you sure you want to delete this item?"
+                            okClassName="button-outline-negative"
+                            okLabel="Delete"
+                            onConfirm={this.handleRemove}
+                            title={`Delete "${item.name}"`}>
+                            <i className="icon icon-16 icon-trash" />
+                        </ConfirmButton>
+                    </div>
+                    <Modal isOpened={isEditing} onClose={this.handleCancelEditing}>
+                        <SiteinfoForm
+                            legend="Edit existing item"
+                            item={item}
+                            onSubmit={this.handleSave}>
+                            <div className="button-toolbar">
+                                <button className="button button-outline-positive" type="submit">Save</button>
+                                <button className="button button-outline-default" onClick={this.handleCancelEditing}>Cancel</button>
+                            </div>
+                        </SiteinfoForm>
+                    </Modal>
+                </td>
             </tr>
         );
     }
 }
 
-class SharedSiteinfoItemRow extends PureComponent<SharedSiteinfoItemRowProps, {}> {
+class SharedSiteinfoItem extends PureComponent<SharedSiteinfoItemRowProps, {}> {
     render() {
-        const { index, item } = this.props;
+        const { item } = this.props;
 
         return (
-            <tr className={classnames({ 'is-even': index % 2 === 0, 'is-odd': index % 2 === 1 })}>
-                <td className="u-text-nowrap">{index + 1}</td>
-                <td className="u-text-wrap">{item.name}</td>
-                <td className="u-text-wrap"><code>{item.urlPattern}</code></td>
-                <td className="u-text-wrap"><code>{item.contentExpression}</code></td>
-                <td className="u-text-wrap"><code>{item.nextLinkExpression}</code></td>
-            </tr>
+            <li className="list-group-item">
+                <div>
+                    <div><strong>{item.name}</strong></div>
+                    <dl className="u-margin-remove">
+                        <dt>URL pattern</dt>
+                        <dd><code>{item.urlPattern}</code></dd>
+                        <dt>Content expression</dt>
+                        <dd><code>{item.contentExpression}</code></dd>
+                        <dt>Next link expression</dt>
+                        <dd><code>{item.nextLinkExpression}</code></dd>
+                    </dl>
+                </div>
+            </li>
         );
     }
 }
@@ -131,49 +207,16 @@ function getKey(item: SiteinfoItem) {
     return item.id;
 }
 
-function renderUserTable(children: React.ReactNode) {
-    return (
-        <table className="table table-filled">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th style={{ width: '20%' }}>Name</th>
-                    <th style={{ width: '20%' }}>URL</th>
-                    <th style={{ width: '20%' }}>Content</th>
-                    <th style={{ width: '20%' }}>Next link</th>
-                    <th style={{ width: '20%' }}>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {children}
-            </tbody>
-        </table>
-    );
-}
-
 function renderSharedTable(children: React.ReactNode, aboveSpace: number, belowSpace: number) {
     return (
-        <table className="table table-filled table-responsive">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th style={{ width: '25%' }}>Name</th>
-                    <th style={{ width: '25%' }}>URL</th>
-                    <th style={{ width: '25%' }}>Content</th>
-                    <th style={{ width: '25%' }}>Next link</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr style={{ height: aboveSpace }} />
-                {children}
-                <tr style={{ height: belowSpace }} />
-            </tbody>
-        </table>
+        <ul className="list-group" style={{ paddingTop: aboveSpace, paddingBottom: belowSpace }}>
+            {children}
+        </ul>
     );
 }
 
-function renderSharedItem(item: SiteinfoItem, index: number) {
-    return <SharedSiteinfoItemRow key={item.id} item={item} index={index} />;
+function renderSharedItem(item: SiteinfoItem) {
+    return <SharedSiteinfoItem key={item.id} item={item} />;
 }
 
 export default connect(
@@ -183,6 +226,7 @@ export default connect(
     (dispatch) => bindActions({
         onAddSiteinfoItem: addSiteinfoItem,
         onRemoveSiteinfoItem: removeSiteinfoItem,
-        onUpdateSiteinfo: updateSiteinfo
+        onUpdateSiteinfo: updateSiteinfo,
+        onUpdateSiteinfoItem: updateSiteinfoItem
     }, dispatch)
 )(SiteinfoSettings);
