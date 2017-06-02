@@ -4,7 +4,7 @@ import Navbar from 'components/parts/Navbar';
 import connect from 'utils/flux/react/connect';
 import { State } from 'messaging/types';
 
-interface AboutProps {
+interface AboutPageProps {
     onToggleSidebar: () => void;
     version: string;
 }
@@ -132,7 +132,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 `.trim();
 
-class AboutPage extends PureComponent<AboutProps, {}> {
+class AboutPage extends PureComponent<AboutPageProps, {}> {
     renderNavbar() {
         const { onToggleSidebar } = this.props;
 
