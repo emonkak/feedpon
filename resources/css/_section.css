@@ -1,3 +1,3 @@
 .section {
-  margin: var(--baseline-height) 0 calc(var(--baseline-height) * 2);
+  margin: 0 0 calc(var(--baseline-height) * 2);
 }

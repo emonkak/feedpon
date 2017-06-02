@@ -6,10 +6,11 @@ import KeyboardSettings from 'components/KeyboardSettings';
 import Nav from 'components/parts/Nav';
 import NavItem from 'components/parts/NavItem';
 import Navbar from 'components/parts/Navbar';
-import SiteinfoSettings from 'components/SiteinfoSettings';
+import SharedSiteinfoSettings from 'components/SharedSiteinfoSettings';
 import StreamSettings from 'components/StreamSettings';
 import SubscriptionSettings from 'components/SubscriptionSettings';
 import TrackingUrlSettings from 'components/TrackingUrlSettings';
+import UserSiteinfoSettings from 'components/UserSiteinfoSettings';
 
 interface SettingsProps {
     onToggleSidebar: () => void;
@@ -39,7 +40,12 @@ function renderNavContent(value: string) {
 
         case 'siteinfo':
             return (
-                <SiteinfoSettings />
+                <section>
+                    <h1 className="display-1">Siteinfo</h1>
+                    <p>Siteinfo is used for extracting the full content.</p>
+                    <UserSiteinfoSettings />
+                    <SharedSiteinfoSettings />
+                </section>
             );
 
         default:
