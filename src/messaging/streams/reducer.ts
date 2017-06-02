@@ -105,7 +105,15 @@ export default function reducer(streams: Streams, event: Event): Streams {
 
         case 'STREAM_FETCHING':
             return {
-                current: streams.current,
+                current: {
+                    streamId: event.streamId,
+                    title: 'Loading...',
+                    entries: [],
+                    continuation: null,
+                    feed: null,
+                    subscription: null,
+                    options: streams.current.options
+                },
                 isLoaded: false,
                 isLoading: true,
                 version: streams.version
