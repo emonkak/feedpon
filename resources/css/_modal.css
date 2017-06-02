@@ -1,67 +1,55 @@
 .modal {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  z-index: 1100;
-  visibility: hidden;
-  overflow: hidden;
-  padding: 0 1.5rem;
-}
-
-.modal.is-opened {
-  visibility: visible;
-  overflow-y: auto;
-}
-
-.modal > .modal-dialog {
-  flex: 1;
-  max-width: 640px;
-  transform: translate(0, -25%);
-  transition: transform 0.2s ease-in-out;
-}
-
-.modal.is-opened > .modal-dialog {
-  opacity: 1;
-  transform: translate(0, 0);
-}
-
-.modal-backdrop {
   position: fixed;
   top: 0;
   right: 0;
   bottom: 0;
   left: 0;
   z-index: 1000;
-  visibility: hidden;
-  background-color: #000;
-  transition: visibility 0s ease-in-out 0.2s, opacity 0.2s ease-in-out;
-  opacity: 0;
+  padding: var(--baseline-height) 1.5rem;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background-color: rgba(0, 0, 0, 0.5);
+  transition: opacity 0.2s cubic-bezier(0.465, 0.183, 0.153, 0.946),
+              transform 0.2s cubic-bezier(0.465, 0.183, 0.153, 0.946);
+  will-change: opacity, transform;
 }
 
-.modal-backdrop.is-opened {
-  visibility: visible;
-  opacity: 0.5;
-  transition-delay: 0s;
+.modal-enter,
+.modal-leave.modal-leave-active {
+  opacity: 0;
+  transform: scale(1.15);
+}
+
+.modal-enter.modal-enter-active,
+.modal-leave {
+  opacity: 1;
+  transform: scale(1);
 }
 
 .modal-dialog {
-  background-color: var(--default-background-color);
-  color: var(--default-color);
-  border-radius: 4px;
   padding: var(--baseline-height) 1.5rem;
   margin: 0 0 var(--baseline-height);
+  background-color: var(--default-background-color);
+  border-radius: 4px;
+  color: var(--default-color);
+}
+
+.modal-dialog > *:last-child {
+  margin-bottom: 0;
+}
+
+.modal > .modal-dialog {
+  flex: 1;
+  margin: auto;
+  max-width: 640px;
 }
 
 .modal-title {
   margin: 0;
-  font-size: 1.125rem;
-  font-weight: 600;
-  line-height: inherit;
+  font-size: 2.0rem;
+  font-weight: 300;
+  line-height: calc(var(--baseline-height) * 2);
 }
 
 .modal-is-opened {

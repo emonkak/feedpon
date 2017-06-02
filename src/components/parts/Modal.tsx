@@ -1,8 +1,7 @@
+import CSSTransitionGroup from 'react-addons-css-transition-group';
 import React, { PureComponent } from 'react';
-import classnames from 'classnames';
 
 interface ModalProps {
-    children?: React.ReactNode;
     isOpened?: boolean;
     onClose?: () => void;
 }
@@ -11,6 +10,12 @@ export default class Modal extends PureComponent<ModalProps, {}> {
     static defaultProps = {
         isOpened: false
     };
+
+    constructor(props: ModalProps, context: any) {
+        super(props);
+
+        this.handleClick = this.handleClick.bind(this);
+    }
 
     componentDidMount() {
         this.refreshBodyStyles();
@@ -32,31 +37,39 @@ export default class Modal extends PureComponent<ModalProps, {}> {
         }
     }
 
-    handleClick(event: any) {
-        if (event.target !== event.currentTarget) {
-            return;
-        }
+    handleClick(event: React.MouseEvent<any>) {
+        if (event.target === event.currentTarget) {
+            event.preventDefault();
 
-        const { onClose } = this.props;
+            const { onClose } = this.props;
 
-        if (onClose) {
-            onClose();
+            if (onClose) {
+                onClose();
+            }
         }
     }
 
-    render() {
-        const { children, isOpened } = this.props;
+    renderModal() {
+        const { children } = this.props;
 
         return (
-            <div>
-                <div className={classnames('modal-backdrop', { 'is-opened': isOpened })} />
-                <div className={classnames('modal', { 'is-opened': isOpened })}
-                     onClick={this.handleClick.bind(this)}>
-                    <div className="modal-dialog">
-                        {isOpened ? children : null}
-                    </div>
-                </div>
+            <div className="modal" onClick={this.handleClick}>
+                <div className="modal-dialog">{children}</div>
             </div>
+        );
+    }
+
+    render() {
+        const { isOpened } = this.props;
+
+        return (
+            <CSSTransitionGroup
+                component="div"
+                transitionEnterTimeout={200}
+                transitionLeaveTimeout={200}
+                transitionName="modal">
+                {isOpened ? this.renderModal() : null}
+            </CSSTransitionGroup>
         );
     }
 }

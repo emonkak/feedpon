@@ -197,7 +197,7 @@ class DashboardPage extends PureComponent<DashboardProps, DashboardState> {
                 </p>
                 <Modal isOpened={modalIsOpened} onClose={this.handleCloseModal.bind(this)}>
                     <button className="close" onClick={this.handleCloseModal.bind(this)}></button>
-                    <h3 className="modal-title">Modal Title</h3>
+                    <h1 className="u-margin-remove display-2">Modal Title</h1>
                     <p>Modal body text goes here.</p>
                     <div className="button-toolbar">
                         <button className="button button-positive">Okay</button>
