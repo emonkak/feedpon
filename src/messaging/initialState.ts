@@ -27,7 +27,8 @@ const initialState: State = {
     trackingUrlSettings: {
         patterns: [
             '^http://feedproxy\\.google\\.com/',
-            '^http://rss\\.rssad\\.jp/'
+            '^http://rss\\.rssad\\.jp/',
+            '^https://rdsig\\.yahoo\\.co\\.jp/rss/'
         ],
         version: 1
     },
