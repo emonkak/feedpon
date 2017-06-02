@@ -74,7 +74,7 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  margin: 0 0 calc(var(--baseline-height) / 2);
+  margin: var(--baseline-height) 0 calc(var(--baseline-height) / 2);
   font-weight: 600;
 }
 

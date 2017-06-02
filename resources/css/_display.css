@@ -4,7 +4,7 @@
 .display-4,
 .display-5,
 .display-6 {
-  margin: 0 0 calc(var(--baseline-height) / 2);
+  margin: var(--baseline-height) 0 calc(var(--baseline-height) / 2);
   font-weight: 200;
 }
 
