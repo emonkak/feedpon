@@ -23,11 +23,11 @@ export default class FeedSearchForm extends PureComponent<FeedSearchFormProps, {
     }
 
     handleComplete(query: string) {
-        if (!query) {
+        if (query.trim() === '') {
             return [];
         }
 
-        const splittedQueries = query.toLowerCase().split(/\s+/);
+        const splittedQueries = query.trim().toLowerCase().split(/\s+/);
         const { subscriptions } = this.props;
 
         return new Enumerable(subscriptions)
@@ -43,12 +43,13 @@ export default class FeedSearchForm extends PureComponent<FeedSearchFormProps, {
         const { onSearch, onSelect } = this.props;
 
         return (
-            <Autocomplete inputControl={<input type="search" className="input-search-box" placeholder="Search for feeds ..." />}
-                          getCandidates={this.handleComplete}
-                          onSubmit={onSearch}
-                          onSelect={onSelect}
-                          renderCandidate={renderCandidate}
-                          renderTailItems={renderTailItems} />
+            <Autocomplete
+                inputControl={<input type="search" className="input-search-box" placeholder="Search for feeds ..." />}
+                getCandidates={this.handleComplete}
+                onSubmit={onSearch}
+                onSelect={onSelect}
+                renderCandidate={renderCandidate}
+                renderExtraItems={renderExtraItems} />
         );
     }
 }
@@ -59,21 +60,23 @@ function renderCandidate(subscription: Subscription, query: string) {
         : <i className="icon icon-16 icon-file" />;
 
     return (
-        <MenuItem key={subscription.subscriptionId}
-                  value={'streams/' + encodeURIComponent(subscription.streamId)}
-                  primaryText={subscription.title}
-                  secondaryText={subscription.unreadCount > 0 ? Number(subscription.unreadCount).toLocaleString() : ''}
-                  icon={icon} />
+        <MenuItem
+            key={subscription.subscriptionId}
+            value={'streams/' + encodeURIComponent(subscription.streamId)}
+            primaryText={subscription.title}
+            secondaryText={subscription.unreadCount > 0 ? Number(subscription.unreadCount).toLocaleString() : ''}
+            icon={icon} />
     );
 }
 
-function renderTailItems(query: string) {
-    if (!query) {
+function renderExtraItems(query: string) {
+    if (query.trim() === '') {
         return null;
     }
 
     return (
-        <MenuItem value={'search/' + encodeURIComponent(query)}
-                  primaryText={`Search for "${query}"`} />
+        <MenuItem
+            value={'search/' + encodeURIComponent(query)}
+            primaryText={`Search for "${query}"`} />
     );
 }

@@ -85,8 +85,9 @@ export class Menu extends PureComponent<MenuProps, {}> {
         const { children, className, onKeyDown, pullRight } = this.props;
 
         return (
-            <div className={classnames(className, 'menu', { 'menu-pull-right': pullRight! })}
-                 onKeyDown={onKeyDown}>
+            <div
+                className={classnames(className, 'menu', { 'menu-pull-right': pullRight! })}
+                onKeyDown={onKeyDown}>
                 {Children.toArray(children).map(this.renderChild, this)}
             </div>
         );
@@ -135,10 +136,11 @@ export class MenuItem extends PureComponent<MenuItemProps, {}> {
             );
         } else {
             return (
-                <a className="menu-item"
-                   title={primaryText}
-                   href="#"
-                   onClick={this.handleSelect.bind(this)}>
+                <a
+                    className="menu-item"
+                    title={primaryText}
+                    href="#"
+                    onClick={this.handleSelect.bind(this)}>
                     {iconElement}
                     {primaryTextElement}
                     {secondaryTextElement}
@@ -160,7 +162,7 @@ export class MenuForm extends PureComponent<MenuFormProps, {}> {
         this.handleKeyDown = this.handleKeyDown.bind(this);
     }
 
-    handleSubmit(event: React.SyntheticEvent<any>) {
+    handleSubmit(event: React.FormEvent<any>) {
         event.preventDefault();
 
         const { onSubmit } = this.props;
@@ -178,9 +180,10 @@ export class MenuForm extends PureComponent<MenuFormProps, {}> {
         const { children } = this.props;
 
         return (
-            <form className="menu-form"
-                  onKeyDown={this.handleKeyDown}
-                  onSubmit={this.handleSubmit}>
+            <form
+                className="menu-form"
+                onKeyDown={this.handleKeyDown}
+                onSubmit={this.handleSubmit}>
                 {children}
             </form>
         );

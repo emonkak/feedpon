@@ -1,3 +1,7 @@
+.table {
+  width: 100%;
+}
+
 .table thead th {
   padding-bottom: calc(var(--baseline-height) / 4 - 2px);
   border-bottom: 2px solid var(--medium-dark-color);
@@ -12,8 +16,4 @@
 .table tbody tr.is-even,
 .table-striped tbody tr:nth-of-type(even) {
   background-color: var(--light-color);
-}
-
-.table-filled {
-  width: 100%;
 }

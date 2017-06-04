@@ -18,8 +18,6 @@ interface SharedSiteinfoItemRowProps {
     item: SiteinfoItem;
 }
 
-const ASSUMED_ITEM_HEIGHT = 24 * 7;
-
 class SharedSiteinfoSettings extends PureComponent<SharedSiteinfoProps, {}> {
     render() {
         const { isLoading, items, lastUpdatedAt, onUpdateSiteinfo } = this.props;
@@ -40,11 +38,11 @@ class SharedSiteinfoSettings extends PureComponent<SharedSiteinfoProps, {}> {
                 </p>
                 <div className="u-responsive">
                     <LazyList
-                        assumedItemHeight={ASSUMED_ITEM_HEIGHT}
-                        getKey={getKey}
+                        assumedItemHeight={24 * 7}
+                        getKey={getSiteinfoItemKey}
                         items={items}
-                        renderItem={renderItem}
-                        renderList={renderTable} />
+                        renderItem={renderSiteinfoItem}
+                        renderList={renderSiteinfoList} />
                 </div>
             </section>
         );
@@ -73,11 +71,11 @@ class SharedSiteinfoItem extends PureComponent<SharedSiteinfoItemRowProps, {}> {
     }
 }
 
-function getKey(item: SiteinfoItem) {
+function getSiteinfoItemKey(item: SiteinfoItem) {
     return item.id;
 }
 
-function renderTable(children: React.ReactNode, aboveSpace: number, belowSpace: number) {
+function renderSiteinfoList(children: React.ReactNode, aboveSpace: number, belowSpace: number) {
     return (
         <ul className="list-group" style={{ paddingTop: aboveSpace, paddingBottom: belowSpace }}>
             {children}
@@ -85,7 +83,7 @@ function renderTable(children: React.ReactNode, aboveSpace: number, belowSpace: 
     );
 }
 
-function renderItem(item: SiteinfoItem) {
+function renderSiteinfoItem(item: SiteinfoItem) {
     return <SharedSiteinfoItem key={item.id} item={item} />;
 }
 
@@ -95,7 +93,7 @@ export default connect(
         items: state.siteinfo.items,
         lastUpdatedAt: state.siteinfo.lastUpdatedAt
     }),
-    (dispatch) => bindActions({
+    bindActions({
         onUpdateSiteinfo: updateSiteinfo
-    }, dispatch)
+    })
 )(SharedSiteinfoSettings);

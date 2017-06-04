@@ -30,7 +30,12 @@ const config = {
 };
 
 if (process.env.NODE_ENV === 'production') {
+    const DefinePlugin = require('webpack/lib/DefinePlugin');
     const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+
+    config.plugins.push(new DefinePlugin({
+        'process.env.NODE_ENV': JSON.stringify('production')
+    }));
 
     config.plugins.push(new UglifyJsPlugin({
         compress: {

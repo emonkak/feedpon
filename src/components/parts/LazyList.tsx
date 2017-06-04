@@ -38,8 +38,6 @@ export default class LazyList extends PureComponent<LazyListProps, LazyListState
 
     private scrollable: Element | Window;
 
-    private heightChanged = false;
-
     constructor(props: LazyListProps, context: any) {
         super(props, context);
 
@@ -60,14 +58,14 @@ export default class LazyList extends PureComponent<LazyListProps, LazyListState
         this.scrollable.addEventListener('scroll', this.handleScroll, { passive: true } as any);
         this.scrollable.addEventListener('touchmove', this.handleScroll, { passive: true } as any);
 
-        this.handleUpdateHeight();
+        this.updateScrollPosition();
     }
 
     componentDidUpdate(prevProps: LazyListProps, prevState: LazyListState) {
-        if (this.props.items !== prevProps.items
-            || this.state.startIndex !== prevState.startIndex
-            || this.state.endIndex !== prevState.endIndex) {
-            this.handleUpdateHeight();
+        if (this.props.items !== prevProps.items) {
+            this.refreshHeights();
+            this.recalclateHeights();
+            this.updateScrollPosition();
         }
     }
 
@@ -92,30 +90,27 @@ export default class LazyList extends PureComponent<LazyListProps, LazyListState
         return { scrollTop, scrollHeight };
     }
 
-    updateHeights() {
-        const { assumedItemHeight, getHeight, getKey, items } = this.props;
+    refreshHeights() {
+        const { getKey, items } = this.props;
+        const heights: { [key: string]: number } = {};
 
-        let heights: { [key: string]: number } = {};
-        let hasChanged = false;
-
-        for (const item of items) {
+        for (const item in items) {
             const key = getKey(item);
 
-            const height = this.elements[key]
-                ? getHeight!(this.elements[key])
-                : this.heights[key] || assumedItemHeight;
-
-            heights[key] = height;
-
-            if (height !== this.heights[key]) {
-                hasChanged = true;
+            if (this.heights[key]) {
+                heights[key] = this.heights[key];
             }
         }
 
         this.heights = heights;
-        this.heightChanged = hasChanged;
+    }
 
-        return hasChanged;
+    recalclateHeights() {
+        const { getHeight } = this.props;
+
+        for (const key in this.elements) {
+            this.heights[key] = getHeight!(this.elements[key]);
+        }
     }
 
     updateScrollPosition() {
@@ -163,18 +158,12 @@ export default class LazyList extends PureComponent<LazyListProps, LazyListState
     }
 
     handleScroll(event: Event) {
-        if (this.heightChanged) {
-            this.heightChanged = false;
-            return;
-        }
-
         this.updateScrollPosition();
     }
 
     handleUpdateHeight() {
-        if (this.updateHeights()) {
-            this.updateScrollPosition();
-        }
+        this.recalclateHeights();
+        this.updateScrollPosition();
     }
 
     renderItem(item: any, index: number): React.ReactElement<any> {
@@ -184,9 +173,12 @@ export default class LazyList extends PureComponent<LazyListProps, LazyListState
         const child = renderItem(item, index + startIndex);
         const key = getKey(item);
 
-        const ref = (child: React.ReactInstance) => {
-            if (child) {
-                this.elements[key] = findDOMNode<HTMLElement>(child);
+        const ref = (ref: React.ReactInstance) => {
+            if (ref) {
+                const { getHeight } = this.props;
+                const element = findDOMNode<HTMLElement>(ref);
+                this.elements[key] = element;
+                this.heights[key] = getHeight!(element);
             } else {
                 delete this.elements[key];
             }

@@ -31,6 +31,7 @@ function restoreItem(key: string): any {
 }
 
 const versions = {
+    categories: initialState.categories.version,
     credential: initialState.credential.version,
     notifications: initialState.notifications.version,
     search: initialState.search.version,
@@ -71,7 +72,7 @@ const store = createStore(reducer, state, [
     ((action, next) => {
         console.log(action);
 
-        next(action);
+        return next(action);
     })
 ]);
 

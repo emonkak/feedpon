@@ -47,7 +47,7 @@ export default connect(
     (state: State) => ({
         notifications: state.notifications.items
     }),
-    (dispatch) => bindActions({
+    bindActions({
         onDismissNotification: dismissNotification
-    }, dispatch)
+    })
 )(Notifications);

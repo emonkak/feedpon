@@ -12,20 +12,26 @@ import FeedPlaceholder from 'components/parts/FeedPlaceholder';
 import Navbar from 'components/parts/Navbar';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
-import { Category, Search, State, Subscription } from 'messaging/types';
+import { Category, Feed, State, Subscription } from 'messaging/types';
+import { addToCategory, removeFromCategory, subscribe, unsubscribe } from 'messaging/subscriptions/actions';
+import { createCategory } from 'messaging/categories/actions';
 import { searchFeeds } from 'messaging/search/actions';
-import { createCategory, subscribeFeed, unsubscribeFeed } from 'messaging/subscriptions/actions';
 
 interface SearchPageProps {
     categories: Category[];
+    feeds: Feed[];
+    isLoaded: boolean;
+    isLoading: boolean;
+    onAddToCategory: typeof addToCategory;
     onCreateCategory: typeof createCategory;
+    onRemoveFromCategory: typeof removeFromCategory;
     onSearchFeeds: typeof searchFeeds;
-    onSubscribeFeed: typeof subscribeFeed;
+    onSubscribe: typeof subscribe;
     onToggleSidebar: () => void;
-    onUnsubscribeFeed: typeof unsubscribeFeed;
+    onUnsubscribe: typeof unsubscribe;
     params: Params;
+    query: string;
     router: History;
-    search: Search;
     subscriptions: Subscription[];
 }
 
@@ -39,17 +45,17 @@ class SearchPage extends PureComponent<SearchPageProps, {}> {
     }
 
     componentWillMount() {
-        const { onSearchFeeds, params, search } = this.props;
+        const { onSearchFeeds, params, query } = this.props;
 
-        if (params['query'] && params['query'] !== search.query) {
+        if (params['query'] && params['query'] !== query) {
             onSearchFeeds(params['query']);
         }
     }
 
     componentWillReceiveProps(nextProps: SearchPageProps) {
-        const { onSearchFeeds, search } = nextProps;
+        const { onSearchFeeds, query } = nextProps;
 
-        if (nextProps.params['query'] !== search.query) {
+        if (nextProps.params['query'] !== query) {
             const query = nextProps.params['query'] || '';
 
             this.searchInput.value = query;
@@ -84,13 +90,15 @@ class SearchPage extends PureComponent<SearchPageProps, {}> {
     }
 
     renderFeeds() {
-        const { params, search } = this.props;
+        const { params, query } = this.props;
 
-        if (params['query'] !== search.query) {
+        if (params['query'] !== query) {
             return null;
         }
 
-        if (search.isLoading) {
+        const { isLoading } = this.props;
+
+        if (isLoading) {
             return (
                 <ol className="list-group">
                     <FeedPlaceholder />
@@ -107,32 +115,43 @@ class SearchPage extends PureComponent<SearchPageProps, {}> {
             );
         }
 
-        if (search.isLoaded && search.feeds.length === 0) {
+        const { feeds, isLoaded } = this.props;
+
+        if (isLoaded && feeds.length === 0) {
             return (
-                <p>Your search "<strong>{search.query}</strong>" did not match any feeds.</p>
+                <p>Your search "<strong>{query}</strong>" did not match any feeds.</p>
             );
         }
 
-        const { categories, onCreateCategory, onSubscribeFeed, onUnsubscribeFeed, subscriptions } = this.props;
-        const feeds = new Enumerable(search.feeds)
+        const { categories, onAddToCategory, onCreateCategory, onRemoveFromCategory, onSubscribe, onUnsubscribe, subscriptions } = this.props;
+
+        const feedElements = new Enumerable(feeds)
             .groupJoin(
                 subscriptions,
                 (feed) => feed.feedId,
                 (subscription) => subscription.feedId,
                 (feed, subscriptions) => ({ feed, subscription: subscriptions[0] || null })
             )
-            .select(({ feed, subscription }) =>
-                <FeedComponent key={feed.feedId}
-                               categories={categories}
-                               feed={feed}
-                               subscription={subscription}
-                               onCreateCategory={onCreateCategory}
-                               onSubscribe={onSubscribeFeed}
-                               onUnsubscribe={onUnsubscribeFeed} />)
+            .select(({ feed, subscription }) => {
+                return (
+                    <FeedComponent
+                        categories={categories}
+                        feed={feed}
+                        key={feed.feedId}
+                        onAddToCategory={onAddToCategory}
+                        onCreateCategory={onCreateCategory}
+                        onRemoveFromCategory={onRemoveFromCategory}
+                        onSubscribe={onSubscribe}
+                        onUnsubscribe={onUnsubscribe}
+                        subscription={subscription} />
+                );
+            })
             .toArray();
 
         return (
-            <ol className="list-group">{feeds}</ol>
+            <ol className="list-group">
+                {feedElements}
+            </ol>
         );
     }
 
@@ -142,7 +161,7 @@ class SearchPage extends PureComponent<SearchPageProps, {}> {
         return (
             <div className="container">
                 <h1 className="display-1">Search for feeds to subscribe</h1>
-                <form onSubmit={this.handleSearch}>
+                <form className="form" onSubmit={this.handleSearch}>
                     <div className="input-group">
                         <input autoFocus
                                ref={(element) => this.searchInput = element}
@@ -174,14 +193,19 @@ class SearchPage extends PureComponent<SearchPageProps, {}> {
 
 export default connect(
     (state: State) => ({
-        categories: state.subscriptions.categories.items,
-        search: state.search,
+        categories: state.categories.items,
+        feeds: state.search.feeds,
+        isLoaded: state.search.isLoaded,
+        isLoading: state.search.isLoading,
+        query: state.search.query,
         subscriptions: state.subscriptions.items
     }),
-    (dispatch) => bindActions({
+    bindActions({
+        onAddToCategory: addToCategory,
         onCreateCategory: createCategory,
+        onRemoveFromCategory: removeFromCategory,
         onSearchFeeds: searchFeeds,
-        onSubscribeFeed: subscribeFeed,
-        onUnsubscribeFeed: unsubscribeFeed
-    }, dispatch)
+        onSubscribe: subscribe,
+        onUnsubscribe: unsubscribe
+    })
 )(SearchPage);

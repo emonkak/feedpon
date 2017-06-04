@@ -111,7 +111,6 @@ export default function reducer(streams: Streams, event: Event): Streams {
                     entries: [],
                     continuation: null,
                     feed: null,
-                    subscription: null,
                     options: streams.current.options
                 },
                 isLoaded: false,
@@ -334,29 +333,8 @@ export default function reducer(streams: Streams, event: Event): Streams {
                 }
             };
 
-        case 'SUBSCRIPTIONS_FETCHED': {
-            if (!streams.current.subscription) {
-                return streams;
-            }
-
-            const subscription = event.subscriptions
-                .find((subscription) => subscription.streamId === streams.current.streamId);
-
-            if (!subscription) {
-                return streams;
-            }
-
-            return {
-                ...streams,
-                current: {
-                    ...streams.current,
-                    subscription
-                }
-            };
-        }
-
         case 'FEED_SUBSCRIBING':
-            if (!(streams.current.feed && streams.current.feed.feedId === event.feedId)) {
+            if (!streams.current.feed || streams.current.feed.feedId !== event.feedId) {
                 return streams;
             }
 
@@ -366,7 +344,7 @@ export default function reducer(streams: Streams, event: Event): Streams {
                     ...streams.current,
                     feed: {
                         ...streams.current.feed,
-                        isSubscribing: true
+                        isLoading: true,
                     }
                 }
             };
@@ -382,13 +360,13 @@ export default function reducer(streams: Streams, event: Event): Streams {
                     ...streams.current,
                     feed: {
                         ...streams.current.feed,
-                        isSubscribing: false
+                        isLoading: false,
                     }
                 }
             };
 
         case 'FEED_SUBSCRIBED':
-            if (!(streams.current.feed && streams.current.feed.feedId === event.feedId)) {
+            if (!(streams.current.feed && streams.current.feed.feedId === event.subscription.feedId)) {
                 return streams;
             }
 
@@ -398,25 +376,56 @@ export default function reducer(streams: Streams, event: Event): Streams {
                     ...streams.current,
                     feed: {
                         ...streams.current.feed,
-                        isSubscribing: false
-                    },
-                    subscription: event.subscription
+                        isLoading: false,
+                    }
+                }
+            };
+
+        case 'FEED_UNSUBSCRIBING':
+            if (!streams.current.feed || streams.current.feed.feedId !== event.subscription.feedId) {
+                return streams;
+            }
+
+            return {
+                ...streams,
+                current: {
+                    ...streams.current,
+                    feed: {
+                        ...streams.current.feed,
+                        isLoading: true,
+                    }
+                }
+            };
+
+        case 'FEED_UNSUBSCRIBING_FAILED':
+            if (!(streams.current.feed && streams.current.feed.feedId === event.subscription.feedId)) {
+                return streams;
+            }
+
+            return {
+                ...streams,
+                current: {
+                    ...streams.current,
+                    feed: {
+                        ...streams.current.feed,
+                        isLoading: false,
+                    }
                 }
             };
 
         case 'FEED_UNSUBSCRIBED':
-            if (!(streams.current.feed && streams.current.feed.feedId === event.feedId)) {
+            if (!(streams.current.feed && streams.current.feed.feedId === event.subscription.feedId)) {
                 return streams;
             }
+
             return {
                 ...streams,
                 current: {
                     ...streams.current,
                     feed: {
                         ...streams.current.feed,
-                        isSubscribing: false
-                    },
-                    subscription: null
+                        isLoading: false,
+                    }
                 }
             };
 

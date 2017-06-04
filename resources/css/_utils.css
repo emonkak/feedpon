@@ -51,7 +51,7 @@
 }
 
 .u-text-right {
-  text-align: center;
+  text-align: right;
 }
 
 .u-text-h1 {
@@ -114,12 +114,32 @@
   display: flex;
 }
 
-.u-flex-justify-content-between {
-  justify-content: space-between;
+.u-flex-grow-0 {
+  flex-grow: 0;
+}
+
+.u-flex-grow-1 {
+  flex-grow: 1;
+}
+
+.u-flex-shrink-1 {
+  flex-shrink: 1;
+}
+
+.u-flex-shrink-0 {
+  flex-shrink: 0;
 }
 
 .u-flex-align-items-center {
   align-items: center;
+}
+
+.u-flex-justify-content-between {
+  justify-content: space-between;
+}
+
+.u-flex-truncate {
+  min-width: 0;
 }
 
 .u-inline {

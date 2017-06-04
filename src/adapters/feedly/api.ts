@@ -39,126 +39,212 @@ export function revokeToken(input: types.RevokeTokenInput): Promise<types.Revoke
 
 // Categories API:
 export function getCategories(accessToken: string): Promise<types.Category[]> {
-    return doGet('v3/categories', {}, createAuthHeader(accessToken));
+    return doGet(
+        'v3/categories',
+        null,
+        createAuthHeader(accessToken)
+    );
 }
 
-export function deleteCategory(accessToken: string, categoryId: string): Promise<string> {
-    return doDelete('v3/categories/' + encodeURIComponent(categoryId), {}, createAuthHeader(accessToken));
+export function changeCategoryLabel(accessToken: string, categoryId: string, label: string): Promise<void> {
+    return doPost<void>(
+        'v3/categories/' + encodeURIComponent(categoryId),
+        { label },
+        createAuthHeader(accessToken)
+    );
+}
+
+export function deleteCategory(accessToken: string, categoryId: string): Promise<void> {
+    return doDelete<void>(
+        'v3/categories/' + encodeURIComponent(categoryId),
+        null,
+        createAuthHeader(accessToken)
+    );
 }
 
 // Feeds API:
 export function getFeed(accessToken: string, feedId: string): Promise<types.Feed> {
-    return doGet('v3/feeds/' + encodeURIComponent(feedId), {}, createAuthHeader(accessToken));
+    return doGet(
+        'v3/feeds/' + encodeURIComponent(feedId),
+        null,
+        createAuthHeader(accessToken)
+    );
 }
 
 // Markers API:
 export function getUnreadCounts(accessToken: string, input: types.GetUnreadCountsInput = {}): Promise<types.GetUnreadCountsResponce> {
-    return doGet('v3/markers/counts', input, createAuthHeader(accessToken));
+    return doGet(
+        'v3/markers/counts',
+        input,
+        createAuthHeader(accessToken)
+    );
 }
 
 export function markAsReadForEntries(accessToken: string, entryIds: string | string[]): Promise<void> {
-    return doPost<void>('v3/markers', {
-        action: 'markAsRead',
-        type: 'entries',
-        entryIds: Array.isArray(entryIds) ? entryIds : [entryIds]
-    }, createAuthHeader(accessToken));
+    return doPost<void>(
+        'v3/markers',
+        {
+            action: 'markAsRead',
+            type: 'entries',
+            entryIds: Array.isArray(entryIds) ? entryIds : [entryIds]
+        },
+        createAuthHeader(accessToken)
+    );
 }
 
 export function markAsReadForFeeds(accessToken: string, feedIds: string | string[]): Promise<void> {
-    return doPost<void>('v3/markers', {
-        action: 'markAsRead',
-        type: 'feeds',
-        feedIds: Array.isArray(feedIds) ? feedIds : [feedIds]
-    }, createAuthHeader(accessToken));
+    return doPost<void>(
+        'v3/markers', {
+            action: 'markAsRead',
+            type: 'feeds',
+            feedIds: Array.isArray(feedIds) ? feedIds : [feedIds]
+        },
+        createAuthHeader(accessToken)
+    );
 }
 
 export function markAsReadForCetegories(accessToken: string, categoryIds: string | string[]): Promise<void> {
-    return doPost<void>('v3/markers', {
-        action: 'markAsRead',
-        type: 'categories',
-        categoryIds: Array.isArray(categoryIds) ? categoryIds : [categoryIds]
-    }, createAuthHeader(accessToken));
+    return doPost<void>(
+        'v3/markers',
+        {
+            action: 'markAsRead',
+            type: 'categories',
+            categoryIds: Array.isArray(categoryIds) ? categoryIds : [categoryIds]
+        },
+        createAuthHeader(accessToken)
+    );
 }
 
 export function keepUnreadForEntries(accessToken: string, entryIds: string | string[]): Promise<void> {
-    return doPost<void>('v3/markers', {
-        action: 'keepUnread',
-        type: 'entries',
-        entryIds: Array.isArray(entryIds) ? entryIds : [entryIds]
-    }, createAuthHeader(accessToken));
+    return doPost<void>(
+        'v3/markers',
+        {
+            action: 'keepUnread',
+            type: 'entries',
+            entryIds: Array.isArray(entryIds) ? entryIds : [entryIds]
+        },
+        createAuthHeader(accessToken)
+    );
 }
 
 export function keepUnreadForFeeds(accessToken: string, feedIds: string | string[]): Promise<void> {
-    return doPost<void>('v3/markers', {
-        action: 'keepUnread',
-        type: 'feeds',
-        feedIds: Array.isArray(feedIds) ? feedIds : [feedIds]
-    }, createAuthHeader(accessToken));
+    return doPost<void>(
+        'v3/markers',
+        {
+            action: 'keepUnread',
+            type: 'feeds',
+            feedIds: Array.isArray(feedIds) ? feedIds : [feedIds]
+        },
+        createAuthHeader(accessToken)
+    );
 }
 
 export function keepUnreadForCetegories(accessToken: string, categoryIds: string | string[]): Promise<void> {
-    return doPost<void>('v3/markers', {
-        action: 'keepUnread',
-        type: 'categories',
-        categoryIds: Array.isArray(categoryIds) ? categoryIds : [categoryIds]
-    }, createAuthHeader(accessToken));
+    return doPost<void>(
+        'v3/markers',
+        {
+            action: 'keepUnread',
+            type: 'categories',
+            categoryIds: Array.isArray(categoryIds) ? categoryIds : [categoryIds]
+        },
+        createAuthHeader(accessToken)
+    );
 }
 
 // Search API:
 export function searchFeeds(accessToken: string, input: types.SearchInput): Promise<types.SearchResponse> {
-    return doGet('v3/search/feeds', input, createAuthHeader(accessToken));
+    return doGet(
+        'v3/search/feeds',
+        input,
+        createAuthHeader(accessToken)
+    );
 }
 
 // Streams API:
 export function getStreamIds(accessToken: string, input: types.GetStreamInput): Promise<types.GetEntryIdsResponse> {
-    return doGet('v3/streams/ids', input, createAuthHeader(accessToken));
+    return doGet(
+        'v3/streams/ids',
+        input,
+        createAuthHeader(accessToken)
+    );
 }
 
 export function getStreamContents(accessToken: string, input: types.GetStreamInput): Promise<types.Contents> {
-    return doGet('v3/streams/contents', input, createAuthHeader(accessToken));
+    return doGet(
+        'v3/streams/contents',
+        input,
+        createAuthHeader(accessToken)
+    );
 }
 
 // Subscriptions API:
 export function getSubscriptions(accessToken: string): Promise<types.Subscription[]> {
-    return doGet('v3/subscriptions', {}, createAuthHeader(accessToken));
+    return doGet(
+        'v3/subscriptions',
+        null,
+        createAuthHeader(accessToken)
+    );
 }
 
 export function subscribeFeed(accessToken: string, input: types.SubscribeFeedInput): Promise<void> {
-    return doPost<void>('v3/subscriptions', input, createAuthHeader(accessToken));
+    return doPost<void>(
+        'v3/subscriptions',
+        input,
+        createAuthHeader(accessToken)
+    );
 }
 
 export function unsubscribeFeed(accessToken: string, feedId: string): Promise<void> {
-    const url = 'v3/subscriptions/' + encodeURIComponent(feedId);
-    return doDelete<void>(url, {}, createAuthHeader(accessToken));
+    return doDelete<void>(
+        'v3/subscriptions/' + encodeURIComponent(feedId),
+        null,
+        createAuthHeader(accessToken)
+    );
 }
 
 // Tags API:
 export function getTags(accessToken: string): Promise<types.Tag[]> {
-    return doGet('v3/tags', {}, createAuthHeader(accessToken));
+    return doGet(
+        'v3/tags',
+        null,
+        createAuthHeader(accessToken)
+    );
 }
 
 export function changeTagLabel(accessToken: string, tagId: string, label: string): Promise<void> {
-    const url = 'v3/tags/' + encodeURIComponent(tagId);
-    return doPost<void>(url, { label }, createAuthHeader(accessToken));
+    return doPost<void>(
+        'v3/tags/' + encodeURIComponent(tagId),
+        { label },
+        createAuthHeader(accessToken)
+    );
 }
 
 export function setTag(accessToken: string, entryIds: string[], tagIds: string[]): Promise<void> {
-    const url = 'v3/tags/' + encodeURIComponent(tagIds.join(','));
-    return doPut<void>(url, { entryIds }, createAuthHeader(accessToken));
+    return doPut<void>(
+        'v3/tags/' + encodeURIComponent(tagIds.join(',')),
+        { entryIds },
+        createAuthHeader(accessToken)
+    );
 }
 
 export function unsetTag(accessToken: string, entryIds: string[], tagIds: string[]): Promise<void> {
-    const url = 'v3/tags/' + encodeURIComponent(tagIds.join(',')) + '/' + encodeURIComponent(entryIds.join(','));
-    return doDelete<void>(url, {}, createAuthHeader(accessToken));
+    return doDelete<void>(
+        'v3/tags/' + encodeURIComponent(tagIds.join(',')) + '/' + encodeURIComponent(entryIds.join(',')),
+        null,
+        createAuthHeader(accessToken)
+    );
 }
 
 export function deleteTag(accessToken: string, tagIds: string[]): Promise<void> {
-    const url = 'v3/tags/' + encodeURIComponent(tagIds.join(','));
-    return doDelete<void>(url, {}, createAuthHeader(accessToken));
+    return doDelete<void>(
+        'v3/tags/' + encodeURIComponent(tagIds.join(',')),
+        null,
+        createAuthHeader(accessToken)
+    );
 }
 
 // Utils:
-function doGet<T>(path: string, params?: { [key: string]: any }, headers?: { [key: string]: string }): Promise<T> {
+function doGet<T>(path: string, params?: { [key: string]: any } | null, headers?: { [key: string]: string }): Promise<T> {
     const url = ENDPOINT + path + (params ? '?' + toQueryString(params) : '');
 
     return fetch(url, {
@@ -179,7 +265,7 @@ function doPost<T>(path: string, data?: { [key: string]: any }, headers?:  { [ke
         .then<T>(parseAsJson);
 }
 
-function doPut<T>(path: string, data?: { [key: string]: any }, headers?:  { [key: string]: string }): Promise<T> {
+function doPut<T>(path: string, data?: { [key: string]: any } | null, headers?: { [key: string]: string }): Promise<T> {
     const url = ENDPOINT + path;
 
     return fetch(url, {
@@ -190,7 +276,7 @@ function doPut<T>(path: string, data?: { [key: string]: any }, headers?:  { [key
         .then<T>(parseAsJson);
 }
 
-function doDelete<T>(path: string, data?: { [key: string]: any }, headers?:  { [key: string]: string }): Promise<T> {
+function doDelete<T>(path: string, data?: { [key: string]: any } | null, headers?: { [key: string]: string }): Promise<T> {
     const url = ENDPOINT + path;
 
     return fetch(url, {

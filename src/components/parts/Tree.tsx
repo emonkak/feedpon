@@ -5,23 +5,27 @@ import createChainedFunction from 'utils/createChainedFunction';
 
 interface TreeProps {
     children?: React.ReactNode;
-    isExpanded: boolean;
+    isExpanded?: boolean;
     onSelect?: (value: any) => void;
     selectedValue?: any;
 }
 
-class Tree extends PureComponent<TreeProps, {}> {
+export class Tree extends PureComponent<TreeProps, {}> {
+    static defaultProps = {
+        isExpanded: true
+    };
+
     constructor(props: TreeProps, context: any) {
         super(props, context);
 
         this.handleSelect = this.handleSelect.bind(this);
     }
 
-      shouldComponentUpdate(nextProps: TreeProps, nextState: {}) {
-          return nextProps.isExpanded &&
-                 (this.props.children !== nextProps.selectedValue ||
-                  this.props.selectedValue !== nextProps.selectedValue);
-      }
+    shouldComponentUpdate(nextProps: TreeProps, nextState: {}) {
+        return nextProps.isExpanded &&
+            (this.props.children !== nextProps.children ||
+             this.props.selectedValue !== nextProps.selectedValue);
+    }
 
     handleSelect(selectedValue: any) {
         const { onSelect } = this.props;
@@ -71,61 +75,9 @@ class Tree extends PureComponent<TreeProps, {}> {
     }
 }
 
-interface TreeRootProps {
-    children?: React.ReactNode;
-    onSelect?: (value: any) => void;
-    selectedValue?: any;
-}
-
-interface TreeRootState {
-    selectedValue?: any;
-}
-
-export class TreeRoot extends PureComponent<TreeRootProps, TreeRootState> {
-    constructor(props: TreeProps, context: any) {
-        super(props, context);
-
-        this.state = {
-            selectedValue: props.selectedValue
-        };
-
-        this.handleSelect = this.handleSelect.bind(this);
-    }
-
-    componentWillReceiveProps(nextProps: TreeProps) {
-        if (this.props.selectedValue !== nextProps.selectedValue) {
-            this.setState({
-                selectedValue: nextProps.selectedValue
-            });
-        }
-    }
-
-    handleSelect(selectedValue: any) {
-        const { onSelect } = this.props;
-
-        if (onSelect) {
-            onSelect(selectedValue);
-        }
-
-        this.setState({ selectedValue });
-    }
-
-    render() {
-        const { children } = this.props;
-        const { selectedValue } = this.state;
-
-        return (
-            <Tree isExpanded={true}
-                  onSelect={this.handleSelect}
-                  selectedValue={selectedValue}>{children}</Tree>
-        );
-    }
-}
-
 interface TreeBranchProps {
     children?: React.ReactNode;
     className?: string;
-    href?: string;
     isExpanded?: boolean;
     onSelect?: (value: any) => void;
     primaryText: string;
@@ -141,7 +93,6 @@ interface TreeBranchState {
 
 export class TreeBranch extends PureComponent<TreeBranchProps, TreeBranchState> {
     static defaultProps = {
-        href: '#',
         isExpanded: false
     }
 
@@ -186,7 +137,7 @@ export class TreeBranch extends PureComponent<TreeBranchProps, TreeBranchState> 
     }
 
     render() {
-        const { onSelect, children, className, href, primaryText, secondaryText, selectedValue, title, value } = this.props;
+        const { onSelect, children, className, primaryText, secondaryText, selectedValue, title, value } = this.props;
         const { isExpanded } = this.state;
 
         return (
@@ -195,7 +146,7 @@ export class TreeBranch extends PureComponent<TreeBranchProps, TreeBranchState> 
                     <a className="tree-node-icon" href="#" onClick={this.handleExpand}>
                         {isExpanded ? <i className="icon icon-16 icon-angle-down" /> : <i className="icon icon-16 icon-angle-right" />}
                     </a>
-                    <a className="tree-node-label" href={href} title={title} onClick={this.handleSelect}>
+                    <a className="tree-node-label" href="#" title={title} onClick={this.handleSelect}>
                         <span className="tree-node-primary-text">{primaryText}</span>
                         <span className="tree-node-secondary-text">{secondaryText}</span>
                     </a>
@@ -210,7 +161,6 @@ export class TreeBranch extends PureComponent<TreeBranchProps, TreeBranchState> 
 
 interface TreeLeafProps {
     className?: string;
-    href?: string;
     icon?: React.ReactElement<any>;
     isSelected?: boolean;
     onSelect?: (value: any) => void;
@@ -222,7 +172,6 @@ interface TreeLeafProps {
 
 export class TreeLeaf extends PureComponent<TreeLeafProps, {}> {
     static defaultProps = {
-        href: '#',
         isSelected: false
     }
 
@@ -243,12 +192,12 @@ export class TreeLeaf extends PureComponent<TreeLeafProps, {}> {
     }
 
     render() {
-        const { className, href, icon, isSelected, primaryText, secondaryText, title } = this.props;
+        const { className, icon, isSelected, primaryText, secondaryText, title } = this.props;
 
         return (
             <div className="tree-leaf">
                 <a className={classnames('tree-node', className, { 'is-selected': isSelected } )}
-                    href={href}
+                    href="#"
                     title={title}
                     onClick={this.handleSelect}>
                     {icon ? <span className="tree-node-icon">{icon}</span> : null}
@@ -260,12 +209,4 @@ export class TreeLeaf extends PureComponent<TreeLeafProps, {}> {
             </div>
         );
     }
-}
-
-export const TreeHeader: React.StatelessComponent<{}> = ({ children }) => {
-    return (
-        <div className="tree-header">
-            {children}
-        </div>
-    );
 }

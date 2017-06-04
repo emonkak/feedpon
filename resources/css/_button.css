@@ -17,8 +17,12 @@
   text-decoration: none;
 }
 
+.button:focus {
+  outline: none;
+}
+
 .button:disabled {
-  opacity: 0.65;
+  opacity: 0.5;
 }
 
 .button-default {
@@ -183,6 +187,21 @@
 .button-toolbar > .button-toolbar + .button,
 .button-toolbar > .button-toolbar + .button-toolbar {
   margin-left: 0.5rem;
+}
+
+.button-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: var(--baseline-height);
+}
+
+.button-icon-24 {
+  width: 24px;
+}
+
+.button-icon-32 {
+  width: 32px;
 }
 
 .close {

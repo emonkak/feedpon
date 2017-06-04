@@ -8,6 +8,7 @@ import { Menu } from 'components/parts/Menu';
 interface DropdownProps {
     className?: string;
     isOpened?: boolean;
+    menu: React.ReactElement<any>;
     onClose?: () => void;
     onSelect?: (value?: any) => void;
     pullRight?: boolean;
@@ -98,7 +99,7 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
     renderToggleButton() {
         const { toggleButton } = this.props;
 
-        const props = {
+        return cloneElement(toggleButton, {
             ...toggleButton.props,
             onClick: createChainedFunction(
                 toggleButton.props.onClick,
@@ -108,13 +109,34 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
                 toggleButton.props.onKeyDown,
                 this.handleKeyDown
             )
-        };
+        });
+    }
 
-        return cloneElement(toggleButton, props);
+    renderMenu() {
+        const { menu } = this.props;
+
+        const ref = (ref: Menu) => this.menu = ref;
+
+        return cloneElement(menu, {
+            ...menu.props,
+            ref: createChainedFunction((menu as any).ref, ref),
+            onKeyDown: createChainedFunction(
+                menu.props.onKeyDown,
+                this.handleKeyDown
+            ),
+            onSelect: createChainedFunction(
+                menu.props.onSelect,
+                this.handleSelect
+            ),
+            onClose: createChainedFunction(
+                menu.props.onClose,
+                this.handleClose
+            )
+        });
     }
 
     render() {
-        const { children, className, pullRight } = this.props;
+        const { className, pullRight } = this.props;
         const { isOpened } = this.state;
 
         return (
@@ -126,13 +148,7 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
                 <Closable
                     onClose={this.handleClose}
                     isDisabled={!isOpened}>
-                    <Menu ref={(ref) => this.menu = ref}
-                          className="dropdown-menu"
-                          onKeyDown={this.handleKeyDown}
-                          onSelect={this.handleSelect}
-                          onClose={this.handleClose}>
-                        {children}
-                    </Menu>
+                    {this.renderMenu()}
                 </Closable>
             </span>
         );

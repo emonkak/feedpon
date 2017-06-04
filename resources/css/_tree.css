@@ -73,17 +73,3 @@ a.tree-node-label {
 .tree-node-primary-text + .tree-node-secondary-text {
   margin-left: 1rem;
 }
-
-.tree-header {
-  display: flex;
-  align-items: stretch;
-  margin: calc(var(--baseline-height) / 2 - 1px) 0 0;
-  border-bottom: 1px solid var(--default-color);
-  border-radius: 0;
-  color: var(--default-color);
-}
-
-.tree-header > .tree-node-label {
-  font-weight: 600;
-  font-size: 0.875rem;
-}

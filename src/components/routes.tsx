@@ -4,6 +4,7 @@ import { Route, IndexRoute } from 'react-router';
 import AboutPage from 'components/AboutPage';
 import AuthenticationPage from 'components/AuthenticationPage';
 import AuthenticationRequired from 'components/AuthenticationRequired';
+import CategoriesPage from 'components/CategoriesPage';
 import DashboardPage from 'components/DashboardPage';
 import Layout from 'components/Layout';
 import NotAuthenticated from 'components/NotAuthenticated'
@@ -18,9 +19,9 @@ const routes = (
             <Route component={Layout}>
                 <IndexRoute component={DashboardPage} />
                 <Route path="about" component={AboutPage} />
+                <Route path="categories/(:label)" component={CategoriesPage} />
                 <Route path="search/(:query)" component={SearchPage} />
-                <Route path="settings" component={SettingsPage} />
-                <Route path="settings/:setting_id" component={SettingsPage} />
+                <Route path="settings/(:setting_id)" component={SettingsPage} />
                 <Route path="streams/:stream_id" component={StreamPage} />
             </Route>
         </Route>

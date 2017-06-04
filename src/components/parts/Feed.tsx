@@ -1,21 +1,25 @@
 import React, { PureComponent } from 'react';
 import { Link } from 'react-router';
 
+import Dropdown from 'components/parts/Dropdown';
 import SubscribeButton from 'components/parts/SubscribeButton';
+import SubscribeMenu from 'components/parts/SubscribeMenu';
 import { Category, Feed, Subscription } from 'messaging/types';
 
 interface FeedProps {
     categories: Category[];
     feed: Feed;
+    onAddToCategory: (subscription: Subscription, label: string) => void;
     onCreateCategory: (label: string, callback: (category: Category) => void) => void;
+    onRemoveFromCategory: (subscription: Subscription, label: string) => void;
     onSubscribe: (feed: Feed, labels: string[]) => void;
-    onUnsubscribe: (feedId: string | number) => void;
-    subscription: Subscription | null;
+    onUnsubscribe: (subscription: Subscription) => void;
+    subscription: Subscription;
 }
 
 export default class FeedComponent extends PureComponent<FeedProps, {}> {
     render() {
-        const { categories, feed, onCreateCategory, onSubscribe, onUnsubscribe, subscription } = this.props;
+        const { categories, feed, onAddToCategory, onCreateCategory, onRemoveFromCategory, onSubscribe, onUnsubscribe, subscription } = this.props;
 
         return (
             <li className="list-group-item">
@@ -25,13 +29,24 @@ export default class FeedComponent extends PureComponent<FeedProps, {}> {
                         <div className="u-text-small"><strong>{feed.subscribers}</strong> subscribers</div>
                         <div className="u-text-muted">{feed.description}</div>
                     </div>
-                    <SubscribeButton
-                        feed={feed}
-                        categories={categories}
-                        onCreateCategory={onCreateCategory}
-                        onSubscribe={onSubscribe}
-                        onUnsubscribe={onUnsubscribe}
-                        subscription={subscription} />
+                    <Dropdown
+                        toggleButton={
+                            <SubscribeButton
+                                isSubscribed={!!subscription}
+                                isLoading={feed.isLoading} />
+                        }
+                        menu={
+                            <SubscribeMenu
+                                categories={categories}
+                                feed={feed}
+                                onAddToCategory={onAddToCategory}
+                                onCreateCategory={onCreateCategory}
+                                onRemoveFromCategory={onRemoveFromCategory}
+                                onSubscribe={onSubscribe}
+                                onUnsubscribe={onUnsubscribe}
+                                subscription={subscription} />
+                        }
+                        pullRight={true} />
                 </div>
             </li>
         );

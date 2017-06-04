@@ -1,5 +1,6 @@
 import { State, Event } from 'messaging/types';
 
+import categoriesReducer from 'messaging/categories/reducer';
 import combineReducers from 'utils/flux/combineReducers';
 import credentialReducer from 'messaging/credential/reducer';
 import identityFunction from 'utils/identityFunction';
@@ -12,6 +13,7 @@ import subscriptionsReducer from 'messaging/subscriptions/reducer';
 import trackingUrlSettingsReducer from 'messaging/trackingUrlSettings/reducer';
 
 export default combineReducers<State, Event>({
+    categories: categoriesReducer,
     credential: credentialReducer,
     notifications: notificationsReducer,
     search: searchReducer,

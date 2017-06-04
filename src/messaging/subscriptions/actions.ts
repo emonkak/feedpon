@@ -7,7 +7,7 @@ import '@emonkak/enumerable/extensions/selectMany';
 import '@emonkak/enumerable/extensions/toArray';
 
 import * as feedly from 'adapters/feedly/api';
-import { AsyncEvent, Category, Event, Feed, SubscriptionOrder } from 'messaging/types';
+import { AsyncEvent, Event, Feed, Subscription, SubscriptionOrder } from 'messaging/types';
 import { getFeedlyToken } from 'messaging/credential/actions';
 
 export function fetchSubscriptions(): AsyncEvent {
@@ -38,9 +38,11 @@ export function fetchSubscriptions(): AsyncEvent {
                     labels: subscription.categories.map((category) => category.label),
                     title: subscription.title || '',
                     url: subscription.website || '',
+                    feedUrl: subscription.id.replace(/feed\//, ''),
                     iconUrl: subscription.iconUrl || '',
                     unreadCount: unreadCount.count,
-                    updatedAt: unreadCount.updated
+                    updatedAt: unreadCount.updated,
+                    isLoading: false
                 }))
                 .toArray();
 
@@ -53,7 +55,8 @@ export function fetchSubscriptions(): AsyncEvent {
                 .select((category) => ({
                     categoryId: category.id,
                     streamId: category.id,
-                    label: category.label
+                    label: category.label,
+                    isLoading: false
                 }))
                 .toArray();
 
@@ -73,31 +76,87 @@ export function fetchSubscriptions(): AsyncEvent {
     };
 }
 
-export function createCategory(label: string, callback: (category: Category) => void): AsyncEvent {
+export function addToCategory(subscription: Subscription, labelToAdd: string): AsyncEvent {
     return async (dispatch, getState) => {
-        const token = await dispatch(getFeedlyToken());
-
         dispatch({
-            type: 'CATEGORY_CREATING'
+            type: 'FEED_SUBSCRIBING',
+            feedId: subscription.feedId
         });
 
-        const id = `user/${token.id}/category/${label}`;
-        const category = {
-            categoryId: id,
-            streamId: id,
-            label
-        };
+        try {
+            const token = await dispatch(getFeedlyToken());
 
-        dispatch({
-            type: 'CATEGORY_CREATED',
-            category
-        });
+            const labels = subscription.labels
+                .filter((label) => label !== labelToAdd)
+                .concat([labelToAdd]);
+            const categories = labels.map((label) => ({
+                id: `user/${token.id}/category/${label}`,
+                label
+            }));
 
-        callback(category);
+            await feedly.subscribeFeed(token.access_token, {
+                id: subscription.feedId as string,
+                categories
+            });
+
+            dispatch({
+                type: 'FEED_SUBSCRIBED',
+                subscription: {
+                    ...subscription,
+                    labels
+                }
+            });
+        } catch (error) {
+            dispatch({
+                type: 'FEED_SUBSCRIBING_FAILED',
+                feedId: subscription.feedId
+            });
+
+            throw error;
+        }
     };
 }
 
-export function subscribeFeed(feed: Feed, labels: string[]): AsyncEvent {
+export function removeFromCategory(subscription: Subscription, labelToRemove: string): AsyncEvent {
+    return async (dispatch, getState) => {
+        dispatch({
+            type: 'FEED_SUBSCRIBING',
+            feedId: subscription.feedId
+        });
+
+        try {
+            const token = await dispatch(getFeedlyToken());
+
+            const labels = subscription.labels.filter((label) => label !== labelToRemove);
+            const categories = labels.map((label) => ({
+                id: `user/${token.id}/category/${label}`,
+                label
+            }));
+
+            await feedly.subscribeFeed(token.access_token, {
+                id: subscription.feedId as string,
+                categories
+            });
+
+            dispatch({
+                type: 'FEED_SUBSCRIBED',
+                subscription: {
+                    ...subscription,
+                    labels
+                }
+            });
+        } catch (error) {
+            dispatch({
+                type: 'FEED_SUBSCRIBING_FAILED',
+                feedId: subscription.feedId
+            });
+
+            throw error;
+        }
+    };
+}
+
+export function subscribe(feed: Feed, labels: string[]): AsyncEvent {
     return async (dispatch, getState) => {
         dispatch({
             type: 'FEED_SUBSCRIBING',
@@ -125,7 +184,6 @@ export function subscribeFeed(feed: Feed, labels: string[]): AsyncEvent {
 
             dispatch({
                 type: 'FEED_SUBSCRIBED',
-                feedId: feed.feedId,
                 subscription: {
                     subscriptionId: feed.feedId,
                     streamId: feed.streamId,
@@ -133,9 +191,11 @@ export function subscribeFeed(feed: Feed, labels: string[]): AsyncEvent {
                     labels: categories.map((category) => category.label),
                     title: feed.title,
                     url: feed.url,
+                    feedUrl: feed.feedUrl,
                     iconUrl: feed.iconUrl,
                     unreadCount: unreadCount ? unreadCount.count : 0,
-                    updatedAt: unreadCount ? unreadCount.updated : 0
+                    updatedAt: unreadCount ? unreadCount.updated : 0,
+                    isLoading: false
                 }
             });
         } catch (error) {
@@ -149,26 +209,26 @@ export function subscribeFeed(feed: Feed, labels: string[]): AsyncEvent {
     };
 }
 
-export function unsubscribeFeed(feedId: string | number): AsyncEvent {
+export function unsubscribe(subscription: Subscription): AsyncEvent {
     return async (dispatch, getState) => {
         dispatch({
-            type: 'FEED_SUBSCRIBING',
-            feedId
+            type: 'FEED_UNSUBSCRIBING',
+            subscription
         });
 
         try {
             const token = await dispatch(getFeedlyToken());
 
-            await feedly.unsubscribeFeed(token.access_token, feedId as string);
+            await feedly.unsubscribeFeed(token.access_token, subscription.feedId as string);
 
             dispatch({
                 type: 'FEED_UNSUBSCRIBED',
-                feedId
+                subscription
             });
         } catch (error) {
             dispatch({
-                type: 'FEED_SUBSCRIBING_FAILED',
-                feedId
+                type: 'FEED_UNSUBSCRIBING_FAILED',
+                subscription
             });
 
             throw error;

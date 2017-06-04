@@ -1,10 +1,12 @@
+.form {
+  margin: 0 0 var(--baseline-height);
+}
+
 .form-legend {
-  display: block;
   margin: 0 0 calc(var(--baseline-height) / 2 - 1px);
-  width: 100%;;
   border-bottom: 1px solid var(--medium-dark-color);
   color: var(--dark-color);
-  font-weight: bold;
+  font-weight: 600;
 }
 
 .form-group {
@@ -89,24 +91,24 @@
 
 .input-group {
   display: flex;
-  position: relative;
-  width: 100%;
 
-  & > .button-toolbar:not(:first-child) > .button:first-of-type,
+  & > .button:focus,
+  & > .button:active,
+  & > .button:hover,
+  & > .form-control:focus {
+    z-index: 10;
+  }
+
+  & > .button + .button {
+    margin-left: -1px;
+  }
+
   & > .form-control:not(:first-child) {
     border-left: 0;
   }
 
-  & > .button-toolbar:not(:last-child) > .button:last-of-type,
   & > .form-control:not(:last-child) {
     border-right: 0;
-  }
-
-  & > .button:not(:last-child),
-  & > .button-toolbar:not(:last-child) > .button:last-of-type,
-  & > .form-control:not(:last-child) {
-    border-bottom-right-radius: 0;
-    border-top-right-radius: 0;
   }
 
   & > .button:not(:first-child),
@@ -114,6 +116,13 @@
   & > .form-control:not(:first-child) {
     border-bottom-left-radius: 0;
     border-top-left-radius: 0;
+  }
+
+  & > .button:not(:last-child),
+  & > .button-toolbar:not(:last-child) > .button:last-of-type,
+  & > .form-control:not(:last-child) {
+    border-bottom-right-radius: 0;
+    border-top-right-radius: 0;
   }
 }
 

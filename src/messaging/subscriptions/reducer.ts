@@ -1,10 +1,3 @@
-import Enumerable from '@emonkak/enumerable';
-
-import '@emonkak/enumerable/extensions/distinct';
-import '@emonkak/enumerable/extensions/startWith';
-import '@emonkak/enumerable/extensions/toArray';
-import '@emonkak/enumerable/extensions/orderBy';
-
 import createAscendingComparer from 'utils/createAscendingComparer';
 import createDescendingComparer from 'utils/createDescendingComparer';
 import { Event, Subscription, SubscriptionOrder, Subscriptions } from 'messaging/types';
@@ -14,42 +7,16 @@ export default function reducer(subscriptions: Subscriptions, event: Event): Sub
         case 'APPLICATION_INITIALIZED':
             return {
                 ...subscriptions,
-                categories: {
-                    isCreating: false,
-                    items: subscriptions.categories.items
-                },
+                items: subscriptions.items.map((subscription) => {
+                    if (!subscription.isLoading) {
+                        return subscription;
+                    }
+                    return {
+                        ...subscription,
+                        isLoading: false
+                    }
+                }),
                 isLoading: false
-            };
-
-        case 'CATEGORY_CREATING':
-            return {
-                ...subscriptions,
-                categories: {
-                    isCreating: true,
-                    items: subscriptions.categories.items
-                }
-            };
-
-        case 'CATEGORY_CREATING_FAILED':
-            return {
-                ...subscriptions,
-                categories: {
-                    isCreating: false,
-                    items: subscriptions.categories.items
-                }
-            };
-
-        case 'CATEGORY_CREATED':
-            return {
-                ...subscriptions,
-                categories: {
-                    isCreating: false,
-                    items: new Enumerable(subscriptions.categories.items)
-                        .startWith(event.category)
-                        .distinct((category) => category.categoryId)
-                        .orderBy((category) => category.label)
-                        .toArray()
-                }
             };
 
         case 'SUBSCRIPTIONS_FETCHING':
@@ -67,10 +34,6 @@ export default function reducer(subscriptions: Subscriptions, event: Event): Sub
         case 'SUBSCRIPTIONS_FETCHED':
             return {
                 ...subscriptions,
-                categories: {
-                    isCreating: subscriptions.categories.isCreating,
-                    items: event.categories
-                },
                 isLoading: false,
                 items: event.subscriptions.slice().sort(createSubscriptionComparer(subscriptions.order)),
                 lastUpdatedAt: event.fetchedAt,
@@ -83,7 +46,9 @@ export default function reducer(subscriptions: Subscriptions, event: Event): Sub
         case 'SUBSCRIPTIONS_ORDER_CHANGED':
             return {
                 ...subscriptions,
-                items: subscriptions.items.slice().sort(createSubscriptionComparer(event.order)),
+                items: subscriptions.items
+                    .slice()
+                    .sort(createSubscriptionComparer(event.order)),
                 order: event.order
             };
 
@@ -93,36 +58,139 @@ export default function reducer(subscriptions: Subscriptions, event: Event): Sub
                 onlyUnread: event.onlyUnread
             };
 
+        case 'FEED_SUBSCRIBING':
+            return {
+                ...subscriptions,
+                items: subscriptions.items
+                    .map((subscription) => {
+                        if (subscription.feedId !== event.feedId) {
+                            return subscription;
+                        }
+                        return {
+                            ...subscription,
+                            isLoading: true
+                        };
+                    })
+            };
+
+        case 'FEED_SUBSCRIBING_FAILED':
+            return {
+                ...subscriptions,
+                items: subscriptions.items
+                    .map((subscription) => {
+                        if (subscription.feedId !== event.feedId) {
+                            return subscription;
+                        }
+                        return {
+                            ...subscription,
+                            isLoading: false
+                        };
+                    })
+            };
+
         case 'FEED_SUBSCRIBED':
             return {
                 ...subscriptions,
                 items: subscriptions.items
-                    .filter((subscription) => subscription.feedId !== event.feedId)
+                    .filter((subscription) => subscription.subscriptionId !== event.subscription.subscriptionId)
                     .concat([event.subscription])
+                    .sort(createSubscriptionComparer(subscriptions.order))
+            };
+
+        case 'FEED_UNSUBSCRIBING':
+            return {
+                ...subscriptions,
+                items: subscriptions.items
+                    .map((subscription) => {
+                        if (subscription.feedId !== event.subscription.feedId) {
+                            return subscription;
+                        }
+                        return {
+                            ...subscription,
+                            isLoading: true
+                        };
+                    })
+            };
+
+        case 'FEED_UNSUBSCRIBING_FAILED':
+            return {
+                ...subscriptions,
+                items: subscriptions.items
+                    .map((subscription) => {
+                        if (subscription.feedId !== event.subscription.feedId) {
+                            return subscription;
+                        }
+                        return {
+                            ...subscription,
+                            isLoading: false
+                        };
+                    })
             };
 
         case 'FEED_UNSUBSCRIBED':
             return {
                 ...subscriptions,
-                items: subscriptions.items.filter(
-                    (subscription) => subscription.feedId !== event.feedId
-                )
+                items: subscriptions.items
+                    .filter((subscription) => subscription.subscriptionId !== event.subscription.subscriptionId)
+                    .sort(createSubscriptionComparer(subscriptions.order))
             };
+
+        case 'CATEGORY_DELETED':
+            return {
+                ...subscriptions,
+                items: subscriptions.items
+                    .map((subscription) => {
+                        const labels = subscription.labels
+                            .filter((label) => label !== event.category.label);
+
+                        if (subscription.labels.length === labels.length) {
+                            return subscription;
+                        }
+
+                        return {
+                            ...subscription,
+                            labels
+                        };
+                    })
+            }
+
+        case 'CATEGORY_UPDATED':
+            return {
+                ...subscriptions,
+                items: subscriptions.items
+                    .map((subscription) => {
+                        const labels = subscription.labels
+                            .filter((label) => label !== event.prevCategory.label);
+
+                        if (subscription.labels.length === labels.length) {
+                            return subscription;
+                        }
+
+                        return {
+                            ...subscription,
+                            labels: [...labels, event.category.label]
+                        };
+                    })
+            }
 
         default:
             return subscriptions;
     }
 }
 
+const titleComparer = createAscendingComparer<Subscription>('title');
+const newestComparer = createDescendingComparer<Subscription>('updatedAt');
+const oldestComparer = createAscendingComparer<Subscription>('updatedAt');
+
 function createSubscriptionComparer(order: SubscriptionOrder): (x: Subscription, y: Subscription) => number {
     switch (order) {
         case 'title':
-            return createAscendingComparer<Subscription>('title');
+            return titleComparer;
 
         case 'newest':
-            return createDescendingComparer<Subscription>('updatedAt');
+            return newestComparer;
 
         case 'oldest':
-            return createAscendingComparer<Subscription>('updatedAt');
+            return oldestComparer;
     }
 }

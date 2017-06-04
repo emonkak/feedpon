@@ -5,6 +5,12 @@ export type Event
     | { type: 'CATEGORY_CREATED', category: Category }
     | { type: 'CATEGORY_CREATING' }
     | { type: 'CATEGORY_CREATING_FAILED' }
+    | { type: 'CATEGORY_UPDATING', category: Category }
+    | { type: 'CATEGORY_UPDATING_FAILED', category: Category }
+    | { type: 'CATEGORY_UPDATED', prevCategory: Category, category: Category }
+    | { type: 'CATEGORY_DELETING', category: Category }
+    | { type: 'CATEGORY_DELETING_FAILED', category: Category }
+    | { type: 'CATEGORY_DELETED', category: Category }
     | { type: 'COMMENTS_FETCHED', entryId: string | number, comments: Comment[] }
     | { type: 'COMMENTS_FETCHING', entryId: string | number }
     | { type: 'COMMENTS_FETCHING_FAILED', entryId: string | number }
@@ -16,10 +22,12 @@ export type Event
     | { type: 'FEED_SEARCHED', query: string, feeds: Feed[] }
     | { type: 'FEED_SEARCHING', query: string }
     | { type: 'FEED_SEARCHING_FAILED', query: string }
-    | { type: 'FEED_SUBSCRIBED', feedId: string | number, subscription: Subscription }
+    | { type: 'FEED_SUBSCRIBED', subscription: Subscription }
     | { type: 'FEED_SUBSCRIBING', feedId: string | number }
     | { type: 'FEED_SUBSCRIBING_FAILED', feedId: string | number }
-    | { type: 'FEED_UNSUBSCRIBED', feedId: string | number }
+    | { type: 'FEED_UNSUBSCRIBED', subscription: Subscription }
+    | { type: 'FEED_UNSUBSCRIBING', subscription: Subscription }
+    | { type: 'FEED_UNSUBSCRIBING_FAILED', subscription: Subscription }
     | { type: 'FULL_CONTENT_FETCHED', entryId: string | number, fullContent: FullContent }
     | { type: 'FULL_CONTENT_FETCHING', entryId: string | number }
     | { type: 'FULL_CONTENT_FETCHING_FAILED', entryId: string | number }
@@ -55,6 +63,7 @@ export interface Dispatcher {
 }
 
 export interface State {
+    categories: Categories;
     credential: Credential;
     notifications: Notifications;
     search: Search;
@@ -92,14 +101,16 @@ export interface Environment {
 }
 
 export interface Categories {
-    isCreating: boolean;
+    isLoading: boolean;
     items: Category[];
+    version: number;
 }
 
 export interface Category {
-    categoryId: string;
+    categoryId: string | number;
     streamId: string;
     label: string;
+    isLoading: boolean;
 }
 
 export interface Streams {
@@ -115,7 +126,6 @@ export interface Stream {
     entries: Entry[];
     continuation: string | null;
     feed: Feed | null;
-    subscription: Subscription | null;
     options: StreamOptions;
 }
 
@@ -134,9 +144,10 @@ export interface Feed {
     title: string;
     description: string;
     url: string;
+    feedUrl: string;
     iconUrl: string;
     subscribers: number;
-    isSubscribing: boolean;
+    isLoading: boolean;
 }
 
 export interface Entry {
@@ -222,7 +233,6 @@ export interface TrackingUrlSettings {
 }
 
 export interface Subscriptions {
-    categories: Categories;
     isLoading: boolean;
     items: Subscription[];
     lastUpdatedAt: number;
@@ -233,15 +243,17 @@ export interface Subscriptions {
 }
 
 export interface Subscription {
-    feedId: string | number;
-    iconUrl: string;
-    labels: string[];
-    streamId: string;
     subscriptionId: string | number;
+    streamId: string;
+    feedId: string | number;
     title: string;
+    labels: string[];
+    url: string;
+    feedUrl: string;
+    iconUrl: string;
     unreadCount: number;
     updatedAt: number;
-    url: string;
+    isLoading: boolean;
 }
 
 export type SubscriptionOrder = 'title' | 'newest' | 'oldest';

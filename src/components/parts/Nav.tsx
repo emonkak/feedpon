@@ -4,28 +4,15 @@ import createChainedFunction from 'utils/createChainedFunction';
 
 interface NavProps {
     children?: React.ReactNode;
-    value?: string;
+    value?: any;
     onSelect?: (value: any) => void;
-    renderContent: (value: any) => React.ReactNode;
 }
 
-interface NavState {
-    value: string | null;
-}
-
-export default class Nav extends PureComponent<NavProps, NavState> {
+export default class Nav extends PureComponent<NavProps, {}> {
     constructor(props: NavProps, context: any) {
         super(props, context);
 
-        this.state = { value: props.value || null };
-
         this.handleSelect = this.handleSelect.bind(this);
-    }
-
-    componentWillReceiveProps(nextProps: NavProps) {
-        if (this.props.value !== nextProps.value) {
-            this.setState({ value: nextProps.value || null });
-        }
     }
 
     handleSelect(value: any) {
@@ -34,12 +21,10 @@ export default class Nav extends PureComponent<NavProps, NavState> {
         if (onSelect) {
             onSelect(value);
         }
-
-        this.setState({ value });
     }
 
     renderChild(child: React.ReactElement<any>, index: number) {
-        const { value } = this.state;
+        const { value } = this.props;
 
         return cloneElement(child, {
             ...child.props,
@@ -52,17 +37,13 @@ export default class Nav extends PureComponent<NavProps, NavState> {
     }
 
     render() {
-        const { children, renderContent } = this.props;
-        const { value } = this.state;
+        const { children } = this.props;
 
         return (
             <div>
-                <header className="nav-header">
-                    <nav className="nav">
-                        {Children.toArray(children).map(this.renderChild, this)}
-                    </nav>
-                </header>
-                {renderContent(value)}
+                <nav className="nav">
+                    {Children.toArray(children).map(this.renderChild, this)}
+                </nav>
             </div>
         );
     }

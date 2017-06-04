@@ -15,8 +15,7 @@ interface AutoCompleteProps {
     onSelect?: (value?: any) => void;
     onSubmit?: (query: string) => void;
     renderCandidate: (candidate: any, query: string) => React.ReactElement<any>;
-    renderHeadItems?: (query: string) => React.ReactNode;
-    renderTailItems?: (query: string) => React.ReactNode;
+    renderExtraItems?: (query: string) => React.ReactNode;
 }
 
 interface AutocompleteState {
@@ -28,8 +27,7 @@ export default class Autocomplete extends PureComponent<AutoCompleteProps, Autoc
     static defaultProps = {
         completeDebounceTime: 100,
         isOpened: false,
-        renderHeadItems: () => null,
-        renderTailItems: () => null
+        renderExtraItems: () => null
     };
 
     private menu: Menu;
@@ -140,12 +138,11 @@ export default class Autocomplete extends PureComponent<AutoCompleteProps, Autoc
     }
 
     render() {
-        const { getCandidates, renderCandidate, renderHeadItems, renderTailItems } = this.props;
+        const { getCandidates, renderCandidate, renderExtraItems } = this.props;
         const { isOpened, query } = this.state;
 
         const candidates = getCandidates(query);
-        const headItems = renderHeadItems!(query);
-        const tailItems = renderTailItems!(query);
+        const extraItems = renderExtraItems!(query);
 
         return (
             <Closable
@@ -158,16 +155,15 @@ export default class Autocomplete extends PureComponent<AutoCompleteProps, Autoc
                           onSubmit={this.handleSubmit}>
                         {this.renderInputControl()}
                     </form>
-                    <Menu ref={(ref) => this.menu = ref}
-                          className="autocomplete-menu"
-                          onKeyDown={this.handleKeyDown}
-                          onSelect={this.handleSelect}
-                          onClose={this.handleClose}>
-                        {headItems}
-                        {candidates.length && Children.count(headItems) ? <div className="menu-divider" /> : null}
+                    <Menu
+                        ref={(ref) => this.menu = ref}
+                        className="autocomplete-menu"
+                        onKeyDown={this.handleKeyDown}
+                        onSelect={this.handleSelect}
+                        onClose={this.handleClose}>
                         {candidates.map((candidate) => renderCandidate(candidate, query))}
-                        {candidates.length && Children.count(tailItems) ? <div className="menu-divider" /> : null}
-                        {tailItems}
+                        {candidates.length > 0 && Children.count(extraItems) > 0 ? <div className="menu-divider" /> : null}
+                        {extraItems}
                     </Menu>
                 </div>
             </Closable>

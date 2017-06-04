@@ -1,8 +1,8 @@
 import React, { PureComponent } from 'react';
 
 import ConfirmButton from 'components/parts/ConfirmButton';
+import InputControl from 'components/parts/InputControl';
 import Modal from 'components/parts/Modal';
-import SiteinfoForm from 'components/parts/SiteinfoForm';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
 import { State, SiteinfoItem } from 'messaging/types';
@@ -46,12 +46,12 @@ class UserSiteinfoSettings extends PureComponent<UserSiteinfoProps, {}> {
                 <h2 className="display-2">User siteinfo</h2>
                 <p>This siteinfo is for user only.</p>
                 <div className="well">
-                    <SiteinfoForm legend="New item" onSubmit={onAddSiteinfoItem}>
+                    <UserSiteinfoForm legend="New item" onSubmit={onAddSiteinfoItem}>
                         <button className="button button-outline-positive" type="submit">Add</button>
-                    </SiteinfoForm>
+                    </UserSiteinfoForm>
                 </div>
                 <div className="u-responsive">
-                    <table className="table table-filled">
+                    <table className="table">
                         <thead>
                             <tr>
                                 <th className="u-text-nowrap" style={{ width: '35%' }}>Name</th>
@@ -120,16 +120,16 @@ class UserSiteinfoItem extends PureComponent<UserSiteinfoItemProps, UserSiteinfo
                         </button>
                         <ConfirmButton
                             className="button button-outline-negative"
-                            message="Are you sure you want to delete this item?"
-                            okClassName="button-outline-negative"
-                            okLabel="Delete"
-                            onConfirm={this.handleRemove}
-                            title={`Delete "${item.name}"`}>
+                            modalMessage="Are you sure you want to delete this item?"
+                            modalTitle={`Delete "${item.name}"`}
+                            okButtonClassName="button button-outline-negative"
+                            okButtonLabel="Delete"
+                            onConfirm={this.handleRemove}>
                             <i className="icon icon-16 icon-trash" />
                         </ConfirmButton>
                     </div>
                     <Modal isOpened={isEditing} onClose={this.handleCancelEditing}>
-                        <SiteinfoForm
+                        <UserSiteinfoForm
                             legend="Edit existing item"
                             item={item}
                             onSubmit={this.handleSave}>
@@ -137,7 +137,7 @@ class UserSiteinfoItem extends PureComponent<UserSiteinfoItemProps, UserSiteinfo
                                 <button className="button button-outline-positive" type="submit">Save</button>
                                 <button className="button button-outline-default" onClick={this.handleCancelEditing}>Cancel</button>
                             </div>
-                        </SiteinfoForm>
+                        </UserSiteinfoForm>
                     </Modal>
                 </td>
             </tr>
@@ -145,13 +145,171 @@ class UserSiteinfoItem extends PureComponent<UserSiteinfoItemProps, UserSiteinfo
     }
 }
 
+interface UserSiteinfoFormProps {
+    item?: SiteinfoItem;
+    legend: string;
+    onSubmit: (item: SiteinfoItem) => void;
+}
+
+interface UserSiteinfoFormState {
+    name: string;
+    urlPattern: string;
+    contentExpression: string;
+    nextLinkExpression: string;
+}
+
+class UserSiteinfoForm extends PureComponent<UserSiteinfoFormProps, UserSiteinfoFormState> {
+    constructor(props: UserSiteinfoFormProps, context: any) {
+        super(props, context);
+
+        if (props.item) {
+            this.state = {
+                name: props.item.name,
+                urlPattern: props.item.urlPattern,
+                contentExpression: props.item.contentExpression,
+                nextLinkExpression: props.item.nextLinkExpression
+            };
+        } else {
+            this.state = {
+                name: '',
+                urlPattern: '',
+                contentExpression: '',
+                nextLinkExpression: ''
+            };
+        }
+
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
+
+    handleSubmit(event: React.SyntheticEvent<any>) {
+        event.preventDefault();
+
+        const { item, onSubmit } = this.props;
+        const { name, urlPattern, contentExpression, nextLinkExpression } = this.state;
+
+        onSubmit({
+            id: item ? item.id : Date.now(),
+            name,
+            urlPattern,
+            contentExpression,
+            nextLinkExpression
+        });
+
+        if (!item) {
+            this.setState({
+                name: '',
+                urlPattern: '',
+                contentExpression: '',
+                nextLinkExpression: ''
+            });
+        }
+    }
+
+    handleChange(event: React.SyntheticEvent<any>) {
+        const { name, value } = event.currentTarget;
+
+        this.setState(state => ({
+            ...state,
+            [name]: value
+        }));
+    }
+
+    render() {
+        const { children, legend } = this.props;
+        const { contentExpression, name, nextLinkExpression, urlPattern } = this.state;
+
+        return (
+            <form className="form" onSubmit={this.handleSubmit}>
+                <fieldset>
+                    <legend className="form-legend">{legend}</legend>
+                    <div className="form-group">
+                        <label>
+                            <span className="form-group-heading form-required">Name</span>
+                            <InputControl
+                                className="form-control"
+                                type="text"
+                                name="name"
+                                value={name}
+                                onChange={this.handleChange}
+                                required />
+                        </label>
+                    </div>
+                    <div className="form-group">
+                        <label>
+                            <span className="form-group-heading form-required">URL pattern</span>
+                            <InputControl
+                                className="form-control"
+                                validations={[{ message: 'Invalid regular expression.', rule: isValidPattern }]}
+                                type="text"
+                                name="urlPattern"
+                                value={urlPattern}
+                                onChange={this.handleChange}
+                                required />
+                        </label>
+                        <span className="u-text-muted">The regular expression for the url.</span>
+                    </div>
+                    <div className="form-group">
+                        <label>
+                            <span className="form-group-heading form-required">Content expression</span>
+                            <InputControl
+                                className="form-control"
+                                validations={[{ message: 'Invalid XPath expression.', rule: isValidXPath }]}
+                                type="text"
+                                name="contentExpression"
+                                value={contentExpression}
+                                onChange={this.handleChange}
+                                required />
+                        </label>
+                        <span className="u-text-muted">The XPath expression to the element representing the content.</span>
+                    </div>
+                    <div className="form-group">
+                        <label>
+                            <span className="form-group-heading">Next link expression</span>
+                            <InputControl
+                                className="form-control"
+                                validations={[{ message: 'Invalid XPath expression.', rule: isValidXPath }]}
+                                type="text"
+                                name="nextLinkExpression"
+                                value={nextLinkExpression}
+                                onChange={this.handleChange} />
+                        </label>
+                        <span className="u-text-muted">The XPath expression to the anchor element representing the next link.</span>
+                    </div>
+                    <div className="form-group">
+                        {children}
+                    </div>
+                </fieldset>
+            </form>
+        );
+    }
+}
+
+function isValidXPath(expression: string): boolean {
+    try {
+        const resolver = document.createNSResolver(document);
+        return !!document.createExpression(expression, resolver);
+    } catch (_error) {
+        return false;
+    }
+}
+
+function isValidPattern(pattern: string): boolean {
+    try {
+        return !!new RegExp(pattern);
+    } catch (_error) {
+        return false;
+    }
+}
+
+
 export default connect(
     (state: State) => ({
         items: state.siteinfo.userItems
     }),
-    (dispatch) => bindActions({
+    bindActions({
         onAddSiteinfoItem: addSiteinfoItem,
         onRemoveSiteinfoItem: removeSiteinfoItem,
         onUpdateSiteinfoItem: updateSiteinfoItem
-    }, dispatch)
+    })
 )(UserSiteinfoSettings);

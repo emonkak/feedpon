@@ -120,10 +120,6 @@ function fetchFeedStream(streamId: string, options: StreamOptions): AsyncEvent<S
                 feedlyApi.getFeed(token.access_token, streamId)
             ]);
 
-            const { subscriptions } = getState();
-            const subscription = subscriptions.items
-                .find((subscription) => subscription.streamId === streamId) || null;
-
             const stream = {
                 streamId,
                 title: feed.title,
@@ -135,11 +131,11 @@ function fetchFeedStream(streamId: string, options: StreamOptions): AsyncEvent<S
                     title: feed.title,
                     description: feed.description || '',
                     url: feed.website || '',
+                    feedUrl: feed.id.replace(/^feed\//, ''),
                     iconUrl: feed.iconUrl || '',
                     subscribers: feed.subscribers,
-                    isSubscribing: false
+                    isLoading: false,
                 },
-                subscription,
                 options
             };
 
@@ -176,8 +172,8 @@ function fetchCategoryStream(streamId: string, options: StreamOptions): AsyncEve
                 unreadOnly: options.onlyUnread
             });
 
-            const { subscriptions } = getState();
-            const category = subscriptions.categories.items
+            const { categories } = getState();
+            const category = categories.items
                 .find((category) => category.streamId === streamId) || null;
 
             const stream = {
@@ -186,7 +182,6 @@ function fetchCategoryStream(streamId: string, options: StreamOptions): AsyncEve
                 entries: contents.items.map(convertEntry),
                 continuation: contents.continuation || null,
                 feed: null,
-                subscription: null,
                 options
             };
 
@@ -230,7 +225,6 @@ function fetchAllStream(options: StreamOptions): AsyncEvent<Stream> {
                 entries: contents.items.map(convertEntry),
                 continuation: contents.continuation || null,
                 feed: null,
-                subscription: null,
                 options
             };
 
@@ -275,7 +269,6 @@ function fetchPinsStream(options: StreamOptions): AsyncEvent<Stream> {
                 entries: contents.items.map(convertEntry),
                 continuation: contents.continuation || null,
                 feed: null,
-                subscription: null,
                 options
             };
 

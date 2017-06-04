@@ -6,15 +6,15 @@ import { Store } from '../types';
 export default function connect<TStateProps, TDispatchProps>(
     mapStateToProps: (state: any) => TStateProps,
     mapDispatchToProps?: (dispatch: (event: any) => void) => TDispatchProps
-): <TProps extends TStateProps & TDispatchProps>(component: ComponentClass<TProps>) => ComponentClass<Partial<TProps>> {
+): <TProps extends TStateProps & TDispatchProps>(wrappedComponent: ComponentClass<TProps>) => ComponentClass<Partial<TProps>> {
     if (!mapDispatchToProps) {
         mapDispatchToProps = (dispatch) => ({}) as any;
     }
 
     return <TProps extends TStateProps & TDispatchProps>(
-        component: ComponentClass<TProps>
+        wrappedComponent: ComponentClass<TProps>
     ): ComponentClass<Partial<TProps>> => {
-        return class StoreSubscriber extends PureComponent<Partial<TProps>, TStateProps> {
+        return class Subscriber extends PureComponent<Partial<TProps>, TStateProps> {
             static contextTypes = {
                 store: PropTypes.shape({
                     getState: PropTypes.func.isRequired,
@@ -61,7 +61,7 @@ export default function connect<TStateProps, TDispatchProps>(
                     this.props
                 ) as TProps;
 
-                return createElement(component, props, children);
+                return createElement(wrappedComponent, props, children);
             }
         };
     };

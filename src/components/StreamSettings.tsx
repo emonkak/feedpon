@@ -50,7 +50,7 @@ class StreamSettingsComponent extends PureComponent<StreamSettingsProps, StreamS
         return (
             <section className="section">
                 <h1 className="display-1">Stream</h1>
-                <form onSubmit={this.handleSubmit}>
+                <form className="form" onSubmit={this.handleSubmit}>
                     <div className="form-group">
                         <label>
                             <span className="form-group-heading">Default display number of entries</span>
@@ -135,7 +135,7 @@ export default connect(
         defaultStreamView: state.streamSettings.defaultStreamView,
         onlyUnreadEntries: state.streamSettings.onlyUnreadEntries
     }),
-    (dispatch) => bindActions({
+    bindActions({
         onChangeStreamSettings: changeStreamSettings
-    }, dispatch)
+    })
 )(StreamSettingsComponent);

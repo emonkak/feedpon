@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 
 import ConfirmButton from 'components/parts/ConfirmButton';
-import TrackingUrlPatternForm from 'components/parts/TrackingUrlPatternForm';
+import InputControl from 'components/parts/InputControl';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
 import { State } from 'messaging/types';
@@ -68,13 +68,85 @@ class TrackingUrlPatternItem extends PureComponent<TrackingUrlPatternItemProps, 
                 <code>{pattern}</code>
                 <ConfirmButton
                     className="u-pull-right close"
-                    message="Are you sure you want to delete this pattern?"
-                    okClassName="button-outline-negative"
-                    okLabel="Delete"
-                    onConfirm={this.handleRemove}
-                    title={`Delete "${pattern}"`} />
+                    modalMessage="Are you sure you want to delete this pattern?"
+                    modalTitle={`Delete "${pattern}"`}
+                    okButtonClassName="button button-outline-negative"
+                    okButtonLabel="Delete"
+                    onConfirm={this.handleRemove} />
             </li>
         )
+    }
+}
+
+interface TrackingUrlPatternFormProps {
+    onAdd: (pattern: string) => void;
+}
+
+interface TrackingUrlPatternFormState {
+    pattern: string;
+}
+
+class TrackingUrlPatternForm extends PureComponent<TrackingUrlPatternFormProps, TrackingUrlPatternFormState> {
+    constructor(props: TrackingUrlPatternFormProps, context: any) {
+        super(props);
+
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+
+        this.state = {
+            pattern: ''
+        };
+    }
+
+    handleChange(event: React.FormEvent<HTMLInputElement>) {
+        this.setState({
+            pattern: event.currentTarget.value
+        });
+    }
+
+    handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+        event.preventDefault();
+
+        const { onAdd } = this.props;
+        const { pattern } = this.state;
+
+        onAdd(pattern);
+
+        this.setState({
+            pattern: ''
+        });
+    }
+
+    render() {
+        const { pattern } = this.state;
+
+        return (
+            <form className="form" onSubmit={this.handleSubmit}>
+                <fieldset>
+                    <legend className="form-legend">New tracking URL pattern</legend>
+                    <div className="input-group">
+                        <InputControl
+                            validations={[{ message: 'Invalid regular expression.', rule: isValidPattern }]}
+                            type="text"
+                            className="form-control"
+                            placeholder="^https://..."
+                            value={pattern}
+                            onChange={this.handleChange}
+                            required />
+                        <button type="submit" className="button button-outline-positive">Add</button>
+                    </div>
+                    <span className="u-text-muted">The regular expression for the tracking url.</span>
+                </fieldset>
+            </form>
+        );
+    }
+}
+
+function isValidPattern(pattern: string): boolean {
+    try {
+        return !!new RegExp(pattern);
+    } catch (_error) {
+        return false;
     }
 }
 
@@ -82,8 +154,8 @@ export default connect(
     (state: State) => ({
         patterns: state.trackingUrlSettings.patterns
     }),
-    (dispatch) => bindActions({
+    bindActions({
         onAddTrackingUrlPattern: addTrackingUrlPattern,
         onRemoveTrackingUrlPattern: removeTrackingUrlPattern
-    }, dispatch)
+    })
 )(TrackingUrlSettings);

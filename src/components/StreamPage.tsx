@@ -5,18 +5,22 @@ import Dropdown from 'components/parts/Dropdown';
 import EntryList from 'components/parts/EntryList';
 import Navbar from 'components/parts/Navbar';
 import SubscribeButton from 'components/parts/SubscribeButton';
+import SubscribeMenu from 'components/parts/SubscribeMenu';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
-import { Category, EntryOrder, State, Stream, StreamView } from 'messaging/types';
-import { MenuItem } from 'components/parts/Menu';
+import { Category, EntryOrder, State, Stream, StreamView, Subscription } from 'messaging/types';
+import { Menu, MenuItem } from 'components/parts/Menu';
+import { addToCategory, removeFromCategory, subscribe, unsubscribe } from 'messaging/subscriptions/actions';
 import { changeStreamView, fetchComments, fetchFullContent, fetchMoreEntries, fetchStream, markAsRead, pinEntry, unpinEntry } from 'messaging/streams/actions';
-import { createCategory, subscribeFeed, unsubscribeFeed } from 'messaging/subscriptions/actions';
+import { createCategory } from 'messaging/categories/actions';
 
 interface StreamProps {
+    subscription: Subscription | null;
     categories: Category[];
     isLoaded: boolean;
     isLoading: boolean;
     isScrolling: boolean;
+    onAddToCategory: typeof addToCategory;
     onChangeStreamView: typeof changeStreamView,
     onCreateCategory: typeof createCategory;
     onFetchComments: typeof fetchComments;
@@ -25,10 +29,11 @@ interface StreamProps {
     onFetchStream: typeof fetchStream;
     onMarkAsRead: typeof markAsRead;
     onPinEntry: typeof pinEntry;
-    onSubscribeFeed: typeof subscribeFeed;
+    onRemoveFromCategory: typeof removeFromCategory;
+    onSubscribe: typeof subscribe;
     onToggleSidebar: () => void,
     onUnpinEntry: typeof unpinEntry;
-    onUnsubscribeFeed: typeof unsubscribeFeed;
+    onUnsubscribe: typeof unsubscribe;
     params: Params;
     scrollTo: (x: number, y: number) => Promise<void>;
     stream: Stream;
@@ -181,22 +186,14 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
         }
     }
 
-    renderReadEntriesDropdown() {
+    renderReadEntriesMenu() {
         const { stream } = this.props;
         const { readEntryIds } = this.state;
 
         const readEntries = stream.entries.filter(entry => readEntryIds.has(entry.entryId));
 
         return (
-            <Dropdown
-                className="navbar-action"
-                toggleButton={
-                    <button>
-                        <i className="icon icon-24 icon-checkmark" />
-                        <span className="badge badge-overlap badge-negative">{readEntries.length || ''}</span>
-                    </button>
-                }
-                pullRight={true}>
+            <Menu>
                 <div className="menu-heading">Read entries</div>
                 {readEntries.map((entry) => (
                     <MenuItem
@@ -214,20 +211,17 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
                 <MenuItem
                     isDisabled={stream.entries.length === 0}
                     primaryText="Mark all as read" />
-            </Dropdown>
+            </Menu>
         );
     }
 
-    renderConfigDropdown() {
+    renderConfigMenu() {
         const { stream } = this.props;
 
         const checkmarkIcon = <i className="icon icon-16 icon-checkmark" />;
 
         return (
-            <Dropdown
-                className="navbar-action"
-                toggleButton={<button><i className="icon icon-24 icon-more" /></button>}
-                pullRight={true}>
+            <Menu>
                 <div className="menu-heading">View</div>
                 <MenuItem
                     icon={stream.options.view === 'expanded' ? checkmarkIcon : null}
@@ -256,12 +250,13 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
                     icon={stream.options.onlyUnread ? checkmarkIcon : null}
                     primaryText="Only unread"
                     onSelect={this.handleToggleOnlyUnread} />
-            </Dropdown>
+            </Menu>
         );
     }
 
     renderNavbar() {
         const { stream, onToggleSidebar } = this.props;
+        const { readEntryIds } = this.state;
 
         const title = stream.feed
             ? <a className="stream-title u-text-truncate" href={stream.feed.url} target="_blank">{stream.title}</a>
@@ -275,8 +270,21 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
                 <div className="navbar-action">
                     <button onClick={this.handleReloadEntries}><i className="icon icon-24 icon-refresh" /></button>
                 </div>
-                {this.renderReadEntriesDropdown()}
-                {this.renderConfigDropdown()}
+                <Dropdown
+                    className="navbar-action"
+                    toggleButton={
+                        <button>
+                            <i className="icon icon-24 icon-checkmark" />
+                            <span className="badge badge-pill badge-negative badge-overlap">{readEntryIds.size || ''}</span>
+                        </button>
+                    }
+                    menu={this.renderReadEntriesMenu()}
+                    pullRight={true} />
+                <Dropdown
+                    className="navbar-action"
+                    toggleButton={<button><i className="icon icon-24 icon-more" /></button>}
+                    menu={this.renderConfigMenu()}
+                    pullRight={true} />
             </Navbar>
         );
     }
@@ -285,7 +293,7 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
         const { stream } = this.props;
 
         if (stream.feed) {
-            const { categories, onCreateCategory, onSubscribeFeed, onUnsubscribeFeed } = this.props;
+            const { categories, onAddToCategory, onCreateCategory, onRemoveFromCategory, onSubscribe, onUnsubscribe, subscription } = this.props;
 
             return (
                 <header className="stream-header">
@@ -297,13 +305,24 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
                                 </div>
                                 <div>{stream.feed.description}</div>
                             </div>
-                            <SubscribeButton
-                                categories={categories}
-                                feed={stream.feed}
-                                onCreateCategory={onCreateCategory}
-                                onSubscribe={onSubscribeFeed}
-                                onUnsubscribe={onUnsubscribeFeed}
-                                subscription={stream.subscription} />
+                            <Dropdown
+                                toggleButton={
+                                    <SubscribeButton
+                                        isSubscribed={!!subscription}
+                                        isLoading={stream.feed.isLoading} />
+                                }
+                                menu={
+                                    <SubscribeMenu
+                                        categories={categories}
+                                        feed={stream.feed}
+                                        onAddToCategory={onAddToCategory}
+                                        onCreateCategory={onCreateCategory}
+                                        onRemoveFromCategory={onRemoveFromCategory}
+                                        onSubscribe={onSubscribe}
+                                        onUnsubscribe={onUnsubscribe}
+                                        subscription={subscription} />
+                                }
+                                pullRight={true} />
                         </div>
                     </div>
                 </header>
@@ -383,12 +402,15 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
 
 export default connect(
     (state: State) => ({
-        categories: state.subscriptions.categories.items,
+        categories: state.categories.items,
         isLoaded: state.streams.isLoaded,
         isLoading: state.streams.isLoading,
-        stream: state.streams.current
+        stream: state.streams.current,
+        subscription: state.subscriptions.items
+            .find((subscription) => subscription.streamId === state.streams.current.streamId) || null
     }),
-    (dispatch) => bindActions({
+    bindActions({
+        onAddToCategory: addToCategory,
         onChangeStreamView: changeStreamView,
         onCreateCategory: createCategory,
         onFetchComments: fetchComments,
@@ -397,8 +419,9 @@ export default connect(
         onFetchStream: fetchStream,
         onMarkAsRead: markAsRead,
         onPinEntry: pinEntry,
-        onSubscribeFeed: subscribeFeed,
+        onRemoveFromCategory: removeFromCategory,
+        onSubscribe: subscribe,
         onUnpinEntry: unpinEntry,
-        onUnsubscribeFeed: unsubscribeFeed
-    }, dispatch)
+        onUnsubscribe: unsubscribe
+    })
 )(StreamPage);

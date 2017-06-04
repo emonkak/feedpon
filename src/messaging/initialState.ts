@@ -1,6 +1,11 @@
 import { State } from 'messaging/types';
 
 const initialState: State = {
+    categories: {
+        isLoading: false,
+        items: [],
+        version: 1
+    },
     credential: {
         authorizedAt: 0,
         token: null,
@@ -46,7 +51,6 @@ const initialState: State = {
             entries: [],
             continuation: null,
             feed: null,
-            subscription: null,
             options: {
                 numEntries: 20,
                 onlyUnread: true,
@@ -59,10 +63,6 @@ const initialState: State = {
         version: 1
     },
     subscriptions: {
-        categories: {
-            isCreating: false,
-            items: []
-        },
         isLoading: false,
         items: [],
         lastUpdatedAt: 0,

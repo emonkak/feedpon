@@ -113,7 +113,7 @@ hr {
   mask-repeat: repeat;
 }
 
-blockquote, dl, figure, form, ol, p, pre, table, ul {
+blockquote, dl, figure, ol, p, pre, table, ul {
   margin: 0 0 var(--baseline-height);
 }
 
@@ -222,7 +222,9 @@ mark {
   border-radius: 4px;
 }
 
-fieldset {
+form,
+fieldset,
+legend {
   margin: 0;
   padding: 0;
   border: 0;
@@ -230,21 +232,16 @@ fieldset {
 
 legend {
   display: block;
-  margin: 0 0 calc(var(--baseline-height) / 2 - 1px);
-  padding: 0;
-  border: 0;
-  width: 100%;;
-  border-bottom: 1px solid var(--medium-dark-color);
-  color: var(--dark-color);
-  font-weight: bold;
+  width: 100%;
 }
 
 input:focus,
-button:focus {
+select:focus {
   outline: none;
 }
 
-input {
+input,
+select {
   padding: 0;
   margin: 0;
   font-family: inherit;
@@ -268,7 +265,7 @@ button {
 }
 
 button:disabled {
-  cursor: default;
+  cursor: not-allowed;
 }
 
 button::-moz-focus-inner,

@@ -62,7 +62,7 @@ function createPipeline<TState, TEvent>(
         return function pipeline(event: TEvent) {
             const middleware = middlewares[index];
             const next = createPipeline(middlewares, finalize, context, index + 1);
-            middleware(event, next, context);
+            return middleware(event, next, context);
         };
     } else {
         return finalize;

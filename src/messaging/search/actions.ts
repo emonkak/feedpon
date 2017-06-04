@@ -33,10 +33,11 @@ export function searchFeeds(query: string): AsyncEvent {
                         title: feed.title,
                         description: feed.description || '',
                         url: feed.website || '',
+                        feedUrl: feed.feedId.replace(/^feed\//, ''),
                         iconUrl: feed.iconUrl || '',
                         subscribers: feed.subscribers,
                         subscription: subscriptions[0] || null,
-                        isSubscribing: false
+                        isLoading: false
                     })
                 )
                 .toArray();

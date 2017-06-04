@@ -30,6 +30,10 @@
   text-decoration: none;
 }
 
+.list-group-item.is-selected {
+  background-color: var(--light-color);
+}
+
 .list-group-item:first-child,
 .list-group-item + .list-group-item {
   border-top: 1px solid var(--medium-dark-color);

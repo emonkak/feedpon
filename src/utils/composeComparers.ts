@@ -1,15 +1,15 @@
-export default function composeComparers<T>(comparers: ((x: T, y: T) => number)): (x: T, y: T) => number {
-    return comparers.reduce((acc, comparer) => {
+export default function composeComparers<T>(...comparers: ((x: T, y: T) => number)[]): (x: T, y: T) => number {
+    return comparers.reduce((acc, next) => {
         if (acc === emptyComparer) {
-            return comparer;
+            return next;
         }
         return (x: T, y: T): number => {
-            const n = acc(x, y);
-            return n === 0 ? comparer(x, y) : n;
+            const ordering = acc(x, y);
+            return ordering !== 0 ? ordering : next(x, y);
         };
     }, emptyComparer);
 }
 
-function emptryComparer(x: never, y: never): number {
+function emptyComparer(x: never, y: never): number {
     return 0;
 }

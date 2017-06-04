@@ -1,17 +1,15 @@
 import React, { PureComponent } from 'react';
-import classnames from 'classnames';
 
 import Modal from 'components/parts/Modal';
 
-interface ConfirmButtonProps {
-    cancelClassName?: string;
-    cancelLabel?: string;
-    className?: string;
-    message: string;
-    okClassName?: string;
-    okLabel?: string;
+interface ConfirmButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
+    cancelButtonClassName?: string;
+    cancelButtonLabel?: string;
+    modalMessage: string;
+    modalTitle: string;
+    okButtonClassName?: string;
+    okButtonLabel?: string;
     onConfirm: () => void;
-    title: string;
 }
 
 interface ConfirmButtonState {
@@ -20,16 +18,17 @@ interface ConfirmButtonState {
 
 export default class ConfirmButton extends PureComponent<ConfirmButtonProps, ConfirmButtonState> {
     static defaultProps = {
-        cancelClassName: 'button-outline-default',
-        cancelLabel: 'Cancel',
-        okClassName: 'button-positive',
-        okLabel: 'OK'
+        cancelButtonClassName: 'button button-outline-default',
+        cancelButtonLabel: 'Cancel',
+        okButtonClassName: 'button button-positive-outline',
+        okButtonLabel: 'OK'
     };
 
     constructor(props: ConfirmButtonProps, context: any) {
         super(props, context);
 
         this.handleClose = this.handleClose.bind(this);
+        this.handleConfirm = this.handleConfirm.bind(this);
         this.handleOpen = this.handleOpen.bind(this);
 
         this.state = {
@@ -43,6 +42,16 @@ export default class ConfirmButton extends PureComponent<ConfirmButtonProps, Con
         });
     }
 
+    handleConfirm() {
+        const { onConfirm } = this.props;
+
+        onConfirm();
+
+        this.setState({
+            isConfirming: false
+        });
+    }
+
     handleOpen() {
         this.setState({
             isConfirming: true
@@ -50,28 +59,38 @@ export default class ConfirmButton extends PureComponent<ConfirmButtonProps, Con
     }
 
     render() {
-        const { cancelClassName, cancelLabel, children, className, message, okClassName, okLabel, onConfirm, title } = this.props;
+        const {
+            cancelButtonClassName,
+            cancelButtonLabel,
+            children,
+            modalMessage,
+            modalTitle,
+            okButtonClassName,
+            okButtonLabel,
+            onConfirm,
+            ...restProps
+        } = this.props;
         const { isConfirming } = this.state;
 
         return (
             <span className="button-toolbar">
-                <button className={className} onClick={this.handleOpen}>
+                <button {...restProps} onClick={this.handleOpen}>
                     {children}
                 </button>
                 <Modal isOpened={isConfirming} onClose={this.handleClose}>
                     <button className="close" onClick={this.handleClose}></button>
-                    <h1 className="modal-title">{title}</h1>
-                    <p>{message}</p>
+                    <h1 className="modal-title">{modalTitle}</h1>
+                    <p>{modalMessage}</p>
                     <p className="button-toolbar">
                         <button
-                            className={classnames('button', okClassName)}
-                            onClick={onConfirm}>
-                            {okLabel}
+                            className={okButtonClassName}
+                            onClick={this.handleConfirm}>
+                            {okButtonLabel}
                         </button>
                         <button
-                            className={classnames('button', cancelClassName)}
+                            className={cancelButtonClassName}
                             onClick={this.handleClose}>
-                            {cancelLabel}
+                            {cancelButtonLabel}
                         </button>
                     </p>
                 </Modal>

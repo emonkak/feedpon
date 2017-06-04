@@ -37,7 +37,7 @@ class AuthenticationPage extends PureComponent<AuthenticationProps, {}> {
 
 export default connect(
     (state: State) => ({}),
-    (dispatch) => bindActions({
+    bindActions({
         onAuthenticate: authenticate
-    }, dispatch)
+    })
 )(AuthenticationPage);
