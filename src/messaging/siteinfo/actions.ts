@@ -35,7 +35,7 @@ export function updateSiteinfoItem(item: SiteinfoItem): Event {
 }
 
 export function updateSiteinfo(): AsyncEvent {
-    return async (dispatch, getState) => {
+    return async ({ dispatch, getState }) => {
         dispatch({
             type: 'SITEINFO_UPDATING'
         });
@@ -64,7 +64,7 @@ export function updateSiteinfo(): AsyncEvent {
 }
 
 export function getSiteinfoItems(): AsyncEvent<SiteinfoItem[]> {
-    return async (dispatch, getState) => {
+    return async ({ dispatch, getState }) => {
         const { siteinfo } = getState();
 
         if (siteinfo.lastUpdatedAt > 0) {

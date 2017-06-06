@@ -3,7 +3,6 @@ import { Location } from 'history';
 
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
-import { State } from 'messaging/types';
 import { authenticate } from 'messaging/credential/actions';
 
 interface AuthenticationProps {
@@ -35,9 +34,8 @@ class AuthenticationPage extends PureComponent<AuthenticationProps, {}> {
     }
 }
 
-export default connect(
-    (state: State) => ({}),
-    bindActions({
+export default connect({
+    mapDispatchToProps: bindActions({
         onAuthenticate: authenticate
     })
-)(AuthenticationPage);
+})(AuthenticationPage);

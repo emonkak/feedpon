@@ -1,13 +1,13 @@
-import { Delegate, Middleware } from '../types';
+import { Middleware, Store } from '../types';
 
-export default function errorHandlingMiddlewareFactory<TState, TEvent>(
-    handler: (error: any, dispatch: Delegate<TEvent>, getState: () => TState) => void
-): Middleware<TState, TEvent> {
-    return function errorHandlingMiddleware(event, next, { getState }) {
+function errorHandlingMiddlewareFactory<TState, TEvent>(handler: (error: any, store: Store<TState, TEvent>) => void): Middleware<TState, TEvent> {
+    return (store) => (event, next) => {
         const result = next(event);
 
         return result instanceof Promise
-            ? result.catch((error) => handler(error, next, getState))
+            ? result.catch((error) => handler(error, store))
             : result;
     };
 }
+
+export default errorHandlingMiddlewareFactory;

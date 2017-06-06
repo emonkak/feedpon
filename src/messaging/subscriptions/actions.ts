@@ -11,7 +11,7 @@ import { AsyncEvent, Event, Feed, Subscription, SubscriptionOrder } from 'messag
 import { getFeedlyToken } from 'messaging/credential/actions';
 
 export function fetchSubscriptions(): AsyncEvent {
-    return async (dispatch, getState) => {
+    return async ({ dispatch, getState }) => {
         dispatch({
             type: 'SUBSCRIPTIONS_FETCHING'
         });
@@ -77,7 +77,7 @@ export function fetchSubscriptions(): AsyncEvent {
 }
 
 export function addToCategory(subscription: Subscription, labelToAdd: string): AsyncEvent {
-    return async (dispatch, getState) => {
+    return async ({ dispatch, getState }) => {
         dispatch({
             type: 'FEED_SUBSCRIBING',
             feedId: subscription.feedId
@@ -118,7 +118,7 @@ export function addToCategory(subscription: Subscription, labelToAdd: string): A
 }
 
 export function removeFromCategory(subscription: Subscription, labelToRemove: string): AsyncEvent {
-    return async (dispatch, getState) => {
+    return async ({ dispatch, getState }) => {
         dispatch({
             type: 'FEED_SUBSCRIBING',
             feedId: subscription.feedId
@@ -157,7 +157,7 @@ export function removeFromCategory(subscription: Subscription, labelToRemove: st
 }
 
 export function subscribe(feed: Feed, labels: string[]): AsyncEvent {
-    return async (dispatch, getState) => {
+    return async ({ dispatch, getState }) => {
         dispatch({
             type: 'FEED_SUBSCRIBING',
             feedId: feed.feedId
@@ -210,7 +210,7 @@ export function subscribe(feed: Feed, labels: string[]): AsyncEvent {
 }
 
 export function unsubscribe(subscription: Subscription): AsyncEvent {
-    return async (dispatch, getState) => {
+    return async ({ dispatch, getState }) => {
         dispatch({
             type: 'FEED_UNSUBSCRIBING',
             subscription

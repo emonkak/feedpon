@@ -1,6 +1,6 @@
 import { Middleware } from '../types';
 
-export default function saveStateMiddlewareFactory(keysToSave: string[], save: (key: string, value: any) => void): Middleware<any, any> {
+function saveStateMiddlewareFactory<TState, TEvent>(save: (key: string, value: any) => void): Middleware<TState, TEvent> {
     let queue: { [key: string]: any } = {};
     let request: number | null = null;
 
@@ -13,7 +13,7 @@ export default function saveStateMiddlewareFactory(keysToSave: string[], save: (
         request = null;
     }
 
-    return function saveStateMiddleware(event, next, { getState }) {
+    return ({ getState }) => (event, next) => {
         const state = getState();
 
         const result = next(event);
@@ -22,7 +22,7 @@ export default function saveStateMiddlewareFactory(keysToSave: string[], save: (
 
         let shouldSave = false;
 
-        for (const key of keysToSave) {
+        for (const key in state) {
             if (state[key] !== nextState[key]) {
                 queue[key] = nextState[key];
                 shouldSave = true;
@@ -36,3 +36,5 @@ export default function saveStateMiddlewareFactory(keysToSave: string[], save: (
         return result;
     };
 }
+
+export default saveStateMiddlewareFactory;

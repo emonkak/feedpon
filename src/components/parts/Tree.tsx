@@ -24,6 +24,8 @@ export class Tree extends PureComponent<TreeProps, {}> {
     shouldComponentUpdate(nextProps: TreeProps, nextState: {}) {
         return nextProps.isExpanded &&
             (this.props.children !== nextProps.children ||
+             this.props.isExpanded !== nextProps.isExpanded ||
+             this.props.onSelect !== nextProps.onSelect ||
              this.props.selectedValue !== nextProps.selectedValue);
     }
 

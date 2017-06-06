@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
 import { Params } from 'react-router/lib/Router';
+import { createSelector } from 'reselect';
 
 import Dropdown from 'components/parts/Dropdown';
 import EntryList from 'components/parts/EntryList';
@@ -360,7 +361,7 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
             if (isLoading) {
                 return (
                     <footer className="stream-footer">
-                        <i className="icon icon-32 icon-spinner animation-clockwise-rotation" />
+                        <i className="icon icon-32 icon-spinner icon-rotating" />
                     </footer>
                 );
             } else {
@@ -400,28 +401,36 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
     }
 }
 
-export default connect(
-    (state: State) => ({
-        categories: state.categories.items,
-        isLoaded: state.streams.isLoaded,
-        isLoading: state.streams.isLoading,
-        stream: state.streams.current,
-        subscription: state.subscriptions.items
-            .find((subscription) => subscription.streamId === state.streams.current.streamId) || null
-    }),
-    bindActions({
-        onAddToCategory: addToCategory,
-        onChangeStreamView: changeStreamView,
-        onCreateCategory: createCategory,
-        onFetchComments: fetchComments,
-        onFetchFullContent: fetchFullContent,
-        onFetchMoreEntries: fetchMoreEntries,
-        onFetchStream: fetchStream,
-        onMarkAsRead: markAsRead,
-        onPinEntry: pinEntry,
-        onRemoveFromCategory: removeFromCategory,
-        onSubscribe: subscribe,
-        onUnpinEntry: unpinEntry,
-        onUnsubscribe: unsubscribe
-    })
-)(StreamPage);
+export default connect(() => {
+    const subscriptionSelector = createSelector(
+        (state: State) => state.subscriptions.items,
+        (state: State) => state.streams.current.streamId,
+        (subscriptions, streamId) =>
+            subscriptions.find((subscription) => subscription.streamId === streamId) || null
+    );
+
+    return {
+        mapStateToProps: (state: State) => ({
+            categories: state.categories.items,
+            isLoaded: state.streams.isLoaded,
+            isLoading: state.streams.isLoading,
+            stream: state.streams.current,
+            subscription: subscriptionSelector(state)
+        }),
+        mapDispatchToProps: bindActions({
+            onAddToCategory: addToCategory,
+            onChangeStreamView: changeStreamView,
+            onCreateCategory: createCategory,
+            onFetchComments: fetchComments,
+            onFetchFullContent: fetchFullContent,
+            onFetchMoreEntries: fetchMoreEntries,
+            onFetchStream: fetchStream,
+            onMarkAsRead: markAsRead,
+            onPinEntry: pinEntry,
+            onRemoveFromCategory: removeFromCategory,
+            onSubscribe: subscribe,
+            onUnpinEntry: unpinEntry,
+            onUnsubscribe: unsubscribe
+        })
+    };
+})(StreamPage);

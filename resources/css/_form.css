@@ -112,14 +112,14 @@
   }
 
   & > .button:not(:first-child),
-  & > .button-toolbar:not(:first-child) > .button:first-of-type,
+  & > .button-container:not(:first-child) > .button,
   & > .form-control:not(:first-child) {
     border-bottom-left-radius: 0;
     border-top-left-radius: 0;
   }
 
   & > .button:not(:last-child),
-  & > .button-toolbar:not(:last-child) > .button:last-of-type,
+  & > .button-container:not(:last-child) > .button,
   & > .form-control:not(:last-child) {
     border-bottom-right-radius: 0;
     border-top-right-radius: 0;

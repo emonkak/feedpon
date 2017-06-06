@@ -1,7 +1,6 @@
 import React, { PureComponent } from 'react';
 
 import connect from 'utils/flux/react/connect';
-import { State } from 'messaging/types';
 
 class KeyboardSettings extends PureComponent<any, any> {
     render() {
@@ -13,8 +12,5 @@ class KeyboardSettings extends PureComponent<any, any> {
     }
 }
 
-export default connect(
-    (state: State) => ({}),
-    (dispatch) => ({})
-)(KeyboardSettings);
-
+export default connect({
+})(KeyboardSettings);

@@ -21,7 +21,7 @@ export default class SubscribeButton extends PureComponent<SubscribeButtonProps,
                     disabled={isLoading}>
                     <i className={classnames(
                         'icon icon-20',
-                        isLoading ? 'icon-spinner animation-clockwise-rotation' : 'icon-settings'
+                        isLoading ? 'icon-spinner icon-rotating' : 'icon-settings'
                     )} />
                 </button>
             );
@@ -34,7 +34,7 @@ export default class SubscribeButton extends PureComponent<SubscribeButtonProps,
                     disabled={isLoading}>
                     <i className={classnames(
                         'icon icon-20',
-                        isLoading ? 'icon-spinner animation-clockwise-rotation' : 'icon-plus-math'
+                        isLoading ? 'icon-spinner icon-rotating' : 'icon-plus-math'
                     )} />
                 </button>
             );

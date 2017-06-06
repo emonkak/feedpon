@@ -32,8 +32,8 @@ class NotAuthenticated extends PureComponent<NotAuthenticatedProps, {}> {
     }
 }
 
-export default connect(
-    (state: State) => ({
+export default connect(() => ({
+    mapStateToProps: (state: State) => ({
         credential: state.credential
     })
-)(NotAuthenticated);
+}))(NotAuthenticated);

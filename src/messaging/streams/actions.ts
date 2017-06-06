@@ -18,7 +18,7 @@ export function changeStreamView(streamId: string, view: StreamView): Event {
 }
 
 export function fetchStream(streamId: string, options?: StreamOptions): AsyncEvent {
-    return async (dispatch, getState) => {
+    return async ({ dispatch, getState }) => {
         if (!options) {
             const { streamSettings } = getState();
 
@@ -55,7 +55,7 @@ export function fetchStream(streamId: string, options?: StreamOptions): AsyncEve
 }
 
 export function fetchMoreEntries(streamId: string, continuation: string, options: StreamOptions): AsyncEvent {
-    return async (dispatch, getState) => {
+    return async ({ dispatch, getState }) => {
         dispatch({
             type: 'MORE_ENTRIES_FETCHING',
             streamId
@@ -102,7 +102,7 @@ export function fetchMoreEntries(streamId: string, continuation: string, options
 }
 
 function fetchFeedStream(streamId: string, options: StreamOptions): AsyncEvent<Stream> {
-    return async (dispatch, getState) => {
+    return async ({ dispatch, getState }) => {
         dispatch({
             type: 'STREAM_FETCHING',
             streamId
@@ -157,7 +157,7 @@ function fetchFeedStream(streamId: string, options: StreamOptions): AsyncEvent<S
 }
 
 function fetchCategoryStream(streamId: string, options: StreamOptions): AsyncEvent<Stream> {
-    return async (dispatch, getState) => {
+    return async ({ dispatch, getState }) => {
         dispatch({
             type: 'STREAM_FETCHING',
             streamId
@@ -203,7 +203,7 @@ function fetchCategoryStream(streamId: string, options: StreamOptions): AsyncEve
 }
 
 function fetchAllStream(options: StreamOptions): AsyncEvent<Stream> {
-    return async (dispatch, getState) => {
+    return async ({ dispatch, getState }) => {
         dispatch({
             type: 'STREAM_FETCHING',
             streamId: 'all'
@@ -246,7 +246,7 @@ function fetchAllStream(options: StreamOptions): AsyncEvent<Stream> {
 }
 
 function fetchPinsStream(options: StreamOptions): AsyncEvent<Stream> {
-    return async (dispatch, getState) => {
+    return async ({ dispatch, getState }) => {
         dispatch({
             type: 'STREAM_FETCHING',
             streamId: 'pins'
@@ -290,7 +290,7 @@ function fetchPinsStream(options: StreamOptions): AsyncEvent<Stream> {
 }
 
 function fetchBookmarkCounts(urls: string[]): AsyncEvent {
-    return async (dispatch, getState) => {
+    return async ({ dispatch, getState }) => {
         if (urls.length > 0) {
             const bookmarkCounts = await bookmarkApi.getBookmarkCounts(urls);
 
@@ -336,7 +336,7 @@ function convertEntry(entry: feedly.Entry): Entry {
 }
 
 export function fetchComments(entryId: string, url: string): AsyncEvent {
-    return async (dispatch) => {
+    return async ({ dispatch }) => {
         dispatch({
             type: 'COMMENTS_FETCHING',
             entryId
@@ -370,7 +370,7 @@ export function fetchComments(entryId: string, url: string): AsyncEvent {
 }
 
 export function fetchFullContent(entryId: string, url: string): AsyncEvent {
-    return async (dispatch, getState) => {
+    return async ({ dispatch, getState }) => {
         dispatch({
             type: 'FULL_CONTENT_FETCHING',
             entryId
@@ -479,7 +479,7 @@ function extractNextPageUrl(contentDocument: Document, url: string, nextLinkExpr
 }
 
 export function markAsRead(entryIds: (string | number)[]): AsyncEvent {
-    return async (dispatch, getState) => {
+    return async ({ dispatch, getState }) => {
         if (entryIds.length === 0) {
             return;
         }
@@ -505,7 +505,7 @@ export function markAsRead(entryIds: (string | number)[]): AsyncEvent {
 }
 
 export function pinEntry(entryId: string): AsyncEvent {
-    return async (dispatch, getState) => {
+    return async ({ dispatch, getState }) => {
         dispatch({
             type: 'ENTRY_PINNING',
             entryId
@@ -534,7 +534,7 @@ export function pinEntry(entryId: string): AsyncEvent {
 }
 
 export function unpinEntry(entryId: string): AsyncEvent {
-    return async (dispatch, getState) => {
+    return async ({ dispatch, getState }) => {
         dispatch({
             type: 'ENTRY_PINNING',
             entryId
@@ -563,7 +563,7 @@ export function unpinEntry(entryId: string): AsyncEvent {
 }
 
 function expandUrls(urls: string[]): AsyncEvent<string[]> {
-    return async (dispatch, getState) => {
+    return async ({ dispatch, getState }) => {
         const { trackingUrlSettings: { patterns } } = getState();
         const trackingUrls = urls
             .filter((url) => patterns.some((pattern) => tryMatch(pattern, url)));

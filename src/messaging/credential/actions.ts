@@ -4,7 +4,7 @@ import { AsyncEvent } from 'messaging/types';
 import { sendNotification } from 'messaging/notifications/actions';
 
 export function authenticate(): AsyncEvent {
-    return async (dispatch, getState, { environment }) => {
+    return async ({ dispatch, getState }, { environment }) => {
         async function handleRedirectUrl(urlString: string): Promise<void> {
             const response = feedlyApi.authCallback(urlString);
 
@@ -56,7 +56,7 @@ export function authenticate(): AsyncEvent {
 }
 
 export function getFeedlyToken(): AsyncEvent<feedly.ExchangeTokenResponse> {
-    return async (dispatch, getState, { environment }) => {
+    return async ({ dispatch, getState }, { environment }) => {
         let { credential } = getState();
 
         if (!credential.token) {

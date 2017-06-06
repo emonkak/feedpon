@@ -6,7 +6,7 @@ import Navbar from 'components/parts/Navbar';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
 import { Menu, MenuItem } from 'components/parts/Menu';
-import { NotificationKind, State } from 'messaging/types';
+import { NotificationKind } from 'messaging/types';
 import { sendNotification } from 'messaging/notifications/actions';
 
 interface DashboardProps {
@@ -417,9 +417,8 @@ class DashboardPage extends PureComponent<DashboardProps, DashboardState> {
     }
 }
 
-export default connect(
-    (state: State) => ({}),
-    bindActions({
+export default connect({
+    mapDispatchToProps: bindActions({
         onSendNotification: sendNotification
     })
-)(DashboardPage);
+})(DashboardPage);

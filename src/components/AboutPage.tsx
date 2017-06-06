@@ -67,6 +67,30 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 `.trim();
 
+const RESELECT_LICENSE = `
+The MIT License (MIT)
+
+Copyright (c) 2015-2016 Reselect Contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+`.trim();
+
 const INTL_RELATIVEFORMAT_LICENSE = `
 Copyright 2014 Yahoo! Inc.
 All rights reserved.
@@ -178,6 +202,10 @@ class AboutPage extends PureComponent<AboutPageProps, {}> {
                                 <pre>{REACT_ROUTER_LICENSE}</pre>
                             </li>
                             <li>
+                                <h2>Reselect</h2>
+                                <pre>{RESELECT_LICENSE}</pre>
+                            </li>
+                            <li>
                                 <h2>Intl RelativeFormat</h2>
                                 <pre>{INTL_RELATIVEFORMAT_LICENSE}</pre>
                             </li>
@@ -209,8 +237,8 @@ class AboutPage extends PureComponent<AboutPageProps, {}> {
     }
 }
 
-export default connect(
-    (state: State) => ({
+export default connect({
+    mapStateToProps: (state: State) => ({
         version: state.version
     })
-)(AboutPage);
+})(AboutPage);

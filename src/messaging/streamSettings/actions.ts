@@ -7,7 +7,7 @@ export function changeStreamSettings(
     defaultStreamView: StreamView,
     onlyUnreadEntries: boolean
 ): AsyncEvent {
-    return async (dispatch) => {
+    return async ({ dispatch }) => {
         dispatch({
             type: 'STREAM_SETTINGS_CHANGED',
             defaultEntryOrder,

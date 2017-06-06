@@ -121,13 +121,13 @@ export default class EntryInner extends PureComponent<EntryInnerProps, EntryInne
                     className={classnames('entry-action entry-action-pin', { 'is-selected': entry.isPinned })}
                     onClick={this.handleTogglePin}
                     disabled={entry.isPinning}>
-                    <i className={classnames('icon icon-20', entry.isPinning ? 'icon-spinner animation-clockwise-rotation' : 'icon-pin-3')} />
+                    <i className={classnames('icon icon-20', entry.isPinning ? 'icon-spinner icon-rotating' : 'icon-pin-3')} />
                 </button>
                 <button
                     className={classnames('entry-action entry-action-fetch-full-content', { 'is-selected': fullContent })}
                     onClick={this.handleToggleFullContent}
                     disabled={entry.fullContents.isLoading}>
-                    <i className={classnames('icon icon-20', entry.fullContents.isLoading ? 'icon-spinner animation-clockwise-rotation' : 'icon-page-overview')} />
+                    <i className={classnames('icon icon-20', entry.fullContents.isLoading ? 'icon-spinner icon-rotating' : 'icon-page-overview')} />
                 </button>
                 <a className="entry-action entry-action-open-external-link" href={entry.url} target="_blank">
                     <i className="icon icon-20 icon-external-link" />
@@ -232,7 +232,7 @@ export default class EntryInner extends PureComponent<EntryInnerProps, EntryInne
                 <button
                     className={classnames('entry-action', { 'is-selected': popover === 'comment' })}
                     onClick={this.handleSwitchCommentPopover}>
-                    <i className={classnames('icon icon-20', entry.comments.isLoading ? 'icon-spinner animation-clockwise-rotation' : 'icon-comments')} />
+                    <i className={classnames('icon icon-20', entry.comments.isLoading ? 'icon-spinner icon-rotating' : 'icon-comments')} />
                 </button>
                 <button
                     className={classnames('entry-action', { 'is-selected': popover === 'share' })}

@@ -183,9 +183,9 @@
 }
 
 .button-toolbar > .button + .button,
-.button-toolbar > .button + .button-toolbar,
-.button-toolbar > .button-toolbar + .button,
-.button-toolbar > .button-toolbar + .button-toolbar {
+.button-toolbar > .button + .button-container,
+.button-toolbar > .button-container + .button,
+.button-toolbar > .button-container + .button-container {
   margin-left: 0.5rem;
 }
 

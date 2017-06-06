@@ -303,13 +303,13 @@ function isValidPattern(pattern: string): boolean {
 }
 
 
-export default connect(
-    (state: State) => ({
+export default connect({
+    mapStateToProps: (state: State) => ({
         items: state.siteinfo.userItems
     }),
-    bindActions({
+    mapDispatchToProps: bindActions({
         onAddSiteinfoItem: addSiteinfoItem,
         onRemoveSiteinfoItem: removeSiteinfoItem,
         onUpdateSiteinfoItem: updateSiteinfoItem
     })
-)(UserSiteinfoSettings);
+})(UserSiteinfoSettings);

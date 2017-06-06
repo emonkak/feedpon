@@ -15,7 +15,7 @@ interface StreamSettingsProps {
 
 type StreamSettingsState = StreamSettingsProps;
 
-class StreamSettingsComponent extends PureComponent<StreamSettingsProps, StreamSettingsState> {
+class StreamSettings extends PureComponent<StreamSettingsProps, StreamSettingsState> {
     constructor(props: StreamSettingsProps, context: any) {
         super(props);
 
@@ -128,14 +128,14 @@ class StreamSettingsComponent extends PureComponent<StreamSettingsProps, StreamS
     }
 }
 
-export default connect(
-    (state: State) => ({
+export default connect({
+    mapStateToProps: (state: State) => ({
         defaultEntryOrder: state.streamSettings.defaultEntryOrder,
         defaultNumEntries: state.streamSettings.defaultNumEntries,
         defaultStreamView: state.streamSettings.defaultStreamView,
         onlyUnreadEntries: state.streamSettings.onlyUnreadEntries
     }),
-    bindActions({
+    mapDispatchToProps: bindActions({
         onChangeStreamSettings: changeStreamSettings
     })
-)(StreamSettingsComponent);
+})(StreamSettings);

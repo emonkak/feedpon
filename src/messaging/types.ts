@@ -5,12 +5,12 @@ export type Event
     | { type: 'CATEGORY_CREATED', category: Category }
     | { type: 'CATEGORY_CREATING' }
     | { type: 'CATEGORY_CREATING_FAILED' }
-    | { type: 'CATEGORY_UPDATING', category: Category }
-    | { type: 'CATEGORY_UPDATING_FAILED', category: Category }
-    | { type: 'CATEGORY_UPDATED', prevCategory: Category, category: Category }
+    | { type: 'CATEGORY_DELETED', category: Category }
     | { type: 'CATEGORY_DELETING', category: Category }
     | { type: 'CATEGORY_DELETING_FAILED', category: Category }
-    | { type: 'CATEGORY_DELETED', category: Category }
+    | { type: 'CATEGORY_UPDATED', prevCategory: Category, category: Category }
+    | { type: 'CATEGORY_UPDATING', category: Category }
+    | { type: 'CATEGORY_UPDATING_FAILED', category: Category }
     | { type: 'COMMENTS_FETCHED', entryId: string | number, comments: Comment[] }
     | { type: 'COMMENTS_FETCHING', entryId: string | number }
     | { type: 'COMMENTS_FETCHING_FAILED', entryId: string | number }
@@ -55,11 +55,12 @@ export type Event
     | { type: 'USER_SITEINFO_ITEM_REMOVED', id: string | number }
     | { type: 'USER_SITEINFO_ITEM_UPDATED', item: SiteinfoItem };
 
-export type AsyncEvent<TResult = void> = (dispatch: Dispatcher, getState: () => State, context: Context) => Promise<TResult>;
+export type AsyncEvent<TResult = void> = (store: Store, context: Context) => Promise<TResult>;
 
-export interface Dispatcher {
-    (event: Event): Event;
-    <TResult>(event: AsyncEvent<TResult>): TResult;
+export interface Store {
+    getState(): State;
+    dispatch(event: Event): Event;
+    dispatch<TResult>(event: AsyncEvent<TResult>): TResult;
 }
 
 export interface State {

@@ -73,7 +73,7 @@ export default class ConfirmButton extends PureComponent<ConfirmButtonProps, Con
         const { isConfirming } = this.state;
 
         return (
-            <span className="button-toolbar">
+            <span className="button-container">
                 <button {...restProps} onClick={this.handleOpen}>
                     {children}
                 </button>
@@ -81,7 +81,7 @@ export default class ConfirmButton extends PureComponent<ConfirmButtonProps, Con
                     <button className="close" onClick={this.handleClose}></button>
                     <h1 className="modal-title">{modalTitle}</h1>
                     <p>{modalMessage}</p>
-                    <p className="button-toolbar">
+                    <p className="button-container">
                         <button
                             className={okButtonClassName}
                             onClick={this.handleConfirm}>

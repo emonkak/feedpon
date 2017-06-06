@@ -150,12 +150,12 @@ function isValidPattern(pattern: string): boolean {
     }
 }
 
-export default connect(
-    (state: State) => ({
+export default connect({
+    mapStateToProps: (state: State) => ({
         patterns: state.trackingUrlSettings.patterns
     }),
-    bindActions({
+    mapDispatchToProps: bindActions({
         onAddTrackingUrlPattern: addTrackingUrlPattern,
         onRemoveTrackingUrlPattern: removeTrackingUrlPattern
     })
-)(TrackingUrlSettings);
+})(TrackingUrlSettings);

@@ -43,11 +43,11 @@ class Notifications extends PureComponent<NotificationsProps, {}> {
     }
 }
 
-export default connect(
-    (state: State) => ({
+export default connect({
+    mapStateToProps: (state: State) => ({
         notifications: state.notifications.items
     }),
-    bindActions({
+    mapDispatchToProps: bindActions({
         onDismissNotification: dismissNotification
     })
-)(Notifications);
+})(Notifications);

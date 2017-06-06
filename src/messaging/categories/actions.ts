@@ -3,7 +3,7 @@ import { AsyncEvent, Category } from 'messaging/types';
 import { getFeedlyToken } from 'messaging/credential/actions';
 
 export function createCategory(label: string, callback: (category: Category) => void): AsyncEvent {
-    return async (dispatch, getState) => {
+    return async ({ dispatch, getState }) => {
         dispatch({
             type: 'CATEGORY_CREATING'
         });
@@ -36,7 +36,7 @@ export function createCategory(label: string, callback: (category: Category) => 
 }
 
 export function deleteCategory(category: Category): AsyncEvent {
-    return async (dispatch, getState) => {
+    return async ({ dispatch, getState }) => {
         dispatch({
             type: 'CATEGORY_DELETING',
             category
@@ -63,7 +63,7 @@ export function deleteCategory(category: Category): AsyncEvent {
 }
 
 export function updateCategory(category: Category, label: string): AsyncEvent {
-    return async (dispatch, getState) => {
+    return async ({ dispatch, getState }) => {
         dispatch({
             type: 'CATEGORY_UPDATING',
             category

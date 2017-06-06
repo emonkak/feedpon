@@ -191,8 +191,8 @@ class SearchPage extends PureComponent<SearchPageProps, {}> {
     }
 }
 
-export default connect(
-    (state: State) => ({
+export default connect({
+    mapStateToProps: (state: State) => ({
         categories: state.categories.items,
         feeds: state.search.feeds,
         isLoaded: state.search.isLoaded,
@@ -200,7 +200,7 @@ export default connect(
         query: state.search.query,
         subscriptions: state.subscriptions.items
     }),
-    bindActions({
+    mapDispatchToProps: bindActions({
         onAddToCategory: addToCategory,
         onCreateCategory: createCategory,
         onRemoveFromCategory: removeFromCategory,
@@ -208,4 +208,4 @@ export default connect(
         onSubscribe: subscribe,
         onUnsubscribe: unsubscribe
     })
-)(SearchPage);
+})(SearchPage);

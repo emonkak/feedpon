@@ -8,7 +8,7 @@ import { getFeedlyToken } from 'messaging/credential/actions';
 import { searchFeeds as feedlySearchFeeds } from 'adapters/feedly/api';
 
 export function searchFeeds(query: string): AsyncEvent {
-    return async (dispatch, getState) => {
+    return async ({ dispatch, getState }) => {
         dispatch({
             type: 'FEED_SEARCHING',
             query

@@ -1,5 +1,7 @@
 import React, { PureComponent } from 'react';
+import classnames from 'classnames';
 import { History } from 'history';
+import { createSelector } from 'reselect';
 
 import ConfirmButton from 'components/parts/ConfirmButton';
 import Dropdown from 'components/parts/Dropdown';
@@ -54,16 +56,17 @@ class CategoriesPage extends PureComponent<CategoriesPageProps, CategoriesPageSt
 
     getVisibleSubscriptions() {
         const { query } = this.state;
-        const { params, subscriptions } = this.props;
+        const { subscriptions } = this.props;
 
-        const splittedQueries = query.trim().toLowerCase().split(/\s+/);
+        const trimmedQuery = query.trim();
+
+        if (trimmedQuery === '') {
+            return subscriptions;
+        }
+
+        const splittedQueries = trimmedQuery.toLowerCase().split(/\s+/);
 
         return subscriptions
-            .filter(
-                params['label']
-                    ? (subscription) => subscription.labels.includes(params['label'])
-                    : (subscription) => subscription.labels.length === 0
-            )
             .filter((subscription) => {
                 const text = (subscription.title + ' ' + subscription.url).toLowerCase();
                 return splittedQueries.every(query => text.includes(query));
@@ -98,12 +101,12 @@ class CategoriesPage extends PureComponent<CategoriesPageProps, CategoriesPageSt
     }
 
     renderNavbar() {
-        const { categories, onToggleSidebar } = this.props;
+        const { onToggleSidebar } = this.props;
 
         return (
-            <CategoriesNavbar
-                categories={categories}
-                onToggleSidebar={onToggleSidebar} />
+            <Navbar onToggleSidebar={onToggleSidebar}>
+                <h1 className="navbar-title">Organize subscriptions</h1>
+            </Navbar>
         );
     }
 
@@ -114,10 +117,10 @@ class CategoriesPage extends PureComponent<CategoriesPageProps, CategoriesPageSt
         const label = params['label'];
         const category = categories.find((category) => category.label === label);
 
-        const visibleSubscriptions = this.getVisibleSubscriptions();
+        const subscriptions = this.getVisibleSubscriptions();
 
-        const description = visibleSubscriptions.length > 0
-            ? <p><strong>{visibleSubscriptions.length}</strong> subscriptions are available in this category.</p>
+        const description = subscriptions.length > 0
+            ? <p><strong>{subscriptions.length}</strong> subscriptions are available in this category.</p>
             : <p>There are no subscriptions in this category.</p>
 
         return (
@@ -141,7 +144,7 @@ class CategoriesPage extends PureComponent<CategoriesPageProps, CategoriesPageSt
                 <LazyList
                     assumedItemHeight={60}
                     getKey={getSubscriptionKey}
-                    items={visibleSubscriptions}
+                    items={subscriptions}
                     renderItem={this.renderSubscriptionItem}
                     renderList={renderSubscriptionList} />
             </div>
@@ -158,42 +161,6 @@ class CategoriesPage extends PureComponent<CategoriesPageProps, CategoriesPageSt
                     {this.renderContent()}
                 </div>
             </div>
-        );
-    }
-}
-
-interface CategoriesNavbarProps {
-    categories: Category[];
-    onToggleSidebar: () => void;
-}
-
-class CategoriesNavbar extends PureComponent<CategoriesNavbarProps, {}> {
-    render() {
-        const { categories, onToggleSidebar } = this.props;
-
-        return (
-            <Navbar onToggleSidebar={onToggleSidebar}>
-                <h1 className="navbar-title">Organize subscriptions</h1>
-                <Dropdown
-                    className="navbar-action"
-                    toggleButton={
-                        <button><i className="icon icon-24 icon-more" /></button>
-                    }
-                    menu={
-                        <Menu>
-                            <div className="menu-heading">Add/Remove category</div>
-                            {categories.map((category) =>
-                                <MenuItem
-                                    key={category.categoryId}
-                                    primaryText={category.label} />
-                            )}
-                            <div className="menu-divider" />
-                            <MenuItem primaryText="Unsubscribe..." />
-                        </Menu>
-                    }
-                    pullRight={true}>
-                </Dropdown>
-            </Navbar>
         );
     }
 }
@@ -267,8 +234,8 @@ class SubscriptionItem extends PureComponent<SubscriptionItemProps, {}> {
                     </div>
                     <Dropdown
                         toggleButton={
-                            <button className="button-icon button-icon-24 u-margin-left">
-                                <i className="icon icon-16 icon-menu-2" />
+                            <button className="button-icon button-icon-24 u-margin-left" disabled={subscription.isLoading}>
+                                <i className={classnames('icon icon-20', subscription.isLoading ? 'icon-spinner icon-rotating' : 'icon-menu-2' )} />
                             </button>
                         }
                         menu={
@@ -499,17 +466,33 @@ function renderSubscriptionList(children: React.ReactNode, aboveSpace: number, b
     );
 }
 
-export default connect(
-    (state: State) => ({
-        categories: state.categories.items,
-        subscriptions: state.subscriptions.items,
-    }),
-    bindActions({
-        onAddToCategory: addToCategory,
-        onUpdateCategory: updateCategory,
-        onCreateCategory: createCategory,
-        onDeleteCategory: deleteCategory,
-        onRemoveFromCategory: removeFromCategory,
-        onUnsubscribe: unsubscribe
-    })
-)(CategoriesPage);
+export default connect(() => {
+    const visibleSubscriptionsSelector = createSelector(
+        (state: State) => state.subscriptions.items,
+        (state: State, props: CategoriesPageProps) => props.params['label'],
+        (subscriptions, label) => {
+            if (label) {
+                return subscriptions
+                    .filter((subscription) => subscription.labels.includes(label));
+            } else {
+                return subscriptions
+                    .filter((subscription) => subscription.labels.length === 0);
+            }
+        }
+    );
+
+    return {
+        mapStateToProps: (state: State, props: CategoriesPageProps) => ({
+            categories: state.categories.items,
+            subscriptions: visibleSubscriptionsSelector(state, props)
+        }),
+        mapDispatchToProps: bindActions({
+            onAddToCategory: addToCategory,
+            onUpdateCategory: updateCategory,
+            onCreateCategory: createCategory,
+            onDeleteCategory: deleteCategory,
+            onRemoveFromCategory: removeFromCategory,
+            onUnsubscribe: unsubscribe
+        })
+    }
+})(CategoriesPage);

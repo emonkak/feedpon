@@ -32,8 +32,8 @@ class AuthenticationRequired extends PureComponent<AuthenticationRequiredProps, 
     }
 }
 
-export default connect(
-    (state: State) => ({
+export default connect(() => ({
+    mapStateToProps: (state: State) => ({
         credential: state.credential
     })
-)(AuthenticationRequired);
+}))(AuthenticationRequired);
