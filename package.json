@@ -54,7 +54,6 @@
     "postcss-csso": "^2.0.0",
     "postcss-custom-media": "^5.0.1",
     "postcss-import": "^9.1.0",
-    "postcss-nesting": "^2.3.1",
     "postcss-simple-vars": "^3.1.0",
     "ts-loader": "^2.0.1",
     "tslint": "^5.0.0",

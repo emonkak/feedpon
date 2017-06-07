@@ -259,7 +259,7 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
         const { stream, onToggleSidebar } = this.props;
         const { readEntryIds } = this.state;
 
-        const title = stream.feed
+        const title = stream.feed && stream.feed.url
             ? <a className="stream-title u-text-truncate" href={stream.feed.url} target="_blank">{stream.title}</a>
             : <span className="stream-title u-text-truncate">{stream.title}</span>;
 
@@ -276,7 +276,7 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
                     toggleButton={
                         <button>
                             <i className="icon icon-24 icon-checkmark" />
-                            <span className="badge badge-pill badge-negative badge-overlap">{readEntryIds.size || ''}</span>
+                            <span className="badge badge-small badge-pill badge-negative badge-overlap">{readEntryIds.size || ''}</span>
                         </button>
                     }
                     menu={this.renderReadEntriesMenu()}
@@ -305,6 +305,7 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
                                     <div className="list-inline-item u-text-muted">{stream.feed.subscribers} subscribers</div>
                                 </div>
                                 <div>{stream.feed.description}</div>
+                                <div><a target="_blank" href={stream.feed.feedUrl}>{stream.feed.feedUrl}</a></div>
                             </div>
                             <Dropdown
                                 toggleButton={

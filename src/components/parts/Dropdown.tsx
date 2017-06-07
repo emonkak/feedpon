@@ -140,7 +140,7 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
         const { isOpened } = this.state;
 
         return (
-            <span className={classnames('button-container dropdown', className, {
+            <span className={classnames('button-group dropdown', className, {
                 'is-opened': isOpened!,
                 'is-pull-right': pullRight!
             })}>

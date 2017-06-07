@@ -225,16 +225,16 @@ class SubscriptionItem extends PureComponent<SubscriptionItemProps, {}> {
             <li className="list-group-item">
                 <div className="u-flex u-flex-align-items-center">
                     {icon}
-                    <div className="u-margin-left u-flex-grow-1">
+                    <div className="u-margin-left-2 u-flex-grow-1">
                         <div>{title}{labels}</div>
                         <div className="u-text-small u-text-wrap"><a target="_blank" href={subscription.feedUrl}>{subscription.feedUrl}</a></div>
                     </div>
-                    <div className="u-margin-left u-text-right u-sm-none">
+                    <div className="u-margin-left-2 u-text-right u-sm-none">
                         <RelativeTime className="u-text-small u-text-muted" time={subscription.updatedAt} />
                     </div>
                     <Dropdown
                         toggleButton={
-                            <button className="button-icon button-icon-24 u-margin-left" disabled={subscription.isLoading}>
+                            <button className="button-icon button-icon-24 u-margin-left-2" disabled={subscription.isLoading}>
                                 <i className={classnames('icon icon-20', subscription.isLoading ? 'icon-spinner icon-rotating' : 'icon-menu-2' )} />
                             </button>
                         }

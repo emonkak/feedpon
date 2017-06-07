@@ -93,10 +93,6 @@ class DashboardPage extends PureComponent<DashboardProps, DashboardState> {
                     <button className="button button-default" onClick={this.handleSendNotification.bind(this, 'default')}>Default</button>
                     <button className="button button-positive" onClick={this.handleSendNotification.bind(this, 'positive')}>Positive</button>
                     <button className="button button-negative" onClick={this.handleSendNotification.bind(this, 'negative')}>Negative</button>
-                </p>
-
-                <h2>Outline Button</h2>
-                <p className="button-toolbar">
                     <button className="button button-outline-default" onClick={this.handleSendNotification.bind(this, 'default')}>Default</button>
                     <button className="button button-outline-positive" onClick={this.handleSendNotification.bind(this, 'positive')}>Positive</button>
                     <button className="button button-outline-negative" onClick={this.handleSendNotification.bind(this, 'negative')}>Negative</button>
@@ -107,10 +103,6 @@ class DashboardPage extends PureComponent<DashboardProps, DashboardState> {
                     <button className="button button-default" disabled>Default</button>
                     <button className="button button-positive" disabled>Positive</button>
                     <button className="button button-negative" disabled>Negative</button>
-                </p>
-
-                <h2>Disabled Outline Button</h2>
-                <p className="button-toolbar">
                     <button className="button button-outline-default" disabled>Default</button>
                     <button className="button button-outline-positive" disabled>Positive</button>
                     <button className="button button-outline-negative" disabled>Negative</button>
@@ -118,17 +110,27 @@ class DashboardPage extends PureComponent<DashboardProps, DashboardState> {
 
                 <h2>Large Button</h2>
                 <p className="button-toolbar">
-                    <button className="button button-large button-default" onClick={this.handleSendNotification.bind(this, 'default')}>Default</button>
-                    <button className="button button-large button-positive" onClick={this.handleSendNotification.bind(this, 'positive')}>Positive</button>
-                    <button className="button button-large button-negative" onClick={this.handleSendNotification.bind(this, 'negative')}>Negative</button>
+                    <button className="button button-large button-default">Default</button>
+                    <button className="button button-large button-positive">Positive</button>
+                    <button className="button button-large button-negative">Negative</button>
+                    <button className="button button-large button-outline-default">Default</button>
+                    <button className="button button-large button-outline-positive">Positive</button>
+                    <button className="button button-large button-outline-negative">Negative</button>
                 </p>
 
-                <h2>Large Outline Button</h2>
-                <p className="button-toolbar">
-                    <button className="button button-large button-outline-default" onClick={this.handleSendNotification.bind(this, 'default')}>Default</button>
-                    <button className="button button-large button-outline-positive" onClick={this.handleSendNotification.bind(this, 'positive')}>Positive</button>
-                    <button className="button button-large button-outline-negative" onClick={this.handleSendNotification.bind(this, 'negative')}>Negative</button>
-                </p>
+                <h2>Group Button</h2>
+                <div className="button-toolbar u-margin-bottom-1">
+                    <div className="button-group">
+                        <button className="button button-default">First</button>
+                        <button className="button button-default">Second</button>
+                        <button className="button button-default">Third</button>
+                    </div>
+                    <div className="button-group">
+                        <button className="button button-outline-default">First</button>
+                        <button className="button button-outline-default">Second</button>
+                        <button className="button button-outline-default">Third</button>
+                    </div>
+                </div>
 
                 <h2>Paragraph</h2>
                 <p><em>Lorem Ipsum</em> is simply dummy text of the printing and typesetting industry. <strong>Lorem Ipsum</strong> has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
@@ -136,7 +138,7 @@ class DashboardPage extends PureComponent<DashboardProps, DashboardState> {
                 <p><em>Lorem Ipsum</em> is simply dummy text of the printing and typesetting industry. <strong>Lorem Ipsum</strong> has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
 
                 <h2>Navigation</h2>
-                <div className="u-margin-bottom">
+                <div className="u-margin-bottom-1">
                     <nav className="nav">
                         <a className="nav-item" href="#">First</a>
                         <a className="nav-item is-selected" href="#">Second</a>
@@ -183,7 +185,7 @@ class DashboardPage extends PureComponent<DashboardProps, DashboardState> {
                 </div>
 
                 <h2>Dropdown</h2>
-                <div className="u-margin-bottom">
+                <div className="u-margin-bottom-1">
                     <Dropdown
                         toggleButton={<button className="button button-outline-default dropdown-arrow">Dropdown</button>}
                         menu={

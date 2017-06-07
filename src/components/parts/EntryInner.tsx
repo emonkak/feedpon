@@ -145,9 +145,9 @@ export default class EntryInner extends PureComponent<EntryInnerProps, EntryInne
         return (
             <div className="list-inline-item">
                 <a
-                    className={classnames('entry-bookmarks', 'link-soft', {
-                        'is-bookmarked': entry.bookmarkCount > 0,
-                        'is-popular': entry.bookmarkCount >= 10
+                    className={classnames('link-soft badge', {
+                        'badge-default': entry.bookmarkCount > 0,
+                        'badge-negative': entry.bookmarkCount >= 10
                     })}
                     target="_blank"
                     href={'http://b.hatena.ne.jp/entry/' + encodeURIComponent(entry.url)}>
@@ -183,7 +183,7 @@ export default class EntryInner extends PureComponent<EntryInnerProps, EntryInne
 
         return (
             <div className="list-inline-item">
-                <span className="entry-author">by {entry.author}</span>
+                <span>by {entry.author}</span>
             </div>
         );
     }
@@ -197,8 +197,20 @@ export default class EntryInner extends PureComponent<EntryInnerProps, EntryInne
 
         return (
             <div className="list-inline-item">
-                <RelativeTime className="entry-published-at" time={entry.publishedAt} />
+                <RelativeTime time={entry.publishedAt} />
             </div>
+        );
+    }
+
+    renderReadMarker() {
+        const { entry } = this.props;
+
+        if (!entry.markedAsRead) {
+            return null;
+        }
+
+        return (
+            <span className="badge badge-small badge-default">READ</span>
         );
     }
 
@@ -330,6 +342,7 @@ export default class EntryInner extends PureComponent<EntryInnerProps, EntryInne
                     {this.renderNav()}
                     <h2 className="entry-title">
                         <a target="_blank" href={entry.url} onClick={onExpand}>{entry.title}</a>
+                        {this.renderReadMarker()}
                     </h2>
                     <div className="u-text-muted">
                         <div className="list-inline list-inline-dotted">

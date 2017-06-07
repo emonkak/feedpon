@@ -5,6 +5,10 @@
   transition: box-shadow 0.2s ease-in-out;
 }
 
+.entry:hover .entry-nav {
+  visibility: visible;
+}
+
 .entry.is-active {
   box-shadow: 0 2px 18px var(--shadow-color),
               0 0 6px var(--shadow-color);
@@ -21,57 +25,30 @@
               0 0 6px var(--shadow-color);
 }
 
-.entry.is-unread {
-  & .entry-title::after {
-    content: '\00a0*';
-    color: var(--negative-color);
-  }
-}
-
-.entry.is-marked-as-read {
-  & .entry-title {
-    color: var(--dark-color);
-  }
-}
-
 .entry.is-collapsible:not(.is-expanded) {
   cursor: pointer;
 }
 
 .entry.is-expanded {
   padding: var(--baseline-height) 0 calc(var(--baseline-height) - 1px);
-
-  & .entry-header {
-    margin-bottom: var(--baseline-height);
-  }
-
-  & .entry-title {
-    font-size: 1.25rem;
-  }
-
-  & .entry-summary,
-  & .entry-action-open-external-link {
-    display: none;
-  }
 }
 
-.entry.is-expanded:not(.is-collapsible) {
-  & .entry-action-close {
-    display: none;
-  }
+.entry.is-expanded .entry-header {
+  margin-bottom: var(--baseline-height);
 }
 
-.entry:not(.is-expanded) {
-  & .entry-content,
-  & .entry-footer,
-  & .entry-action-close,
-  & .entry-action-fetch-full-content {
-    display: none;
-  }
+.entry.is-expanded .entry-title {
+  font-size: 1.25rem;
 }
 
-.entry:hover .entry-nav {
-  visibility: visible;
+.entry.is-expanded .entry-action-open-external-link,
+.entry.is-expanded .entry-summary,
+.entry.is-expanded:not(.is-collapsible) .entry-action-close,
+.entry:not(.is-expanded) .entry-action-close,
+.entry:not(.is-expanded) .entry-action-fetch-full-content,
+.entry:not(.is-expanded) .entry-footer,
+.entry:not(.is-expanded) .entry-content {
+  display: none;
 }
 
 .entry-nav {
@@ -92,7 +69,7 @@ a.entry-action {
   width: 36px;
   height: 36px;
   border: 1px solid var(--medium-dark-color);
-  border-radius: 100%;
+  border-radius: 50%;
   transition: color 0.2s ease-in-out,
               background-color 0.2s ease-in-out,
               border-color 0.2s ease-in-out;
@@ -144,20 +121,6 @@ a.entry-action.is-selected {
 
 .entry-title > a:hover {
   color: var(--positive-color);
-}
-
-.entry-bookmarks {
-  padding: 2px;
-  border-radius: 4px;
-}
-
-.entry-bookmarks.is-bookmarked {
-  color: var(--negative-color);
-}
-
-.entry-bookmarks.is-popular {
-  font-weight: 600;
-  background-color: var(--negative-background-color);
 }
 
 .entry-summary {

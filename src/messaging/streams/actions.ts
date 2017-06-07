@@ -122,7 +122,7 @@ function fetchFeedStream(streamId: string, options: StreamOptions): AsyncEvent<S
 
             const stream = {
                 streamId,
-                title: feed.title,
+                title: feed.title || feed.website || feed.id.replace(/^feed\//, ''),
                 entries: contents.items.map(convertEntry),
                 continuation: contents.continuation || null,
                 feed: {

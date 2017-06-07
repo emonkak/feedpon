@@ -1,4 +1,5 @@
 import React, { PureComponent } from 'react';
+import classnames from 'classnames';
 
 import Modal from 'components/parts/Modal';
 
@@ -63,6 +64,7 @@ export default class ConfirmButton extends PureComponent<ConfirmButtonProps, Con
             cancelButtonClassName,
             cancelButtonLabel,
             children,
+            className,
             modalMessage,
             modalTitle,
             okButtonClassName,
@@ -73,7 +75,7 @@ export default class ConfirmButton extends PureComponent<ConfirmButtonProps, Con
         const { isConfirming } = this.state;
 
         return (
-            <span className="button-container">
+            <span className={classnames('button-group', className)}>
                 <button {...restProps} onClick={this.handleOpen}>
                     {children}
                 </button>
@@ -81,7 +83,7 @@ export default class ConfirmButton extends PureComponent<ConfirmButtonProps, Con
                     <button className="close" onClick={this.handleClose}></button>
                     <h1 className="modal-title">{modalTitle}</h1>
                     <p>{modalMessage}</p>
-                    <p className="button-container">
+                    <p className="button-group">
                         <button
                             className={okButtonClassName}
                             onClick={this.handleConfirm}>

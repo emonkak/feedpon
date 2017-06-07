@@ -25,6 +25,7 @@
 
 .form-control {
   display: block;
+  position: relative;
   box-sizing: border-box;
   width: 100%;
   padding: calc(var(--baseline-height) / 4 - 1px) calc(0.5rem - 1px);
@@ -32,29 +33,29 @@
   border: 1px solid var(--medium-dark-color);
   border-radius: 4px;
   transition: border-color ease-in-out 0.2s, box-shadow ease-in-out 0.2s;
+}
 
-  &:focus {
-    box-shadow: 0 0 1px 1px var(--default-focus-outline-color);
-    z-index: 1;
-  }
+.form-control:focus {
+  box-shadow: 0 0 1px 1px var(--default-focus-outline-color);
+  z-index: 1;
+}
 
-  &.has-success {
-    border-color: var(--positive-color);
-    background-color: var(--default-background-color);
-  }
+.form-control.has-success {
+  border-color: var(--positive-color);
+  background-color: var(--default-background-color);
+}
 
-  &.has-success:focus {
-    box-shadow: 0 0 1px 1px var(--positive-focus-outline-color);
-  }
+.form-control.has-success:focus {
+  box-shadow: 0 0 1px 1px var(--positive-focus-outline-color);
+}
 
-  &.has-error {
-    border-color: var(--negative-color);
-    background-color: var(--default-background-color);
-  }
+.form-control.has-error {
+  border-color: var(--negative-color);
+  background-color: var(--default-background-color);
+}
 
-  &.has-error:focus {
-    box-shadow: 0 0 1px 1px var(--negative-focus-outline-color);
-  }
+.form-control.has-error:focus {
+  box-shadow: 0 0 1px 1px var(--negative-focus-outline-color);
 }
 
 .form-control-addon {
@@ -67,16 +68,16 @@
   border: 1px solid var(--medium-dark-color);
   border-radius: 4px;
   white-space: nowrap;
+}
 
-  &:not(:last-child) {
+.form-control-addon:not(:last-child) {
     border-bottom-right-radius: 0;
     border-top-right-radius: 0;
   }
 
-  &:not(:first-child) {
-    border-bottom-left-radius: 0;
-    border-top-left-radius: 0;
-  }
+.form-control-addon:not(:first-child) {
+  border-bottom-left-radius: 0;
+  border-top-left-radius: 0;
 }
 
 .form-check {
@@ -91,39 +92,39 @@
 
 .input-group {
   display: flex;
+}
 
-  & > .button:focus,
-  & > .button:active,
-  & > .button:hover,
-  & > .form-control:focus {
-    z-index: 10;
-  }
+.input-group > .button:focus,
+.input-group > .button:active,
+.input-group > .button:hover,
+.input-group > .form-control:focus {
+  z-index: 10;
+}
 
-  & > .button + .button {
-    margin-left: -1px;
-  }
+.input-group > .button + .button {
+  margin-left: -1px;
+}
 
-  & > .form-control:not(:first-child) {
-    border-left: 0;
-  }
+.input-group > .form-control:not(:first-child) {
+  border-left: 0;
+}
 
-  & > .form-control:not(:last-child) {
-    border-right: 0;
-  }
+.input-group > .form-control:not(:last-child) {
+  border-right: 0;
+}
 
-  & > .button:not(:first-child),
-  & > .button-container:not(:first-child) > .button,
-  & > .form-control:not(:first-child) {
-    border-bottom-left-radius: 0;
-    border-top-left-radius: 0;
-  }
+.input-group > .button:not(:first-child),
+.input-group > .button-group:not(:first-child) > .button:first-of-type,
+.input-group > .form-control:not(:first-child) {
+  border-bottom-left-radius: 0;
+  border-top-left-radius: 0;
+}
 
-  & > .button:not(:last-child),
-  & > .button-container:not(:last-child) > .button,
-  & > .form-control:not(:last-child) {
-    border-bottom-right-radius: 0;
-    border-top-right-radius: 0;
-  }
+.input-group > .button:not(:last-child),
+.input-group > .button-group:not(:last-child) > .button:last-of-type,
+.input-group > .form-control:not(:last-child) {
+  border-bottom-right-radius: 0;
+  border-top-right-radius: 0;
 }
 
 .input-search-box {

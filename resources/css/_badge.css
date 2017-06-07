@@ -1,18 +1,25 @@
 .badge {
+  display: inline-block;
   box-sizing: border-box;
   margin: 0 2px;
   padding: 0 2px;
-  min-width: 16px;
-  line-height: 16px;
   border-radius: 4px;
-  font-size: 0.75rem;
+  min-width: 20px;
+  line-height: 20px;
   font-weight: 600;
-  text-align: center;
-  vertical-align: text-top;
+  font-size: 0.875rem;
 }
 
-.badge-pill {
-  border-radius: 50%;
+.badge-small {
+  min-width: 16px;
+  line-height: 16px;
+  font-size: 0.75rem;
+}
+
+.badge-large {
+  min-width: 24px;
+  line-height: 24px;
+  font-size: 1rem;
 }
 
 .badge-overlap {
@@ -22,17 +29,36 @@
   z-index: 10;
 }
 
-.badge-default {
+.badge-pill {
+  border-radius: 50%;
+}
+
+.badge-default,
+a.badge-default {
   background-color: var(--medium-light-color);
   color: var(--dark-color);
 }
 
-.badge-positive {
+.badge-positive,
+a.badge-positive {
+  background-color: var(--positive-background-color);
+  color: var(--positive-color);
+}
+
+.badge-negative,
+a.badge-negative {
+  background-color: var(--negative-background-color);
+  color: var(--negative-color);
+}
+
+.badge-pill.badge-positive,
+a.badge-pill.badge-positive {
   background-color: var(--positive-color);
   color: var(--default-background-color);
 }
 
-.badge-negative {
+.badge-pill.badge-negative,
+a.badge-pill.badge-negative {
   background-color: var(--negative-color);
   color: var(--default-background-color);
 }
