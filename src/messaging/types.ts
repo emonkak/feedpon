@@ -68,11 +68,12 @@ export interface State {
     credential: Credential;
     notifications: Notifications;
     search: Search;
-    siteinfo: Siteinfo;
+    sharedSiteinfo: SharedSiteinfo;
     streamSettings: StreamSettings;
     streams: Streams;
     subscriptions: Subscriptions;
     trackingUrlSettings: TrackingUrlSettings;
+    userSiteinfo: UserSiteinfo;
     version: string;
 }
 
@@ -259,9 +260,13 @@ export interface Subscription {
 
 export type SubscriptionOrder = 'title' | 'newest' | 'oldest';
 
-export interface Siteinfo {
+export interface UserSiteinfo {
     items: SiteinfoItem[];
-    userItems: SiteinfoItem[];
+    version: number;
+}
+
+export interface SharedSiteinfo {
+    items: SiteinfoItem[];
     lastUpdatedAt: number;
     isLoading: boolean;
     version: number;

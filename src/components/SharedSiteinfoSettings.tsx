@@ -5,7 +5,7 @@ import RelativeTime from 'components/parts/RelativeTime';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
 import { State, SiteinfoItem } from 'messaging/types';
-import { updateSiteinfo } from 'messaging/siteinfo/actions';
+import { updateSiteinfo } from 'messaging/sharedSiteinfo/actions';
 
 interface SharedSiteinfoProps {
     isLoading: boolean;
@@ -89,9 +89,9 @@ function renderSiteinfoItem(item: SiteinfoItem) {
 
 export default connect({
     mapStateToProps: (state: State) => ({
-        isLoading: state.siteinfo.isLoading,
-        items: state.siteinfo.items,
-        lastUpdatedAt: state.siteinfo.lastUpdatedAt
+        isLoading: state.sharedSiteinfo.isLoading,
+        items: state.sharedSiteinfo.items,
+        lastUpdatedAt: state.sharedSiteinfo.lastUpdatedAt
     }),
     mapDispatchToProps: bindActions({
         onUpdateSiteinfo: updateSiteinfo

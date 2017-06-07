@@ -6,21 +6,23 @@ import credentialReducer from 'messaging/credential/reducer';
 import identityFunction from 'utils/identityFunction';
 import notificationsReducer from 'messaging/notifications/reducer';
 import searchReducer from 'messaging/search/reducer';
-import siteinfoReducer from 'messaging/siteinfo/reducer';
+import sharedSiteinfoReducer from 'messaging/sharedSiteinfo/reducer';
 import streamSettingsReducer from 'messaging/streamSettings/reducer';
 import streamsReducer from 'messaging/streams/reducer';
 import subscriptionsReducer from 'messaging/subscriptions/reducer';
 import trackingUrlSettingsReducer from 'messaging/trackingUrlSettings/reducer';
+import userSiteinfoReducer from 'messaging/userSiteinfo/reducer';
 
 export default combineReducers<State, Event>({
     categories: categoriesReducer,
     credential: credentialReducer,
     notifications: notificationsReducer,
     search: searchReducer,
-    siteinfo: siteinfoReducer,
+    sharedSiteinfo: sharedSiteinfoReducer,
     streamSettings: streamSettingsReducer,
     streams: streamsReducer,
     subscriptions: subscriptionsReducer,
     trackingUrlSettings: trackingUrlSettingsReducer,
+    userSiteinfo: userSiteinfoReducer,
     version: identityFunction
 });

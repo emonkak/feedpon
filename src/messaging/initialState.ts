@@ -11,6 +11,10 @@ const initialState: State = {
         token: null,
         version: 1
     },
+    notifications: {
+        items: [],
+        version: 1
+    },
     search: {
         feeds: [],
         isLoaded: false,
@@ -18,8 +22,10 @@ const initialState: State = {
         query: '',
         version: 1
     },
-    notifications: {
+    sharedSiteinfo: {
+        isLoading: false,
         items: [],
+        lastUpdatedAt: 0,
         version: 1
     },
     streamSettings: {
@@ -35,13 +41,6 @@ const initialState: State = {
             '^http://rss\\.rssad\\.jp/',
             '^https://rdsig\\.yahoo\\.co\\.jp/rss/'
         ],
-        version: 1
-    },
-    siteinfo: {
-        isLoading: false,
-        items: [],
-        userItems: [],
-        lastUpdatedAt: 0,
         version: 1
     },
     streams: {
@@ -69,6 +68,10 @@ const initialState: State = {
         onlyUnread: true,
         order: 'title',
         totalUnreadCount: 0,
+        version: 1
+    },
+    userSiteinfo: {
+        items: [],
         version: 1
     },
     version: '0.0.0'

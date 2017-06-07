@@ -6,7 +6,7 @@ import Modal from 'components/parts/Modal';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
 import { State, SiteinfoItem } from 'messaging/types';
-import { addSiteinfoItem, removeSiteinfoItem, updateSiteinfoItem } from 'messaging/siteinfo/actions';
+import { addSiteinfoItem, removeSiteinfoItem, updateSiteinfoItem } from 'messaging/userSiteinfo/actions';
 
 interface UserSiteinfoProps {
     items: SiteinfoItem[];
@@ -305,7 +305,7 @@ function isValidPattern(pattern: string): boolean {
 
 export default connect({
     mapStateToProps: (state: State) => ({
-        items: state.siteinfo.userItems
+        items: state.userSiteinfo.items
     }),
     mapDispatchToProps: bindActions({
         onAddSiteinfoItem: addSiteinfoItem,

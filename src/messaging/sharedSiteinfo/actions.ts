@@ -1,4 +1,4 @@
-import { AsyncEvent, SiteinfoItem, Event } from 'messaging/types';
+import { AsyncEvent, SiteinfoItem } from 'messaging/types';
 import { LDRFullFeedData, WedataItem }  from 'adapters/wedata/types';
 import { getAutoPagerizeItems, getLDRFullFeedItems }  from 'adapters/wedata/api';
 import { sendNotification } from 'messaging/notifications/actions';
@@ -12,27 +12,6 @@ const LDR_FULL_FEED_TYPE_PRIORITIES: { [key: string]: number } = {
     'GEN': 0,
     'GENERAL': 0
 };
-
-export function addSiteinfoItem(item: SiteinfoItem): Event {
-    return {
-        type: 'USER_SITEINFO_ITEM_ADDED',
-        item
-    };
-}
-
-export function removeSiteinfoItem(id: string | number): Event {
-    return {
-        type: 'USER_SITEINFO_ITEM_REMOVED',
-        id
-    };
-}
-
-export function updateSiteinfoItem(item: SiteinfoItem): Event {
-    return {
-        type: 'USER_SITEINFO_ITEM_UPDATED',
-        item
-    };
-}
 
 export function updateSiteinfo(): AsyncEvent {
     return async ({ dispatch, getState }) => {
@@ -65,10 +44,10 @@ export function updateSiteinfo(): AsyncEvent {
 
 export function getSiteinfoItems(): AsyncEvent<SiteinfoItem[]> {
     return async ({ dispatch, getState }) => {
-        const { siteinfo } = getState();
+        const { sharedSiteinfo, userSiteinfo } = getState();
 
-        if (siteinfo.lastUpdatedAt > 0) {
-            return siteinfo.userItems.concat(siteinfo.items);
+        if (sharedSiteinfo.lastUpdatedAt > 0) {
+            return userSiteinfo.items.concat(sharedSiteinfo.items);
         }
 
         dispatch({
@@ -84,7 +63,7 @@ export function getSiteinfoItems(): AsyncEvent<SiteinfoItem[]> {
                 updatedAt: Date.now()
             });
 
-            return siteinfo.userItems.concat(items);
+            return userSiteinfo.items.concat(items);
         } catch (error) {
             dispatch({
                 type: 'SITEINFO_UPDATING_FAILED'

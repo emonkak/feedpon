@@ -34,17 +34,13 @@ function restore(key: string): any {
     return null;
 }
 
-const versions = {
-    categories: initialState.categories.version,
-    credential: initialState.credential.version,
-    notifications: initialState.notifications.version,
-    search: initialState.search.version,
-    siteinfo: initialState.siteinfo.version,
-    streamSettings: initialState.streamSettings.version,
-    streams: initialState.streams.version,
-    subscriptions: initialState.subscriptions.version,
-    trackingUrlSettings: initialState.trackingUrlSettings.version
-};
+const versions = Object.keys(initialState).reduce<{ [key: string]: number }>((acc, key) => {
+    const version = (initialState as any)[key].version;
+    if (version) {
+        acc[key] = version;
+    }
+    return acc;
+}, {});
 
 const state = {
     ...initialState,

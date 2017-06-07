@@ -6,7 +6,7 @@ import decodeResponseAsText from 'utils/decodeResponseAsText';
 import stripTags from 'utils/stripTags';
 import { AsyncEvent, Entry, Event, Stream, StreamOptions, StreamView } from 'messaging/types';
 import { getFeedlyToken } from 'messaging/credential/actions';
-import { getSiteinfoItems } from 'messaging/siteinfo/actions';
+import { getSiteinfoItems } from 'messaging/sharedSiteinfo/actions';
 import { sendNotification } from 'messaging/notifications/actions';
 
 export function changeStreamView(streamId: string, view: StreamView): Event {
