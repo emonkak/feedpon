@@ -1,6 +1,6 @@
 import createAscendingComparer from 'utils/createAscendingComparer';
 import createDescendingComparer from 'utils/createDescendingComparer';
-import { Event, Subscription, SubscriptionOrder, Subscriptions } from 'messaging/types';
+import { Event, Subscription, SubscriptionsOrder, Subscriptions } from 'messaging/types';
 
 export default function reducer(subscriptions: Subscriptions, event: Event): Subscriptions {
     switch (event.type) {
@@ -182,7 +182,7 @@ const titleComparer = createAscendingComparer<Subscription>('title');
 const newestComparer = createDescendingComparer<Subscription>('updatedAt');
 const oldestComparer = createAscendingComparer<Subscription>('updatedAt');
 
-function createSubscriptionComparer(order: SubscriptionOrder): (x: Subscription, y: Subscription) => number {
+function createSubscriptionComparer(order: SubscriptionsOrder): (x: Subscription, y: Subscription) => number {
     switch (order) {
         case 'title':
             return titleComparer;

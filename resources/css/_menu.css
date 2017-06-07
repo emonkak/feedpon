@@ -4,6 +4,17 @@
   border: 1px solid var(--medium-dark-color);
   border-radius: 4px;
   background-color: var(--default-background-color);
+  transition: opacity 0.2s ease-in-out;
+}
+
+.menu-enter,
+.menu-leave.menu-leave-active {
+  opacity: 0;
+}
+
+.menu-enter.menu-enter-active,
+.menu-leave {
+  opacity: 1;
 }
 
 .menu-item,

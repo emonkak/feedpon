@@ -151,6 +151,23 @@ export function keepUnreadForCetegories(accessToken: string, categoryIds: string
     );
 }
 
+// Profile API:
+export function getProfile(accessToken: string): Promise<types.Profile> {
+    return doGet(
+        'v3/profile',
+        null,
+        createAuthHeader(accessToken)
+    );
+}
+
+export function updateProfile(accessToken: string, input: types.UpdateProfileInput): Promise<void> {
+    return doPut<void>(
+        'v3/profile',
+        null,
+        createAuthHeader(accessToken)
+    );
+}
+
 // Search API:
 export function searchFeeds(accessToken: string, input: types.SearchInput): Promise<types.SearchResponse> {
     return doGet(

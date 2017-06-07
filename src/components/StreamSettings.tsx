@@ -70,7 +70,8 @@ class StreamSettings extends PureComponent<StreamSettingsProps, StreamSettingsSt
                                 className="form-check"
                                 name="onlyUnreadEntries"
                                 checked={onlyUnreadEntries}
-                                onChange={this.handleChange} />Display only unread entries
+                                onChange={this.handleChange} />
+                                Display only unread entries on default
                         </label>
                     </div>
                     <div className="form-group">

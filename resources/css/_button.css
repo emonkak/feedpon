@@ -9,6 +9,7 @@
   text-decoration: none;
   white-space: nowrap;
   vertical-align: middle;
+  cursor: pointer;
   transition-property: background-color, border-color, box-shadow, color, opacity;
   transition-duration: 0.2s;
   transition-timing-function: ease-in-out;
@@ -231,7 +232,6 @@
 }
 
 .close {
-  float: right;
   padding: 0;
   width: 24px;
   height: 24px;

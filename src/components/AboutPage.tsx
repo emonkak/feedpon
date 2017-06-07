@@ -216,9 +216,6 @@ class AboutPage extends PureComponent<AboutPageProps, {}> {
                         </ul>
                     </div>
                 </section>
-                <section className="section u-text-center">
-                    <p>Copyright &copy; 2017 Shota Nozaki</p>
-                </section>
             </div>
         );
     }

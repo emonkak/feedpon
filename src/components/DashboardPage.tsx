@@ -120,16 +120,16 @@ class DashboardPage extends PureComponent<DashboardProps, DashboardState> {
 
                 <h2>Group Button</h2>
                 <div className="button-toolbar u-margin-bottom-1">
-                    <div className="button-group">
+                    <span className="button-group">
                         <button className="button button-default">First</button>
                         <button className="button button-default">Second</button>
                         <button className="button button-default">Third</button>
-                    </div>
-                    <div className="button-group">
+                    </span>
+                    <span className="button-group">
                         <button className="button button-outline-default">First</button>
                         <button className="button button-outline-default">Second</button>
                         <button className="button button-outline-default">Third</button>
-                    </div>
+                    </span>
                 </div>
 
                 <h2>Paragraph</h2>
@@ -204,7 +204,7 @@ class DashboardPage extends PureComponent<DashboardProps, DashboardState> {
                     <button className="button button-positive" onClick={this.handleOpenModal.bind(this)}>Launch Modal</button>
                 </p>
                 <Modal isOpened={modalIsOpened} onClose={this.handleCloseModal.bind(this)}>
-                    <button className="close" onClick={this.handleCloseModal.bind(this)}></button>
+                    <button className="close u-pull-right" onClick={this.handleCloseModal.bind(this)}></button>
                     <h1 className="modal-title">Modal Title</h1>
                     <p>Modal body text goes here.</p>
                     <p className="button-toolbar">
@@ -215,63 +215,153 @@ class DashboardPage extends PureComponent<DashboardProps, DashboardState> {
 
                 <h2>Message</h2>
                 <div className="message message-default">
-                    <button className="close"></button>
+                    <button className="close u-pull-right"></button>
                     <h6 className="message-title">Changes in Service</h6>
                     <p>We just updated our privacy policy here to better service our customers. We recommend reviewing the changes.</p>
                 </div>
                 <div className="message message-positive">
-                    <button className="close"></button>
+                    <button className="close u-pull-right"></button>
                     <h6 className="message-title">Changes in Service</h6>
                     <p>We just updated our privacy policy here to better service our customers. We recommend reviewing the changes.</p>
                 </div>
                 <div className="message message-negative">
-                    <button className="close"></button>
+                    <button className="close u-pull-right"></button>
                     <h6 className="message-title">Changes in Service</h6>
                     <p>We just updated our privacy policy here to better service our customers. We recommend reviewing the changes.</p>
                 </div>
 
                 <h2>Icon</h2>
                 <p>
-                    <i className="icon icon-32 icon-menu" />
-                    <i className="icon icon-32 icon-angle-right" />
                     <i className="icon icon-32 icon-angle-down" />
-                    <i className="icon icon-32 icon-more" />
-                    <i className="icon icon-32 icon-refresh" />
-                    <i className="icon icon-32 icon-file" />
+                    <i className="icon icon-32 icon-angle-right" />
                     <i className="icon icon-32 icon-bookmark" />
-                    <i className="icon icon-32 icon-comments" />
-                    <i className="icon icon-32 icon-share" />
-                    <i className="icon icon-32 icon-pin-3" />
-                    <i className="icon icon-32 icon-checkmark" />
-                    <i className="icon icon-32 icon-info" />
                     <i className="icon icon-32 icon-checked" />
-                    <i className="icon icon-32 icon-warning" />
+                    <i className="icon icon-32 icon-checkmark" />
+                    <i className="icon icon-32 icon-close" />
+                    <i className="icon icon-32 icon-comments" />
+                    <i className="icon icon-32 icon-database" />
                     <i className="icon icon-32 icon-delete" />
+                    <i className="icon icon-32 icon-edit" />
+                    <i className="icon icon-32 icon-external-link" />
+                    <i className="icon icon-32 icon-facebook" />
+                    <i className="icon icon-32 icon-file" />
+                    <i className="icon icon-32 icon-hatena-bookmark" />
+                    <i className="icon icon-32 icon-info" />
+                    <i className="icon icon-32 icon-instapaper" />
+                    <i className="icon icon-32 icon-keyboard" />
+                    <i className="icon icon-32 icon-menu" />
+                    <i className="icon icon-32 icon-menu-2" />
+                    <i className="icon icon-32 icon-more" />
+                    <i className="icon icon-32 icon-page-overview" />
+                    <i className="icon icon-32 icon-pin-3" />
+                    <i className="icon icon-32 icon-plus-math" />
+                    <i className="icon icon-32 icon-pocket" />
+                    <i className="icon icon-32 icon-refresh" />
+                    <i className="icon icon-32 icon-settings" />
+                    <i className="icon icon-32 icon-share" />
                     <i className="icon icon-32 icon-spinner" />
-                    <i className="icon icon-32 icon-unchecked-checkbox" />
-                    <i className="icon icon-32 icon-checked-checkbox" />
-                    <i className="icon icon-32 icon-indeterminate-checkbox" />
+                    <i className="icon icon-32 icon-trash" />
+                    <i className="icon icon-32 icon-twitter" />
+                    <i className="icon icon-32 icon-warning" />
                 </p>
                 <p>
-                    <i className="icon icon-16 icon-menu" />
-                    <i className="icon icon-16 icon-angle-right" />
+                    <i className="icon icon-24 icon-angle-down" />
+                    <i className="icon icon-24 icon-angle-right" />
+                    <i className="icon icon-24 icon-bookmark" />
+                    <i className="icon icon-24 icon-checked" />
+                    <i className="icon icon-24 icon-checkmark" />
+                    <i className="icon icon-24 icon-close" />
+                    <i className="icon icon-24 icon-comments" />
+                    <i className="icon icon-24 icon-database" />
+                    <i className="icon icon-24 icon-delete" />
+                    <i className="icon icon-24 icon-edit" />
+                    <i className="icon icon-24 icon-external-link" />
+                    <i className="icon icon-24 icon-facebook" />
+                    <i className="icon icon-24 icon-file" />
+                    <i className="icon icon-24 icon-hatena-bookmark" />
+                    <i className="icon icon-24 icon-info" />
+                    <i className="icon icon-24 icon-instapaper" />
+                    <i className="icon icon-24 icon-keyboard" />
+                    <i className="icon icon-24 icon-menu" />
+                    <i className="icon icon-24 icon-menu-2" />
+                    <i className="icon icon-24 icon-more" />
+                    <i className="icon icon-24 icon-page-overview" />
+                    <i className="icon icon-24 icon-pin-3" />
+                    <i className="icon icon-24 icon-plus-math" />
+                    <i className="icon icon-24 icon-pocket" />
+                    <i className="icon icon-24 icon-refresh" />
+                    <i className="icon icon-24 icon-settings" />
+                    <i className="icon icon-24 icon-share" />
+                    <i className="icon icon-24 icon-spinner" />
+                    <i className="icon icon-24 icon-trash" />
+                    <i className="icon icon-24 icon-twitter" />
+                    <i className="icon icon-24 icon-warning" />
+                </p>
+                <p>
+                    <i className="icon icon-20 icon-angle-down" />
+                    <i className="icon icon-20 icon-angle-right" />
+                    <i className="icon icon-20 icon-bookmark" />
+                    <i className="icon icon-20 icon-checked" />
+                    <i className="icon icon-20 icon-checkmark" />
+                    <i className="icon icon-20 icon-close" />
+                    <i className="icon icon-20 icon-comments" />
+                    <i className="icon icon-20 icon-database" />
+                    <i className="icon icon-20 icon-delete" />
+                    <i className="icon icon-20 icon-edit" />
+                    <i className="icon icon-20 icon-external-link" />
+                    <i className="icon icon-20 icon-facebook" />
+                    <i className="icon icon-20 icon-file" />
+                    <i className="icon icon-20 icon-hatena-bookmark" />
+                    <i className="icon icon-20 icon-info" />
+                    <i className="icon icon-20 icon-instapaper" />
+                    <i className="icon icon-20 icon-keyboard" />
+                    <i className="icon icon-20 icon-menu" />
+                    <i className="icon icon-20 icon-menu-2" />
+                    <i className="icon icon-20 icon-more" />
+                    <i className="icon icon-20 icon-page-overview" />
+                    <i className="icon icon-20 icon-pin-3" />
+                    <i className="icon icon-20 icon-plus-math" />
+                    <i className="icon icon-20 icon-pocket" />
+                    <i className="icon icon-20 icon-refresh" />
+                    <i className="icon icon-20 icon-settings" />
+                    <i className="icon icon-20 icon-share" />
+                    <i className="icon icon-20 icon-spinner" />
+                    <i className="icon icon-20 icon-trash" />
+                    <i className="icon icon-20 icon-twitter" />
+                    <i className="icon icon-20 icon-warning" />
+                </p>
+                <p>
                     <i className="icon icon-16 icon-angle-down" />
-                    <i className="icon icon-16 icon-more" />
-                    <i className="icon icon-16 icon-refresh" />
-                    <i className="icon icon-16 icon-file" />
+                    <i className="icon icon-16 icon-angle-right" />
                     <i className="icon icon-16 icon-bookmark" />
-                    <i className="icon icon-16 icon-comments" />
-                    <i className="icon icon-16 icon-share" />
-                    <i className="icon icon-16 icon-pin-3" />
-                    <i className="icon icon-16 icon-checkmark" />
-                    <i className="icon icon-16 icon-info" />
                     <i className="icon icon-16 icon-checked" />
-                    <i className="icon icon-16 icon-warning" />
+                    <i className="icon icon-16 icon-checkmark" />
+                    <i className="icon icon-16 icon-close" />
+                    <i className="icon icon-16 icon-comments" />
+                    <i className="icon icon-16 icon-database" />
                     <i className="icon icon-16 icon-delete" />
+                    <i className="icon icon-16 icon-edit" />
+                    <i className="icon icon-16 icon-external-link" />
+                    <i className="icon icon-16 icon-facebook" />
+                    <i className="icon icon-16 icon-file" />
+                    <i className="icon icon-16 icon-hatena-bookmark" />
+                    <i className="icon icon-16 icon-info" />
+                    <i className="icon icon-16 icon-instapaper" />
+                    <i className="icon icon-16 icon-keyboard" />
+                    <i className="icon icon-16 icon-menu" />
+                    <i className="icon icon-16 icon-menu-2" />
+                    <i className="icon icon-16 icon-more" />
+                    <i className="icon icon-16 icon-page-overview" />
+                    <i className="icon icon-16 icon-pin-3" />
+                    <i className="icon icon-16 icon-plus-math" />
+                    <i className="icon icon-16 icon-pocket" />
+                    <i className="icon icon-16 icon-refresh" />
+                    <i className="icon icon-16 icon-settings" />
+                    <i className="icon icon-16 icon-share" />
                     <i className="icon icon-16 icon-spinner" />
-                    <i className="icon icon-16 icon-unchecked-checkbox" />
-                    <i className="icon icon-16 icon-checked-checkbox" />
-                    <i className="icon icon-16 icon-indeterminate-checkbox" />
+                    <i className="icon icon-16 icon-trash" />
+                    <i className="icon icon-16 icon-twitter" />
+                    <i className="icon icon-16 icon-warning" />
                 </p>
 
                 <h2>Placeholder</h2>

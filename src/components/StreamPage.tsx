@@ -16,7 +16,6 @@ import { changeStreamView, fetchComments, fetchFullContent, fetchMoreEntries, fe
 import { createCategory } from 'messaging/categories/actions';
 
 interface StreamProps {
-    subscription: Subscription | null;
     categories: Category[];
     isLoaded: boolean;
     isLoading: boolean;
@@ -38,6 +37,7 @@ interface StreamProps {
     params: Params;
     scrollTo: (x: number, y: number) => Promise<void>;
     stream: Stream;
+    subscription: Subscription | null;
 };
 
 interface StreamState {
@@ -99,7 +99,7 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
     }
 
     componentWillUnmount() {
-        const { stream, onMarkAsRead, params } = this.props;
+        const { onMarkAsRead, params, stream } = this.props;
         const { readEntryIds } = this.state;
 
         if (stream.streamId === params['stream_id']) {
@@ -279,13 +279,11 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
                             <span className="badge badge-small badge-pill badge-negative badge-overlap">{readEntryIds.size || ''}</span>
                         </button>
                     }
-                    menu={this.renderReadEntriesMenu()}
-                    pullRight={true} />
+                    menu={this.renderReadEntriesMenu()} />
                 <Dropdown
                     className="navbar-action"
                     toggleButton={<button><i className="icon icon-24 icon-more" /></button>}
-                    menu={this.renderConfigMenu()}
-                    pullRight={true} />
+                    menu={this.renderConfigMenu()} />
             </Navbar>
         );
     }
@@ -323,8 +321,7 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
                                         onSubscribe={onSubscribe}
                                         onUnsubscribe={onUnsubscribe}
                                         subscription={subscription} />
-                                }
-                                pullRight={true} />
+                                } />
                         </div>
                     </div>
                 </header>

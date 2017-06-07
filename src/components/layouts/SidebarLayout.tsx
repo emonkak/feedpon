@@ -4,24 +4,31 @@ import { History, Location } from 'history';
 
 import Notifications from 'components/Notifications';
 import Sidebar from 'components/Sidebar';
+import connect from 'utils/flux/react/connect';
 import smoothScroll from 'utils/dom/smoothScroll';
+import { State } from 'messaging/types';
 
-interface LayoutProps {
+interface SidebarLayoutProps {
     children: React.ReactElement<any>;
+    isLoading: boolean;
     location: Location;
     router: History;
 }
 
-interface LayoutState {
+interface SidebarLayoutState {
     isScrolling: boolean;
     sidebarIsOpened: boolean;
 }
 
-export default class Layout extends PureComponent<LayoutProps, LayoutState> {
+class SidebarLayout extends PureComponent<SidebarLayoutProps, SidebarLayoutState> {
     private unsubscribe: () => void | null;
 
-    constructor(props: LayoutProps, context: any) {
+    constructor(props: SidebarLayoutProps, context: any) {
         super(props, context);
+
+        this.handleToggleSidebar = this.handleToggleSidebar.bind(this);
+        this.handleCloseSidebar = this.handleCloseSidebar.bind(this);
+        this.handleChangeLocation = this.handleChangeLocation.bind(this);
 
         this.state = {
             isScrolling: false,
@@ -32,7 +39,7 @@ export default class Layout extends PureComponent<LayoutProps, LayoutState> {
     componentWillMount() {
         const { router } = this.props;
 
-        this.unsubscribe = router.listen(this.handleChangeLocation.bind(this));
+        this.unsubscribe = router.listen(this.handleChangeLocation);
     }
 
     componentWillUnmount() {
@@ -89,15 +96,15 @@ export default class Layout extends PureComponent<LayoutProps, LayoutState> {
     }
 
     render() {
-        const { children, location, router } = this.props;
+        const { children, isLoading, location, router } = this.props;
         const { isScrolling, sidebarIsOpened } = this.state;
 
-        const rootClassName = classnames('l-root', {
-            'is-opened': sidebarIsOpened,
-        });
-
         return (
-            <div className={rootClassName} onClick={this.handleCloseSidebar.bind(this)}>
+            <div
+                className={classnames('l-root', {
+                    'is-opened': sidebarIsOpened
+                })}
+                onClick={this.handleCloseSidebar}>
                 <div className='l-sidebar'>
                     <Sidebar router={router} location={location} />
                 </div>
@@ -106,10 +113,19 @@ export default class Layout extends PureComponent<LayoutProps, LayoutState> {
                 </div>
                 {cloneElement(children, {
                     isScrolling,
-                    onToggleSidebar: this.handleToggleSidebar.bind(this),
+                    onToggleSidebar: this.handleToggleSidebar,
                     scrollTo: this.scrollTo.bind(this)
                 })}
+                <div className="l-backdrop">
+                    {isLoading ? <i className="icon icon-48 icon-spinner icon-rotating" /> : null}
+                </div>
             </div>
         );
     }
 }
+
+export default connect({
+    mapStateToProps: (state: State) => ({
+        isLoading: state.credential.isLoading
+    })
+})(SidebarLayout);

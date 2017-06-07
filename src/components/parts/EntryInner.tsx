@@ -146,7 +146,7 @@ export default class EntryInner extends PureComponent<EntryInnerProps, EntryInne
             <div className="list-inline-item">
                 <a
                     className={classnames('link-soft badge', {
-                        'badge-default': entry.bookmarkCount > 0,
+                        'u-text-negative': entry.bookmarkCount > 0,
                         'badge-negative': entry.bookmarkCount >= 10
                     })}
                     target="_blank"

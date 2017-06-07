@@ -105,6 +105,7 @@ export default function reducer(streams: Streams, event: Event): Streams {
 
         case 'STREAM_FETCHING':
             return {
+                ...streams,
                 current: {
                     streamId: event.streamId,
                     title: 'Loading...',
@@ -114,24 +115,22 @@ export default function reducer(streams: Streams, event: Event): Streams {
                     options: streams.current.options
                 },
                 isLoaded: false,
-                isLoading: true,
-                version: streams.version
+                isLoading: true
             };
 
         case 'STREAM_FETCHING_FAILED':
             return {
-                current: streams.current,
+                ...streams,
                 isLoaded: true,
-                isLoading: false,
-                version: streams.version
+                isLoading: false
             };
 
         case 'STREAM_FETCHED':
             return {
+                ...streams,
                 current: event.stream,
                 isLoaded: true,
-                isLoading: false,
-                version: streams.version
+                isLoading: false
             };
 
         case 'FULL_CONTENT_FETCHING':

@@ -1,8 +1,9 @@
 import React, { PureComponent } from 'react';
 
-import ConfirmButton from 'components/parts/ConfirmButton';
+import ConfirmModal from 'components/parts/ConfirmModal';
 import InputControl from 'components/parts/InputControl';
 import Modal from 'components/parts/Modal';
+import ModalButton from 'components/parts/ModalButton';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
 import { State, SiteinfoItem } from 'messaging/types';
@@ -118,15 +119,21 @@ class UserSiteinfoItem extends PureComponent<UserSiteinfoItemProps, UserSiteinfo
                         <button className="button button-outline-default" onClick={this.handleEdit}>
                             <i className="icon icon-16 icon-edit" />
                         </button>
-                        <ConfirmButton
-                            className="button button-outline-negative"
-                            modalMessage="Are you sure you want to delete this item?"
-                            modalTitle={`Delete "${item.name}"`}
-                            okButtonClassName="button button-outline-negative"
-                            okButtonLabel="Delete"
-                            onConfirm={this.handleRemove}>
-                            <i className="icon icon-16 icon-trash" />
-                        </ConfirmButton>
+                        <ModalButton
+                            modal={
+                                <ConfirmModal
+                                    message="Are you sure you want to delete this item?"
+                                    okButtonClassName="button button-outline-negative"
+                                    okButtonLabel="Delete"
+                                    onConfirm={this.handleRemove}
+                                    title={`Delete "${item.name}"`} />
+                            }
+                            button={
+                                <button
+                                    className="button button-outline-negative">
+                                    <i className="icon icon-16 icon-trash" />
+                                </button>
+                            } />
                     </div>
                     <Modal isOpened={isEditing} onClose={this.handleCancelEditing}>
                         <UserSiteinfoForm

@@ -6,17 +6,17 @@ import AuthenticationPage from 'components/AuthenticationPage';
 import AuthenticationRequired from 'components/AuthenticationRequired';
 import CategoriesPage from 'components/CategoriesPage';
 import DashboardPage from 'components/DashboardPage';
-import Layout from 'components/Layout';
 import NotAuthenticated from 'components/NotAuthenticated'
 import SearchPage from 'components/SearchPage';
 import SettingsPage from 'components/SettingsPage';
-import SingleLayout from 'components/SingleLayout';
+import SidebarLayout from 'components/layouts/SidebarLayout';
+import SingleLayout from 'components/layouts/SingleLayout';
 import StreamPage from 'components/StreamPage';
 
 const routes = (
     <Route path="/">
         <Route component={AuthenticationRequired}>
-            <Route component={Layout}>
+            <Route component={SidebarLayout}>
                 <IndexRoute component={DashboardPage} />
                 <Route path="about" component={AboutPage} />
                 <Route path="categories/(:label)" component={CategoriesPage} />

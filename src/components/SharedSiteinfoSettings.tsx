@@ -36,14 +36,12 @@ class SharedSiteinfoSettings extends PureComponent<SharedSiteinfoProps, {}> {
                         Update
                     </button>
                 </p>
-                <div className="u-responsive">
-                    <LazyList
-                        assumedItemHeight={24 * 7}
-                        getKey={getSiteinfoItemKey}
-                        items={items}
-                        renderItem={renderSiteinfoItem}
-                        renderList={renderSiteinfoList} />
-                </div>
+                <LazyList
+                    assumedItemHeight={24 * 7}
+                    getKey={getSiteinfoItemKey}
+                    items={items}
+                    renderItem={renderSiteinfoItem}
+                    renderList={renderSiteinfoList} />
             </section>
         );
     }
@@ -77,9 +75,11 @@ function getSiteinfoItemKey(item: SiteinfoItem) {
 
 function renderSiteinfoList(children: React.ReactNode, aboveSpace: number, belowSpace: number) {
     return (
-        <ul className="list-group" style={{ paddingTop: aboveSpace, paddingBottom: belowSpace }}>
-            {children}
-        </ul>
+        <div className="u-responsive">
+            <ul className="list-group" style={{ paddingTop: aboveSpace, paddingBottom: belowSpace }}>
+                {children}
+            </ul>
+        </div>
     );
 }
 

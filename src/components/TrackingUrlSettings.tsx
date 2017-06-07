@@ -1,7 +1,8 @@
 import React, { PureComponent } from 'react';
 
-import ConfirmButton from 'components/parts/ConfirmButton';
+import ConfirmModal from 'components/parts/ConfirmModal';
 import InputControl from 'components/parts/InputControl';
+import ModalButton from 'components/parts/ModalButton';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
 import { State } from 'messaging/types';
@@ -66,13 +67,17 @@ class TrackingUrlPatternItem extends PureComponent<TrackingUrlPatternItemProps, 
         return (
             <li className="list-group-item">
                 <code>{pattern}</code>
-                <ConfirmButton
-                    className="u-pull-right close"
-                    modalMessage="Are you sure you want to delete this pattern?"
-                    modalTitle={`Delete "${pattern}"`}
-                    okButtonClassName="button button-outline-negative"
-                    okButtonLabel="Delete"
-                    onConfirm={this.handleRemove} />
+                <ModalButton
+                    className="button-group u-pull-right"
+                    modal={
+                        <ConfirmModal
+                            message="Are you sure you want to delete this pattern?"
+                            okButtonClassName="button button-outline-negative"
+                            okButtonLabel="Delete"
+                            onConfirm={this.handleRemove}
+                            title={`Delete "${pattern}"`} />
+                    }
+                    button={<button className="close" />} />
             </li>
         )
     }

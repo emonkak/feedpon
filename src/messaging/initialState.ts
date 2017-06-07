@@ -8,6 +8,7 @@ const initialState: State = {
     },
     credential: {
         authorizedAt: 0,
+        isLoading: false,
         token: null,
         version: 1
     },
@@ -68,6 +69,16 @@ const initialState: State = {
         onlyUnread: true,
         order: 'title',
         totalUnreadCount: 0,
+        version: 1
+    },
+    user: {
+        isLoaded: false,
+        isLoading: false,
+        profile: {
+            userId: '<unknown>',
+            source: '<unknown>',
+            picture: ''
+        },
         version: 1
     },
     userSiteinfo: {

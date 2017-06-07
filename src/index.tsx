@@ -61,15 +61,16 @@ const store = applyMiddlewares(createStore(reducer, state), [
     errorHandlingMiddleware((error, { dispatch }) => {
         console.error(error);
 
+        const errorString = (error + '') || 'Unknown error occured';
+
         dispatch(sendNotification(
-            'Error occured: ' + error,
-            'negative',
-            0
+            errorString,
+            'negative'
         ));
     }),
     asyncMiddleware(context),
     saveStateMiddleware(save),
-    reduxMiddleware(createLogger({ diff: true }))
+    reduxMiddleware(createLogger({ duration: true }))
 ]);
 
 const element = document.getElementById('app');
@@ -85,6 +86,5 @@ ReactDOM.render((
 waitForReadyState(document, 'interactive', () => {
     store.dispatch({
         type: 'APPLICATION_INITIALIZED'
-
     });
 });

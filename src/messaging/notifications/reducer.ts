@@ -4,14 +4,14 @@ export default function reducer(notifications: Notifications, event: Event): Not
     switch (event.type) {
         case 'NOTIFICATION_SENT':
             return {
-                items: [...notifications.items, event.notification],
-                version: notifications.version
+                ...notifications,
+                items: [...notifications.items, event.notification]
             };
 
         case 'NOTIFICATION_DISMISSED':
             return {
-                items: notifications.items.filter((notification) => notification.id !== event.id),
-                version: notifications.version
+                ...notifications,
+                items: notifications.items.filter((notification) => notification.id !== event.id)
             };
 
         default:

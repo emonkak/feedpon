@@ -2,8 +2,9 @@ import React, { cloneElement, PureComponent } from 'react';
 import { findDOMNode } from 'react-dom';
 
 import createChainedFunction from 'utils/createChainedFunction';
-import throttleEventHandler from 'utils/throttleEventHandler';
+import getScrollableParent from 'utils/dom/getScrollableParent';
 import throttleAnimationFrame from 'utils/throttleAnimationFrame';
+import throttleEventHandler from 'utils/throttleEventHandler';
 
 interface LazyListProps {
     assumedItemHeight: number;
@@ -26,7 +27,7 @@ interface LazyListState {
 
 export default class LazyList extends PureComponent<LazyListProps, LazyListState> {
     static defaultProps = {
-        getScrollableParent: (element: Element) => window,
+        getScrollableParent,
         getHeight: (element: HTMLElement) => element.offsetHeight,
         offscreenToViewportRatio: 1.0,
         scrollThrottleTime: 100

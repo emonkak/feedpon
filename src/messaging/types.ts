@@ -1,6 +1,5 @@
 export type Event
     = { type: 'APPLICATION_INITIALIZED' }
-    | { type: 'AUTHENTICATED', authorizedAt: number, token: any }
     | { type: 'BOOKMARK_COUNTS_FETCHED', bookmarkCounts: { [key: string]: number } }
     | { type: 'CATEGORY_CREATED', category: Category }
     | { type: 'CATEGORY_CREATING' }
@@ -47,10 +46,18 @@ export type Event
     | { type: 'SUBSCRIPTIONS_FETCHED', subscriptions: Subscription[], categories: Category[], fetchedAt: number }
     | { type: 'SUBSCRIPTIONS_FETCHING' }
     | { type: 'SUBSCRIPTIONS_FETCHING_FAILED' }
-    | { type: 'SUBSCRIPTIONS_ORDER_CHANGED', order: SubscriptionOrder }
+    | { type: 'SUBSCRIPTIONS_ORDER_CHANGED', order: SubscriptionsOrder }
     | { type: 'SUBSCRIPTIONS_UNREAD_VIEWING_CHANGED', onlyUnread: boolean }
+    | { type: 'TOKEN_RECEIVED', authorizedAt: number, token: any }
+    | { type: 'TOKEN_RECEIVING' }
+    | { type: 'TOKEN_RECEIVING_FAILED' }
+    | { type: 'TOKEN_REVOKED' }
+    | { type: 'TOKEN_REVOKING' }
     | { type: 'TRACKING_URL_PATTERN_ADDED', pattern: string }
     | { type: 'TRACKING_URL_PATTERN_REMOVED', pattern: string }
+    | { type: 'USER_FETCHED', profile: Profile }
+    | { type: 'USER_FETCHING' }
+    | { type: 'USER_FETCHING_FAILED' }
     | { type: 'USER_SITEINFO_ITEM_ADDED', item: SiteinfoItem }
     | { type: 'USER_SITEINFO_ITEM_REMOVED', id: string | number }
     | { type: 'USER_SITEINFO_ITEM_UPDATED', item: SiteinfoItem };
@@ -73,6 +80,7 @@ export interface State {
     streams: Streams;
     subscriptions: Subscriptions;
     trackingUrlSettings: TrackingUrlSettings;
+    user: User;
     userSiteinfo: UserSiteinfo;
     version: string;
 }
@@ -83,8 +91,22 @@ export interface Context {
 
 export interface Credential {
     authorizedAt: number;
+    isLoading: boolean;
     token: object | null;
     version: number;
+}
+
+export interface User {
+    isLoaded: boolean;
+    isLoading: boolean;
+    profile: Profile;
+    version: number;
+}
+
+export interface Profile {
+    picture: string;
+    source: string;
+    userId: string;
 }
 
 export interface Search {
@@ -239,7 +261,7 @@ export interface Subscriptions {
     items: Subscription[];
     lastUpdatedAt: number;
     onlyUnread: boolean;
-    order: SubscriptionOrder;
+    order: SubscriptionsOrder;
     totalUnreadCount: number;
     version: number;
 }
@@ -258,7 +280,7 @@ export interface Subscription {
     isLoading: boolean;
 }
 
-export type SubscriptionOrder = 'title' | 'newest' | 'oldest';
+export type SubscriptionsOrder = 'title' | 'newest' | 'oldest';
 
 export interface UserSiteinfo {
     items: SiteinfoItem[];

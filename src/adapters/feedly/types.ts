@@ -102,6 +102,47 @@ export interface UnreadCount {
     id: string;
 }
 
+// Profile API:
+export interface Profile {
+    id: string;
+    email?: string;
+    givenName?: string;
+    familyName?: string;
+    fullName?: string;
+    picture?: string;
+    gender?: string;
+    locale?: string;
+    google?: string;
+    reader?: string;
+    twitter?: string;
+    twitterUserId?: string;
+    facebookUserId?: string;
+    wordPressId?: string;
+    windowsLiveId?: string;
+    wave: string;
+    client: string;
+    source: string;
+    created?: number;
+
+    // Pro accounts only:
+    product?: string;
+    productExpiration?: number;
+    subscriptionStatus?: 'Active' | 'PastDue' | 'Canceled' | 'Unpaid' | 'Deleted' | 'Expired';
+    isEvernoteConnected?: boolean;
+    isPocketConnected?: boolean;
+}
+
+export interface UpdateProfileInput {
+    email?: string;
+    givenName?: string;
+    familyName?: string;
+    picture?: string;
+    gender?: string;
+    locale?: boolean;
+    twitter?: string;
+    facebook?: string;
+}
+
 // Search API:
 export interface SearchInput {
     query: string;

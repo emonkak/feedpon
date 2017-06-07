@@ -255,13 +255,13 @@ select {
 button {
   padding: 0;
   margin: 0;
-  cursor: pointer;
   font-family: inherit;
   font-size: inherit;
   line-height: inherit;
   background: none;
   border: none;
   color: inherit;
+  cursor: pointer;
 }
 
 button:disabled {

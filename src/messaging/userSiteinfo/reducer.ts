@@ -4,21 +4,21 @@ export default function reducer(siteinfo: UserSiteinfo, event: Event): UserSitei
     switch (event.type) {
         case 'USER_SITEINFO_ITEM_ADDED':
             return {
-                items: [...siteinfo.items, event.item],
-                version: siteinfo.version
+                ...siteinfo,
+                items: [...siteinfo.items, event.item]
             };
 
         case 'USER_SITEINFO_ITEM_UPDATED':
             return {
+                ...siteinfo,
                 items: siteinfo.items
-                    .map((item) => item.id === event.item.id ? event.item : item),
-                version: siteinfo.version
+                    .map((item) => item.id === event.item.id ? event.item : item)
             };
 
         case 'USER_SITEINFO_ITEM_REMOVED':
             return {
-                items: siteinfo.items.filter((item) => item.id !== event.id),
-                version: siteinfo.version
+                ...siteinfo,
+                items: siteinfo.items.filter((item) => item.id !== event.id)
             };
 
         default:

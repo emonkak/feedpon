@@ -3,9 +3,10 @@ import classnames from 'classnames';
 import { History } from 'history';
 import { createSelector } from 'reselect';
 
-import ConfirmButton from 'components/parts/ConfirmButton';
+import ConfirmModal from 'components/parts/ConfirmModal';
 import Dropdown from 'components/parts/Dropdown';
 import LazyList from 'components/parts/LazyList';
+import ModalButton from 'components/parts/ModalButton';
 import Nav from 'components/parts/Nav';
 import NavItem from 'components/parts/NavItem';
 import Navbar from 'components/parts/Navbar';
@@ -219,7 +220,7 @@ class SubscriptionItem extends PureComponent<SubscriptionItemProps, {}> {
             : <span>{subscription.title}</span>;
 
         const labels = subscription.labels
-            .map((label) => <span key={label} className="badge badge-default">{label}</span>);
+            .map((label) => <span key={label} className="badge badge-small badge-default">{label}</span>);
 
         return (
             <li className="list-group-item">
@@ -246,8 +247,7 @@ class SubscriptionItem extends PureComponent<SubscriptionItemProps, {}> {
                                 onRemoveFromCategory={onRemoveFromCategory}
                                 onUnsubscribe={onUnsubscribe}
                                 subscription={subscription} />
-                        }
-                        pullRight={true} />
+                        } />
                 </div>
             </li>
         );
@@ -428,26 +428,40 @@ class EditCategoryForm extends PureComponent<EditCategoryFormProps, EditCategory
                         className="form-control"
                         value={label}
                         required />
-                    <ConfirmButton
-                        className="button button-positive"
-                        disabled={category.isLoading || label === '' || label === category.label}
-                        modalMessage="Are you sure you want to change label of this category?"
-                        modalTitle={`Rename "${category.label}" to "${label}"`}
-                        okButtonClassName="button button-positive"
-                        okButtonLabel="OK"
-                        onConfirm={this.handleUpdate}>
-                        Rename
-                    </ConfirmButton>
-                    <ConfirmButton
-                        className="button button-negative"
-                        disabled={category.isLoading}
-                        modalMessage="Are you sure you want to delete this category?"
-                        modalTitle={`Delete "${category.label}"`}
-                        okButtonClassName="button button-negative"
-                        okButtonLabel="Delete"
-                        onConfirm={this.handleDelete}>
-                        Delete
-                    </ConfirmButton>
+                    <ModalButton
+                        className="button-group"
+                        modal={
+                            <ConfirmModal
+                                message="Are you sure you want to change label of this category?"
+                                okButtonClassName="button button-positive"
+                                okButtonLabel="OK"
+                                onConfirm={this.handleUpdate}
+                                title={`Rename "${category.label}" to "${label}"`} />
+                        }
+                        button={
+                            <button
+                                className="button button-positive"
+                                disabled={category.isLoading || label === '' || label === category.label}>
+                                Rename
+                            </button>
+                        } />
+                    <ModalButton
+                        className="button-group"
+                        modal={
+                            <ConfirmModal
+                                message="Are you sure you want to delete this category?"
+                                okButtonClassName="button button-negative"
+                                okButtonLabel="Delete"
+                                onConfirm={this.handleDelete}
+                                title={`Delete "${category.label}"`} />
+                        }
+                        button={
+                            <button
+                                className="button button-negative"
+                                disabled={category.isLoading}>
+                                Delete
+                            </button>
+                        } />
                 </div>
             </div>
         );

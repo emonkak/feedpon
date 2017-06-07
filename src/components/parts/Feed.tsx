@@ -45,8 +45,7 @@ export default class FeedComponent extends PureComponent<FeedProps, {}> {
                                 onSubscribe={onSubscribe}
                                 onUnsubscribe={onUnsubscribe}
                                 subscription={subscription} />
-                        }
-                        pullRight={true} />
+                        } />
                 </div>
             </li>
         );

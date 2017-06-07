@@ -1,20 +1,26 @@
 import * as feedly from 'adapters/feedly/types';
 import * as feedlyApi from 'adapters/feedly/api';
 import { AsyncEvent } from 'messaging/types';
-import { sendNotification } from 'messaging/notifications/actions';
 
 export function authenticate(): AsyncEvent {
     return async ({ dispatch, getState }, { environment }) => {
-        async function handleRedirectUrl(urlString: string): Promise<void> {
-            const response = feedlyApi.authCallback(urlString);
+        const url = feedlyApi.createAuthUrl({
+            client_id: environment.clientId,
+            redirect_uri: environment.redirectUri,
+            response_type: 'code',
+            scope: environment.scope
+        });
+
+        dispatch({
+            type: 'TOKEN_RECEIVING'
+        });
+
+        try {
+            const redirectUrl = await openWindow(url, (url: string) => url.startsWith(environment.redirectUri));
+            const response = feedlyApi.authCallback(redirectUrl);
 
             if (response.error) {
-                dispatch(sendNotification(
-                    'Authentication failed: ' + response.error,
-                    'negative'
-                ));
-
-                return;
+                throw new Error(response.error);
             }
 
             const token = await feedlyApi.exchangeToken({
@@ -26,31 +32,40 @@ export function authenticate(): AsyncEvent {
             });
 
             dispatch({
-                type: 'AUTHENTICATED',
+                type: 'TOKEN_RECEIVED',
                 authorizedAt: Date.now(),
                 token
             });
-        }
+        } catch (error) {
+            dispatch({
+                type: 'TOKEN_RECEIVING_FAILED'
+            });
 
-        const url = feedlyApi.createAuthUrl({
-            client_id: environment.clientId,
-            redirect_uri: environment.redirectUri,
-            response_type: 'code',
-            scope: environment.scope
+            throw error;
+        }
+    };
+}
+
+export function revokeToken(): AsyncEvent {
+    return async ({ dispatch, getState }, { environment }) => {
+        dispatch({
+            type: 'TOKEN_REVOKING'
         });
 
-        chrome.windows.create({ url, type: 'popup' }, (window: chrome.windows.Window) => {
-            observeUrlChanging(window, (url: string) => {
-                if (!url.startsWith(environment.redirectUri)) {
-                    return false;
-                }
+        let { credential } = getState();
+        let token = credential.token as feedly.ExchangeTokenResponse;
 
-                chrome.windows.remove(window.id);
-
-                handleRedirectUrl(url);
-
-                return true;
+        if (token) {
+            await feedlyApi.revokeToken({
+                refresh_token: token.refresh_token,
+                client_id: environment.clientId,
+                client_secret: environment.clientSecret,
+                grant_type: 'revoke_token'
             });
+        }
+
+        dispatch({
+            type: 'TOKEN_REVOKED'
         });
     };
 }
@@ -58,12 +73,11 @@ export function authenticate(): AsyncEvent {
 export function getFeedlyToken(): AsyncEvent<feedly.ExchangeTokenResponse> {
     return async ({ dispatch, getState }, { environment }) => {
         let { credential } = getState();
-
-        if (!credential.token) {
-            throw new Error('Not authenticated');
-        }
-
         let token = credential.token as feedly.ExchangeTokenResponse;
+
+        if (!token) {
+            throw new Error('Not authenticated yet');
+        }
 
         const now = Date.now();
         const expiredAt = credential.authorizedAt + (token.expires_in * 1000);
@@ -82,10 +96,8 @@ export function getFeedlyToken(): AsyncEvent<feedly.ExchangeTokenResponse> {
                 ...refreshToken
             };
 
-            debugger;
-
             dispatch({
-                type: 'AUTHENTICATED',
+                type: 'TOKEN_RECEIVED',
                 authorizedAt: now,
                 token
             });
@@ -95,26 +107,37 @@ export function getFeedlyToken(): AsyncEvent<feedly.ExchangeTokenResponse> {
     };
 }
 
-function observeUrlChanging(window: chrome.windows.Window, callback: (url: string) => boolean): void {
-    function handleUpdateTab(tabId: number, changeInfo: chrome.tabs.TabChangeInfo, tab: chrome.tabs.Tab): void {
-        if (tab.windowId === window.id && tab.status === 'complete' && tab.url != null) {
-            if (callback(tab.url)) {
-                unregisterListeners();
+function openWindow(url: string, onTransition: (url: string) => boolean): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+        chrome.windows.create({ url, type: 'popup' }, (window) => {
+            if (window == null) {
+                reject(new Error('Failed to create the window'));
             }
-        }
-    }
 
-    function handleRemoveWindow(windowId: number): void {
-        if (windowId === window.id) {
-            unregisterListeners();
-        }
-    }
+            function handleUpdateTab(tabId: number, changeInfo: chrome.tabs.TabChangeInfo, tab: chrome.tabs.Tab): void {
+                if (tab.windowId === window!.id && tab.status === 'complete' && tab.url != null) {
+                    if (onTransition(tab.url)) {
+                        unregisterListeners();
+                        chrome.windows.remove(window!.id);
+                        resolve(tab.url);
+                    }
+                }
+            }
 
-    function unregisterListeners(): void {
-        chrome.tabs.onUpdated.removeListener(handleUpdateTab);
-        chrome.windows.onRemoved.removeListener(handleRemoveWindow);
-    }
+            function handleRemoveWindow(windowId: number): void {
+                if (windowId === window!.id) {
+                    unregisterListeners();
+                    reject(new Error('Window did not transition to the expected URL'));
+                }
+            }
 
-    chrome.tabs.onUpdated.addListener(handleUpdateTab);
-    chrome.windows.onRemoved.addListener(handleRemoveWindow);
+            function unregisterListeners(): void {
+                chrome.tabs.onUpdated.removeListener(handleUpdateTab);
+                chrome.windows.onRemoved.removeListener(handleRemoveWindow);
+            }
+
+            chrome.tabs.onUpdated.addListener(handleUpdateTab);
+            chrome.windows.onRemoved.addListener(handleRemoveWindow);
+        });
+    });
 }

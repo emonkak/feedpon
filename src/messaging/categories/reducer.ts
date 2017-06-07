@@ -11,39 +11,36 @@ export default function reducer(categories: Categories, event: Event): Categorie
     switch (event.type) {
         case 'APPLICATION_INITIALIZED':
             return {
-                isLoading: false,
-                items: categories.items,
-                version: categories.version
+                ...categories,
+                isLoading: false
             };
 
         case 'CATEGORY_CREATING':
             return {
-                isLoading: true,
-                items: categories.items,
-                version: categories.version
+                ...categories,
+                isLoading: true
             };
 
         case 'CATEGORY_CREATING_FAILED':
             return {
-                isLoading: false,
-                items: categories.items,
-                version: categories.version
+                ...categories,
+                isLoading: false
             };
 
         case 'CATEGORY_CREATED':
             return {
+                ...categories,
                 isLoading: false,
                 items: new Enumerable(categories.items)
                     .startWith(event.category)
                     .distinct((category) => category.categoryId)
                     .orderBy((category) => category.label)
-                    .toArray(),
-                version: categories.version
+                    .toArray()
             };
 
         case 'CATEGORY_UPDATING':
             return {
-                isLoading: categories.isLoading,
+                ...categories,
                 items: categories.items.map((category) => {
                     if (category.categoryId !== event.category.categoryId) {
                         return category;
@@ -52,13 +49,12 @@ export default function reducer(categories: Categories, event: Event): Categorie
                         ...category,
                         isLoading: true
                     };
-                }),
-                version: categories.version
+                })
             };
 
         case 'CATEGORY_UPDATING_FAILED':
             return {
-                isLoading: categories.isLoading,
+                ...categories,
                 items: categories.items.map((category) => {
                     if (category.categoryId !== event.category.categoryId) {
                         return category;
@@ -67,13 +63,12 @@ export default function reducer(categories: Categories, event: Event): Categorie
                         ...category,
                         isLoading: false
                     };
-                }),
-                version: categories.version
+                })
             };
 
         case 'CATEGORY_UPDATED':
             return {
-                isLoading: categories.isLoading,
+                ...categories,
                 items: new Enumerable(categories.items)
                     .select((category) => {
                         if (category.categoryId !== event.prevCategory.categoryId) {
@@ -83,13 +78,12 @@ export default function reducer(categories: Categories, event: Event): Categorie
                     })
                     .distinct((category) => category.categoryId)
                     .orderBy((category) => category.label)
-                    .toArray(),
-                version: categories.version
+                    .toArray()
             };
 
         case 'CATEGORY_DELETING':
             return {
-                isLoading: categories.isLoading,
+                ...categories,
                 items: categories.items.map((category) => {
                     if (category.categoryId !== event.category.categoryId) {
                         return category;
@@ -98,13 +92,12 @@ export default function reducer(categories: Categories, event: Event): Categorie
                         ...category,
                         isLoading: true
                     };
-                }),
-                version: categories.version
+                })
             };
 
         case 'CATEGORY_DELETING_FAILED':
             return {
-                isLoading: categories.isLoading,
+                ...categories,
                 items: categories.items.map((category) => {
                     if (category.categoryId !== event.category.categoryId) {
                         return category;
@@ -113,30 +106,28 @@ export default function reducer(categories: Categories, event: Event): Categorie
                         ...category,
                         isLoading: false
                     };
-                }),
-                version: categories.version
+                })
             };
 
         case 'CATEGORY_DELETED':
             return {
+                ...categories,
                 isLoading: false,
                 items: categories.items
-                    .filter((category) => category.categoryId !== event.category.categoryId),
-                version: categories.version
+                    .filter((category) => category.categoryId !== event.category.categoryId)
             };
 
         case 'SUBSCRIPTIONS_FETCHING':
             return {
-                isLoading: true,
-                items: categories.items,
-                version: categories.version
+                ...categories,
+                isLoading: true
             };
 
         case 'SUBSCRIPTIONS_FETCHED':
             return {
+                ...categories,
                 isLoading: false,
-                items: event.categories,
-                version: categories.version
+                items: event.categories
             };
 
         default:

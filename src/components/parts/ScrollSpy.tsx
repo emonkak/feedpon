@@ -8,6 +8,7 @@ import '@emonkak/enumerable/extensions/select';
 import '@emonkak/enumerable/extensions/where';
 
 import createChainedFunction from 'utils/createChainedFunction';
+import getScrollableParent from 'utils/dom/getScrollableParent';
 import throttleEventHandler from 'utils/throttleEventHandler';
 
 interface ScrollSpyProps {
@@ -35,7 +36,7 @@ const initialState: ScrollSpyState = {
 export default class ScrollSpy extends PureComponent<ScrollSpyProps, ScrollSpyState> {
     static defaultProps = {
         activeProp: 'isActive',
-        getScrollableParent: (element: Element) => window,
+        getScrollableParent,
         isDisabled: false,
         marginBottom: 0,
         marginTop: 0,
@@ -77,7 +78,7 @@ export default class ScrollSpy extends PureComponent<ScrollSpyProps, ScrollSpySt
         }
     }
 
-    getScrollRect() {
+    getViewportRect() {
         let top = 0;
         let height = 0;
 
@@ -119,7 +120,7 @@ export default class ScrollSpy extends PureComponent<ScrollSpyProps, ScrollSpySt
 
     update() {
         const { marginBottom, marginTop } = this.props;
-        const { top, height } = this.getScrollRect();
+        const { top, height } = this.getViewportRect();
 
         const nextActiveKey = this.getActiveKey(
             top + (marginTop || 0),

@@ -6,36 +6,44 @@ import { createSelector } from 'reselect';
 
 import Dropdown from 'components/parts/Dropdown';
 import FeedSearchForm from 'components/parts/FeedSearchForm';
+import ProfileButton from 'components/parts/ProfileButton';
 import RelativeTime from 'components/parts/RelativeTime';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
+import { Category, Profile, State, Subscription, SubscriptionsOrder } from 'messaging/types';
 import { Menu, MenuItem } from 'components/parts/Menu';
-import { Category, State, Subscription, SubscriptionOrder } from 'messaging/types';
 import { Tree, TreeBranch, TreeLeaf } from 'components/parts/Tree';
-import { changeSubscriptionOrder, changeUnreadViewing, fetchSubscriptions } from 'messaging/subscriptions/actions';
+import { changeSubscriptionsOrder, changeUnreadViewing, fetchSubscriptions } from 'messaging/subscriptions/actions';
+import { fetchUser } from 'messaging/user/actions';
+import { revokeToken } from 'messaging/credential/actions';
 
 const UNCATEGORIZED = Symbol();
 
 interface SidebarProps {
     categories: Category[];
     groupedSubscriptions: { [key: string]: GroupedSubscription };
-    isLoading: boolean;
     lastUpdatedAt: number;
     location: Location;
-    onChangeSubscriptionOrder: typeof changeSubscriptionOrder;
+    onChangeSubscriptionsOrder: typeof changeSubscriptionsOrder;
     onChangeUnreadViewing: typeof changeUnreadViewing;
     onFetchSubscriptions: typeof fetchSubscriptions;
+    onFetchUser: typeof fetchUser;
+    onRevokeToken: typeof revokeToken;
     onlyUnread: boolean;
-    order: SubscriptionOrder;
+    profile: Profile;
     router: History;
     subscriptions: Subscription[];
+    subscriptionsIsLoading: boolean;
+    subscriptionsOrder: SubscriptionsOrder;
     totalUnreadCount: number;
+    userIsLoaded: boolean;
+    userIsLoading: boolean;
 }
 
 interface GroupedSubscription {
     items: Subscription[];
     unreadCount: number;
-};
+}
 
 class Sidebar extends PureComponent<SidebarProps, {}> {
     constructor(props: SidebarProps, context: any) {
@@ -47,10 +55,14 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
     }
 
     componentWillMount() {
-        const { lastUpdatedAt, onFetchSubscriptions } = this.props;
+        const { lastUpdatedAt, onFetchSubscriptions, onFetchUser, userIsLoaded } = this.props;
 
         if (lastUpdatedAt === 0) {
             onFetchSubscriptions();
+        }
+
+        if (!userIsLoaded) {
+            onFetchUser();
         }
     }
 
@@ -76,16 +88,20 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
         const {
             categories,
             groupedSubscriptions,
-            isLoading,
             lastUpdatedAt,
             location,
-            onChangeSubscriptionOrder,
+            onChangeSubscriptionsOrder,
             onChangeUnreadViewing,
             onFetchSubscriptions,
+            onFetchUser,
+            onRevokeToken,
             onlyUnread,
-            order,
+            profile,
             subscriptions,
-            totalUnreadCount
+            subscriptionsIsLoading,
+            subscriptionsOrder,
+            totalUnreadCount,
+            userIsLoading
         } = this.props;
 
         return (
@@ -108,14 +124,14 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
                 </div>
                 <div className="sidebar-group">
                     <SubscriptionTreeHeader
-                        isLoading={isLoading}
+                        isLoading={subscriptionsIsLoading}
                         lastUpdatedAt={lastUpdatedAt}
-                        onChangeSubscriptionOrder={onChangeSubscriptionOrder}
+                        onChangeSubscriptionsOrder={onChangeSubscriptionsOrder}
                         onChangeUnreadViewing={onChangeUnreadViewing}
                         onOrganizeSubscriptions={this.handleOrganizeSubscriptions}
                         onReload={onFetchSubscriptions}
                         onlyUnread={onlyUnread}
-                        order={order} />
+                        order={subscriptionsOrder} />
                     <SubscriptionTree
                         categories={categories}
                         groupedSubscriptions={groupedSubscriptions}
@@ -131,11 +147,22 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
                 <div className="sidebar-group">
                     <Link className="button button-block button-outline-default" to="/search/">New Subscription</Link>
                 </div>
-                <div className="sidebar-group u-text-center">
-                    <ul className="list-inline list-inline-slashed">
-                        <li className="list-inline-item"><a href="#">emonkak@gmail.com</a></li>
-                        <li className="list-inline-item"><a href="#">Logout</a></li>
-                    </ul>
+                <div className="sidebar-group">
+                    <Dropdown
+                        className="dropdown-block"
+                        toggleButton={
+                            <ProfileButton isLoading={userIsLoading} profile={profile} />
+                        }
+                        menu={
+                            <Menu>
+                                <MenuItem
+                                    onSelect={onFetchUser}
+                                    primaryText="Refresh" />
+                                <MenuItem
+                                    onSelect={onRevokeToken}
+                                    primaryText="Logout..." />
+                            </Menu>
+                        } />
                 </div>
             </nav>
         );
@@ -145,12 +172,12 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
 interface SubscriptionTreeHeaderProps {
     isLoading: boolean;
     lastUpdatedAt: number;
-    onChangeSubscriptionOrder: (order: SubscriptionOrder) => void;
+    onChangeSubscriptionsOrder: (order: SubscriptionsOrder) => void;
     onChangeUnreadViewing: (onlyUnread: boolean) => void;
     onReload: () => void;
     onOrganizeSubscriptions: () => void;
     onlyUnread: boolean;
-    order: SubscriptionOrder;
+    order: SubscriptionsOrder;
 }
 
 class SubscriptionTreeHeader extends PureComponent<SubscriptionTreeHeaderProps, {}> {
@@ -158,7 +185,7 @@ class SubscriptionTreeHeader extends PureComponent<SubscriptionTreeHeaderProps, 
         const {
             isLoading,
             lastUpdatedAt,
-            onChangeSubscriptionOrder,
+            onChangeSubscriptionsOrder,
             onChangeUnreadViewing,
             onOrganizeSubscriptions,
             onReload,
@@ -182,7 +209,6 @@ class SubscriptionTreeHeader extends PureComponent<SubscriptionTreeHeaderProps, 
                 </button>
                 <strong className="u-flex-grow-1 u-text-small">{lastUpdate}</strong>
                 <Dropdown
-                    pullRight={true}
                     toggleButton={
                         <button className="u-flex-shrink-0 button-icon button-icon-32">
                             <i className="icon icon-16 icon-more" />
@@ -193,17 +219,17 @@ class SubscriptionTreeHeader extends PureComponent<SubscriptionTreeHeaderProps, 
                             <div className="menu-heading">Order</div>
                             <MenuItem
                                 icon={order === 'title' ? <i className="icon icon-16 icon-checkmark" /> : null}
-                                onSelect={onChangeSubscriptionOrder}
+                                onSelect={onChangeSubscriptionsOrder}
                                 primaryText="Title"
                                 value="title" />
                             <MenuItem
                                 icon={order === 'newest' ? <i className="icon icon-16 icon-checkmark" /> : null}
-                                onSelect={onChangeSubscriptionOrder}
+                                onSelect={onChangeSubscriptionsOrder}
                                 primaryText="Newest First"
                                 value="newest" />
                             <MenuItem
                                 icon={order === 'oldest' ? <i className="icon icon-16 icon-checkmark" /> : null}
-                                onSelect={onChangeSubscriptionOrder}
+                                onSelect={onChangeSubscriptionsOrder}
                                 primaryText="Oldest First"
                                 value="oldest" />
                             <div className="menu-divider" />
@@ -313,17 +339,22 @@ export default connect(() => {
         mapStateToProps: (state: State) => ({
             categories: state.categories.items,
             groupedSubscriptions: groupedSubscriptionsSelector(state),
-            isLoading: state.subscriptions.isLoading,
             lastUpdatedAt: state.subscriptions.lastUpdatedAt,
             onlyUnread: state.subscriptions.onlyUnread,
-            order: state.subscriptions.order,
+            profile: state.user.profile,
             subscriptions: state.subscriptions.items,
-            totalUnreadCount: state.subscriptions.totalUnreadCount
+            subscriptionsIsLoading: state.subscriptions.isLoading,
+            subscriptionsOrder: state.subscriptions.order,
+            totalUnreadCount: state.subscriptions.totalUnreadCount,
+            userIsLoaded: state.user.isLoaded,
+            userIsLoading: state.user.isLoading
         }),
         mapDispatchToProps: bindActions({
-            onChangeSubscriptionOrder: changeSubscriptionOrder,
+            onChangeSubscriptionsOrder: changeSubscriptionsOrder,
             onChangeUnreadViewing: changeUnreadViewing,
-            onFetchSubscriptions: fetchSubscriptions
+            onFetchSubscriptions: fetchSubscriptions,
+            onFetchUser: fetchUser,
+            onRevokeToken: revokeToken
         })
     };
 })(Sidebar);

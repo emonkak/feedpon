@@ -1,29 +1,40 @@
+import CSSTransitionGroup from 'react-addons-css-transition-group';
 import React, { PureComponent, cloneElement } from 'react';
 import classnames from 'classnames';
+import { findDOMNode } from 'react-dom';
 
 import Closable from 'components/parts/Closable';
 import createChainedFunction from 'utils/createChainedFunction';
+import getScrollableParent from 'utils/dom/getScrollableParent';
 import { Menu } from 'components/parts/Menu';
 
 interface DropdownProps {
     className?: string;
-    isOpened?: boolean;
+    component?: keyof React.ReactDOM;
+    getScrollableParent?: (element: Element) => Element | Window;
     menu: React.ReactElement<any>;
     onClose?: () => void;
     onSelect?: (value?: any) => void;
-    pullRight?: boolean;
     toggleButton: React.ReactElement<any>;
 }
 
 interface DropdownState {
     isOpened: boolean;
+    pullRight: boolean;
+    pullUp: boolean;
 }
 
 export default class Dropdown extends PureComponent<DropdownProps, DropdownState> {
     static defaultProps = {
-        isOpened: false,
-        pullRight: false
+        component: 'div',
+        getScrollableParent,
+        pullRight: false,
+        pullUp: false
     };
+
+    private containerElement: Element;
+
+    private scrollable: Element | Window;
 
     private menu: Menu;
 
@@ -31,7 +42,9 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
         super(props, context);
 
         this.state = {
-            isOpened: props.isOpened!
+            isOpened: false,
+            pullRight: false,
+            pullUp: false
         };
 
         this.handleClose = this.handleClose.bind(this);
@@ -40,10 +53,9 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
         this.handleToggle = this.handleToggle.bind(this);
     }
 
-    componentWillReceiveProps(nextProps: DropdownProps) {
-        if (this.props.isOpened !== nextProps.isOpened) {
-            this.setState({ isOpened: nextProps.isOpened! });
-        }
+    componentDidMount() {
+        this.containerElement = findDOMNode(this);
+        this.scrollable = this.props.getScrollableParent!(this.containerElement);
     }
 
     handleClose() {
@@ -53,7 +65,7 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
             onClose();
         }
 
-        this.setState({ isOpened: false });
+        this.closeDropdown();
     }
 
     handleKeyDown(event: React.KeyboardEvent<any>) {
@@ -85,15 +97,57 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
             onSelect(value);
         }
 
-        this.setState({ isOpened: false });
+        this.closeDropdown();
     }
 
-    handleToggle(event: React.SyntheticEvent<any>) {
+    handleToggle(event: React.MouseEvent<any>) {
         event.preventDefault();
 
         const { isOpened } = this.state;
 
-        this.setState({ isOpened: !isOpened });
+        isOpened ? this.closeDropdown() : this.openDropdown();
+    }
+
+    openDropdown() {
+        const viewportDimension = this.getViewportDimension();
+        const containerRect = this.containerElement.getBoundingClientRect();
+
+        const topSpace = containerRect.top;
+        const bottomSpace = viewportDimension.height - containerRect.bottom;
+        const leftSpace = containerRect.left;
+        const rightSpace = viewportDimension.width - containerRect.right;
+
+        const pullUp = topSpace > bottomSpace;
+        const pullRight = leftSpace > rightSpace;
+
+        this.setState({
+            isOpened: true,
+            pullRight,
+            pullUp
+        });
+    }
+
+    closeDropdown() {
+        this.setState((state) => ({
+            isOpened: false,
+            pullRight: state.pullRight,
+            pullUp: state.pullUp
+        }));
+    }
+
+    getViewportDimension() {
+        let height = 0;
+        let width = 0;
+
+        if (this.scrollable instanceof Element) {
+            height = this.scrollable.clientHeight;
+            width = this.scrollable.clientWidth;
+        } else if (this.scrollable instanceof Window) {
+            height = this.scrollable.innerHeight;
+            width = this.scrollable.innerWidth;
+        }
+
+        return { height, width };
     }
 
     renderToggleButton() {
@@ -136,21 +190,26 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
     }
 
     render() {
-        const { className, pullRight } = this.props;
-        const { isOpened } = this.state;
+        const { className, component } = this.props;
+        const { isOpened, pullRight, pullUp } = this.state;
+
+        const Component = component!;
 
         return (
-            <span className={classnames('button-group dropdown', className, {
-                'is-opened': isOpened!,
-                'is-pull-right': pullRight!
-            })}>
+            <Component className={classnames('dropdown', className)}>
                 {this.renderToggleButton()}
-                <Closable
-                    onClose={this.handleClose}
-                    isDisabled={!isOpened}>
-                    {this.renderMenu()}
-                </Closable>
-            </span>
+                <CSSTransitionGroup
+                    component="div"
+                    className={classnames('dropdown-menu', {
+                        'is-pull-right': pullRight,
+                        'is-pull-up': pullUp
+                    })}
+                    transitionEnterTimeout={200}
+                    transitionLeaveTimeout={200}
+                    transitionName="menu">
+                    {isOpened ? <Closable onClose={this.handleClose}>{this.renderMenu()}</Closable> : null}
+                </CSSTransitionGroup>
+            </Component>
         );
     }
 }

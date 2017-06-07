@@ -4,14 +4,14 @@ export default function reduceTrackingUrlSettings(settings: TrackingUrlSettings,
     switch (event.type) {
         case 'TRACKING_URL_PATTERN_ADDED':
             return {
-                patterns: [...new Set([...settings.patterns, event.pattern])],
-                version: settings.version
+                ...settings,
+                patterns: [...new Set([...settings.patterns, event.pattern])]
             };
 
         case 'TRACKING_URL_PATTERN_REMOVED':
             return {
-                patterns: settings.patterns.filter((pattern) => pattern !== event.pattern),
-                version: settings.version
+                ...settings,
+                patterns: settings.patterns.filter((pattern) => pattern !== event.pattern)
             };
 
         default:

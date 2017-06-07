@@ -25,24 +25,43 @@ export function fetchStream(streamId: string, options?: StreamOptions): AsyncEve
             options = {
                 numEntries: streamSettings.defaultNumEntries,
                 order: streamSettings.defaultEntryOrder,
-                onlyUnread: streamSettings.onlyUnreadEntries,
+                onlyUnread: streamSettings.onlyUnreadEntries || streamId === 'pins',
                 view: streamSettings.defaultStreamView
             };
         }
 
         let stream = null;
 
-        if (streamId.startsWith('feed/')) {
-            stream = await dispatch(fetchFeedStream(streamId, options));
-        } else if (streamId.startsWith('user/')) {
-            stream = await dispatch(fetchCategoryStream(streamId, options));
-        } else if (streamId === 'all') {
-            stream = await dispatch(fetchAllStream(options));
-        } else if (streamId === 'pins') {
-            stream = await dispatch(fetchPinsStream(options));
+        dispatch({
+            type: 'STREAM_FETCHING',
+            streamId
+        });
+
+        try {
+            if (streamId.startsWith('feed/')) {
+                stream = await dispatch(fetchFeedStream(streamId, options));
+            } else if (streamId.startsWith('user/')) {
+                stream = await dispatch(fetchCategoryStream(streamId, options));
+            } else if (streamId === 'all') {
+                stream = await dispatch(fetchAllStream(options));
+            } else if (streamId === 'pins') {
+                stream = await dispatch(fetchPinsStream(options));
+            }
+        } catch (error) {
+            dispatch({
+                type: 'STREAM_FETCHING_FAILED',
+                streamId
+            });
+
+            throw error;
         }
 
         if (stream) {
+            dispatch({
+                type: 'STREAM_FETCHED',
+                stream
+            });
+
             const urls = stream.entries
                 .filter((entry) => !!entry.url)
                 .map((entry) => entry.url);
@@ -50,6 +69,18 @@ export function fetchStream(streamId: string, options?: StreamOptions): AsyncEve
             const expandedUrls = await dispatch(expandUrls(urls));
 
             await dispatch(fetchBookmarkCounts(expandedUrls));
+        } else {
+            dispatch({
+                type: 'STREAM_FETCHED',
+                stream: {
+                    streamId,
+                    title: 'Stream is not found',
+                    entries: [],
+                    continuation: null,
+                    feed: null,
+                    options
+                }
+            });
         }
     };
 }
@@ -103,189 +134,128 @@ export function fetchMoreEntries(streamId: string, continuation: string, options
 
 function fetchFeedStream(streamId: string, options: StreamOptions): AsyncEvent<Stream> {
     return async ({ dispatch, getState }) => {
-        dispatch({
-            type: 'STREAM_FETCHING',
-            streamId
-        });
+        const token = await dispatch(getFeedlyToken());
 
-        try {
-            const token = await dispatch(getFeedlyToken());
-
-            const [contents, feed] = await Promise.all([
-                feedlyApi.getStreamContents(token.access_token, {
-                    streamId,
-                    ranked: options.order,
-                    unreadOnly: options.onlyUnread
-                }),
-                feedlyApi.getFeed(token.access_token, streamId)
-            ]);
-
-            const stream = {
+        const [contents, feed] = await Promise.all([
+            feedlyApi.getStreamContents(token.access_token, {
                 streamId,
-                title: feed.title || feed.website || feed.id.replace(/^feed\//, ''),
-                entries: contents.items.map(convertEntry),
-                continuation: contents.continuation || null,
-                feed: {
-                    feedId: feed.id,
-                    streamId: feed.id,
-                    title: feed.title,
-                    description: feed.description || '',
-                    url: feed.website || '',
-                    feedUrl: feed.id.replace(/^feed\//, ''),
-                    iconUrl: feed.iconUrl || '',
-                    subscribers: feed.subscribers,
-                    isLoading: false,
-                },
-                options
-            };
+                ranked: options.order,
+                unreadOnly: options.onlyUnread
+            }),
+            feedlyApi.getFeed(token.access_token, streamId)
+        ]);
 
-            dispatch({
-                type: 'STREAM_FETCHED',
-                stream
-            });
+        const stream = {
+            streamId,
+            title: feed.title || feed.website || feed.id.replace(/^feed\//, ''),
+            entries: contents.items.map(convertEntry),
+            continuation: contents.continuation || null,
+            feed: {
+                feedId: feed.id,
+                streamId: feed.id,
+                title: feed.title,
+                description: feed.description || '',
+                url: feed.website || '',
+                feedUrl: feed.id.replace(/^feed\//, ''),
+                iconUrl: feed.iconUrl || '',
+                subscribers: feed.subscribers,
+                isLoading: false,
+            },
+            options
+        };
 
-            return stream;
-        } catch (error) {
-            dispatch({
-                type: 'STREAM_FETCHING_FAILED',
-                streamId
-            });
-
-            throw error;
-        }
+        return stream;
     };
 }
 
 function fetchCategoryStream(streamId: string, options: StreamOptions): AsyncEvent<Stream> {
     return async ({ dispatch, getState }) => {
-        dispatch({
-            type: 'STREAM_FETCHING',
-            streamId
+        const token = await dispatch(getFeedlyToken());
+
+        const contents = await feedlyApi.getStreamContents(token.access_token, {
+            streamId,
+            ranked: options.order,
+            unreadOnly: options.onlyUnread
         });
 
-        try {
-            const token = await dispatch(getFeedlyToken());
+        const { categories } = getState();
+        const category = categories.items
+            .find((category) => category.streamId === streamId) || null;
 
-            const contents = await feedlyApi.getStreamContents(token.access_token, {
-                streamId,
-                ranked: options.order,
-                unreadOnly: options.onlyUnread
-            });
+        const stream = {
+            streamId,
+            title: category ? category.label : '',
+            entries: contents.items.map(convertEntry),
+            continuation: contents.continuation || null,
+            feed: null,
+            options
+        };
 
-            const { categories } = getState();
-            const category = categories.items
-                .find((category) => category.streamId === streamId) || null;
+        dispatch({
+            type: 'STREAM_FETCHED',
+            stream
+        });
 
-            const stream = {
-                streamId,
-                title: category ? category.label : '',
-                entries: contents.items.map(convertEntry),
-                continuation: contents.continuation || null,
-                feed: null,
-                options
-            };
-
-            dispatch({
-                type: 'STREAM_FETCHED',
-                stream
-            });
-
-            return stream;
-        } catch (error) {
-            dispatch({
-                type: 'STREAM_FETCHING_FAILED',
-                streamId
-            });
-
-            throw error;
-        }
+        return stream;
     };
 }
 
 function fetchAllStream(options: StreamOptions): AsyncEvent<Stream> {
     return async ({ dispatch, getState }) => {
-        dispatch({
-            type: 'STREAM_FETCHING',
-            streamId: 'all'
+        const token = await dispatch(getFeedlyToken());
+
+        const streamId = toFeedlyStreamId('all', token.id);
+        const contents = await feedlyApi.getStreamContents(token.access_token, {
+            streamId,
+            ranked: options.order,
+            unreadOnly: options.onlyUnread
         });
 
-        try {
-            const token = await dispatch(getFeedlyToken());
+        const stream = {
+            streamId: 'all',
+            title: 'All',
+            entries: contents.items.map(convertEntry),
+            continuation: contents.continuation || null,
+            feed: null,
+            options
+        };
 
-            const streamId = toFeedlyStreamId('all', token.id);
-            const contents = await feedlyApi.getStreamContents(token.access_token, {
-                streamId,
-                ranked: options.order,
-                unreadOnly: options.onlyUnread
-            });
+        dispatch({
+            type: 'STREAM_FETCHED',
+            stream
+        });
 
-            const stream = {
-                streamId: 'all',
-                title: 'All',
-                entries: contents.items.map(convertEntry),
-                continuation: contents.continuation || null,
-                feed: null,
-                options
-            };
-
-            dispatch({
-                type: 'STREAM_FETCHED',
-                stream
-            });
-
-            return stream;
-        } catch (error) {
-            dispatch({
-                type: 'STREAM_FETCHING_FAILED',
-                streamId: 'all'
-            });
-
-            throw error;
-        }
+        return stream;
     };
 }
 
 function fetchPinsStream(options: StreamOptions): AsyncEvent<Stream> {
     return async ({ dispatch, getState }) => {
-        dispatch({
-            type: 'STREAM_FETCHING',
-            streamId: 'pins'
+        const token = await dispatch(getFeedlyToken());
+
+        const streamId = toFeedlyStreamId('pins', token.id);
+        const contents = await feedlyApi.getStreamContents(token.access_token, {
+            streamId,
+            ranked: options.order,
+            unreadOnly: options.onlyUnread
         });
 
-        try {
-            const token = await dispatch(getFeedlyToken());
+        const stream = {
+            type: 'STREAM_FETCHED',
+            streamId: 'pins',
+            title: 'Pins',
+            entries: contents.items.map(convertEntry),
+            continuation: contents.continuation || null,
+            feed: null,
+            options
+        };
 
-            const streamId = toFeedlyStreamId('pins', token.id);
-            const contents = await feedlyApi.getStreamContents(token.access_token, {
-                streamId,
-                ranked: options.order,
-                unreadOnly: options.onlyUnread
-            });
+        dispatch({
+            type: 'STREAM_FETCHED',
+            stream
+        });
 
-            const stream = {
-                type: 'STREAM_FETCHED',
-                streamId: 'pins',
-                title: 'Pins',
-                entries: contents.items.map(convertEntry),
-                continuation: contents.continuation || null,
-                feed: null,
-                options
-            };
-
-            dispatch({
-                type: 'STREAM_FETCHED',
-                stream
-            });
-
-            return stream;
-        } catch (error) {
-            dispatch({
-                type: 'STREAM_FETCHING_FAILED',
-                streamId: 'pins'
-            });
-
-            throw error;
-        }
+        return stream;
     };
 }
 
