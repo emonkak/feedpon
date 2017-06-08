@@ -209,6 +209,7 @@ class SubscriptionTreeHeader extends PureComponent<SubscriptionTreeHeaderProps, 
                 </button>
                 <strong className="u-flex-grow-1 u-text-small">{lastUpdate}</strong>
                 <Dropdown
+                    pullUp={false}
                     toggleButton={
                         <button className="u-flex-shrink-0 button-icon button-icon-32">
                             <i className="icon icon-16 icon-more" />

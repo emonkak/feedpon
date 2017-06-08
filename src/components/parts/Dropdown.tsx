@@ -15,6 +15,8 @@ interface DropdownProps {
     menu: React.ReactElement<any>;
     onClose?: () => void;
     onSelect?: (value?: any) => void;
+    pullRight?: boolean;
+    pullUp?: boolean;
     toggleButton: React.ReactElement<any>;
 }
 
@@ -27,9 +29,7 @@ interface DropdownState {
 export default class Dropdown extends PureComponent<DropdownProps, DropdownState> {
     static defaultProps = {
         component: 'div',
-        getScrollableParent,
-        pullRight: false,
-        pullUp: false
+        getScrollableParent
     };
 
     private containerElement: Element;
@@ -109,6 +109,8 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
     }
 
     openDropdown() {
+        const { pullRight, pullUp } = this.props;
+
         const viewportDimension = this.getViewportDimension();
         const containerRect = this.containerElement.getBoundingClientRect();
 
@@ -117,13 +119,10 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
         const leftSpace = containerRect.left;
         const rightSpace = viewportDimension.width - containerRect.right;
 
-        const pullUp = topSpace > bottomSpace;
-        const pullRight = leftSpace > rightSpace;
-
         this.setState({
             isOpened: true,
-            pullRight,
-            pullUp
+            pullRight: pullRight != null ? pullRight : leftSpace > rightSpace,
+            pullUp: pullUp != null ? pullUp : topSpace > bottomSpace
         });
     }
 
