@@ -22,7 +22,7 @@ export class Tree extends PureComponent<TreeProps, {}> {
     }
 
     shouldComponentUpdate(nextProps: TreeProps, nextState: {}) {
-        return nextProps.isExpanded &&
+        return nextProps.isExpanded! &&
             (this.props.children !== nextProps.children ||
              this.props.isExpanded !== nextProps.isExpanded ||
              this.props.onSelect !== nextProps.onSelect ||
