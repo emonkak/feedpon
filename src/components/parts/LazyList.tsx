@@ -37,6 +37,8 @@ export default class LazyList extends PureComponent<LazyListProps, LazyListState
 
     private heights: { [key: string]: number } = {};
 
+    private containerElement: HTMLElement;
+
     private scrollable: Element | Window;
 
     constructor(props: LazyListProps, context: any) {
@@ -54,7 +56,9 @@ export default class LazyList extends PureComponent<LazyListProps, LazyListState
     }
 
     componentDidMount() {
-        this.scrollable = this.props.getScrollableParent!(findDOMNode(this));
+        this.containerElement = findDOMNode<HTMLElement>(this);
+
+        this.scrollable = this.props.getScrollableParent!(this.containerElement);
         this.scrollable.addEventListener('resize', this.handleUpdateHeight, { passive: true } as any);
         this.scrollable.addEventListener('scroll', this.handleScroll, { passive: true } as any);
         this.scrollable.addEventListener('touchmove', this.handleScroll, { passive: true } as any);
@@ -125,7 +129,7 @@ export default class LazyList extends PureComponent<LazyListProps, LazyListState
         let belowSpace = 0;
         let startIndex = 0;
         let endIndex = 0;
-        let currentTop = findDOMNode<HTMLElement>(this).offsetTop;
+        let currentTop = this.containerElement.offsetTop;
 
         for (let i = 0, l = items.length; i < l; i++) {
             const item = items[i]!;
