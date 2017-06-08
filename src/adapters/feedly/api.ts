@@ -1,12 +1,12 @@
 import * as types from './types';
-import toQueryString from 'utils/toQueryString';
+import buildQueryString from 'utils/buildQueryString';
 
 const ENDPOINT = 'https://cloud.feedly.com/';
 
 // Authentication API:
 export function createAuthUrl(input: types.AuthenticateInput): string {
     return ENDPOINT + 'v3/auth/auth?' +
-        toQueryString({
+        buildQueryString({
             client_id: input.client_id,
             redirect_uri: input.redirect_uri,
             response_type: input.response_type,
@@ -262,7 +262,7 @@ export function deleteTag(accessToken: string, tagIds: string[]): Promise<void> 
 
 // Utils:
 function doGet<T>(path: string, params?: { [key: string]: any } | null, headers?: { [key: string]: string }): Promise<T> {
-    const url = ENDPOINT + path + (params ? '?' + toQueryString(params) : '');
+    const url = ENDPOINT + path + (params ? '?' + buildQueryString(params) : '');
 
     return fetch(url, {
             method: 'GET',

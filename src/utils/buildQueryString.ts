@@ -1,4 +1,4 @@
-export default function toQueryString(input: any): string {
+export default function buildQueryString(input: any): string {
     const params = new URLSearchParams();
     for (const key of Object.keys(input)) {
         if (Array.isArray(input[key])) {
