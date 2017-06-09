@@ -4,9 +4,14 @@ function errorHandlingMiddlewareFactory<TState, TEvent>(handler: (error: any, st
     return (store) => (event, next) => {
         const result = next(event);
 
-        return result instanceof Promise
-            ? result.catch((error) => handler(error, store))
-            : result;
+        if (result instanceof Promise) {
+            return result.catch((error) => {
+                handler(error, store);
+                return Promise.reject(error);
+            });
+        }
+
+        return result;
     };
 }
 
