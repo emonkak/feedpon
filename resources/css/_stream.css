@@ -17,12 +17,6 @@ a.stream-title:hover {
   z-index: 20;
 }
 
-.stream-header-content {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
 .stream-metadata {
   color: var(--dark-color);
 }

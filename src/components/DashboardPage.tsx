@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 
 import Dropdown from 'components/parts/Dropdown';
+import MainLayout from 'components/layouts/MainLayout';
 import Modal from 'components/parts/Modal';
 import Navbar from 'components/parts/Navbar';
 import bindActions from 'utils/flux/bindActions';
@@ -497,14 +498,9 @@ class DashboardPage extends PureComponent<DashboardProps, DashboardState> {
 
     render() {
         return (
-            <div className="l-main">
-                <div className="l-main-header">
-                    {this.renderNavbar()}
-                </div>
-                <div className="l-main-content">
-                    {this.renderContent()}
-                </div>
-            </div>
+            <MainLayout navbar={this.renderNavbar()}>
+                {this.renderContent()}
+            </MainLayout>
         );
     }
 }

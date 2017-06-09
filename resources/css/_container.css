@@ -4,6 +4,10 @@
   max-width: var(--container-width);
 }
 
+.container-narrow {
+  max-width: 480px;
+}
+
 @media (--md-viewport) {
   .container {
     padding: 0 2.5rem;

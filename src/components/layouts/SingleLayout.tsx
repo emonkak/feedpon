@@ -13,13 +13,11 @@ class SingleLayout extends PureComponent<SingleLayoutProps, {}> {
         const { children, isLoading } = this.props;
 
         return (
-            <div>
+            <div className="l-single">
                 <div className="l-notifications">
                     <Notifications />
                 </div>
-                <div className="l-main-content">
-                    {children}
-                </div>
+                {children}
                 <div className="l-backdrop">
                     {isLoading ? <i className="icon icon-48 icon-spinner icon-rotating" /> : null}
                 </div>
@@ -27,7 +25,6 @@ class SingleLayout extends PureComponent<SingleLayoutProps, {}> {
         );
     }
 }
-
 
 export default connect({
     mapStateToProps: (state: State) => ({

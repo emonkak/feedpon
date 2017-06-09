@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
 
+import MainLayout from 'components/layouts/MainLayout';
 import Navbar from 'components/parts/Navbar';
 import connect from 'utils/flux/react/connect';
 import { State } from 'messaging/types';
@@ -222,14 +223,9 @@ class AboutPage extends PureComponent<AboutPageProps, {}> {
 
     render() {
         return (
-            <div className="l-main">
-                <div className="l-main-header">
-                    {this.renderNavbar()}
-                </div>
-                <div className="l-main-content">
-                    {this.renderContent()}
-                </div>
-            </div>
+            <MainLayout navbar={this.renderNavbar()}>
+                {this.renderContent()}
+            </MainLayout>
         );
     }
 }

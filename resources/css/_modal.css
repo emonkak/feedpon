@@ -9,7 +9,7 @@
   padding: var(--baseline-height) 1.5rem;
   overflow-y: auto;
   overflow-x: hidden;
-  background-color: rgba(0, 0, 0, 0.75);
+  background-color: rgba(0, 0, 0, 0.5);
   transition: opacity 0.2s cubic-bezier(0.465, 0.183, 0.153, 0.946),
               transform 0.2s cubic-bezier(0.465, 0.183, 0.153, 0.946);
   will-change: opacity, transform;

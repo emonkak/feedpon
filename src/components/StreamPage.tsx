@@ -4,6 +4,7 @@ import { createSelector } from 'reselect';
 
 import Dropdown from 'components/parts/Dropdown';
 import EntryList from 'components/parts/EntryList';
+import MainLayout from 'components/layouts/MainLayout';
 import Navbar from 'components/parts/Navbar';
 import SubscribeButton from 'components/parts/SubscribeButton';
 import SubscribeMenu from 'components/parts/SubscribeMenu';
@@ -297,8 +298,8 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
             return (
                 <header className="stream-header">
                     <div className="container">
-                        <div className="stream-header-content">
-                            <div className="u-margin-right">
+                        <div className="u-flex u-flex-align-items-center u-flex-justify-content-between">
+                            <div className="u-margin-right-2">
                                 <div className="list-inline list-inline-dotted">
                                     <div className="list-inline-item u-text-muted">{stream.feed.subscribers} subscribers</div>
                                 </div>
@@ -385,16 +386,11 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
 
     render() {
         return (
-            <div className="l-main">
-                <div className="l-main-header">
-                    {this.renderNavbar()}
-                </div>
-                <div className="l-main-content">
-                    {this.renderHeader()}
-                    {this.renderEntryList()}
-                    {this.renderFooter()}
-                </div>
-            </div>
+            <MainLayout navbar={this.renderNavbar()}>
+                {this.renderHeader()}
+                {this.renderEntryList()}
+                {this.renderFooter()}
+            </MainLayout>
         );
     }
 }

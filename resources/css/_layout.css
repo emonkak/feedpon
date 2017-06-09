@@ -18,7 +18,7 @@
 
 .l-root.is-opened::before {
   visibility: visible;
-  opacity: 0.75;
+  opacity: 0.5;
   transition-delay: 0s;
 }
 
@@ -41,19 +41,19 @@
   z-index: 300;
   overflow-x: hidden;
   overflow-y: auto;
-  background-color: var(--light-color);
   border-right: 1px solid var(--medium-dark-color);
   transition: left 0.2s ease-in-out;
   -webkit-overflow-scrolling: touch;
 }
 
 .l-main {
-  width: 100%;
   transition: padding 0.2s ease-in-out;
 }
 
 .l-main-content {
-  padding-top: var(--navbar-height);
+  background-color: var(--default-background-color);
+  overflow: hidden;
+  padding: var(--navbar-height) 0 0;
 }
 
 .l-main-header {
@@ -63,6 +63,11 @@
   width: 100%;
   z-index: 100;
   transition: padding 0.2s ease-in-out;
+}
+
+.l-main-footer {
+  padding: calc(var(--baseline-height) - 1px) 0 var(--baseline-height);
+  border-top: 1px solid var(--medium-dark-color);
 }
 
 .l-notifications {
@@ -86,14 +91,19 @@
   z-index: 300;
   color: var(--default-background-color);
   background-color: #000;
+  opacity: 0;
   visibility: hidden;
   transition: visibility 0s ease-in-out 0.2s, opacity 0.2s ease-in-out;
 }
 
 .l-backdrop:not(:empty) {
   visibility: visible;
-  opacity: 0.75;
+  opacity: 0.5;
   transition-delay: 0s;
+}
+
+.l-single {
+  padding: var(--navbar-height) 0 0;
 }
 
 @media (--md-viewport) {

@@ -6,6 +6,7 @@ import { createSelector } from 'reselect';
 import ConfirmModal from 'components/parts/ConfirmModal';
 import Dropdown from 'components/parts/Dropdown';
 import LazyList from 'components/parts/LazyList';
+import MainLayout from 'components/layouts/MainLayout';
 import ModalButton from 'components/parts/ModalButton';
 import Nav from 'components/parts/Nav';
 import NavItem from 'components/parts/NavItem';
@@ -154,14 +155,9 @@ class CategoriesPage extends PureComponent<CategoriesPageProps, CategoriesPageSt
 
     render() {
         return (
-            <div className="l-main">
-                <div className="l-main-header">
-                    {this.renderNavbar()}
-                </div>
-                <div className="l-main-content">
-                    {this.renderContent()}
-                </div>
-            </div>
+            <MainLayout navbar={this.renderNavbar()}>
+                {this.renderContent()}
+            </MainLayout>
         );
     }
 }

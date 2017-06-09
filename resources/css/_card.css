@@ -1,0 +1,12 @@
+.card {
+  margin: var(--baseline-height) 0;
+  padding: calc(var(--baseline-height) * 2 - 1px) calc(1.5rem - 1px);
+  background-color: var(--default-background-color);
+  border: 1px solid var(--medium-dark-color);
+  border-radius: 4px;
+}
+
+.card-shadow {
+  box-shadow: 0 2px 18px var(--shadow-color),
+              0 0 6px var(--shadow-color);
+}

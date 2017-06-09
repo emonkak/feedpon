@@ -63,18 +63,17 @@ html, body {
   font-size: 14px;
   line-height: var(--baseline-height);
   touch-action: manipulation;
-  -webkit-font-smoothing: antialiased;
   -webkit-text-size-adjust: 100%;
 }
 
 body {
   margin: 0;
   color: var(--default-color);
-  background-color: var(--default-background-color);
+  background-color: var(--light-color);
 }
 
 h1, h2, h3, h4, h5, h6 {
-  margin: var(--baseline-height) 0 calc(var(--baseline-height) / 2);
+  margin: 0 0 calc(var(--baseline-height) / 2);
   font-weight: 600;
 }
 

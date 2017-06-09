@@ -9,6 +9,7 @@ import '@emonkak/enumerable/extensions/toArray';
 
 import FeedComponent from 'components/parts/Feed';
 import FeedPlaceholder from 'components/parts/FeedPlaceholder';
+import MainLayout from 'components/layouts/MainLayout';
 import Navbar from 'components/parts/Navbar';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
@@ -179,16 +180,11 @@ class SearchPage extends PureComponent<SearchPageProps, {}> {
 
     render() {
         return (
-            <div className="l-main">
-                <div className="l-main-header">
-                    {this.renderNavbar()}
-                </div>
-                <div className="l-main-content">
-                    {this.renderContent()}
-                </div>
-            </div>
+            <MainLayout navbar={this.renderNavbar()}>
+                {this.renderContent()}
+            </MainLayout>
         );
-    }
+   }
 }
 
 export default connect({

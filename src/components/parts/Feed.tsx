@@ -24,7 +24,7 @@ export default class FeedComponent extends PureComponent<FeedProps, {}> {
         return (
             <li className="list-group-item">
                 <div className="u-flex u-flex-justify-content-between u-flex-align-items-center">
-                    <div className="u-margin-right">
+                    <div className="u-margin-right-2">
                         <Link className="link-strong" to={`/streams/${encodeURIComponent(feed.streamId)}`}>{feed.title}</Link>
                         <div className="u-text-small"><strong>{feed.subscribers}</strong> subscribers</div>
                         <div className="u-text-muted">{feed.description}</div>

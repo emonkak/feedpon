@@ -15,7 +15,7 @@ import restoreState from 'utils/restoreState';
 import routes from 'components/routes';
 import saveStateMiddleware from 'utils/flux/middlewares/saveStateMiddleware';
 import waitForReadyState from 'utils/dom/waitForReadyState';
-import { VERSION } from 'constants';
+import { VERSION } from './constants';
 import { sendNotification } from 'messaging/notifications/actions';
 
 function save(key: string, value: any): void {

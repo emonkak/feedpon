@@ -3,6 +3,7 @@ import { History } from 'history';
 import { Params } from 'react-router/lib/Router';
 
 import KeyboardSettings from 'components/KeyboardSettings';
+import MainLayout from 'components/layouts/MainLayout';
 import Nav from 'components/parts/Nav';
 import NavItem from 'components/parts/NavItem';
 import Navbar from 'components/parts/Navbar';
@@ -98,14 +99,9 @@ export default class SettingsPage extends PureComponent<SettingsProps, {}> {
 
     render() {
         return (
-            <div className="l-main">
-                <div className="l-main-header">
-                    {this.renderNavbar()}
-                </div>
-                <div className="l-main-content">
-                    {this.renderContent()}
-                </div>
-            </div>
+            <MainLayout navbar={this.renderNavbar()}>
+                {this.renderContent()}
+            </MainLayout>
         );
     }
 }

@@ -187,7 +187,7 @@ a.entry-action.is-selected {
   min-height: calc(var(--baseline-height) * 2);
 }
 
-@media (pointer:coarse) {
+@media (pointer: coarse) {
   .entry.is-active .entry-nav {
     visibility: visible;
   }
