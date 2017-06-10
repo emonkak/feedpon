@@ -5,7 +5,7 @@
 }
 
 .container-narrow {
-  max-width: 480px;
+  max-width: var(--container-narrow-width);
 }
 
 @media (--md-viewport) {

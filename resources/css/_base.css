@@ -45,6 +45,7 @@
   --navbar-height: 48px;
   --sidebar-width: 288px;
   --container-width: 768px;
+  --container-narrow-width: 480px;
 }
 
 * {
