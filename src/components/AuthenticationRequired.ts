@@ -2,11 +2,11 @@ import { History } from 'history';
 import { PureComponent } from 'react';
 
 import connect from 'utils/flux/react/connect';
-import { Credential, State } from 'messaging/types';
+import { State } from 'messaging/types';
 
 interface AuthenticationRequiredProps {
     children: React.ReactElement<any>;
-    credential: Credential;
+    isAuthenticated: boolean;
     router: History;
 }
 
@@ -20,20 +20,22 @@ class AuthenticationRequired extends PureComponent<AuthenticationRequiredProps, 
     }
 
     update(props: AuthenticationRequiredProps) {
-        const { credential, router } = props;
+        const { isAuthenticated, router } = props;
 
-        if (!credential.token) {
+        if (!isAuthenticated) {
             router.replace('/authentication');
         }
     }
 
     render() {
-        return this.props.children;
+        const { children, isAuthenticated } = this.props;
+
+        return isAuthenticated ? children : null;
     }
 }
 
 export default connect(() => ({
     mapStateToProps: (state: State) => ({
-        credential: state.credential
+        isAuthenticated: !!state.credential.token
     })
 }))(AuthenticationRequired);
