@@ -2,6 +2,12 @@ import { User, Event } from 'messaging/types';
 
 export default function reduceUser(user: User, event: Event): User {
     switch (event.type) {
+        case 'APPLICATION_INITIALIZED':
+            return {
+                ...user,
+                isLoading: false
+            };
+
         case 'USER_FETCHING':
             return {
                 ...user,

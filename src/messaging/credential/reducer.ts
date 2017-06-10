@@ -2,6 +2,12 @@ import { Credential, Event } from 'messaging/types';
 
 export default function reduceCredential(credential: Credential, event: Event): Credential {
     switch (event.type) {
+        case 'APPLICATION_INITIALIZED':
+            return {
+                ...credential,
+                isLoading: false
+            };
+
         case 'TOKEN_RECEIVING':
             return {
                 ...credential,
