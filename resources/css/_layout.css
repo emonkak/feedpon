@@ -1,4 +1,4 @@
-.l-root::before {
+.l-openable::before {
   content: '';
   position: fixed;
   visibility: hidden;
@@ -12,23 +12,23 @@
   transition: visibility 0s ease-in-out 0.2s, opacity 0.2s ease-in-out;
 }
 
-.l-root.is-opened {
+.l-openable.is-opened {
   overflow: hidden;
 }
 
-.l-root.is-opened::before {
+.l-openable.is-opened::before {
   visibility: visible;
   opacity: 0.5;
   transition-delay: 0s;
 }
 
-.l-root.is-opened > .l-sidebar {
+.l-openable.is-opened > .l-sidebar {
   left: 0;
 }
 
-.l-root.is-opened > .l-sidebar ~ .l-main,
-.l-root.is-opened > .l-sidebar ~ .l-main > .l-main-header,
-.l-root.is-opened > .l-sidebar ~ .l-notifications {
+.l-openable.is-opened > .l-sidebar ~ .l-main,
+.l-openable.is-opened > .l-sidebar ~ .l-main > .l-main-header,
+.l-openable.is-opened > .l-sidebar ~ .l-notifications {
   padding-left: var(--sidebar-width);
 }
 
@@ -83,7 +83,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
@@ -102,7 +102,7 @@
   transition-delay: 0s;
 }
 
-.l-single {
+.l-single-content {
   padding: var(--navbar-height) 0 0;
 }
 

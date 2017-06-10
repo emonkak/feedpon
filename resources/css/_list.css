@@ -23,7 +23,8 @@
   margin: 0 0 var(--baseline-height);
 }
 
-.list-group-item {
+.list-group-item,
+a.list-group-item {
   display: block;
   padding: calc(var(--baseline-height) / 4) 1rem;
   color: inherit;
@@ -49,7 +50,7 @@
   margin-bottom: 0;
 }
 
-a.list-group-item:hover {
+a.list-group-item:hover,
+label.list-group-item:hover {
   background-color: var(--light-color);
-  text-decoration: none;
 }

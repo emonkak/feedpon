@@ -101,7 +101,7 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps, SidebarLayoutState
 
         return (
             <div
-                className={classnames('l-root', {
+                className={classnames('l-openable', {
                     'is-opened': sidebarIsOpened
                 })}
                 onClick={this.handleCloseSidebar}>

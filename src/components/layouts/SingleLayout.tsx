@@ -13,11 +13,13 @@ class SingleLayout extends PureComponent<SingleLayoutProps, {}> {
         const { children, isLoading } = this.props;
 
         return (
-            <div className="l-single">
+            <div>
                 <div className="l-notifications">
                     <Notifications />
                 </div>
-                {children}
+                <div className="l-single-content">
+                    {children}
+                </div>
                 <div className="l-backdrop">
                     {isLoading ? <i className="icon icon-48 icon-spinner icon-rotating" /> : null}
                 </div>

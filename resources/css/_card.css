@@ -1,5 +1,5 @@
 .card {
-  margin: var(--baseline-height) 0;
+  margin: 0 0 var(--baseline-height);
   padding: calc(var(--baseline-height) * 2 - 1px) calc(1.5rem - 1px);
   background-color: var(--default-background-color);
   border: 1px solid var(--medium-dark-color);
