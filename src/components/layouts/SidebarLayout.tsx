@@ -110,7 +110,7 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
                     'is-opened': sidebarIsOpened
                 })}
                 onClick={this.handleCloseSidebar}>
-                <div className={classnames('l-sidebar', { 'is-pinned': sidebarIsOpened })}>
+                <div className={'l-sidebar'}>
                     <Sidebar router={router} location={location} />
                 </div>
                 <div className="l-notifications">
