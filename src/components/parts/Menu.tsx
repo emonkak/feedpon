@@ -1,22 +1,15 @@
 import React, { Children, PureComponent, cloneElement } from 'react';
-import classnames from 'classnames';
 import { findDOMNode } from 'react-dom';
 
 import createChainedFunction from 'utils/createChainedFunction';
 
 interface MenuProps {
-    className?: string;
     onClose?: () => void;
     onKeyDown?: (event: React.KeyboardEvent<any>) => void;
     onSelect?: (value?: any) => void;
-    pullRight?: boolean;
 }
 
 export class Menu extends PureComponent<MenuProps, {}> {
-    static defaultProps = {
-        pullRight: false
-    };
-
     focusPrevious() {
         const { activeIndex, elements } = this.getFocusableElements();
 
@@ -82,11 +75,11 @@ export class Menu extends PureComponent<MenuProps, {}> {
     }
 
     render() {
-        const { children, className, onKeyDown, pullRight } = this.props;
+        const { children, onKeyDown } = this.props;
 
         return (
             <div
-                className={classnames(className, 'menu', { 'menu-pull-right': pullRight! })}
+                className="menu"
                 onKeyDown={onKeyDown}>
                 {Children.toArray(children).map(this.renderChild, this)}
             </div>

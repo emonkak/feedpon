@@ -8,23 +8,25 @@
   margin-bottom: 0;
 }
 
-.autocomplete.is-opened > .autocomplete-form > .form-control {
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
-}
-
-.autocomplete.is-opened > .autocomplete-menu:not(:empty) {
-  display: block;
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
-}
-
 .autocomplete-menu {
   display: none;
   position: absolute;
   top: 100%;
   left: 0;
   width: 100%;
-  margin-bottom: var(--baseline-height);
   z-index: 2000;
+}
+
+.autocomplete.is-opened > .autocomplete-form > .form-control {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.autocomplete.is-opened > .autocomplete-menu {
+  display: block;
+}
+
+.autocomplete.is-opened > .autocomplete-menu > .menu {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
 }

@@ -16,6 +16,7 @@
   max-width: calc(100vw - 100%);
   max-height: calc(100vh - 100%);
   z-index: 2000;
+  overflow-y: auto;
 }
 
 @media (--md-viewport) {

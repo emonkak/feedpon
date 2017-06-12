@@ -149,22 +149,23 @@ export default class Autocomplete extends PureComponent<AutoCompleteProps, Autoc
                 onClose={this.handleClose}
                 isDisabled={!isOpened}>
                 <div className={classnames('autocomplete', {
-                    'is-opened': isOpened
+                    'is-opened': isOpened && candidates.length > 0
                 })}>
                     <form className="autocomplete-form"
                           onSubmit={this.handleSubmit}>
                         {this.renderInputControl()}
                     </form>
-                    <Menu
-                        ref={(ref) => this.menu = ref}
-                        className="autocomplete-menu"
-                        onKeyDown={this.handleKeyDown}
-                        onSelect={this.handleSelect}
-                        onClose={this.handleClose}>
-                        {candidates.map((candidate) => renderCandidate(candidate, query))}
-                        {candidates.length > 0 && Children.count(extraItems) > 0 ? <div className="menu-divider" /> : null}
-                        {extraItems}
-                    </Menu>
+                    <div className="autocomplete-menu">
+                        <Menu
+                            ref={(ref) => this.menu = ref}
+                            onKeyDown={this.handleKeyDown}
+                            onSelect={this.handleSelect}
+                            onClose={this.handleClose}>
+                            {candidates.map((candidate) => renderCandidate(candidate, query))}
+                            {candidates.length > 0 && Children.count(extraItems) > 0 ? <div className="menu-divider" /> : null}
+                            {extraItems}
+                        </Menu>
+                    </div>
                 </div>
             </Closable>
         );

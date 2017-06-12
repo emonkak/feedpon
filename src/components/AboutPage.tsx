@@ -223,7 +223,7 @@ class AboutPage extends PureComponent<AboutPageProps, {}> {
 
     render() {
         return (
-            <MainLayout navbar={this.renderNavbar()}>
+            <MainLayout header={this.renderNavbar()}>
                 {this.renderContent()}
             </MainLayout>
         );

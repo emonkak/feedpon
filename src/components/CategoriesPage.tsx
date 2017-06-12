@@ -155,7 +155,7 @@ class CategoriesPage extends PureComponent<CategoriesPageProps, CategoriesPageSt
 
     render() {
         return (
-            <MainLayout navbar={this.renderNavbar()}>
+            <MainLayout header={this.renderNavbar()}>
                 {this.renderContent()}
             </MainLayout>
         );

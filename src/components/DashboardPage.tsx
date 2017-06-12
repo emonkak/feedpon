@@ -498,7 +498,7 @@ class DashboardPage extends PureComponent<DashboardProps, DashboardState> {
 
     render() {
         return (
-            <MainLayout navbar={this.renderNavbar()}>
+            <MainLayout header={this.renderNavbar()}>
                 {this.renderContent()}
             </MainLayout>
         );

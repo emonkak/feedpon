@@ -41,6 +41,7 @@
   z-index: 300;
   overflow-x: hidden;
   overflow-y: auto;
+  background-color: var(--light-color);
   border-right: 1px solid var(--medium-dark-color);
   transition: left 0.2s ease-in-out;
   -webkit-overflow-scrolling: touch;

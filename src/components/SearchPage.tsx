@@ -180,7 +180,7 @@ class SearchPage extends PureComponent<SearchPageProps, {}> {
 
     render() {
         return (
-            <MainLayout navbar={this.renderNavbar()}>
+            <MainLayout header={this.renderNavbar()}>
                 {this.renderContent()}
             </MainLayout>
         );
