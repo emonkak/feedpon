@@ -16,7 +16,7 @@ import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
 import debounceEventHandler from 'utils/debounceEventHandler';
 import { Category, State, Subscription } from 'messaging/types';
-import { Menu, MenuForm, MenuItem } from 'components/parts/Menu';
+import { MenuForm, MenuItem } from 'components/parts/Menu';
 import { Params } from 'react-router/lib/Router';
 import { addToCategory, removeFromCategory, unsubscribe } from 'messaging/subscriptions/actions';
 import { createCategory, deleteCategory, updateCategory } from 'messaging/categories/actions';
@@ -229,43 +229,32 @@ class SubscriptionItem extends PureComponent<SubscriptionItemProps, {}> {
                     <div className="u-margin-left-2 u-text-right u-sm-none">
                         <RelativeTime className="u-text-small u-text-muted" time={subscription.updatedAt} />
                     </div>
-                    <Dropdown
-                        toggleButton={
-                            <button className="button-icon button-icon-24 u-margin-left-2" disabled={subscription.isLoading}>
-                                <i className={classnames('icon icon-20', subscription.isLoading ? 'icon-spinner icon-rotating' : 'icon-menu-2' )} />
-                            </button>
-                        }
-                        menu={
-                            <SubscriptionMenu
-                                categories={categories}
-                                onAddToCategory={onAddToCategory}
-                                onCreateCategory={onCreateCategory}
-                                onRemoveFromCategory={onRemoveFromCategory}
-                                onUnsubscribe={onUnsubscribe}
-                                subscription={subscription} />
-                        } />
+                    <SubscriptionDropdown
+                        categories={categories}
+                        onAddToCategory={onAddToCategory}
+                        onCreateCategory={onCreateCategory}
+                        onRemoveFromCategory={onRemoveFromCategory}
+                        onUnsubscribe={onUnsubscribe}
+                        subscription={subscription} />
                 </div>
             </li>
         );
     }
 }
 
-interface SubscriptionMenuProps {
+interface SubscriptionDropdownProps {
     categories: Category[];
     subscription: Subscription;
     onAddToCategory: (subscription: Subscription, label: string) => void;
-    onClose?: () => void;
     onCreateCategory: (label: string, callback: (category: Category) => void) => void;
-    onKeyDown?: (event: React.KeyboardEvent<any>) => void;
     onRemoveFromCategory: (subscription: Subscription, label: string) => void;
-    onSelect?: (value?: any) => void;
     onUnsubscribe: (subscription: Subscription) => void;
 }
 
-class SubscriptionMenu extends PureComponent<SubscriptionMenuProps, {}> {
+class SubscriptionDropdown extends PureComponent<SubscriptionDropdownProps, {}> {
     private categoryLabelInput: HTMLInputElement;
 
-    constructor(props: SubscriptionMenuProps, context: any) {
+    constructor(props: SubscriptionDropdownProps, context: any) {
         super(props, context);
 
         this.handleAddToCategory = this.handleAddToCategory.bind(this);
@@ -320,13 +309,15 @@ class SubscriptionMenu extends PureComponent<SubscriptionMenuProps, {}> {
     }
 
     render() {
-        const { categories, onClose, onKeyDown, onSelect, subscription } = this.props;
+        const { categories, subscription } = this.props;
 
         return (
-            <Menu
-                onClose={onClose}
-                onKeyDown={onKeyDown}
-                onSelect={onSelect}>
+            <Dropdown
+                toggleButton={
+                    <button className="button-icon button-icon-24 u-margin-left-2" disabled={subscription.isLoading}>
+                        <i className={classnames('icon icon-20', subscription.isLoading ? 'icon-spinner icon-rotating' : 'icon-menu-2' )} />
+                    </button>
+                }>
                 <div className="menu-heading">Category</div>
                 {categories.map(this.renderCategoryMenuItem, this)}
                 <div className="menu-divider" />
@@ -352,7 +343,7 @@ class SubscriptionMenu extends PureComponent<SubscriptionMenuProps, {}> {
                     onSelect={this.handleUnsubscribe}
                     primaryText="Unsubscribe"
                     isDisabled={subscription.isLoading} />
-            </Menu>
+            </Dropdown>
         )
     }
 }

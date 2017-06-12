@@ -13,7 +13,7 @@ import connect from 'utils/flux/react/connect';
 import createAscendingComparer from 'utils/createAscendingComparer';
 import createDescendingComparer from 'utils/createDescendingComparer';
 import { Category, Profile, State, Subscription, SubscriptionsOrder } from 'messaging/types';
-import { Menu, MenuItem } from 'components/parts/Menu';
+import { MenuItem } from 'components/parts/Menu';
 import { Tree, TreeBranch, TreeLeaf } from 'components/parts/Tree';
 import { changeSubscriptionsOrder, changeUnreadViewing, fetchSubscriptions } from 'messaging/subscriptions/actions';
 import { fetchUser } from 'messaging/user/actions';
@@ -155,17 +155,14 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
                         className="dropdown-block"
                         toggleButton={
                             <ProfileButton isLoading={userIsLoading} profile={profile} />
-                        }
-                        menu={
-                            <Menu>
-                                <MenuItem
-                                    onSelect={onFetchUser}
-                                    primaryText="Refresh" />
-                                <MenuItem
-                                    onSelect={onRevokeToken}
-                                    primaryText="Logout..." />
-                            </Menu>
-                        } />
+                        }>
+                        <MenuItem
+                            onSelect={onFetchUser}
+                            primaryText="Refresh" />
+                        <MenuItem
+                            onSelect={onRevokeToken}
+                            primaryText="Logout..." />
+                    </Dropdown>
                 </div>
             </nav>
         );
@@ -217,37 +214,33 @@ class SubscriptionTreeHeader extends PureComponent<SubscriptionTreeHeaderProps, 
                         <button className="u-flex-shrink-0 button-icon button-icon-32">
                             <i className="icon icon-16 icon-more" />
                         </button>
-                    }
-                    menu={
-                        <Menu>
-                            <div className="menu-heading">Order</div>
-                            <MenuItem
-                                icon={order === 'title' ? <i className="icon icon-16 icon-checkmark" /> : null}
-                                onSelect={onChangeSubscriptionsOrder}
-                                primaryText="Title"
-                                value="title" />
-                            <MenuItem
-                                icon={order === 'newest' ? <i className="icon icon-16 icon-checkmark" /> : null}
-                                onSelect={onChangeSubscriptionsOrder}
-                                primaryText="Newest First"
-                                value="newest" />
-                            <MenuItem
-                                icon={order === 'oldest' ? <i className="icon icon-16 icon-checkmark" /> : null}
-                                onSelect={onChangeSubscriptionsOrder}
-                                primaryText="Oldest First"
-                                value="oldest" />
-                            <div className="menu-divider" />
-                            <MenuItem
-                                icon={onlyUnread ? <i className="icon icon-16 icon-checkmark" /> : null}
-                                onSelect={onChangeUnreadViewing}
-                                primaryText="Only unread"
-                                value={!onlyUnread} />
-                            <div className="menu-divider" />
-                            <MenuItem
-                                onSelect={onOrganizeSubscriptions}
-                                primaryText="Organize subscriptions..." />
-                        </Menu>
                     }>
+                    <div className="menu-heading">Order</div>
+                    <MenuItem
+                        icon={order === 'title' ? <i className="icon icon-16 icon-checkmark" /> : null}
+                        onSelect={onChangeSubscriptionsOrder}
+                        primaryText="Title"
+                        value="title" />
+                    <MenuItem
+                        icon={order === 'newest' ? <i className="icon icon-16 icon-checkmark" /> : null}
+                        onSelect={onChangeSubscriptionsOrder}
+                        primaryText="Newest First"
+                        value="newest" />
+                    <MenuItem
+                        icon={order === 'oldest' ? <i className="icon icon-16 icon-checkmark" /> : null}
+                        onSelect={onChangeSubscriptionsOrder}
+                        primaryText="Oldest First"
+                        value="oldest" />
+                    <div className="menu-divider" />
+                    <MenuItem
+                        icon={onlyUnread ? <i className="icon icon-16 icon-checkmark" /> : null}
+                        onSelect={onChangeUnreadViewing}
+                        primaryText="Only unread"
+                        value={!onlyUnread} />
+                    <div className="menu-divider" />
+                    <MenuItem
+                        onSelect={onOrganizeSubscriptions}
+                        primaryText="Organize subscriptions..." />
                 </Dropdown>
             </header>
         );

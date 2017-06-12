@@ -12,7 +12,6 @@ interface DropdownProps {
     className?: string;
     component?: keyof React.ReactDOM;
     getScrollableParent?: (element: Element) => Element | Window;
-    menu: React.ReactElement<any>;
     onClose?: () => void;
     onSelect?: (value?: any) => void;
     pullRight?: boolean;
@@ -166,26 +165,19 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
     }
 
     renderMenu() {
-        const { menu } = this.props;
+        const { children } = this.props;
 
-        const ref = (ref: Menu) => this.menu = ref;
-
-        return cloneElement(menu, {
-            ...menu.props,
-            ref: createChainedFunction((menu as any).ref, ref),
-            onKeyDown: createChainedFunction(
-                menu.props.onKeyDown,
-                this.handleKeyDown
-            ),
-            onSelect: createChainedFunction(
-                menu.props.onSelect,
-                this.handleSelect
-            ),
-            onClose: createChainedFunction(
-                menu.props.onClose,
-                this.handleClose
-            )
-        });
+        return (
+            <Closable onClose={this.handleClose}>
+                <Menu
+                    ref={(ref) => this.menu = ref}
+                    onKeyDown={this.handleKeyDown}
+                    onSelect={this.handleSelect}
+                    onClose={this.handleClose}>
+                    {children}
+                </Menu>
+            </Closable>
+        )
     }
 
     render() {
@@ -206,7 +198,7 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
                     transitionEnterTimeout={200}
                     transitionLeaveTimeout={200}
                     transitionName="menu">
-                    {isOpened ? <Closable onClose={this.handleClose}>{this.renderMenu()}</Closable> : null}
+                    {isOpened ? this.renderMenu() : null}
                 </CSSTransitionGroup>
             </Component>
         );

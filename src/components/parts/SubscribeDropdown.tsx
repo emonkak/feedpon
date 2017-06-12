@@ -1,26 +1,25 @@
 import React, { PureComponent } from 'react';
+import classnames from 'classnames';
 
+import Dropdown from 'components/parts/Dropdown';
 import { Category, Feed, Subscription } from 'messaging/types';
-import { Menu, MenuForm, MenuItem } from 'components/parts/Menu';
+import { MenuForm, MenuItem } from 'components/parts/Menu';
 
-interface SubscribeMenuProps {
+interface SubscribeDropdownProps {
     categories: Category[];
     feed: Feed;
     onAddToCategory: (subscription: Subscription, label: string) => void;
-    onClose?: () => void;
     onCreateCategory: (label: string, callback: (category: Category) => void) => void;
-    onKeyDown?: (event: React.KeyboardEvent<any>) => void;
     onRemoveFromCategory: (subscription: Subscription, label: string) => void;
-    onSelect?: (value?: any) => void;
     onSubscribe: (feed: Feed, labels: string[]) => void;
     onUnsubscribe: (subscription: Subscription) => void;
     subscription: Subscription | null;
 }
 
-export default class SubscribeMenu extends PureComponent<SubscribeMenuProps, {}> {
+export default class SubscribeDropdown extends PureComponent<SubscribeDropdownProps, {}> {
     private categoryLabelInput: HTMLInputElement;
 
-    constructor(props: SubscribeMenuProps, context: any) {
+    constructor(props: SubscribeDropdownProps, context: any) {
         super(props, context);
 
         this.handleAddToCategory = this.handleAddToCategory.bind(this);
@@ -99,13 +98,11 @@ export default class SubscribeMenu extends PureComponent<SubscribeMenuProps, {}>
     }
 
     render() {
-        const { categories, onClose, onKeyDown, onSelect, subscription } = this.props;
+        const { categories, feed, subscription } = this.props;
 
         return (
-            <Menu
-                onClose={onClose}
-                onKeyDown={onKeyDown}
-                onSelect={onSelect}>
+            <Dropdown
+                toggleButton={<SubscribeButton isSubscribed={!!subscription} isLoading={feed.isLoading} />}>
                 <div className="menu-heading">Category</div>
                 {categories.map(this.renderCategoryMenuItem, this)}
                 <div className="menu-divider" />
@@ -125,7 +122,48 @@ export default class SubscribeMenu extends PureComponent<SubscribeMenuProps, {}>
                     isDisabled={!subscription}
                     onSelect={this.handleUnsubscribe}
                     primaryText="Unsubscribe" />
-            </Menu>
+            </Dropdown>
         )
+    }
+}
+
+interface SubscribeButtonProps {
+    isSubscribed: boolean;
+    isLoading: boolean;
+    onClick?: (event: React.MouseEvent<any>) => void;
+    onKeyDown?: (event: React.KeyboardEvent<any>) => void;
+}
+
+class SubscribeButton extends PureComponent<SubscribeButtonProps, {}> {
+    render() {
+        const { isSubscribed, isLoading, onClick, onKeyDown } = this.props;
+
+        if (isSubscribed) {
+            return (
+                <button 
+                    onClick={onClick}
+                    onKeyDown={onKeyDown}
+                    className="button button-outline-default dropdown-arrow"
+                    disabled={isLoading}>
+                    <i className={classnames(
+                        'icon icon-20',
+                        isLoading ? 'icon-spinner icon-rotating' : 'icon-settings'
+                    )} />
+                </button>
+            );
+        } else {
+            return (
+                <button
+                    onClick={onClick}
+                    onKeyDown={onKeyDown}
+                    className="button button-outline-positive dropdown-arrow"
+                    disabled={isLoading}>
+                    <i className={classnames(
+                        'icon icon-20',
+                        isLoading ? 'icon-spinner icon-rotating' : 'icon-plus-math'
+                    )} />
+                </button>
+            );
+        }
     }
 }

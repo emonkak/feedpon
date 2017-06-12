@@ -1,9 +1,7 @@
 import React, { PureComponent } from 'react';
 import { Link } from 'react-router';
 
-import Dropdown from 'components/parts/Dropdown';
-import SubscribeButton from 'components/parts/SubscribeButton';
-import SubscribeMenu from 'components/parts/SubscribeMenu';
+import SubscribeDropdown from 'components/parts/SubscribeDropdown';
 import { Category, Feed, Subscription } from 'messaging/types';
 
 interface FeedProps {
@@ -29,23 +27,15 @@ export default class FeedComponent extends PureComponent<FeedProps, {}> {
                         <div className="u-text-small"><strong>{feed.subscribers}</strong> subscribers</div>
                         <div className="u-text-muted">{feed.description}</div>
                     </div>
-                    <Dropdown
-                        toggleButton={
-                            <SubscribeButton
-                                isSubscribed={!!subscription}
-                                isLoading={feed.isLoading} />
-                        }
-                        menu={
-                            <SubscribeMenu
-                                categories={categories}
-                                feed={feed}
-                                onAddToCategory={onAddToCategory}
-                                onCreateCategory={onCreateCategory}
-                                onRemoveFromCategory={onRemoveFromCategory}
-                                onSubscribe={onSubscribe}
-                                onUnsubscribe={onUnsubscribe}
-                                subscription={subscription} />
-                        } />
+                    <SubscribeDropdown
+                        categories={categories}
+                        feed={feed}
+                        onAddToCategory={onAddToCategory}
+                        onCreateCategory={onCreateCategory}
+                        onRemoveFromCategory={onRemoveFromCategory}
+                        onSubscribe={onSubscribe}
+                        onUnsubscribe={onUnsubscribe}
+                        subscription={subscription} />
                 </div>
             </li>
         );

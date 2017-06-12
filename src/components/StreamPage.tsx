@@ -6,12 +6,11 @@ import Dropdown from 'components/parts/Dropdown';
 import EntryList from 'components/parts/EntryList';
 import MainLayout from 'components/layouts/MainLayout';
 import Navbar from 'components/parts/Navbar';
-import SubscribeButton from 'components/parts/SubscribeButton';
-import SubscribeMenu from 'components/parts/SubscribeMenu';
+import SubscribeDropdown from 'components/parts/SubscribeDropdown';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
 import { Category, Entry, EntryOrder, Feed, State, Stream, StreamOptions, StreamView, Subscription } from 'messaging/types';
-import { Menu, MenuItem } from 'components/parts/Menu';
+import { MenuItem } from 'components/parts/Menu';
 import { addToCategory, removeFromCategory, subscribe, unsubscribe } from 'messaging/subscriptions/actions';
 import { changeStreamView, fetchComments, fetchFullContent, fetchMoreEntries, fetchStream, markAsRead, pinEntry, unpinEntry } from 'messaging/streams/actions';
 import { createCategory } from 'messaging/categories/actions';
@@ -290,31 +289,16 @@ class StreamNavbar extends PureComponent<StreamNavbarProps, {}> {
                 <div className="navbar-action">
                     <button onClick={this.handleReloadEntries}><i className="icon icon-24 icon-refresh" /></button>
                 </div>
-                <Dropdown
-                    className="navbar-action"
-                    toggleButton={
-                        <button>
-                            <i className="icon icon-24 icon-checkmark" />
-                            <span className="badge badge-small badge-pill badge-negative badge-overlap">{readEntryIds.size || ''}</span>
-                        </button>
-                    }
-                    menu={
-                        <ReadEntriesMenu
-                            entries={stream.entries}
-                            onClearReadEntries={onClearReadEntries}
-                            onScrollToEntry={this.handleScrollToEntry}
-                            readEntryIds={readEntryIds} />
-                    } />
-                <Dropdown
-                    className="navbar-action"
-                    toggleButton={<button><i className="icon icon-24 icon-more" /></button>}
-                    menu={
-                        <StreamOptionsMenu
-                            onChangeEntryOrder={this.handleChangeEntryOrder}
-                            onChangeStreamView={this.handleChangeStreamView}
-                            onToggleOnlyUnread={this.handleToggleOnlyUnread}
-                            options={stream.options} />
-                    } />
+                <ReadEntriesDropdown
+                    entries={stream.entries}
+                    onClearReadEntries={onClearReadEntries}
+                    onScrollToEntry={this.handleScrollToEntry}
+                    readEntryIds={readEntryIds} />
+                <StreamOptionsDropdown
+                    onChangeEntryOrder={this.handleChangeEntryOrder}
+                    onChangeStreamView={this.handleChangeStreamView}
+                    onToggleOnlyUnread={this.handleToggleOnlyUnread}
+                    options={stream.options} />
             </Navbar>
         );
     }
@@ -323,24 +307,25 @@ class StreamNavbar extends PureComponent<StreamNavbarProps, {}> {
 interface ReadEntriesMenuProps {
     entries: Entry[];
     onClearReadEntries: () => void;
-    onClose?: () => void;
-    onKeyDown?: (event: React.KeyboardEvent<any>) => void;
     onScrollToEntry: (entryId: string) => void;
-    onSelect?: (value?: any) => void;
     readEntryIds: Set<string | number>;
 }
 
-class ReadEntriesMenu extends PureComponent<ReadEntriesMenuProps, {}> {
+class ReadEntriesDropdown extends PureComponent<ReadEntriesMenuProps, {}> {
     render() {
-        const { entries, onClearReadEntries, onClose, onKeyDown, onScrollToEntry, onSelect, readEntryIds } = this.props;
+        const { entries, onClearReadEntries, onScrollToEntry, readEntryIds } = this.props;
 
         const readEntries = entries.filter(entry => readEntryIds.has(entry.entryId));
 
         return (
-            <Menu
-                onClose={onClose}
-                onKeyDown={onKeyDown}
-                onSelect={onSelect}>
+            <Dropdown
+                className="navbar-action"
+                toggleButton={
+                    <button>
+                        <i className="icon icon-24 icon-checkmark" />
+                        <span className="badge badge-small badge-pill badge-negative badge-overlap">{readEntryIds.size || ''}</span>
+                    </button>
+                }>
                 <div className="menu-heading">Read entries</div>
                 {readEntries.map((entry) => (
                     <MenuItem
@@ -358,12 +343,12 @@ class ReadEntriesMenu extends PureComponent<ReadEntriesMenuProps, {}> {
                 <MenuItem
                     isDisabled={entries.length === 0}
                     primaryText="Mark all as read" />
-            </Menu>
-        )
+            </Dropdown>
+        );
     }
 }
 
-interface StreamOptionsMenuProps {
+interface StreamOptionsDropdownProps {
     onChangeEntryOrder: (order: EntryOrder) => void;
     onChangeStreamView: (view: StreamView) => void;
     onClose?: () => void;
@@ -373,17 +358,16 @@ interface StreamOptionsMenuProps {
     options: StreamOptions;
 }
 
-class StreamOptionsMenu extends PureComponent<StreamOptionsMenuProps, {}> {
+class StreamOptionsDropdown extends PureComponent<StreamOptionsDropdownProps, {}> {
     render() {
-        const { onChangeEntryOrder, onChangeStreamView, onClose, onKeyDown, onSelect, onToggleOnlyUnread, options } = this.props;
+        const { onChangeEntryOrder, onChangeStreamView, onToggleOnlyUnread, options } = this.props;
 
         const checkmarkIcon = <i className="icon icon-16 icon-checkmark" />;
 
         return (
-            <Menu
-                onClose={onClose}
-                onKeyDown={onKeyDown}
-                onSelect={onSelect}>
+            <Dropdown
+                className="navbar-action"
+                toggleButton={<button><i className="icon icon-24 icon-more" /></button>}>
                 <div className="menu-heading">View</div>
                 <MenuItem
                     icon={options.view === 'expanded' ? checkmarkIcon : null}
@@ -412,7 +396,7 @@ class StreamOptionsMenu extends PureComponent<StreamOptionsMenuProps, {}> {
                     icon={options.onlyUnread ? checkmarkIcon : null}
                     primaryText="Only unread"
                     onSelect={onToggleOnlyUnread} />
-            </Menu>
+            </Dropdown>
         );
     }
 }
@@ -443,23 +427,15 @@ class StreamHeader extends PureComponent<StreamHeaderProps, {}> {
                             <div>{feed.description}</div>
                             <div><a target="_blank" href={feed.feedUrl}>{feed.feedUrl}</a></div>
                         </div>
-                        <Dropdown
-                            toggleButton={
-                                <SubscribeButton
-                                    isSubscribed={!!subscription}
-                                    isLoading={feed.isLoading} />
-                            }
-                            menu={
-                                <SubscribeMenu
-                                    categories={categories}
-                                    feed={feed}
-                                    onAddToCategory={onAddToCategory}
-                                    onCreateCategory={onCreateCategory}
-                                    onRemoveFromCategory={onRemoveFromCategory}
-                                    onSubscribe={onSubscribe}
-                                    onUnsubscribe={onUnsubscribe}
-                                    subscription={subscription} />
-                            } />
+                        <SubscribeDropdown
+                            categories={categories}
+                            feed={feed}
+                            onAddToCategory={onAddToCategory}
+                            onCreateCategory={onCreateCategory}
+                            onRemoveFromCategory={onRemoveFromCategory}
+                            onSubscribe={onSubscribe}
+                            onUnsubscribe={onUnsubscribe}
+                            subscription={subscription} />
                     </div>
                 </div>
             </header>

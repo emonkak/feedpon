@@ -6,7 +6,7 @@ import Modal from 'components/parts/Modal';
 import Navbar from 'components/parts/Navbar';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
-import { Menu, MenuItem } from 'components/parts/Menu';
+import { MenuItem } from 'components/parts/Menu';
 import { NotificationKind } from 'messaging/types';
 import { sendNotification } from 'messaging/notifications/actions';
 
@@ -224,16 +224,13 @@ class DashboardPage extends PureComponent<DashboardProps, DashboardState> {
                 <h2>Dropdown</h2>
                 <div className="u-margin-bottom-1">
                     <Dropdown
-                        toggleButton={<button className="button button-outline-default dropdown-arrow">Dropdown</button>}
-                        menu={
-                            <Menu>
-                                <MenuItem primaryText="First Action" secondaryText="First"></MenuItem>
-                                <MenuItem primaryText="Second Action" secondaryText="Second"></MenuItem>
-                                <MenuItem primaryText="Third Action" secondaryText="Third"></MenuItem>
-                                <div className="menu-divider"></div>
-                                <MenuItem isDisabled={true} primaryText="Forth Action"></MenuItem>
-                            </Menu>
-                        } />
+                        toggleButton={<button className="button button-outline-default dropdown-arrow">Dropdown</button>}>
+                        <MenuItem primaryText="First Action" secondaryText="First"></MenuItem>
+                        <MenuItem primaryText="Second Action" secondaryText="Second"></MenuItem>
+                        <MenuItem primaryText="Third Action" secondaryText="Third"></MenuItem>
+                        <div className="menu-divider"></div>
+                        <MenuItem isDisabled={true} primaryText="Forth Action"></MenuItem>
+                    </Dropdown>
                 </div>
 
                 <h2>Modal</h2>
