@@ -312,7 +312,7 @@ export default class EntryInner extends PureComponent<EntryInnerProps, EntryInne
                         <a className="social-button link-soft"
                            target="_blank"
                            title="Save to Hatena Bookmark"
-                           href={'http://b.hatena.ne.jp/entry/' + encodeURIComponent(entry.url)}>
+                           href={'http://b.hatena.ne.jp/add?mode=confirm&title=' + encodeURIComponent(entry.title) + '&url=' + encodeURIComponent(entry.url)}>
                             <i className="icon icon-24 icon-hatena-bookmark" />
                         </a>
                         <a className="social-button link-soft"
