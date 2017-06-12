@@ -37,6 +37,7 @@ interface SidebarProps {
     subscriptions: Subscription[];
     subscriptionsIsLoading: boolean;
     subscriptionsOrder: SubscriptionsOrder;
+    theme: boolean;
     totalUnreadCount: number;
     userIsLoaded: boolean;
     userIsLoading: boolean;
@@ -68,6 +69,12 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
         }
     }
 
+    handleOrganizeSubscriptions() {
+        const { router } = this.props;
+
+        router.push('/categories/');
+    }
+
     handleSearch(query: string) {
         const { router } = this.props;
 
@@ -78,12 +85,6 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
         const { router } = this.props;
 
         router.push(path);
-    }
-
-    handleOrganizeSubscriptions() {
-        const { router } = this.props;
-
-        router.push('/categories/');
     }
 
     render() {

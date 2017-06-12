@@ -1,4 +1,4 @@
-.l-openable::before {
+.l-root::before {
   content: '';
   position: fixed;
   visibility: hidden;
@@ -12,23 +12,19 @@
   transition: visibility 0s ease-in-out 0.2s, opacity 0.2s ease-in-out;
 }
 
-.l-openable.is-opened {
-  overflow: hidden;
-}
-
-.l-openable.is-opened::before {
+.l-root.is-opened::before {
   visibility: visible;
   opacity: 0.5;
   transition-delay: 0s;
 }
 
-.l-openable.is-opened > .l-sidebar {
+.l-sidebar.is-pinned {
   left: 0;
 }
 
-.l-openable.is-opened > .l-sidebar ~ .l-main,
-.l-openable.is-opened > .l-sidebar ~ .l-main > .l-main-header,
-.l-openable.is-opened > .l-sidebar ~ .l-notifications {
+.l-sidebar.is-pinned ~ .l-main,
+.l-sidebar.is-pinned ~ .l-main > .l-main-header,
+.l-sidebar.is-pinned ~ .l-notifications {
   padding-left: var(--sidebar-width);
 }
 
@@ -49,6 +45,7 @@
 
 .l-main {
   transition: padding 0.2s ease-in-out;
+  width: 100%;
 }
 
 .l-main-content {
@@ -108,14 +105,23 @@
 }
 
 @media (--md-viewport) {
-  .l-sidebar {
+  .l-root.is-opened::before {
+    display: none;
+  }
+
+  .l-sidebar.is-pinned {
     left: 0;
   }
 
-  .l-sidebar ~ .l-main,
-  .l-sidebar ~ .l-main > .l-main-header,
-  .l-sidebar ~ .l-notifications {
-    padding-left: var(--sidebar-width);
+  .l-main,
+  .l-main > .l-main-header,
+  .l-notifications {
     box-sizing: border-box;
+  }
+
+  .l-sidebar.is-pinned ~ .l-main,
+  .l-sidebar.is-pinned ~ .l-main > .l-main-header,
+  .l-sidebar.is-pinned ~ .l-notifications {
+    padding-left: var(--sidebar-width);
   }
 }

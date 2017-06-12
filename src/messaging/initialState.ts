@@ -9,6 +9,7 @@ import subscriptions from 'messaging/subscriptions/initialState';
 import trackingUrlSettings from 'messaging/trackingUrlSettings/initialState';
 import user from 'messaging/user/initialState';
 import userSiteinfo from 'messaging/userSiteinfo/initialState';
+import ui from 'messaging/ui/initialState';
 import { State } from 'messaging/types';
 
 const initialState: State = {
@@ -21,6 +22,7 @@ const initialState: State = {
     streams,
     subscriptions,
     trackingUrlSettings,
+    ui,
     user,
     userSiteinfo
 };

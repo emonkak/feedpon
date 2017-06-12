@@ -2,13 +2,11 @@
   display: inline-block;
   position: relative;
   box-sizing: border-box;
-  padding: calc(var(--baseline-height) / 4 - 1px) 1rem;
+  padding: calc(var(--baseline-height) / 4 - 1px) calc(1rem - 1px);
   border: 1px solid transparent;
   border-radius: 4px;
   text-align: center;
   text-decoration: none;
-  white-space: nowrap;
-  vertical-align: middle;
   cursor: pointer;
   transition-property: background-color, border-color, box-shadow, color, opacity;
   transition-duration: 0.2s;
@@ -25,6 +23,18 @@
 
 .button:disabled {
   opacity: 0.5;
+}
+
+.button-small {
+  padding: 0 calc(0.75rem - 1px);
+  margin-top: -2px;
+  margin-bottom: -2px;
+  font-size: 0.75rem;
+}
+
+.button-large {
+  padding: calc(var(--baseline-height) / 2 - 1px) calc(1.25rem - 1px);
+  font-size: 1.25rem;
 }
 
 .button-default {
@@ -178,11 +188,6 @@
 .button-block {
   display: block;
   width: 100%;
-}
-
-.button-large {
-  padding: calc(var(--baseline-height) / 2 - 1px) 1.25rem;
-  font-size: 1.25rem;
 }
 
 .button-icon {

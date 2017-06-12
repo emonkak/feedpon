@@ -16,3 +16,9 @@
 .sidebar-is-opened {
   overflow: hidden;
 }
+
+@media (--md-viewport) {
+  .sidebar-is-opened {
+    overflow: visible;
+  }
+}

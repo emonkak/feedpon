@@ -109,6 +109,16 @@ class DashboardPage extends PureComponent<DashboardProps, DashboardState> {
                     <button className="button button-outline-negative" disabled>Negative</button>
                 </p>
 
+                <h2>Small Button</h2>
+                <p className="button-toolbar">
+                    <button className="button button-small button-default">Default</button>
+                    <button className="button button-small button-positive">Positive</button>
+                    <button className="button button-small button-negative">Negative</button>
+                    <button className="button button-small button-outline-default">Default</button>
+                    <button className="button button-small button-outline-positive">Positive</button>
+                    <button className="button button-small button-outline-negative">Negative</button>
+                </p>
+
                 <h2>Large Button</h2>
                 <p className="button-toolbar">
                     <button className="button button-large button-default">Default</button>
@@ -131,6 +141,32 @@ class DashboardPage extends PureComponent<DashboardProps, DashboardState> {
                         <button className="button button-outline-default">Second</button>
                         <button className="button button-outline-default">Third</button>
                     </span>
+                </div>
+
+                <h2>Badge</h2>
+                <div className="button-toolbar u-margin-bottom-1">
+                    <span className="badge badge-small badge-default">Default</span>
+                    <span className="badge badge-small badge-positive">Positive</span>
+                    <span className="badge badge-small badge-negative">Negative</span>
+                    <span className="badge badge-default">Default</span>
+                    <span className="badge badge-positive">Positive</span>
+                    <span className="badge badge-negative">Negative</span>
+                    <span className="badge badge-large badge-default">Default</span>
+                    <span className="badge badge-large badge-positive">Positive</span>
+                    <span className="badge badge-large badge-negative">Negative</span>
+                </div>
+
+                <h2>Pill Badge</h2>
+                <div className="button-toolbar u-margin-bottom-1">
+                    <span className="badge badge-small badge-pill badge-default">12</span>
+                    <span className="badge badge-small badge-pill badge-positive">34</span>
+                    <span className="badge badge-small badge-pill badge-negative">56</span>
+                    <span className="badge badge-pill badge-default">12</span>
+                    <span className="badge badge-pill badge-positive">34</span>
+                    <span className="badge badge-pill badge-negative">56</span>
+                    <span className="badge badge-large badge-pill badge-default">12</span>
+                    <span className="badge badge-large badge-pill badge-positive">34</span>
+                    <span className="badge badge-large badge-pill badge-negative">56</span>
                 </div>
 
                 <h2>Paragraph</h2>

@@ -34,7 +34,7 @@ export default function reducer(subscriptions: Subscriptions, event: Event): Sub
             return {
                 ...subscriptions,
                 isLoading: false,
-                items: event.subscriptions,
+                items: event.subscriptions.sort(subscriptionIdComparer),
                 lastUpdatedAt: event.fetchedAt,
                 totalUnreadCount: event.subscriptions.reduce(
                     (total, subscription) => total + subscription.unreadCount,

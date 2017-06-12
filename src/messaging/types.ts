@@ -35,6 +35,8 @@ export type Event
     | { type: 'MORE_ENTRIES_FETCHING_FAILED', streamId: string }
     | { type: 'NOTIFICATION_DISMISSED', id: number }
     | { type: 'NOTIFICATION_SENT', notification: Notification }
+    | { type: 'SIDEBAR_CLOSED' }
+    | { type: 'SIDEBAR_OPENED' }
     | { type: 'SITEINFO_UPDATED', items: SiteinfoItem[], updatedAt: number }
     | { type: 'SITEINFO_UPDATING' }
     | { type: 'SITEINFO_UPDATING_FAILED' }
@@ -80,6 +82,7 @@ export interface State {
     streams: Streams;
     subscriptions: Subscriptions;
     trackingUrlSettings: TrackingUrlSettings;
+    ui: UI;
     user: User;
     userSiteinfo: UserSiteinfo;
 }
@@ -92,13 +95,6 @@ export interface Credential {
     authorizedAt: number;
     isLoading: boolean;
     token: object | null;
-    version: number;
-}
-
-export interface User {
-    isLoaded: boolean;
-    isLoading: boolean;
-    profile: Profile;
     version: number;
 }
 
@@ -300,3 +296,18 @@ export interface SiteinfoItem {
     contentExpression: string;
     nextLinkExpression: string;
 }
+
+export interface User {
+    isLoaded: boolean;
+    isLoading: boolean;
+    profile: Profile;
+    version: number;
+}
+
+export interface UI {
+    sidebarIsOpened: boolean;
+    theme: Theme;
+    version: number;
+}
+
+export type Theme = 'default' | 'dark';

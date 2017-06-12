@@ -1,28 +1,30 @@
 import { State, Event } from 'messaging/types';
 
-import categoriesReducer from 'messaging/categories/reducer';
+import categories from 'messaging/categories/reducer';
 import combineReducers from 'utils/flux/combineReducers';
-import credentialReducer from 'messaging/credential/reducer';
-import notificationsReducer from 'messaging/notifications/reducer';
-import searchReducer from 'messaging/search/reducer';
-import sharedSiteinfoReducer from 'messaging/sharedSiteinfo/reducer';
-import streamSettingsReducer from 'messaging/streamSettings/reducer';
-import streamsReducer from 'messaging/streams/reducer';
-import subscriptionsReducer from 'messaging/subscriptions/reducer';
-import trackingUrlSettingsReducer from 'messaging/trackingUrlSettings/reducer';
-import userReducer from 'messaging/user/reducer';
-import userSiteinfoReducer from 'messaging/userSiteinfo/reducer';
+import credential from 'messaging/credential/reducer';
+import notifications from 'messaging/notifications/reducer';
+import search from 'messaging/search/reducer';
+import sharedSiteinfo from 'messaging/sharedSiteinfo/reducer';
+import streamSettings from 'messaging/streamSettings/reducer';
+import streams from 'messaging/streams/reducer';
+import subscriptions from 'messaging/subscriptions/reducer';
+import trackingUrlSettings from 'messaging/trackingUrlSettings/reducer';
+import user from 'messaging/user/reducer';
+import userSiteinfo from 'messaging/userSiteinfo/reducer';
+import ui from 'messaging/ui/reducer';
 
 export default combineReducers<State, Event>({
-    categories: categoriesReducer,
-    credential: credentialReducer,
-    notifications: notificationsReducer,
-    search: searchReducer,
-    sharedSiteinfo: sharedSiteinfoReducer,
-    streamSettings: streamSettingsReducer,
-    streams: streamsReducer,
-    subscriptions: subscriptionsReducer,
-    trackingUrlSettings: trackingUrlSettingsReducer,
-    user: userReducer,
-    userSiteinfo: userSiteinfoReducer
+    categories,
+    credential,
+    notifications,
+    search,
+    sharedSiteinfo,
+    streamSettings,
+    streams,
+    subscriptions,
+    trackingUrlSettings,
+    ui,
+    user,
+    userSiteinfo
 });
