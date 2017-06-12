@@ -60,7 +60,12 @@
   left: 0;
   width: 100%;
   z-index: 100;
-  transition: padding 0.2s ease-in-out;
+  transition: padding 0.2s ease-in-out, transform 0.2s ease-in-out;
+  transform: translateY(-100%);
+}
+
+.l-main-header.is-pinned {
+  transform: translateY(0);
 }
 
 .l-main-footer {

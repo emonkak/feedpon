@@ -35,6 +35,8 @@ export type Event
     | { type: 'MORE_ENTRIES_FETCHING_FAILED', streamId: string }
     | { type: 'NOTIFICATION_DISMISSED', id: number }
     | { type: 'NOTIFICATION_SENT', notification: Notification }
+    | { type: 'SCROLL_ENDED' }
+    | { type: 'SCROLL_STARTED' }
     | { type: 'SIDEBAR_CLOSED' }
     | { type: 'SIDEBAR_OPENED' }
     | { type: 'SITEINFO_UPDATED', items: SiteinfoItem[], updatedAt: number }
@@ -305,6 +307,7 @@ export interface User {
 }
 
 export interface UI {
+    isScrolling: boolean;
     sidebarIsOpened: boolean;
     theme: Theme;
     version: number;

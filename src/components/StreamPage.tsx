@@ -535,6 +535,7 @@ export default connect(() => {
             categories: state.categories.items,
             isLoaded: state.streams.isLoaded,
             isLoading: state.streams.isLoading,
+            isScrolling: state.ui.isScrolling,
             stream: state.streams.current,
             subscription: subscriptionSelector(state)
         }),

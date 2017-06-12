@@ -8,23 +8,21 @@ import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
 import smoothScroll from 'utils/dom/smoothScroll';
 import { State } from 'messaging/types';
-import { closeSidebar, openSidebar } from 'messaging/ui/actions';
+import { closeSidebar, endScroll, openSidebar, startScroll } from 'messaging/ui/actions';
 
 interface SidebarLayoutProps {
     children: React.ReactElement<any>;
     isAuthenticating: boolean;
     location: Location;
     onCloseSidebar: typeof closeSidebar;
+    onEndScroll: typeof endScroll;
     onOpenSidebar: typeof openSidebar;
+    onStartScroll: typeof startScroll;
     router: History;
     sidebarIsOpened: boolean;
 }
 
-interface SidebarLayoutState {
-    isScrolling: boolean;
-}
-
-class SidebarLayout extends PureComponent<SidebarLayoutProps, SidebarLayoutState> {
+class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
     private unsubscribe: () => void | null;
 
     constructor(props: SidebarLayoutProps, context: any) {
@@ -33,10 +31,6 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps, SidebarLayoutState
         this.handleToggleSidebar = this.handleToggleSidebar.bind(this);
         this.handleCloseSidebar = this.handleCloseSidebar.bind(this);
         this.handleChangeLocation = this.handleChangeLocation.bind(this);
-
-        this.state = {
-            isScrolling: false
-        };
     }
 
     componentWillMount() {
@@ -100,20 +94,15 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps, SidebarLayoutState
     }
 
     scrollTo(x: number, y: number): Promise<void> {
-        this.setState({
-            isScrolling: true
-        });
+        this.props.onStartScroll();
 
         return smoothScroll(document.body, x, y).then(() => {
-            this.setState({
-                isScrolling: false
-            });
+            this.props.onEndScroll();
         });
     }
 
     render() {
         const { children, isAuthenticating, location, router, sidebarIsOpened } = this.props;
-        const { isScrolling } = this.state;
 
         return (
             <div
@@ -128,7 +117,6 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps, SidebarLayoutState
                     <Notifications />
                 </div>
                 {cloneElement(children, {
-                    isScrolling,
                     onToggleSidebar: this.handleToggleSidebar,
                     scrollTo: this.scrollTo.bind(this)
                 })}
@@ -147,6 +135,8 @@ export default connect({
     }),
     mapDispatchToProps: bindActions({
         onOpenSidebar: openSidebar,
-        onCloseSidebar: closeSidebar
+        onCloseSidebar: closeSidebar,
+        onStartScroll: startScroll,
+        onEndScroll: endScroll
     })
 })(SidebarLayout);

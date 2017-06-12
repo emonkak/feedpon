@@ -11,3 +11,15 @@ export function closeSidebar(): Event {
         type: 'SIDEBAR_CLOSED'
     };
 }
+
+export function startScroll(): Event {
+    return {
+        type: 'SCROLL_STARTED'
+    };
+}
+
+export function endScroll(): Event {
+    return {
+        type: 'SCROLL_ENDED'
+    };
+}
