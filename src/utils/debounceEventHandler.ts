@@ -1,4 +1,4 @@
-export default function debounceEventHandler<T extends { timeStamp: number }>(handler: (event: T) => void, debounceTime: number): (event: T) => void {
+export default function debounceEventHandler<T extends { timeStamp: number }>(handler: (event?: T) => void, debounceTime: number): (event: T) => void {
     let lastCalled = 0;
     let timer: number | null = null;
 

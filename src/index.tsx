@@ -57,7 +57,7 @@ const store = applyMiddlewares(createStore(reducer, state), [
         ));
     }),
     asyncMiddleware(context),
-    saveStateMiddleware(save),
+    saveStateMiddleware(save, 1000),
     reduxMiddleware(createLogger({ duration: true }))
 ]);
 

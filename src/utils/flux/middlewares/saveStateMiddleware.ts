@@ -1,17 +1,16 @@
+import debounceEventHandler from '../../debounceEventHandler';
+import throttleIdleCallback from '../../throttleIdleCallback';
 import { Middleware } from '../types';
 
-function saveStateMiddlewareFactory<TState, TEvent>(save: (key: string, value: any) => void): Middleware<TState, TEvent> {
-    let queue: { [key: string]: any } = {};
-    let request: number | null = null;
+function saveStateMiddlewareFactory<TState, TEvent>(save: (key: string, value: any) => void, saveInterval: number): Middleware<TState, TEvent> {
+    let queue: Partial<TState> = {};
 
-    function processQueue() {
-        for (const key of Object.keys(queue)) {
+    const processQueue = debounceEventHandler(throttleIdleCallback(() => {
+        for (const key in queue) {
             save(key, queue[key]);
         }
-
         queue = {};
-        request = null;
-    }
+    }), saveInterval);
 
     return ({ getState }) => (event, next) => {
         const state = getState();
@@ -29,8 +28,8 @@ function saveStateMiddlewareFactory<TState, TEvent>(save: (key: string, value: a
             }
         }
 
-        if (shouldSave && request === null) {
-            request = window.requestIdleCallback(processQueue);
+        if (shouldSave) {
+            processQueue({ timeStamp: Date.now() });
         }
 
         return result;

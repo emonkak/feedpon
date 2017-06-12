@@ -1,4 +1,4 @@
-export default function throttleEventHandler<T extends { timeStamp: number }>(handler: (event: T) => void, throttleTime: number): (event: T) => void {
+export default function throttleEventHandler<T extends { timeStamp: number }>(handler: (event?: T) => void, throttleTime: number): (event: T) => void {
     let lastInvoked = 0;
     let timer: number | null = null;
 
