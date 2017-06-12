@@ -8,6 +8,7 @@
   text-align: center;
   text-decoration: none;
   cursor: pointer;
+  white-space: nowrap;
   transition-property: background-color, border-color, box-shadow, color, opacity;
   transition-duration: 0.2s;
   transition-timing-function: ease-in-out;
