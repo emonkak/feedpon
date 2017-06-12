@@ -59,8 +59,12 @@
 
 .l-main-content {
   background-color: var(--default-background-color);
-  overflow: hidden;
   padding: var(--navbar-height) 0 0;
+}
+
+.l-main-content::after {
+  content: '';
+  display: table;
 }
 
 .l-main-footer {
