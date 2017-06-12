@@ -3,7 +3,6 @@ import { State, Event } from 'messaging/types';
 import categoriesReducer from 'messaging/categories/reducer';
 import combineReducers from 'utils/flux/combineReducers';
 import credentialReducer from 'messaging/credential/reducer';
-import identityFunction from 'utils/identityFunction';
 import notificationsReducer from 'messaging/notifications/reducer';
 import searchReducer from 'messaging/search/reducer';
 import sharedSiteinfoReducer from 'messaging/sharedSiteinfo/reducer';
@@ -25,6 +24,5 @@ export default combineReducers<State, Event>({
     subscriptions: subscriptionsReducer,
     trackingUrlSettings: trackingUrlSettingsReducer,
     user: userReducer,
-    userSiteinfo: userSiteinfoReducer,
-    version: identityFunction
+    userSiteinfo: userSiteinfoReducer
 });

@@ -15,7 +15,6 @@ import restoreState from 'utils/restoreState';
 import routes from 'components/routes';
 import saveStateMiddleware from 'utils/flux/middlewares/saveStateMiddleware';
 import waitForReadyState from 'utils/dom/waitForReadyState';
-import { VERSION } from './constants';
 import { sendNotification } from 'messaging/notifications/actions';
 
 function save(key: string, value: any): void {
@@ -35,19 +34,7 @@ function restore(key: string): any {
     return null;
 }
 
-const versions = Object.keys(initialState).reduce<{ [key: string]: number }>((acc, key) => {
-    const version = (initialState as any)[key].version;
-    if (version) {
-        acc[key] = version;
-    }
-    return acc;
-}, {});
-
-const state = {
-    ...initialState,
-    ...restoreState(versions, restore),
-    version: VERSION
-};
+const state = restoreState(initialState, restore);
 
 const context = {
     environment: {

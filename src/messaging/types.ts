@@ -82,7 +82,6 @@ export interface State {
     trackingUrlSettings: TrackingUrlSettings;
     user: User;
     userSiteinfo: UserSiteinfo;
-    version: string;
 }
 
 export interface Context {

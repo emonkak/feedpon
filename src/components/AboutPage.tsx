@@ -2,8 +2,7 @@ import React, { PureComponent } from 'react';
 
 import MainLayout from 'components/layouts/MainLayout';
 import Navbar from 'components/parts/Navbar';
-import connect from 'utils/flux/react/connect';
-import { State } from 'messaging/types';
+import { VERSION } from 'messaging/constants';
 
 interface AboutPageProps {
     onToggleSidebar: () => void;
@@ -157,7 +156,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 `.trim();
 
-class AboutPage extends PureComponent<AboutPageProps, {}> {
+export default class AboutPage extends PureComponent<AboutPageProps, {}> {
     renderNavbar() {
         const { onToggleSidebar } = this.props;
 
@@ -169,8 +168,6 @@ class AboutPage extends PureComponent<AboutPageProps, {}> {
     }
 
     renderContent() {
-        const { version } = this.props;
-
         return (
             <div>
                 <section className="section u-text-center">
@@ -181,7 +178,7 @@ class AboutPage extends PureComponent<AboutPageProps, {}> {
                             </a>
                         </div>
                         <p className="u-text-large"><em>The feed reader for me</em></p>
-                        <div className="u-text-large">Version <strong>{version}</strong></div>
+                        <div className="u-text-large">Version <strong>{VERSION}</strong></div>
                         <div className="u-text-large">
                             <ul className="list-inline list-inline-slashed">
                                 <li className="list-inline-item"><a href="https://github.com/emonkak/feedpon" target="_blank">Source code</a></li>
@@ -229,9 +226,3 @@ class AboutPage extends PureComponent<AboutPageProps, {}> {
         );
     }
 }
-
-export default connect({
-    mapStateToProps: (state: State) => ({
-        version: state.version
-    })
-})(AboutPage);

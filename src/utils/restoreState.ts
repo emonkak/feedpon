@@ -1,12 +1,17 @@
-export default function restoreState<TState>(versions: { [P in keyof TState]: number }, restore: (key: string) => any): Partial<TState> {
-    return Object.keys(versions).reduce<Partial<TState>>((state, key) => {
-        const data = restore(key);
-        const version = versions[key];
+export default function restoreState<TState extends Record<keyof TState, { version: number }>>(
+    initialState: TState,
+    restore: (key: string) => any
+): TState {
+    const keys = Object.keys(initialState) as (keyof TState)[];
 
-        if (data != null && data.version && data.version === version) {
+    return keys.reduce<TState>((state, key) => {
+        const data = restore(key);
+        const { version } = initialState[key];
+
+        if (data != null && data.version === version) {
             state[key] = data;
         }
 
         return state;
-    }, {});
+    }, initialState);
 }

@@ -1,91 +1,28 @@
+import categories from 'messaging/categories/initialState';
+import credential from 'messaging/credential/initialState';
+import notifications from 'messaging/notifications/initialState';
+import search from 'messaging/search/initialState';
+import sharedSiteinfo from 'messaging/sharedSiteinfo/initialState';
+import streamSettings from 'messaging/streamSettings/initialState';
+import streams from 'messaging/streams/initialState';
+import subscriptions from 'messaging/subscriptions/initialState';
+import trackingUrlSettings from 'messaging/trackingUrlSettings/initialState';
+import user from 'messaging/user/initialState';
+import userSiteinfo from 'messaging/userSiteinfo/initialState';
 import { State } from 'messaging/types';
 
 const initialState: State = {
-    categories: {
-        isLoading: false,
-        items: [],
-        version: 1
-    },
-    credential: {
-        authorizedAt: 0,
-        isLoading: false,
-        token: null,
-        version: 1
-    },
-    notifications: {
-        items: [],
-        version: 1
-    },
-    search: {
-        feeds: [],
-        isLoaded: false,
-        isLoading: false,
-        query: '',
-        version: 1
-    },
-    sharedSiteinfo: {
-        isLoading: false,
-        items: [],
-        lastUpdatedAt: 0,
-        version: 1
-    },
-    streamSettings: {
-        defaultEntryOrder: 'newest',
-        defaultNumEntries: 20,
-        defaultStreamView: 'expanded',
-        onlyUnreadEntries: true,
-        version: 1
-    },
-    trackingUrlSettings: {
-        patterns: [
-            '^http://feedproxy\\.google\\.com/',
-            '^http://rss\\.rssad\\.jp/',
-            '^https://rdsig\\.yahoo\\.co\\.jp/rss/'
-        ],
-        version: 1
-    },
-    streams: {
-        current: {
-            streamId: null,
-            title: 'Loading...',
-            entries: [],
-            continuation: null,
-            feed: null,
-            options: {
-                numEntries: 20,
-                onlyUnread: true,
-                order: 'newest',
-                view: 'expanded'
-            }
-        },
-        isLoading: false,
-        isLoaded: false,
-        version: 1
-    },
-    subscriptions: {
-        isLoading: false,
-        items: [],
-        lastUpdatedAt: 0,
-        onlyUnread: true,
-        order: 'title',
-        totalUnreadCount: 0,
-        version: 1
-    },
-    user: {
-        isLoaded: false,
-        isLoading: false,
-        profile: {
-            userId: '<unknown>',
-            source: '<unknown>',
-            picture: ''
-        },
-        version: 1
-    },
-    userSiteinfo: {
-        items: [],
-        version: 1
-    },
-    version: '0.0.0'
+    categories,
+    credential,
+    notifications,
+    search,
+    sharedSiteinfo,
+    streamSettings,
+    streams,
+    subscriptions,
+    trackingUrlSettings,
+    user,
+    userSiteinfo
 };
 
 export default initialState;
