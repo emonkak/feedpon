@@ -10,6 +10,8 @@ import ProfileButton from 'components/parts/ProfileButton';
 import RelativeTime from 'components/parts/RelativeTime';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
+import createAscendingComparer from 'utils/createAscendingComparer';
+import createDescendingComparer from 'utils/createDescendingComparer';
 import { Category, Profile, State, Subscription, SubscriptionsOrder } from 'messaging/types';
 import { Menu, MenuItem } from 'components/parts/Menu';
 import { Tree, TreeBranch, TreeLeaf } from 'components/parts/Tree';
@@ -308,15 +310,38 @@ class SubscriptionTree extends PureComponent<SubscriptionTreeProps, {}> {
     }
 }
 
+const titleComparer = createAscendingComparer<Subscription>('title');
+const newestComparer = createDescendingComparer<Subscription>('updatedAt');
+const oldestComparer = createAscendingComparer<Subscription>('updatedAt');
+
 export default connect(() => {
+    const subscriptionComparerSelector = createSelector(
+        (state: State) => state.subscriptions.order,
+        (order) => {
+            switch (order) {
+                case 'title':
+                    return titleComparer;
+
+                case 'newest':
+                    return newestComparer;
+
+                case 'oldest':
+                    return oldestComparer;
+            }
+        }
+    );
+
     const visibleSubscriptionsSelector = createSelector(
         (state: State) => state.subscriptions.items,
         (state: State) => state.subscriptions.onlyUnread,
-        (subscriptions, onlyUnread) => {
+        subscriptionComparerSelector,
+        (subscriptions, onlyUnread, subscriptionComparer) => {
             if (!onlyUnread) {
                 return subscriptions;
             }
-            return subscriptions.filter((subscription) => subscription.unreadCount > 0);
+            return subscriptions
+                .filter((subscription) => subscription.unreadCount > 0)
+                .sort(subscriptionComparer);
         }
     );
 

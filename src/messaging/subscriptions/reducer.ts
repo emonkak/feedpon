@@ -1,6 +1,5 @@
 import createAscendingComparer from 'utils/createAscendingComparer';
-import createDescendingComparer from 'utils/createDescendingComparer';
-import { Event, Subscription, SubscriptionsOrder, Subscriptions } from 'messaging/types';
+import { Event, Subscription, Subscriptions } from 'messaging/types';
 
 export default function reducer(subscriptions: Subscriptions, event: Event): Subscriptions {
     switch (event.type) {
@@ -35,7 +34,7 @@ export default function reducer(subscriptions: Subscriptions, event: Event): Sub
             return {
                 ...subscriptions,
                 isLoading: false,
-                items: event.subscriptions.slice().sort(createSubscriptionComparer(subscriptions.order)),
+                items: event.subscriptions,
                 lastUpdatedAt: event.fetchedAt,
                 totalUnreadCount: event.subscriptions.reduce(
                     (total, subscription) => total + subscription.unreadCount,
@@ -46,9 +45,6 @@ export default function reducer(subscriptions: Subscriptions, event: Event): Sub
         case 'SUBSCRIPTIONS_ORDER_CHANGED':
             return {
                 ...subscriptions,
-                items: subscriptions.items
-                    .slice()
-                    .sort(createSubscriptionComparer(event.order)),
                 order: event.order
             };
 
@@ -94,7 +90,7 @@ export default function reducer(subscriptions: Subscriptions, event: Event): Sub
                 items: subscriptions.items
                     .filter((subscription) => subscription.subscriptionId !== event.subscription.subscriptionId)
                     .concat([event.subscription])
-                    .sort(createSubscriptionComparer(subscriptions.order))
+                    .sort(subscriptionIdComparer)
             };
 
         case 'FEED_UNSUBSCRIBING':
@@ -132,7 +128,7 @@ export default function reducer(subscriptions: Subscriptions, event: Event): Sub
                 ...subscriptions,
                 items: subscriptions.items
                     .filter((subscription) => subscription.subscriptionId !== event.subscription.subscriptionId)
-                    .sort(createSubscriptionComparer(subscriptions.order))
+                    .sort(subscriptionIdComparer)
             };
 
         case 'CATEGORY_DELETED':
@@ -178,19 +174,4 @@ export default function reducer(subscriptions: Subscriptions, event: Event): Sub
     }
 }
 
-const titleComparer = createAscendingComparer<Subscription>('title');
-const newestComparer = createDescendingComparer<Subscription>('updatedAt');
-const oldestComparer = createAscendingComparer<Subscription>('updatedAt');
-
-function createSubscriptionComparer(order: SubscriptionsOrder): (x: Subscription, y: Subscription) => number {
-    switch (order) {
-        case 'title':
-            return titleComparer;
-
-        case 'newest':
-            return newestComparer;
-
-        case 'oldest':
-            return oldestComparer;
-    }
-}
+const subscriptionIdComparer = createAscendingComparer<Subscription>('subscriptionId');
