@@ -18,16 +18,18 @@ export default class Modal extends PureComponent<ModalProps, {}> {
     }
 
     componentDidMount() {
-        this.refreshBodyStyles();
+        this.refreshBodyStyles(this.props.isOpened!);
     }
 
     componentDidUpdate(prevProps: any, prevState: any) {
-        this.refreshBodyStyles();
+        this.refreshBodyStyles(this.props.isOpened!);
     }
 
-    refreshBodyStyles() {
-        const { isOpened } = this.props;
+    componentWillUnmount() {
+        this.refreshBodyStyles(false);
+    }
 
+    refreshBodyStyles(isOpened: boolean) {
         if (isOpened) {
             document.body.classList.add('modal-is-opened');
             document.documentElement.classList.add('modal-is-opened');

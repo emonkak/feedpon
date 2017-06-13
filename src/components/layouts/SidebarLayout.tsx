@@ -40,17 +40,19 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
     }
 
     componentWillUnmount() {
+        this.refreshBodyStyles(false);
+
         if (this.unsubscribe) {
             this.unsubscribe();
         }
     }
 
     componentDidMount() {
-        this.refreshBodyStyles();
+        this.refreshBodyStyles(this.props.sidebarIsOpened);
     }
 
     componentDidUpdate() {
-        this.refreshBodyStyles();
+        this.refreshBodyStyles(this.props.sidebarIsOpened);
     }
 
     handleChangeLocation() {
@@ -81,9 +83,7 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
         }
     }
 
-    refreshBodyStyles() {
-        const { sidebarIsOpened } = this.props;
-
+    refreshBodyStyles(sidebarIsOpened: boolean) {
         if (sidebarIsOpened) {
             document.body.classList.add('sidebar-is-opened');
             document.documentElement.classList.add('sidebar-is-opened');
