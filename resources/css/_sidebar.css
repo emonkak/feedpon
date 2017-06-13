@@ -13,12 +13,8 @@
   border-bottom: 1px solid var(--default-color);
 }
 
-.sidebar-is-opened {
-  overflow: hidden;
-}
-
-@media (--md-viewport) {
+@media (--sm-viewport) {
   .sidebar-is-opened {
-    overflow: visible;
+    overflow: hidden;
   }
 }

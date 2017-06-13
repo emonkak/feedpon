@@ -285,7 +285,6 @@ class DashboardPage extends PureComponent<DashboardProps, DashboardState> {
                     <i className="icon icon-32 icon-keyboard" />
                     <i className="icon icon-32 icon-menu" />
                     <i className="icon icon-32 icon-menu-2" />
-                    <i className="icon icon-32 icon-more" />
                     <i className="icon icon-32 icon-page-overview" />
                     <i className="icon icon-32 icon-pin-3" />
                     <i className="icon icon-32 icon-plus-math" />
@@ -318,7 +317,6 @@ class DashboardPage extends PureComponent<DashboardProps, DashboardState> {
                     <i className="icon icon-24 icon-keyboard" />
                     <i className="icon icon-24 icon-menu" />
                     <i className="icon icon-24 icon-menu-2" />
-                    <i className="icon icon-24 icon-more" />
                     <i className="icon icon-24 icon-page-overview" />
                     <i className="icon icon-24 icon-pin-3" />
                     <i className="icon icon-24 icon-plus-math" />
@@ -351,7 +349,6 @@ class DashboardPage extends PureComponent<DashboardProps, DashboardState> {
                     <i className="icon icon-20 icon-keyboard" />
                     <i className="icon icon-20 icon-menu" />
                     <i className="icon icon-20 icon-menu-2" />
-                    <i className="icon icon-20 icon-more" />
                     <i className="icon icon-20 icon-page-overview" />
                     <i className="icon icon-20 icon-pin-3" />
                     <i className="icon icon-20 icon-plus-math" />
@@ -384,7 +381,6 @@ class DashboardPage extends PureComponent<DashboardProps, DashboardState> {
                     <i className="icon icon-16 icon-keyboard" />
                     <i className="icon icon-16 icon-menu" />
                     <i className="icon icon-16 icon-menu-2" />
-                    <i className="icon icon-16 icon-more" />
                     <i className="icon icon-16 icon-page-overview" />
                     <i className="icon icon-16 icon-pin-3" />
                     <i className="icon icon-16 icon-plus-math" />

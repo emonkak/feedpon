@@ -6,6 +6,12 @@ interface NavbarProps {
 }
 
 export default class Navbar extends PureComponent<NavbarProps, {}> {
+    constructor(props: NavbarProps, context: any) {
+        super(props, context);
+
+        this.handleToggleSidebar = this.handleToggleSidebar.bind(this);
+    }
+
     handleToggleSidebar(event: React.SyntheticEvent<any>) {
         event.preventDefault();
 
@@ -22,9 +28,9 @@ export default class Navbar extends PureComponent<NavbarProps, {}> {
         return (
             <nav className="navbar">
                 <div className="navbar-container">
-                    <a className="navbar-toggle-icon" href="#" onClick={this.handleToggleSidebar.bind(this)}>
+                    <button className="navbar-action" href="#" onClick={this.handleToggleSidebar}>
                         <i className="icon icon-24 icon-menu" />
-                    </a>
+                    </button>
                     {children}
                 </div>
             </nav>

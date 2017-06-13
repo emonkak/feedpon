@@ -212,7 +212,7 @@ class SubscriptionTreeHeader extends PureComponent<SubscriptionTreeHeaderProps, 
                     pullUp={false}
                     toggleButton={
                         <button className="u-flex-shrink-0 button-icon button-icon-32">
-                            <i className="icon icon-16 icon-more" />
+                            <i className="icon icon-16 icon-menu-2" />
                         </button>
                     }>
                     <div className="menu-heading">Order</div>

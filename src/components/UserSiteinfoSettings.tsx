@@ -120,6 +120,7 @@ class UserSiteinfoItem extends PureComponent<UserSiteinfoItemProps, UserSiteinfo
                             <i className="icon icon-16 icon-edit" />
                         </button>
                         <ModalButton
+                            className="button-group"
                             modal={
                                 <ConfirmModal
                                     message="Are you sure you want to delete this item?"

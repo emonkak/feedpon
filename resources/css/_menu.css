@@ -43,10 +43,11 @@ a.menu-item.is-disabled {
 }
 
 .menu-item-icon {
-  flex: 0 0 32px;
+  flex: none;
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 32px;
 }
 
 .menu-item-primary-text {

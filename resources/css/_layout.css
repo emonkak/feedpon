@@ -54,6 +54,7 @@
   left: 0;
   width: 100%;
   z-index: 100;
+  background-color: var(--transparent-color);
   transition: padding 0.2s ease-in-out, transform 0.2s ease-in-out;
 }
 

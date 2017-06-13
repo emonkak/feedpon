@@ -40,7 +40,9 @@
   --dark-color: $dark-color;
 
   --shadow-color: color($x-dark-color alpha(20%));
+  --transparent-color: color($x-light-color alpha(90%));
 
+  --font-size: 14px;
   --baseline-height: 24px;
   --navbar-height: 48px;
   --sidebar-width: 288px;
@@ -61,7 +63,7 @@
 html, body {
   font-family: -apple-system, BlinkMacSystemFont, '.SFNSDisplay-Regular', 'San Francisco Text', 'Segoe UI', Helvetica, YuGothic, 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
   font-weight: 400;
-  font-size: 14px;
+  font-size: var(--font-size);
   line-height: var(--baseline-height);
   touch-action: manipulation;
   -webkit-text-size-adjust: 100%;

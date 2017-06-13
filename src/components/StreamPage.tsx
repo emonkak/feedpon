@@ -120,11 +120,12 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
     }
 
     renderNavbar() {
-        const { onChangeStreamView, onFetchStream, onToggleSidebar, scrollTo, stream } = this.props;
+        const { isLoading, onChangeStreamView, onFetchStream, onToggleSidebar, scrollTo, stream } = this.props;
         const { readEntryIds } = this.state;
 
         return (
             <StreamNavbar
+                isLoading={isLoading}
                 onChangeStreamView={onChangeStreamView}
                 onClearReadEntries={this.handleClearReadEntries}
                 onFetchStream={onFetchStream}
@@ -201,6 +202,7 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
 }
 
 interface StreamNavbarProps {
+    isLoading: boolean;
     onChangeStreamView: typeof changeStreamView,
     onClearReadEntries: () => void;
     onFetchStream: typeof fetchStream;
@@ -274,27 +276,30 @@ class StreamNavbar extends PureComponent<StreamNavbarProps, {}> {
     }
 
     render() {
-        const { onClearReadEntries, onToggleSidebar, readEntryIds, stream } = this.props;
+        const { isLoading, onClearReadEntries, onToggleSidebar, readEntryIds, stream } = this.props;
 
         const title = stream.feed && stream.feed.url
             ? <a className="stream-title u-text-truncate" href={stream.feed.url} target="_blank">{stream.title}</a>
             : <span className="stream-title u-text-truncate">{stream.title}</span>;
-
 
         return (
             <Navbar onToggleSidebar={onToggleSidebar}>
                 <h1 className="navbar-title">
                     {title}
                 </h1>
-                <div className="navbar-action">
-                    <button onClick={this.handleReloadEntries}><i className="icon icon-24 icon-refresh" /></button>
-                </div>
+                <button
+                    disabled={isLoading}
+                    className="navbar-action"
+                    onClick={this.handleReloadEntries}>
+                    <i className="icon icon-24 icon-refresh" />
+                </button>
                 <ReadEntriesDropdown
                     entries={stream.entries}
                     onClearReadEntries={onClearReadEntries}
                     onScrollToEntry={this.handleScrollToEntry}
                     readEntryIds={readEntryIds} />
                 <StreamOptionsDropdown
+                    isLoading={isLoading}
                     onChangeEntryOrder={this.handleChangeEntryOrder}
                     onChangeStreamView={this.handleChangeStreamView}
                     onToggleOnlyUnread={this.handleToggleOnlyUnread}
@@ -319,9 +324,8 @@ class ReadEntriesDropdown extends PureComponent<ReadEntriesMenuProps, {}> {
 
         return (
             <Dropdown
-                className="navbar-action"
                 toggleButton={
-                    <button>
+                    <button className="navbar-action">
                         <i className="icon icon-24 icon-checkmark" />
                         <span className="badge badge-small badge-pill badge-negative badge-overlap">{readEntryIds.size || ''}</span>
                     </button>
@@ -349,6 +353,7 @@ class ReadEntriesDropdown extends PureComponent<ReadEntriesMenuProps, {}> {
 }
 
 interface StreamOptionsDropdownProps {
+    isLoading: boolean;
     onChangeEntryOrder: (order: EntryOrder) => void;
     onChangeStreamView: (view: StreamView) => void;
     onClose?: () => void;
@@ -360,14 +365,17 @@ interface StreamOptionsDropdownProps {
 
 class StreamOptionsDropdown extends PureComponent<StreamOptionsDropdownProps, {}> {
     render() {
-        const { onChangeEntryOrder, onChangeStreamView, onToggleOnlyUnread, options } = this.props;
+        const { isLoading, onChangeEntryOrder, onChangeStreamView, onToggleOnlyUnread, options } = this.props;
 
         const checkmarkIcon = <i className="icon icon-16 icon-checkmark" />;
 
         return (
             <Dropdown
-                className="navbar-action"
-                toggleButton={<button><i className="icon icon-24 icon-more" /></button>}>
+                toggleButton={
+                    <button className="navbar-action">
+                        <i className="icon icon-24 icon-menu-2" />
+                    </button>
+                }>
                 <div className="menu-heading">View</div>
                 <MenuItem
                     icon={options.view === 'expanded' ? checkmarkIcon : null}
@@ -382,17 +390,20 @@ class StreamOptionsDropdown extends PureComponent<StreamOptionsDropdownProps, {}
                 <div className="menu-divider" />
                 <div className="menu-heading">Order</div>
                 <MenuItem
+                    isDisabled={isLoading}
                     icon={options.order === 'newest' ? checkmarkIcon : null}
                     onSelect={onChangeEntryOrder}
                     primaryText="Newest first"
                     value="newest" />
                 <MenuItem
+                    isDisabled={isLoading}
                     icon={options.order === 'oldest' ? checkmarkIcon : null}
                     onSelect={onChangeEntryOrder}
                     primaryText="Oldest first"
                     value="oldest" />
                 <div className="menu-divider" />
                 <MenuItem
+                    isDisabled={isLoading}
                     icon={options.onlyUnread ? checkmarkIcon : null}
                     primaryText="Only unread"
                     onSelect={onToggleOnlyUnread} />

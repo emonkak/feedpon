@@ -36,10 +36,11 @@
 }
 
 .notification-icon {
-  flex: 0 0 var(--navbar-height);
+  flex: none;
   display: flex;
   align-items: center;
   justify-content: center;
+  width: var(--navbar-height);
 }
 
 .notification-content {

@@ -5,7 +5,7 @@ const config = {
         require('postcss-custom-media')(),
         require('postcss-color-function')(),
         require('autoprefixer')({
-            browsers: 'last 1 versions'
+            browsers: 'last 1 version'
         })
     ]
 }
