@@ -94,7 +94,8 @@ export function markAsReadForEntries(accessToken: string, entryIds: string | str
 
 export function markAsReadForFeeds(accessToken: string, feedIds: string | string[]): Promise<void> {
     return doPost<void>(
-        'v3/markers', {
+        'v3/markers',
+        {
             action: 'markAsRead',
             type: 'feeds',
             feedIds: Array.isArray(feedIds) ? feedIds : [feedIds]
@@ -103,7 +104,7 @@ export function markAsReadForFeeds(accessToken: string, feedIds: string | string
     );
 }
 
-export function markAsReadForCetegories(accessToken: string, categoryIds: string | string[]): Promise<void> {
+export function markAsReadForCategories(accessToken: string, categoryIds: string | string[]): Promise<void> {
     return doPost<void>(
         'v3/markers',
         {
@@ -139,7 +140,7 @@ export function keepUnreadForFeeds(accessToken: string, feedIds: string | string
     );
 }
 
-export function keepUnreadForCetegories(accessToken: string, categoryIds: string | string[]): Promise<void> {
+export function keepUnreadForCategories(accessToken: string, categoryIds: string | string[]): Promise<void> {
     return doPost<void>(
         'v3/markers',
         {

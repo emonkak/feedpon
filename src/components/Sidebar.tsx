@@ -309,6 +309,14 @@ const newestComparer = createDescendingComparer<Subscription>('updatedAt');
 const oldestComparer = createAscendingComparer<Subscription>('updatedAt');
 
 export default connect(() => {
+    const totalUnreadCountSelector = createSelector(
+        (state: State) => state.subscriptions.items,
+        (subscriptions) => subscriptions.reduce(
+            (total, subscription) => total + subscription.unreadCount,
+            0
+        )
+    );
+
     const subscriptionComparerSelector = createSelector(
         (state: State) => state.subscriptions.order,
         (order) => {
@@ -365,7 +373,7 @@ export default connect(() => {
             subscriptions: state.subscriptions.items,
             subscriptionsIsLoading: state.subscriptions.isLoading,
             subscriptionsOrder: state.subscriptions.order,
-            totalUnreadCount: state.subscriptions.totalUnreadCount,
+            totalUnreadCount: totalUnreadCountSelector(state),
             userIsLoaded: state.user.isLoaded,
             userIsLoading: state.user.isLoading
         }),

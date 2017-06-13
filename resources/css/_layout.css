@@ -105,8 +105,8 @@
   transition-delay: 0s;
 }
 
-.l-single-content {
-  padding: var(--navbar-height) 0 0;
+.l-content {
+  margin: calc(var(--baseline-height) * 4) 0 var(--baseline-height);
 }
 
 @media (--md-viewport) {

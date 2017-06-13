@@ -17,11 +17,11 @@ class SingleLayout extends PureComponent<SingleLayoutProps, {}> {
                 <div className="l-notifications">
                     <Notifications />
                 </div>
-                <div className="l-single-content">
-                    {children}
-                </div>
                 <div className="l-backdrop">
                     {isLoading ? <i className="icon icon-48 icon-spinner icon-rotating" /> : null}
+                </div>
+                <div className="l-content">
+                    {children}
                 </div>
             </div>
         );

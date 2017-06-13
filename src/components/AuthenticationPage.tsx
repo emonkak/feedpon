@@ -20,30 +20,28 @@ class AuthenticationPage extends PureComponent<AuthenticationProps, {}> {
     render() {
         return (
             <div className="container container-narrow">
-                <div className="card">
-                    <div className="u-text-center u-margin-bottom-1">
-                        <a href="https://github.com/emonkak/feedpon" target="_blank">
-                            <img src="/img/feedpon.svg" width="320" height="96" />
-                        </a>
-                    </div>
-                    <div className="u-text-muted u-text-center u-margin-bottom-1">
-                        <p className="u-text-x-large">Please choose the backend service and sign in</p>
-                    </div>
-                    <div className="list-group u-margin-bottom-1">
-                        <label className="list-group-item">
-                            <div className="u-flex u-flex-align-items-center">
-                                <input className="form-check" type="radio" name="backend" value="feedly" defaultChecked />
-                                <i className="icon icon-48 icon-feedly u-margin-right-1" />
-                                <span className="u-flex-grow-1 u-text-large">Feedly</span>
-                            </div>
-                        </label>
-                    </div>
-                    <button
-                        className="button button-positive button-block button-large"
-                        onClick={this.handleAuthenticate.bind(this)}>
-                        Authenticate...
-                    </button>
+                <div className="u-text-center u-margin-bottom-1">
+                    <a href="https://github.com/emonkak/feedpon" target="_blank">
+                        <img src="/img/feedpon.svg" width="320" height="96" />
+                    </a>
                 </div>
+                <div className="u-text-muted u-text-center u-margin-bottom-1">
+                    <p className="u-text-x-large">Please choose the backend service and sign in</p>
+                </div>
+                <div className="list-group u-margin-bottom-1">
+                    <label className="list-group-item">
+                        <div className="u-flex u-flex-align-items-center">
+                            <input className="form-check" type="radio" name="backend" value="feedly" defaultChecked />
+                            <i className="icon icon-48 icon-feedly u-margin-right-1" />
+                            <span className="u-flex-grow-1 u-text-large">Feedly</span>
+                        </div>
+                    </label>
+                </div>
+                <button
+                    className="button button-positive button-block button-large"
+                    onClick={this.handleAuthenticate.bind(this)}>
+                    Authenticate...
+                </button>
             </div>
         );
     }

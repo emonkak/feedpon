@@ -47,8 +47,6 @@ const context = {
 
 const store = applyMiddlewares(createStore(reducer, state), [
     errorHandlingMiddleware((error, { dispatch }) => {
-        console.error(error);
-
         const errorString = (error + '') || 'Unknown error occured';
 
         dispatch(sendNotification(

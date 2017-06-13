@@ -6,7 +6,6 @@ const subscriptions: Subscriptions = {
     lastUpdatedAt: 0,
     onlyUnread: true,
     order: 'title',
-    totalUnreadCount: 0,
     version: 1
 };
 

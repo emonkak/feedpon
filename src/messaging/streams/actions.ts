@@ -4,29 +4,21 @@ import * as feedlyApi from 'adapters/feedly/api';
 import PromiseQueue from 'utils/PromiseQueue';
 import decodeResponseAsText from 'utils/decodeResponseAsText';
 import stripTags from 'utils/stripTags';
-import { AsyncEvent, Entry, Event, Stream, StreamOptions, StreamView } from 'messaging/types';
+import { AsyncEvent, Category, Entry, Event, Feed, Stream, StreamOptions, StreamView } from 'messaging/types';
 import { getFeedlyToken } from 'messaging/credential/actions';
 import { getSiteinfoItems } from 'messaging/sharedSiteinfo/actions';
 import { sendNotification } from 'messaging/notifications/actions';
 
-export function changeStreamView(streamId: string, view: StreamView): Event {
-    return {
-        type: 'STREAM_VIEW_CHANGED',
-        streamId,
-        view
-    };
-}
-
 export function fetchStream(streamId: string, options?: StreamOptions): AsyncEvent {
     return async ({ dispatch, getState }) => {
         if (!options) {
-            const { streamSettings } = getState();
+            const { streamSettings: { defaultSetting } } = getState();
 
             options = {
-                numEntries: streamSettings.defaultNumEntries,
-                order: streamSettings.defaultEntryOrder,
-                onlyUnread: streamSettings.onlyUnreadEntries || streamId === 'pins',
-                view: streamSettings.defaultStreamView
+                numEntries: defaultSetting.numEntries,
+                onlyUnread: defaultSetting.onlyUnread || streamId === 'pins',
+                order: defaultSetting.entryOrder,
+                view: defaultSetting.streamView
             };
         }
 
@@ -78,6 +70,7 @@ export function fetchStream(streamId: string, options?: StreamOptions): AsyncEve
                     entries: [],
                     continuation: null,
                     feed: null,
+                    category: null,
                     options
                 }
             });
@@ -86,7 +79,7 @@ export function fetchStream(streamId: string, options?: StreamOptions): AsyncEve
 }
 
 export function fetchMoreEntries(streamId: string, continuation: string, options: StreamOptions): AsyncEvent {
-    return async ({ dispatch, getState }) => {
+    return async ({ dispatch }) => {
         dispatch({
             type: 'MORE_ENTRIES_FETCHING',
             streamId
@@ -132,179 +125,6 @@ export function fetchMoreEntries(streamId: string, continuation: string, options
     };
 }
 
-function fetchFeedStream(streamId: string, options: StreamOptions): AsyncEvent<Stream> {
-    return async ({ dispatch, getState }) => {
-        const token = await dispatch(getFeedlyToken());
-
-        const [contents, feed] = await Promise.all([
-            feedlyApi.getStreamContents(token.access_token, {
-                streamId,
-                ranked: options.order,
-                unreadOnly: options.onlyUnread
-            }),
-            feedlyApi.getFeed(token.access_token, streamId)
-        ]);
-
-        const stream = {
-            streamId,
-            title: feed.title || feed.website || feed.id.replace(/^feed\//, ''),
-            entries: contents.items.map(convertEntry),
-            continuation: contents.continuation || null,
-            feed: {
-                feedId: feed.id,
-                streamId: feed.id,
-                title: feed.title,
-                description: feed.description || '',
-                url: feed.website || '',
-                feedUrl: feed.id.replace(/^feed\//, ''),
-                iconUrl: feed.iconUrl || '',
-                subscribers: feed.subscribers,
-                isLoading: false,
-            },
-            options
-        };
-
-        return stream;
-    };
-}
-
-function fetchCategoryStream(streamId: string, options: StreamOptions): AsyncEvent<Stream> {
-    return async ({ dispatch, getState }) => {
-        const token = await dispatch(getFeedlyToken());
-
-        const contents = await feedlyApi.getStreamContents(token.access_token, {
-            streamId,
-            ranked: options.order,
-            unreadOnly: options.onlyUnread
-        });
-
-        const { categories } = getState();
-        const category = categories.items
-            .find((category) => category.streamId === streamId) || null;
-
-        const stream = {
-            streamId,
-            title: category ? category.label : '',
-            entries: contents.items.map(convertEntry),
-            continuation: contents.continuation || null,
-            feed: null,
-            options
-        };
-
-        dispatch({
-            type: 'STREAM_FETCHED',
-            stream
-        });
-
-        return stream;
-    };
-}
-
-function fetchAllStream(options: StreamOptions): AsyncEvent<Stream> {
-    return async ({ dispatch, getState }) => {
-        const token = await dispatch(getFeedlyToken());
-
-        const streamId = toFeedlyStreamId('all', token.id);
-        const contents = await feedlyApi.getStreamContents(token.access_token, {
-            streamId,
-            ranked: options.order,
-            unreadOnly: options.onlyUnread
-        });
-
-        const stream = {
-            streamId: 'all',
-            title: 'All',
-            entries: contents.items.map(convertEntry),
-            continuation: contents.continuation || null,
-            feed: null,
-            options
-        };
-
-        dispatch({
-            type: 'STREAM_FETCHED',
-            stream
-        });
-
-        return stream;
-    };
-}
-
-function fetchPinsStream(options: StreamOptions): AsyncEvent<Stream> {
-    return async ({ dispatch, getState }) => {
-        const token = await dispatch(getFeedlyToken());
-
-        const streamId = toFeedlyStreamId('pins', token.id);
-        const contents = await feedlyApi.getStreamContents(token.access_token, {
-            streamId,
-            ranked: options.order,
-            unreadOnly: options.onlyUnread
-        });
-
-        const stream = {
-            type: 'STREAM_FETCHED',
-            streamId: 'pins',
-            title: 'Pins',
-            entries: contents.items.map(convertEntry),
-            continuation: contents.continuation || null,
-            feed: null,
-            options
-        };
-
-        dispatch({
-            type: 'STREAM_FETCHED',
-            stream
-        });
-
-        return stream;
-    };
-}
-
-function fetchBookmarkCounts(urls: string[]): AsyncEvent {
-    return async ({ dispatch, getState }) => {
-        if (urls.length > 0) {
-            const bookmarkCounts = await bookmarkApi.getBookmarkCounts(urls);
-
-            dispatch({
-                type: 'BOOKMARK_COUNTS_FETCHED',
-                bookmarkCounts
-            });
-        }
-    };
-}
-
-function convertEntry(entry: feedly.Entry): Entry {
-    const url = (entry.alternate && entry.alternate[0] && entry.alternate[0].href) || '';
-
-    return {
-        entryId: entry.id,
-        title: entry.title,
-        author: entry.author || '',
-        url,
-        summary: stripTags((entry.summary ? entry.summary.content : '') || (entry.content ? entry.content.content : '')),
-        content: (entry.content ? entry.content.content : '') || (entry.summary ? entry.summary.content : ''),
-        publishedAt: entry.published,
-        bookmarkCount: 0,
-        isPinned: entry.tags ? entry.tags.some((tag) => tag.id.endsWith('tag/global.saved')) : false,
-        isPinning: false,
-        markedAsRead: !entry.unread,
-        origin: entry.origin ? {
-            streamId: entry.origin.streamId,
-            title: entry.origin.title,
-            url: entry.origin.htmlUrl
-        } : null,
-        fullContents: {
-            isLoaded: false,
-            isLoading: false,
-            items: []
-        },
-        comments: {
-            isLoaded: false,
-            isLoading: false,
-            items: []
-        }
-    };
-}
-
 export function fetchComments(entryId: string, url: string): AsyncEvent {
     return async ({ dispatch }) => {
         dispatch({
@@ -340,7 +160,7 @@ export function fetchComments(entryId: string, url: string): AsyncEvent {
 }
 
 export function fetchFullContent(entryId: string, url: string): AsyncEvent {
-    return async ({ dispatch, getState }) => {
+    return async ({ dispatch }) => {
         dispatch({
             type: 'FULL_CONTENT_FETCHING',
             entryId
@@ -402,6 +222,346 @@ export function fetchFullContent(entryId: string, url: string): AsyncEvent {
     };
 }
 
+export function markAsRead(entries: Entry[]): AsyncEvent {
+    return async ({ dispatch }) => {
+        const token = await dispatch(getFeedlyToken());
+
+        const entryIds = entries.map((entry) => entry.entryId as string);
+
+        await feedlyApi.markAsReadForEntries(token.access_token, entryIds);
+
+        const readCounts = entries.reduce<{ [streamId: string]: number }>((acc, entry) => {
+            if (entry.origin) {
+                const { streamId } = entry.origin;
+                acc[streamId] = (acc[streamId] || 0) + 1;
+            }
+            return acc;
+        }, {});
+
+        dispatch({
+            type: 'ENTRIES_MARKED_AS_READ',
+            entryIds,
+            readCounts
+        });
+
+        const message = entries.length === 1
+            ? `${entries.length} entry is marked as read.`
+            : `${entries.length} entries are marked as read.`;
+
+        dispatch(sendNotification(
+            message,
+            'positive'
+        ));
+    };
+}
+
+export function markFeedAsRead(feed: Feed): AsyncEvent {
+    return async ({ dispatch, getState }) => {
+        const token = await dispatch(getFeedlyToken());
+
+        await feedlyApi.markAsReadForFeeds(token.access_token, feed.feedId as string);
+
+        const { subscriptions } = getState();
+        const numEntries = subscriptions.items.reduce(
+            (total, subscription) => total + (subscription.feedId === feed.feedId ? subscription.unreadCount : 0),
+            0
+        );
+
+        dispatch({
+            type: 'FEED_MARKED_AS_READ',
+            feedId: feed.feedId
+        });
+
+        const message = numEntries === 1
+            ? `${numEntries} entry is marked as read.`
+            : `${numEntries} entries are marked as read.`;
+
+        dispatch(sendNotification(
+            message,
+            'positive'
+        ));
+    };
+}
+
+export function markCategoryAsRead(category: Category): AsyncEvent {
+    return async ({ dispatch, getState }) => {
+        const token = await dispatch(getFeedlyToken());
+
+        await feedlyApi.markAsReadForCategories(token.access_token, category.categoryId as string);
+
+        const { subscriptions } = getState();
+        const numEntries = subscriptions.items.reduce(
+            (total, subscription) => total + (subscription.labels.includes(category.label) ? subscription.unreadCount : 0),
+            0
+        );
+
+        dispatch({
+            type: 'CATEGORY_MARKED_AS_READ',
+            categoryId: category.categoryId,
+            label: category.label
+        });
+
+        const message = numEntries === 1
+            ? `${numEntries} entry is marked as read.`
+            : `${numEntries} entries are marked as read.`;
+
+        dispatch(sendNotification(
+            message,
+            'positive'
+        ));
+    };
+}
+
+export function pinEntry(entryId: string): AsyncEvent {
+    return async ({ dispatch }) => {
+        dispatch({
+            type: 'ENTRY_PINNING',
+            entryId
+        });
+
+        try {
+            const token = await dispatch(getFeedlyToken());
+            const tagId = toFeedlyStreamId('pins', token.id);
+
+            await feedlyApi.setTag(token.access_token, [entryId], [tagId]);
+
+            dispatch({
+                type: 'ENTRY_PINNED',
+                entryId,
+                isPinned: true
+            });
+        } catch (error) {
+            dispatch({
+                type: 'ENTRY_PINNING_FAILED',
+                entryId
+            });
+
+            throw error;
+        }
+    };
+}
+
+export function unpinEntry(entryId: string): AsyncEvent {
+    return async ({ dispatch }) => {
+        dispatch({
+            type: 'ENTRY_PINNING',
+            entryId
+        });
+
+        try {
+            const token = await dispatch(getFeedlyToken());
+            const tagId = toFeedlyStreamId('pins', token.id);
+
+            await feedlyApi.unsetTag(token.access_token, [entryId], [tagId]);
+
+            dispatch({
+                type: 'ENTRY_PINNED',
+                entryId,
+                isPinned: false
+            });
+        } catch (error) {
+            dispatch({
+                type: 'ENTRY_PINNING_FAILED',
+                entryId
+            });
+
+            throw error;
+        }
+    };
+}
+
+export function changeStreamView(streamId: string, view: StreamView): Event {
+    return {
+        type: 'STREAM_VIEW_CHANGED',
+        streamId,
+        view
+    };
+}
+
+export function changeUnreadKeeping(keepUnread: boolean): Event {
+    return {
+        type: 'UNREAD_KEEPING_CHANGED',
+        keepUnread
+    };
+}
+
+function fetchFeedStream(streamId: string, options: StreamOptions): AsyncEvent<Stream> {
+    return async ({ dispatch }) => {
+        const token = await dispatch(getFeedlyToken());
+
+        const [contents, feed] = await Promise.all([
+            feedlyApi.getStreamContents(token.access_token, {
+                streamId,
+                ranked: options.order,
+                unreadOnly: options.onlyUnread
+            }),
+            feedlyApi.getFeed(token.access_token, streamId)
+        ]);
+
+        const stream = {
+            streamId,
+            category: null,
+            title: feed.title || feed.website || feed.id.replace(/^feed\//, ''),
+            entries: contents.items.map(convertEntry),
+            continuation: contents.continuation || null,
+            feed: {
+                feedId: feed.id,
+                streamId: feed.id,
+                title: feed.title,
+                description: feed.description || '',
+                url: feed.website || '',
+                feedUrl: feed.id.replace(/^feed\//, ''),
+                iconUrl: feed.iconUrl || '',
+                subscribers: feed.subscribers,
+                isLoading: false,
+            },
+            options
+        };
+
+        return stream;
+    };
+}
+
+function fetchCategoryStream(streamId: string, options: StreamOptions): AsyncEvent<Stream> {
+    return async ({ dispatch, getState }) => {
+        const token = await dispatch(getFeedlyToken());
+
+        const contents = await feedlyApi.getStreamContents(token.access_token, {
+            streamId,
+            ranked: options.order,
+            unreadOnly: options.onlyUnread
+        });
+
+        const { categories } = getState();
+        const category = categories.items
+            .find((category) => category.streamId === streamId) || null;
+
+        const stream = {
+            streamId,
+            category: category,
+            title: category ? category.label : '',
+            entries: contents.items.map(convertEntry),
+            continuation: contents.continuation || null,
+            feed: null,
+            options
+        };
+
+        dispatch({
+            type: 'STREAM_FETCHED',
+            stream
+        });
+
+        return stream;
+    };
+}
+
+function fetchAllStream(options: StreamOptions): AsyncEvent<Stream> {
+    return async ({ dispatch }) => {
+        const token = await dispatch(getFeedlyToken());
+
+        const streamId = toFeedlyStreamId('all', token.id);
+        const contents = await feedlyApi.getStreamContents(token.access_token, {
+            streamId,
+            ranked: options.order,
+            unreadOnly: options.onlyUnread
+        });
+
+        const stream = {
+            streamId: 'all',
+            title: 'All',
+            entries: contents.items.map(convertEntry),
+            continuation: contents.continuation || null,
+            feed: null,
+            category: null,
+            options
+        };
+
+        dispatch({
+            type: 'STREAM_FETCHED',
+            stream
+        });
+
+        return stream;
+    };
+}
+
+function fetchPinsStream(options: StreamOptions): AsyncEvent<Stream> {
+    return async ({ dispatch }) => {
+        const token = await dispatch(getFeedlyToken());
+
+        const streamId = toFeedlyStreamId('pins', token.id);
+        const contents = await feedlyApi.getStreamContents(token.access_token, {
+            streamId,
+            ranked: options.order,
+            unreadOnly: options.onlyUnread
+        });
+
+        const stream = {
+            type: 'STREAM_FETCHED',
+            streamId: 'pins',
+            title: 'Pins',
+            entries: contents.items.map(convertEntry),
+            continuation: contents.continuation || null,
+            feed: null,
+            category: null,
+            options
+        };
+
+        dispatch({
+            type: 'STREAM_FETCHED',
+            stream
+        });
+
+        return stream;
+    };
+}
+
+function fetchBookmarkCounts(urls: string[]): AsyncEvent {
+    return async ({ dispatch }) => {
+        if (urls.length > 0) {
+            const bookmarkCounts = await bookmarkApi.getBookmarkCounts(urls);
+
+            dispatch({
+                type: 'BOOKMARK_COUNTS_FETCHED',
+                bookmarkCounts
+            });
+        }
+    };
+}
+
+function convertEntry(entry: feedly.Entry): Entry {
+    const url = (entry.alternate && entry.alternate[0] && entry.alternate[0].href) || '';
+
+    return {
+        entryId: entry.id,
+        title: entry.title,
+        author: entry.author || '',
+        url,
+        summary: stripTags((entry.summary ? entry.summary.content : '') || (entry.content ? entry.content.content : '')),
+        content: (entry.content ? entry.content.content : '') || (entry.summary ? entry.summary.content : ''),
+        publishedAt: entry.published,
+        bookmarkCount: 0,
+        isPinned: entry.tags ? entry.tags.some((tag) => tag.id.endsWith('tag/global.saved')) : false,
+        isPinning: false,
+        markedAsRead: !entry.unread,
+        origin: entry.origin ? {
+            streamId: entry.origin.streamId,
+            title: entry.origin.title,
+            url: entry.origin.htmlUrl
+        } : null,
+        fullContents: {
+            isLoaded: false,
+            isLoading: false,
+            items: []
+        },
+        comments: {
+            isLoaded: false,
+            isLoading: false,
+            items: []
+        }
+    };
+}
+
 function extractContent(contentDocument: Document, url: string, contentExpression: string): string {
     let content = '';
 
@@ -446,90 +606,6 @@ function extractNextPageUrl(contentDocument: Document, url: string, nextLinkExpr
     }
 
     return '';
-}
-
-export function markAsRead(entryIds: (string | number)[]): AsyncEvent {
-    return async ({ dispatch, getState }) => {
-        if (entryIds.length === 0) {
-            return;
-        }
-
-        // TODO: Implementation
-
-        setTimeout(() => {
-            const message = entryIds.length === 1
-                ? `${entryIds.length} entry is marked as read.`
-                : `${entryIds.length} entries are marked as read.`;
-
-            dispatch({
-                type: 'ENTRY_MARKED_AS_READ',
-                entryIds
-            });
-
-            dispatch(sendNotification(
-                message,
-                'positive'
-            ));
-        }, 200);
-    };
-}
-
-export function pinEntry(entryId: string): AsyncEvent {
-    return async ({ dispatch, getState }) => {
-        dispatch({
-            type: 'ENTRY_PINNING',
-            entryId
-        });
-
-        try {
-            const token = await dispatch(getFeedlyToken());
-            const tagId = toFeedlyStreamId('pins', token.id);
-
-            await feedlyApi.setTag(token.access_token, [entryId], [tagId]);
-
-            dispatch({
-                type: 'ENTRY_PINNED',
-                entryId,
-                isPinned: true
-            });
-        } catch (error) {
-            dispatch({
-                type: 'ENTRY_PINNING_FAILED',
-                entryId
-            });
-
-            throw error;
-        }
-    };
-}
-
-export function unpinEntry(entryId: string): AsyncEvent {
-    return async ({ dispatch, getState }) => {
-        dispatch({
-            type: 'ENTRY_PINNING',
-            entryId
-        });
-
-        try {
-            const token = await dispatch(getFeedlyToken());
-            const tagId = toFeedlyStreamId('pins', token.id);
-
-            await feedlyApi.unsetTag(token.access_token, [entryId], [tagId]);
-
-            dispatch({
-                type: 'ENTRY_PINNED',
-                entryId,
-                isPinned: false
-            });
-        } catch (error) {
-            dispatch({
-                type: 'ENTRY_PINNING_FAILED',
-                entryId
-            });
-
-            throw error;
-        }
-    };
 }
 
 function expandUrls(urls: string[]): AsyncEvent<string[]> {

@@ -1,23 +1,26 @@
 export type Event
     = { type: 'APPLICATION_INITIALIZED' }
-    | { type: 'BOOKMARK_COUNTS_FETCHED', bookmarkCounts: { [key: string]: number } }
+    | { type: 'BOOKMARK_COUNTS_FETCHED', bookmarkCounts: { [url: string]: number } }
     | { type: 'CATEGORY_CREATED', category: Category }
     | { type: 'CATEGORY_CREATING' }
     | { type: 'CATEGORY_CREATING_FAILED' }
-    | { type: 'CATEGORY_DELETED', category: Category }
-    | { type: 'CATEGORY_DELETING', category: Category }
-    | { type: 'CATEGORY_DELETING_FAILED', category: Category }
+    | { type: 'CATEGORY_DELETED', categoryId: string | number, label: string }
+    | { type: 'CATEGORY_DELETING', categoryId: string | number, label: string }
+    | { type: 'CATEGORY_DELETING_FAILED', categoryId: string | number, label: string }
+    | { type: 'CATEGORY_MARKED_AS_READ', categoryId: string | number, label: string }
     | { type: 'CATEGORY_UPDATED', prevCategory: Category, category: Category }
     | { type: 'CATEGORY_UPDATING', category: Category }
     | { type: 'CATEGORY_UPDATING_FAILED', category: Category }
     | { type: 'COMMENTS_FETCHED', entryId: string | number, comments: Comment[] }
     | { type: 'COMMENTS_FETCHING', entryId: string | number }
     | { type: 'COMMENTS_FETCHING_FAILED', entryId: string | number }
-    | { type: 'ENTRY_MARKED_AS_READ', entryIds: (string | number)[] }
+    | { type: 'DEFAULT_STREAM_SETTING_CHANGED', setting: StreamSetting }
+    | { type: 'ENTRIES_MARKED_AS_READ', entryIds: (string | number)[], readCounts: { [streamId: string]: number } }
     | { type: 'ENTRY_PINNED', entryId: string | number, isPinned: boolean }
     | { type: 'ENTRY_PINNING', entryId: string | number }
     | { type: 'ENTRY_PINNING_FAILED', entryId: string | number }
-    | { type: 'ENTRY_URLS_EXPANDED', urls: { [key: string]: string } }
+    | { type: 'ENTRY_URLS_EXPANDED', urls: { [url: string]: string } }
+    | { type: 'FEED_MARKED_AS_READ', feedId: string | number }
     | { type: 'FEED_SEARCHED', query: string, feeds: Feed[] }
     | { type: 'FEED_SEARCHING', query: string }
     | { type: 'FEED_SEARCHING_FAILED', query: string }
@@ -45,7 +48,6 @@ export type Event
     | { type: 'STREAM_FETCHED', stream: Stream  }
     | { type: 'STREAM_FETCHING', streamId: string }
     | { type: 'STREAM_FETCHING_FAILED', streamId: string }
-    | { type: 'STREAM_SETTINGS_CHANGED', defaultEntryOrder: EntryOrder, defaultNumEntries: number, defaultStreamView: StreamView, onlyUnreadEntries: boolean }
     | { type: 'STREAM_VIEW_CHANGED', streamId: string, view: StreamView }
     | { type: 'SUBSCRIPTIONS_FETCHED', subscriptions: Subscription[], categories: Category[], fetchedAt: number }
     | { type: 'SUBSCRIPTIONS_FETCHING' }
@@ -59,6 +61,7 @@ export type Event
     | { type: 'TOKEN_REVOKING' }
     | { type: 'TRACKING_URL_PATTERN_ADDED', pattern: string }
     | { type: 'TRACKING_URL_PATTERN_REMOVED', pattern: string }
+    | { type: 'UNREAD_KEEPING_CHANGED', keepUnread: boolean }
     | { type: 'USER_FETCHED', profile: Profile }
     | { type: 'USER_FETCHING' }
     | { type: 'USER_FETCHING_FAILED' }
@@ -138,22 +141,24 @@ export interface Streams {
     current: Stream;
     isLoaded: boolean;
     isLoading: boolean;
+    keepUnread: boolean;
     version: number;
 }
 
 export interface Stream {
-    streamId: string | null;
-    title: string;
-    entries: Entry[];
+    category: Category | null;
     continuation: string | null;
+    entries: Entry[];
     feed: Feed | null;
     options: StreamOptions;
+    streamId: string;
+    title: string;
 }
 
 export interface StreamOptions {
     numEntries: number;
-    order: EntryOrder;
     onlyUnread: boolean;
+    order: EntryOrder;
     view: StreamView;
 }
 
@@ -239,11 +244,15 @@ export interface Notification {
 export type NotificationKind = 'default' | 'positive' | 'negative';
 
 export interface StreamSettings {
-    defaultEntryOrder: EntryOrder;
-    defaultNumEntries: number;
-    defaultStreamView: StreamView;
-    onlyUnreadEntries: boolean;
+    defaultSetting: StreamSetting;
     version: number;
+}
+
+export interface StreamSetting {
+    entryOrder: EntryOrder;
+    numEntries: number;
+    onlyUnread: boolean;
+    streamView: StreamView;
 }
 
 export type EntryOrder = 'newest' | 'oldest';
@@ -259,7 +268,6 @@ export interface Subscriptions {
     lastUpdatedAt: number;
     onlyUnread: boolean;
     order: SubscriptionsOrder;
-    totalUnreadCount: number;
     version: number;
 }
 

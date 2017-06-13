@@ -35,11 +35,7 @@ export default function reducer(subscriptions: Subscriptions, event: Event): Sub
                 ...subscriptions,
                 isLoading: false,
                 items: event.subscriptions.sort(subscriptionIdComparer),
-                lastUpdatedAt: event.fetchedAt,
-                totalUnreadCount: event.subscriptions.reduce(
-                    (total, subscription) => total + subscription.unreadCount,
-                    0
-                )
+                lastUpdatedAt: event.fetchedAt
             };
 
         case 'SUBSCRIPTIONS_ORDER_CHANGED':
@@ -137,7 +133,7 @@ export default function reducer(subscriptions: Subscriptions, event: Event): Sub
                 items: subscriptions.items
                     .map((subscription) => {
                         const labels = subscription.labels
-                            .filter((label) => label !== event.category.label);
+                            .filter((label) => label !== event.label);
 
                         if (subscription.labels.length === labels.length) {
                             return subscription;
@@ -168,6 +164,48 @@ export default function reducer(subscriptions: Subscriptions, event: Event): Sub
                         };
                     })
             }
+
+        case 'ENTRIES_MARKED_AS_READ':
+            return {
+                ...subscriptions,
+                items: subscriptions.items.map((subscription) => {
+                    if (!event.readCounts[subscription.streamId]) {
+                        return subscription;
+                    }
+                    return {
+                        ...subscription,
+                        unreadCount: Math.max(subscription.unreadCount - event.readCounts[subscription.streamId], 0)
+                    };
+                })
+            };
+
+        case 'FEED_MARKED_AS_READ':
+            return {
+                ...subscriptions,
+                items: subscriptions.items.map((subscription) => {
+                    if (subscription.feedId !== event.feedId) {
+                        return subscription;
+                    }
+                    return {
+                        ...subscription,
+                        unreadCount: 0
+                    };
+                })
+            };
+
+        case 'CATEGORY_MARKED_AS_READ':
+            return {
+                ...subscriptions,
+                items: subscriptions.items.map((subscription) => {
+                    if (subscription.labels.includes(event.label)) {
+                        return subscription;
+                    }
+                    return {
+                        ...subscription,
+                        unreadCount: 0
+                    };
+                })
+            };
 
         default:
             return subscriptions;

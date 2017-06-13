@@ -101,6 +101,12 @@ export class MenuItem extends PureComponent<MenuItemProps, {}> {
         isDisabled: false
     };
 
+    constructor(props: MenuItemProps, context: any) {
+        super(props, context);
+
+        this.handleSelect = this.handleSelect.bind(this);
+    }
+
     handleSelect(event: React.SyntheticEvent<any>) {
         event.preventDefault();
 
@@ -133,7 +139,7 @@ export class MenuItem extends PureComponent<MenuItemProps, {}> {
                     className="menu-item"
                     title={primaryText}
                     href="#"
-                    onClick={this.handleSelect.bind(this)}>
+                    onClick={this.handleSelect}>
                     {iconElement}
                     {primaryTextElement}
                     {secondaryTextElement}

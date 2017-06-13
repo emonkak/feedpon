@@ -42,7 +42,7 @@ export default function reducer(categories: Categories, event: Event): Categorie
             return {
                 ...categories,
                 items: categories.items.map((category) => {
-                    if (category.categoryId !== event.category.categoryId) {
+                    if (category.label !== event.category.label) {
                         return category;
                     }
                     return {
@@ -85,7 +85,7 @@ export default function reducer(categories: Categories, event: Event): Categorie
             return {
                 ...categories,
                 items: categories.items.map((category) => {
-                    if (category.categoryId !== event.category.categoryId) {
+                    if (category.categoryId !== event.categoryId) {
                         return category;
                     }
                     return {
@@ -99,7 +99,7 @@ export default function reducer(categories: Categories, event: Event): Categorie
             return {
                 ...categories,
                 items: categories.items.map((category) => {
-                    if (category.categoryId !== event.category.categoryId) {
+                    if (category.categoryId !== event.categoryId) {
                         return category;
                     }
                     return {
@@ -114,7 +114,7 @@ export default function reducer(categories: Categories, event: Event): Categorie
                 ...categories,
                 isLoading: false,
                 items: categories.items
-                    .filter((category) => category.categoryId !== event.category.categoryId)
+                    .filter((category) => category.categoryId !== event.categoryId)
             };
 
         case 'SUBSCRIPTIONS_FETCHING':

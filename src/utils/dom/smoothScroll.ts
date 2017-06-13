@@ -20,6 +20,10 @@ export default function smoothScroll(el: HTMLElement, x: number, y: number): Pro
 
     const startTime = window.performance.now();
 
+    if (startX === x && startY === y) {
+        return Promise.resolve();
+    }
+
     return start(scrollable, scroll, startTime, startX, startY, x, y);
 }
 

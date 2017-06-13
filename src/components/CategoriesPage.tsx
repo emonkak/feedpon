@@ -131,7 +131,7 @@ class CategoriesPage extends PureComponent<CategoriesPageProps, CategoriesPageSt
                     categories={categories}
                     label={label || UNCATEGORIZED}
                     onSelectCategory={this.handleSelectCategory} />
-                {category ? <EditCategoryForm category={category} onUpdateCategory={onUpdateCategory} onDelete={onDeleteCategory} /> : null}
+                {category ? <EditCategoryForm category={category} onUpdateCategory={onUpdateCategory} onDeleteCategory={onDeleteCategory} /> : null}
                 <h1 className="display-1">{label || 'Uncategorized'}</h1>
                 {description}
                 <p>
@@ -350,8 +350,8 @@ class SubscriptionDropdown extends PureComponent<SubscriptionDropdownProps, {}> 
 
 interface EditCategoryFormProps {
     category: Category;
-    onDelete: (category: Category) => void;
-    onUpdateCategory: (category: Category, label: string) => void;
+    onDeleteCategory: typeof deleteCategory;
+    onUpdateCategory: typeof updateCategory;
 }
 
 interface EditCategoryFormState {
@@ -382,9 +382,9 @@ class EditCategoryForm extends PureComponent<EditCategoryFormProps, EditCategory
     }
 
     handleDelete() {
-        const { category, onDelete } = this.props;
+        const { category, onDeleteCategory } = this.props;
 
-        onDelete(category);
+        onDeleteCategory(category.categoryId, category.label);
     }
 
     handleUpdate() {

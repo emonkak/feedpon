@@ -35,26 +35,29 @@ export function createCategory(label: string, callback: (category: Category) => 
     };
 }
 
-export function deleteCategory(category: Category): AsyncEvent {
+export function deleteCategory(categoryId: string | number, label: string): AsyncEvent {
     return async ({ dispatch, getState }) => {
         dispatch({
             type: 'CATEGORY_DELETING',
-            category
+            categoryId,
+            label
         });
 
         try {
             const token = await dispatch(getFeedlyToken());
 
-            await feedly.deleteCategory(token.access_token, category.categoryId as string);
+            await feedly.deleteCategory(token.access_token, categoryId as string);
 
             dispatch({
                 type: 'CATEGORY_DELETED',
-                category
+                categoryId,
+                label
             });
         } catch (error) {
             dispatch({
                 type: 'CATEGORY_DELETING_FAILED',
-                category
+                categoryId,
+                label
             });
 
             throw error;
@@ -72,7 +75,7 @@ export function updateCategory(category: Category, label: string): AsyncEvent {
         try {
             const token = await dispatch(getFeedlyToken());
 
-            await feedly.changeCategoryLabel(token.access_token, category.categoryId as string, label);
+            await feedly.changeCategoryLabel(token.access_token, category.streamId, label);
 
             const categoryId = `user/${token.id}/category/${label}`;
 

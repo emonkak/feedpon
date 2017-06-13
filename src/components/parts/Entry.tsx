@@ -10,7 +10,6 @@ interface EntryProps {
     isActive?: boolean;
     isCollapsible?: boolean;
     isExpanded?: boolean;
-    isRead?: boolean;
     onClose: () => void;
     onExpand: (entryId: string | number, element: Element) => void;
     onFetchComments: (entryId: string | number, url: string) => void;
@@ -24,8 +23,7 @@ export default class Entry extends PureComponent<EntryProps, {}> {
     static defaultProps = {
         isActive: false,
         isCollapsible: false,
-        isExpanded: false,
-        isRead: false
+        isExpanded: false
     };
 
     constructor(props: EntryProps, context: any) {
@@ -61,7 +59,7 @@ export default class Entry extends PureComponent<EntryProps, {}> {
     }
 
     render() {
-        const { entry, isActive, isCollapsible, isExpanded, isRead, onFetchComments, onFetchFullContent, onPin, onUnpin, sameOrigin } = this.props;
+        const { entry, isActive, isCollapsible, isExpanded, onFetchComments, onFetchFullContent, onPin, onUnpin, sameOrigin } = this.props;
 
         return (
             <article
@@ -71,8 +69,7 @@ export default class Entry extends PureComponent<EntryProps, {}> {
                     'is-collapsible': isCollapsible,
                     'is-expanded': isExpanded,
                     'is-marked-as-read': entry.markedAsRead,
-                    'is-pinned': entry.isPinned,
-                    'is-unread': !entry.markedAsRead && !isRead,
+                    'is-pinned': entry.isPinned
                 })}>
                 <EntryInner
                     entry={entry}

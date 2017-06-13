@@ -1,10 +1,12 @@
 import { StreamSettings } from 'messaging/types';
 
 const streamSettings: StreamSettings = {
-    defaultEntryOrder: 'newest',
-    defaultNumEntries: 20,
-    defaultStreamView: 'expanded',
-    onlyUnreadEntries: true,
+    defaultSetting: {
+        entryOrder: 'newest',
+        numEntries: 20,
+        onlyUnread: true,
+        streamView: 'expanded'
+    },
     version: 1
 };
 

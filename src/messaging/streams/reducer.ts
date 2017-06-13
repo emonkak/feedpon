@@ -28,81 +28,6 @@ export default function reducer(streams: Streams, event: Event): Streams {
                 isLoading: false
             }
 
-        case 'BOOKMARK_COUNTS_FETCHED':
-            return {
-                ...streams,
-                current: {
-                    ...streams.current,
-                    entries: streams.current.entries.map((entry) => ({
-                        ...entry,
-                        bookmarkCount: event.bookmarkCounts[entry.url] || 0
-                    }))
-                }
-            };
-
-        case 'COMMENTS_FETCHING':
-            return {
-                ...streams,
-                current: {
-                    ...streams.current,
-                    entries: streams.current.entries.map((entry) => {
-                        if (entry.entryId !== event.entryId) {
-                            return entry;
-                        }
-                        return {
-                            ...entry,
-                            comments: {
-                                isLoaded: false,
-                                isLoading: true,
-                                items: []
-                            }
-                        };
-                    })
-                }
-            };
-
-        case 'COMMENTS_FETCHING_FAILED':
-            return {
-                ...streams,
-                current: {
-                    ...streams.current,
-                    entries: streams.current.entries.map((entry) => {
-                        if (entry.entryId !== event.entryId) {
-                            return entry;
-                        }
-                        return {
-                            ...entry,
-                            comments: {
-                                isLoaded: true,
-                                isLoading: false,
-                                items: []
-                            }
-                        };
-                    })
-                }
-            };
-
-        case 'COMMENTS_FETCHED':
-            return {
-                ...streams,
-                current: {
-                    ...streams.current,
-                    entries: streams.current.entries.map((entry) => {
-                        if (entry.entryId !== event.entryId) {
-                            return entry;
-                        }
-                        return {
-                            ...entry,
-                            comments: {
-                                isLoaded: true,
-                                isLoading: false,
-                                items: event.comments
-                            }
-                        };
-                    })
-                }
-            };
-
         case 'STREAM_FETCHING':
             return {
                 ...streams,
@@ -112,6 +37,7 @@ export default function reducer(streams: Streams, event: Event): Streams {
                     entries: [],
                     continuation: null,
                     feed: null,
+                    category: null,
                     options: streams.current.options
                 },
                 isLoaded: false,
@@ -131,68 +57,6 @@ export default function reducer(streams: Streams, event: Event): Streams {
                 current: event.stream,
                 isLoaded: true,
                 isLoading: false
-            };
-
-        case 'FULL_CONTENT_FETCHING':
-            return {
-                ...streams,
-                current: {
-                    ...streams.current,
-                    entries: streams.current.entries.map((entry) => {
-                        if (entry.entryId !== event.entryId) {
-                            return entry;
-                        }
-                        return {
-                            ...entry,
-                            fullContents: {
-                                ...entry.fullContents,
-                                isLoading: true
-                            }
-                        };
-                    })
-                }
-            };
-
-        case 'FULL_CONTENT_FETCHING_FAILED':
-            return {
-                ...streams,
-                current: {
-                    ...streams.current,
-                    entries: streams.current.entries.map((entry) => {
-                        if (entry.entryId !== event.entryId) {
-                            return entry;
-                        }
-                        return {
-                            ...entry,
-                            fullContents: {
-                                ...entry.fullContents,
-                                isLoaded: true,
-                                isLoading: false
-                            }
-                        };
-                    })
-                }
-            };
-
-        case 'FULL_CONTENT_FETCHED':
-            return {
-                ...streams,
-                current: {
-                    ...streams.current,
-                    entries: streams.current.entries.map((entry) => {
-                        if (entry.entryId !== event.entryId) {
-                            return entry;
-                        }
-                        return {
-                            ...entry,
-                            fullContents: {
-                                isLoaded: true,
-                                isLoading: false,
-                                items: entry.fullContents.items.concat([event.fullContent])
-                            }
-                        };
-                    })
-                }
             };
 
         case 'STREAM_VIEW_CHANGED':
@@ -244,23 +108,6 @@ export default function reducer(streams: Streams, event: Event): Streams {
                     entries: streams.current.entries.concat(event.entries)
                 },
                 isLoading: false,
-            };
-
-        case 'ENTRY_MARKED_AS_READ':
-            return {
-                ...streams,
-                current: {
-                    ...streams.current,
-                    entries: streams.current.entries.map((entry) => {
-                        if (!event.entryIds.includes(entry.entryId)) {
-                            return entry;
-                        }
-                        return {
-                            ...entry,
-                            markedAsRead: true
-                        };
-                    })
-                }
             };
 
         case 'ENTRY_PINNING':
@@ -327,6 +174,23 @@ export default function reducer(streams: Streams, event: Event): Streams {
                         return {
                             ...entry,
                             url: event.urls[entry.url]
+                        };
+                    })
+                }
+            };
+
+        case 'ENTRIES_MARKED_AS_READ':
+            return {
+                ...streams,
+                current: {
+                    ...streams.current,
+                    entries: streams.current.entries.map((entry) => {
+                        if (!event.entryIds.includes(entry.entryId)) {
+                            return entry;
+                        }
+                        return {
+                            ...entry,
+                            markedAsRead: true
                         };
                     })
                 }
@@ -426,6 +290,185 @@ export default function reducer(streams: Streams, event: Event): Streams {
                         isLoading: false,
                     }
                 }
+            };
+
+        case 'FEED_MARKED_AS_READ':
+            if (streams.current.feed && streams.current.feed.feedId !== event.feedId) {
+                return streams;
+            }
+
+            return {
+                ...streams,
+                current: {
+                    ...streams.current,
+                    entries: streams.current.entries.map((entry) => {
+                        return {
+                            ...entry,
+                            markedAsRead: true
+                        };
+                    })
+                }
+            };
+
+        case 'FULL_CONTENT_FETCHING':
+            return {
+                ...streams,
+                current: {
+                    ...streams.current,
+                    entries: streams.current.entries.map((entry) => {
+                        if (entry.entryId !== event.entryId) {
+                            return entry;
+                        }
+                        return {
+                            ...entry,
+                            fullContents: {
+                                ...entry.fullContents,
+                                isLoading: true
+                            }
+                        };
+                    })
+                }
+            };
+
+        case 'FULL_CONTENT_FETCHING_FAILED':
+            return {
+                ...streams,
+                current: {
+                    ...streams.current,
+                    entries: streams.current.entries.map((entry) => {
+                        if (entry.entryId !== event.entryId) {
+                            return entry;
+                        }
+                        return {
+                            ...entry,
+                            fullContents: {
+                                ...entry.fullContents,
+                                isLoaded: true,
+                                isLoading: false
+                            }
+                        };
+                    })
+                }
+            };
+
+        case 'FULL_CONTENT_FETCHED':
+            return {
+                ...streams,
+                current: {
+                    ...streams.current,
+                    entries: streams.current.entries.map((entry) => {
+                        if (entry.entryId !== event.entryId) {
+                            return entry;
+                        }
+                        return {
+                            ...entry,
+                            fullContents: {
+                                isLoaded: true,
+                                isLoading: false,
+                                items: entry.fullContents.items.concat([event.fullContent])
+                            }
+                        };
+                    })
+                }
+            };
+
+        case 'CATEGORY_MARKED_AS_READ':
+            if (streams.current.category && streams.current.category.categoryId !== event.categoryId) {
+                return streams;
+            }
+
+            return {
+                ...streams,
+                current: {
+                    ...streams.current,
+                    entries: streams.current.entries.map((entry) => {
+                        return {
+                            ...entry,
+                            markedAsRead: true
+                        };
+                    })
+                }
+            };
+
+        case 'BOOKMARK_COUNTS_FETCHED':
+            return {
+                ...streams,
+                current: {
+                    ...streams.current,
+                    entries: streams.current.entries.map((entry) => ({
+                        ...entry,
+                        bookmarkCount: event.bookmarkCounts[entry.url] || 0
+                    }))
+                }
+            };
+
+        case 'COMMENTS_FETCHING':
+            return {
+                ...streams,
+                current: {
+                    ...streams.current,
+                    entries: streams.current.entries.map((entry) => {
+                        if (entry.entryId !== event.entryId) {
+                            return entry;
+                        }
+                        return {
+                            ...entry,
+                            comments: {
+                                isLoaded: false,
+                                isLoading: true,
+                                items: []
+                            }
+                        };
+                    })
+                }
+            };
+
+        case 'COMMENTS_FETCHING_FAILED':
+            return {
+                ...streams,
+                current: {
+                    ...streams.current,
+                    entries: streams.current.entries.map((entry) => {
+                        if (entry.entryId !== event.entryId) {
+                            return entry;
+                        }
+                        return {
+                            ...entry,
+                            comments: {
+                                isLoaded: true,
+                                isLoading: false,
+                                items: []
+                            }
+                        };
+                    })
+                }
+            };
+
+        case 'COMMENTS_FETCHED':
+            return {
+                ...streams,
+                current: {
+                    ...streams.current,
+                    entries: streams.current.entries.map((entry) => {
+                        if (entry.entryId !== event.entryId) {
+                            return entry;
+                        }
+                        return {
+                            ...entry,
+                            comments: {
+                                isLoaded: true,
+                                isLoading: false,
+                                items: event.comments
+                            }
+                        };
+                    })
+                }
+            };
+
+        case 'UNREAD_KEEPING_CHANGED':
+            return {
+                ...streams,
+                keepUnread: event.keepUnread
             };
 
         default:

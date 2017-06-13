@@ -2,18 +2,15 @@ import React, { PureComponent } from 'react';
 
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
-import { EntryOrder, State, StreamView } from 'messaging/types';
-import { changeStreamSettings } from 'messaging/streamSettings/actions';
+import { State, StreamSetting } from 'messaging/types';
+import { changeDefaultStreamSetting } from 'messaging/streamSettings/actions';
 
 interface StreamSettingsProps {
-    defaultEntryOrder: EntryOrder;
-    defaultNumEntries: number;
-    defaultStreamView: StreamView;
-    onChangeStreamSettings: typeof changeStreamSettings;
-    onlyUnreadEntries: boolean;
+    defaultSetting: StreamSetting;
+    onChangeDefaultStreamSetting: typeof changeDefaultStreamSetting;
 }
 
-type StreamSettingsState = StreamSettingsProps;
+type StreamSettingsState = StreamSetting;
 
 class StreamSettings extends PureComponent<StreamSettingsProps, StreamSettingsState> {
     constructor(props: StreamSettingsProps, context: any) {
@@ -22,7 +19,7 @@ class StreamSettings extends PureComponent<StreamSettingsProps, StreamSettingsSt
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
 
-        this.state = props;
+        this.state = props.defaultSetting;
     }
 
     handleChange(event: React.FormEvent<HTMLInputElement>) {
@@ -39,13 +36,13 @@ class StreamSettings extends PureComponent<StreamSettingsProps, StreamSettingsSt
     handleSubmit(event: React.FormEvent<any>) {
         event.preventDefault();
 
-        const { defaultEntryOrder, defaultNumEntries, defaultStreamView, onChangeStreamSettings, onlyUnreadEntries } = this.state;
+        const { onChangeDefaultStreamSetting } = this.props;
 
-        onChangeStreamSettings(defaultEntryOrder, defaultNumEntries, defaultStreamView, onlyUnreadEntries);
+        onChangeDefaultStreamSetting(this.state);
     }
 
     render() {
-        const { defaultEntryOrder, defaultNumEntries, defaultStreamView, onlyUnreadEntries } = this.state;
+        const { entryOrder, numEntries, onlyUnread, streamView } = this.state;
 
         return (
             <section className="section">
@@ -57,8 +54,8 @@ class StreamSettings extends PureComponent<StreamSettingsProps, StreamSettingsSt
                             <input
                                 type="number"
                                 className="form-control"
-                                name="defaultNumEntries"
-                                value={defaultNumEntries + ''}
+                                name="numEntries"
+                                value={numEntries + ''}
                                 onChange={this.handleChange}
                                 required />
                         </label>
@@ -68,8 +65,8 @@ class StreamSettings extends PureComponent<StreamSettingsProps, StreamSettingsSt
                             <input
                                 type="checkbox"
                                 className="form-check"
-                                name="onlyUnreadEntries"
-                                checked={onlyUnreadEntries}
+                                name="onlyUnread"
+                                checked={onlyUnread}
                                 onChange={this.handleChange} />
                                 Display only unread entries on default
                         </label>
@@ -80,9 +77,9 @@ class StreamSettings extends PureComponent<StreamSettingsProps, StreamSettingsSt
                             <input
                                 type="radio"
                                 className="form-check"
-                                name="defaultEntryOrder"
+                                name="entryOrder"
                                 value="newest"
-                                checked={defaultEntryOrder === 'newest'}
+                                checked={entryOrder === 'newest'}
                                 onChange={this.handleChange}
                                 required />Newest
                         </label>
@@ -90,9 +87,9 @@ class StreamSettings extends PureComponent<StreamSettingsProps, StreamSettingsSt
                             <input
                                 type="radio"
                                 className="form-check"
-                                name="defaultEntryOrder"
+                                name="entryOrder"
                                 value="oldest"
-                                checked={defaultEntryOrder === 'oldest'}
+                                checked={entryOrder === 'oldest'}
                                 onChange={this.handleChange}
                                 required />Oldest
                         </label>
@@ -103,9 +100,9 @@ class StreamSettings extends PureComponent<StreamSettingsProps, StreamSettingsSt
                             <input
                                 type="radio"
                                 className="form-check"
-                                name="defaultStreamView"
+                                name="streamView"
                                 value="expanded"
-                                checked={defaultStreamView === 'expanded'}
+                                checked={streamView === 'expanded'}
                                 onChange={this.handleChange}
                                 required />Expanded view
                         </label>
@@ -113,9 +110,9 @@ class StreamSettings extends PureComponent<StreamSettingsProps, StreamSettingsSt
                             <input
                                 type="radio"
                                 className="form-check"
-                                name="defaultStreamView"
+                                name="streamView"
                                 value="collapsible"
-                                checked={defaultStreamView === 'collapsible'}
+                                checked={streamView === 'collapsible'}
                                 onChange={this.handleChange}
                                 required />Collapsible view
                         </label>
@@ -131,12 +128,9 @@ class StreamSettings extends PureComponent<StreamSettingsProps, StreamSettingsSt
 
 export default connect({
     mapStateToProps: (state: State) => ({
-        defaultEntryOrder: state.streamSettings.defaultEntryOrder,
-        defaultNumEntries: state.streamSettings.defaultNumEntries,
-        defaultStreamView: state.streamSettings.defaultStreamView,
-        onlyUnreadEntries: state.streamSettings.onlyUnreadEntries
+        defaultSetting: state.streamSettings.defaultSetting
     }),
     mapDispatchToProps: bindActions({
-        onChangeStreamSettings: changeStreamSettings
+        onChangeDefaultStreamSetting: changeDefaultStreamSetting
     })
 })(StreamSettings);

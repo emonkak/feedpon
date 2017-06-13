@@ -81,7 +81,7 @@ export default class SubscribeDropdown extends PureComponent<SubscribeDropdownPr
             return (
                 <MenuItem
                     value={category.label}
-                    key={category.categoryId}
+                    key={category.label}
                     icon={isAdded ? <i className="icon icon-16 icon-checkmark" /> : null}
                     onSelect={isAdded ? this.handleRemoveFromCategory : this.handleAddToCategory}
                     primaryText={category.label} />
