@@ -1,6 +1,5 @@
 import React, { PureComponent } from 'react';
 import classnames from 'classnames';
-import { Link } from 'react-router';
 
 import CleanHtml from 'components/parts/CleanHtml';
 import CommentList from 'components/parts/CommentList';
@@ -166,10 +165,9 @@ export default class EntryInner extends PureComponent<EntryInnerProps, EntryInne
 
         return (
             <div className="list-inline-item">
-                <Link className="link-strong"
-                        to={'streams/' + encodeURIComponent(entry.origin.streamId)}>
+                <a className="link-strong" href={entry.origin.url} target="_blank">
                     {entry.origin.title}
-                </Link>
+                </a>
             </div>
         );
     }
