@@ -19,7 +19,9 @@ export default class EntryPlaceholder extends React.Component<EntryPlaceholderPr
             })}>
                 <div className="container">
                     <header className="entry-header">
-                        <h2 className="entry-title"><span className="placeholder placeholder-animated placeholder-80" /></h2>
+                        <h2 className="entry-title">
+                            <span className="placeholder placeholder-animated placeholder-80" />
+                        </h2>
                         <div className="entry-metadata">
                             <span className="placeholder placeholder-animated placeholder-60" />
                         </div>
@@ -48,10 +50,9 @@ export default class EntryPlaceholder extends React.Component<EntryPlaceholderPr
                         </p>
                     </div>
                     <footer className="entry-footer">
-                        <div className="entry-action-list">
-                            <span className="entry-action"><i className="icon icon-20 icon-comments"></i></span>
-                            <span className="entry-action"><i className="icon icon-20 icon-share"></i></span>
-                            <span className="entry-action"><i className="icon icon-20 icon-external-link"></i></span>
+                        <div className="button-toolbar u-text-center">
+                            <span className="button button-circular button-outline-default"><i className="icon icon-20 icon-comments"></i></span> <span className="entry-action"><i className="icon icon-20 icon-share"></i></span>
+                            <span className="button button-circular button-outline-default"><i className="icon icon-20 icon-external-link"></i></span>
                         </div>
                     </footer>
                 </div>

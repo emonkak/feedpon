@@ -5,11 +5,11 @@ import Modal from 'components/parts/Modal';
 interface ConfirmModalProps {
     cancelButtonClassName?: string;
     cancelButtonLabel?: string;
+    confirmButtonClassName?: string;
+    confirmButtonLabel?: string;
     containerClassName?: string;
     isOpened?: boolean;
     message: string;
-    okButtonClassName?: string;
-    okButtonLabel?: string;
     onClose?: () => void;
     onConfirm?: () => void;
     title: string;
@@ -19,9 +19,9 @@ export default class ConfirmModal extends PureComponent<ConfirmModalProps, {}> {
     static defaultProps = {
         cancelButtonClassName: 'button button-outline-default',
         cancelButtonLabel: 'Cancel',
-        isOpened: false,
-        okButtonClassName: 'button button-outline-positive',
-        okButtonLabel: 'OK'
+        confirmButtonClassName: 'button button-outline-positive',
+        confirmButtonLabel: 'OK',
+        isOpened: false
     };
 
     render() {
@@ -30,8 +30,8 @@ export default class ConfirmModal extends PureComponent<ConfirmModalProps, {}> {
             cancelButtonLabel,
             isOpened,
             message,
-            okButtonClassName,
-            okButtonLabel,
+            confirmButtonClassName,
+            confirmButtonLabel,
             onClose,
             onConfirm,
             title
@@ -43,7 +43,7 @@ export default class ConfirmModal extends PureComponent<ConfirmModalProps, {}> {
                 <h1 className="modal-title">{title}</h1>
                 <p>{message}</p>
                 <p className="button-toolbar">
-                    <button className={okButtonClassName} onClick={onConfirm}>{okButtonLabel}</button>
+                    <button className={confirmButtonClassName} onClick={onConfirm}>{confirmButtonLabel}</button>
                     <button className={cancelButtonClassName} onClick={onClose}>{cancelButtonLabel}</button>
                 </p>
             </Modal>

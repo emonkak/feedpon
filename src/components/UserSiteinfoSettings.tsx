@@ -124,8 +124,8 @@ class UserSiteinfoItem extends PureComponent<UserSiteinfoItemProps, UserSiteinfo
                             modal={
                                 <ConfirmModal
                                     message="Are you sure you want to delete this item?"
-                                    okButtonClassName="button button-outline-negative"
-                                    okButtonLabel="Delete"
+                                    confirmButtonClassName="button button-outline-negative"
+                                    confirmButtonLabel="Delete"
                                     onConfirm={this.handleRemove}
                                     title={`Delete "${item.name}"`} />
                             }

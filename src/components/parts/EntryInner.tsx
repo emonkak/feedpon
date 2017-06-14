@@ -22,7 +22,7 @@ interface EntryInnerProps {
 
 interface EntryInnerState {
     popover: Popover;
-    fullContent: boolean;
+    fullContentIsShown: boolean;
 }
 
 export default class EntryInner extends PureComponent<EntryInnerProps, EntryInnerState> {
@@ -31,7 +31,7 @@ export default class EntryInner extends PureComponent<EntryInnerProps, EntryInne
 
         this.state = {
             popover: 'none',
-            fullContent: false
+            fullContentIsShown: false
         };
 
         this.handleFetchNextFullContent = this.handleFetchNextFullContent.bind(this);
@@ -63,10 +63,10 @@ export default class EntryInner extends PureComponent<EntryInnerProps, EntryInne
 
     handleToggleFullContent(event: React.SyntheticEvent<any>) {
         const { entry } = this.props;
-        const { fullContent } = this.state;
+        const { fullContentIsShown } = this.state;
 
         if (!entry.fullContents.isLoading) {
-            if (!fullContent) {
+            if (!fullContentIsShown) {
                 const { onFetchFullContent } = this.props;
 
                 if (!entry.fullContents.isLoaded) {
@@ -75,7 +75,7 @@ export default class EntryInner extends PureComponent<EntryInnerProps, EntryInne
             }
 
             this.setState({
-                fullContent: !fullContent
+                fullContentIsShown: !fullContentIsShown
             });
         }
     }
@@ -112,28 +112,30 @@ export default class EntryInner extends PureComponent<EntryInnerProps, EntryInne
 
     renderNav() {
         const { entry, onClose } = this.props;
-        const { fullContent } = this.state;
+        const { fullContentIsShown } = this.state;
 
         return (
             <nav className="entry-nav">
-                <button
-                    className={classnames('entry-action entry-action-pin', { 'is-selected': entry.isPinned })}
-                    onClick={this.handleTogglePin}
-                    disabled={entry.isPinning}>
-                    <i className={classnames('icon icon-20', entry.isPinning ? 'icon-spinner icon-rotating' : 'icon-pin-3')} />
-                </button>
-                <button
-                    className={classnames('entry-action entry-action-fetch-full-content', { 'is-selected': fullContent })}
-                    onClick={this.handleToggleFullContent}
-                    disabled={entry.fullContents.isLoading}>
-                    <i className={classnames('icon icon-20', entry.fullContents.isLoading ? 'icon-spinner icon-rotating' : 'icon-page-overview')} />
-                </button>
-                <a className="entry-action entry-action-open-external-link" href={entry.url} target="_blank">
-                    <i className="icon icon-20 icon-external-link" />
-                </a>
-                <button className="entry-action entry-action-close" onClick={onClose}>
-                    <i className="icon icon-16 icon-close" />
-                </button>
+                <div className="button-toolbar">
+                    <button
+                        className={classnames('entry-action-pin button button-circular', entry.isPinned ? 'button-default' : 'button-outline-default')}
+                        onClick={this.handleTogglePin}
+                        disabled={entry.isPinning}>
+                        <i className={classnames('icon icon-20', entry.isPinning ? 'icon-spinner icon-rotating' : 'icon-pin-3')} />
+                    </button>
+                    <button
+                        className={classnames('entry-action-fetch-full-content button button-circular', fullContentIsShown ? 'button-default' : 'button-outline-default')}
+                        onClick={this.handleToggleFullContent}
+                        disabled={entry.fullContents.isLoading}>
+                        <i className={classnames('icon icon-20', entry.fullContents.isLoading ? 'icon-spinner icon-rotating' : 'icon-page-overview')} />
+                    </button>
+                    <a className="entry-action-open-external-link button button-circular button-outline-default" href={entry.url} target="_blank">
+                        <i className="icon icon-20 icon-external-link" />
+                    </a>
+                    <button className="entry-action-close button button-circular button-outline-default" onClick={onClose}>
+                        <i className="icon icon-16 icon-close" />
+                    </button>
+                </div>
             </nav>
         );
     }
@@ -201,22 +203,13 @@ export default class EntryInner extends PureComponent<EntryInnerProps, EntryInne
     }
 
     renderReadMarker() {
-        const { entry } = this.props;
-
-        if (!entry.markedAsRead) {
-            return null;
-        }
-
-        return (
-            <span className="badge badge-small badge-default">READ</span>
-        );
     }
 
     renderContent() {
         const { entry, entry: { fullContents } } = this.props;
-        const { fullContent } = this.state;
+        const { fullContentIsShown } = this.state;
 
-        if (fullContent && fullContents.isLoaded) {
+        if (fullContentIsShown && fullContents.isLoaded) {
             return (
                 <FullContents
                     isLoading={fullContents.isLoading}
@@ -238,19 +231,19 @@ export default class EntryInner extends PureComponent<EntryInnerProps, EntryInne
         const { popover } = this.state;
 
         return (
-            <div className="entry-action-list">
+            <div className="button-toolbar u-text-center">
                 <button
-                    className={classnames('entry-action', { 'is-selected': popover === 'comment' })}
+                    className={classnames('button button-circular', popover === 'comment' ? 'button-default' : 'button-outline-default')}
                     onClick={this.handleSwitchCommentPopover}>
                     <i className={classnames('icon icon-20', entry.comments.isLoading ? 'icon-spinner icon-rotating' : 'icon-comments')} />
                 </button>
                 <button
-                    className={classnames('entry-action', { 'is-selected': popover === 'share' })}
+                    className={classnames('button button-circular', popover === 'share' ? 'button-default' : 'button-outline-default')}
                     onClick={this.handleSwitchSharePopover}>
                     <i className="icon icon-20 icon-share" />
                 </button>
                 <a
-                    className="entry-action"
+                    className="button button-circular button-outline-default"
                     href={entry.url}
                     target="_blank">
                     <i className="icon icon-20 icon-external-link" />
@@ -334,13 +327,17 @@ export default class EntryInner extends PureComponent<EntryInnerProps, EntryInne
     render() {
         const { entry, onExpand } = this.props;
 
+        const readMaker = entry.markedAsRead
+            ? <span className="badge badge-small badge-default">READ</span>
+            : null;
+
         return (
             <div className="container" onClick={onExpand}>
                 <header className="entry-header">
                     {this.renderNav()}
                     <h2 className="entry-title">
-                        <a target="_blank" href={entry.url} onClick={onExpand}>{entry.title}</a>
-                        {this.renderReadMarker()}
+                        <a className="link-soft" target="_blank" href={entry.url} onClick={onExpand}>{entry.title}</a>
+                        {readMaker}
                     </h2>
                     <div className="u-text-muted">
                         <div className="list-inline list-inline-dotted">

@@ -1,5 +1,7 @@
 .button {
-  display: inline-block;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
   position: relative;
   box-sizing: border-box;
   padding: calc(var(--baseline-height) / 4 - 1px) calc(1rem - 1px);
@@ -24,6 +26,13 @@
 
 .button:disabled {
   opacity: 0.5;
+}
+
+.button-circular {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: 50%;
 }
 
 .button-small {
@@ -104,7 +113,7 @@
 
 .button-outline-default {
   background-color: var(--default-background-color);
-  border-color: var(--default-color);
+  border-color: var(--medium-dark-color);
   color: var(--default-color);
 }
 
@@ -126,7 +135,7 @@
 
 .button-outline-default:disabled {
   background-color: var(--default-background-color);
-  border-color: var(--default-color);
+  border-color: var(--medium-dark-color);
   color: var(--default-color);
 }
 

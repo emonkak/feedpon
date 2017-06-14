@@ -72,8 +72,8 @@ class TrackingUrlPatternItem extends PureComponent<TrackingUrlPatternItemProps, 
                     modal={
                         <ConfirmModal
                             message="Are you sure you want to delete this pattern?"
-                            okButtonClassName="button button-outline-negative"
-                            okButtonLabel="Delete"
+                            confirmButtonClassName="button button-outline-negative"
+                            confirmButtonLabel="Delete"
                             onConfirm={this.handleRemove}
                             title={`Delete "${pattern}"`} />
                     }

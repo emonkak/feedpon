@@ -58,69 +58,11 @@
   padding-left: 1rem;
 }
 
-.entry-action,
-a.entry-action {
-  position: relative;
-  display: flex;
-  box-sizing: border-box;
-  align-items: center;
-  justify-content: center;
-  color: inherit;
-  width: 36px;
-  height: 36px;
-  border: 1px solid var(--medium-dark-color);
-  border-radius: 50%;
-  transition: color 0.2s ease-in-out,
-              background-color 0.2s ease-in-out,
-              border-color 0.2s ease-in-out;
-}
-
-.entry-action:active {
-  background-color: var(--positive-background-color);
-}
-
-.entry-action:focus {
-  outline: none;
-}
-
-.entry-action:hover {
-  color: var(--positive-color);
-  border-color: var(--positive-color);
-}
-
-.entry-action + .entry-action {
-  margin-left: 8px;
-}
-
-.entry-action.is-selected,
-a.entry-action.is-selected {
-  color: var(--default-background-color);
-  background-color: var(--positive-color);
-  border-color: var(--positive-color);
-}
-
-.entry-action.is-selected:hover {
-  background-color: var(--positive-hover-color);
-}
-
-.entry-action.is-selected:active {
-  background-color: var(--positive-active-color);
-}
-
 .entry-title {
   margin: 0;
   font-size: inherit;
   font-weight: 600;
   line-height: inherit;
-}
-
-.entry-title > a {
-  color: inherit;
-  text-decoration: none;
-}
-
-.entry-title > a:hover {
-  color: var(--positive-color);
 }
 
 .entry-summary {
@@ -178,13 +120,6 @@ a.entry-action.is-selected {
 
 .entry-page-title::after {
   left: 100%;
-}
-
-.entry-action-list {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: calc(var(--baseline-height) * 2);
 }
 
 @media (pointer: coarse) {

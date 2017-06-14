@@ -420,8 +420,8 @@ class EditCategoryForm extends PureComponent<EditCategoryFormProps, EditCategory
                         modal={
                             <ConfirmModal
                                 message="Are you sure you want to change label of this category?"
-                                okButtonClassName="button button-positive"
-                                okButtonLabel="OK"
+                                confirmButtonClassName="button button-positive"
+                                confirmButtonLabel="OK"
                                 onConfirm={this.handleUpdate}
                                 title={`Rename "${category.label}" to "${label}"`} />
                         }
@@ -437,8 +437,8 @@ class EditCategoryForm extends PureComponent<EditCategoryFormProps, EditCategory
                         modal={
                             <ConfirmModal
                                 message="Are you sure you want to delete this category?"
-                                okButtonClassName="button button-negative"
-                                okButtonLabel="Delete"
+                                confirmButtonClassName="button button-negative"
+                                confirmButtonLabel="Delete"
                                 onConfirm={this.handleDelete}
                                 title={`Delete "${category.label}"`} />
                         }
