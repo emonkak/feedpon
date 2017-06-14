@@ -76,7 +76,7 @@ class TrackingUrlPatternItem extends PureComponent<TrackingUrlPatternItemProps, 
                             onConfirm={this.handleRemove}
                             title={`Delete "${pattern}"`} />
                     }
-                    button={<button className="close" />} />
+                    button={<button className="close u-pull-right" />} />
             </li>
         )
     }

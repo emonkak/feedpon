@@ -10,7 +10,7 @@
   display: flex;
   align-items: center;
   padding: calc(var(--baseline-height) / 4) 0 calc(var(--baseline-height) / 4 - 1px);
-  border-bottom: 1px solid var(--default-color);
+  border-bottom: 1px solid var(--x-dark-color);
 }
 
 @media (--sm-viewport) {

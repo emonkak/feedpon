@@ -8,13 +8,13 @@
   bottom: 0;
   z-index: 200;
   opacity: 0;
-  background-color: #000;
+  background-color: var(--backdrop-background-color);
   transition: visibility 0s ease-in-out 0.2s, opacity 0.2s ease-in-out;
 }
 
 .l-root.is-opened::before {
   visibility: visible;
-  opacity: 0.5;
+  opacity: 1;
   transition-delay: 0s;
 }
 
@@ -60,7 +60,7 @@
 }
 
 .l-main-content {
-  background-color: var(--default-background-color);
+  background-color: var(--x-light-color);
   padding: var(--navbar-height) 0 0;
 }
 
@@ -70,7 +70,7 @@
 }
 
 .l-main-footer {
-  padding: calc(var(--baseline-height) - 1px) 0 var(--baseline-height);
+  padding: calc(var(--baseline-height) * 2 - 1px) 0 calc(var(--baseline-height) * 2);
   border-top: 1px solid var(--medium-dark-color);
 }
 
@@ -93,8 +93,8 @@
   width: 100%;
   height: 100%;
   z-index: 300;
-  color: var(--default-background-color);
-  background-color: #000;
+  color: var(--backdrop-color);
+  background-color: var(--backdrop-background-color);
   opacity: 0;
   visibility: hidden;
   transition: visibility 0s ease-in-out 0.2s, opacity 0.2s ease-in-out;
@@ -102,7 +102,7 @@
 
 .l-backdrop:not(:empty) {
   visibility: visible;
-  opacity: 0.5;
+  opacity: 1;
   transition-delay: 0s;
 }
 

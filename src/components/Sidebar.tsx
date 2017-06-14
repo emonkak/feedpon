@@ -218,12 +218,12 @@ class SubscriptionTreeHeader extends PureComponent<SubscriptionTreeHeaderProps, 
                     <MenuItem
                         icon={order === 'newest' ? <i className="icon icon-16 icon-checkmark" /> : null}
                         onSelect={onChangeSubscriptionsOrder}
-                        primaryText="Newest First"
+                        primaryText="Newest first"
                         value="newest" />
                     <MenuItem
                         icon={order === 'oldest' ? <i className="icon icon-16 icon-checkmark" /> : null}
                         onSelect={onChangeSubscriptionsOrder}
-                        primaryText="Oldest First"
+                        primaryText="Oldest first"
                         value="oldest" />
                     <div className="menu-divider" />
                     <MenuItem

@@ -70,7 +70,7 @@
 
 .button-positive {
   background-color: var(--positive-color);
-  color: var(--default-background-color);
+  color: var(--x-light-color);
 }
 
 .button-positive:hover {
@@ -92,7 +92,7 @@
 
 .button-negative {
   background-color: var(--negative-color);
-  color: var(--default-background-color);
+  color: var(--x-light-color);
 }
 
 .button-negative:hover {
@@ -113,7 +113,7 @@
 
 .button-outline-default {
   background-color: var(--default-background-color);
-  border-color: var(--medium-dark-color);
+  border-color: var(--default-border-color);
   color: var(--default-color);
 }
 
@@ -135,26 +135,26 @@
 
 .button-outline-default:disabled {
   background-color: var(--default-background-color);
-  border-color: var(--medium-dark-color);
+  border-color: var(--default-border-color);
   color: var(--default-color);
 }
 
 .button-outline-positive {
   color: var(--positive-color);
-  background-color: var(--default-background-color);
-  border-color: var(--positive-color);
+  background-color: var(--x-light-color);
+  border-color: var(--positive-border-color);
 }
 
 .button-outline-positive:hover {
   background-color: var(--positive-color);
   border-color: transparent;
-  color: var(--default-background-color);
+  color: var(--x-light-color);
 }
 
 .button-outline-positive:active {
   background-color: var(--positive-active-color);
   border-color: transparent;
-  color: var(--default-background-color);
+  color: var(--x-light-color);
 }
 
 .button-outline-positive:focus {
@@ -163,26 +163,26 @@
 
 .button-outline-positive:disabled {
   color: var(--positive-color);
-  background-color: var(--default-background-color);
-  border-color: var(--positive-color);
+  background-color: var(--x-light-color);
+  border-color: var(--positive-border-color);
 }
 
 .button-outline-negative {
   color: var(--negative-color);
-  background-color: var(--default-background-color);
-  border-color: var(--negative-color);
+  background-color: var(--x-light-color);
+  border-color: var(--negative-border-color);
 }
 
 .button-outline-negative:hover {
   background-color: var(--negative-color);
   border-color: transparent;
-  color: var(--default-background-color);
+  color: var(--x-light-color);
 }
 
 .button-outline-negative:active {
   background-color: var(--negative-active-color);
   border-color: transparent;
-  color: var(--default-background-color);
+  color: var(--x-light-color);
 }
 
 .button-outline-negative:focus {
@@ -191,8 +191,8 @@
 
 .button-outline-negative:disabled {
   color: var(--negative-color);
-  background-color: var(--default-background-color);
-  border-color: var(--negative-color);
+  background-color: var(--x-light-color);
+  border-color: var(--negative-border-color);
 }
 
 .button-block {
@@ -205,6 +205,14 @@
   justify-content: center;
   align-items: center;
   height: var(--baseline-height);
+}
+
+.button-icon:hover {
+  color: var(--dark-color);
+}
+
+.button-icon:focus {
+  color: var(--positive-color);
 }
 
 .button-icon-24 {

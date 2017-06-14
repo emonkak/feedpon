@@ -3,7 +3,7 @@
   padding: calc(var(--baseline-height) / 4 - 1px) 0;
   border: 1px solid var(--medium-dark-color);
   border-radius: 4px;
-  background-color: var(--default-background-color);
+  background-color: var(--x-light-color);
   will-change: opacity;
 }
 

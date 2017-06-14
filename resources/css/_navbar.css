@@ -44,8 +44,8 @@
   background-color: var(--light-color);
 }
 
-.navbar-action:active {
-  background-color: var(--medium-light-color);
+.navbar-action:focus {
+  color: var(--positive-color);
 }
 
 .navbar-action:disabled {

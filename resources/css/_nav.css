@@ -10,7 +10,7 @@
   margin: calc(var(--baseline-height) / 4) 0 calc(var(--baseline-height) / 4) -1px;
   padding: calc(var(--baseline-height) / 4 - 1px) 1.5rem;
   min-height: var(--baseline-height);
-  border: 1px solid var(--default-color);
+  border: 1px solid var(--medium-dark-color);
 }
 
 a.nav-item {

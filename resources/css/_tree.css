@@ -13,7 +13,6 @@
   display: flex;
   align-items: stretch;
   border-radius: 4px;
-  color: var(--default-color);
   margin: calc(var(--baseline-height) / 4) 0;
 }
 

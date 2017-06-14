@@ -7,6 +7,7 @@ import AuthenticationRequired from 'components/AuthenticationRequired';
 import CategoriesPage from 'components/CategoriesPage';
 import DashboardPage from 'components/DashboardPage';
 import NotAuthenticated from 'components/NotAuthenticated'
+import RootLayout from 'components/layouts/RootLayout';
 import SearchPage from 'components/SearchPage';
 import SettingsPage from 'components/SettingsPage';
 import SidebarLayout from 'components/layouts/SidebarLayout';
@@ -14,7 +15,7 @@ import SingleLayout from 'components/layouts/SingleLayout';
 import StreamPage from 'components/StreamPage';
 
 const routes = (
-    <Route path="/">
+    <Route component={RootLayout} path="/">
         <Route component={AuthenticationRequired}>
             <Route component={SidebarLayout}>
                 <IndexRoute component={DashboardPage} />

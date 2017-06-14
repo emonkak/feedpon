@@ -3,7 +3,6 @@
   margin: var(--baseline-height) 0;
   border: 1px solid transparent;
   border-radius: 4px;
-  color: var(--default-color);
 }
 
 .popover-arrow {
@@ -32,21 +31,21 @@
 .popover-default .popover-arrow {
   color: var(--default-color);
   background-color: var(--default-background-color);
-  border-color: var(--default-color);
+  border-color: var(--default-border-color);
 }
 
 .popover-positive,
 .popover-positive .popover-arrow {
   color: var(--positive-color);
-  background-color: var(--default-background-color);
-  border-color: var(--positive-color);
+  background-color: var(--positive-background-color);
+  border-color: var(--positive-border-color);
 }
 
 .popover-negative,
 .popover-negative .popover-arrow {
   color: var(--negative-color);
-  background-color: var(--default-background-color);
-  border-color: var(--negative-color);
+  background-color: var(--negative-background-color);
+  border-color: var(--negative-border-color);
 }
 
 .popover-top .popover-arrow {

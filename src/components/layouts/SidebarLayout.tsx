@@ -23,7 +23,7 @@ interface SidebarLayoutProps {
 }
 
 class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
-    private unsubscribe: () => void | null;
+    private routerSubscription: (() => void) | null = null;
 
     constructor(props: SidebarLayoutProps, context: any) {
         super(props, context);
@@ -36,23 +36,30 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
     componentWillMount() {
         const { router } = this.props;
 
-        this.unsubscribe = router.listen(this.handleChangeLocation);
-    }
-
-    componentWillUnmount() {
-        this.refreshBodyStyles(false);
-
-        if (this.unsubscribe) {
-            this.unsubscribe();
-        }
+        this.routerSubscription = router.listen(this.handleChangeLocation);
     }
 
     componentDidMount() {
-        this.refreshBodyStyles(this.props.sidebarIsOpened);
+        const { sidebarIsOpened } = this.props;
+
+        this.updateSidebarStatus(sidebarIsOpened);
     }
 
-    componentDidUpdate() {
-        this.refreshBodyStyles(this.props.sidebarIsOpened);
+    componentDidUpdate(prevProps: SidebarLayoutProps, prevState: {}) {
+        const { sidebarIsOpened } = this.props;
+
+        if (sidebarIsOpened !== prevProps.sidebarIsOpened) {
+            this.updateSidebarStatus(sidebarIsOpened);
+        }
+    }
+
+    componentWillUnmount() {
+        this.updateSidebarStatus(false);
+
+        if (this.routerSubscription) {
+            this.routerSubscription();
+            this.routerSubscription = null;
+        }
     }
 
     handleChangeLocation() {
@@ -83,12 +90,10 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
         }
     }
 
-    refreshBodyStyles(sidebarIsOpened: boolean) {
+    updateSidebarStatus(sidebarIsOpened: boolean) {
         if (sidebarIsOpened) {
-            document.body.classList.add('sidebar-is-opened');
             document.documentElement.classList.add('sidebar-is-opened');
         } else {
-            document.body.classList.remove('sidebar-is-opened');
             document.documentElement.classList.remove('sidebar-is-opened');
         }
     }

@@ -1,0 +1,108 @@
+@custom-media --sm-viewport (max-width: 768px);
+@custom-media --md-viewport (min-width: 769px);
+@custom-media --lg-viewport (min-width: 980px);
+
+:root {
+  --font-size: 14px;
+  --baseline-height: 24px;
+  --navbar-height: 48px;
+  --sidebar-width: 288px;
+  --container-width: 768px;
+}
+
+.theme-light {
+  $x-light-color: #ffffff;
+  $light-color: #f7f9fc;
+  $medium-light-color: #e8edf2;
+  $medium-dark-color: #d3dbe3;
+  $dark-color: #7e8998;
+  $x-dark-color: #203442;
+
+  $positive-color: #2eabff;
+  $positive-background-color: #e0f3ff;
+
+  $negative-color: #ee6969;
+  $negative-background-color: #fbdbdb;
+
+  --x-light-color: $x-light-color;
+  --light-color: $light-color;
+  --medium-light-color: $medium-light-color;
+  --medium-dark-color: $medium-dark-color;
+  --dark-color: $dark-color;
+  --x-dark-color: $x-dark-color;
+
+  --default-color: $x-dark-color;
+  --default-background-color: $x-light-color;
+  --default-border-color: $medium-dark-color;
+  --default-hover-color: color($x-light-color lightness(+5%));
+  --default-active-color: color($x-light-color lightness(+5%) alpha(90%));
+  --default-focus-outline-color: color($x-light-color alpha(50%));
+
+  --positive-color: $positive-color;
+  --positive-background-color: $positive-background-color;
+  --positive-border-color: $positive-color;
+  --positive-hover-color: color($positive-color lightness(+5%));
+  --positive-active-color: color($positive-color lightness(+5%) alpha(90%));
+  --positive-focus-outline-color: color($positive-color alpha(50%));
+
+  --negative-color: $negative-color;
+  --negative-background-color: $negative-background-color;
+  --negative-border-color: $negative-color;
+  --negative-hover-color: color($negative-color lightness(+5%));
+  --negative-active-color: color($negative-color lightness(+5%) alpha(90%));
+  --negative-focus-outline-color: color($negative-color alpha(50%));
+
+  --backdrop-color: $x-light-color;
+  --backdrop-background-color: rgba(0, 0, 0, 0.75);
+
+  --shadow-color: rgba(0, 0, 0, 0.20);
+  --transparent-color: color($x-light-color alpha(90%));
+}
+
+.theme-dark {
+  $x-light-color: #eee;
+  $light-color: #888;
+  $medium-light-color: #3a3a3a;
+  $medium-dark-color: #2a2a2a;
+  $dark-color: #202020;
+  $x-dark-color: #1a1a1a;
+
+  $positive-color: #2eabff;
+  $positive-background-color: #003a61;
+
+  $negative-color: #ee6969;
+  $negative-background-color: #580e0e;
+
+  --x-light-color: $x-dark-color;
+  --light-color: $dark-color;
+  --medium-light-color: $medium-dark-color;
+  --medium-dark-color: $medium-light-color;
+  --dark-color: $light-color;
+  --x-dark-color: $x-light-color;
+
+  --default-color: $x-light-color;
+  --default-background-color: $x-dark-color;
+  --default-border-color: $medium-light-color;
+  --default-hover-color: color($x-light-color lightness(-10%));
+  --default-active-color: color($x-light-color lightness(-10%) alpha(90%));
+  --default-focus-outline-color: color($x-light-color alpha(50%));
+
+  --positive-color: $positive-color;
+  --positive-background-color: $positive-background-color;
+  --positive-border-color: $positive-color;
+  --positive-hover-color: color($positive-color lightness(-10%));
+  --positive-active-color: color($positive-color lightness(-10%) alpha(90%));
+  --positive-focus-outline-color: color($positive-color alpha(50%));
+
+  --negative-color: $negative-color;
+  --negative-background-color: $negative-background-color;
+  --negative-border-color: $negative-color;
+  --negative-hover-color: color($negative-color lightness(-10%));
+  --negative-active-color: color($negative-color lightness(-10%) alpha(90%));
+
+  --backdrop-color: $x-light-color;
+  --backdrop-background-color: rgba(0, 0, 0, 0.75);
+
+  --shadow-color: rgba(0, 0, 0, 0.50);
+  --transparent-color: color($x-dark-color alpha(90%));
+}

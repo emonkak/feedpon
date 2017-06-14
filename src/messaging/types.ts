@@ -60,6 +60,7 @@ export type Event
     | { type: 'SUBSCRIPTIONS_FETCHING_FAILED' }
     | { type: 'SUBSCRIPTIONS_ORDER_CHANGED', order: SubscriptionsOrder }
     | { type: 'SUBSCRIPTIONS_UNREAD_VIEWING_CHANGED', onlyUnread: boolean }
+    | { type: 'THEME_CHANGED', theme: Theme }
     | { type: 'TOKEN_RECEIVED', authorizedAt: number, token: any }
     | { type: 'TOKEN_RECEIVING' }
     | { type: 'TOKEN_RECEIVING_FAILED' }
@@ -328,4 +329,4 @@ export interface UI {
     version: number;
 }
 
-export type Theme = 'default' | 'dark';
+export type Theme = 'theme-light' | 'theme-dark';

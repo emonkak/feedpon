@@ -10,6 +10,7 @@ import Navbar from 'components/parts/Navbar';
 import SharedSiteinfoSettings from 'components/SharedSiteinfoSettings';
 import StreamSettings from 'components/StreamSettings';
 import TrackingUrlSettings from 'components/TrackingUrlSettings';
+import UISettings from 'components/UISettings';
 import UserSiteinfoSettings from 'components/UserSiteinfoSettings';
 
 interface SettingsProps {
@@ -48,6 +49,7 @@ export default class SettingsPage extends PureComponent<SettingsProps, {}> {
             case 'general':
                 return (
                     <div>
+                        <UISettings />
                         <StreamSettings />
                         <TrackingUrlSettings />
                     </div>

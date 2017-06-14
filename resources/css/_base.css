@@ -1,55 +1,3 @@
-@custom-media --sm-viewport (max-width: 768px);
-@custom-media --md-viewport (min-width: 769px);
-@custom-media --lg-viewport (min-width: 980px);
-
-:root {
-  $x-light-color: #ffffff;
-  $light-color: #f7f9fc;
-  $medium-light-color: #e8edf2;
-  $medium-dark-color: #d3dbe3;
-  $dark-color: #7e8998;
-  $x-dark-color: #203442;
-
-  $positive-color: #2eabff;
-  $positive-background-color: #e0f3ff;
-
-  $negative-color: #ee6969;
-  $negative-background-color: #fbdbdb;
-
-  --default-color: $x-dark-color;
-  --default-background-color: $x-light-color;
-  --default-hover-color: color($x-dark-color lightness(+5%));
-  --default-active-color: color($x-dark-color lightness(+5%) alpha(90%));
-  --default-focus-outline-color: color($x-dark-color alpha(50%));
-
-  --positive-color: $positive-color;
-  --positive-background-color: $positive-background-color;
-  --positive-hover-color: color($positive-color lightness(+5%));
-  --positive-active-color: color($positive-color lightness(+5%) alpha(90%));
-  --positive-focus-outline-color: color($positive-color alpha(50%));
-
-  --negative-color: $negative-color;
-  --negative-background-color: $negative-background-color;
-  --negative-hover-color: color($negative-color lightness(+5%));
-  --negative-active-color: color($negative-color lightness(+5%) alpha(90%));
-  --negative-focus-outline-color: color($negative-color alpha(50%));
-
-  --light-color: $light-color;
-  --medium-light-color: $medium-light-color;
-  --medium-dark-color: $medium-dark-color;
-  --dark-color: $dark-color;
-
-  --shadow-color: color($x-dark-color alpha(20%));
-  --transparent-color: color($x-light-color alpha(90%));
-
-  --font-size: 14px;
-  --baseline-height: 24px;
-  --navbar-height: 48px;
-  --sidebar-width: 288px;
-  --container-width: 768px;
-  --container-narrow-width: 480px;
-}
-
 * {
   -webkit-tap-highmedium-light-color: transparent;
   -webkit-touch-callout: none;
@@ -57,7 +5,7 @@
 
 ::selection {
   background-color: var(--positive-color);
-  color: var(--default-background-color);
+  color: var(--x-light-color);
 }
 
 html, body {
@@ -71,7 +19,7 @@ html, body {
 
 body {
   margin: 0;
-  color: var(--default-color);
+  color: var(--x-dark-color);
   background-color: var(--light-color);
 }
 
@@ -268,6 +216,10 @@ button {
 
 button:disabled {
   cursor: not-allowed;
+}
+
+button:focus {
+  outline: none;
 }
 
 button::-moz-focus-inner,

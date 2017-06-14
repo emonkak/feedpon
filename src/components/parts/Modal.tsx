@@ -32,10 +32,8 @@ export default class Modal extends PureComponent<ModalProps, {}> {
 
     refreshBodyStyles(isOpened: boolean) {
         if (isOpened) {
-            document.body.classList.add('modal-is-opened');
             document.documentElement.classList.add('modal-is-opened');
         } else {
-            document.body.classList.remove('modal-is-opened');
             document.documentElement.classList.remove('modal-is-opened');
         }
     }

@@ -59,11 +59,11 @@ a.badge-negative {
 .badge-pill.badge-positive,
 a.badge-pill.badge-positive {
   background-color: var(--positive-color);
-  color: var(--default-background-color);
+  color: var(--x-light-color);
 }
 
 .badge-pill.badge-negative,
 a.badge-pill.badge-negative {
   background-color: var(--negative-color);
-  color: var(--default-background-color);
+  color: var(--x-light-color);
 }

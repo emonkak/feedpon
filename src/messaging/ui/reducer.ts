@@ -32,6 +32,12 @@ export default function uiReducer(ui: UI, event: Event): UI {
                 isScrolling: false
             };
 
+        case 'THEME_CHANGED':
+            return {
+                ...ui,
+                theme: event.theme
+            };
+
         default:
             return ui;
     }

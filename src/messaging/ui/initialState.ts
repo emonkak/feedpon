@@ -3,7 +3,7 @@ import { UI } from 'messaging/types';
 const ui: UI = {
     isScrolling: false,
     sidebarIsOpened: true,
-    theme: 'default',
+    theme: 'theme-light',
     version: 1
 };
 
