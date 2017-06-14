@@ -1,4 +1,4 @@
-import React, { Children, PureComponent, cloneElement } from 'react';
+import React, { Children, PureComponent, cloneElement, isValidElement } from 'react';
 import { findDOMNode } from 'react-dom';
 
 import createChainedFunction from 'utils/createChainedFunction';
@@ -46,29 +46,31 @@ export class Menu extends PureComponent<MenuProps, {}> {
         return { activeIndex, elements };
     }
 
-    renderChild(child: React.ReactElement<any>) {
-        if (child.type === MenuItem) {
-            const { onSelect } = this.props;
+    renderChild(child: React.ReactChild) {
+        if (isValidElement<any>(child)) {
+            if (child.type === MenuItem) {
+                const { onSelect } = this.props;
 
-            return cloneElement(child, {
-                ...child.props,
-                onSelect: createChainedFunction(
-                    child.props.onSelect,
-                    onSelect
-                )
-            });
-        }
+                return cloneElement(child, {
+                    ...child.props,
+                    onSelect: createChainedFunction(
+                        child.props.onSelect,
+                        onSelect
+                    )
+                });
+            }
 
-        if (child.type === MenuForm) {
-            const { onClose } = this.props;
+            if (child.type === MenuForm) {
+                const { onClose } = this.props;
 
-            return cloneElement(child, {
-                ...child.props,
-                onSubmit: createChainedFunction(
-                    child.props.onSubmit,
-                    onClose
-                )
-            });
+                return cloneElement(child, {
+                    ...child.props,
+                    onSubmit: createChainedFunction(
+                        child.props.onSubmit,
+                        onClose
+                    )
+                });
+            }
         }
 
         return child;
@@ -81,7 +83,7 @@ export class Menu extends PureComponent<MenuProps, {}> {
             <div
                 className="menu"
                 onKeyDown={onKeyDown}>
-                {Children.toArray(children).map(this.renderChild, this)}
+                {Children.map(children, this.renderChild.bind(this))}
             </div>
         );
     }

@@ -1,4 +1,4 @@
-import React, { cloneElement, Children, PureComponent } from 'react';
+import React, { Children, PureComponent, cloneElement, isValidElement } from 'react';
 
 import createChainedFunction from 'utils/createChainedFunction';
 
@@ -23,7 +23,11 @@ export default class Nav extends PureComponent<NavProps, {}> {
         }
     }
 
-    renderChild(child: React.ReactElement<any>, index: number) {
+    renderChild(child: React.ReactChild, index: number) {
+        if (!isValidElement<any>(child)) {
+            return child;
+        }
+
         const { value } = this.props;
 
         return cloneElement(child, {
@@ -42,7 +46,7 @@ export default class Nav extends PureComponent<NavProps, {}> {
         return (
             <div>
                 <nav className="nav">
-                    {Children.toArray(children).map(this.renderChild, this)}
+                    {Children.map(children, this.renderChild.bind(this))}
                 </nav>
             </div>
         );

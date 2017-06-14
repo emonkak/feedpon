@@ -1,5 +1,5 @@
 import Enumerable from '@emonkak/enumerable';
-import React, { Children, PureComponent, cloneElement } from 'react';
+import React, { Children, PureComponent, cloneElement, isValidElement } from 'react';
 import { findDOMNode } from 'react-dom';
 
 import '@emonkak/enumerable/extensions/firstOrDefault';
@@ -162,7 +162,11 @@ export default class ScrollSpy extends PureComponent<ScrollSpyProps, ScrollSpySt
         }
     }
 
-    renderChild(child: React.ReactElement<any>) {
+    renderChild(child: React.ReactChild) {
+        if (!isValidElement<any>(child)) {
+            return child;
+        }
+
         const { getKey, activeProp } = this.props;
         const { activeKey } = this.state;
 
