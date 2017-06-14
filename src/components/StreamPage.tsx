@@ -20,6 +20,7 @@ interface StreamProps {
     categories: Category[];
     isLoaded: boolean;
     isLoading: boolean;
+    isMarking: boolean;
     isScrolling: boolean;
     keepUnread: boolean;
     onAddToCategory: typeof addToCategory;
@@ -222,12 +223,13 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
     }
 
     renderNavbar() {
-        const { isLoading, keepUnread, onToggleSidebar, stream } = this.props;
+        const { isLoading, isMarking, keepUnread, onToggleSidebar, stream, subscription } = this.props;
         const readEntries = this.readEntriesSelector(this.props, this.state);
+        const canMarkAllAsRead = !!((stream.category || stream.feed) && !isMarking && subscription);
 
         return (
             <StreamNavbar
-                canMarkAllAsRead={!!stream.feed || !!stream.category}
+                canMarkAllAsRead={canMarkAllAsRead}
                 feed={stream.feed}
                 isLoading={isLoading}
                 keepUnread={keepUnread}
@@ -298,13 +300,16 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
     }
 
     renderStreamFooter() {
-        const { isLoading, stream } = this.props;
+        const { isLoading, isMarking, stream, subscription } = this.props;
+        const canMarkAllAsRead = !!((stream.category || stream.feed) && !isMarking && subscription);
 
         return (
             <StreamFooter
+                canMarkAllAsRead={canMarkAllAsRead}
                 hasMoreEntries={!!stream.continuation}
                 isLoading={isLoading}
-                onLoadMoreEntries={this.handleLoadMoreEntries} />
+                onLoadMoreEntries={this.handleLoadMoreEntries}
+                onMarkAllAsRead={this.handleMarkAllAsRead} />
         );
     }
 
@@ -450,7 +455,7 @@ class ReadEntriesDropdown extends PureComponent<ReadEntriesMenuProps, {}> {
                 <MenuItem
                     isDisabled={!canMarkAllAsRead}
                     onSelect={onMarkAllAsRead}
-                    primaryText="Mark all as read in stream" />
+                    primaryText="Mark all as read in stream..." />
             </Dropdown>
         );
     }
@@ -559,9 +564,11 @@ class StreamHeader extends PureComponent<StreamHeaderProps, {}> {
 }
 
 interface StreamFooterProps {
+    canMarkAllAsRead: boolean;
     hasMoreEntries: boolean;
     isLoading: boolean;
     onLoadMoreEntries: () => void;
+    onMarkAllAsRead: () => void;
 }
 
 class StreamFooter extends PureComponent<StreamFooterProps, {}> {
@@ -580,7 +587,12 @@ class StreamFooter extends PureComponent<StreamFooterProps, {}> {
     }
 
     render() {
-        const { hasMoreEntries, isLoading } = this.props;
+        const {
+            canMarkAllAsRead,
+            hasMoreEntries,
+            isLoading,
+            onMarkAllAsRead
+        } = this.props;
 
         if (hasMoreEntries) {
             if (isLoading) {
@@ -604,7 +616,15 @@ class StreamFooter extends PureComponent<StreamFooterProps, {}> {
         } else {
             return (
                 <footer className="stream-footer">
-                    No more entries here.
+                    <p>No more entries here.</p>
+                    <p>
+                        <button
+                            className="button button-positive"
+                            disabled={!canMarkAllAsRead}
+                            onClick={onMarkAllAsRead}>
+                            Mark all as read
+                        </button>
+                    </p>
                 </footer>
             );
         }
@@ -624,6 +644,7 @@ export default connect(() => {
             categories: state.categories.items,
             isLoaded: state.streams.isLoaded,
             isLoading: state.streams.isLoading,
+            isMarking: state.streams.isMarking,
             isScrolling: state.ui.isScrolling,
             keepUnread: state.streams.keepUnread,
             stream: state.streams.current,

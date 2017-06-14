@@ -17,6 +17,7 @@ const streams: Streams = {
     },
     isLoaded: false,
     isLoading: false,
+    isMarking: false,
     keepUnread: true,
     version: 1
 };

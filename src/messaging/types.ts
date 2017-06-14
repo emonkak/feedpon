@@ -8,6 +8,8 @@ export type Event
     | { type: 'CATEGORY_DELETING', categoryId: string | number, label: string }
     | { type: 'CATEGORY_DELETING_FAILED', categoryId: string | number, label: string }
     | { type: 'CATEGORY_MARKED_AS_READ', categoryId: string | number, label: string }
+    | { type: 'CATEGORY_MARKING_AS_READ', categoryId: string | number, label: string }
+    | { type: 'CATEGORY_MARKING_AS_READ_FAILED', categoryId: string | number, label: string }
     | { type: 'CATEGORY_UPDATED', prevCategory: Category, category: Category }
     | { type: 'CATEGORY_UPDATING', category: Category }
     | { type: 'CATEGORY_UPDATING_FAILED', category: Category }
@@ -16,11 +18,15 @@ export type Event
     | { type: 'COMMENTS_FETCHING_FAILED', entryId: string | number }
     | { type: 'DEFAULT_STREAM_SETTING_CHANGED', setting: StreamSetting }
     | { type: 'ENTRIES_MARKED_AS_READ', entryIds: (string | number)[], readCounts: { [streamId: string]: number } }
+    | { type: 'ENTRIES_MARKING_AS_READ', entryIds: (string | number)[] }
+    | { type: 'ENTRIES_MARKING_AS_READ_FAILED', entryIds: (string | number)[] }
     | { type: 'ENTRY_PINNED', entryId: string | number, isPinned: boolean }
     | { type: 'ENTRY_PINNING', entryId: string | number }
     | { type: 'ENTRY_PINNING_FAILED', entryId: string | number }
     | { type: 'ENTRY_URLS_EXPANDED', urls: { [url: string]: string } }
     | { type: 'FEED_MARKED_AS_READ', feedId: string | number }
+    | { type: 'FEED_MARKING_AS_READ', feedId: string | number }
+    | { type: 'FEED_MARKING_AS_READ_FAILED', feedId: string | number }
     | { type: 'FEED_SEARCHED', query: string, feeds: Feed[] }
     | { type: 'FEED_SEARCHING', query: string }
     | { type: 'FEED_SEARCHING_FAILED', query: string }
@@ -141,6 +147,7 @@ export interface Streams {
     current: Stream;
     isLoaded: boolean;
     isLoading: boolean;
+    isMarking: boolean;
     keepUnread: boolean;
     version: number;
 }

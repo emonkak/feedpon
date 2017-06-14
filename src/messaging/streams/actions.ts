@@ -224,91 +224,136 @@ export function fetchFullContent(entryId: string, url: string): AsyncEvent {
 
 export function markAsRead(entries: Entry[]): AsyncEvent {
     return async ({ dispatch }) => {
-        const token = await dispatch(getFeedlyToken());
-
         const entryIds = entries.map((entry) => entry.entryId as string);
 
-        await feedlyApi.markAsReadForEntries(token.access_token, entryIds);
-
-        const readCounts = entries.reduce<{ [streamId: string]: number }>((acc, entry) => {
-            if (entry.origin) {
-                const { streamId } = entry.origin;
-                acc[streamId] = (acc[streamId] || 0) + 1;
-            }
-            return acc;
-        }, {});
-
         dispatch({
-            type: 'ENTRIES_MARKED_AS_READ',
-            entryIds,
-            readCounts
+            type: 'ENTRIES_MARKING_AS_READ',
+            entryIds
         });
 
-        const message = entries.length === 1
-            ? `${entries.length} entry is marked as read.`
-            : `${entries.length} entries are marked as read.`;
+        try {
+            const token = await dispatch(getFeedlyToken());
 
-        dispatch(sendNotification(
-            message,
-            'positive'
-        ));
+            await feedlyApi.markAsReadForEntries(token.access_token, entryIds);
+
+            const readCounts = entries
+                .reduce<{ [streamId: string]: number }>((acc, entry) => {
+                    if (entry.origin) {
+                        const { streamId } = entry.origin;
+                        acc[streamId] = (acc[streamId] || 0) + 1;
+                    }
+                    return acc;
+                }, {});
+
+            dispatch({
+                type: 'ENTRIES_MARKED_AS_READ',
+                entryIds,
+                readCounts
+            });
+
+            const message = entries.length === 1
+                ? `${entries.length} entry is marked as read.`
+                : `${entries.length} entries are marked as read.`;
+
+            dispatch(sendNotification(
+                message,
+                'positive'
+            ));
+        } catch (error) {
+            dispatch({
+                type: 'ENTRIES_MARKING_AS_READ_FAILED',
+                entryIds
+            });
+
+            throw error;
+        }
     };
 }
 
 export function markFeedAsRead(feed: Feed): AsyncEvent {
     return async ({ dispatch, getState }) => {
-        const token = await dispatch(getFeedlyToken());
-
-        await feedlyApi.markAsReadForFeeds(token.access_token, feed.feedId as string);
-
-        const { subscriptions } = getState();
-        const numEntries = subscriptions.items.reduce(
-            (total, subscription) => total + (subscription.feedId === feed.feedId ? subscription.unreadCount : 0),
-            0
-        );
-
         dispatch({
-            type: 'FEED_MARKED_AS_READ',
+            type: 'FEED_MARKING_AS_READ',
             feedId: feed.feedId
         });
 
-        const message = numEntries === 1
-            ? `${numEntries} entry is marked as read.`
-            : `${numEntries} entries are marked as read.`;
+        try {
+            const token = await dispatch(getFeedlyToken());
 
-        dispatch(sendNotification(
-            message,
-            'positive'
-        ));
+            await feedlyApi.markAsReadForFeeds(token.access_token, feed.feedId as string);
+
+            const { subscriptions } = getState();
+            const numEntries = subscriptions.items.reduce(
+                (total, subscription) => total + (subscription.feedId === feed.feedId ? subscription.unreadCount : 0),
+                0
+            );
+
+            dispatch({
+                type: 'FEED_MARKED_AS_READ',
+                feedId: feed.feedId
+            });
+
+            const message = numEntries === 1
+                ? `${numEntries} entry is marked as read.`
+                : `${numEntries} entries are marked as read.`;
+
+            dispatch(sendNotification(
+                message,
+                'positive'
+            ));
+        } catch (error) {
+            dispatch({
+                type: 'FEED_MARKING_AS_READ_FAILED',
+                feedId: feed.feedId
+            });
+
+            throw error;
+        }
     };
 }
 
 export function markCategoryAsRead(category: Category): AsyncEvent {
     return async ({ dispatch, getState }) => {
-        const token = await dispatch(getFeedlyToken());
-
-        await feedlyApi.markAsReadForCategories(token.access_token, category.categoryId as string);
-
-        const { subscriptions } = getState();
-        const numEntries = subscriptions.items.reduce(
-            (total, subscription) => total + (subscription.labels.includes(category.label) ? subscription.unreadCount : 0),
-            0
-        );
-
         dispatch({
-            type: 'CATEGORY_MARKED_AS_READ',
+            type: 'CATEGORY_MARKING_AS_READ',
             categoryId: category.categoryId,
             label: category.label
         });
 
-        const message = numEntries === 1
-            ? `${numEntries} entry is marked as read.`
-            : `${numEntries} entries are marked as read.`;
+        try {
+            const token = await dispatch(getFeedlyToken());
 
-        dispatch(sendNotification(
-            message,
-            'positive'
-        ));
+            await feedlyApi.markAsReadForCategories(token.access_token, category.categoryId as string);
+
+            const { subscriptions } = getState();
+            const numEntries = subscriptions.items.reduce(
+                (total, subscription) => total + (subscription.labels.includes(category.label) ? subscription.unreadCount : 0),
+                0
+            );
+
+            dispatch({
+                type: 'CATEGORY_MARKED_AS_READ',
+                categoryId: category.categoryId,
+                label: category.label
+            });
+
+            const message = numEntries === 1
+                ? `${numEntries} entry is marked as read.`
+                : `${numEntries} entries are marked as read.`;
+
+            dispatch(sendNotification(
+                message,
+                'positive'
+            ));
+        } catch (error) {
+            dispatch({
+                type: 'CATEGORY_MARKING_AS_READ_FAILED',
+                categoryId: category.categoryId,
+                label: category.label
+            });
+
+            throw error;
+        }
     };
 }
 

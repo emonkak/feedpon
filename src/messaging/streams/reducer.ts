@@ -25,8 +25,9 @@ export default function reducer(streams: Streams, event: Event): Streams {
                         };
                     })
                 },
-                isLoading: false
-            }
+                isLoading: false,
+                isMarking: false
+            };
 
         case 'STREAM_FETCHING':
             return {
@@ -179,23 +180,6 @@ export default function reducer(streams: Streams, event: Event): Streams {
                 }
             };
 
-        case 'ENTRIES_MARKED_AS_READ':
-            return {
-                ...streams,
-                current: {
-                    ...streams.current,
-                    entries: streams.current.entries.map((entry) => {
-                        if (!event.entryIds.includes(entry.entryId)) {
-                            return entry;
-                        }
-                        return {
-                            ...entry,
-                            markedAsRead: true
-                        };
-                    })
-                }
-            };
-
         case 'FEED_SUBSCRIBING':
             if (!streams.current.feed || streams.current.feed.feedId !== event.feedId) {
                 return streams;
@@ -292,24 +276,6 @@ export default function reducer(streams: Streams, event: Event): Streams {
                 }
             };
 
-        case 'FEED_MARKED_AS_READ':
-            if (streams.current.feed && streams.current.feed.feedId !== event.feedId) {
-                return streams;
-            }
-
-            return {
-                ...streams,
-                current: {
-                    ...streams.current,
-                    entries: streams.current.entries.map((entry) => {
-                        return {
-                            ...entry,
-                            markedAsRead: true
-                        };
-                    })
-                }
-            };
-
         case 'FULL_CONTENT_FETCHING':
             return {
                 ...streams,
@@ -367,24 +333,6 @@ export default function reducer(streams: Streams, event: Event): Streams {
                                 isLoading: false,
                                 items: entry.fullContents.items.concat([event.fullContent])
                             }
-                        };
-                    })
-                }
-            };
-
-        case 'CATEGORY_MARKED_AS_READ':
-            if (streams.current.category && streams.current.category.categoryId !== event.categoryId) {
-                return streams;
-            }
-
-            return {
-                ...streams,
-                current: {
-                    ...streams.current,
-                    entries: streams.current.entries.map((entry) => {
-                        return {
-                            ...entry,
-                            markedAsRead: true
                         };
                     })
                 }
@@ -469,6 +417,78 @@ export default function reducer(streams: Streams, event: Event): Streams {
             return {
                 ...streams,
                 keepUnread: event.keepUnread
+            };
+
+        case 'ENTRIES_MARKING_AS_READ':
+        case 'CATEGORY_MARKING_AS_READ':
+        case 'FEED_MARKING_AS_READ':
+            return {
+                ...streams,
+                isMarking: true
+            };
+
+        case 'ENTRIES_MARKING_AS_READ_FAILED':
+        case 'CATEGORY_MARKING_AS_READ_FAILED':
+        case 'FEED_MARKING_AS_READ_FAILED':
+            return {
+                ...streams,
+                isMarking: false
+            };
+
+        case 'ENTRIES_MARKED_AS_READ':
+            return {
+                ...streams,
+                current: {
+                    ...streams.current,
+                    entries: streams.current.entries.map((entry) => {
+                        if (!event.entryIds.includes(entry.entryId)) {
+                            return entry;
+                        }
+                        return {
+                            ...entry,
+                            markedAsRead: true
+                        };
+                    })
+                },
+                isMarking: false
+            };
+
+        case 'FEED_MARKED_AS_READ':
+            if (streams.current.feed && streams.current.feed.feedId !== event.feedId) {
+                return streams;
+            }
+
+            return {
+                ...streams,
+                current: {
+                    ...streams.current,
+                    entries: streams.current.entries.map((entry) => {
+                        return {
+                            ...entry,
+                            markedAsRead: true
+                        };
+                    })
+                },
+                isMarking: false
+            };
+
+        case 'CATEGORY_MARKED_AS_READ':
+            if (streams.current.category && streams.current.category.categoryId !== event.categoryId) {
+                return streams;
+            }
+
+            return {
+                ...streams,
+                current: {
+                    ...streams.current,
+                    entries: streams.current.entries.map((entry) => {
+                        return {
+                            ...entry,
+                            markedAsRead: true
+                        };
+                    })
+                },
+                isMarking: false
             };
 
         default:
