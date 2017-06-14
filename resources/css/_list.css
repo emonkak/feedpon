@@ -17,6 +17,17 @@
   color: var(--dark-color);
 }
 
+.list-inline-divided > .list-inline-item {
+  display: inline-block;
+  padding: 0 calc(1rem - 1px);
+  border-left: 1px solid transparent;
+  border-right: 1px solid transparent;
+}
+
+.list-inline-divided > .list-inline-item + .list-inline-item {
+  border-left-color: var(--medium-dark-color);
+}
+
 .list-group {
   list-style: none;
   padding: 0;

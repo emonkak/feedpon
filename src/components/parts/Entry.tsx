@@ -365,37 +365,39 @@ class EntryInner extends PureComponent<EntryInnerProps, EntryInnerState> {
             <div className="popover popover-default popover-bottom">
                 <div className="popover-arrow" style={{ left: '50%' }} />
                 <div className="popover-content">
-                    <div className="social-button-list">
-                        <a className="social-button link-soft"
-                           target="_blank"
-                           title="Share to Twitter"
-                           href={'https://twitter.com/intent/tweet?text=' + encodeURIComponent(entry.title + ' ' + entry.url)}>
-                            <i className="icon icon-24 icon-twitter" />
-                        </a>
-                        <a className="social-button link-soft"
-                           target="_blank"
-                           title="Share to Facebook"
-                           href={'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(entry.url)}>
-                            <i className="icon icon-24 icon-facebook" />
-                        </a>
-                        <a className="social-button link-soft"
-                           target="_blank"
-                           title="Save to Hatena Bookmark"
-                           href={'http://b.hatena.ne.jp/add?mode=confirm&title=' + encodeURIComponent(entry.title) + '&url=' + encodeURIComponent(entry.url)}>
-                            <i className="icon icon-24 icon-hatena-bookmark" />
-                        </a>
-                        <a className="social-button link-soft"
-                           target="_blank"
-                           title="Save to Pocket"
-                           href={'https://getpocket.com/save?url=' + encodeURIComponent(entry.url) + "&title=" + encodeURIComponent(entry.title)}>
-                            <i className="icon icon-24 icon-pocket" />
-                        </a>
-                        <a className="social-button link-soft"
-                           target="_blank"
-                           title="Save to Instapaper"
-                           href={'http://www.instapaper.com/text?u=' + encodeURIComponent(entry.url)}>
-                            <i className="icon icon-24 icon-instapaper" />
-                        </a>
+                    <div className="u-text-center">
+                        <div className="list-inline list-inline-divided">
+                            <a className="list-inline-item link-soft"
+                            target="_blank"
+                            title="Share to Twitter"
+                            href={'https://twitter.com/intent/tweet?text=' + encodeURIComponent(entry.title + ' ' + entry.url)}>
+                                <i className="icon icon-24 icon-twitter" />
+                            </a>
+                            <a className="list-inline-item link-soft"
+                            target="_blank"
+                            title="Share to Facebook"
+                            href={'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(entry.url)}>
+                                <i className="icon icon-24 icon-facebook" />
+                            </a>
+                            <a className="list-inline-item link-soft"
+                            target="_blank"
+                            title="Save to Hatena Bookmark"
+                            href={'http://b.hatena.ne.jp/add?mode=confirm&title=' + encodeURIComponent(entry.title) + '&url=' + encodeURIComponent(entry.url)}>
+                                <i className="icon icon-24 icon-hatena-bookmark" />
+                            </a>
+                            <a className="list-inline-item link-soft"
+                            target="_blank"
+                            title="Save to Pocket"
+                            href={'https://getpocket.com/save?url=' + encodeURIComponent(entry.url) + "&title=" + encodeURIComponent(entry.title)}>
+                                <i className="icon icon-24 icon-pocket" />
+                            </a>
+                            <a className="list-inline-item link-soft"
+                            target="_blank"
+                            title="Save to Instapaper"
+                            href={'http://www.instapaper.com/text?u=' + encodeURIComponent(entry.url)}>
+                                <i className="icon icon-24 icon-instapaper" />
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
