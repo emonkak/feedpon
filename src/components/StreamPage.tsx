@@ -3,15 +3,18 @@ import classnames from 'classnames';
 import { Params } from 'react-router/lib/Router';
 import { createSelector } from 'reselect';
 
+import ConfirmModal from 'components/parts/ConfirmModal';
 import Dropdown from 'components/parts/Dropdown';
 import EntryList from 'components/parts/EntryList';
 import MainLayout from 'components/layouts/MainLayout';
+import MenuItem from 'components/parts/MenuItem';
+import ModalButton from 'components/parts/ModalButton';
 import Navbar from 'components/parts/Navbar';
+import Portal from 'components/parts/Portal';
 import SubscribeDropdown from 'components/parts/SubscribeDropdown';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
 import { Category, Entry, EntryOrder, Feed, State, Stream, StreamOptions, StreamView, Subscription } from 'messaging/types';
-import { MenuItem } from 'components/parts/Menu';
 import { addToCategory, removeFromCategory, subscribe, unsubscribe } from 'messaging/subscriptions/actions';
 import { changeStreamView, changeUnreadKeeping, fetchComments, fetchFullContent, fetchMoreEntries, fetchStream, markAsRead, markCategoryAsRead, markFeedAsRead, pinEntry, unpinEntry } from 'messaging/streams/actions';
 import { createCategory } from 'messaging/categories/actions';
@@ -225,7 +228,7 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
     renderNavbar() {
         const { isLoading, isMarking, keepUnread, onToggleSidebar, stream, subscription } = this.props;
         const readEntries = this.readEntriesSelector(this.props, this.state);
-        const canMarkAllAsRead = !!((stream.category || stream.feed) && !isMarking && subscription);
+        const canMarkAllAsRead = !!((stream.feed && subscription) || stream.category) && !isMarking;
 
         return (
             <StreamNavbar
@@ -245,7 +248,7 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
                 options={stream.options}
                 readEntries={readEntries}
                 title={stream.title} />
-        )
+        );
     }
 
     renderStreamHeader() {
@@ -301,7 +304,7 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
 
     renderStreamFooter() {
         const { isLoading, isMarking, stream, subscription } = this.props;
-        const canMarkAllAsRead = !!((stream.category || stream.feed) && !isMarking && subscription);
+        const canMarkAllAsRead = !!((stream.feed && subscription) || stream.category) && !isMarking;
 
         return (
             <StreamFooter
@@ -309,7 +312,8 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
                 hasMoreEntries={!!stream.continuation}
                 isLoading={isLoading}
                 onLoadMoreEntries={this.handleLoadMoreEntries}
-                onMarkAllAsRead={this.handleMarkAllAsRead} />
+                onMarkAllAsRead={this.handleMarkAllAsRead}
+                title={stream.title} />
         );
     }
 
@@ -390,7 +394,8 @@ class StreamNavbar extends PureComponent<StreamNavbarProps, {}> {
                     onMarkAllAsRead={onMarkAllAsRead}
                     onScrollToEntry={onScrollToEntry}
                     onToggleUnreadKeeping={onToggleUnreadKeeping}
-                    readEntries={readEntries} />
+                    readEntries={readEntries}
+                    title={title} />
                 <StreamOptionsDropdown
                     isLoading={isLoading}
                     onChangeEntryOrder={onChangeEntryOrder}
@@ -410,9 +415,37 @@ interface ReadEntriesMenuProps {
     onScrollToEntry: (entryId: string) => void;
     onToggleUnreadKeeping: () => void;
     readEntries: Entry[];
+    title: string;
 }
 
-class ReadEntriesDropdown extends PureComponent<ReadEntriesMenuProps, {}> {
+interface ReadEntriesDropdownState {
+    markAllAsReadModalIsOpened: boolean;
+}
+
+class ReadEntriesDropdown extends PureComponent<ReadEntriesMenuProps, ReadEntriesDropdownState> {
+    constructor(props: ReadEntriesMenuProps, context: any) {
+        super(props, context);
+
+        this.state = { 
+            markAllAsReadModalIsOpened: false
+        };
+
+        this.handleOpenMarkAllAsReadModal = this.handleOpenMarkAllAsReadModal.bind(this);
+        this.handleCloseMarkAllAsReadModal = this.handleCloseMarkAllAsReadModal.bind(this);
+    }
+
+    handleOpenMarkAllAsReadModal() {
+        this.setState({
+            markAllAsReadModalIsOpened: true
+        });
+    }
+
+    handleCloseMarkAllAsReadModal() {
+        this.setState({
+            markAllAsReadModalIsOpened: false
+        });
+    }
+
     render() {
         const {
             canMarkAllAsRead,
@@ -421,42 +454,55 @@ class ReadEntriesDropdown extends PureComponent<ReadEntriesMenuProps, {}> {
             onMarkAllAsRead,
             onScrollToEntry,
             onToggleUnreadKeeping,
-            readEntries
+            readEntries,
+            title
         } = this.props;
+        const { markAllAsReadModalIsOpened } = this.state;
 
         return (
-            <Dropdown
-                toggleButton={
-                    <button className="navbar-action">
-                        <i className="icon icon-24 icon-checkmark" />
-                        <span className={classnames('badge badge-small badge-pill badge-overlap', keepUnread ? 'badge-default' : 'badge-negative' )}>
-                            {readEntries.length || ''}
-                        </span>
-                    </button>
-                }>
-                <div className="menu-heading">Read entries</div>
-                {readEntries.map((entry) => (
+            <Portal overlay={
+                <ConfirmModal
+                    isOpened={markAllAsReadModalIsOpened}
+                    onClose={this.handleCloseMarkAllAsReadModal}
+                    message="Are you sure you want to mark as read in this stream?"
+                    confirmButtonClassName="button button-positive"
+                    confirmButtonLabel="Mark all as read"
+                    onConfirm={onMarkAllAsRead}
+                    title={`Mark all as read in "${title}"`} />
+            }>
+                <Dropdown
+                    toggleButton={
+                        <button className="navbar-action">
+                            <i className="icon icon-24 icon-checkmark" />
+                            <span className={classnames('badge badge-small badge-pill badge-overlap', keepUnread ? 'badge-default' : 'badge-negative')}>
+                                {readEntries.length || ''}
+                            </span>
+                        </button>
+                    }>
+                    <div className="menu-heading">Read entries</div>
+                    {readEntries.map((entry) => (
+                        <MenuItem
+                            key={entry.entryId}
+                            onSelect={onScrollToEntry}
+                            primaryText={entry.title}
+                            value={entry.entryId} />
+                    ))}
+                    <div className="menu-divider" />
                     <MenuItem
-                        key={entry.entryId}
-                        onSelect={onScrollToEntry}
-                        primaryText={entry.title}
-                        value={entry.entryId} />
-                ))}
-                <div className="menu-divider" />
-                <MenuItem
-                    icon={keepUnread ? <i className="icon icon-16 icon-checkmark" /> : null}
-                    onSelect={onToggleUnreadKeeping}
-                    primaryText="Keep unread" />
-                <div className="menu-divider" />
-                <MenuItem
-                    isDisabled={readEntries.length === 0}
-                    onSelect={onClearReadEntries}
-                    primaryText="Clear read entries" />
-                <MenuItem
-                    isDisabled={!canMarkAllAsRead}
-                    onSelect={onMarkAllAsRead}
-                    primaryText="Mark all as read in stream..." />
-            </Dropdown>
+                        icon={keepUnread ? <i className="icon icon-16 icon-checkmark" /> : null}
+                        onSelect={onToggleUnreadKeeping}
+                        primaryText="Keep unread" />
+                    <div className="menu-divider" />
+                    <MenuItem
+                        isDisabled={readEntries.length === 0}
+                        onSelect={onClearReadEntries}
+                        primaryText="Clear read entries" />
+                    <MenuItem
+                        isDisabled={!canMarkAllAsRead}
+                        onSelect={this.handleOpenMarkAllAsReadModal}
+                        primaryText="Mark all as read in stream..." />
+                </Dropdown>
+            </Portal>
         );
     }
 }
@@ -569,6 +615,7 @@ interface StreamFooterProps {
     isLoading: boolean;
     onLoadMoreEntries: () => void;
     onMarkAllAsRead: () => void;
+    title: string;
 }
 
 class StreamFooter extends PureComponent<StreamFooterProps, {}> {
@@ -591,7 +638,8 @@ class StreamFooter extends PureComponent<StreamFooterProps, {}> {
             canMarkAllAsRead,
             hasMoreEntries,
             isLoading,
-            onMarkAllAsRead
+            onMarkAllAsRead,
+            title
         } = this.props;
 
         if (hasMoreEntries) {
@@ -618,12 +666,22 @@ class StreamFooter extends PureComponent<StreamFooterProps, {}> {
                 <footer className="stream-footer">
                     <p>No more entries here.</p>
                     <p>
-                        <button
-                            className="button button-positive"
-                            disabled={!canMarkAllAsRead}
-                            onClick={onMarkAllAsRead}>
-                            Mark all as read
-                        </button>
+                        <ModalButton
+                            button={
+                                <button
+                                    className="button button-positive"
+                                    disabled={!canMarkAllAsRead}>
+                                    Mark all as read
+                                </button>
+                            }
+                            modal={
+                                <ConfirmModal
+                                    message="Are you sure you want to mark as read in this stream?"
+                                    confirmButtonClassName="button button-positive"
+                                    confirmButtonLabel="Mark all as read"
+                                    onConfirm={onMarkAllAsRead}
+                                    title={`Mark all as read in "${title}"`} />
+                            } />
                     </p>
                 </footer>
             );

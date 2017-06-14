@@ -68,7 +68,6 @@ class TrackingUrlPatternItem extends PureComponent<TrackingUrlPatternItemProps, 
             <li className="list-group-item">
                 <code>{pattern}</code>
                 <ModalButton
-                    className="button-group u-pull-right"
                     modal={
                         <ConfirmModal
                             message="Are you sure you want to delete this pattern?"

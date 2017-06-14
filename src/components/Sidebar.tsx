@@ -4,16 +4,17 @@ import { History, Location } from 'history';
 import { Link } from 'react-router';
 import { createSelector } from 'reselect';
 
+import ConfirmModal from 'components/parts/ConfirmModal';
 import Dropdown from 'components/parts/Dropdown';
 import FeedSearchForm from 'components/parts/FeedSearchForm';
-import ProfileButton from 'components/parts/ProfileButton';
+import MenuItem from 'components/parts/MenuItem';
+import Portal from 'components/parts/Portal';
 import RelativeTime from 'components/parts/RelativeTime';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
 import createAscendingComparer from 'utils/createAscendingComparer';
 import createDescendingComparer from 'utils/createDescendingComparer';
 import { Category, Profile, State, Subscription, SubscriptionsOrder } from 'messaging/types';
-import { MenuItem } from 'components/parts/Menu';
 import { Tree, TreeBranch, TreeLeaf } from 'components/parts/Tree';
 import { changeSubscriptionsOrder, changeUnreadViewing, fetchSubscriptions } from 'messaging/subscriptions/actions';
 import { fetchUser } from 'messaging/user/actions';
@@ -151,18 +152,11 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
                     <Link className="button button-block button-outline-default" to="/search/">New Subscription</Link>
                 </div>
                 <div className="sidebar-group">
-                    <Dropdown
-                        className="dropdown-block"
-                        toggleButton={
-                            <ProfileButton isLoading={userIsLoading} profile={profile} />
-                        }>
-                        <MenuItem
-                            onSelect={onFetchUser}
-                            primaryText="Refresh" />
-                        <MenuItem
-                            onSelect={onRevokeToken}
-                            primaryText="Logout..." />
-                    </Dropdown>
+                    <ProfileDropdown
+                        isLoading={userIsLoading}
+                        profile={profile}
+                        onRefresh={onFetchUser}
+                        onLogout={onRevokeToken} />
                 </div>
             </nav>
         );
@@ -300,6 +294,87 @@ class SubscriptionTree extends PureComponent<SubscriptionTreeProps, {}> {
                 {visibleCategories.map(({ category, groupedSubscription }) => this.renderCategory(category, groupedSubscription))}
                 {uncategorizedSubscriptions.map(this.renderSubscription, this)}
             </Tree>
+        );
+    }
+}
+
+interface ProfileDropdownProps {
+    isLoading: boolean;
+    onLogout: () => void;
+    onRefresh: () => void;
+    profile: Profile;
+}
+
+interface ProfileDropdownState {
+    logoutModalIsOpened: boolean;
+}
+
+class ProfileDropdown extends PureComponent<ProfileDropdownProps, ProfileDropdownState> {
+    constructor(props: ProfileDropdownProps, context: any) {
+        super(props, context);
+
+        this.state = {
+            logoutModalIsOpened: false
+        };
+
+        this.handleCloseLogoutModal = this.handleCloseLogoutModal.bind(this);
+        this.handleOpenLogoutModal = this.handleOpenLogoutModal.bind(this);
+    }
+
+    handleCloseLogoutModal() {
+        this.setState({
+            logoutModalIsOpened: false
+        });
+    }
+
+    handleOpenLogoutModal() {
+        this.setState({
+            logoutModalIsOpened: true
+        });
+    }
+
+    render() {
+        const { isLoading, onLogout, onRefresh, profile } = this.props;
+        const { logoutModalIsOpened } = this.state;
+
+        const icon = profile.picture
+            ? <img className="u-flex-shrink-0 u-rounded-circle" height="40" width="40" src={profile.picture} />
+            : <span className="u-flex-shrink-0"><i className="icon icon-40 icon-contacts" /></span>;
+
+        return (
+            <Portal overlay={
+                <ConfirmModal
+                    confirmButtonClassName="button button-negative"
+                    confirmButtonLabel="Logout"
+                    isOpened={logoutModalIsOpened}
+                    message="Are you sure you want to logout in current user?"
+                    onClose={this.handleCloseLogoutModal}
+                    onConfirm={onLogout}
+                    title={`Logout "${profile.userId}"`} />
+            }>
+                <Dropdown
+                    className="dropdown-block"
+                    toggleButton={
+                        <button
+                            className="button button-outline-default button-block"
+                            disabled={isLoading}>
+                            <div className="u-flex u-flex-align-items-center dropdown-arrow">
+                                {icon}
+                                <span className="u-flex-grow-1 u-margin-left-1 u-text-left">
+                                    <div><strong>{profile.userId}</strong></div>
+                                    <div className="u-text-small">via <strong>{profile.source}</strong></div>
+                                </span>
+                            </div>
+                        </button>
+                    }>
+                    <MenuItem
+                        onSelect={onRefresh}
+                        primaryText="Refresh" />
+                    <MenuItem
+                        onSelect={this.handleOpenLogoutModal}
+                        primaryText="Logout..." />
+                </Dropdown>
+            </Portal>
         );
     }
 }

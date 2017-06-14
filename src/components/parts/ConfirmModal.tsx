@@ -10,6 +10,7 @@ interface ConfirmModalProps {
     containerClassName?: string;
     isOpened?: boolean;
     message: string;
+    onCancel?: () => void;
     onClose?: () => void;
     onConfirm?: () => void;
     title: string;
@@ -24,6 +25,37 @@ export default class ConfirmModal extends PureComponent<ConfirmModalProps, {}> {
         isOpened: false
     };
 
+    constructor(props: ConfirmModalProps, context: any) {
+        super(props, context);
+
+        this.handleCancel = this.handleCancel.bind(this);
+        this.handleConfirm = this.handleConfirm.bind(this);
+    }
+
+    handleCancel() {
+        const { onClose, onCancel } = this.props;
+
+        if (onCancel) {
+            onCancel();
+        }
+
+        if (onClose) {
+            onClose();
+        }
+    }
+
+    handleConfirm() {
+        const { onClose, onConfirm } = this.props;
+
+        if (onConfirm) {
+            onConfirm();
+        }
+
+        if (onClose) {
+            onClose();
+        }
+    }
+
     render() {
         const {
             cancelButtonClassName,
@@ -33,7 +65,6 @@ export default class ConfirmModal extends PureComponent<ConfirmModalProps, {}> {
             confirmButtonClassName,
             confirmButtonLabel,
             onClose,
-            onConfirm,
             title
         } = this.props;
 
@@ -43,8 +74,8 @@ export default class ConfirmModal extends PureComponent<ConfirmModalProps, {}> {
                 <h1 className="modal-title">{title}</h1>
                 <p>{message}</p>
                 <p className="button-toolbar">
-                    <button className={confirmButtonClassName} onClick={onConfirm}>{confirmButtonLabel}</button>
-                    <button className={cancelButtonClassName} onClick={onClose}>{cancelButtonLabel}</button>
+                    <button autoFocus className={confirmButtonClassName} onClick={this.handleConfirm}>{confirmButtonLabel}</button>
+                    <button className={cancelButtonClassName} onClick={this.handleCancel}>{cancelButtonLabel}</button>
                 </p>
             </Modal>
         );

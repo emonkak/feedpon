@@ -2,6 +2,7 @@ import { Children, PureComponent } from 'react';
 import { findDOMNode } from 'react-dom';
 
 interface ClosableProps {
+    children?: React.ReactElement<any>;
     isDisabled?: boolean;
     onClose?: () => void;
 }

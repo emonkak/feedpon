@@ -2,6 +2,7 @@ import CSSTransitionGroup from 'react-addons-css-transition-group';
 import React, { PureComponent } from 'react';
 
 interface ModalProps {
+    children?: React.ReactNode;
     isOpened?: boolean;
     onClose?: () => void;
 }

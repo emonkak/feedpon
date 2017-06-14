@@ -1,16 +1,15 @@
 import React, { PureComponent, cloneElement } from 'react';
 
+import Portal from 'components/parts/Portal';
 import createChainedFunction from 'utils/createChainedFunction';
 
 interface ModalButtonProps {
     button: React.ReactElement<any>;
-    className?: string;
-    component?: string;
     modal: React.ReactElement<any>;
 }
 
 interface ModalButtonState {
-    isShowing: boolean;
+    modalIsOpened: boolean;
 }
 
 export default class ModalButton extends PureComponent<ModalButtonProps, ModalButtonState> {
@@ -25,27 +24,25 @@ export default class ModalButton extends PureComponent<ModalButtonProps, ModalBu
         this.handleOpen = this.handleOpen.bind(this);
 
         this.state = {
-            isShowing: false
+            modalIsOpened: false
         };
     }
 
     handleClose() {
         this.setState({
-            isShowing: false
+            modalIsOpened: false
         });
     }
 
     handleOpen() {
         this.setState({
-            isShowing: true
+            modalIsOpened: true
         });
     }
 
     render() {
-        const { button, className, component, modal } = this.props;
-        const { isShowing } = this.state;
-
-        const Component = component!;
+        const { button, modal } = this.props;
+        const { modalIsOpened } = this.state;
 
         const buttonElement = cloneElement(button, {
             onClick: createChainedFunction(
@@ -55,7 +52,7 @@ export default class ModalButton extends PureComponent<ModalButtonProps, ModalBu
         });
 
         const modalElement = cloneElement(modal, {
-            isOpened: isShowing,
+            isOpened: modalIsOpened,
             onClose: createChainedFunction(
                 modal.props.onClose,
                 this.handleClose
@@ -63,10 +60,9 @@ export default class ModalButton extends PureComponent<ModalButtonProps, ModalBu
         })
 
         return (
-            <Component className={className}>
+            <Portal overlay={modalElement}>
                 {buttonElement}
-                {modalElement}
-            </Component>
+            </Portal>
         );
     }
 }

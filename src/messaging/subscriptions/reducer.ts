@@ -197,7 +197,7 @@ export default function reducer(subscriptions: Subscriptions, event: Event): Sub
             return {
                 ...subscriptions,
                 items: subscriptions.items.map((subscription) => {
-                    if (subscription.labels.includes(event.label)) {
+                    if (!subscription.labels.includes(event.label)) {
                         return subscription;
                     }
                     return {

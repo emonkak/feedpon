@@ -1,9 +1,12 @@
 import React, { PureComponent } from 'react';
 import classnames from 'classnames';
 
+import ConfirmModal from 'components/parts/ConfirmModal';
 import Dropdown from 'components/parts/Dropdown';
+import MenuForm from 'components/parts/MenuForm';
+import MenuItem from 'components/parts/MenuItem';
+import Portal from 'components/parts/Portal';
 import { Category, Feed, Subscription } from 'messaging/types';
-import { MenuForm, MenuItem } from 'components/parts/Menu';
 
 interface SubscribeDropdownProps {
     categories: Category[];
@@ -16,17 +19,41 @@ interface SubscribeDropdownProps {
     subscription: Subscription | null;
 }
 
-export default class SubscribeDropdown extends PureComponent<SubscribeDropdownProps, {}> {
+interface SubscribeDropdownState {
+    unsubscribeModalIsOpened: boolean;
+}
+
+export default class SubscribeDropdown extends PureComponent<SubscribeDropdownProps, SubscribeDropdownState> {
     private categoryLabelInput: HTMLInputElement;
 
     constructor(props: SubscribeDropdownProps, context: any) {
         super(props, context);
 
+        this.state = {
+            unsubscribeModalIsOpened: false
+        };
+
         this.handleAddToCategory = this.handleAddToCategory.bind(this);
+        this.handleCloseUnsubscribeModal = this.handleCloseUnsubscribeModal.bind(this);
         this.handleCreateCategory = this.handleCreateCategory.bind(this);
+        this.handleOpenUnsubscribeModal = this.handleOpenUnsubscribeModal.bind(this);
         this.handleRemoveFromCategory = this.handleRemoveFromCategory.bind(this);
         this.handleSubscribe = this.handleSubscribe.bind(this);
         this.handleUnsubscribe = this.handleUnsubscribe.bind(this);
+    }
+
+    handleAddToCategory(label: string) {
+        const { onAddToCategory, subscription } = this.props;
+
+        if (subscription) {
+            onAddToCategory(subscription, label);
+        }
+    }
+
+    handleCloseUnsubscribeModal() {
+        this.setState({
+            unsubscribeModalIsOpened: false
+        });
     }
 
     handleCreateCategory() {
@@ -42,12 +69,10 @@ export default class SubscribeDropdown extends PureComponent<SubscribeDropdownPr
         this.categoryLabelInput.value = '';
     }
 
-    handleAddToCategory(label: string) {
-        const { onAddToCategory, subscription } = this.props;
-
-        if (subscription) {
-            onAddToCategory(subscription, label);
-        }
+    handleOpenUnsubscribeModal() {
+        this.setState({
+            unsubscribeModalIsOpened: true
+        });
     }
 
     handleRemoveFromCategory(label: string) {
@@ -99,31 +124,43 @@ export default class SubscribeDropdown extends PureComponent<SubscribeDropdownPr
 
     render() {
         const { categories, feed, subscription } = this.props;
+        const { unsubscribeModalIsOpened } = this.state;
 
         return (
-            <Dropdown
-                toggleButton={<SubscribeButton isSubscribed={!!subscription} isLoading={feed.isLoading} />}>
-                <div className="menu-heading">Category</div>
-                {categories.map(this.renderCategoryMenuItem, this)}
-                <div className="menu-divider" />
-                <div className="menu-heading">New category</div>
-                <MenuForm onSubmit={this.handleCreateCategory}>
-                    <div className="input-group">
-                        <input
-                            type="text"
-                            className="form-control"
-                            style={{ width: '12rem' }}
-                            ref={(ref) => this.categoryLabelInput = ref} />
-                        <button type="submit" className="button button-positive">OK</button>
-                    </div>
-                </MenuForm>
-                <div className="menu-divider" />
-                <MenuItem
-                    isDisabled={!subscription}
-                    onSelect={this.handleUnsubscribe}
-                    primaryText="Unsubscribe" />
-            </Dropdown>
-        )
+            <Portal overlay={
+                <ConfirmModal
+                    confirmButtonClassName="button button-negative"
+                    confirmButtonLabel="Unsubscribe"
+                    isOpened={unsubscribeModalIsOpened}
+                    message="Are you sure you want to unsubscribe this feed?"
+                    onClose={this.handleCloseUnsubscribeModal}
+                    onConfirm={this.handleUnsubscribe}
+                    title={`Unsubscribe "${feed.title}"`} />
+            }>
+                <Dropdown
+                    toggleButton={<SubscribeButton isSubscribed={!!subscription} isLoading={feed.isLoading} />}>
+                    <div className="menu-heading">Category</div>
+                    {categories.map(this.renderCategoryMenuItem, this)}
+                    <div className="menu-divider" />
+                    <div className="menu-heading">New category</div>
+                    <MenuForm onSubmit={this.handleCreateCategory}>
+                        <div className="input-group">
+                            <input
+                                type="text"
+                                className="form-control"
+                                style={{ width: '12rem' }}
+                                ref={(ref) => this.categoryLabelInput = ref} />
+                            <button type="submit" className="button button-positive">OK</button>
+                        </div>
+                    </MenuForm>
+                    <div className="menu-divider" />
+                    <MenuItem
+                        isDisabled={!subscription}
+                        onSelect={this.handleOpenUnsubscribeModal}
+                        primaryText="Unsubscribe..." />
+                </Dropdown>
+            </Portal>
+        );
     }
 }
 
