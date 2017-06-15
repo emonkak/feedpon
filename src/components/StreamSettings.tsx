@@ -2,52 +2,52 @@ import React, { PureComponent } from 'react';
 
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
-import { State, StreamSetting } from 'messaging/types';
-import { changeDefaultStreamSetting } from 'messaging/streamSettings/actions';
+import { State, StreamOptions, StreamView } from 'messaging/types';
+import { changeDefaultStreamOptions, changeDefaultStreamView } from 'messaging/streamSettings/actions';
 
 interface StreamSettingsProps {
-    defaultSetting: StreamSetting;
-    onChangeDefaultStreamSetting: typeof changeDefaultStreamSetting;
+    onChangeDefaultStreamOptions: typeof changeDefaultStreamOptions;
+    onChangeDefaultStreamView: typeof changeDefaultStreamView;
+    options: StreamOptions;
+    streamView: StreamView;
 }
 
-type StreamSettingsState = StreamSetting;
-
-class StreamSettings extends PureComponent<StreamSettingsProps, StreamSettingsState> {
+class StreamSettings extends PureComponent<StreamSettingsProps, {}> {
     constructor(props: StreamSettingsProps, context: any) {
         super(props);
 
-        this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
-
-        this.state = props.defaultSetting;
+        this.handleChangeStreamOption = this.handleChangeStreamOption.bind(this);
+        this.handleChangeStreamView = this.handleChangeStreamView.bind(this);
     }
 
-    handleChange(event: React.FormEvent<HTMLInputElement>) {
+    handleChangeStreamOption(event: React.FormEvent<HTMLInputElement>) {
+        const { onChangeDefaultStreamOptions, options } = this.props;
         const target = event.currentTarget;
         const name = target.name;
         const value = target.type === 'checkbox' ? target.checked : target.value;
 
-        this.setState(state => ({
-            ...state,
+        const nextOptions = {
+            ...options,
             [name]: value
-        }));
+        };
+
+        onChangeDefaultStreamOptions(nextOptions);
     }
 
-    handleSubmit(event: React.FormEvent<any>) {
-        event.preventDefault();
+    handleChangeStreamView(event: React.FormEvent<HTMLInputElement>) {
+        const { onChangeDefaultStreamView } = this.props;
+        const target = event.currentTarget;
 
-        const { onChangeDefaultStreamSetting } = this.props;
-
-        onChangeDefaultStreamSetting(this.state);
+        onChangeDefaultStreamView(target.value as StreamView);
     }
 
     render() {
-        const { entryOrder, numEntries, onlyUnread, streamView } = this.state;
+        const { options, streamView } = this.props;
 
         return (
             <section className="section">
                 <h1 className="display-1">Stream</h1>
-                <form className="form" onSubmit={this.handleSubmit}>
+                <div className="form">
                     <div className="form-group">
                         <label>
                             <span className="form-group-heading">Default display number of entries</span>
@@ -55,8 +55,8 @@ class StreamSettings extends PureComponent<StreamSettingsProps, StreamSettingsSt
                                 type="number"
                                 className="form-control"
                                 name="numEntries"
-                                value={numEntries + ''}
-                                onChange={this.handleChange}
+                                value={options.numEntries + ''}
+                                onChange={this.handleChangeStreamOption}
                                 required />
                         </label>
                     </div>
@@ -66,8 +66,8 @@ class StreamSettings extends PureComponent<StreamSettingsProps, StreamSettingsSt
                                 type="checkbox"
                                 className="form-check"
                                 name="onlyUnread"
-                                checked={onlyUnread}
-                                onChange={this.handleChange} />
+                                checked={options.onlyUnread}
+                                onChange={this.handleChangeStreamOption} />
                                 Display only unread entries on default
                         </label>
                     </div>
@@ -79,8 +79,8 @@ class StreamSettings extends PureComponent<StreamSettingsProps, StreamSettingsSt
                                 className="form-check"
                                 name="entryOrder"
                                 value="newest"
-                                checked={entryOrder === 'newest'}
-                                onChange={this.handleChange}
+                                checked={options.entryOrder === 'newest'}
+                                onChange={this.handleChangeStreamOption}
                                 required />Newest
                         </label>
                         <label className="form-check-label">
@@ -89,8 +89,8 @@ class StreamSettings extends PureComponent<StreamSettingsProps, StreamSettingsSt
                                 className="form-check"
                                 name="entryOrder"
                                 value="oldest"
-                                checked={entryOrder === 'oldest'}
-                                onChange={this.handleChange}
+                                checked={options.entryOrder === 'oldest'}
+                                onChange={this.handleChangeStreamOption}
                                 required />Oldest
                         </label>
                     </div>
@@ -103,7 +103,7 @@ class StreamSettings extends PureComponent<StreamSettingsProps, StreamSettingsSt
                                 name="streamView"
                                 value="expanded"
                                 checked={streamView === 'expanded'}
-                                onChange={this.handleChange}
+                                onChange={this.handleChangeStreamView}
                                 required />Expanded view
                         </label>
                         <label className="form-check-label">
@@ -113,14 +113,11 @@ class StreamSettings extends PureComponent<StreamSettingsProps, StreamSettingsSt
                                 name="streamView"
                                 value="collapsible"
                                 checked={streamView === 'collapsible'}
-                                onChange={this.handleChange}
+                                onChange={this.handleChangeStreamView}
                                 required />Collapsible view
                         </label>
                     </div>
-                    <div className="form-group">
-                        <button type="submit" className="button button-outline-positive">Save</button>
-                    </div>
-                </form>
+                </div>
             </section>
         );
     }
@@ -128,9 +125,11 @@ class StreamSettings extends PureComponent<StreamSettingsProps, StreamSettingsSt
 
 export default connect({
     mapStateToProps: (state: State) => ({
-        defaultSetting: state.streamSettings.defaultSetting
+        options: state.streamSettings.defaultOptions,
+        streamView: state.streamSettings.defaultStreamView
     }),
     mapDispatchToProps: bindActions({
-        onChangeDefaultStreamSetting: changeDefaultStreamSetting
+        onChangeDefaultStreamOptions: changeDefaultStreamOptions,
+        onChangeDefaultStreamView: changeDefaultStreamView
     })
 })(StreamSettings);

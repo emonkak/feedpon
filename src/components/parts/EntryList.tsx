@@ -24,7 +24,7 @@ interface EntryListProps {
     onUnpin: (entryId: string | number) => void;
     sameOrigin: boolean;
     scrollTo: (x: number, y: number) => Promise<void>;
-    view: StreamView;
+    streamView: StreamView;
 }
 
 interface EntryListState {
@@ -48,7 +48,7 @@ export default class EntryList extends PureComponent<EntryListProps, EntryListSt
     }
 
     componentWillReceiveProps(nextProps: EntryListProps) {
-        if (nextProps.view !== this.props.view) {
+        if (nextProps.streamView !== this.props.streamView) {
             this.setState({
                 expandedEntryId: null
             });
@@ -62,7 +62,7 @@ export default class EntryList extends PureComponent<EntryListProps, EntryListSt
             scrollElement = document.getElementById('entry-' + this.state.expandedEntryId);
         }
 
-        if (this.props.view !== prevProps.view && this.activeEntryId) {
+        if (this.props.streamView !== prevProps.streamView && this.activeEntryId) {
             scrollElement = document.getElementById('entry-' + this.activeEntryId);
         }
 
@@ -110,10 +110,10 @@ export default class EntryList extends PureComponent<EntryListProps, EntryListSt
     }
 
     renderEntry(entry: Entry) {
-        const { onFetchComments, onFetchFullContent, onPin, onUnpin, sameOrigin, view } = this.props;
+        const { onFetchComments, onFetchFullContent, onPin, onUnpin, sameOrigin, streamView } = this.props;
         const { expandedEntryId } = this.state;
-        const isCollapsible = view === 'collapsible';
-        const isExpanded = view === 'expanded' || expandedEntryId === entry.entryId;
+        const isCollapsible = streamView === 'collapsible';
+        const isExpanded = streamView === 'expanded' || expandedEntryId === entry.entryId;
 
         return (
             <EntryComponent
@@ -132,10 +132,10 @@ export default class EntryList extends PureComponent<EntryListProps, EntryListSt
     }
 
     render() {
-        const { isLoading, view } = this.props;
+        const { isLoading, streamView } = this.props;
 
         if (isLoading) {
-            const isExpanded = view === 'expanded';
+            const isExpanded = streamView === 'expanded';
 
             return (
                 <div className="entry-list">

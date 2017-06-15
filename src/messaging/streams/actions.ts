@@ -4,23 +4,20 @@ import * as feedlyApi from 'adapters/feedly/api';
 import PromiseQueue from 'utils/PromiseQueue';
 import decodeResponseAsText from 'utils/decodeResponseAsText';
 import stripTags from 'utils/stripTags';
-import { AsyncEvent, Category, Entry, Event, Feed, Stream, StreamOptions, StreamView } from 'messaging/types';
+import { AsyncEvent, Category, Entry, Event, Feed, Stream, StreamOptions } from 'messaging/types';
 import { getFeedlyToken } from 'messaging/credential/actions';
 import { getSiteinfoItems } from 'messaging/sharedSiteinfo/actions';
 import { sendNotification } from 'messaging/notifications/actions';
 
-export function fetchStream(streamId: string, options?: StreamOptions): AsyncEvent {
+export function fetchStream(streamId: string, partialOptions: Partial<StreamOptions>): AsyncEvent {
     return async ({ dispatch, getState }) => {
-        if (!options) {
-            const { streamSettings: { defaultSetting } } = getState();
+        const { streamSettings } = getState();
 
-            options = {
-                numEntries: defaultSetting.numEntries,
-                onlyUnread: defaultSetting.onlyUnread || streamId === 'pins',
-                order: defaultSetting.entryOrder,
-                view: defaultSetting.streamView
-            };
-        }
+        const options = Object.assign(
+            {},
+            streamSettings.defaultOptions,
+            partialOptions
+        );
 
         let stream = null;
 
@@ -94,7 +91,7 @@ export function fetchMoreEntries(streamId: string, continuation: string, options
             const contents = await feedlyApi.getStreamContents(token.access_token, {
                 streamId: feedlyStreamId,
                 continuation,
-                ranked: options.order,
+                ranked: options.entryOrder,
                 unreadOnly: options.onlyUnread
             });
 
@@ -415,14 +412,6 @@ export function unpinEntry(entryId: string): AsyncEvent {
     };
 }
 
-export function changeStreamView(streamId: string, view: StreamView): Event {
-    return {
-        type: 'STREAM_VIEW_CHANGED',
-        streamId,
-        view
-    };
-}
-
 export function changeUnreadKeeping(keepUnread: boolean): Event {
     return {
         type: 'UNREAD_KEEPING_CHANGED',
@@ -437,7 +426,7 @@ function fetchFeedStream(streamId: string, options: StreamOptions): AsyncEvent<S
         const [contents, feed] = await Promise.all([
             feedlyApi.getStreamContents(token.access_token, {
                 streamId,
-                ranked: options.order,
+                ranked: options.entryOrder,
                 unreadOnly: options.onlyUnread
             }),
             feedlyApi.getFeed(token.access_token, streamId)
@@ -473,7 +462,7 @@ function fetchCategoryStream(streamId: string, options: StreamOptions): AsyncEve
 
         const contents = await feedlyApi.getStreamContents(token.access_token, {
             streamId,
-            ranked: options.order,
+            ranked: options.entryOrder,
             unreadOnly: options.onlyUnread
         });
 
@@ -507,7 +496,7 @@ function fetchAllStream(options: StreamOptions): AsyncEvent<Stream> {
         const streamId = toFeedlyStreamId('all', token.id);
         const contents = await feedlyApi.getStreamContents(token.access_token, {
             streamId,
-            ranked: options.order,
+            ranked: options.entryOrder,
             unreadOnly: options.onlyUnread
         });
 
@@ -537,7 +526,7 @@ function fetchPinsStream(options: StreamOptions): AsyncEvent<Stream> {
         const streamId = toFeedlyStreamId('pins', token.id);
         const contents = await feedlyApi.getStreamContents(token.access_token, {
             streamId,
-            ranked: options.order,
+            ranked: options.entryOrder,
             unreadOnly: options.onlyUnread
         });
 

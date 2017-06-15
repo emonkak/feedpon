@@ -2,10 +2,16 @@ import { StreamSettings, Event } from 'messaging/types';
 
 export default function reduceStreamSettings(settings: StreamSettings, event: Event): StreamSettings {
     switch (event.type) {
-        case 'DEFAULT_STREAM_SETTING_CHANGED':
+        case 'DEFAULT_STREAM_OPTIONS_CHANGED':
             return {
-                defaultSetting: event.setting,
-                version: settings.version
+                ...settings,
+                defaultOptions: event.options
+            };
+
+        case 'DEFAULT_STREAM_VIEW_CHANGED':
+            return {
+                ...settings,
+                defaultStreamView: event.streamView
             };
 
         default:

@@ -1,15 +1,29 @@
-import { AsyncEvent, StreamSetting } from 'messaging/types';
+import { AsyncEvent, StreamOptions, StreamView } from 'messaging/types';
 import { sendNotification } from 'messaging/notifications/actions';
 
-export function changeDefaultStreamSetting(setting: StreamSetting): AsyncEvent {
+export function changeDefaultStreamOptions(options: StreamOptions): AsyncEvent {
     return async ({ dispatch }) => {
         dispatch({
-            type: 'DEFAULT_STREAM_SETTING_CHANGED',
-            setting
+            type: 'DEFAULT_STREAM_OPTIONS_CHANGED',
+            options
         });
 
         dispatch(sendNotification(
-            'Stream settings changed',
+            'Default stream options changed',
+            'positive'
+        ));
+    };
+}
+
+export function changeDefaultStreamView(streamView: StreamView): AsyncEvent {
+    return async ({ dispatch }) => {
+        dispatch({
+            type: 'DEFAULT_STREAM_VIEW_CHANGED',
+            streamView
+        });
+
+        dispatch(sendNotification(
+            'Default stream view changed',
             'positive'
         ));
     };

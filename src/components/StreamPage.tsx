@@ -1,5 +1,7 @@
 import React, { PureComponent } from 'react';
 import classnames from 'classnames';
+import shallowEqual from 'fbjs/lib/shallowEqual';
+import { History, Location } from 'history';
 import { Params } from 'react-router/lib/Router';
 import { createSelector } from 'reselect';
 
@@ -16,18 +18,18 @@ import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
 import { Category, Entry, EntryOrder, Feed, State, Stream, StreamOptions, StreamView, Subscription } from 'messaging/types';
 import { addToCategory, removeFromCategory, subscribe, unsubscribe } from 'messaging/subscriptions/actions';
-import { changeStreamView, changeUnreadKeeping, fetchComments, fetchFullContent, fetchMoreEntries, fetchStream, markAsRead, markCategoryAsRead, markFeedAsRead, pinEntry, unpinEntry } from 'messaging/streams/actions';
+import { changeUnreadKeeping, fetchComments, fetchFullContent, fetchMoreEntries, fetchStream, markAsRead, markCategoryAsRead, markFeedAsRead, pinEntry, unpinEntry } from 'messaging/streams/actions';
 import { createCategory } from 'messaging/categories/actions';
 
-interface StreamProps {
+interface StreamPageProps {
     categories: Category[];
     isLoaded: boolean;
     isLoading: boolean;
     isMarking: boolean;
     isScrolling: boolean;
     keepUnread: boolean;
+    location: Location;
     onAddToCategory: typeof addToCategory;
-    onChangeStreamView: typeof changeStreamView,
     onChangeUnreadKeeping: typeof changeUnreadKeeping,
     onCreateCategory: typeof createCategory;
     onFetchComments: typeof fetchComments;
@@ -44,8 +46,11 @@ interface StreamProps {
     onUnpinEntry: typeof unpinEntry;
     onUnsubscribe: typeof unsubscribe;
     params: Params;
+    router: History;
     scrollTo: (x: number, y: number) => Promise<void>;
     stream: Stream;
+    streamOptions: StreamOptions;
+    streamView: StreamView;
     subscription: Subscription | null;
 };
 
@@ -55,14 +60,14 @@ interface StreamState {
 
 const SCROLL_OFFSET = 48;
 
-class StreamPage extends PureComponent<StreamProps, StreamState> {
-    readonly readEntriesSelector = createSelector(
-        (props: StreamProps) => props.stream.entries,
-        (props: StreamProps, state: StreamState) => state.readEntryIds,
+class StreamPage extends PureComponent<StreamPageProps, StreamState> {
+    readEntriesSelector = createSelector(
+        (props: StreamPageProps) => props.stream.entries,
+        (props: StreamPageProps, state: StreamState) => state.readEntryIds,
         (entries, readEntryIds) => entries.filter(entry => !entry.markedAsRead && readEntryIds.has(entry.entryId))
     );
 
-    constructor(props: StreamProps, context: any) {
+    constructor(props: StreamPageProps, context: any) {
         super(props, context);
 
         this.state = {
@@ -83,21 +88,23 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
     }
 
     componentWillMount() {
-        const { stream, onFetchStream, params } = this.props;
+        const { onFetchStream, params, stream, streamOptions } = this.props;
 
-        if (!stream || (stream.streamId !== params['stream_id'])) {
-            onFetchStream(params['stream_id']);
+        if (stream.streamId !== params['stream_id']
+            || !shallowEqual(stream.options, streamOptions)) {
+            onFetchStream(params['stream_id'], streamOptions);
         }
     }
 
-    componentWillUpdate(nextProps: StreamProps, nextState: {}) {
-        const { params } = this.props;
+    componentWillUpdate(nextProps: StreamPageProps, nextState: {}) {
+        const { params, streamOptions } = this.props;
 
         // When transition to different stream
-        if (params['stream_id'] !== nextProps.params['stream_id']) {
-            const { keepUnread, onFetchStream, onMarkAsRead, stream } = this.props;
+        if (params['stream_id'] !== nextProps.params['stream_id']
+            || !shallowEqual(streamOptions, nextProps.streamOptions)) {
+            const { keepUnread, onFetchStream, onMarkAsRead } = this.props;
 
-            if (!keepUnread && stream.streamId === params['stream_id']) {
+            if (!keepUnread) {
                 const readEntries = this.readEntriesSelector(this.props, this.state);
 
                 if (readEntries.length > 0) {
@@ -105,11 +112,11 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
                 }
             }
 
-            onFetchStream(nextProps.params['stream_id']);
+            onFetchStream(nextProps.params['stream_id'], nextProps.streamOptions);
         }
     }
 
-    componentWillReceiveProps(nextProps: StreamProps) {
+    componentWillReceiveProps(nextProps: StreamPageProps) {
         const { stream } = this.props;
 
         if (stream.streamId !== nextProps.stream.streamId) {
@@ -120,9 +127,9 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
     }
 
     componentWillUnmount() {
-        const { keepUnread, onMarkAsRead, params, stream } = this.props;
+        const { keepUnread, onMarkAsRead } = this.props;
 
-        if (!keepUnread && stream.streamId === params['stream_id']) {
+        if (!keepUnread) {
             const readEntries = this.readEntriesSelector(this.props, this.state);
 
             if (readEntries.length > 0) {
@@ -131,21 +138,30 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
         }
     }
 
-    handleChangeEntryOrder(order: EntryOrder) {
-        const { stream, onFetchStream, scrollTo } = this.props;
+    handleChangeEntryOrder(entryOrder: EntryOrder) {
+        const { location, router, scrollTo } = this.props;
 
         scrollTo(0, 0);
 
-        onFetchStream(stream.streamId, {
-            ...stream.options,
-            order
+        router.replace({
+            pathname: location.pathname,
+            query: {
+                ...location.query,
+                entryOrder
+            }
         });
     }
 
-    handleChangeStreamView(view: StreamView) {
-        const { onChangeStreamView, stream } = this.props;
+    handleChangeStreamView(streamView: StreamView) {
+        const { location, router } = this.props;
 
-        onChangeStreamView(stream.streamId, view);
+        router.replace({
+            pathname: location.pathname,
+            query: {
+                ...location.query,
+                streamView
+            }
+        });
     }
 
     handleClearReadEntries() {
@@ -155,10 +171,10 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
     }
 
     handleLoadMoreEntries() {
-        const { keepUnread, onFetchMoreEntries, onMarkAsRead, stream } = this.props;
+        const { keepUnread, onFetchMoreEntries, onMarkAsRead, stream, streamOptions } = this.props;
 
         if (stream.continuation) {
-            onFetchMoreEntries(stream.streamId, stream.continuation, stream.options);
+            onFetchMoreEntries(stream.streamId, stream.continuation, streamOptions);
         }
 
         if (!keepUnread) {
@@ -193,11 +209,11 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
     }
 
     handleReloadEntries() {
-        const { onFetchStream, scrollTo, stream } = this.props;
+        const { onFetchStream, scrollTo, stream, streamOptions } = this.props;
 
         scrollTo(0, 0);
 
-        onFetchStream(stream.streamId, stream.options);
+        onFetchStream(stream.streamId, streamOptions);
     }
 
     handleScrollToEntry(entryId: string) {
@@ -209,13 +225,16 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
     }
 
     handleToggleOnlyUnread() {
-        const { onFetchStream, scrollTo, stream } = this.props;
+        const { location, router, scrollTo, streamOptions } = this.props;
 
         scrollTo(0, 0);
 
-        onFetchStream(stream.streamId, {
-            ...stream.options,
-            onlyUnread: !stream.options.onlyUnread
+        router.replace({
+            pathname: location.pathname,
+            query: {
+                ...location.query,
+                onlyUnread: !streamOptions.onlyUnread ? '1' : '0'
+            }
         });
     }
 
@@ -226,7 +245,16 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
     }
 
     renderNavbar() {
-        const { isLoading, isMarking, keepUnread, onToggleSidebar, stream, subscription } = this.props;
+        const {
+            isLoading,
+            isMarking,
+            keepUnread,
+            onToggleSidebar,
+            stream,
+            streamOptions,
+            streamView,
+            subscription
+        } = this.props;
         const readEntries = this.readEntriesSelector(this.props, this.state);
         const canMarkAllAsRead = !!((stream.feed && subscription) || stream.category) && !isMarking;
 
@@ -245,8 +273,9 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
                 onToggleOnlyUnread={this.handleToggleOnlyUnread}
                 onToggleSidebar={onToggleSidebar}
                 onToggleUnreadKeeping={this.handleToggleUnreadKeeping}
-                options={stream.options}
+                options={streamOptions}
                 readEntries={readEntries}
+                streamView={streamView}
                 title={stream.title} />
         );
     }
@@ -283,7 +312,8 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
             onPinEntry,
             onUnpinEntry,
             scrollTo,
-            stream
+            stream,
+            streamView
         } = this.props;
 
         return (
@@ -298,7 +328,7 @@ class StreamPage extends PureComponent<StreamProps, StreamState> {
                 onUnpin={onUnpinEntry}
                 sameOrigin={!!stream.feed}
                 scrollTo={scrollTo}
-                view={stream.options.view} />
+                streamView={streamView} />
         );
     }
 
@@ -344,14 +374,11 @@ interface StreamNavbarProps {
     onToggleUnreadKeeping: () => void;
     options: StreamOptions;
     readEntries: Entry[];
+    streamView: StreamView;
     title: string;
 }
 
 class StreamNavbar extends PureComponent<StreamNavbarProps, {}> {
-    constructor(props: StreamNavbarProps, context: any) {
-        super(props, context);
-    }
-
     render() {
         const {
             canMarkAllAsRead,
@@ -369,6 +396,7 @@ class StreamNavbar extends PureComponent<StreamNavbarProps, {}> {
             onToggleUnreadKeeping,
             options,
             readEntries,
+            streamView,
             title
         } = this.props;
 
@@ -401,7 +429,8 @@ class StreamNavbar extends PureComponent<StreamNavbarProps, {}> {
                     onChangeEntryOrder={onChangeEntryOrder}
                     onChangeStreamView={onChangeStreamView}
                     onToggleOnlyUnread={onToggleOnlyUnread}
-                    options={options} />
+                    options={options}
+                    streamView={streamView} />
             </Navbar>
         );
     }
@@ -516,11 +545,19 @@ interface StreamOptionsDropdownProps {
     onSelect?: (value?: any) => void;
     onToggleOnlyUnread: () => void;
     options: StreamOptions;
+    streamView: StreamView;
 }
 
 class StreamOptionsDropdown extends PureComponent<StreamOptionsDropdownProps, {}> {
     render() {
-        const { isLoading, onChangeEntryOrder, onChangeStreamView, onToggleOnlyUnread, options } = this.props;
+        const {
+            isLoading,
+            onChangeEntryOrder,
+            onChangeStreamView,
+            onToggleOnlyUnread,
+            options,
+            streamView
+        } = this.props;
 
         const checkmarkIcon = <i className="icon icon-16 icon-checkmark" />;
 
@@ -533,12 +570,12 @@ class StreamOptionsDropdown extends PureComponent<StreamOptionsDropdownProps, {}
                 }>
                 <div className="menu-heading">View</div>
                 <MenuItem
-                    icon={options.view === 'expanded' ? checkmarkIcon : null}
+                    icon={streamView === 'expanded' ? checkmarkIcon : null}
                     onSelect={onChangeStreamView}
                     primaryText="Expanded view"
                     value="expanded" />
                 <MenuItem
-                    icon={options.view === 'collapsible' ? checkmarkIcon : null}
+                    icon={streamView === 'collapsible' ? checkmarkIcon : null}
                     primaryText="Collapsible view"
                     onSelect={onChangeStreamView}
                     value="collapsible" />
@@ -546,13 +583,13 @@ class StreamOptionsDropdown extends PureComponent<StreamOptionsDropdownProps, {}
                 <div className="menu-heading">Order</div>
                 <MenuItem
                     isDisabled={isLoading}
-                    icon={options.order === 'newest' ? checkmarkIcon : null}
+                    icon={options.entryOrder === 'newest' ? checkmarkIcon : null}
                     onSelect={onChangeEntryOrder}
                     primaryText="Newest first"
                     value="newest" />
                 <MenuItem
                     isDisabled={isLoading}
-                    icon={options.order === 'oldest' ? checkmarkIcon : null}
+                    icon={options.entryOrder === 'oldest' ? checkmarkIcon : null}
                     onSelect={onChangeEntryOrder}
                     primaryText="Oldest first"
                     value="oldest" />
@@ -697,8 +734,40 @@ export default connect(() => {
             subscriptions.find((subscription) => subscription.streamId === streamId) || null
     );
 
+    const streamOptionsSelector = createSelector(
+        (state: State) => state.streamSettings.defaultOptions,
+        (state: State, props: StreamPageProps) => props.location.query,
+        (defaultOptions, query) => {
+            const options = Object.assign({}, defaultOptions);
+
+            if (query.numEntries != null) {
+                options.numEntries = parseInt(query.numEntries);
+            }
+
+            if (query.onlyUnread != null) {
+                options.onlyUnread = !!query.onlyUnread;
+            }
+
+            if (query.entryOrder === 'newest' || query.entryOrder === 'oldest') {
+                options.entryOrder = query.entryOrder as EntryOrder;
+            }
+
+            return options;
+        }
+    );
+
+    const streamViewSelector = createSelector(
+        (state: State) => state.streamSettings.defaultStreamView,
+        (state: State, props: StreamPageProps) => props.location.query,
+        (defaultStreamView, query) => {
+            return (query.streamView === 'expanded' || query.streamView === 'collapsible')
+                ? query.streamView as StreamView
+                : defaultStreamView;
+        }
+    );
+
     return {
-        mapStateToProps: (state: State) => ({
+        mapStateToProps: (state: State, props: StreamPageProps) => ({
             categories: state.categories.items,
             isLoaded: state.streams.isLoaded,
             isLoading: state.streams.isLoading,
@@ -706,11 +775,12 @@ export default connect(() => {
             isScrolling: state.ui.isScrolling,
             keepUnread: state.streams.keepUnread,
             stream: state.streams.current,
+            streamOptions: streamOptionsSelector(state, props),
+            streamView: streamViewSelector(state, props),
             subscription: subscriptionSelector(state)
         }),
         mapDispatchToProps: bindActions({
             onAddToCategory: addToCategory,
-            onChangeStreamView: changeStreamView,
             onChangeUnreadKeeping: changeUnreadKeeping,
             onCreateCategory: createCategory,
             onFetchComments: fetchComments,

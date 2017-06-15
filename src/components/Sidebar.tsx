@@ -120,10 +120,12 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
                     <Tree selectedValue={location.pathname} onSelect={this.handleSelect}>
                         <TreeLeaf value="/" primaryText="Dashboard" />
                         <TreeLeaf
-                            value="/streams/all/"
+                            value="/streams/all"
                             primaryText="All"
                             secondaryText={Number(totalUnreadCount).toLocaleString()} />
-                        <TreeLeaf value="/streams/pins/" primaryText="Pins" />
+                        <TreeLeaf
+                            value="/streams/pins?onlyUnread=0"
+                            primaryText="Pins" />
                     </Tree>
                 </div>
                 <div className="sidebar-group">

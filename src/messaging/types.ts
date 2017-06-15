@@ -16,7 +16,8 @@ export type Event
     | { type: 'COMMENTS_FETCHED', entryId: string | number, comments: Comment[] }
     | { type: 'COMMENTS_FETCHING', entryId: string | number }
     | { type: 'COMMENTS_FETCHING_FAILED', entryId: string | number }
-    | { type: 'DEFAULT_STREAM_SETTING_CHANGED', setting: StreamSetting }
+    | { type: 'DEFAULT_STREAM_OPTIONS_CHANGED', options: StreamOptions }
+    | { type: 'DEFAULT_STREAM_VIEW_CHANGED', streamView: StreamView }
     | { type: 'ENTRIES_MARKED_AS_READ', entryIds: (string | number)[], readCounts: { [streamId: string]: number } }
     | { type: 'ENTRIES_MARKING_AS_READ', entryIds: (string | number)[] }
     | { type: 'ENTRIES_MARKING_AS_READ_FAILED', entryIds: (string | number)[] }
@@ -54,7 +55,6 @@ export type Event
     | { type: 'STREAM_FETCHED', stream: Stream  }
     | { type: 'STREAM_FETCHING', streamId: string }
     | { type: 'STREAM_FETCHING_FAILED', streamId: string }
-    | { type: 'STREAM_VIEW_CHANGED', streamId: string, view: StreamView }
     | { type: 'SUBSCRIPTIONS_FETCHED', subscriptions: Subscription[], categories: Category[], fetchedAt: number }
     | { type: 'SUBSCRIPTIONS_FETCHING' }
     | { type: 'SUBSCRIPTIONS_FETCHING_FAILED' }
@@ -154,21 +154,22 @@ export interface Streams {
 }
 
 export interface Stream {
-    category: Category | null;
-    continuation: string | null;
-    entries: Entry[];
-    feed: Feed | null;
-    options: StreamOptions;
     streamId: string;
     title: string;
+    entries: Entry[];
+    continuation: string | null;
+    feed: Feed | null;
+    category: Category | null;
+    options: StreamOptions | null;
 }
 
 export interface StreamOptions {
+    entryOrder: EntryOrder;
     numEntries: number;
     onlyUnread: boolean;
-    order: EntryOrder;
-    view: StreamView;
 }
+
+export type EntryOrder = 'newest' | 'oldest';
 
 export type StreamView = 'expanded' | 'collapsible';
 
@@ -252,18 +253,10 @@ export interface Notification {
 export type NotificationKind = 'default' | 'positive' | 'negative';
 
 export interface StreamSettings {
-    defaultSetting: StreamSetting;
+    defaultOptions: StreamOptions;
+    defaultStreamView: StreamView;
     version: number;
 }
-
-export interface StreamSetting {
-    entryOrder: EntryOrder;
-    numEntries: number;
-    onlyUnread: boolean;
-    streamView: StreamView;
-}
-
-export type EntryOrder = 'newest' | 'oldest';
 
 export interface TrackingUrlSettings {
     patterns: string[];

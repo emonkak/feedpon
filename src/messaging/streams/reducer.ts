@@ -60,22 +60,6 @@ export default function reducer(streams: Streams, event: Event): Streams {
                 isLoading: false
             };
 
-        case 'STREAM_VIEW_CHANGED':
-            if (streams.current.streamId !== event.streamId) {
-                return streams;
-            }
-
-            return {
-                ...streams,
-                current: {
-                    ...streams.current,
-                    options: {
-                        ...streams.current.options,
-                        view: event.view
-                    }
-                }
-            };
-
         case 'MORE_ENTRIES_FETCHING':
             if (streams.current.streamId !== event.streamId) {
                 return streams;

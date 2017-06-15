@@ -1,3 +1,4 @@
+/// <reference path="./fbjs.d.ts" />
 /// <reference path="./intl-relativeformat.d.ts" />
 
 interface RequestIdleCallback {

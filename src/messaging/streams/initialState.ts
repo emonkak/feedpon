@@ -3,17 +3,12 @@ import { Streams } from 'messaging/types';
 const streams: Streams = {
     current: {
         streamId: '',
-        title: 'Loading...',
+        title: '',
         entries: [],
         continuation: null,
         feed: null,
         category: null,
-        options: {
-            numEntries: 20,
-            onlyUnread: true,
-            order: 'newest',
-            view: 'expanded'
-        }
+        options: null
     },
     isLoaded: false,
     isLoading: false,
