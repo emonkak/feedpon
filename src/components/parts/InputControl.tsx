@@ -2,6 +2,8 @@ import React, { PureComponent } from 'react';
 import classnames from 'classnames';
 
 interface InputControlProps extends React.HTMLAttributes<HTMLInputElement> {
+    errorClassName?: string | null;
+    successClassName?: string | null;
     validations?: { rule: (value: string) => boolean, message: string }[];
 }
 
@@ -11,6 +13,8 @@ interface InputControlState {
 
 export default class InputControl extends PureComponent<InputControlProps, InputControlState> {
     static defaultProps = {
+        errorClassName: 'has-error',
+        successClassName: 'has-success',
         validations: []
     };
 
@@ -71,7 +75,7 @@ export default class InputControl extends PureComponent<InputControlProps, Input
     }
 
     render() {
-        const { className, validations, ...restProps } = this.props;
+        const { className, errorClassName, successClassName, validations, ...restProps } = this.props;
         const { status } = this.state;
 
         return (
@@ -79,8 +83,8 @@ export default class InputControl extends PureComponent<InputControlProps, Input
                 {...restProps}
                 ref={(element) => this.inputElement = element}
                 className={classnames(className, {
-                    'has-success': status === 'valid',
-                    'has-error': status === 'invalid'
+                    [successClassName!]: status === 'valid',
+                    [errorClassName!]: status === 'invalid'
                 })}
                 onChange={this.handleChange} />
         );

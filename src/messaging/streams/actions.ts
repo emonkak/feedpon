@@ -4,42 +4,40 @@ import * as feedlyApi from 'adapters/feedly/api';
 import PromiseQueue from 'utils/PromiseQueue';
 import decodeResponseAsText from 'utils/decodeResponseAsText';
 import stripTags from 'utils/stripTags';
-import { AsyncEvent, Category, Entry, Event, Feed, Stream, StreamOptions } from 'messaging/types';
+import { AsyncEvent, Category, Entry, Event, Feed, Stream, StreamFetchOptions, StreamView } from 'messaging/types';
 import { getFeedlyToken } from 'messaging/credential/actions';
 import { getSiteinfoItems } from 'messaging/sharedSiteinfo/actions';
 import { sendNotification } from 'messaging/notifications/actions';
 
-export function fetchStream(streamId: string, partialOptions: Partial<StreamOptions>): AsyncEvent {
+export function fetchStream(streamId: string, fetchOptions: StreamFetchOptions): AsyncEvent {
     return async ({ dispatch, getState }) => {
-        const { streamSettings } = getState();
-
-        const options = Object.assign(
-            {},
-            streamSettings.defaultOptions,
-            partialOptions
-        );
-
-        let stream = null;
+        const fetchedAt = Date.now();
 
         dispatch({
             type: 'STREAM_FETCHING',
-            streamId
+            streamId,
+            fetchOptions,
+            fetchedAt
         });
+
+        let stream = null;
 
         try {
             if (streamId.startsWith('feed/')) {
-                stream = await dispatch(fetchFeedStream(streamId, options));
+                stream = await dispatch(fetchFeedStream(streamId, fetchOptions, fetchedAt));
             } else if (streamId.startsWith('user/')) {
-                stream = await dispatch(fetchCategoryStream(streamId, options));
+                stream = await dispatch(fetchCategoryStream(streamId, fetchOptions, fetchedAt));
             } else if (streamId === 'all') {
-                stream = await dispatch(fetchAllStream(options));
+                stream = await dispatch(fetchAllStream(fetchOptions, fetchedAt));
             } else if (streamId === 'pins') {
-                stream = await dispatch(fetchPinsStream(options));
+                stream = await dispatch(fetchPinsStream(fetchOptions, fetchedAt));
             }
         } catch (error) {
             dispatch({
                 type: 'STREAM_FETCHING_FAILED',
-                streamId
+                streamId,
+                fetchOptions,
+                fetchedAt
             });
 
             throw error;
@@ -64,18 +62,19 @@ export function fetchStream(streamId: string, partialOptions: Partial<StreamOpti
                 stream: {
                     streamId,
                     title: 'Stream is not found',
+                    fetchedAt: 0,
                     entries: [],
                     continuation: null,
                     feed: null,
                     category: null,
-                    options
+                    fetchOptions
                 }
             });
         }
     };
 }
 
-export function fetchMoreEntries(streamId: string, continuation: string, options: StreamOptions): AsyncEvent {
+export function fetchMoreEntries(streamId: string, continuation: string, fetchOptions: StreamFetchOptions): AsyncEvent {
     return async ({ dispatch }) => {
         dispatch({
             type: 'MORE_ENTRIES_FETCHING',
@@ -91,8 +90,8 @@ export function fetchMoreEntries(streamId: string, continuation: string, options
             const contents = await feedlyApi.getStreamContents(token.access_token, {
                 streamId: feedlyStreamId,
                 continuation,
-                ranked: options.entryOrder,
-                unreadOnly: options.onlyUnread
+                ranked: fetchOptions.entryOrder,
+                unreadOnly: fetchOptions.onlyUnread
             });
 
             entries = contents.items.map(convertEntry);
@@ -419,15 +418,58 @@ export function changeUnreadKeeping(keepUnread: boolean): Event {
     };
 }
 
-function fetchFeedStream(streamId: string, options: StreamOptions): AsyncEvent<Stream> {
+export function changeDefaultStreamFetchOptions(fetchOptions: StreamFetchOptions): AsyncEvent {
+    return async ({ dispatch }) => {
+        dispatch({
+            type: 'DEFAULT_STREAM_OPTIONS_CHANGED',
+            fetchOptions
+        });
+
+        dispatch(sendNotification(
+            'Default stream fetch options changed',
+            'positive'
+        ));
+    };
+}
+
+export function changeDefaultStreamView(streamView: StreamView): AsyncEvent {
+    return async ({ dispatch }) => {
+        dispatch({
+            type: 'DEFAULT_STREAM_VIEW_CHANGED',
+            streamView
+        });
+
+        dispatch(sendNotification(
+            'Default stream view changed',
+            'positive'
+        ));
+    };
+}
+
+export function changeStreamCacheOptions(capacity: number, lifetime: number): AsyncEvent {
+    return async ({ dispatch }) => {
+        dispatch({
+            type: 'STREAM_CACHE_OPTIONS_CHANGED',
+            capacity,
+            lifetime
+        });
+
+        dispatch(sendNotification(
+            'Stream cache options changed',
+            'positive'
+        ));
+    };
+}
+
+function fetchFeedStream(streamId: string, fetchOptions: StreamFetchOptions, fetchedAt: number): AsyncEvent<Stream> {
     return async ({ dispatch }) => {
         const token = await dispatch(getFeedlyToken());
 
         const [contents, feed] = await Promise.all([
             feedlyApi.getStreamContents(token.access_token, {
                 streamId,
-                ranked: options.entryOrder,
-                unreadOnly: options.onlyUnread
+                ranked: fetchOptions.entryOrder,
+                unreadOnly: fetchOptions.onlyUnread
             }),
             feedlyApi.getFeed(token.access_token, streamId)
         ]);
@@ -436,6 +478,7 @@ function fetchFeedStream(streamId: string, options: StreamOptions): AsyncEvent<S
             streamId,
             category: null,
             title: feed.title || feed.website || feed.id.replace(/^feed\//, ''),
+            fetchedAt,
             entries: contents.items.map(convertEntry),
             continuation: contents.continuation || null,
             feed: {
@@ -449,65 +492,62 @@ function fetchFeedStream(streamId: string, options: StreamOptions): AsyncEvent<S
                 subscribers: feed.subscribers,
                 isLoading: false,
             },
-            options
+            fetchOptions
         };
 
         return stream;
     };
 }
 
-function fetchCategoryStream(streamId: string, options: StreamOptions): AsyncEvent<Stream> {
+function fetchCategoryStream(streamId: string, fetchOptions: StreamFetchOptions, fetchedAt: number): AsyncEvent<Stream> {
     return async ({ dispatch, getState }) => {
         const token = await dispatch(getFeedlyToken());
 
         const contents = await feedlyApi.getStreamContents(token.access_token, {
             streamId,
-            ranked: options.entryOrder,
-            unreadOnly: options.onlyUnread
+            ranked: fetchOptions.entryOrder,
+            unreadOnly: fetchOptions.onlyUnread
         });
 
         const { categories } = getState();
         const category = categories.items
             .find((category) => category.streamId === streamId) || null;
 
-        const stream = {
+        const stream: Stream = {
             streamId,
             category: category,
             title: category ? category.label : '',
+            fetchedAt,
             entries: contents.items.map(convertEntry),
             continuation: contents.continuation || null,
             feed: null,
-            options
+            fetchOptions
         };
-
-        dispatch({
-            type: 'STREAM_FETCHED',
-            stream
-        });
 
         return stream;
     };
 }
 
-function fetchAllStream(options: StreamOptions): AsyncEvent<Stream> {
+function fetchAllStream(fetchOptions: StreamFetchOptions, fetchedAt: number): AsyncEvent<Stream> {
     return async ({ dispatch }) => {
         const token = await dispatch(getFeedlyToken());
 
         const streamId = toFeedlyStreamId('all', token.id);
         const contents = await feedlyApi.getStreamContents(token.access_token, {
             streamId,
-            ranked: options.entryOrder,
-            unreadOnly: options.onlyUnread
+            ranked: fetchOptions.entryOrder,
+            unreadOnly: fetchOptions.onlyUnread
         });
 
-        const stream = {
+        const stream: Stream = {
             streamId: 'all',
             title: 'All',
             entries: contents.items.map(convertEntry),
+            fetchedAt,
             continuation: contents.continuation || null,
             feed: null,
             category: null,
-            options
+            fetchOptions
         };
 
         dispatch({
@@ -519,26 +559,26 @@ function fetchAllStream(options: StreamOptions): AsyncEvent<Stream> {
     };
 }
 
-function fetchPinsStream(options: StreamOptions): AsyncEvent<Stream> {
+function fetchPinsStream(fetchOptions: StreamFetchOptions, fetchedAt: number): AsyncEvent<Stream> {
     return async ({ dispatch }) => {
         const token = await dispatch(getFeedlyToken());
 
         const streamId = toFeedlyStreamId('pins', token.id);
         const contents = await feedlyApi.getStreamContents(token.access_token, {
             streamId,
-            ranked: options.entryOrder,
-            unreadOnly: options.onlyUnread
+            ranked: fetchOptions.entryOrder,
+            unreadOnly: fetchOptions.onlyUnread
         });
 
-        const stream = {
-            type: 'STREAM_FETCHED',
+        const stream: Stream = {
             streamId: 'pins',
             title: 'Pins',
             entries: contents.items.map(convertEntry),
+            fetchedAt,
             continuation: contents.continuation || null,
             feed: null,
             category: null,
-            options
+            fetchOptions
         };
 
         dispatch({
@@ -644,9 +684,9 @@ function extractNextPageUrl(contentDocument: Document, url: string, nextLinkExpr
 
 function expandUrls(urls: string[]): AsyncEvent<string[]> {
     return async ({ dispatch, getState }) => {
-        const { trackingUrlSettings: { patterns } } = getState();
+        const { trackingUrlPatterns } = getState();
         const trackingUrls = urls
-            .filter((url) => patterns.some((pattern) => tryMatch(pattern, url)));
+            .filter((url) => trackingUrlPatterns.items.some((pattern) => tryMatch(pattern, url)));
 
         if (trackingUrls.length === 0) {
             return urls;

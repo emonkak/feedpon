@@ -1,3 +1,5 @@
+import { FIFOCache } from 'utils/FIFOCache';
+
 export type Event
     = { type: 'APPLICATION_INITIALIZED' }
     | { type: 'BOOKMARK_COUNTS_FETCHED', bookmarkCounts: { [url: string]: number } }
@@ -16,7 +18,7 @@ export type Event
     | { type: 'COMMENTS_FETCHED', entryId: string | number, comments: Comment[] }
     | { type: 'COMMENTS_FETCHING', entryId: string | number }
     | { type: 'COMMENTS_FETCHING_FAILED', entryId: string | number }
-    | { type: 'DEFAULT_STREAM_OPTIONS_CHANGED', options: StreamOptions }
+    | { type: 'DEFAULT_STREAM_OPTIONS_CHANGED', fetchOptions: StreamFetchOptions }
     | { type: 'DEFAULT_STREAM_VIEW_CHANGED', streamView: StreamView }
     | { type: 'ENTRIES_MARKED_AS_READ', entryIds: (string | number)[], readCounts: { [streamId: string]: number } }
     | { type: 'ENTRIES_MARKING_AS_READ', entryIds: (string | number)[] }
@@ -52,9 +54,10 @@ export type Event
     | { type: 'SITEINFO_UPDATED', items: SiteinfoItem[], updatedAt: number }
     | { type: 'SITEINFO_UPDATING' }
     | { type: 'SITEINFO_UPDATING_FAILED' }
+    | { type: 'STREAM_CACHE_OPTIONS_CHANGED', capacity: number, lifetime: number }
     | { type: 'STREAM_FETCHED', stream: Stream  }
-    | { type: 'STREAM_FETCHING', streamId: string }
-    | { type: 'STREAM_FETCHING_FAILED', streamId: string }
+    | { type: 'STREAM_FETCHING', streamId: string, fetchOptions: StreamFetchOptions, fetchedAt: number }
+    | { type: 'STREAM_FETCHING_FAILED', streamId: string, fetchOptions: StreamFetchOptions, fetchedAt: number }
     | { type: 'SUBSCRIPTIONS_FETCHED', subscriptions: Subscription[], categories: Category[], fetchedAt: number }
     | { type: 'SUBSCRIPTIONS_FETCHING' }
     | { type: 'SUBSCRIPTIONS_FETCHING_FAILED' }
@@ -90,10 +93,9 @@ export interface State {
     notifications: Notifications;
     search: Search;
     sharedSiteinfo: SharedSiteinfo;
-    streamSettings: StreamSettings;
     streams: Streams;
     subscriptions: Subscriptions;
-    trackingUrlSettings: TrackingUrlSettings;
+    trackingUrlPatterns: TrackingUrlPatterns;
     ui: UI;
     user: User;
     userSiteinfo: UserSiteinfo;
@@ -145,10 +147,13 @@ export interface Category {
 }
 
 export interface Streams {
-    current: Stream;
+    cacheLifetime: number;
+    defaultFetchOptions: StreamFetchOptions;
+    defaultStreamView: StreamView;
     isLoaded: boolean;
     isLoading: boolean;
     isMarking: boolean;
+    items: FIFOCache<Stream>;
     keepUnread: boolean;
     version: number;
 }
@@ -156,14 +161,15 @@ export interface Streams {
 export interface Stream {
     streamId: string;
     title: string;
+    fetchedAt: number;
     entries: Entry[];
     continuation: string | null;
     feed: Feed | null;
     category: Category | null;
-    options: StreamOptions | null;
+    fetchOptions: StreamFetchOptions | null;
 }
 
-export interface StreamOptions {
+export interface StreamFetchOptions {
     entryOrder: EntryOrder;
     numEntries: number;
     onlyUnread: boolean;
@@ -253,13 +259,13 @@ export interface Notification {
 export type NotificationKind = 'default' | 'positive' | 'negative';
 
 export interface StreamSettings {
-    defaultOptions: StreamOptions;
+    defaultFetchOptions: StreamFetchOptions;
     defaultStreamView: StreamView;
     version: number;
 }
 
-export interface TrackingUrlSettings {
-    patterns: string[];
+export interface TrackingUrlPatterns {
+    items: string[];
     version: number;
 }
 

@@ -6,7 +6,7 @@ import ModalButton from 'components/parts/ModalButton';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
 import { State } from 'messaging/types';
-import { addTrackingUrlPattern, removeTrackingUrlPattern } from 'messaging/trackingUrlSettings/actions';
+import { addTrackingUrlPattern, removeTrackingUrlPattern } from 'messaging/trackingUrlPatterns/actions';
 
 interface TrackingUrlProps {
     onAddTrackingUrlPattern: typeof addTrackingUrlPattern;
@@ -156,7 +156,7 @@ function isValidPattern(pattern: string): boolean {
 
 export default connect({
     mapStateToProps: (state: State) => ({
-        patterns: state.trackingUrlSettings.patterns
+        patterns: state.trackingUrlPatterns.items
     }),
     mapDispatchToProps: bindActions({
         onAddTrackingUrlPattern: addTrackingUrlPattern,

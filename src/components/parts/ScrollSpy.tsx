@@ -173,7 +173,11 @@ export default class ScrollSpy extends PureComponent<ScrollSpyProps, ScrollSpySt
         const key = getKey(child);
         const ref = (instance: React.ReactInstance) => {
             if (child) {
-                this.childElements.set(key, findDOMNode<HTMLElement>(instance));
+                const element = findDOMNode<HTMLElement>(instance);
+
+                if (element) {
+                    this.childElements.set(key, element);
+                }
             } else {
                 this.childElements.delete(key);
             }
