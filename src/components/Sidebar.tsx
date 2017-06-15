@@ -117,15 +117,20 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
                         subscriptions={subscriptions} />
                 </div>
                 <div className="sidebar-group">
-                    <Tree selectedValue={location.pathname} onSelect={this.handleSelect}>
-                        <TreeLeaf value="/" primaryText="Dashboard" />
+                    <Tree onSelect={this.handleSelect}>
+                        <TreeLeaf
+                            value="/"
+                            primaryText="Dashboard"
+                            isSelected={location.pathname === '/'} />
                         <TreeLeaf
                             value="/streams/all"
                             primaryText="All"
-                            secondaryText={Number(totalUnreadCount).toLocaleString()} />
+                            secondaryText={Number(totalUnreadCount).toLocaleString()}
+                            isSelected={location.pathname.startsWith('/streams/all')} />
                         <TreeLeaf
                             value="/streams/pins?onlyUnread=0"
-                            primaryText="Pins" />
+                            primaryText="Pins"
+                            isSelected={location.pathname.startsWith('/streams/pins')} />
                     </Tree>
                 </div>
                 <div className="sidebar-group">
@@ -141,13 +146,19 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
                     <SubscriptionTree
                         categories={categories}
                         groupedSubscriptions={groupedSubscriptions}
-                        onSelect={this.handleSelect}
-                        selectedValue={location.pathname} />
+                        location={location}
+                        onSelect={this.handleSelect} />
                 </div>
                 <div className="sidebar-group">
-                    <Tree selectedValue={location.pathname} onSelect={this.handleSelect}>
-                        <TreeLeaf value="/settings/" primaryText="Settings" />
-                        <TreeLeaf value="/about/" primaryText="About" />
+                    <Tree onSelect={this.handleSelect}>
+                        <TreeLeaf
+                            value="/settings/"
+                            primaryText="Settings"
+                            isSelected={location.pathname.startsWith('/settings/')} />
+                        <TreeLeaf
+                            value="/about/"
+                            primaryText="About"
+                            isSelected={location.pathname.startsWith('/about/')} />
                     </Tree>
                 </div>
                 <div className="sidebar-group">
@@ -245,17 +256,21 @@ class SubscriptionTreeHeader extends PureComponent<SubscriptionTreeHeaderProps, 
 
 interface SubscriptionTreeProps {
     categories: Category[];
-    onSelect: (value: string) => void;
-    selectedValue?: string;
     groupedSubscriptions: { [key: string]: GroupedSubscription };
+    location: Location;
+    onSelect: (value: string) => void;
 }
 
 class SubscriptionTree extends PureComponent<SubscriptionTreeProps, {}> {
     renderCategory(category: Category, groupedSubscription: GroupedSubscription) {
+        const { location } = this.props;
+        const path = `/streams/${encodeURIComponent(category.streamId)}`;
+
         return (
             <TreeBranch
                 key={category.categoryId}
-                value={`/streams/${encodeURIComponent(category.streamId)}`}
+                value={path}
+                isSelected={location.pathname.startsWith(path)}
                 className={classnames({ 'is-important': groupedSubscription.unreadCount > 0 })}
                 primaryText={category.label}
                 secondaryText={groupedSubscription.unreadCount > 0 ? Number(groupedSubscription.unreadCount).toLocaleString() : ''}>
@@ -265,6 +280,9 @@ class SubscriptionTree extends PureComponent<SubscriptionTreeProps, {}> {
     }
 
     renderSubscription(subscription: Subscription) {
+        const { location } = this.props;
+        const path = `/streams/${encodeURIComponent(subscription.streamId)}`;
+
         const icon = subscription.iconUrl
             ? <img alt={subscription.title} src={subscription.iconUrl} width={16} height={16} />
             : <i className="icon icon-16 icon-file" />;
@@ -272,7 +290,8 @@ class SubscriptionTree extends PureComponent<SubscriptionTreeProps, {}> {
         return (
             <TreeLeaf
                 key={subscription.subscriptionId}
-                value={`/streams/${encodeURIComponent(subscription.streamId)}`}
+                value={path}
+                isSelected={location.pathname.startsWith(path)}
                 className={classnames({ 'is-important': subscription.unreadCount > 0 })}
                 primaryText={subscription.title}
                 secondaryText={subscription.unreadCount > 0 ? Number(subscription.unreadCount).toLocaleString() : ''}
@@ -281,7 +300,7 @@ class SubscriptionTree extends PureComponent<SubscriptionTreeProps, {}> {
     }
 
     render() {
-        const { categories, groupedSubscriptions, onSelect, selectedValue } = this.props;
+        const { categories, groupedSubscriptions, onSelect } = this.props;
 
         const visibleCategories = categories
             .filter((category) => !!groupedSubscriptions[category.label])
@@ -292,7 +311,7 @@ class SubscriptionTree extends PureComponent<SubscriptionTreeProps, {}> {
             : [];
 
         return (
-            <Tree selectedValue={selectedValue} onSelect={onSelect}>
+            <Tree onSelect={onSelect}>
                 {visibleCategories.map(({ category, groupedSubscription }) => this.renderCategory(category, groupedSubscription))}
                 {uncategorizedSubscriptions.map(this.renderSubscription, this)}
             </Tree>
