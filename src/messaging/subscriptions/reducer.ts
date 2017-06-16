@@ -1,4 +1,6 @@
-import createAscendingComparer from 'utils/createAscendingComparer';
+import filterObject from 'fbjs/lib/filterObject';
+import mapObject from 'fbjs/lib/mapObject';
+
 import { Event, Subscription, Subscriptions } from 'messaging/types';
 
 export default function reducer(subscriptions: Subscriptions, event: Event): Subscriptions {
@@ -6,7 +8,7 @@ export default function reducer(subscriptions: Subscriptions, event: Event): Sub
         case 'APPLICATION_INITIALIZED':
             return {
                 ...subscriptions,
-                items: subscriptions.items.map((subscription) => {
+                items: mapObject(subscriptions.items, (subscription) => {
                     if (!subscription.isLoading) {
                         return subscription;
                     }
@@ -34,7 +36,10 @@ export default function reducer(subscriptions: Subscriptions, event: Event): Sub
             return {
                 ...subscriptions,
                 isLoading: false,
-                items: event.subscriptions.sort(subscriptionIdComparer),
+                items: event.subscriptions.reduce<{ [key: string]: Subscription }>((acc, subscription) => {
+                    acc[subscription.subscriptionId] = subscription;
+                    return acc;
+                }, {}),
                 lastUpdatedAt: event.fetchedAt
             };
 
@@ -53,122 +58,116 @@ export default function reducer(subscriptions: Subscriptions, event: Event): Sub
         case 'FEED_SUBSCRIBING':
             return {
                 ...subscriptions,
-                items: subscriptions.items
-                    .map((subscription) => {
-                        if (subscription.feedId !== event.feedId) {
-                            return subscription;
-                        }
-                        return {
-                            ...subscription,
-                            isLoading: true
-                        };
-                    })
+                items: mapObject(subscriptions.items, (subscription) => {
+                    if (subscription.feedId !== event.feedId) {
+                        return subscription;
+                    }
+                    return {
+                        ...subscription,
+                        isLoading: true
+                    };
+                })
             };
 
         case 'FEED_SUBSCRIBING_FAILED':
             return {
                 ...subscriptions,
-                items: subscriptions.items
-                    .map((subscription) => {
-                        if (subscription.feedId !== event.feedId) {
-                            return subscription;
-                        }
-                        return {
-                            ...subscription,
-                            isLoading: false
-                        };
-                    })
+                items: mapObject(subscriptions.items, (subscription) => {
+                    if (subscription.feedId !== event.feedId) {
+                        return subscription;
+                    }
+                    return {
+                        ...subscription,
+                        isLoading: false
+                    };
+                })
             };
 
         case 'FEED_SUBSCRIBED':
             return {
                 ...subscriptions,
-                items: subscriptions.items
-                    .filter((subscription) => subscription.subscriptionId !== event.subscription.subscriptionId)
-                    .concat([event.subscription])
-                    .sort(subscriptionIdComparer)
+                items: {
+                    ...subscriptions.items,
+                    [event.subscription.subscriptionId]: event.subscription
+                }
             };
 
         case 'FEED_UNSUBSCRIBING':
             return {
                 ...subscriptions,
-                items: subscriptions.items
-                    .map((subscription) => {
-                        if (subscription.feedId !== event.subscription.feedId) {
-                            return subscription;
-                        }
-                        return {
-                            ...subscription,
-                            isLoading: true
-                        };
-                    })
+                items: mapObject(subscriptions.items, (subscription) => {
+                    if (subscription.feedId !== event.subscription.feedId) {
+                        return subscription;
+                    }
+                    return {
+                        ...subscription,
+                        isLoading: true
+                    };
+                })
             };
 
         case 'FEED_UNSUBSCRIBING_FAILED':
             return {
                 ...subscriptions,
-                items: subscriptions.items
-                    .map((subscription) => {
-                        if (subscription.feedId !== event.subscription.feedId) {
-                            return subscription;
-                        }
-                        return {
-                            ...subscription,
-                            isLoading: false
-                        };
-                    })
+                items: mapObject(subscriptions.items, (subscription) => {
+                    if (subscription.feedId !== event.subscription.feedId) {
+                        return subscription;
+                    }
+                    return {
+                        ...subscription,
+                        isLoading: false
+                    };
+                })
             };
 
         case 'FEED_UNSUBSCRIBED':
             return {
                 ...subscriptions,
-                items: subscriptions.items
-                    .filter((subscription) => subscription.subscriptionId !== event.subscription.subscriptionId)
-                    .sort(subscriptionIdComparer)
+                items: filterObject(subscriptions.items, (subscription) =>
+                    subscription.subscriptionId !== event.subscription.subscriptionId
+                )
             };
 
         case 'CATEGORY_DELETED':
             return {
                 ...subscriptions,
-                items: subscriptions.items
-                    .map((subscription) => {
-                        const labels = subscription.labels
-                            .filter((label) => label !== event.label);
+                items: mapObject(subscriptions.items, (subscription) => {
+                    const labels = subscription.labels
+                        .filter((label) => label !== event.label);
 
-                        if (subscription.labels.length === labels.length) {
-                            return subscription;
-                        }
+                    if (subscription.labels.length === labels.length) {
+                        return subscription;
+                    }
 
-                        return {
-                            ...subscription,
-                            labels
-                        };
-                    })
+                    return {
+                        ...subscription,
+                        labels
+                    };
+                })
             }
 
         case 'CATEGORY_UPDATED':
             return {
                 ...subscriptions,
-                items: subscriptions.items
-                    .map((subscription) => {
-                        const labels = subscription.labels
-                            .filter((label) => label !== event.prevCategory.label);
+                items: mapObject(subscriptions.items, (subscription) => {
+                    const labels = subscription.labels
+                        .filter((label) => label !== event.prevCategory.label);
 
-                        if (subscription.labels.length === labels.length) {
-                            return subscription;
-                        }
+                    if (subscription.labels.length === labels.length) {
+                        return subscription;
+                    }
 
-                        return {
-                            ...subscription,
-                            labels: [...labels, event.category.label]
-                        };
-                    })
+                    return {
+                        ...subscription,
+                        labels: [...labels, event.category.label]
+                    };
+                })
             }
 
         case 'ENTRIES_MARKED_AS_READ':
             return {
                 ...subscriptions,
-                items: subscriptions.items.map((subscription) => {
+                items: mapObject(subscriptions.items, (subscription) => {
                     if (!event.readCounts[subscription.streamId]) {
                         return subscription;
                     }
@@ -182,7 +181,7 @@ export default function reducer(subscriptions: Subscriptions, event: Event): Sub
         case 'FEED_MARKED_AS_READ':
             return {
                 ...subscriptions,
-                items: subscriptions.items.map((subscription) => {
+                items: mapObject(subscriptions.items, (subscription) => {
                     if (subscription.feedId !== event.feedId) {
                         return subscription;
                     }
@@ -196,7 +195,7 @@ export default function reducer(subscriptions: Subscriptions, event: Event): Sub
         case 'CATEGORY_MARKED_AS_READ':
             return {
                 ...subscriptions,
-                items: subscriptions.items.map((subscription) => {
+                items: mapObject(subscriptions.items, (subscription) => {
                     if (!subscription.labels.includes(event.label)) {
                         return subscription;
                     }
@@ -211,5 +210,3 @@ export default function reducer(subscriptions: Subscriptions, event: Event): Sub
             return subscriptions;
     }
 }
-
-const subscriptionIdComparer = createAscendingComparer<Subscription>('subscriptionId');

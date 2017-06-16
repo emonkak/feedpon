@@ -279,7 +279,7 @@ export function markFeedAsRead(feed: Feed): AsyncEvent {
             await feedlyApi.markAsReadForFeeds(token.access_token, feed.feedId as string);
 
             const { subscriptions } = getState();
-            const numEntries = subscriptions.items.reduce(
+            const numEntries = Object.values(subscriptions.items).reduce(
                 (total, subscription) => total + (subscription.feedId === feed.feedId ? subscription.unreadCount : 0),
                 0
             );
@@ -322,7 +322,7 @@ export function markCategoryAsRead(category: Category): AsyncEvent {
             await feedlyApi.markAsReadForCategories(token.access_token, category.categoryId as string);
 
             const { subscriptions } = getState();
-            const numEntries = subscriptions.items.reduce(
+            const numEntries = Object.values(subscriptions.items).reduce(
                 (total, subscription) => total + (subscription.labels.includes(category.label) ? subscription.unreadCount : 0),
                 0
             );
@@ -461,6 +461,20 @@ export function changeStreamCacheOptions(capacity: number, lifetime: number): As
     };
 }
 
+export function changeStreamHistoryOptions(numStreamHistories: number): AsyncEvent {
+    return async ({ dispatch }) => {
+        dispatch({
+            type: 'STREAM_HISTORY_OPTIONS_CHANGED',
+            numStreamHistories
+        });
+
+        dispatch(sendNotification(
+            'Stream history options changed',
+            'positive'
+        ));
+    };
+}
+
 function fetchFeedStream(streamId: string, fetchOptions: StreamFetchOptions, fetchedAt: number): AsyncEvent<Stream> {
     return async ({ dispatch }) => {
         const token = await dispatch(getFeedlyToken());
@@ -510,7 +524,7 @@ function fetchCategoryStream(streamId: string, fetchOptions: StreamFetchOptions,
         });
 
         const { categories } = getState();
-        const category = categories.items
+        const category = Object.values(categories.items)
             .find((category) => category.streamId === streamId) || null;
 
         const stream: Stream = {

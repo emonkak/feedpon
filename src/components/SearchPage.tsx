@@ -1,11 +1,7 @@
-import Enumerable from '@emonkak/enumerable';
 import React, { PureComponent } from 'react';
 import { History } from 'history';
 import { Params } from 'react-router/lib/Router';
-
-import '@emonkak/enumerable/extensions/groupJoin';
-import '@emonkak/enumerable/extensions/select';
-import '@emonkak/enumerable/extensions/toArray';
+import { createSelector } from 'reselect';
 
 import FeedComponent from 'components/parts/Feed';
 import FeedPlaceholder from 'components/parts/FeedPlaceholder';
@@ -13,6 +9,7 @@ import MainLayout from 'components/layouts/MainLayout';
 import Navbar from 'components/parts/Navbar';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
+import createAscendingComparer from 'utils/createAscendingComparer';
 import { Category, Feed, State, Subscription } from 'messaging/types';
 import { addToCategory, removeFromCategory, subscribe, unsubscribe } from 'messaging/subscriptions/actions';
 import { createCategory } from 'messaging/categories/actions';
@@ -33,7 +30,7 @@ interface SearchPageProps {
     params: Params;
     query: string;
     router: History;
-    subscriptions: Subscription[];
+    subscriptions: { [key: string]: Subscription };
 }
 
 class SearchPage extends PureComponent<SearchPageProps, {}> {
@@ -126,28 +123,18 @@ class SearchPage extends PureComponent<SearchPageProps, {}> {
 
         const { categories, onAddToCategory, onCreateCategory, onRemoveFromCategory, onSubscribe, onUnsubscribe, subscriptions } = this.props;
 
-        const feedElements = new Enumerable(feeds)
-            .groupJoin(
-                subscriptions,
-                (feed) => feed.feedId,
-                (subscription) => subscription.feedId,
-                (feed, subscriptions) => ({ feed, subscription: subscriptions[0] || null })
-            )
-            .select(({ feed, subscription }) => {
-                return (
-                    <FeedComponent
-                        categories={categories}
-                        feed={feed}
-                        key={feed.feedId}
-                        onAddToCategory={onAddToCategory}
-                        onCreateCategory={onCreateCategory}
-                        onRemoveFromCategory={onRemoveFromCategory}
-                        onSubscribe={onSubscribe}
-                        onUnsubscribe={onUnsubscribe}
-                        subscription={subscription} />
-                );
-            })
-            .toArray();
+        const feedElements = feeds.map((feed) =>
+            <FeedComponent
+                categories={categories}
+                feed={feed}
+                key={feed.feedId}
+                onAddToCategory={onAddToCategory}
+                onCreateCategory={onCreateCategory}
+                onRemoveFromCategory={onRemoveFromCategory}
+                onSubscribe={onSubscribe}
+                onUnsubscribe={onUnsubscribe}
+                subscription={subscriptions[feed.streamId]} />
+        );
 
         return (
             <ol className="list-group">
@@ -187,21 +174,30 @@ class SearchPage extends PureComponent<SearchPageProps, {}> {
    }
 }
 
-export default connect({
-    mapStateToProps: (state: State) => ({
-        categories: state.categories.items,
-        feeds: state.search.feeds,
-        isLoaded: state.search.isLoaded,
-        isLoading: state.search.isLoading,
-        query: state.search.query,
-        subscriptions: state.subscriptions.items
-    }),
-    mapDispatchToProps: bindActions({
-        onAddToCategory: addToCategory,
-        onCreateCategory: createCategory,
-        onRemoveFromCategory: removeFromCategory,
-        onSearchFeeds: searchFeeds,
-        onSubscribe: subscribe,
-        onUnsubscribe: unsubscribe
-    })
+const categoriesComparer = createAscendingComparer<Category>('categoryId');
+
+export default connect(() => {
+    const categoriesSelector = createSelector(
+        (state: State) => state.categories.items,
+        (categories) => Object.values(categories).sort(categoriesComparer)
+    );
+
+    return {
+        mapStateToProps: (state: State) => ({
+            categories: categoriesSelector(state),
+            feeds: state.search.feeds,
+            isLoaded: state.search.isLoaded,
+            isLoading: state.search.isLoading,
+            query: state.search.query,
+            subscriptions: state.subscriptions.items
+        }),
+        mapDispatchToProps: bindActions({
+            onAddToCategory: addToCategory,
+            onCreateCategory: createCategory,
+            onRemoveFromCategory: removeFromCategory,
+            onSearchFeeds: searchFeeds,
+            onSubscribe: subscribe,
+            onUnsubscribe: unsubscribe
+        })
+    };
 })(SearchPage);

@@ -1,4 +1,6 @@
-import Enumerable from '@emonkak/enumerable';
+import filterObject from 'fbjs/lib/filterObject';
+import mapObject from 'fbjs/lib/mapObject';
+import { Category } from 'messaging/types';
 
 import '@emonkak/enumerable/extensions/distinct';
 import '@emonkak/enumerable/extensions/startWith';
@@ -31,17 +33,16 @@ export default function reducer(categories: Categories, event: Event): Categorie
             return {
                 ...categories,
                 isLoading: false,
-                items: new Enumerable(categories.items)
-                    .startWith(event.category)
-                    .distinct((category) => category.categoryId)
-                    .orderBy((category) => category.label)
-                    .toArray()
+                items: {
+                    ...categories.items,
+                    [event.category.streamId]: event.category
+                }
             };
 
         case 'CATEGORY_UPDATING':
             return {
                 ...categories,
-                items: categories.items.map((category) => {
+                items: mapObject(categories.items, (category) => {
                     if (category.label !== event.category.label) {
                         return category;
                     }
@@ -55,7 +56,7 @@ export default function reducer(categories: Categories, event: Event): Categorie
         case 'CATEGORY_UPDATING_FAILED':
             return {
                 ...categories,
-                items: categories.items.map((category) => {
+                items: mapObject(categories.items, (category) => {
                     if (category.categoryId !== event.category.categoryId) {
                         return category;
                     }
@@ -69,22 +70,16 @@ export default function reducer(categories: Categories, event: Event): Categorie
         case 'CATEGORY_UPDATED':
             return {
                 ...categories,
-                items: new Enumerable(categories.items)
-                    .select((category) => {
-                        if (category.categoryId !== event.prevCategory.categoryId) {
-                            return category;
-                        }
-                        return event.category;
-                    })
-                    .distinct((category) => category.categoryId)
-                    .orderBy((category) => category.label)
-                    .toArray()
+                items: {
+                    ...categories.items,
+                    [event.category.streamId]: event.category
+                }
             };
 
         case 'CATEGORY_DELETING':
             return {
                 ...categories,
-                items: categories.items.map((category) => {
+                items: mapObject(categories.items, (category) => {
                     if (category.categoryId !== event.categoryId) {
                         return category;
                     }
@@ -98,7 +93,7 @@ export default function reducer(categories: Categories, event: Event): Categorie
         case 'CATEGORY_DELETING_FAILED':
             return {
                 ...categories,
-                items: categories.items.map((category) => {
+                items: mapObject(categories.items, (category) => {
                     if (category.categoryId !== event.categoryId) {
                         return category;
                     }
@@ -113,8 +108,9 @@ export default function reducer(categories: Categories, event: Event): Categorie
             return {
                 ...categories,
                 isLoading: false,
-                items: categories.items
-                    .filter((category) => category.categoryId !== event.categoryId)
+                items: filterObject(categories.items, (category) =>
+                    category.categoryId !== event.categoryId
+                )
             };
 
         case 'SUBSCRIPTIONS_FETCHING':
@@ -127,7 +123,10 @@ export default function reducer(categories: Categories, event: Event): Categorie
             return {
                 ...categories,
                 isLoading: false,
-                items: event.categories
+                items: event.categories.reduce<{ [key: string]: Category }>((acc, category) => {
+                    acc[category.streamId] = category;
+                    return acc;
+                }, {})
             };
 
         default:

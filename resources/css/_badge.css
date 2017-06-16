@@ -9,6 +9,7 @@
   font-weight: 600;
   font-size: 0.875rem;
   text-align: center;
+  vertical-align: text-top;
 }
 
 .badge-small {

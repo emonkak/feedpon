@@ -6,6 +6,7 @@ import AuthenticationPage from 'components/AuthenticationPage';
 import AuthenticationRequired from 'components/AuthenticationRequired';
 import CategoriesPage from 'components/CategoriesPage';
 import DashboardPage from 'components/DashboardPage';
+import KitchenSinkPage from 'components/KitchenSinkPage';
 import NotAuthenticated from 'components/NotAuthenticated'
 import RootLayout from 'components/layouts/RootLayout';
 import SearchPage from 'components/SearchPage';
@@ -19,8 +20,9 @@ const routes = (
         <Route component={AuthenticationRequired}>
             <Route component={SidebarLayout}>
                 <IndexRoute component={DashboardPage} />
-                <Route path="about" component={AboutPage} />
+                <Route path="about/" component={AboutPage} />
                 <Route path="categories/(:label)" component={CategoriesPage} />
+                <Route path="kitchensink/" component={KitchenSinkPage} />
                 <Route path="search/(:query)" component={SearchPage} />
                 <Route path="settings/(:setting_id)" component={SettingsPage} />
                 <Route path="streams/:stream_id" component={StreamPage} />

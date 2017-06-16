@@ -5,16 +5,29 @@ declare module 'fbjs/lib/shallowEqual' {
 }
 
 declare module 'fbjs/lib/mapObject' {
-    function mapObject<TValue, TContext>(
+    function mapObject<TValue, TResult, TContext>(
         object: { [name: string]: TValue },
-        callback: (this: TContext, value: TValue, name: string, object: { [name: string]: TValue }) => TValue,
+        callback: (this: TContext, value: TValue, name: string, object: { [name: string]: TValue }) => TResult,
         context?: TContext
-    ): { [key: string]: TValue };
-    function mapObject<TValue, TContext>(
+    ): { [key: string]: TResult };
+    function mapObject<TValue, TResult, TContext>(
         object: { [name: string]: TValue } | null,
-        callback: (this: TContext, value: TValue, name: string, object: { [name: string]: TValue }) => TValue,
+        callback: (this: TContext, value: TValue, name: string, object: { [name: string]: TValue }) => TResult,
         context?: TContext
-    ): { [key: string]: TValue } | null;
+    ): { [key: string]: TResult } | null;
 
     export = mapObject;
+}
+
+declare module 'fbjs/lib/filterObject' {
+    function filterObject<TValue, TContext>(
+        object: { [name: string]: TValue },
+        callback: (this: TContext, value: TValue, name: string, object: { [name: string]: TValue }) => boolean
+    ): { [key: string]: TValue };
+    function filterObject<TValue, TContext>(
+        object: { [name: string]: TValue } | null,
+        callback: (this: TContext, value: TValue, name: string, object: { [name: string]: TValue }) => boolean
+    ): { [key: string]: TValue } | null;
+
+    export = filterObject;
 }

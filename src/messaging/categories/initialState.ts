@@ -2,7 +2,7 @@ import { Categories } from 'messaging/types';
 
 const categories: Categories = {
     isLoading: false,
-    items: [],
+    items: {},
     version: 1
 };
 

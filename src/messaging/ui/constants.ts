@@ -6,7 +6,7 @@ export const THEMES: { label: string, value: Theme }[] = [
         value: 'theme-light'
     },
     {
-        label: 'Night',
+        label: 'Dark',
         value: 'theme-dark'
     }
 ];

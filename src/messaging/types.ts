@@ -58,6 +58,7 @@ export type Event
     | { type: 'STREAM_FETCHED', stream: Stream  }
     | { type: 'STREAM_FETCHING', streamId: string, fetchOptions: StreamFetchOptions, fetchedAt: number }
     | { type: 'STREAM_FETCHING_FAILED', streamId: string, fetchOptions: StreamFetchOptions, fetchedAt: number }
+    | { type: 'STREAM_HISTORY_OPTIONS_CHANGED', numStreamHistories: number }
     | { type: 'SUBSCRIPTIONS_FETCHED', subscriptions: Subscription[], categories: Category[], fetchedAt: number }
     | { type: 'SUBSCRIPTIONS_FETCHING' }
     | { type: 'SUBSCRIPTIONS_FETCHING_FAILED' }
@@ -90,6 +91,7 @@ export interface Store {
 export interface State {
     categories: Categories;
     credential: Credential;
+    histories: Histories;
     notifications: Notifications;
     search: Search;
     sharedSiteinfo: SharedSiteinfo;
@@ -135,7 +137,7 @@ export interface Environment {
 
 export interface Categories {
     isLoading: boolean;
-    items: Category[];
+    items: { [categoryId: string]: Category };
     version: number;
 }
 
@@ -271,7 +273,7 @@ export interface TrackingUrlPatterns {
 
 export interface Subscriptions {
     isLoading: boolean;
-    items: Subscription[];
+    items: { [streamId: string]: Subscription };
     lastUpdatedAt: number;
     onlyUnread: boolean;
     order: SubscriptionsOrder;
@@ -325,6 +327,11 @@ export interface UI {
     isScrolling: boolean;
     sidebarIsOpened: boolean;
     theme: Theme;
+    version: number;
+}
+
+export interface Histories {
+    recentlyReadStreams: CacheMap<number>;
     version: number;
 }
 

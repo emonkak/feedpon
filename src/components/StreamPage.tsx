@@ -16,6 +16,7 @@ import Portal from 'components/parts/Portal';
 import SubscribeDropdown from 'components/parts/SubscribeDropdown';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
+import createAscendingComparer from 'utils/createAscendingComparer';
 import { Category, Entry, EntryOrder, Feed, State, Stream, StreamFetchOptions, StreamView, Subscription } from 'messaging/types';
 import { MenuItem } from 'components/parts/Menu';
 import { addToCategory, removeFromCategory, subscribe, unsubscribe } from 'messaging/subscriptions/actions';
@@ -728,6 +729,8 @@ class StreamFooter extends PureComponent<StreamFooterProps, {}> {
     }
 }
 
+const categoriesComparer = createAscendingComparer<Category>('categoryId');
+
 function shouldFetchStream(props: StreamPageProps) {
     const { params, fetchOptions, cacheLifetime, stream } = props;
 
@@ -737,6 +740,11 @@ function shouldFetchStream(props: StreamPageProps) {
 }
 
 export default connect(() => {
+    const categoriesSelector = createSelector(
+        (state: State) => state.categories.items,
+        (categories) => Object.values(categories).sort(categoriesComparer)
+    );
+
     const streamSelector = createSelector(
         (state: State) => state.streams.items,
         (state: State, props: StreamPageProps) => props.params['stream_id'],
@@ -775,17 +783,16 @@ export default connect(() => {
         }
     );
 
-    const subscriptionSelector = createSelector(
+    const subscriptionSelector: (state: State, props: StreamPageProps) => Subscription | null = createSelector(
         (state: State) => state.subscriptions.items,
         (state: State, props: StreamPageProps) => props.params['stream_id'],
-        (subscriptions, streamId) =>
-            subscriptions.find((subscription) => subscription.streamId === streamId) || null
+        (subscriptions, streamId) => subscriptions[streamId] || null
     );
 
     return {
         mapStateToProps: (state: State, props: StreamPageProps) => ({
             cacheLifetime: state.streams.cacheLifetime,
-            categories: state.categories.items,
+            categories: categoriesSelector(state),
             fetchOptions: fetchOptionsSelector(state, props),
             isLoaded: state.streams.isLoaded,
             isLoading: state.streams.isLoading,

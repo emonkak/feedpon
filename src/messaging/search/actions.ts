@@ -1,8 +1,3 @@
-import Enumerable from '@emonkak/enumerable';
-
-import '@emonkak/enumerable/extensions/groupJoin';
-import '@emonkak/enumerable/extensions/toArray';
-
 import { AsyncEvent } from 'messaging/types';
 import { getFeedlyToken } from 'messaging/credential/actions';
 import { searchFeeds as feedlySearchFeeds } from 'adapters/feedly/api';
@@ -21,26 +16,18 @@ export function searchFeeds(query: string): AsyncEvent {
                 count: 20
             });
 
-            const { subscriptions } = getState();
-            const feeds = new Enumerable(searchResult.results)
-                .groupJoin(
-                    subscriptions.items,
-                    (feed) => feed.feedId,
-                    (subscription) => subscription.streamId,
-                    (feed, subscriptions) => ({
-                        feedId: feed.feedId,
-                        streamId: feed.feedId,
-                        title: feed.title,
-                        description: feed.description || '',
-                        url: feed.website || '',
-                        feedUrl: feed.feedId.replace(/^feed\//, ''),
-                        iconUrl: feed.iconUrl || '',
-                        subscribers: feed.subscribers,
-                        subscription: subscriptions[0] || null,
-                        isLoading: false
-                    })
-                )
-                .toArray();
+            const feeds = searchResult.results
+                .map((feed, subscriptions) => ({
+                    feedId: feed.feedId,
+                    streamId: feed.feedId,
+                    title: feed.title,
+                    description: feed.description || '',
+                    url: feed.website || '',
+                    feedUrl: feed.feedId.replace(/^feed\//, ''),
+                    iconUrl: feed.iconUrl || '',
+                    subscribers: feed.subscribers,
+                    isLoading: false
+                }));
 
             dispatch({
                 type: 'FEED_SEARCHED',

@@ -36,7 +36,7 @@
     "tslib": "^1.7.1"
   },
   "devDependencies": {
-    "@types/chrome": "0.0.46",
+    "@types/chrome": "0.0.47",
     "@types/classnames": "2.2.0",
     "@types/prop-types": "^15.5.1",
     "@types/react": "^15.0.11",

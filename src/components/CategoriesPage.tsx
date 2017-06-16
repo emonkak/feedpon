@@ -16,6 +16,7 @@ import RelativeTime from 'components/parts/RelativeTime';
 import SubscriptionIcon from 'components/parts/SubscriptionIcon';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
+import createAscendingComparer from 'utils/createAscendingComparer';
 import debounceEventHandler from 'utils/debounceEventHandler';
 import { Category, State, Subscription } from 'messaging/types';
 import { MenuItem, MenuForm } from 'components/parts/Menu';
@@ -497,9 +498,22 @@ function renderSubscriptionList(children: React.ReactNode, aboveSpace: number, b
     );
 }
 
+const categoriesComparer = createAscendingComparer<Category>('categoryId');
+const subscirptionComparer = createAscendingComparer<Subscription>('subscriptionId');
+
 export default connect(() => {
-    const visibleSubscriptionsSelector = createSelector(
+    const categoriesSelector = createSelector(
+        (state: State) => state.categories.items,
+        (categories) => Object.values(categories).sort(categoriesComparer)
+    );
+
+    const subscriptionsSelector = createSelector(
         (state: State) => state.subscriptions.items,
+        (subscriptions) => Object.values(subscriptions).sort(subscirptionComparer)
+    );
+
+    const visibleSubscriptionsSelector = createSelector(
+        subscriptionsSelector,
         (state: State, props: CategoriesPageProps) => props.params['label'],
         (subscriptions, label) => {
             if (label) {
@@ -514,7 +528,7 @@ export default connect(() => {
 
     return {
         mapStateToProps: (state: State, props: CategoriesPageProps) => ({
-            categories: state.categories.items,
+            categories: categoriesSelector(state),
             subscriptions: visibleSubscriptionsSelector(state, props)
         }),
         mapDispatchToProps: bindActions({

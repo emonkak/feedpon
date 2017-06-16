@@ -387,13 +387,25 @@ class ProfileDropdown extends PureComponent<ProfileDropdownProps, ProfileDropdow
     }
 }
 
-const titleComparer = createAscendingComparer<Subscription>('title');
-const newestComparer = createDescendingComparer<Subscription>('updatedAt');
-const oldestComparer = createAscendingComparer<Subscription>('updatedAt');
+const categoriesComparer = createAscendingComparer<Category>('categoryId');
+
+const subscriptionTitleComparer = createAscendingComparer<Subscription>('title');
+const subscriptionNewestComparer = createDescendingComparer<Subscription>('updatedAt');
+const subscriptionOldestComparer = createAscendingComparer<Subscription>('updatedAt');
 
 export default connect(() => {
-    const totalUnreadCountSelector = createSelector(
+    const categoriesSelector = createSelector(
+        (state: State) => state.categories.items,
+        (categories) => Object.values(categories).sort(categoriesComparer)
+    );
+
+    const subscriptionsSelector = createSelector(
         (state: State) => state.subscriptions.items,
+        (subscriptions) => Object.values(subscriptions)
+    );
+
+    const totalUnreadCountSelector = createSelector(
+        subscriptionsSelector,
         (subscriptions) => subscriptions.reduce(
             (total, subscription) => total + subscription.unreadCount,
             0
@@ -405,27 +417,28 @@ export default connect(() => {
         (order) => {
             switch (order) {
                 case 'title':
-                    return titleComparer;
+                    return subscriptionTitleComparer;
 
                 case 'newest':
-                    return newestComparer;
+                    return subscriptionNewestComparer;
 
                 case 'oldest':
-                    return oldestComparer;
+                    return subscriptionOldestComparer;
             }
         }
     );
 
     const visibleSubscriptionsSelector = createSelector(
-        (state: State) => state.subscriptions.items,
+        subscriptionsSelector,
         (state: State) => state.subscriptions.onlyUnread,
         subscriptionComparerSelector,
         (subscriptions, onlyUnread, subscriptionComparer) => {
-            if (!onlyUnread) {
-                return subscriptions;
+            if (onlyUnread) {
+                return subscriptions
+                    .filter((subscription) => subscription.unreadCount > 0)
+                    .sort(subscriptionComparer);
             }
             return subscriptions
-                .filter((subscription) => subscription.unreadCount > 0)
                 .sort(subscriptionComparer);
         }
     );
@@ -448,12 +461,12 @@ export default connect(() => {
 
     return {
         mapStateToProps: (state: State) => ({
-            categories: state.categories.items,
+            categories: categoriesSelector(state),
             groupedSubscriptions: groupedSubscriptionsSelector(state),
             lastUpdatedAt: state.subscriptions.lastUpdatedAt,
             onlyUnread: state.subscriptions.onlyUnread,
             profile: state.user.profile,
-            subscriptions: state.subscriptions.items,
+            subscriptions: subscriptionsSelector(state),
             subscriptionsIsLoading: state.subscriptions.isLoading,
             subscriptionsOrder: state.subscriptions.order,
             totalUnreadCount: totalUnreadCountSelector(state),

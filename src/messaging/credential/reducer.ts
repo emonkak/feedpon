@@ -39,8 +39,7 @@ export default function reduceCredential(credential: Credential, event: Event): 
                 ...credential,
                 authorizedAt: 0,
                 isLoading: false,
-                token: null,
-                user: null
+                token: null
             };
 
         default:

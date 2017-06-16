@@ -40,10 +40,7 @@
   height: 100%;
 }
 
-.navbar-action:hover {
-  background-color: var(--light-color);
-}
-
+.navbar-action:hover,
 .navbar-action:focus {
   color: var(--positive-color);
 }

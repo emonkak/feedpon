@@ -2,7 +2,7 @@ import { Subscriptions } from 'messaging/types';
 
 const subscriptions: Subscriptions = {
     isLoading: false,
-    items: [],
+    items: {},
     lastUpdatedAt: 0,
     onlyUnread: true,
     order: 'title',

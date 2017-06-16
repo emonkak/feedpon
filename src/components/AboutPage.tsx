@@ -1,7 +1,9 @@
 import React, { PureComponent } from 'react';
 
+import Dropdown from 'components/parts/Dropdown';
 import MainLayout from 'components/layouts/MainLayout';
 import Navbar from 'components/parts/Navbar';
+import { MenuLink } from 'components/parts/Menu';
 import { VERSION } from 'messaging/constants';
 
 interface AboutPageProps {
@@ -163,6 +165,16 @@ export default class AboutPage extends PureComponent<AboutPageProps, {}> {
         return (
             <Navbar onToggleSidebar={onToggleSidebar}>
                 <h1 className="navbar-title">About</h1>
+                <Dropdown
+                    toggleButton={
+                        <button className="navbar-action">
+                            <i className="icon icon-24 icon-menu-2" />
+                        </button>
+                    }>
+                    <MenuLink
+                        to="/kitchensink/"
+                        primaryText="Go to kitchensink..." />
+                </Dropdown>
             </Navbar>
         );
     }
@@ -177,14 +189,14 @@ export default class AboutPage extends PureComponent<AboutPageProps, {}> {
                                 <img src="/img/feedpon.svg" width="320" height="96" />
                             </a>
                         </div>
-                        <p className="u-text-large"><em>The feed reader for me</em></p>
-                        <div className="u-text-large">Version <strong>{VERSION}</strong></div>
-                        <div className="u-text-large">
-                            <ul className="list-inline list-inline-slashed">
-                                <li className="list-inline-item"><a href="https://github.com/emonkak/feedpon" target="_blank">Source code</a></li>
-                                <li className="list-inline-item"><a href="https://github.com/emonkak/feedpon/issues" target="_blank">Issues</a></li>
-                            </ul>
+                        <div className="u-margin-bottom-1">
+                            <div className="u-text-large"><em>The feed reader for me</em></div>
+                            <div className="u-text-large">Version <strong>{VERSION}</strong></div>
                         </div>
+                        <ul className="list-inline list-inline-slashed">
+                            <li className="list-inline-item"><a href="https://github.com/emonkak/feedpon" target="_blank">Source code</a></li>
+                            <li className="list-inline-item"><a href="https://github.com/emonkak/feedpon/issues" target="_blank">Issues</a></li>
+                        </ul>
                     </div>
                 </section>
                 <section className="section">
