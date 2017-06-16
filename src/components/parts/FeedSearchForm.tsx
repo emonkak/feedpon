@@ -6,7 +6,7 @@ import '@emonkak/enumerable/extensions/toArray';
 import '@emonkak/enumerable/extensions/where';
 
 import Autocomplete from 'components/parts/Autocomplete';
-import MenuItem from 'components/parts/MenuItem';
+import { MenuItem } from 'components/parts/Menu';
 import { Subscription } from 'messaging/types';
 
 interface FeedSearchFormProps {

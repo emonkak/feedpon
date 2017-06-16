@@ -3,10 +3,9 @@ import classnames from 'classnames';
 
 import ConfirmModal from 'components/parts/ConfirmModal';
 import Dropdown from 'components/parts/Dropdown';
-import MenuForm from 'components/parts/MenuForm';
-import MenuItem from 'components/parts/MenuItem';
 import Portal from 'components/parts/Portal';
 import { Category, Feed, Subscription } from 'messaging/types';
+import { MenuItem, MenuForm } from 'components/parts/Menu';
 
 interface SubscribeDropdownProps {
     categories: Category[];

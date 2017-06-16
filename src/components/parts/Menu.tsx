@@ -1,9 +1,20 @@
-import React, { Children, PureComponent, cloneElement, isValidElement } from 'react';
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
 import { findDOMNode } from 'react-dom';
 
-import MenuForm from 'components/parts/MenuForm';
-import MenuItem from 'components/parts/MenuItem';
-import createChainedFunction from 'utils/createChainedFunction';
+const menuContext = {
+    menu: PropTypes.shape({
+        onClose: PropTypes.func.isRequired,
+        onSelect: PropTypes.func.isRequired
+    }).isRequired
+};
+
+interface MenuContext {
+    menu: {
+        onClose: () => void,
+        onSelect: (value: any) => void
+    }
+}
 
 interface MenuProps {
     children?: React.ReactNode;
@@ -13,6 +24,24 @@ interface MenuProps {
 }
 
 export class Menu extends PureComponent<MenuProps, {}> {
+    static defaultProps = {
+        onClose: () => ({}),
+        onSelect: () => ({})
+    };
+
+    static childContextTypes = menuContext;
+
+    getChildContext(): MenuContext {
+        const { onClose, onSelect } = this.props;
+
+        return {
+            menu: {
+                onClose: onClose!,
+                onSelect: onSelect!
+            }
+        };
+    }
+
     focusPrevious() {
         const { activeIndex, elements } = this.getFocusableElements();
 
@@ -49,45 +78,127 @@ export class Menu extends PureComponent<MenuProps, {}> {
         return { activeIndex, elements };
     }
 
-    renderChild(child: React.ReactChild) {
-        if (isValidElement<any>(child)) {
-            if (child.type === MenuItem) {
-                const { onSelect } = this.props;
-
-                return cloneElement(child, {
-                    ...child.props,
-                    onSelect: createChainedFunction(
-                        child.props.onSelect,
-                        onSelect
-                    )
-                });
-            }
-
-            if (child.type === MenuForm) {
-                const { onClose } = this.props;
-
-                return cloneElement(child, {
-                    ...child.props,
-                    onSubmit: createChainedFunction(
-                        child.props.onSubmit,
-                        onClose
-                    )
-                });
-            }
-        }
-
-        return child;
-    }
-
     render() {
         const { children, onKeyDown } = this.props;
 
         return (
-            <div
-                className="menu"
-                onKeyDown={onKeyDown}>
-                {Children.map(children, this.renderChild.bind(this))}
+            <div className="menu" onKeyDown={onKeyDown}>
+                {children}
             </div>
+        );
+    }
+}
+
+interface MenuItemProps {
+    icon?: React.ReactNode;
+    isDisabled?: boolean;
+    onSelect?: (value?: any) => void;
+    primaryText: string;
+    secondaryText?: string;
+    value?: any;
+}
+
+export class MenuItem extends PureComponent<MenuItemProps, {}> {
+    static defaultProps = {
+        isDisabled: false
+    };
+
+    static contextTypes = menuContext;
+
+    context: MenuContext;
+
+    constructor(props: MenuItemProps, context: any) {
+        super(props, context);
+
+        this.handleSelect = this.handleSelect.bind(this);
+    }
+
+    handleSelect(event: React.SyntheticEvent<any>) {
+        event.preventDefault();
+
+        const { onSelect, value } = this.props;
+
+        if (onSelect) {
+            onSelect(value);
+        }
+
+        this.context.menu.onSelect(value);
+    }
+
+    render() {
+        const { icon, isDisabled, primaryText, secondaryText } = this.props;
+
+        const iconElement = icon ? <span className="menu-item-icon">{icon}</span> : null;
+        const primaryTextElement = <span className="menu-item-primary-text">{primaryText}</span>;
+        const secondaryTextElement = <span className="menu-item-secondary-text">{secondaryText}</span>;
+
+        if (isDisabled) {
+            return (
+                <div className="menu-item is-disabled"
+                     title={primaryText}>
+                    {iconElement}
+                    {primaryTextElement}
+                    {secondaryTextElement}
+                </div>
+            );
+        } else {
+            return (
+                <a
+                    className="menu-item"
+                    title={primaryText}
+                    href="#"
+                    onClick={this.handleSelect}>
+                    {iconElement}
+                    {primaryTextElement}
+                    {secondaryTextElement}
+                </a>
+            );
+        }
+    }
+}
+
+interface MenuFormProps {
+    onSubmit?: () => void;
+}
+
+export class MenuForm extends PureComponent<MenuFormProps, {}> {
+    static contextTypes = menuContext;
+
+    context: MenuContext;
+
+    constructor(props: MenuFormProps, context: any) {
+        super(props, context);
+
+        this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleKeyDown = this.handleKeyDown.bind(this);
+    }
+
+    handleSubmit(event: React.FormEvent<any>) {
+        event.preventDefault();
+
+        const { onSubmit } = this.props;
+
+        if (onSubmit) {
+            onSubmit();
+        }
+
+        this.context.menu.onClose();
+    }
+
+    handleKeyDown(event: React.KeyboardEvent<any>) {
+        event.stopPropagation();
+    }
+
+    render() {
+        const { children } = this.props;
+
+        return (
+            <form
+                className="menu-form"
+                onKeyDown={this.handleKeyDown}
+                onSubmit={this.handleSubmit}>
+                {children}
+            </form>
         );
     }
 }
