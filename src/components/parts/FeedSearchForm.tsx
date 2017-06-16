@@ -6,6 +6,7 @@ import '@emonkak/enumerable/extensions/toArray';
 import '@emonkak/enumerable/extensions/where';
 
 import Autocomplete from 'components/parts/Autocomplete';
+import SubscriptionIcon from 'components/parts/SubscriptionIcon';
 import { MenuItem } from 'components/parts/Menu';
 import { Subscription } from 'messaging/types';
 
@@ -55,17 +56,13 @@ export default class FeedSearchForm extends PureComponent<FeedSearchFormProps, {
 }
 
 function renderCandidate(subscription: Subscription, query: string) {
-    const icon = subscription.iconUrl
-        ? <img alt={subscription.title} src={subscription.iconUrl} width={16} height={16} />
-        : <i className="icon icon-16 icon-file" />;
-
     return (
         <MenuItem
             key={subscription.subscriptionId}
             value={'streams/' + encodeURIComponent(subscription.streamId)}
             primaryText={subscription.title}
             secondaryText={subscription.unreadCount > 0 ? Number(subscription.unreadCount).toLocaleString() : ''}
-            icon={icon} />
+            icon={<SubscriptionIcon title={subscription.title} iconUrl={subscription.iconUrl} />} />
     );
 }
 

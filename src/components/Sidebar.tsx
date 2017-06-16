@@ -9,6 +9,7 @@ import Dropdown from 'components/parts/Dropdown';
 import FeedSearchForm from 'components/parts/FeedSearchForm';
 import Portal from 'components/parts/Portal';
 import RelativeTime from 'components/parts/RelativeTime';
+import SubscriptionIcon from 'components/parts/SubscriptionIcon';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
 import createAscendingComparer from 'utils/createAscendingComparer';
@@ -273,10 +274,6 @@ class SubscriptionTree extends PureComponent<SubscriptionTreeProps, {}> {
         const { location } = this.props;
         const path = `/streams/${encodeURIComponent(subscription.streamId)}`;
 
-        const icon = subscription.iconUrl
-            ? <img alt={subscription.title} src={subscription.iconUrl} width={16} height={16} />
-            : <i className="icon icon-16 icon-file" />;
-
         return (
             <TreeLeaf
                 key={subscription.subscriptionId}
@@ -285,7 +282,7 @@ class SubscriptionTree extends PureComponent<SubscriptionTreeProps, {}> {
                 className={classnames({ 'is-important': subscription.unreadCount > 0 })}
                 primaryText={subscription.title}
                 secondaryText={subscription.unreadCount > 0 ? Number(subscription.unreadCount).toLocaleString() : ''}
-                icon={icon} />
+                icon={<SubscriptionIcon title={subscription.title} iconUrl={subscription.iconUrl} />} />
         );
     }
 

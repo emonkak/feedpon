@@ -13,6 +13,7 @@ import NavItem from 'components/parts/NavItem';
 import Navbar from 'components/parts/Navbar';
 import Portal from 'components/parts/Portal';
 import RelativeTime from 'components/parts/RelativeTime';
+import SubscriptionIcon from 'components/parts/SubscriptionIcon';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
 import debounceEventHandler from 'utils/debounceEventHandler';
@@ -208,10 +209,6 @@ class SubscriptionItem extends PureComponent<SubscriptionItemProps, {}> {
             subscription
         } = this.props;
 
-        const icon = subscription.iconUrl
-            ? <img className="u-flex-shrink-0" alt={subscription.title} src={subscription.iconUrl} width={16} height={16} />
-            : <i className="icon icon-16 icon-file u-flex-shrink-0" />;
-
         const title = subscription.url
             ? <a className="link-soft" target="_blank" href={subscription.url}>{subscription.title}</a>
             : <span>{subscription.title}</span>;
@@ -222,12 +219,12 @@ class SubscriptionItem extends PureComponent<SubscriptionItemProps, {}> {
         return (
             <li className="list-group-item">
                 <div className="u-flex u-flex-align-items-center">
-                    {icon}
-                    <div className="u-margin-left-2 u-flex-grow-1">
+                    <SubscriptionIcon className="u-flex-shrink-0 u-margin-right-2" title={subscription.title} iconUrl={subscription.iconUrl} />
+                    <div className="u-flex-grow-1 u-margin-right-2">
                         <div>{title}{labels}</div>
                         <div className="u-text-small u-text-wrap"><a target="_blank" href={subscription.feedUrl}>{subscription.feedUrl}</a></div>
                     </div>
-                    <div className="u-margin-left-2 u-text-right u-sm-none">
+                    <div className="u-margin-right-2 u-text-right u-sm-none">
                         <RelativeTime className="u-text-small u-text-muted" time={subscription.updatedAt} />
                     </div>
                     <SubscriptionDropdown
