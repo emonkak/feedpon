@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
+import { Link } from 'react-router';
 import { findDOMNode } from 'react-dom';
 
 const menuContext = {
@@ -152,6 +153,55 @@ export class MenuItem extends PureComponent<MenuItemProps, {}> {
                     {primaryTextElement}
                     {secondaryTextElement}
                 </a>
+            );
+        }
+    }
+}
+
+interface MenuLinkProps {
+    icon?: React.ReactNode;
+    isDisabled?: boolean;
+    primaryText: string;
+    secondaryText?: string;
+    to: string;
+}
+
+export class MenuLink extends PureComponent<MenuLinkProps, {}> {
+    static defaultProps = {
+        isDisabled: false
+    };
+
+    static contextTypes = menuContext;
+
+    context: MenuContext;
+
+    render() {
+        const { icon, isDisabled, primaryText, secondaryText, to } = this.props;
+
+        const iconElement = icon ? <span className="menu-item-icon">{icon}</span> : null;
+        const primaryTextElement = <span className="menu-item-primary-text">{primaryText}</span>;
+        const secondaryTextElement = <span className="menu-item-secondary-text">{secondaryText}</span>;
+
+        if (isDisabled) {
+            return (
+                <div className="menu-item is-disabled"
+                     title={primaryText}>
+                    {iconElement}
+                    {primaryTextElement}
+                    {secondaryTextElement}
+                </div>
+            );
+        } else {
+            return (
+                <Link
+                    className="menu-item"
+                    title={primaryText}
+                    to={to}
+                    onClick={this.context.menu.onSelect}>
+                    {iconElement}
+                    {primaryTextElement}
+                    {secondaryTextElement}
+                </Link>
             );
         }
     }

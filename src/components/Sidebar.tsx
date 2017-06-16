@@ -14,7 +14,7 @@ import connect from 'utils/flux/react/connect';
 import createAscendingComparer from 'utils/createAscendingComparer';
 import createDescendingComparer from 'utils/createDescendingComparer';
 import { Category, Profile, State, Subscription, SubscriptionsOrder } from 'messaging/types';
-import { MenuItem } from 'components/parts/Menu';
+import { MenuItem, MenuLink } from 'components/parts/Menu';
 import { Tree, TreeBranch, TreeLeaf } from 'components/parts/Tree';
 import { changeSubscriptionsOrder, changeUnreadViewing, fetchSubscriptions } from 'messaging/subscriptions/actions';
 import { fetchUser } from 'messaging/user/actions';
@@ -53,7 +53,6 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
     constructor(props: SidebarProps, context: any) {
         super(props, context);
 
-        this.handleOrganizeSubscriptions = this.handleOrganizeSubscriptions.bind(this);
         this.handleSearch = this.handleSearch.bind(this);
         this.handleSelect = this.handleSelect.bind(this);
     }
@@ -68,12 +67,6 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
         if (!userIsLoaded) {
             onFetchUser();
         }
-    }
-
-    handleOrganizeSubscriptions() {
-        const { router } = this.props;
-
-        router.push('/categories/');
     }
 
     handleSearch(query: string) {
@@ -139,7 +132,6 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
                         lastUpdatedAt={lastUpdatedAt}
                         onChangeSubscriptionsOrder={onChangeSubscriptionsOrder}
                         onChangeUnreadViewing={onChangeUnreadViewing}
-                        onOrganizeSubscriptions={this.handleOrganizeSubscriptions}
                         onReload={onFetchSubscriptions}
                         onlyUnread={onlyUnread}
                         order={subscriptionsOrder} />
@@ -182,7 +174,6 @@ interface SubscriptionTreeHeaderProps {
     onChangeSubscriptionsOrder: (order: SubscriptionsOrder) => void;
     onChangeUnreadViewing: (onlyUnread: boolean) => void;
     onReload: () => void;
-    onOrganizeSubscriptions: () => void;
     onlyUnread: boolean;
     order: SubscriptionsOrder;
 }
@@ -194,7 +185,6 @@ class SubscriptionTreeHeader extends PureComponent<SubscriptionTreeHeaderProps, 
             lastUpdatedAt,
             onChangeSubscriptionsOrder,
             onChangeUnreadViewing,
-            onOrganizeSubscriptions,
             onReload,
             onlyUnread,
             order
@@ -245,8 +235,8 @@ class SubscriptionTreeHeader extends PureComponent<SubscriptionTreeHeaderProps, 
                         primaryText="Only unread"
                         value={!onlyUnread} />
                     <div className="menu-divider" />
-                    <MenuItem
-                        onSelect={onOrganizeSubscriptions}
+                    <MenuLink
+                        to="/categories/"
                         primaryText="Organize subscriptions..." />
                 </Dropdown>
             </header>

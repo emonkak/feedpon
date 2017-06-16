@@ -72,6 +72,7 @@ a.menu-item.is-disabled {
 
 .menu-item-secondary-text {
   color: var(--dark-color);
+  font-size: 0.875rem;
 }
 
 .menu-heading {
