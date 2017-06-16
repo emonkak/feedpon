@@ -5,7 +5,7 @@ import { History, Location } from 'history';
 import { Params } from 'react-router/lib/Router';
 import { createSelector } from 'reselect';
 
-import * as FIFOCache from 'utils/FIFOCache';
+import * as CacheMap from 'utils/CacheMap';
 import ConfirmModal from 'components/parts/ConfirmModal';
 import Dropdown from 'components/parts/Dropdown';
 import EntryList from 'components/parts/EntryList';
@@ -740,7 +740,7 @@ export default connect(() => {
     const streamSelector = createSelector(
         (state: State) => state.streams.items,
         (state: State, props: StreamPageProps) => props.params['stream_id'],
-        (streams, streamId) => FIFOCache.get(streams, streamId, INITIAL_STREAM)
+        (streams, streamId) => CacheMap.get(streams, streamId, INITIAL_STREAM)
     );
 
     const fetchOptionsSelector = createSelector(

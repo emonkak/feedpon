@@ -1,4 +1,4 @@
-import * as FIFOCache from 'utils/FIFOCache';
+import * as CacheMap from 'utils/CacheMap';
 import { Event, Streams } from 'messaging/types';
 
 export default function reducer(streams: Streams, event: Event): Streams {
@@ -8,7 +8,7 @@ export default function reducer(streams: Streams, event: Event): Streams {
                 ...streams,
                 isLoading: false,
                 isMarking: false,
-                items: FIFOCache.mapValues(streams.items, (stream) => ({
+                items: CacheMap.mapValues(streams.items, (stream) => ({
                     ...stream,
                     entries: stream.entries.map((entry) => {
                         if (!(entry.isPinning || entry.comments.isLoading || entry.fullContents.isLoading)) {
@@ -35,7 +35,7 @@ export default function reducer(streams: Streams, event: Event): Streams {
                 ...streams,
                 isLoaded: false,
                 isLoading: true,
-                items: FIFOCache.set(streams.items, event.streamId, {
+                items: CacheMap.set(streams.items, event.streamId, {
                     streamId: event.streamId,
                     title: 'Loading...',
                     fetchedAt: event.fetchedAt,
@@ -52,7 +52,7 @@ export default function reducer(streams: Streams, event: Event): Streams {
                 ...streams,
                 isLoaded: true,
                 isLoading: false,
-                items: FIFOCache.set(streams.items, event.streamId, {
+                items: CacheMap.set(streams.items, event.streamId, {
                     streamId: event.streamId,
                     title: 'Failed to fetch',
                     fetchedAt: event.fetchedAt,
@@ -69,7 +69,7 @@ export default function reducer(streams: Streams, event: Event): Streams {
                 ...streams,
                 isLoaded: true,
                 isLoading: false,
-                items: FIFOCache.set(streams.items, event.stream.streamId, event.stream)
+                items: CacheMap.set(streams.items, event.stream.streamId, event.stream)
             };
 
         case 'MORE_ENTRIES_FETCHING':
@@ -88,7 +88,7 @@ export default function reducer(streams: Streams, event: Event): Streams {
             return {
                 ...streams,
                 isLoading: false,
-                items: FIFOCache.mapValues(streams.items, (stream) => {
+                items: CacheMap.mapValues(streams.items, (stream) => {
                     if (stream.streamId !== event.streamId) {
                         return stream;
                     }
@@ -103,7 +103,7 @@ export default function reducer(streams: Streams, event: Event): Streams {
         case 'ENTRY_PINNING':
             return {
                 ...streams,
-                items: FIFOCache.mapValues(streams.items, (stream) => ({
+                items: CacheMap.mapValues(streams.items, (stream) => ({
                     ...stream,
                     entries: stream.entries.map((entry) => {
                         if (entry.entryId !== event.entryId) {
@@ -120,7 +120,7 @@ export default function reducer(streams: Streams, event: Event): Streams {
         case 'ENTRY_PINNING_FAILED':
             return {
                 ...streams,
-                items: FIFOCache.mapValues(streams.items, (stream) => ({
+                items: CacheMap.mapValues(streams.items, (stream) => ({
                     ...stream,
                     entries: stream.entries.map((entry) => {
                         if (entry.entryId !== event.entryId) {
@@ -137,7 +137,7 @@ export default function reducer(streams: Streams, event: Event): Streams {
         case 'ENTRY_PINNED':
             return {
                 ...streams,
-                items: FIFOCache.mapValues(streams.items, (stream) => ({
+                items: CacheMap.mapValues(streams.items, (stream) => ({
                     ...stream,
                     entries: stream.entries.map((entry) => {
                         if (entry.entryId !== event.entryId) {
@@ -155,7 +155,7 @@ export default function reducer(streams: Streams, event: Event): Streams {
         case 'ENTRY_URLS_EXPANDED':
             return {
                 ...streams,
-                items: FIFOCache.mapValues(streams.items, (stream) => ({
+                items: CacheMap.mapValues(streams.items, (stream) => ({
                     ...stream,
                     entries: stream.entries.map((entry) => {
                         if (!event.urls[entry.url]) {
@@ -172,7 +172,7 @@ export default function reducer(streams: Streams, event: Event): Streams {
         case 'FEED_SUBSCRIBING':
             return {
                 ...streams,
-                items: FIFOCache.mapValues(streams.items, (stream) => {
+                items: CacheMap.mapValues(streams.items, (stream) => {
                     if (!stream.feed || stream.feed.feedId !== event.feedId) {
                         return stream;
                     }
@@ -189,7 +189,7 @@ export default function reducer(streams: Streams, event: Event): Streams {
         case 'FEED_SUBSCRIBING_FAILED':
             return {
                 ...streams,
-                items: FIFOCache.mapValues(streams.items, (stream) => {
+                items: CacheMap.mapValues(streams.items, (stream) => {
                     if (!stream.feed || stream.feed.feedId !== event.feedId) {
                         return stream;
                     }
@@ -206,7 +206,7 @@ export default function reducer(streams: Streams, event: Event): Streams {
         case 'FEED_SUBSCRIBED':
             return {
                 ...streams,
-                items: FIFOCache.mapValues(streams.items, (stream) => {
+                items: CacheMap.mapValues(streams.items, (stream) => {
                     if (!stream.feed || stream.feed.feedId !== event.subscription.feedId) {
                         return stream;
                     }
@@ -223,7 +223,7 @@ export default function reducer(streams: Streams, event: Event): Streams {
         case 'FEED_UNSUBSCRIBING':
             return {
                 ...streams,
-                items: FIFOCache.mapValues(streams.items, (stream) => {
+                items: CacheMap.mapValues(streams.items, (stream) => {
                     if (!stream.feed || stream.feed.feedId !== event.subscription.feedId) {
                         return stream;
                     }
@@ -241,7 +241,7 @@ export default function reducer(streams: Streams, event: Event): Streams {
         case 'FEED_UNSUBSCRIBED':
             return {
                 ...streams,
-                items: FIFOCache.mapValues(streams.items, (stream) => {
+                items: CacheMap.mapValues(streams.items, (stream) => {
                     if (!stream.feed || stream.feed.feedId !== event.subscription.feedId) {
                         return stream;
                     }
@@ -258,7 +258,7 @@ export default function reducer(streams: Streams, event: Event): Streams {
         case 'FULL_CONTENT_FETCHING':
             return {
                 ...streams,
-                items: FIFOCache.mapValues(streams.items, (stream) => ({
+                items: CacheMap.mapValues(streams.items, (stream) => ({
                     ...stream,
                     entries: stream.entries.map((entry) => {
                         if (entry.entryId !== event.entryId) {
@@ -278,7 +278,7 @@ export default function reducer(streams: Streams, event: Event): Streams {
         case 'FULL_CONTENT_FETCHING_FAILED':
             return {
                 ...streams,
-                items: FIFOCache.mapValues(streams.items, (stream) => ({
+                items: CacheMap.mapValues(streams.items, (stream) => ({
                     ...stream,
                     entries: stream.entries.map((entry) => {
                         if (entry.entryId !== event.entryId) {
@@ -299,7 +299,7 @@ export default function reducer(streams: Streams, event: Event): Streams {
         case 'FULL_CONTENT_FETCHED':
             return {
                 ...streams,
-                items: FIFOCache.mapValues(streams.items, (stream) => ({
+                items: CacheMap.mapValues(streams.items, (stream) => ({
                     ...stream,
                     entries: stream.entries.map((entry) => {
                         if (entry.entryId !== event.entryId) {
@@ -320,7 +320,7 @@ export default function reducer(streams: Streams, event: Event): Streams {
         case 'BOOKMARK_COUNTS_FETCHED':
             return {
                 ...streams,
-                items: FIFOCache.mapValues(streams.items, (stream) => ({
+                items: CacheMap.mapValues(streams.items, (stream) => ({
                     ...stream,
                     entries: stream.entries.map((entry) => ({
                         ...entry,
@@ -332,7 +332,7 @@ export default function reducer(streams: Streams, event: Event): Streams {
         case 'COMMENTS_FETCHING':
             return {
                 ...streams,
-                items: FIFOCache.mapValues(streams.items, (stream) => ({
+                items: CacheMap.mapValues(streams.items, (stream) => ({
                     ...stream,
                     entries: stream.entries.map((entry) => {
                         if (entry.entryId !== event.entryId) {
@@ -353,7 +353,7 @@ export default function reducer(streams: Streams, event: Event): Streams {
         case 'COMMENTS_FETCHING_FAILED':
             return {
                 ...streams,
-                items: FIFOCache.mapValues(streams.items, (stream) => ({
+                items: CacheMap.mapValues(streams.items, (stream) => ({
                     ...stream,
                     entries: stream.entries.map((entry) => {
                         if (entry.entryId !== event.entryId) {
@@ -374,7 +374,7 @@ export default function reducer(streams: Streams, event: Event): Streams {
         case 'COMMENTS_FETCHED':
             return {
                 ...streams,
-                items: FIFOCache.mapValues(streams.items, (stream) => ({
+                items: CacheMap.mapValues(streams.items, (stream) => ({
                     ...stream,
                     entries: stream.entries.map((entry) => {
                         if (entry.entryId !== event.entryId) {
@@ -417,7 +417,7 @@ export default function reducer(streams: Streams, event: Event): Streams {
         case 'ENTRIES_MARKED_AS_READ':
             return {
                 ...streams,
-                items: FIFOCache.mapValues(streams.items, (stream) => ({
+                items: CacheMap.mapValues(streams.items, (stream) => ({
                     ...stream,
                     entries: stream.entries.map((entry) => {
                         if (!event.entryIds.includes(entry.entryId)) {
@@ -435,7 +435,7 @@ export default function reducer(streams: Streams, event: Event): Streams {
         case 'FEED_MARKED_AS_READ':
             return {
                 ...streams,
-                items: FIFOCache.mapValues(streams.items, (stream) => {
+                items: CacheMap.mapValues(streams.items, (stream) => {
                     if (stream.feed && stream.feed.feedId !== event.feedId) {
                         return stream;
                     }
@@ -453,7 +453,7 @@ export default function reducer(streams: Streams, event: Event): Streams {
         case 'CATEGORY_MARKED_AS_READ':
             return {
                 ...streams,
-                items: FIFOCache.mapValues(streams.items, (stream) => {
+                items: CacheMap.mapValues(streams.items, (stream) => {
                     if (stream.category && stream.category.categoryId !== event.categoryId) {
                         return stream;
                     }
@@ -484,7 +484,7 @@ export default function reducer(streams: Streams, event: Event): Streams {
             return {
                 ...streams,
                 cacheLifetime: event.lifetime,
-                items: FIFOCache.extend(streams.items, event.capacity)
+                items: CacheMap.extend(streams.items, event.capacity)
             };
 
         default:

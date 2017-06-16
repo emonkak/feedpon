@@ -1,4 +1,4 @@
-import { FIFOCache } from 'utils/FIFOCache';
+import { CacheMap } from 'utils/CacheMap';
 
 export type Event
     = { type: 'APPLICATION_INITIALIZED' }
@@ -153,7 +153,7 @@ export interface Streams {
     isLoaded: boolean;
     isLoading: boolean;
     isMarking: boolean;
-    items: FIFOCache<Stream>;
+    items: CacheMap<Stream>;
     keepUnread: boolean;
     version: number;
 }

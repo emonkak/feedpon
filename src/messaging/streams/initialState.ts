@@ -1,5 +1,5 @@
 import { Stream, Streams } from 'messaging/types';
-import * as FIFOCache from 'utils/FIFOCache';
+import * as CacheMap from 'utils/CacheMap';
 
 const streams: Streams = {
     cacheLifetime: 10 * 60 * 1000,
@@ -12,7 +12,7 @@ const streams: Streams = {
     isLoaded: false,
     isLoading: false,
     isMarking: false,
-    items: FIFOCache.empty<Stream>(10),
+    items: CacheMap.empty<Stream>(10),
     keepUnread: true,
     version: 1
 };
