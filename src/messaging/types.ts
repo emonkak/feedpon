@@ -84,7 +84,7 @@ export type AsyncEvent<TResult = void> = (store: Store, context: Context) => Pro
 export interface Store {
     getState(): State;
     dispatch(event: Event): Event;
-    dispatch<TResult>(event: AsyncEvent<TResult>): TResult;
+    dispatch<TResult>(event: AsyncEvent<TResult>): Promise<TResult>;
 }
 
 export interface State {
