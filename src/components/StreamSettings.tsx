@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 
-import InputControl from 'components/parts/InputControl';
+import ValidatableInput from 'components/parts/ValidatableInput';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
 import formatDuration from 'utils/formatDuration';
@@ -227,13 +227,13 @@ class StreamSettings extends PureComponent<StreamSettingsProps, StreamSettingsSt
                     <div className="form-group">
                         <label>
                             <span className="form-group-heading">Cache lifetime(hh:mm:ss)</span>
-                            <InputControl
+                            <ValidatableInput
                                 type="text"
                                 className="form-control"
                                 name="cacheLifetime"
                                 onChange={this.handleChangeStreamCacheLifetime}
                                 pattern={DURATION_PATTERN.source}
-                                successClassName={null}
+                                invalidClassName={null}
                                 value={cacheLifetime}
                                 required />
                         </label>

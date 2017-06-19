@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 
 import ConfirmModal from 'components/parts/ConfirmModal';
-import InputControl from 'components/parts/InputControl';
+import ValidatableInput from 'components/parts/ValidatableInput';
 import Modal from 'components/parts/Modal';
 import ModalButton from 'components/parts/ModalButton';
 import bindActions from 'utils/flux/bindActions';
@@ -233,7 +233,7 @@ class UserSiteinfoForm extends PureComponent<UserSiteinfoFormProps, UserSiteinfo
                     <div className="form-group">
                         <label>
                             <span className="form-group-heading form-required">Name</span>
-                            <InputControl
+                            <ValidatableInput
                                 className="form-control"
                                 type="text"
                                 name="name"
@@ -245,7 +245,7 @@ class UserSiteinfoForm extends PureComponent<UserSiteinfoFormProps, UserSiteinfo
                     <div className="form-group">
                         <label>
                             <span className="form-group-heading form-required">URL pattern</span>
-                            <InputControl
+                            <ValidatableInput
                                 className="form-control"
                                 validations={[{ message: 'Invalid regular expression.', rule: isValidPattern }]}
                                 type="text"
@@ -259,7 +259,7 @@ class UserSiteinfoForm extends PureComponent<UserSiteinfoFormProps, UserSiteinfo
                     <div className="form-group">
                         <label>
                             <span className="form-group-heading form-required">Content expression</span>
-                            <InputControl
+                            <ValidatableInput
                                 className="form-control"
                                 validations={[{ message: 'Invalid XPath expression.', rule: isValidXPath }]}
                                 type="text"
@@ -273,7 +273,7 @@ class UserSiteinfoForm extends PureComponent<UserSiteinfoFormProps, UserSiteinfo
                     <div className="form-group">
                         <label>
                             <span className="form-group-heading">Next link expression</span>
-                            <InputControl
+                            <ValidatableInput
                                 className="form-control"
                                 validations={[{ message: 'Invalid XPath expression.', rule: isValidXPath }]}
                                 type="text"

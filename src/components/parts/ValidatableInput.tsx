@@ -1,26 +1,26 @@
 import React, { PureComponent } from 'react';
 import classnames from 'classnames';
 
-interface InputControlProps extends React.HTMLAttributes<HTMLInputElement> {
-    errorClassName?: string | null;
-    successClassName?: string | null;
+interface ValidatableInputProps extends React.HTMLAttributes<HTMLInputElement> {
+    invalidClassName?: string | null;
+    validClassName?: string | null;
     validations?: { rule: (value: string) => boolean, message: string }[];
 }
 
-interface InputControlState {
+interface ValidatableInputState {
     status: 'empty' | 'valid' | 'invalid';
 }
 
-export default class InputControl extends PureComponent<InputControlProps, InputControlState> {
+export default class ValidatableInput extends PureComponent<ValidatableInputProps, ValidatableInputState> {
     static defaultProps = {
-        errorClassName: 'has-error',
-        successClassName: 'has-success',
+        invalidClassName: 'has-error',
+        validClassName: 'has-success',
         validations: []
     };
 
     private inputElement: HTMLInputElement;
 
-    constructor(props: InputControlProps, context: any) {
+    constructor(props: ValidatableInputProps, context: any) {
         super(props, context);
 
         this.handleChange = this.handleChange.bind(this);
@@ -32,7 +32,7 @@ export default class InputControl extends PureComponent<InputControlProps, Input
         this.update();
     }
 
-    componentDidUpdate(prevProps: InputControlProps, prevState: InputControlState) {
+    componentDidUpdate(prevProps: ValidatableInputProps, prevState: ValidatableInputState) {
         if (this.props.value !== prevProps.value) {
             this.update();
         }
@@ -75,7 +75,7 @@ export default class InputControl extends PureComponent<InputControlProps, Input
     }
 
     render() {
-        const { className, errorClassName, successClassName, validations, ...restProps } = this.props;
+        const { className, invalidClassName, validClassName, validations, ...restProps } = this.props;
         const { status } = this.state;
 
         return (
@@ -83,8 +83,8 @@ export default class InputControl extends PureComponent<InputControlProps, Input
                 {...restProps}
                 ref={(element) => this.inputElement = element}
                 className={classnames(className, {
-                    [successClassName!]: status === 'valid',
-                    [errorClassName!]: status === 'invalid'
+                    [invalidClassName!]: status === 'invalid',
+                    [validClassName!]: status === 'valid'
                 })}
                 onChange={this.handleChange} />
         );

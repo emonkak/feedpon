@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 
 import ConfirmModal from 'components/parts/ConfirmModal';
-import InputControl from 'components/parts/InputControl';
+import ValidatableInput from 'components/parts/ValidatableInput';
 import ModalButton from 'components/parts/ModalButton';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
@@ -129,7 +129,7 @@ class TrackingUrlPatternForm extends PureComponent<TrackingUrlPatternFormProps, 
                 <fieldset>
                     <legend className="form-legend">New tracking URL pattern</legend>
                     <div className="input-group">
-                        <InputControl
+                        <ValidatableInput
                             validations={[{ message: 'Invalid regular expression.', rule: isValidPattern }]}
                             type="text"
                             className="form-control"

@@ -114,7 +114,7 @@ export default class Autocomplete extends PureComponent<AutoCompleteProps, Autoc
         }
     }
 
-    renderInputControl() {
+    renderValidatableInput() {
         const { inputControl } = this.props;
 
         return cloneElement(inputControl, {
@@ -153,7 +153,7 @@ export default class Autocomplete extends PureComponent<AutoCompleteProps, Autoc
                 })}>
                     <form className="autocomplete-form"
                           onSubmit={this.handleSubmit}>
-                        {this.renderInputControl()}
+                        {this.renderValidatableInput()}
                     </form>
                     <div className="autocomplete-menu">
                         <Menu
