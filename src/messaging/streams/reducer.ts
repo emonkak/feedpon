@@ -436,7 +436,7 @@ export default function reducer(streams: Streams, event: Event): Streams {
             return {
                 ...streams,
                 items: CacheMap.mapValues(streams.items, (stream) => {
-                    if (stream.feed && stream.feed.feedId !== event.feedId) {
+                    if (!stream.feed || stream.feed.feedId !== event.feedId) {
                         return stream;
                     }
                     return {
