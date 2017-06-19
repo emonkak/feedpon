@@ -36,7 +36,7 @@
 }
 
 .form-control:focus {
-  box-shadow: 0 0 1px 1px var(--default-focus-outline-color);
+  box-shadow: 0 0 0 2px var(--default-focus-outline-color);
   z-index: 1;
 }
 
@@ -46,7 +46,7 @@
 }
 
 .form-control.has-success:focus {
-  box-shadow: 0 0 1px 1px var(--positive-focus-outline-color);
+  box-shadow: 0 0 0 2px var(--positive-focus-outline-color);
 }
 
 .form-control.has-error {
@@ -55,7 +55,7 @@
 }
 
 .form-control.has-error:focus {
-  box-shadow: 0 0 1px 1px var(--negative-focus-outline-color);
+  box-shadow: 0 0 0 2px var(--negative-focus-outline-color);
 }
 
 .form-control-addon {
