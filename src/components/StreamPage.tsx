@@ -10,7 +10,6 @@ import ConfirmModal from 'components/parts/ConfirmModal';
 import Dropdown from 'components/parts/Dropdown';
 import EntryList from 'components/parts/EntryList';
 import MainLayout from 'components/layouts/MainLayout';
-import ModalButton from 'components/parts/ModalButton';
 import Navbar from 'components/parts/Navbar';
 import Portal from 'components/parts/Portal';
 import SubscribeDropdown from 'components/parts/SubscribeDropdown';
@@ -678,8 +677,7 @@ class StreamFooter extends PureComponent<StreamFooterProps, {}> {
             canMarkAllAsRead,
             hasMoreEntries,
             isLoading,
-            onMarkAllAsRead,
-            title
+            onMarkAllAsRead
         } = this.props;
 
         if (hasMoreEntries) {
@@ -706,22 +704,12 @@ class StreamFooter extends PureComponent<StreamFooterProps, {}> {
                 <footer className="stream-footer">
                     <p>No more entries here.</p>
                     <p>
-                        <ModalButton
-                            button={
-                                <button
-                                    className="button button-positive"
-                                    disabled={!canMarkAllAsRead}>
-                                    Mark all as read
-                                </button>
-                            }
-                            modal={
-                                <ConfirmModal
-                                    message="Are you sure you want to mark as read in this stream?"
-                                    confirmButtonClassName="button button-positive"
-                                    confirmButtonLabel="Mark all as read"
-                                    onConfirm={onMarkAllAsRead}
-                                    title={`Mark all as read in "${title}"`} />
-                            } />
+                        <button
+                            className="button button-positive"
+                            onClick={onMarkAllAsRead}
+                            disabled={!canMarkAllAsRead}>
+                            Mark all as read
+                        </button>
                     </p>
                 </footer>
             );
