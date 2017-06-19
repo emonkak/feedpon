@@ -39,6 +39,7 @@ a.menu-item {
 .menu-item:not(.is-disabled):hover,
 .menu-item:focus {
   background-color: var(--medium-light-color);
+  outline: none;
 }
 
 .menu-item.is-disabled,
