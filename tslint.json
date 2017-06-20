@@ -11,6 +11,7 @@
             true,
             "spaces"
         ],
+        "interface-over-type-literal": true,
         "no-duplicate-variable": true,
         "no-eval": true,
         "no-internal-module": true,
