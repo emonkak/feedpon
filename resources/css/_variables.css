@@ -10,6 +10,7 @@
   --container-width: 768px;
 }
 
+:root,
 .theme-light {
   $x-light-color: #ffffff;
   $light-color: #f7f9fc;
