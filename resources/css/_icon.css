@@ -15,12 +15,24 @@
   vertical-align: middle;
 }
 
-.icon-angle-down {
-  mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M4.22 10.78l-1.44 1.44 12.5 12.5.72.686.72-.687 12.5-12.5-1.44-1.44L16 22.564 4.22 10.78z"/></svg>') no-repeat;
+.icon-angle-up,
+.icon-angle-right,
+.icon-angle-down,
+.icon-angle-left {
+  mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M 16 6.59375 L 15.28125 7.28125 L 2.78125 19.78125 L 4.21875 21.21875 L 16 9.4375 L 27.78125 21.21875 L 29.21875 19.78125 L 16.71875 7.28125 L 16 6.59375 z"/></svg>') no-repeat;
+  transition: transform 0.2s ease-in-out;
 }
 
 .icon-angle-right {
-  mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M12.97 4.28l-1.44 1.44L21.814 16 11.53 26.28l1.44 1.44 11-11 .686-.72-.687-.72-11-11z"/></svg>') no-repeat;
+  transform: rotate(90deg);
+}
+
+.icon-angle-down {
+  transform: rotate(180deg);
+}
+
+.icon-angle-left {
+  transform: rotate(270deg);
 }
 
 .icon-bookmark {
