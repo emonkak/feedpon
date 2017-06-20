@@ -69,7 +69,7 @@ ReactDOM.render((
     </StoreProvider>
 ), element);
 
-waitForReadyState(document, 'interactive', () => {
+waitForReadyState(document, ['complete', 'interactive'], () => {
     store.dispatch({
         type: 'APPLICATION_INITIALIZED'
     });
