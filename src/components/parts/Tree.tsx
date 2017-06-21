@@ -111,7 +111,7 @@ export class TreeBranch extends PureComponent<TreeBranchProps, TreeBranchState> 
         }
     }
 
-    handleExpand(event: React.SyntheticEvent<any>) {
+    handleExpand(event: React.MouseEvent<any>) {
         event.preventDefault();
 
         const { isExpanded } = this.state;
@@ -121,7 +121,7 @@ export class TreeBranch extends PureComponent<TreeBranchProps, TreeBranchState> 
         });
     }
 
-    handleSelect(event: React.SyntheticEvent<any>) {
+    handleSelect(event: React.MouseEvent<any>) {
         event.preventDefault();
 
         const { isSelected, onSelect, value } = this.props;
@@ -187,7 +187,7 @@ export class TreeLeaf extends PureComponent<TreeLeafProps, {}> {
         this.handleSelect = this.handleSelect.bind(this);
     }
 
-    handleSelect(event: React.SyntheticEvent<any>) {
+    handleSelect(event: React.MouseEvent<any>) {
         event.preventDefault();
 
         const { isSelected, onSelect, value } = this.props;

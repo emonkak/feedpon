@@ -48,7 +48,7 @@ export default class EntryComponent extends PureComponent<EntryProps, EntryState
         this.handleTogglePin = this.handleTogglePin.bind(this);
     }
 
-    handleClose(event: React.SyntheticEvent<any>) {
+    handleClose(event: React.MouseEvent<any>) {
         event.preventDefault();
 
         const { isCollapsible, isExpanded, onClose } = this.props;
@@ -58,7 +58,7 @@ export default class EntryComponent extends PureComponent<EntryProps, EntryState
         }
     }
 
-    handleExpand(event: React.SyntheticEvent<any>) {
+    handleExpand(event: React.MouseEvent<any>) {
         const { entry, isCollapsible, isExpanded, onExpand } = this.props;
 
         if (isCollapsible && !isExpanded && onExpand) {
@@ -85,15 +85,15 @@ export default class EntryComponent extends PureComponent<EntryProps, EntryState
         }
     }
 
-    handleSwitchCommentPopover(event: React.SyntheticEvent<any>) {
+    handleSwitchCommentPopover(event: React.MouseEvent<any>) {
         this.changePopover('comment');
     }
 
-    handleSwitchSharePopover(event: React.SyntheticEvent<any>) {
+    handleSwitchSharePopover(event: React.MouseEvent<any>) {
         this.changePopover('share');
     }
 
-    handleToggleFullContent(event: React.SyntheticEvent<any>) {
+    handleToggleFullContent(event: React.MouseEvent<any>) {
         const { entry, onFetchFullContent, onHideFullContents, onShowFullContents } = this.props;
 
         if (!entry.fullContents.isLoading) {
@@ -111,7 +111,7 @@ export default class EntryComponent extends PureComponent<EntryProps, EntryState
         }
     }
 
-    handleTogglePin(event: React.SyntheticEvent<any>) {
+    handleTogglePin(event: React.MouseEvent<any>) {
         const { entry, onPin, onUnpin } = this.props;
 
         if (!entry.isPinning) {

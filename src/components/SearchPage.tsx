@@ -68,7 +68,7 @@ class SearchPage extends PureComponent<SearchPageProps, {}> {
         }
     }
 
-    handleSearch(event: React.SyntheticEvent<any>) {
+    handleSearch(event: React.FormEvent<any>) {
         if (!this.searchInput) {
             return;
         }

@@ -114,7 +114,7 @@ export class MenuItem extends PureComponent<MenuItemProps, {}> {
         this.handleSelect = this.handleSelect.bind(this);
     }
 
-    handleSelect(event: React.SyntheticEvent<any>) {
+    handleSelect(event: React.MouseEvent<any>) {
         event.preventDefault();
 
         const { onSelect, value } = this.props;

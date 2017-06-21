@@ -72,7 +72,7 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
         }
     }
 
-    handleCloseSidebar(event: React.SyntheticEvent<any>) {
+    handleCloseSidebar(event: React.MouseEvent<any>) {
         const { onCloseSidebar, sidebarIsOpened } = this.props;
 
         if (sidebarIsOpened && event.target === event.currentTarget) {

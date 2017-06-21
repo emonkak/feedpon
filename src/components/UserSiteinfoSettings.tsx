@@ -189,7 +189,7 @@ class UserSiteinfoForm extends PureComponent<UserSiteinfoFormProps, UserSiteinfo
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    handleSubmit(event: React.SyntheticEvent<any>) {
+    handleSubmit(event: React.FormEvent<any>) {
         event.preventDefault();
 
         const { item, onSubmit } = this.props;
@@ -213,7 +213,7 @@ class UserSiteinfoForm extends PureComponent<UserSiteinfoFormProps, UserSiteinfo
         }
     }
 
-    handleChange(event: React.SyntheticEvent<any>) {
+    handleChange(event: React.ChangeEvent<any>) {
         const { name, value } = event.currentTarget;
 
         this.setState(state => ({

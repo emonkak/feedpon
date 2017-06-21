@@ -40,7 +40,7 @@ export default class NotificationComponent extends PureComponent<NotificationPro
         }
     }
 
-    handleClose(event: React.SyntheticEvent<any>) {
+    handleClose(event: React.MouseEvent<any>) {
         event.preventDefault();
 
         const { onClose, notification } = this.props;

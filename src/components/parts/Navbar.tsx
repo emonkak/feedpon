@@ -12,7 +12,7 @@ export default class Navbar extends PureComponent<NavbarProps, {}> {
         this.handleToggleSidebar = this.handleToggleSidebar.bind(this);
     }
 
-    handleToggleSidebar(event: React.SyntheticEvent<any>) {
+    handleToggleSidebar(event: React.MouseEvent<any>) {
         event.preventDefault();
 
         const { onToggleSidebar } = this.props;

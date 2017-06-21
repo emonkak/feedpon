@@ -81,7 +81,7 @@ export class NavItem extends PureComponent<NavItemProps, {}> {
         this.handleSelect = this.handleSelect.bind(this);
     }
 
-    handleSelect(event: React.SyntheticEvent<any>) {
+    handleSelect(event: React.MouseEvent<any>) {
         event.preventDefault();
 
         const { onSelect, value } = this.props;
