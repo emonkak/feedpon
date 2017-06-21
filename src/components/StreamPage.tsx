@@ -16,7 +16,7 @@ import SubscribeDropdown from 'components/parts/SubscribeDropdown';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
 import createAscendingComparer from 'utils/createAscendingComparer';
-import { Category, Entry, EntryOrder, Feed, State, Stream, StreamFetchOptions, StreamView, Subscription } from 'messaging/types';
+import { Category, Entry, EntryOrderKind, Feed, State, Stream, StreamFetchOptions, StreamViewKind, Subscription } from 'messaging/types';
 import { MenuItem } from 'components/parts/Menu';
 import { addToCategory, removeFromCategory, subscribe, unsubscribe } from 'messaging/subscriptions/actions';
 import { changeUnreadKeeping, fetchComments, fetchFullContent, fetchMoreEntries, fetchStream, hideFullContents, markAsRead, markCategoryAsRead, markFeedAsRead, pinEntry, showFullContents, unpinEntry } from 'messaging/streams/actions';
@@ -54,7 +54,7 @@ interface StreamPageProps {
     router: History;
     scrollTo: (x: number, y: number) => Promise<void>;
     stream: Stream;
-    streamView: StreamView;
+    streamView: StreamViewKind;
     subscription: Subscription | null;
 };
 
@@ -89,7 +89,7 @@ class StreamPage extends PureComponent<StreamPageProps, StreamPageState> {
             readEntryIds: new Set()
         };
 
-        this.handleChangeEntryOrder = this.handleChangeEntryOrder.bind(this);
+        this.handleChangeEntryOrderKind = this.handleChangeEntryOrderKind.bind(this);
         this.handleChangeStreamView = this.handleChangeStreamView.bind(this);
         this.handleClearReadEntries = this.handleClearReadEntries.bind(this);
         this.handleLoadMoreEntries = this.handleLoadMoreEntries.bind(this);
@@ -148,7 +148,7 @@ class StreamPage extends PureComponent<StreamPageProps, StreamPageState> {
         }
     }
 
-    handleChangeEntryOrder(entryOrder: EntryOrder) {
+    handleChangeEntryOrderKind(entryOrder: EntryOrderKind) {
         const { location, router, scrollTo } = this.props;
 
         scrollTo(0, 0);
@@ -162,7 +162,7 @@ class StreamPage extends PureComponent<StreamPageProps, StreamPageState> {
         });
     }
 
-    handleChangeStreamView(streamView: StreamView) {
+    handleChangeStreamView(streamView: StreamViewKind) {
         const { location, router } = this.props;
 
         router.replace({
@@ -268,7 +268,7 @@ class StreamPage extends PureComponent<StreamPageProps, StreamPageState> {
                 feed={stream.feed}
                 isLoading={isLoading}
                 keepUnread={keepUnread}
-                onChangeEntryOrder={this.handleChangeEntryOrder}
+                onChangeEntryOrderKind={this.handleChangeEntryOrderKind}
                 onChangeStreamView={this.handleChangeStreamView}
                 onClearReadEntries={this.handleClearReadEntries}
                 onMarkAllAsRead={this.handleMarkAllAsRead}
@@ -372,8 +372,8 @@ interface StreamNavbarProps {
     fetchOptions: StreamFetchOptions;
     isLoading: boolean;
     keepUnread: boolean;
-    onChangeEntryOrder: (order: EntryOrder) => void,
-    onChangeStreamView: (view: StreamView) => void,
+    onChangeEntryOrderKind: (order: EntryOrderKind) => void,
+    onChangeStreamView: (view: StreamViewKind) => void,
     onClearReadEntries: () => void;
     onMarkAllAsRead: () => void;
     onReloadEntries: () => void;
@@ -382,7 +382,7 @@ interface StreamNavbarProps {
     onToggleSidebar: () => void;
     onToggleUnreadKeeping: () => void;
     readEntries: Entry[];
-    streamView: StreamView;
+    streamView: StreamViewKind;
     title: string;
 }
 
@@ -394,7 +394,7 @@ class StreamNavbar extends PureComponent<StreamNavbarProps, {}> {
             fetchOptions,
             isLoading,
             keepUnread,
-            onChangeEntryOrder,
+            onChangeEntryOrderKind,
             onChangeStreamView,
             onClearReadEntries,
             onMarkAllAsRead,
@@ -435,7 +435,7 @@ class StreamNavbar extends PureComponent<StreamNavbarProps, {}> {
                 <StreamFetchOptionsDropdown
                     fetchOptions={fetchOptions}
                     isLoading={isLoading}
-                    onChangeEntryOrder={onChangeEntryOrder}
+                    onChangeEntryOrderKind={onChangeEntryOrderKind}
                     onChangeStreamView={onChangeStreamView}
                     onToggleOnlyUnread={onToggleOnlyUnread}
                     streamView={streamView} />
@@ -547,13 +547,13 @@ class ReadEntriesDropdown extends PureComponent<ReadEntriesMenuProps, ReadEntrie
 interface StreamFetchOptionsDropdownProps {
     fetchOptions: StreamFetchOptions;
     isLoading: boolean;
-    onChangeEntryOrder: (order: EntryOrder) => void;
-    onChangeStreamView: (view: StreamView) => void;
+    onChangeEntryOrderKind: (order: EntryOrderKind) => void;
+    onChangeStreamView: (view: StreamViewKind) => void;
     onClose?: () => void;
     onKeyDown?: (event: React.KeyboardEvent<any>) => void;
     onSelect?: (value?: any) => void;
     onToggleOnlyUnread: () => void;
-    streamView: StreamView;
+    streamView: StreamViewKind;
 }
 
 class StreamFetchOptionsDropdown extends PureComponent<StreamFetchOptionsDropdownProps, {}> {
@@ -561,7 +561,7 @@ class StreamFetchOptionsDropdown extends PureComponent<StreamFetchOptionsDropdow
         const {
             fetchOptions,
             isLoading,
-            onChangeEntryOrder,
+            onChangeEntryOrderKind,
             onChangeStreamView,
             onToggleOnlyUnread,
             streamView
@@ -592,13 +592,13 @@ class StreamFetchOptionsDropdown extends PureComponent<StreamFetchOptionsDropdow
                 <MenuItem
                     isDisabled={isLoading}
                     icon={fetchOptions.entryOrder === 'newest' ? checkmarkIcon : null}
-                    onSelect={onChangeEntryOrder}
+                    onSelect={onChangeEntryOrderKind}
                     primaryText="Newest first"
                     value="newest" />
                 <MenuItem
                     isDisabled={isLoading}
                     icon={fetchOptions.entryOrder === 'oldest' ? checkmarkIcon : null}
-                    onSelect={onChangeEntryOrder}
+                    onSelect={onChangeEntryOrderKind}
                     primaryText="Oldest first"
                     value="oldest" />
                 <div className="menu-divider" />
@@ -760,7 +760,7 @@ export default connect(() => {
             }
 
             if (query.entryOrder === 'newest' || query.entryOrder === 'oldest') {
-                fetchOptions.entryOrder = query.entryOrder as EntryOrder;
+                fetchOptions.entryOrder = query.entryOrder as EntryOrderKind;
             }
 
             return fetchOptions;
@@ -772,7 +772,7 @@ export default connect(() => {
         (state: State, props: StreamPageProps) => props.location.query,
         (defaultStreamView, query) => {
             return (query.streamView === 'expanded' || query.streamView === 'collapsible')
-                ? query.streamView as StreamView
+                ? query.streamView as StreamViewKind
                 : defaultStreamView;
         }
     );

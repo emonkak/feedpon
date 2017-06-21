@@ -19,7 +19,7 @@ export type Event
     | { type: 'COMMENTS_FETCHING', entryId: string | number }
     | { type: 'COMMENTS_FETCHING_FAILED', entryId: string | number }
     | { type: 'DEFAULT_STREAM_OPTIONS_CHANGED', fetchOptions: StreamFetchOptions }
-    | { type: 'DEFAULT_STREAM_VIEW_CHANGED', streamView: StreamView }
+    | { type: 'DEFAULT_STREAM_VIEW_CHANGED', streamView: StreamViewKind }
     | { type: 'ENTRIES_MARKED_AS_READ', entryIds: (string | number)[], readCounts: { [streamId: string]: number } }
     | { type: 'ENTRIES_MARKING_AS_READ', entryIds: (string | number)[] }
     | { type: 'ENTRIES_MARKING_AS_READ_FAILED', entryIds: (string | number)[] }
@@ -64,9 +64,9 @@ export type Event
     | { type: 'SUBSCRIPTIONS_FETCHED', subscriptions: Subscription[], categories: Category[], fetchedAt: number }
     | { type: 'SUBSCRIPTIONS_FETCHING' }
     | { type: 'SUBSCRIPTIONS_FETCHING_FAILED' }
-    | { type: 'SUBSCRIPTIONS_ORDER_CHANGED', order: SubscriptionsOrder }
+    | { type: 'SUBSCRIPTIONS_ORDER_CHANGED', order: SubscriptionOrderKind }
     | { type: 'SUBSCRIPTIONS_UNREAD_VIEWING_CHANGED', onlyUnread: boolean }
-    | { type: 'THEME_CHANGED', theme: Theme }
+    | { type: 'THEME_CHANGED', theme: ThemeKind }
     | { type: 'TOKEN_RECEIVED', authorizedAt: number, token: any }
     | { type: 'TOKEN_RECEIVING' }
     | { type: 'TOKEN_RECEIVING_FAILED' }
@@ -153,7 +153,7 @@ export interface Category {
 export interface Streams {
     cacheLifetime: number;
     defaultFetchOptions: StreamFetchOptions;
-    defaultStreamView: StreamView;
+    defaultStreamView: StreamViewKind;
     isLoaded: boolean;
     isLoading: boolean;
     isMarking: boolean;
@@ -174,14 +174,14 @@ export interface Stream {
 }
 
 export interface StreamFetchOptions {
-    entryOrder: EntryOrder;
+    entryOrder: EntryOrderKind;
     numEntries: number;
     onlyUnread: boolean;
 }
 
-export type EntryOrder = 'newest' | 'oldest';
+export type EntryOrderKind = 'newest' | 'oldest';
 
-export type StreamView = 'expanded' | 'collapsible';
+export type StreamViewKind = 'expanded' | 'collapsible';
 
 export interface Feed {
     feedId: string | number;
@@ -267,7 +267,7 @@ export type NotificationKind = 'default' | 'positive' | 'negative';
 
 export interface StreamSettings {
     defaultFetchOptions: StreamFetchOptions;
-    defaultStreamView: StreamView;
+    defaultStreamView: StreamViewKind;
     version: number;
 }
 
@@ -281,7 +281,7 @@ export interface Subscriptions {
     items: { [streamId: string]: Subscription };
     lastUpdatedAt: number;
     onlyUnread: boolean;
-    order: SubscriptionsOrder;
+    order: SubscriptionOrderKind;
     version: number;
 }
 
@@ -299,7 +299,7 @@ export interface Subscription {
     isLoading: boolean;
 }
 
-export type SubscriptionsOrder = 'title' | 'newest' | 'oldest';
+export type SubscriptionOrderKind = 'title' | 'newest' | 'oldest';
 
 export interface UserSiteinfo {
     items: SiteinfoItem[];
@@ -331,7 +331,7 @@ export interface User {
 export interface UI {
     isScrolling: boolean;
     sidebarIsOpened: boolean;
-    theme: Theme;
+    theme: ThemeKind;
     version: number;
 }
 
@@ -340,4 +340,4 @@ export interface Histories {
     version: number;
 }
 
-export type Theme = 'theme-light' | 'theme-dark';
+export type ThemeKind = 'theme-light' | 'theme-dark';

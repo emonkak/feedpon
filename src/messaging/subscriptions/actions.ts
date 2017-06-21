@@ -7,7 +7,7 @@ import '@emonkak/enumerable/extensions/selectMany';
 import '@emonkak/enumerable/extensions/toArray';
 
 import * as feedly from 'adapters/feedly/api';
-import { AsyncEvent, Event, Feed, Subscription, SubscriptionsOrder } from 'messaging/types';
+import { AsyncEvent, Event, Feed, Subscription, SubscriptionOrderKind } from 'messaging/types';
 import { getFeedlyToken } from 'messaging/credential/actions';
 
 export function fetchSubscriptions(): AsyncEvent {
@@ -236,7 +236,7 @@ export function unsubscribe(subscription: Subscription): AsyncEvent {
     };
 }
 
-export function changeSubscriptionsOrder(order: SubscriptionsOrder): Event {
+export function changeSubscriptionOrder(order: SubscriptionOrderKind): Event {
     return {
         type: 'SUBSCRIPTIONS_ORDER_CHANGED',
         order

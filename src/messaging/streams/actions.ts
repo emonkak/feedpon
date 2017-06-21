@@ -4,7 +4,7 @@ import * as feedlyApi from 'adapters/feedly/api';
 import PromiseQueue from 'utils/PromiseQueue';
 import decodeResponseAsText from 'utils/decodeResponseAsText';
 import stripTags from 'utils/stripTags';
-import { AsyncEvent, Category, Entry, Event, Feed, Stream, StreamFetchOptions, StreamView } from 'messaging/types';
+import { AsyncEvent, Category, Entry, Event, Feed, Stream, StreamFetchOptions, StreamViewKind } from 'messaging/types';
 import { getFeedlyToken } from 'messaging/credential/actions';
 import { getSiteinfoItems } from 'messaging/sharedSiteinfo/actions';
 import { sendNotification } from 'messaging/notifications/actions';
@@ -432,7 +432,7 @@ export function changeDefaultStreamFetchOptions(fetchOptions: StreamFetchOptions
     };
 }
 
-export function changeDefaultStreamView(streamView: StreamView): AsyncEvent {
+export function changeDefaultStreamView(streamView: StreamViewKind): AsyncEvent {
     return async ({ dispatch }) => {
         dispatch({
             type: 'DEFAULT_STREAM_VIEW_CHANGED',

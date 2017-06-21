@@ -9,7 +9,7 @@ import '@emonkak/enumerable/extensions/where';
 import EntryComponent from 'components/parts/Entry';
 import EntryPlaceholder from 'components/parts/EntryPlaceholder';
 import ScrollSpy from 'components/parts/ScrollSpy';
-import { Entry, StreamView } from 'messaging/types';
+import { Entry, StreamViewKind } from 'messaging/types';
 
 const SCROLL_OFFSET = 48;
 
@@ -26,7 +26,7 @@ interface EntryListProps {
     onUnpin: (entryId: string | number) => void;
     sameOrigin: boolean;
     scrollTo: (x: number, y: number) => Promise<void>;
-    streamView: StreamView;
+    streamView: StreamViewKind;
 }
 
 interface EntryListState {

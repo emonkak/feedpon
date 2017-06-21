@@ -1,4 +1,4 @@
-import { Event, Theme } from 'messaging/types';
+import { Event, ThemeKind } from 'messaging/types';
 
 export function openSidebar(): Event {
     return {
@@ -24,7 +24,7 @@ export function endScroll(): Event {
     };
 }
 
-export function changeTheme(theme: Theme): Event {
+export function changeTheme(theme: ThemeKind): Event {
     return {
         type: 'THEME_CHANGED',
         theme

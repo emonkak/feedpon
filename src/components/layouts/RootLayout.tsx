@@ -1,12 +1,12 @@
 import React, { Children, PureComponent } from 'react';
 
 import connect from 'utils/flux/react/connect';
-import { State, Theme } from 'messaging/types';
+import { State, ThemeKind } from 'messaging/types';
 import { THEMES } from 'messaging/ui/constants';
 
 interface RootLayoutProps {
     children: React.ReactElement<any>;
-    theme: Theme,
+    theme: ThemeKind,
 }
 
 class RootLayout extends PureComponent<RootLayoutProps, any> {
@@ -28,7 +28,7 @@ class RootLayout extends PureComponent<RootLayoutProps, any> {
         this.clearTheme();
     }
 
-    updateTheme(nextTheme: Theme) {
+    updateTheme(nextTheme: ThemeKind) {
         for (const theme of THEMES) {
             if (theme.value !== nextTheme) {
                 document.documentElement.classList.remove(theme.value);

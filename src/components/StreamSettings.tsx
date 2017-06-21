@@ -5,7 +5,7 @@ import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
 import formatDuration from 'utils/formatDuration';
 import parseDuration, { DURATION_PATTERN } from 'utils/parseDuration';
-import { State, StreamFetchOptions, StreamView } from 'messaging/types';
+import { State, StreamFetchOptions, StreamViewKind } from 'messaging/types';
 import { changeDefaultStreamFetchOptions, changeDefaultStreamView, changeStreamCacheOptions, changeStreamHistoryOptions } from 'messaging/streams/actions';
 
 interface StreamSettingsProps {
@@ -17,7 +17,7 @@ interface StreamSettingsProps {
     onChangeDefaultStreamView: typeof changeDefaultStreamView;
     onChangeStreamCacheOptions: typeof changeStreamCacheOptions;
     onChangeStreamHistoryOptions: typeof changeStreamHistoryOptions;
-    streamView: StreamView;
+    streamView: StreamViewKind;
 }
 
 interface StreamSettingsState {
@@ -93,7 +93,7 @@ class StreamSettings extends PureComponent<StreamSettingsProps, StreamSettingsSt
         const { onChangeDefaultStreamView } = this.props;
         const target = event.currentTarget;
 
-        onChangeDefaultStreamView(target.value as StreamView);
+        onChangeDefaultStreamView(target.value as StreamViewKind);
     }
 
     handleSubmitStreamFetchOptions(event: React.FormEvent<HTMLFormElement>) {

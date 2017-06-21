@@ -1,6 +1,6 @@
-import { Theme } from 'messaging/types';
+import { ThemeKind } from 'messaging/types';
 
-export const THEMES: { label: string, value: Theme }[] = [
+export const THEMES: { label: string, value: ThemeKind }[] = [
     {
         label: 'Light',
         value: 'theme-light'

@@ -2,12 +2,12 @@ import React, { PureComponent } from 'react';
 
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
-import { State, Theme } from 'messaging/types';
+import { State, ThemeKind } from 'messaging/types';
 import { THEMES } from 'messaging/ui/constants';
 import { changeTheme } from 'messaging/ui/actions';
 
 interface UISettingsProps {
-    currentTheme: Theme;
+    currentTheme: ThemeKind;
     onChangeTheme: typeof changeTheme;
 }
 
@@ -20,7 +20,7 @@ class UISettings extends PureComponent<UISettingsProps, {}> {
 
     handleChangeTheme(event: React.ChangeEvent<HTMLInputElement>) {
         const { onChangeTheme } = this.props;
-        const value = event.currentTarget.value as Theme;
+        const value = event.currentTarget.value as ThemeKind;
 
         onChangeTheme(value);
     }
@@ -33,7 +33,7 @@ class UISettings extends PureComponent<UISettingsProps, {}> {
                 <h1 className="display-1">UI</h1>
                 <div className="form">
                     <div className="form-group">
-                        <span className="form-group-heading">Theme</span>
+                        <span className="form-group-heading">ThemeKind</span>
                         {THEMES.map((theme) =>
                             <label key={theme.value} className="form-check-label">
                                 <input
