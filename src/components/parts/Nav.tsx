@@ -1,18 +1,43 @@
-import React, { Children, PureComponent, cloneElement, isValidElement } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
+import classnames from 'classnames';
 
-import createChainedFunction from 'utils/createChainedFunction';
+const navContext = {
+    nav: PropTypes.shape({
+        onSelect: PropTypes.func.isRequired
+    }).isRequired
+};
+
+interface NavContext {
+    nav: {
+        onSelect: (value: any) => void
+    }
+}
 
 interface NavProps {
     children?: React.ReactNode;
-    value?: any;
     onSelect?: (value: any) => void;
 }
 
-export default class Nav extends PureComponent<NavProps, {}> {
+export class Nav extends PureComponent<NavProps, {}> {
+    static defaultProps = {
+        onSelect: () => ({})
+    };
+
+    static childContextTypes = navContext;
+
     constructor(props: NavProps, context: any) {
         super(props, context);
 
         this.handleSelect = this.handleSelect.bind(this);
+    }
+
+    getChildContext(): NavContext {
+        const { onSelect } = this.props;
+
+        return {
+            nav: { onSelect: onSelect! }
+        };
     }
 
     handleSelect(value: any) {
@@ -23,32 +48,62 @@ export default class Nav extends PureComponent<NavProps, {}> {
         }
     }
 
-    renderChild(child: React.ReactChild, index: number) {
-        if (!isValidElement<any>(child)) {
-            return child;
-        }
-
-        const { value } = this.props;
-
-        return cloneElement(child, {
-            ...child.props,
-            onSelect: createChainedFunction(
-                child.props.onSelect,
-                this.handleSelect
-            ),
-            isSelected: value === child.props.value
-        });
-    }
-
     render() {
         const { children } = this.props;
 
         return (
-            <div>
-                <nav className="nav">
-                    {Children.map(children, this.renderChild.bind(this))}
-                </nav>
-            </div>
+            <nav className="nav">
+                {children}
+            </nav>
+        );
+    }
+}
+
+interface NavItemProps {
+    isSelected?: boolean;
+    onSelect?: (value: any) => void;
+    title?: string;
+    value: any;
+}
+
+export class NavItem extends PureComponent<NavItemProps, {}> {
+    static defaultProps = {
+        isSelected: false
+    };
+
+    static contextTypes = navContext;
+
+    context: NavContext;
+
+    constructor(props: NavItemProps, context: any) {
+        super(props, context);
+
+        this.handleSelect = this.handleSelect.bind(this);
+    }
+
+    handleSelect(event: React.SyntheticEvent<any>) {
+        event.preventDefault();
+
+        const { onSelect, value } = this.props;
+
+        if (onSelect) {
+            onSelect(value);
+        }
+
+        this.context.nav.onSelect(value);
+    }
+
+    render() {
+        const { children, isSelected, title } = this.props;
+
+        return (
+            <a
+                className={classnames('nav-item', { 'is-selected': isSelected })}
+                href="#"
+                title={title}
+                onClick={this.handleSelect}>
+                {children}
+            </a>
         );
     }
 }

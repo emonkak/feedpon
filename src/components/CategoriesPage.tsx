@@ -8,8 +8,6 @@ import Dropdown from 'components/parts/Dropdown';
 import LazyList from 'components/parts/LazyList';
 import MainLayout from 'components/layouts/MainLayout';
 import ModalButton from 'components/parts/ModalButton';
-import Nav from 'components/parts/Nav';
-import NavItem from 'components/parts/NavItem';
 import Navbar from 'components/parts/Navbar';
 import Portal from 'components/parts/Portal';
 import RelativeTime from 'components/parts/RelativeTime';
@@ -20,6 +18,7 @@ import createAscendingComparer from 'utils/createAscendingComparer';
 import debounceEventHandler from 'utils/debounceEventHandler';
 import { Category, State, Subscription } from 'messaging/types';
 import { MenuItem, MenuForm } from 'components/parts/Menu';
+import { Nav, NavItem } from 'components/parts/Nav';
 import { Params } from 'react-router/lib/Router';
 import { addToCategory, removeFromCategory, unsubscribe } from 'messaging/subscriptions/actions';
 import { createCategory, deleteCategory, updateCategory } from 'messaging/categories/actions';
@@ -398,12 +397,13 @@ class CategoriesNav extends PureComponent<CategoriesNavProps, {}> {
         const { categories, label, onSelectCategory } = this.props;
 
         return (
-            <Nav
-                onSelect={onSelectCategory}
-                value={label || UNCATEGORIZED}>
+            <Nav onSelect={onSelectCategory}>
                 <NavItem value={UNCATEGORIZED}>Uncategorized</NavItem>
                 {categories.map((category) =>
-                    <NavItem key={category.categoryId} value={category.label}>
+                    <NavItem
+                        key={category.categoryId}
+                        value={category.label}
+                        isSelected={label === category.label}>
                         {category.label}
                     </NavItem>
                 )}

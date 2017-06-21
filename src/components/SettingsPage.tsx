@@ -4,14 +4,13 @@ import { Params } from 'react-router/lib/Router';
 
 import KeyboardSettings from 'components/KeyboardSettings';
 import MainLayout from 'components/layouts/MainLayout';
-import Nav from 'components/parts/Nav';
-import NavItem from 'components/parts/NavItem';
 import Navbar from 'components/parts/Navbar';
 import SharedSiteinfoSettings from 'components/SharedSiteinfoSettings';
 import StreamSettings from 'components/StreamSettings';
 import TrackingUrlSettings from 'components/TrackingUrlSettings';
 import UISettings from 'components/UISettings';
 import UserSiteinfoSettings from 'components/UserSiteinfoSettings';
+import { Nav, NavItem } from 'components/parts/Nav';
 
 interface SettingsProps {
     onToggleSidebar: () => void;
@@ -81,16 +80,24 @@ export default class SettingsPage extends PureComponent<SettingsProps, {}> {
 
         return (
             <div className="container">
-                <Nav
-                    value={value}
-                    onSelect={this.handleSelectNavItem}>
-                    <NavItem value="general" title="General">
+                <Nav onSelect={this.handleSelectNavItem}>
+                    <NavItem
+                        value="general"
+                        title="General"
+                        isSelected={value === 'general'}>
                         <i className="u-sm-inline-block u-md-none icon icon-20 icon-settings" /><span className="u-sm-none u-md-inline">General</span>
                     </NavItem>
-                    <NavItem value="keyboard" title="Keyboard">
+                    <NavItem
+                        value="keyboard"
+                        title="Keyboard"
+                        isSelected={value === 'keyboard'}
+                        >
                         <i className="u-sm-inline-block u-md-none icon icon-20 icon-keyboard" /><span className="u-sm-none u-md-inline">Keyboard</span>
                     </NavItem>
-                    <NavItem value="siteinfo" title="Siteinfo">
+                    <NavItem
+                        value="siteinfo"
+                        title="Siteinfo"
+                        isSelected={value === 'Siteinfo'}>
                         <i className="u-sm-inline-block u-md-none icon icon-20 icon-database" /><span className="u-sm-none u-md-inline">Siteinfo</span>
                     </NavItem>
                 </Nav>
