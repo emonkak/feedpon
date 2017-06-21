@@ -66,7 +66,7 @@ export function remove<T>(c: CacheMap<T>, key: string): CacheMap<T> {
         return c;
     }
 
-    const keys = c.keys.filter(k => k !== key);
+    const keys = c.keys.filter((k) => k !== key);
     const indices = Object.assign({}, c.indices);
 
     delete indices[key];

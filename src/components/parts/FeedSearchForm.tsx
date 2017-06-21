@@ -62,7 +62,8 @@ function renderCandidate(subscription: Subscription, query: string) {
             value={'streams/' + encodeURIComponent(subscription.streamId)}
             primaryText={subscription.title}
             secondaryText={subscription.unreadCount > 0 ? Number(subscription.unreadCount).toLocaleString() : ''}
-            icon={<SubscriptionIcon title={subscription.title} iconUrl={subscription.iconUrl} />} />
+            icon={<SubscriptionIcon title={subscription.title}
+            iconUrl={subscription.iconUrl} />} />
     );
 }
 

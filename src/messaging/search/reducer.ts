@@ -15,7 +15,7 @@ export default function reducer(search: Search, event: Event) {
                         isLoading: false
                     };
                 })
-            }
+            };
 
         case 'FEED_SEARCHING':
             return {

@@ -518,7 +518,7 @@ function fetchFeedStream(streamId: string, fetchOptions: StreamFetchOptions, fet
                 feedUrl: feed.id.replace(/^feed\//, ''),
                 iconUrl: feed.iconUrl || '',
                 subscribers: feed.subscribers,
-                isLoading: false,
+                isLoading: false
             },
             fetchOptions
         };
@@ -735,7 +735,7 @@ function expandUrls(urls: string[]): AsyncEvent<string[]> {
                 });
                 if (cachedResponse) {
                     return { url, redirectUrl: cachedResponse.url };
-                } 
+                }
 
                 const response = await fetch(request);
                 await cache.put(url, response);
@@ -755,7 +755,7 @@ function expandUrls(urls: string[]): AsyncEvent<string[]> {
             urls: expandedUrls
         });
 
-        return urls.map(url => expandedUrls[url] || url);
+        return urls.map((url) => expandedUrls[url] || url);
     };
 }
 

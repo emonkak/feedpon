@@ -15,7 +15,7 @@ export default function reducer(subscriptions: Subscriptions, event: Event): Sub
                     return {
                         ...subscription,
                         isLoading: false
-                    }
+                    };
                 }),
                 isLoading: false
             };
@@ -144,7 +144,7 @@ export default function reducer(subscriptions: Subscriptions, event: Event): Sub
                         labels
                     };
                 })
-            }
+            };
 
         case 'CATEGORY_UPDATED':
             return {
@@ -162,7 +162,7 @@ export default function reducer(subscriptions: Subscriptions, event: Event): Sub
                         labels: [...labels, event.category.label]
                     };
                 })
-            }
+            };
 
         case 'ENTRIES_MARKED_AS_READ':
             return {

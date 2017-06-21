@@ -1,4 +1,6 @@
-export type BookmarkCounts = { [key: string]: number };
+export interface BookmarkCounts {
+    [key: string]: number;
+}
 
 export interface GetEntryResponse extends Entry {
     bookmarks?: Bookmark[];
