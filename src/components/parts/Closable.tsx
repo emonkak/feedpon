@@ -18,18 +18,6 @@ export default class Closable extends PureComponent<ClosableProps, {}> {
         this.handleMouseCapture = this.handleMouseCapture.bind(this);
     }
 
-    handleMouseCapture(event: MouseEvent) {
-        const { onClose } = this.props;
-
-        if (onClose) {
-            const node = findDOMNode(this);
-
-            if (!node.contains(event.target as Node)) {
-                onClose();
-            }
-        }
-    }
-
     componentDidMount() {
         const { isDisabled } = this.props;
 
@@ -55,6 +43,18 @@ export default class Closable extends PureComponent<ClosableProps, {}> {
 
         if (!isDisabled) {
             this.unregisterDocumentListeners();
+        }
+    }
+
+    handleMouseCapture(event: MouseEvent) {
+        const { onClose } = this.props;
+
+        if (onClose) {
+            const node = findDOMNode(this);
+
+            if (!node.contains(event.target as Node)) {
+                onClose();
+            }
         }
     }
 
