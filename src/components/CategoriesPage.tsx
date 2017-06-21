@@ -396,7 +396,11 @@ class CategoriesNav extends PureComponent<CategoriesNavProps, {}> {
 
         return (
             <Nav onSelect={onSelectCategory}>
-                <NavItem value={UNCATEGORIZED}>Uncategorized</NavItem>
+                <NavItem
+                    value={UNCATEGORIZED}
+                    isSelected={label === UNCATEGORIZED}>
+                    Uncategorized
+                </NavItem>
                 {categories.map((category) =>
                     <NavItem
                         key={category.categoryId}

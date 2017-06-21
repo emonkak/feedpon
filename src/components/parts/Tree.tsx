@@ -43,26 +43,6 @@ export class Tree extends PureComponent<TreeProps, {}> {
     }
 }
 
-interface TreeChildrenProps {
-    children?: React.ReactNode;
-    isExpanded: boolean;
-}
-
-class TreeChildren extends PureComponent<TreeChildrenProps, {}> {
-    shouldComponentUpdate(nextProps: TreeChildrenProps, nextState: {}) {
-        return nextProps.isExpanded! &&
-            this.props.children !== nextProps.children;
-    }
-
-    render() {
-        return (
-            <div className="tree">
-                {this.props.children}
-            </div>
-        );
-    }
-}
-
 interface TreeBranchProps {
     children?: React.ReactNode;
     className?: string;
@@ -141,10 +121,9 @@ export class TreeBranch extends PureComponent<TreeBranchProps, TreeBranchState> 
 
         return (
             <div className={classnames('tree-branch', { 'is-expanded': isExpanded })}>
-                <div
-                    className={classnames('tree-node', className, {
-                        'is-selected': isSelected,
-                    })}>
+                <div className={classnames('tree-node', className, {
+                    'is-selected': isSelected,
+                })}>
                     <a className="tree-node-icon" href="#" onClick={this.handleExpand}>
                         {isExpanded ? <i className="icon icon-16 icon-angle-down" /> : <i className="icon icon-16 icon-angle-right" />}
                     </a>
@@ -220,6 +199,24 @@ export class TreeLeaf extends PureComponent<TreeLeafProps, {}> {
                     </span>
                 </a>
             </div>
+        );
+    }
+}
+
+interface TreeChildrenProps {
+    children?: React.ReactNode;
+    isExpanded: boolean;
+}
+
+class TreeChildren extends PureComponent<TreeChildrenProps, {}> {
+    shouldComponentUpdate(nextProps: TreeChildrenProps, nextState: {}) {
+        return nextProps.isExpanded! &&
+            this.props.children !== nextProps.children;
+    }
+
+    render() {
+        return (
+            <div className="tree">{this.props.children}</div>
         );
     }
 }

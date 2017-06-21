@@ -10,7 +10,7 @@ import { Menu } from 'components/parts/Menu';
 
 interface DropdownProps {
     className?: string;
-    component?: keyof React.ReactDOM;
+    component?: React.ReactType;
     getScrollableParent?: (element: Element) => Element | Window;
     onClose?: () => void;
     onSelect?: (value?: any) => void;

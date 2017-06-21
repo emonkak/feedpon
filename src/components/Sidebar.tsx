@@ -4,10 +4,9 @@ import { History, Location } from 'history';
 import { Link } from 'react-router';
 import { createSelector } from 'reselect';
 
-import ConfirmModal from 'components/parts/ConfirmModal';
 import Dropdown from 'components/parts/Dropdown';
 import FeedSearchForm from 'components/parts/FeedSearchForm';
-import Portal from 'components/parts/Portal';
+import ProfileDropdown from 'components/parts/ProfileDropdown';
 import RelativeTime from 'components/parts/RelativeTime';
 import SubscriptionIcon from 'components/parts/SubscriptionIcon';
 import bindActions from 'utils/flux/bindActions';
@@ -36,9 +35,9 @@ interface SidebarProps {
     onlyUnread: boolean;
     profile: Profile;
     router: History;
+    subscriptionOrder: SubscriptionOrderKind;
     subscriptions: Subscription[];
     subscriptionsIsLoading: boolean;
-    subscriptionsOrder: SubscriptionOrderKind;
     theme: boolean;
     totalUnreadCount: number;
     userIsLoaded: boolean;
@@ -97,7 +96,7 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
             profile,
             subscriptions,
             subscriptionsIsLoading,
-            subscriptionsOrder,
+            subscriptionOrder,
             totalUnreadCount,
             userIsLoading
         } = this.props;
@@ -135,11 +134,11 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
                         onChangeUnreadViewing={onChangeUnreadViewing}
                         onReload={onFetchSubscriptions}
                         onlyUnread={onlyUnread}
-                        order={subscriptionsOrder} />
+                        subscriptionOrder={subscriptionOrder} />
                     <SubscriptionTree
                         categories={categories}
                         groupedSubscriptions={groupedSubscriptions}
-                        location={location}
+                        selectedPath={location.pathname}
                         onSelect={this.handleSelect} />
                 </div>
                 <div className="sidebar-group">
@@ -176,216 +175,183 @@ interface SubscriptionTreeHeaderProps {
     onChangeUnreadViewing: (onlyUnread: boolean) => void;
     onReload: () => void;
     onlyUnread: boolean;
-    order: SubscriptionOrderKind;
+    subscriptionOrder: SubscriptionOrderKind;
 }
 
-class SubscriptionTreeHeader extends PureComponent<SubscriptionTreeHeaderProps, {}> {
-    render() {
-        const {
-            isLoading,
-            lastUpdatedAt,
-            onChangeSubscriptionOrder,
-            onChangeUnreadViewing,
-            onReload,
-            onlyUnread,
-            order
-        } = this.props;
+const SubscriptionTreeHeader: React.SFC<SubscriptionTreeHeaderProps> = ({
+    isLoading,
+    lastUpdatedAt,
+    onChangeSubscriptionOrder,
+    onChangeUnreadViewing,
+    onReload,
+    onlyUnread,
+    subscriptionOrder
+}) => {
+    const lastUpdate = lastUpdatedAt > 0
+        ? <span>Updated <RelativeTime time={lastUpdatedAt} /></span>
+        : 'Not updated yet';
 
-        const lastUpdate = lastUpdatedAt > 0
-            ? <span>Updated <RelativeTime time={lastUpdatedAt} /></span>
-            : 'Not updated yet';
-
-        return (
-            <header className="sidebar-group-header">
-                <button
-                    className="u-flex-shrink-0 button-icon button-icon-32"
-                    disabled={isLoading}
-                    onClick={onReload}>
-                    <i className={classnames('icon', 'icon-16', 'icon-refresh', {
-                        'icon-rotating': isLoading
-                    })} />
-                </button>
-                <strong className="u-flex-grow-1 u-text-small">{lastUpdate}</strong>
-                <Dropdown
-                    pullUp={false}
-                    toggleButton={
-                        <button className="u-flex-shrink-0 button-icon button-icon-32">
-                            <i className="icon icon-16 icon-menu-2" />
-                        </button>
-                    }>
-                    <div className="menu-heading">Order</div>
-                    <MenuItem
-                        icon={order === 'title' ? <i className="icon icon-16 icon-checkmark" /> : null}
-                        onSelect={onChangeSubscriptionOrder}
-                        primaryText="Title"
-                        value="title" />
-                    <MenuItem
-                        icon={order === 'newest' ? <i className="icon icon-16 icon-checkmark" /> : null}
-                        onSelect={onChangeSubscriptionOrder}
-                        primaryText="Newest first"
-                        value="newest" />
-                    <MenuItem
-                        icon={order === 'oldest' ? <i className="icon icon-16 icon-checkmark" /> : null}
-                        onSelect={onChangeSubscriptionOrder}
-                        primaryText="Oldest first"
-                        value="oldest" />
-                    <div className="menu-divider" />
-                    <MenuItem
-                        icon={onlyUnread ? <i className="icon icon-16 icon-checkmark" /> : null}
-                        onSelect={onChangeUnreadViewing}
-                        primaryText="Only unread"
-                        value={!onlyUnread} />
-                    <div className="menu-divider" />
-                    <MenuLink
-                        to="/categories/"
-                        primaryText="Organize subscriptions..." />
-                </Dropdown>
-            </header>
-        );
-    }
+    return (
+        <header className="sidebar-group-header">
+            <button
+                className="u-flex-shrink-0 button-icon button-icon-32"
+                disabled={isLoading}
+                onClick={onReload}>
+                <i className={classnames('icon', 'icon-16', 'icon-refresh', {
+                    'icon-rotating': isLoading
+                })} />
+            </button>
+            <strong className="u-flex-grow-1 u-text-small">{lastUpdate}</strong>
+            <Dropdown
+                pullUp={false}
+                toggleButton={
+                    <button className="u-flex-shrink-0 button-icon button-icon-32">
+                        <i className="icon icon-16 icon-menu-2" />
+                    </button>
+                }>
+                <div className="menu-heading">Order</div>
+                <MenuItem
+                    icon={subscriptionOrder === 'title' ? <i className="icon icon-16 icon-checkmark" /> : null}
+                    onSelect={onChangeSubscriptionOrder}
+                    primaryText="Title"
+                    value="title" />
+                <MenuItem
+                    icon={subscriptionOrder === 'newest' ? <i className="icon icon-16 icon-checkmark" /> : null}
+                    onSelect={onChangeSubscriptionOrder}
+                    primaryText="Newest first"
+                    value="newest" />
+                <MenuItem
+                    icon={subscriptionOrder === 'oldest' ? <i className="icon icon-16 icon-checkmark" /> : null}
+                    onSelect={onChangeSubscriptionOrder}
+                    primaryText="Oldest first"
+                    value="oldest" />
+                <div className="menu-divider" />
+                <MenuItem
+                    icon={onlyUnread ? <i className="icon icon-16 icon-checkmark" /> : null}
+                    onSelect={onChangeUnreadViewing}
+                    primaryText="Only unread"
+                    value={!onlyUnread} />
+                <div className="menu-divider" />
+                <MenuLink
+                    to="/categories/"
+                    primaryText="Organize subscriptions..." />
+            </Dropdown>
+        </header>
+    );
 }
 
 interface SubscriptionTreeProps {
     categories: Category[];
     groupedSubscriptions: { [key: string]: GroupedSubscription };
-    location: Location;
     onSelect: (value: string) => void;
+    selectedPath: string;
 }
 
-class SubscriptionTree extends PureComponent<SubscriptionTreeProps, {}> {
-    renderCategory(category: Category, groupedSubscription: GroupedSubscription) {
-        const { location } = this.props;
-        const path = `/streams/${encodeURIComponent(category.streamId)}`;
+const SubscriptionTree: React.SFC<SubscriptionTreeProps> = ({
+    categories,
+    groupedSubscriptions,
+    onSelect,
+    selectedPath
+}) => {
+    const visibleCategories = categories
+        .filter((category) => !!groupedSubscriptions[category.label])
+        .map((category) => ({ category, groupedSubscription: groupedSubscriptions[category.label]! }));
 
-        return (
-            <TreeBranch
-                key={category.categoryId}
-                value={path}
-                isSelected={location.pathname.startsWith(path)}
-                className={classnames({ 'is-important': groupedSubscription.unreadCount > 0 })}
-                primaryText={category.label}
-                secondaryText={groupedSubscription.unreadCount > 0 ? Number(groupedSubscription.unreadCount).toLocaleString() : ''}>
-                {groupedSubscription.items.map(this.renderSubscription, this)}
-            </TreeBranch>
-        );
-    }
+    const uncategorizedSubscriptions = groupedSubscriptions[UNCATEGORIZED]
+        ? groupedSubscriptions[UNCATEGORIZED].items
+        : [];
 
-    renderSubscription(subscription: Subscription) {
-        const { location } = this.props;
-        const path = `/streams/${encodeURIComponent(subscription.streamId)}`;
+    return (
+        <Tree onSelect={onSelect}>
+            {visibleCategories.map(({ category, groupedSubscription }) =>
+                <CategoryBranch
+                    key={category.categoryId}
+                    selectedPath={selectedPath}
+                    category={category}
+                    subscriptions={groupedSubscription.items}
+                    unreadCount={groupedSubscription.unreadCount} />
+            )}
+            {uncategorizedSubscriptions.map((subscription) => {
+                const path = `/streams/${encodeURIComponent(subscription.streamId)}`;
 
-        return (
-            <TreeLeaf
-                key={subscription.subscriptionId}
-                value={path}
-                isSelected={location.pathname.startsWith(path)}
-                className={classnames({ 'is-important': subscription.unreadCount > 0 })}
-                primaryText={subscription.title}
-                secondaryText={subscription.unreadCount > 0 ? Number(subscription.unreadCount).toLocaleString() : ''}
-                icon={<SubscriptionIcon title={subscription.title} iconUrl={subscription.iconUrl} />} />
-        );
-    }
-
-    render() {
-        const { categories, groupedSubscriptions, onSelect } = this.props;
-
-        const visibleCategories = categories
-            .filter((category) => !!groupedSubscriptions[category.label])
-            .map((category) => ({ category, groupedSubscription: groupedSubscriptions[category.label]! }));
-
-        const uncategorizedSubscriptions = groupedSubscriptions[UNCATEGORIZED]
-            ? groupedSubscriptions[UNCATEGORIZED].items
-            : [];
-
-        return (
-            <Tree onSelect={onSelect}>
-                {visibleCategories.map(({ category, groupedSubscription }) => this.renderCategory(category, groupedSubscription))}
-                {uncategorizedSubscriptions.map(this.renderSubscription, this)}
-            </Tree>
-        );
-    }
+                return (
+                    <SubscriptionLeaf
+                        key={subscription.subscriptionId}
+                        iconUrl={subscription.iconUrl}
+                        isSelected={selectedPath.startsWith(path)}
+                        path={path}
+                        title={subscription.title}
+                        unreadCount={subscription.unreadCount} />
+                );
+            })}
+        </Tree>
+    );
 }
 
-interface ProfileDropdownProps {
-    isLoading: boolean;
-    onLogout: () => void;
-    onRefresh: () => void;
-    profile: Profile;
+interface CategoryBranchProps {
+    category: Category;
+    selectedPath: string;
+    subscriptions: Subscription[];
+    unreadCount: number;
 }
 
-interface ProfileDropdownState {
-    logoutModalIsOpened: boolean;
+const CategoryBranch: React.SFC<CategoryBranchProps> = ({
+    category,
+    unreadCount,
+    selectedPath,
+    subscriptions
+}) => {
+    const path = `/streams/${encodeURIComponent(category.streamId)}`;
+
+    return (
+        <TreeBranch
+            value={path}
+            isSelected={selectedPath.startsWith(path)}
+            className={classnames({ 'is-important': unreadCount > 0 })}
+            primaryText={category.label}
+            secondaryText={unreadCount > 0 ? Number(unreadCount).toLocaleString() : ''}>
+            {subscriptions.map((subscription) => {
+                const path =`/streams/${encodeURIComponent(subscription.streamId)}`;
+
+                return (
+                    <SubscriptionLeaf
+                        key={subscription.subscriptionId}
+                        iconUrl={subscription.iconUrl}
+                        isSelected={selectedPath.startsWith(path)}
+                        path={path}
+                        title={subscription.title}
+                        unreadCount={subscription.unreadCount} />
+                );
+            })}
+        </TreeBranch>
+    );
+};
+
+interface SubscriptionLeafProps {
+    iconUrl: string;
+    isSelected: boolean;
+    path: string;
+    title: string;
+    unreadCount: number;
 }
 
-class ProfileDropdown extends PureComponent<ProfileDropdownProps, ProfileDropdownState> {
-    constructor(props: ProfileDropdownProps, context: any) {
-        super(props, context);
-
-        this.state = {
-            logoutModalIsOpened: false
-        };
-
-        this.handleCloseLogoutModal = this.handleCloseLogoutModal.bind(this);
-        this.handleOpenLogoutModal = this.handleOpenLogoutModal.bind(this);
-    }
-
-    handleCloseLogoutModal() {
-        this.setState({
-            logoutModalIsOpened: false
-        });
-    }
-
-    handleOpenLogoutModal() {
-        this.setState({
-            logoutModalIsOpened: true
-        });
-    }
-
-    render() {
-        const { isLoading, onLogout, onRefresh, profile } = this.props;
-        const { logoutModalIsOpened } = this.state;
-
-        const icon = profile.picture
-            ? <img className="u-flex-shrink-0 u-rounded-circle" height="40" width="40" src={profile.picture} />
-            : <span className="u-flex-shrink-0"><i className="icon icon-40 icon-contacts" /></span>;
-
-        return (
-            <Portal overlay={
-                <ConfirmModal
-                    confirmButtonClassName="button button-negative"
-                    confirmButtonLabel="Logout"
-                    isOpened={logoutModalIsOpened}
-                    message="Are you sure you want to logout in current user?"
-                    onClose={this.handleCloseLogoutModal}
-                    onConfirm={onLogout}
-                    title={`Logout "${profile.userId}"`} />
-            }>
-                <Dropdown
-                    className="dropdown-block"
-                    toggleButton={
-                        <button
-                            className="button button-outline-default button-block"
-                            disabled={isLoading}>
-                            <div className="u-flex u-flex-align-items-center dropdown-arrow">
-                                {icon}
-                                <span className="u-flex-grow-1 u-margin-left-1 u-text-left">
-                                    <div><strong>{profile.userId}</strong></div>
-                                    <div className="u-text-small">via <strong>{profile.source}</strong></div>
-                                </span>
-                            </div>
-                        </button>
-                    }>
-                    <MenuItem
-                        onSelect={onRefresh}
-                        primaryText="Refresh" />
-                    <MenuItem
-                        onSelect={this.handleOpenLogoutModal}
-                        primaryText="Logout..." />
-                </Dropdown>
-            </Portal>
-        );
-    }
-}
+const SubscriptionLeaf: React.SFC<SubscriptionLeafProps> = ({
+    iconUrl,
+    isSelected,
+    path,
+    title,
+    unreadCount,
+}) => {
+    return (
+        <TreeLeaf
+            value={path}
+            isSelected={isSelected}
+            className={classnames({ 'is-important': unreadCount > 0 })}
+            primaryText={title}
+            secondaryText={unreadCount > 0 ? Number(unreadCount).toLocaleString() : ''}
+            icon={<SubscriptionIcon title={title} iconUrl={iconUrl} />} />
+    );
+};
 
 const categoriesComparer = createAscendingComparer<Category>('categoryId');
 
@@ -468,7 +434,7 @@ export default connect(() => {
             profile: state.user.profile,
             subscriptions: subscriptionsSelector(state),
             subscriptionsIsLoading: state.subscriptions.isLoading,
-            subscriptionsOrder: state.subscriptions.order,
+            subscriptionOrder: state.subscriptions.order,
             totalUnreadCount: totalUnreadCountSelector(state),
             userIsLoaded: state.user.isLoaded,
             userIsLoading: state.user.isLoading

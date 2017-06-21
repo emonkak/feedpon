@@ -3,7 +3,8 @@ const path = require('path');
 const config = {
     entry: {
         'background': './src/background.ts',
-        'index': './src/index.tsx'
+        'index': './src/index.tsx',
+        'perf': 'react-addons-perf'
     },
     output: {
         path: path.join(__dirname, 'public', 'js'),
@@ -22,6 +23,15 @@ const config = {
                 test: /\.tsx?$/,
                 use: [
                     'ts-loader'
+                ]
+            },
+            {
+                test: require.resolve('react-addons-perf'),
+                use: [
+                    {
+                        loader: 'expose-loader',
+                        options: 'Perf'
+                    }
                 ]
             }
         ]

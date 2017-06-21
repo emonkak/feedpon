@@ -5,15 +5,10 @@ import { Notification } from 'messaging/types';
 
 interface NotificationProps {
     notification: Notification;
-    isReversed?: boolean;
     onClose: (id: string | number) => void;
 }
 
 export default class NotificationComponent extends PureComponent<NotificationProps, {}> {
-    static defaultProps = {
-        isReversed: false
-    };
-
     private timer: number | null = null;
 
     constructor(props: NotificationProps, context: any) {
@@ -49,12 +44,11 @@ export default class NotificationComponent extends PureComponent<NotificationPro
     }
 
     render() {
-        const { notification, isReversed } = this.props;
+        const { notification } = this.props;
 
         const notificationClassName = classnames('notification', {
             'notification-negative': notification.kind === 'negative',
-            'notification-positive': notification.kind === 'positive',
-            'notification-reversed': isReversed
+            'notification-positive': notification.kind === 'positive'
         });
 
         const iconClassName = classnames('icon', 'icon-24', {
