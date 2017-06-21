@@ -44,6 +44,9 @@ interface CategoriesPageState {
 
 const UNCATEGORIZED = Symbol();
 
+const categoriesComparer = createAscendingComparer<Category>('categoryId');
+const subscirptionComparer = createAscendingComparer<Subscription>('subscriptionId');
+
 class CategoriesPage extends PureComponent<CategoriesPageProps, CategoriesPageState> {
     private searchInput: HTMLInputElement;
 
@@ -52,7 +55,6 @@ class CategoriesPage extends PureComponent<CategoriesPageProps, CategoriesPageSt
 
         this.handleSelectCategory = this.handleSelectCategory.bind(this);
         this.handleChangeSearchQuery = debounceEventHandler(this.handleChangeSearchQuery.bind(this), 100);
-        this.renderSubscriptionItem = this.renderSubscriptionItem.bind(this);
 
         this.state = {
             query: ''
@@ -88,21 +90,6 @@ class CategoriesPage extends PureComponent<CategoriesPageProps, CategoriesPageSt
         this.setState({
             query: this.searchInput.value
         });
-    }
-
-    renderSubscriptionItem(subscription: Subscription) {
-        const { categories, onAddToCategory, onCreateCategory, onRemoveFromCategory, onUnsubscribe } = this.props;
-
-        return (
-            <SubscriptionItem
-                key={subscription.subscriptionId}
-                categories={categories}
-                onAddToCategory={onAddToCategory}
-                onCreateCategory={onCreateCategory}
-                onRemoveFromCategory={onRemoveFromCategory}
-                onUnsubscribe={onUnsubscribe}
-                subscription={subscription} />
-        );
     }
 
     renderNavbar() {
@@ -150,7 +137,7 @@ class CategoriesPage extends PureComponent<CategoriesPageProps, CategoriesPageSt
                     assumedItemHeight={60}
                     getKey={getSubscriptionKey}
                     items={subscriptions}
-                    renderItem={this.renderSubscriptionItem}
+                    renderItem={renderSubscriptionItem}
                     renderList={renderSubscriptionList} />
             </div>
         );
@@ -165,31 +152,6 @@ class CategoriesPage extends PureComponent<CategoriesPageProps, CategoriesPageSt
     }
 }
 
-interface CategoriesNavProps {
-    categories: Category[];
-    label: string | symbol;
-    onSelectCategory: (label: string) => void;
-}
-
-class CategoriesNav extends PureComponent<CategoriesNavProps, {}> {
-    render() {
-        const { categories, label, onSelectCategory } = this.props;
-
-        return (
-            <Nav
-                onSelect={onSelectCategory}
-                value={label || UNCATEGORIZED}>
-                <NavItem value={UNCATEGORIZED}>Uncategorized</NavItem>
-                {categories.map((category) =>
-                    <NavItem key={category.categoryId} value={category.label}>
-                        {category.label}
-                    </NavItem>
-                )}
-            </Nav>
-        );
-    }
-}
-
 interface SubscriptionItemProps {
     categories: Category[];
     onAddToCategory: typeof addToCategory;
@@ -199,46 +161,44 @@ interface SubscriptionItemProps {
     subscription: Subscription;
 }
 
-class SubscriptionItem extends PureComponent<SubscriptionItemProps, {}> {
-    render() {
-        const {
-            categories,
-            onAddToCategory,
-            onCreateCategory,
-            onRemoveFromCategory,
-            onUnsubscribe,
-            subscription
-        } = this.props;
+const SubscriptionItem: React.SFC<SubscriptionItemProps> = (props) => {
+    const {
+        categories,
+        onAddToCategory,
+        onCreateCategory,
+        onRemoveFromCategory,
+        onUnsubscribe,
+        subscription
+    } = props;
 
-        const title = subscription.url
-            ? <a className="link-soft" target="_blank" href={subscription.url}>{subscription.title}</a>
-            : <span>{subscription.title}</span>;
+    const title = subscription.url
+        ? <a className="link-soft" target="_blank" href={subscription.url}>{subscription.title}</a>
+        : <span>{subscription.title}</span>;
 
-        const labels = subscription.labels
-            .map((label) => <span key={label} className="badge badge-small badge-default">{label}</span>);
+    const labels = subscription.labels
+        .map((label) => <span key={label} className="badge badge-small badge-default">{label}</span>);
 
-        return (
-            <li className="list-group-item">
-                <div className="u-flex u-flex-align-items-center">
-                    <SubscriptionIcon className="u-flex-shrink-0 u-margin-right-2" title={subscription.title} iconUrl={subscription.iconUrl} />
-                    <div className="u-flex-grow-1 u-margin-right-2">
-                        <div>{title}{labels}</div>
-                        <div className="u-text-small u-text-wrap"><a target="_blank" href={subscription.feedUrl}>{subscription.feedUrl}</a></div>
-                    </div>
-                    <div className="u-margin-right-2 u-text-right u-sm-none">
-                        <RelativeTime className="u-text-small u-text-muted" time={subscription.updatedAt} />
-                    </div>
-                    <SubscriptionDropdown
-                        categories={categories}
-                        onAddToCategory={onAddToCategory}
-                        onCreateCategory={onCreateCategory}
-                        onRemoveFromCategory={onRemoveFromCategory}
-                        onUnsubscribe={onUnsubscribe}
-                        subscription={subscription} />
+    return (
+        <li className="list-group-item">
+            <div className="u-flex u-flex-align-items-center">
+                <SubscriptionIcon className="u-flex-shrink-0 u-margin-right-2" title={subscription.title} iconUrl={subscription.iconUrl} />
+                <div className="u-flex-grow-1 u-margin-right-2">
+                    <div>{title}{labels}</div>
+                    <div className="u-text-small u-text-wrap"><a target="_blank" href={subscription.feedUrl}>{subscription.feedUrl}</a></div>
                 </div>
-            </li>
-        );
-    }
+                <div className="u-margin-right-2 u-text-right u-sm-none">
+                    <RelativeTime className="u-text-small u-text-muted" time={subscription.updatedAt} />
+                </div>
+                <SubscriptionDropdown
+                    categories={categories}
+                    onAddToCategory={onAddToCategory}
+                    onCreateCategory={onCreateCategory}
+                    onRemoveFromCategory={onRemoveFromCategory}
+                    onUnsubscribe={onUnsubscribe}
+                    subscription={subscription} />
+            </div>
+        </li>
+    );
 }
 
 interface SubscriptionDropdownProps {
@@ -381,6 +341,69 @@ class SubscriptionDropdown extends PureComponent<SubscriptionDropdownProps, Subs
     }
 }
 
+const ConnectedSubscriptionItem = connect(() => {
+    const categoriesSelector = createSelector(
+        (state: State) => state.categories.items,
+        (categories) => Object.values(categories).sort(categoriesComparer)
+    );
+
+    return {
+        mapStateToProps: (state: State) => ({
+            categories: categoriesSelector(state)
+        }),
+        mapDispatchToProps: bindActions({
+            onAddToCategory: addToCategory,
+            onRemoveFromCategory: removeFromCategory,
+            onUnsubscribe: unsubscribe
+        })
+    }
+})(SubscriptionItem);
+
+function getSubscriptionKey(subscription: Subscription): string | number {
+    return subscription.subscriptionId;
+}
+
+function renderSubscriptionList(children: React.ReactNode, aboveSpace: number, belowSpace: number): React.ReactElement<any> {
+    return (
+        <ul className="list-group" style={{ paddingTop: aboveSpace, paddingBottom: belowSpace }}>
+            {children}
+        </ul>
+    );
+}
+
+function renderSubscriptionItem(subscription: Subscription) {
+    return (
+        <ConnectedSubscriptionItem
+            key={subscription.subscriptionId}
+            subscription={subscription} />
+    );
+}
+
+interface CategoriesNavProps {
+    categories: Category[];
+    label: string | symbol;
+    onSelectCategory: (label: string) => void;
+}
+
+class CategoriesNav extends PureComponent<CategoriesNavProps, {}> {
+    render() {
+        const { categories, label, onSelectCategory } = this.props;
+
+        return (
+            <Nav
+                onSelect={onSelectCategory}
+                value={label || UNCATEGORIZED}>
+                <NavItem value={UNCATEGORIZED}>Uncategorized</NavItem>
+                {categories.map((category) =>
+                    <NavItem key={category.categoryId} value={category.label}>
+                        {category.label}
+                    </NavItem>
+                )}
+            </Nav>
+        );
+    }
+}
+
 interface EditCategoryFormProps {
     category: Category;
     onDeleteCategory: typeof deleteCategory;
@@ -486,21 +509,6 @@ class EditCategoryForm extends PureComponent<EditCategoryFormProps, EditCategory
     }
 }
 
-function getSubscriptionKey(subscription: Subscription): string | number {
-    return subscription.subscriptionId;
-}
-
-function renderSubscriptionList(children: React.ReactNode, aboveSpace: number, belowSpace: number): React.ReactElement<any> {
-    return (
-        <ul className="list-group" style={{ paddingTop: aboveSpace, paddingBottom: belowSpace }}>
-            {children}
-        </ul>
-    );
-}
-
-const categoriesComparer = createAscendingComparer<Category>('categoryId');
-const subscirptionComparer = createAscendingComparer<Subscription>('subscriptionId');
-
 export default connect(() => {
     const categoriesSelector = createSelector(
         (state: State) => state.categories.items,
@@ -532,12 +540,9 @@ export default connect(() => {
             subscriptions: visibleSubscriptionsSelector(state, props)
         }),
         mapDispatchToProps: bindActions({
-            onAddToCategory: addToCategory,
             onUpdateCategory: updateCategory,
             onCreateCategory: createCategory,
             onDeleteCategory: deleteCategory,
-            onRemoveFromCategory: removeFromCategory,
-            onUnsubscribe: unsubscribe
         })
     }
 })(CategoriesPage);

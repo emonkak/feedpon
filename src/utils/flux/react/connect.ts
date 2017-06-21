@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { ComponentClass, PureComponent, createElement } from 'react';
+import { ComponentType, PureComponent, createElement } from 'react';
 
 import { Store } from '../types';
 
@@ -11,8 +11,8 @@ interface Connection<TStateProps, TDispatchProps, TOwnProps> {
 
 export default function connect<TStateProps, TDispatchProps, TOwnProps>(
     connectionOrConnector: Connection<TStateProps, TDispatchProps, TOwnProps> | (() => Connection<TStateProps, TDispatchProps, TOwnProps>)
-): <TProps extends TStateProps & TDispatchProps & TOwnProps>(WrappedComponent: ComponentClass<TProps>) => ComponentClass<Partial<TProps>> {
-    return <TProps extends TStateProps & TDispatchProps & TOwnProps>(WrappedComponent: ComponentClass<TProps>): ComponentClass<Partial<TProps>> => {
+): <TProps extends TStateProps & TDispatchProps & TOwnProps>(WrappedComponent: ComponentType<TProps>) => ComponentType<Partial<TProps>> {
+    return <TProps extends TStateProps & TDispatchProps & TOwnProps>(WrappedComponent: ComponentType<TProps>): ComponentType<Partial<TProps>> => {
         return class StoreSubscriber extends PureComponent<Partial<TProps>, TStateProps> {
             static contextTypes = {
                 store: PropTypes.shape({
@@ -89,7 +89,7 @@ export default function connect<TStateProps, TDispatchProps, TOwnProps>(
                     this.props
                 );
 
-                return createElement(WrappedComponent, props, children);
+                return createElement(WrappedComponent as any, props, children);
             }
         };
     };
