@@ -6,9 +6,9 @@ interface CommentProps {
     comment: Comment;
 }
 
-const CommentComponent: React.SFC<CommentProps> = (props) => {
-    const { comment } = props;
-
+const CommentComponent: React.SFC<CommentProps> = ({
+    comment
+}) => {
     return (
         <div className="comment">
             <span className="comment-user">{comment.user}</span>

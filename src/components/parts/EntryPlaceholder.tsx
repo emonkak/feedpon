@@ -5,9 +5,7 @@ interface EntryPlaceholderProps {
     isExpanded: boolean;
 }
 
-const EntryPlaceholder: React.SFC<EntryPlaceholderProps> = (props) => {
-    const { isExpanded } = props;
-
+const EntryPlaceholder: React.SFC<EntryPlaceholderProps> = ({ isExpanded }) => {
     return (
         <article className={classnames('entry', {
             'is-expanded': isExpanded

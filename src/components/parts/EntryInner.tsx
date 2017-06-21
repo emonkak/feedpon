@@ -22,20 +22,18 @@ interface EntryInnerProps {
     sameOrigin: boolean;
 }
 
-const EntryInner: React.SFC<EntryInnerProps> = (props) => {
-    const { 
-        entry,
-        onClose,
-        onExpand,
-        onFetchNextFullContent,
-        onSwitchCommentPopover,
-        onSwitchSharePopover,
-        onToggleFullContent,
-        onTogglePin,
-        popover,
-        sameOrigin
-    } = props;
-
+const EntryInner: React.SFC<EntryInnerProps> = ({
+    entry,
+    onClose,
+    onExpand,
+    onFetchNextFullContent,
+    onSwitchCommentPopover,
+    onSwitchSharePopover,
+    onToggleFullContent,
+    onTogglePin,
+    popover,
+    sameOrigin
+}) => {
     const readMaker = entry.markedAsRead
         ? <span className="badge badge-small badge-default">READ</span>
         : null;

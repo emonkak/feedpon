@@ -7,9 +7,11 @@ interface SubscriptionIconProps {
     className?: string;
 }
 
-const SubscriptionIcon: React.SFC<SubscriptionIconProps> = (props) => {
-    const { className, iconUrl, title } = props;
-
+const SubscriptionIcon: React.SFC<SubscriptionIconProps> = ({
+    className,
+    iconUrl,
+    title 
+}) => {
     if (iconUrl) {
         return (
             <img

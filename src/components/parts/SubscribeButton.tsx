@@ -8,9 +8,12 @@ interface SubscribeButtonProps {
     onKeyDown?: React.KeyboardEventHandler<any>;
 }
 
-const SubscribeButton: React.SFC<SubscribeButtonProps> = (props) => {
-    const { isSubscribed, isLoading, onClick, onKeyDown } = props;
-
+const SubscribeButton: React.SFC<SubscribeButtonProps> = ({
+    isSubscribed,
+    isLoading,
+    onClick,
+    onKeyDown 
+}) => {
     if (isSubscribed) {
         return (
             <button 

@@ -11,9 +11,13 @@ interface EntryActionListProps {
     url: string;
 }
 
-const EntryActionList: React.SFC<EntryActionListProps> = (props) => {
-    const { commentsIsLoading, onSwitchCommentPopover, onSwitchSharePopover, popover, url } = props;
-
+const EntryActionList: React.SFC<EntryActionListProps> = ({
+    commentsIsLoading,
+    onSwitchCommentPopover,
+    onSwitchSharePopover,
+    popover,
+    url 
+}) => {
     return (
         <div className="button-toolbar u-text-center">
             <button

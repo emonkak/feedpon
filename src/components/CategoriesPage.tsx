@@ -164,16 +164,14 @@ interface SubscriptionItemProps {
     subscription: Subscription;
 }
 
-const SubscriptionItem: React.SFC<SubscriptionItemProps> = (props) => {
-    const {
-        categories,
-        onAddToCategory,
-        onCreateCategory,
-        onRemoveFromCategory,
-        onUnsubscribe,
-        subscription
-    } = props;
-
+const SubscriptionItem: React.SFC<SubscriptionItemProps> = ({
+    categories,
+    onAddToCategory,
+    onCreateCategory,
+    onRemoveFromCategory,
+    onUnsubscribe,
+    subscription
+}) => {
     const title = subscription.url
         ? <a className="link-soft" target="_blank" href={subscription.url}>{subscription.title}</a>
         : <span>{subscription.title}</span>;

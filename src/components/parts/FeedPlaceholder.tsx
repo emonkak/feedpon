@@ -1,6 +1,6 @@
 import React from 'react';
 
-const FeedPlaceholder: React.SFC<{}> = (props) => {
+const FeedPlaceholder: React.SFC<{}> = () => {
     return (
         <li className="list-group-item">
             <div className="link-strong">

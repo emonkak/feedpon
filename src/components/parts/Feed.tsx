@@ -15,18 +15,16 @@ interface FeedProps {
     subscription: Subscription;
 }
 
-const FeedComponent: React.SFC<FeedProps> = (props) => {
-    const {
-        categories,
-        feed,
-        onAddToCategory,
-        onCreateCategory,
-        onRemoveFromCategory,
-        onSubscribe,
-        onUnsubscribe,
-        subscription
-    } = props;
-
+const FeedComponent: React.SFC<FeedProps> = ({
+    categories,
+    feed,
+    onAddToCategory,
+    onCreateCategory,
+    onRemoveFromCategory,
+    onSubscribe,
+    onUnsubscribe,
+    subscription
+}) => {
     return (
         <li className="list-group-item">
             <div className="u-flex u-flex-justify-content-between u-flex-align-items-center">

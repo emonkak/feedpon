@@ -10,9 +10,12 @@ interface EntryPopoverProps {
     url: string;
 }
 
-const EntryPopover: React.SFC<EntryPopoverProps> = (props) => {
-    const { comments, popover, title, url } = props;
-
+const EntryPopover: React.SFC<EntryPopoverProps> = ({
+    comments,
+    popover,
+    title,
+    url 
+}) => {
     switch (popover) {
         case 'comment': 
             return renderCommentPopover(comments);

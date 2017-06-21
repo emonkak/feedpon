@@ -8,9 +8,10 @@ interface CommentListProps {
     isLoading: boolean;
 }
 
-const CommentList: React.SFC<CommentListProps> = (props) => {
-    const { comments, isLoading } = props;
-
+const CommentList: React.SFC<CommentListProps> = ({
+    comments,
+    isLoading 
+}) => {
     if (isLoading) {
         return (
             <div className="comment-list">

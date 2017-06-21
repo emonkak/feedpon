@@ -12,9 +12,16 @@ interface EntryNavProps {
     url: string;
 }
 
-const EntryNav: React.SFC<EntryNavProps> = (props) => {
-    const { fullContentsIsLoading, fullContentsIsShown, isPinned, isPinning, onClose, onToggleFullContent, onTogglePin, url } = props;
-
+const EntryNav: React.SFC<EntryNavProps> = ({
+    fullContentsIsLoading,
+    fullContentsIsShown,
+    isPinned,
+    isPinning,
+    onClose,
+    onToggleFullContent,
+    onTogglePin,
+    url 
+}) => {
     return (
         <nav className="entry-nav">
             <div className="button-toolbar">

@@ -9,9 +9,11 @@ interface FullContentsProps {
     onFetchNext: React.MouseEventHandler<any>;
 }
 
-const FullContents: React.SFC<FullContentsProps> = (props) => {
-    const { isLoading, items, onFetchNext } = props;
-
+const FullContents: React.SFC<FullContentsProps> = ({
+    isLoading,
+    items,
+    onFetchNext 
+}) => {
     if (items.length === 0) {
         return (
             <div className="entry-content">
