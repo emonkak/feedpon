@@ -34,7 +34,7 @@ interface SearchPageProps {
 }
 
 class SearchPage extends PureComponent<SearchPageProps, {}> {
-    private searchInput: HTMLInputElement;
+    private searchInput: HTMLInputElement | null;
 
     constructor(props: SearchPageProps, context: {}) {
         super(props, context);
@@ -51,6 +51,10 @@ class SearchPage extends PureComponent<SearchPageProps, {}> {
     }
 
     componentWillReceiveProps(nextProps: SearchPageProps) {
+        if (!this.searchInput) {
+            return;
+        }
+
         const { onSearchFeeds, query } = nextProps;
 
         if (nextProps.params['query'] !== query) {
@@ -65,6 +69,10 @@ class SearchPage extends PureComponent<SearchPageProps, {}> {
     }
 
     handleSearch(event: React.SyntheticEvent<any>) {
+        if (!this.searchInput) {
+            return;
+        }
+
         event.preventDefault();
 
         if (this.searchInput.value) {

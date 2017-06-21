@@ -461,6 +461,20 @@ export function changeStreamCacheOptions(capacity: number, lifetime: number): As
     };
 }
 
+export function showFullContents(entryId: string): Event {
+    return {
+        type: 'FULL_CONTENTS_SHOWN',
+        entryId
+    };
+}
+
+export function hideFullContents(entryId: string): Event {
+    return {
+        type: 'FULL_CONTENTS_HIDDEN',
+        entryId
+    };
+}
+
 export function changeStreamHistoryOptions(numStreamHistories: number): AsyncEvent {
     return async ({ dispatch }) => {
         dispatch({
@@ -640,6 +654,7 @@ function convertEntry(entry: feedly.Entry): Entry {
         fullContents: {
             isLoaded: false,
             isLoading: false,
+            isShown: false,
             items: []
         },
         comments: {

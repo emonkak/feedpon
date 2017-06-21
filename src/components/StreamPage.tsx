@@ -19,7 +19,7 @@ import createAscendingComparer from 'utils/createAscendingComparer';
 import { Category, Entry, EntryOrder, Feed, State, Stream, StreamFetchOptions, StreamView, Subscription } from 'messaging/types';
 import { MenuItem } from 'components/parts/Menu';
 import { addToCategory, removeFromCategory, subscribe, unsubscribe } from 'messaging/subscriptions/actions';
-import { changeUnreadKeeping, fetchComments, fetchFullContent, fetchMoreEntries, fetchStream, markAsRead, markCategoryAsRead, markFeedAsRead, pinEntry, unpinEntry } from 'messaging/streams/actions';
+import { changeUnreadKeeping, fetchComments, fetchFullContent, fetchMoreEntries, fetchStream, hideFullContents, markAsRead, markCategoryAsRead, markFeedAsRead, pinEntry, showFullContents, unpinEntry } from 'messaging/streams/actions';
 import { createCategory } from 'messaging/categories/actions';
 
 interface StreamPageProps {
@@ -39,11 +39,13 @@ interface StreamPageProps {
     onFetchFullContent: typeof fetchFullContent;
     onFetchMoreEntries: typeof fetchMoreEntries;
     onFetchStream: typeof fetchStream;
+    onHideFullContents: typeof hideFullContents;
     onMarkAsRead: typeof markAsRead;
     onMarkCategoryAsRead: typeof markCategoryAsRead;
     onMarkFeedAsRead: typeof markFeedAsRead;
     onPinEntry: typeof pinEntry;
     onRemoveFromCategory: typeof removeFromCategory;
+    onShowFullContents: typeof showFullContents;
     onSubscribe: typeof subscribe;
     onToggleSidebar: () => void,
     onUnpinEntry: typeof unpinEntry;
@@ -311,7 +313,9 @@ class StreamPage extends PureComponent<StreamPageProps, StreamPageState> {
             isScrolling,
             onFetchComments,
             onFetchFullContent,
+            onHideFullContents,
             onPinEntry,
+            onShowFullContents,
             onUnpinEntry,
             scrollTo,
             stream,
@@ -325,8 +329,10 @@ class StreamPage extends PureComponent<StreamPageProps, StreamPageState> {
                 isScrolling={isScrolling}
                 onFetchComments={onFetchComments}
                 onFetchFullContent={onFetchFullContent}
+                onHideFullContents={onHideFullContents}
                 onPin={onPinEntry}
                 onRead={this.handleReadEntry}
+                onShowFullContents={onShowFullContents}
                 onUnpin={onUnpinEntry}
                 sameOrigin={!!stream.feed}
                 scrollTo={scrollTo}
@@ -799,11 +805,13 @@ export default connect(() => {
             onFetchFullContent: fetchFullContent,
             onFetchMoreEntries: fetchMoreEntries,
             onFetchStream: fetchStream,
+            onHideFullContents: hideFullContents,
             onMarkAsRead: markAsRead,
             onMarkCategoryAsRead: markCategoryAsRead,
             onMarkFeedAsRead: markFeedAsRead,
             onPinEntry: pinEntry,
             onRemoveFromCategory: removeFromCategory,
+            onShowFullContents: showFullContents,
             onSubscribe: subscribe,
             onUnpinEntry: unpinEntry,
             onUnsubscribe: unsubscribe

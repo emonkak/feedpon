@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React from 'react';
 import classnames from 'classnames';
 
 interface SubscriptionIconProps {
@@ -7,23 +7,23 @@ interface SubscriptionIconProps {
     className?: string;
 }
 
-export default class SubscriptionIcon extends PureComponent<SubscriptionIconProps, {}> {
-    render() {
-        const { className, iconUrl, title } = this.props;
+const SubscriptionIcon: React.SFC<SubscriptionIconProps> = (props) => {
+    const { className, iconUrl, title } = props;
 
-        if (iconUrl) {
-            return (
-                <img
-                    className={className}
-                    alt={title}
-                    src={iconUrl}
-                    width={16}
-                    height={16} />
-            );
-        } else {
-            return (
-                <i className={classnames('icon icon-16 icon-file', className)} />
-            );
-        }
+    if (iconUrl) {
+        return (
+            <img
+                className={className}
+                alt={title}
+                src={iconUrl}
+                width={16}
+                height={16} />
+        );
+    } else {
+        return (
+            <i className={classnames('icon icon-16 icon-file', className)} />
+        );
     }
 }
+
+export default SubscriptionIcon;

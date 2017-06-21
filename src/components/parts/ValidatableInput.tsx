@@ -18,7 +18,7 @@ export default class ValidatableInput extends PureComponent<ValidatableInputProp
         validations: []
     };
 
-    private inputElement: HTMLInputElement;
+    private inputElement: HTMLInputElement | null;
 
     constructor(props: ValidatableInputProps, context: any) {
         super(props, context);
@@ -39,6 +39,10 @@ export default class ValidatableInput extends PureComponent<ValidatableInputProp
     }
 
     update() {
+        if (!this.inputElement) {
+            return;
+        }
+
         const input = this.inputElement;
 
         if (input.value) {

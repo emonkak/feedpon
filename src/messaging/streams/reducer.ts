@@ -310,7 +310,48 @@ export default function reducer(streams: Streams, event: Event): Streams {
                             fullContents: {
                                 isLoaded: true,
                                 isLoading: false,
+                                isShown: true,
                                 items: entry.fullContents.items.concat([event.fullContent])
+                            }
+                        };
+                    })
+                }))
+            };
+
+        case 'FULL_CONTENTS_SHOWN':
+            return {
+                ...streams,
+                items: CacheMap.mapValues(streams.items, (stream) => ({
+                    ...stream,
+                    entries: stream.entries.map((entry) => {
+                        if (entry.entryId !== event.entryId) {
+                            return entry;
+                        }
+                        return {
+                            ...entry,
+                            fullContents: {
+                                ...entry.fullContents,
+                                isShown: true
+                            }
+                        };
+                    })
+                }))
+            };
+
+        case 'FULL_CONTENTS_HIDDEN':
+            return {
+                ...streams,
+                items: CacheMap.mapValues(streams.items, (stream) => ({
+                    ...stream,
+                    entries: stream.entries.map((entry) => {
+                        if (entry.entryId !== event.entryId) {
+                            return entry;
+                        }
+                        return {
+                            ...entry,
+                            fullContents: {
+                                ...entry.fullContents,
+                                isShown: false
                             }
                         };
                     })

@@ -39,6 +39,8 @@ export type Event
     | { type: 'FEED_UNSUBSCRIBED', subscription: Subscription }
     | { type: 'FEED_UNSUBSCRIBING', subscription: Subscription }
     | { type: 'FEED_UNSUBSCRIBING_FAILED', subscription: Subscription }
+    | { type: 'FULL_CONTENTS_HIDDEN', entryId: string | number }
+    | { type: 'FULL_CONTENTS_SHOWN', entryId: string | number }
     | { type: 'FULL_CONTENT_FETCHED', entryId: string | number, fullContent: FullContent }
     | { type: 'FULL_CONTENT_FETCHING', entryId: string | number }
     | { type: 'FULL_CONTENT_FETCHING_FAILED', entryId: string | number }
@@ -210,6 +212,8 @@ export interface Entry {
     comments: Comments;
 }
 
+export type EntryPopoverKind = 'none' | 'comment' | 'share';
+
 export interface Origin {
     streamId: string;
     title: string;
@@ -223,9 +227,10 @@ export interface Visual {
 }
 
 export interface FullContents {
-    items: FullContent[];
     isLoaded: boolean;
     isLoading: boolean;
+    isShown: boolean;
+    items: FullContent[];
 }
 
 export interface FullContent {

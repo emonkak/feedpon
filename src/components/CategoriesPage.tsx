@@ -48,7 +48,7 @@ const categoriesComparer = createAscendingComparer<Category>('categoryId');
 const subscirptionComparer = createAscendingComparer<Subscription>('subscriptionId');
 
 class CategoriesPage extends PureComponent<CategoriesPageProps, CategoriesPageState> {
-    private searchInput: HTMLInputElement;
+    private searchInput: HTMLInputElement | null;
 
     constructor(props: CategoriesPageProps, context: any) {
         super(props, context);
@@ -87,6 +87,10 @@ class CategoriesPage extends PureComponent<CategoriesPageProps, CategoriesPageSt
     }
 
     handleChangeSearchQuery(event: React.ChangeEvent<any>) {
+        if (!this.searchInput) {
+            return;
+        }
+
         this.setState({
             query: this.searchInput.value
         });
@@ -215,7 +219,7 @@ interface SubscriptionDropdownState {
 }
 
 class SubscriptionDropdown extends PureComponent<SubscriptionDropdownProps, SubscriptionDropdownState> {
-    private categoryLabelInput: HTMLInputElement;
+    private categoryLabelInput: HTMLInputElement | null;
 
     constructor(props: SubscriptionDropdownProps, context: any) {
         super(props, context);
@@ -245,6 +249,10 @@ class SubscriptionDropdown extends PureComponent<SubscriptionDropdownProps, Subs
     }
 
     handleCreateCategory() {
+        if (!this.categoryLabelInput) {
+            return;
+        }
+
         const { subscription, onAddToCategory, onCreateCategory } = this.props;
         const label = this.categoryLabelInput.value;
 
@@ -415,8 +423,6 @@ interface EditCategoryFormState {
 }
 
 class EditCategoryForm extends PureComponent<EditCategoryFormProps, EditCategoryFormState> {
-    private categoryInput: HTMLInputElement;
-
     constructor(props: EditCategoryFormProps, context: any) {
         super(props, context);
 
@@ -466,7 +472,6 @@ class EditCategoryForm extends PureComponent<EditCategoryFormProps, EditCategory
                 <div className="input-group">
                     <input
                         onChange={this.handleChangeCategory}
-                        ref={(input) => this.categoryInput = input}
                         type="text"
                         className="form-control"
                         value={label}

@@ -30,7 +30,7 @@ export default class Autocomplete extends PureComponent<AutoCompleteProps, Autoc
         renderExtraItems: () => null
     };
 
-    private menu: Menu;
+    private menu: Menu | null;
 
     private queryInput: HTMLInputElement;
 
@@ -74,6 +74,10 @@ export default class Autocomplete extends PureComponent<AutoCompleteProps, Autoc
     }
 
     handleKeyDown(event: React.KeyboardEvent<any>) {
+        if (!this.menu) {
+            return;
+        }
+
         switch (event.key) {
             case 'ArrowUp':
                 event.preventDefault();

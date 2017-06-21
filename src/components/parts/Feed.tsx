@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React from 'react';
 import { Link } from 'react-router';
 
 import SubscribeDropdown from 'components/parts/SubscribeDropdown';
@@ -15,29 +15,38 @@ interface FeedProps {
     subscription: Subscription;
 }
 
-export default class FeedComponent extends PureComponent<FeedProps, {}> {
-    render() {
-        const { categories, feed, onAddToCategory, onCreateCategory, onRemoveFromCategory, onSubscribe, onUnsubscribe, subscription } = this.props;
+const FeedComponent: React.SFC<FeedProps> = (props) => {
+    const {
+        categories,
+        feed,
+        onAddToCategory,
+        onCreateCategory,
+        onRemoveFromCategory,
+        onSubscribe,
+        onUnsubscribe,
+        subscription
+    } = props;
 
-        return (
-            <li className="list-group-item">
-                <div className="u-flex u-flex-justify-content-between u-flex-align-items-center">
-                    <div className="u-margin-right-2">
-                        <Link className="link-strong" to={`/streams/${encodeURIComponent(feed.streamId)}`}>{feed.title}</Link>
-                        <div className="u-text-small"><strong>{feed.subscribers}</strong> subscribers</div>
-                        <div className="u-text-muted">{feed.description}</div>
-                    </div>
-                    <SubscribeDropdown
-                        categories={categories}
-                        feed={feed}
-                        onAddToCategory={onAddToCategory}
-                        onCreateCategory={onCreateCategory}
-                        onRemoveFromCategory={onRemoveFromCategory}
-                        onSubscribe={onSubscribe}
-                        onUnsubscribe={onUnsubscribe}
-                        subscription={subscription} />
+    return (
+        <li className="list-group-item">
+            <div className="u-flex u-flex-justify-content-between u-flex-align-items-center">
+                <div className="u-margin-right-2">
+                    <Link className="link-strong" to={`/streams/${encodeURIComponent(feed.streamId)}`}>{feed.title}</Link>
+                    <div className="u-text-small"><strong>{feed.subscribers}</strong> subscribers</div>
+                    <div className="u-text-muted">{feed.description}</div>
                 </div>
-            </li>
-        );
-    }
+                <SubscribeDropdown
+                    categories={categories}
+                    feed={feed}
+                    onAddToCategory={onAddToCategory}
+                    onCreateCategory={onCreateCategory}
+                    onRemoveFromCategory={onRemoveFromCategory}
+                    onSubscribe={onSubscribe}
+                    onUnsubscribe={onUnsubscribe}
+                    subscription={subscription} />
+            </div>
+        </li>
+    );
 }
+
+export default FeedComponent;

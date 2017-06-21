@@ -1,9 +1,9 @@
 import React, { PureComponent } from 'react';
-import classnames from 'classnames';
 
 import ConfirmModal from 'components/parts/ConfirmModal';
 import Dropdown from 'components/parts/Dropdown';
 import Portal from 'components/parts/Portal';
+import SubscribeButton from 'components/parts/SubscribeButton';
 import { Category, Feed, Subscription } from 'messaging/types';
 import { MenuItem, MenuForm } from 'components/parts/Menu';
 
@@ -23,7 +23,7 @@ interface SubscribeDropdownState {
 }
 
 export default class SubscribeDropdown extends PureComponent<SubscribeDropdownProps, SubscribeDropdownState> {
-    private categoryLabelInput: HTMLInputElement;
+    private categoryLabelInput: HTMLInputElement | null;
 
     constructor(props: SubscribeDropdownProps, context: any) {
         super(props, context);
@@ -56,6 +56,10 @@ export default class SubscribeDropdown extends PureComponent<SubscribeDropdownPr
     }
 
     handleCreateCategory() {
+        if (!this.categoryLabelInput) {
+            return;
+        }
+
         const { feed, onAddToCategory, onCreateCategory, onSubscribe, subscription } = this.props;
         const label = this.categoryLabelInput.value;
 
@@ -160,46 +164,5 @@ export default class SubscribeDropdown extends PureComponent<SubscribeDropdownPr
                 </Dropdown>
             </Portal>
         );
-    }
-}
-
-interface SubscribeButtonProps {
-    isSubscribed: boolean;
-    isLoading: boolean;
-    onClick?: (event: React.MouseEvent<any>) => void;
-    onKeyDown?: (event: React.KeyboardEvent<any>) => void;
-}
-
-class SubscribeButton extends PureComponent<SubscribeButtonProps, {}> {
-    render() {
-        const { isSubscribed, isLoading, onClick, onKeyDown } = this.props;
-
-        if (isSubscribed) {
-            return (
-                <button 
-                    onClick={onClick}
-                    onKeyDown={onKeyDown}
-                    className="button button-outline-default dropdown-arrow"
-                    disabled={isLoading}>
-                    <i className={classnames(
-                        'icon icon-20',
-                        isLoading ? 'icon-spinner icon-rotating' : 'icon-settings'
-                    )} />
-                </button>
-            );
-        } else {
-            return (
-                <button
-                    onClick={onClick}
-                    onKeyDown={onKeyDown}
-                    className="button button-outline-positive dropdown-arrow"
-                    disabled={isLoading}>
-                    <i className={classnames(
-                        'icon icon-20',
-                        isLoading ? 'icon-spinner icon-rotating' : 'icon-plus-math'
-                    )} />
-                </button>
-            );
-        }
     }
 }

@@ -19,8 +19,10 @@ interface EntryListProps {
     isScrolling: boolean;
     onFetchComments: (entryId: string | number, url: string) => void;
     onFetchFullContent: (entryId: string | number, url: string) => void;
+    onHideFullContents: (entryId: string | number) => void;
     onPin: (entryId: string | number) => void;
     onRead: (entryIds: (string | number)[]) => void;
+    onShowFullContents: (entryId: string | number) => void;
     onUnpin: (entryId: string | number) => void;
     sameOrigin: boolean;
     scrollTo: (x: number, y: number) => Promise<void>;
@@ -110,22 +112,31 @@ export default class EntryList extends PureComponent<EntryListProps, EntryListSt
     }
 
     renderEntry(entry: Entry) {
-        const { onFetchComments, onFetchFullContent, onPin, onUnpin, sameOrigin, streamView } = this.props;
+        const { 
+            onFetchComments,
+            onFetchFullContent,
+            onHideFullContents,
+            onPin,
+            onShowFullContents,
+            onUnpin,
+            sameOrigin,
+            streamView
+        } = this.props;
         const { expandedEntryId } = this.state;
-        const isCollapsible = streamView === 'collapsible';
-        const isExpanded = streamView === 'expanded' || expandedEntryId === entry.entryId;
 
         return (
             <EntryComponent
                 entry={entry}
-                isCollapsible={isCollapsible}
-                isExpanded={isExpanded}
+                isCollapsible={streamView === 'collapsible'}
+                isExpanded={streamView === 'expanded' || expandedEntryId === entry.entryId}
                 key={entry.entryId}
                 onClose={this.handleClose}
                 onExpand={this.handleExpand}
                 onFetchComments={onFetchComments}
                 onFetchFullContent={onFetchFullContent}
+                onHideFullContents={onHideFullContents}
                 onPin={onPin}
+                onShowFullContents={onShowFullContents}
                 onUnpin={onUnpin}
                 sameOrigin={sameOrigin} />
         );

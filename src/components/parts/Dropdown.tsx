@@ -35,7 +35,7 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
 
     private scrollable: Element | Window;
 
-    private menu: Menu;
+    private menu: Menu | null;
 
     constructor(props: DropdownProps, context: any) {
         super(props, context);
@@ -68,6 +68,10 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
     }
 
     handleKeyDown(event: React.KeyboardEvent<any>) {
+        if (!this.menu) {
+            return;
+        }
+
         switch (event.key) {
             case 'ArrowUp':
                 event.preventDefault();
