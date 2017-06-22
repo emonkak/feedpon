@@ -89,6 +89,13 @@ class KitchenSinkPage extends PureComponent<KitchenSinkProps, KitchenSinkState> 
                     <span className="u-text-negative">Duis mollis, est non commodo luctus, nisi erat porttitor ligula.</span>
                 </p>
 
+                <h2>Code</h2>
+                <p>
+                    <kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>Delete</kbd>
+                    <br />
+                    <code>Code</code>
+                </p>
+
                 <h2>Button</h2>
                 <p className="button-toolbar">
                     <button className="button button-default" onClick={this.handleSendNotification.bind(this, 'default')}>Default</button>

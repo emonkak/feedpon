@@ -76,19 +76,22 @@ dd {
   margin: 0 0 0 1.5rem;
 }
 
-pre, code, var, samp {
+pre, code, var, samp, kbd {
   font-family: Consolas, Menlo, Monaco, monospace;
+  font-style: normal;
 }
 
-code, var, samp {
+code, var, samp, kbd {
   line-height: 1;
   background-color: var(--light-color);
+  margin: 0 2px;
   padding: 2px 4px;
   border-radius: 4px;
 }
 
-code:empty, var:empty, samp:empty {
-  padding: 0;
+kbd {
+  border: 1px solid var(--medium-dark-color);
+  box-shadow: inset 0 -1px 0 var(--medium-dark-color);
 }
 
 pre {
