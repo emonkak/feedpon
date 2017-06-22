@@ -1,6 +1,6 @@
 export default function restoreState<TState extends Record<keyof TState, { version: number }>>(
     initialState: TState,
-    restore: (key: string) => any
+    restore: <TKey extends keyof TState>(key: TKey) => TState[TKey] | null
 ): TState {
     const keys = Object.keys(initialState) as (keyof TState)[];
 
