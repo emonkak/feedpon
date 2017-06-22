@@ -41,7 +41,7 @@
   font-size: 1.25rem;
 }
 
-.entry.is-expanded .entry-action-open-external-link,
+.entry.is-expanded .entry-action-visit-website,
 .entry.is-expanded .entry-summary,
 .entry.is-expanded:not(.is-collapsible) .entry-action-close,
 .entry:not(.is-expanded) .entry-action-close,

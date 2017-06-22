@@ -228,65 +228,63 @@ class UserSiteinfoForm extends PureComponent<UserSiteinfoFormProps, UserSiteinfo
 
         return (
             <form className="form" onSubmit={this.handleSubmit}>
-                <fieldset>
-                    <legend className="form-legend">{legend}</legend>
-                    <div className="form-group">
-                        <label>
-                            <span className="form-group-heading form-required">Name</span>
-                            <ValidatableInput
-                                className="form-control"
-                                type="text"
-                                name="name"
-                                value={name}
-                                onChange={this.handleChange}
-                                required />
-                        </label>
-                    </div>
-                    <div className="form-group">
-                        <label>
-                            <span className="form-group-heading form-required">URL pattern</span>
-                            <ValidatableInput
-                                className="form-control"
-                                validations={[{ message: 'Invalid regular expression.', rule: isValidPattern }]}
-                                type="text"
-                                name="urlPattern"
-                                value={urlPattern}
-                                onChange={this.handleChange}
-                                required />
-                        </label>
-                        <span className="u-text-muted">The regular expression for the url.</span>
-                    </div>
-                    <div className="form-group">
-                        <label>
-                            <span className="form-group-heading form-required">Content expression</span>
-                            <ValidatableInput
-                                className="form-control"
-                                validations={[{ message: 'Invalid XPath expression.', rule: isValidXPath }]}
-                                type="text"
-                                name="contentExpression"
-                                value={contentExpression}
-                                onChange={this.handleChange}
-                                required />
-                        </label>
-                        <span className="u-text-muted">The XPath expression to the element representing the content.</span>
-                    </div>
-                    <div className="form-group">
-                        <label>
-                            <span className="form-group-heading">Next link expression</span>
-                            <ValidatableInput
-                                className="form-control"
-                                validations={[{ message: 'Invalid XPath expression.', rule: isValidXPath }]}
-                                type="text"
-                                name="nextLinkExpression"
-                                value={nextLinkExpression}
-                                onChange={this.handleChange} />
-                        </label>
-                        <span className="u-text-muted">The XPath expression to the anchor element representing the next link.</span>
-                    </div>
-                    <div className="form-group">
-                        {children}
-                    </div>
-                </fieldset>
+                <div className="form-legend">{legend}</div>
+                <div className="form-group">
+                    <label>
+                        <span className="form-group-heading form-required">Name</span>
+                        <ValidatableInput
+                            className="form-control"
+                            type="text"
+                            name="name"
+                            value={name}
+                            onChange={this.handleChange}
+                            required />
+                    </label>
+                </div>
+                <div className="form-group">
+                    <label>
+                        <span className="form-group-heading form-required">URL pattern</span>
+                        <ValidatableInput
+                            className="form-control"
+                            validations={[{ message: 'Invalid regular expression.', rule: isValidPattern }]}
+                            type="text"
+                            name="urlPattern"
+                            value={urlPattern}
+                            onChange={this.handleChange}
+                            required />
+                    </label>
+                    <span className="u-text-muted">The regular expression for the url.</span>
+                </div>
+                <div className="form-group">
+                    <label>
+                        <span className="form-group-heading form-required">Content expression</span>
+                        <ValidatableInput
+                            className="form-control"
+                            validations={[{ message: 'Invalid XPath expression.', rule: isValidXPath }]}
+                            type="text"
+                            name="contentExpression"
+                            value={contentExpression}
+                            onChange={this.handleChange}
+                            required />
+                    </label>
+                    <span className="u-text-muted">The XPath expression to the element representing the content.</span>
+                </div>
+                <div className="form-group">
+                    <label>
+                        <span className="form-group-heading">Next link expression</span>
+                        <ValidatableInput
+                            className="form-control"
+                            validations={[{ message: 'Invalid XPath expression.', rule: isValidXPath }]}
+                            type="text"
+                            name="nextLinkExpression"
+                            value={nextLinkExpression}
+                            onChange={this.handleChange} />
+                    </label>
+                    <span className="u-text-muted">The XPath expression to the anchor element representing the next link.</span>
+                </div>
+                <div className="form-group">
+                    {children}
+                </div>
             </form>
         );
     }

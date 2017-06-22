@@ -44,8 +44,8 @@ const EntryPlaceholder: React.SFC<EntryPlaceholderProps> = ({ isExpanded }) => {
                 </div>
                 <footer className="entry-footer">
                     <div className="button-toolbar u-text-center">
-                        <span className="button button-circular button-outline-default"><i className="icon icon-20 icon-comments"></i></span> <span className="entry-action"><i className="icon icon-20 icon-share"></i></span>
-                        <span className="button button-circular button-outline-default"><i className="icon icon-20 icon-external-link"></i></span>
+                        <span className="button button-pill button-outline-default"><i className="icon icon-20 icon-comments"></i></span> <span className="entry-action"><i className="icon icon-20 icon-share"></i></span>
+                        <span className="button button-pill button-outline-default"><i className="icon icon-20 icon-external-link"></i></span>
                     </div>
                 </footer>
             </div>

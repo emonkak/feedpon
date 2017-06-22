@@ -109,16 +109,6 @@ class KitchenSinkPage extends PureComponent<KitchenSinkProps, KitchenSinkState> 
                     <button className="button button-outline-negative" disabled>Negative</button>
                 </p>
 
-                <h2>Small Button</h2>
-                <p className="button-toolbar">
-                    <button className="button button-small button-default">Default</button>
-                    <button className="button button-small button-positive">Positive</button>
-                    <button className="button button-small button-negative">Negative</button>
-                    <button className="button button-small button-outline-default">Default</button>
-                    <button className="button button-small button-outline-positive">Positive</button>
-                    <button className="button button-small button-outline-negative">Negative</button>
-                </p>
-
                 <h2>Large Button</h2>
                 <p className="button-toolbar">
                     <button className="button button-large button-default">Default</button>

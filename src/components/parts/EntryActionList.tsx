@@ -21,19 +21,22 @@ const EntryActionList: React.SFC<EntryActionListProps> = ({
     return (
         <div className="button-toolbar u-text-center">
             <button
-                className={classnames('button button-circular', popover === 'comment' ? 'button-default' : 'button-outline-default')}
+                className={classnames('button button-pill', popover === 'comment' ? 'button-default' : 'button-outline-default')}
+                title="Comments..."
                 onClick={onSwitchCommentPopover}>
                 <i className={classnames('icon icon-20', commentsIsLoading ? 'icon-spinner icon-rotating' : 'icon-comments')} />
             </button>
             <button
-                className={classnames('button button-circular', popover === 'share' ? 'button-default' : 'button-outline-default')}
+                className={classnames('button button-pill', popover === 'share' ? 'button-default' : 'button-outline-default')}
+                title="Share..."
                 onClick={onSwitchSharePopover}>
                 <i className="icon icon-20 icon-share" />
             </button>
             <a
-                className="button button-circular button-outline-default"
+                className="button button-pill button-outline-default"
                 href={url}
-                target="_blank">
+                target="_blank"
+                title="Visit website">
                 <i className="icon icon-20 icon-external-link" />
             </a>
         </div>

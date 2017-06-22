@@ -126,21 +126,19 @@ class TrackingUrlPatternForm extends PureComponent<TrackingUrlPatternFormProps, 
 
         return (
             <form className="form" onSubmit={this.handleSubmit}>
-                <fieldset>
-                    <legend className="form-legend">New tracking URL pattern</legend>
-                    <div className="input-group">
-                        <ValidatableInput
-                            validations={[{ message: 'Invalid regular expression.', rule: isValidPattern }]}
-                            type="text"
-                            className="form-control"
-                            placeholder="^https://..."
-                            value={pattern}
-                            onChange={this.handleChange}
-                            required />
-                        <button type="submit" className="button button-outline-positive">Add</button>
-                    </div>
-                    <span className="u-text-muted">The regular expression for the tracking url.</span>
-                </fieldset>
+                <div className="form-legend">New tracking URL pattern</div>
+                <div className="input-group">
+                    <ValidatableInput
+                        validations={[{ message: 'Invalid regular expression.', rule: isValidPattern }]}
+                        type="text"
+                        className="form-control"
+                        placeholder="^https://..."
+                        value={pattern}
+                        onChange={this.handleChange}
+                        required />
+                    <button type="submit" className="button button-outline-positive">Add</button>
+                </div>
+                <span className="u-text-muted">The regular expression for the tracking url.</span>
             </form>
         );
     }

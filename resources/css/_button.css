@@ -28,23 +28,16 @@
   opacity: 0.5;
 }
 
-.button-circular {
+.button-large {
+  padding: calc(var(--baseline-height) / 2 - 1px) calc(1.25rem - 1px);
+  font-size: 1.25rem;
+}
+
+.button-pill {
   width: 36px;
   height: 36px;
   padding: 0;
   border-radius: 50%;
-}
-
-.button-small {
-  padding: 0 calc(0.75rem - 1px);
-  margin-top: -2px;
-  margin-bottom: -2px;
-  font-size: 0.75rem;
-}
-
-.button-large {
-  padding: calc(var(--baseline-height) / 2 - 1px) calc(1.25rem - 1px);
-  font-size: 1.25rem;
 }
 
 .button-default {

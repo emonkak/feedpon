@@ -33,7 +33,7 @@ class UISettings extends PureComponent<UISettingsProps, {}> {
                 <h1 className="display-1">UI</h1>
                 <div className="form">
                     <div className="form-group">
-                        <span className="form-group-heading">ThemeKind</span>
+                        <span className="form-group-heading">Theme</span>
                         {THEMES.map((theme) =>
                             <label key={theme.value} className="form-check-label">
                                 <input
