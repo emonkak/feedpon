@@ -1,5 +1,11 @@
 import { CacheMap } from 'utils/CacheMap';
 
+export interface Store {
+    getState(): State;
+    dispatch(event: Event): Event;
+    dispatch<TResult>(event: AsyncEvent<TResult>): Promise<TResult>;
+}
+
 export type Event
     = { type: 'APPLICATION_INITIALIZED' }
     | { type: 'BOOKMARK_COUNTS_FETCHED', bookmarkCounts: { [url: string]: number } }
@@ -82,12 +88,10 @@ export type Event
     | { type: 'USER_SITEINFO_ITEM_REMOVED', id: string | number }
     | { type: 'USER_SITEINFO_ITEM_UPDATED', item: SiteinfoItem };
 
-export type AsyncEvent<TResult = void> = (store: Store, context: Context) => Promise<TResult>;
+export type AsyncEvent<TResult = void> = (store: Store, context: AsyncEventContext) => Promise<TResult>;
 
-export interface Store {
-    getState(): State;
-    dispatch(event: Event): Event;
-    dispatch<TResult>(event: AsyncEvent<TResult>): Promise<TResult>;
+export interface AsyncEventContext {
+    environment: Environment;
 }
 
 export interface State {
@@ -103,10 +107,6 @@ export interface State {
     ui: UI;
     user: User;
     userSiteinfo: UserSiteinfo;
-}
-
-export interface Context {
-    environment: Environment;
 }
 
 export interface Credential {

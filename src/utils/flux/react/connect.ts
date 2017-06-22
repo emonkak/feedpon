@@ -17,7 +17,6 @@ export default function connect<TStateProps, TDispatchProps, TOwnProps>(
             static contextTypes = {
                 store: PropTypes.shape({
                     getState: PropTypes.func.isRequired,
-                    replaceState: PropTypes.func.isRequired,
                     dispatch: PropTypes.func.isRequired,
                     subscribe: PropTypes.func.isRequired
                 }).isRequired

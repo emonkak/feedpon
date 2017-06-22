@@ -13,7 +13,6 @@ export default class StoreProvider extends PureComponent<StoreContextProps, {}> 
     static childContextTypes = {
         store: PropTypes.shape({
             getState: PropTypes.func.isRequired,
-            replaceState: PropTypes.func.isRequired,
             dispatch: PropTypes.func.isRequired,
             subscribe: PropTypes.func.isRequired
         }).isRequired

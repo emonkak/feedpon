@@ -10,16 +10,12 @@ export default function createStore<TState, TEvent>(
         return state;
     }
 
-    function replaceState(nextState: TState): void {
-        state = nextState;
+    function dispatch(event: TEvent): TEvent {
+        const nextState = reducer(state, event);
         for (const subscriber of subscribers) {
             subscriber(nextState);
         }
-    }
-
-    function dispatch(event: TEvent): TEvent {
-        const nextState = reducer(state, event);
-        replaceState(nextState);
+        state = nextState;
         return event;
     }
 
@@ -38,7 +34,6 @@ export default function createStore<TState, TEvent>(
 
     return {
         getState,
-        replaceState,
         dispatch,
         subscribe
     };
