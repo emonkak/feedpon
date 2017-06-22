@@ -42,7 +42,7 @@ class DashboardPage extends PureComponent<DashboardProps, DashboardState> {
                 <div className="u-flex u-flex-align-items-center">
                     <div className="u-flex-shrink-0 u-margin-right-2">
                         {streamHistory.type === 'category'
-                            ? <i className="icon icon-16 icon-folder" />
+                            ? <i className="icon icon-16 icon-folder u-vertical-middle" />
                             : <SubscriptionIcon title={streamHistory.title} iconUrl={streamHistory.iconUrl} />}
                     </div>
                     <div className="u-flex-grow-1 u-margin-right-2">

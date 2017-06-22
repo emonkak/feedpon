@@ -51,35 +51,35 @@ function renderSharePopover(title: string, url: string) {
                             target="_blank"
                             title="Share to Twitter"
                             href={'https://twitter.com/intent/tweet?text=' + encodeURIComponent(title + ' ' + url)}>
-                            <i className="icon icon-24 icon-vertical-bottom icon-twitter" />
+                            <i className="icon icon-24 icon-twitter u-vertical-bottom" />
                         </a>
                         <a
                             className="list-inline-item link-soft"
                             target="_blank"
                             title="Share to Facebook"
                             href={'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url)}>
-                            <i className="icon icon-24 icon-vertical-bottom icon-facebook" />
+                            <i className="icon icon-24 icon-facebook u-vertical-bottom" />
                         </a>
                         <a
                             className="list-inline-item link-soft"
                             target="_blank"
                             title="Save to Hatena Bookmark"
                             href={'http://b.hatena.ne.jp/add?mode=confirm&title=' + encodeURIComponent(title) + '&url=' + encodeURIComponent(url)}>
-                                <i className="icon icon-24 icon-vertical-bottom icon-hatena-bookmark" />
+                                <i className="icon icon-24 icon-hatena-bookmark u-vertical-bottom" />
                         </a>
                         <a
                             className="list-inline-item link-soft"
                             target="_blank"
                             title="Save to Pocket"
                             href={'https://getpocket.com/save?url=' + encodeURIComponent(url) + "&title=" + encodeURIComponent(title)}>
-                            <i className="icon icon-24 icon-vertical-bottom icon-pocket" />
+                            <i className="icon icon-24 icon-pocket u-vertical-bottom" />
                         </a>
                         <a
                             className="list-inline-item link-soft"
                             target="_blank"
                             title="Save to Instapaper"
                             href={'http://www.instapaper.com/text?u=' + encodeURIComponent(url)}>
-                            <i className="icon icon-24 icon-vertical-bottom icon-instapaper" />
+                            <i className="icon icon-24 icon-instapaper u-vertical-bottom" />
                         </a>
                     </div>
                 </div>

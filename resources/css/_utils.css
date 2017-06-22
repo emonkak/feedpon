@@ -142,6 +142,38 @@
   color: var(--negative-color);
 }
 
+.u-vertical-top {
+  vertical-align: top;
+}
+
+.u-vertical-middle {
+  vertical-align: middle;
+}
+
+.u-vertical-bottom {
+  vertical-align: bottom;
+}
+
+.u-object-fit-fill {
+  object-fit: fill;
+}
+
+.u-object-fit-contain {
+  object-fit: contain;
+}
+
+.u-object-fit-cover {
+  object-fit: cover;
+}
+
+.u-object-fit-none {
+  object-fit: none;
+}
+
+.u-object-fit-scale-down {
+  object-fit: scale-down;
+}
+
 .u-rounded {
   border-radius: 4px;
 }

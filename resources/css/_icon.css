@@ -14,18 +14,6 @@
   display: inline-block;
 }
 
-.icon-vertical-top {
-  vertical-align: top;
-}
-
-.icon-vertical-middle {
-  vertical-align: middle;
-}
-
-.icon-vertical-bottom {
-  vertical-align: bottom;
-}
-
 .icon-angle-up,
 .icon-angle-right,
 .icon-angle-down,

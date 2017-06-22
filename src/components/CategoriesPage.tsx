@@ -182,7 +182,9 @@ const SubscriptionItem: React.SFC<SubscriptionItemProps> = ({
     return (
         <li className="list-group-item">
             <div className="u-flex u-flex-align-items-center">
-                <SubscriptionIcon className="u-flex-shrink-0 u-margin-right-2" title={subscription.title} iconUrl={subscription.iconUrl} />
+                <div className="u-flex-shrink-0 u-margin-right-2">
+                    <SubscriptionIcon title={subscription.title} iconUrl={subscription.iconUrl} />
+                </div>
                 <div className="u-flex-grow-1 u-margin-right-2">
                     <div>{title}{labels}</div>
                     <div className="u-text-small u-text-wrap"><a target="_blank" href={subscription.feedUrl}>{subscription.feedUrl}</a></div>

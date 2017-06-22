@@ -1,21 +1,18 @@
 import React from 'react';
-import classnames from 'classnames';
 
 interface SubscriptionIconProps {
     iconUrl: string;
     title: string;
-    className?: string;
 }
 
 const SubscriptionIcon: React.SFC<SubscriptionIconProps> = ({
-    className,
     iconUrl,
     title 
 }) => {
     if (iconUrl) {
         return (
             <img
-                className={className}
+                className="u-vertical-middle u-object-fit-cover"
                 alt={title}
                 src={iconUrl}
                 width={16}
@@ -23,7 +20,7 @@ const SubscriptionIcon: React.SFC<SubscriptionIconProps> = ({
         );
     } else {
         return (
-            <i className={classnames('icon icon-16 icon-file', className)} />
+            <i className="icon icon-16 icon-file u-vertical-middle " />
         );
     }
 }

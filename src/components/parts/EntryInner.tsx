@@ -102,7 +102,7 @@ function renderBookmarks(entry: Entry) {
                 })}
                 target="_blank"
                 href={'http://b.hatena.ne.jp/entry/' + encodeURIComponent(entry.url)}>
-                    <i className="icon icon-16  icon-vertical-middle icon-bookmark" />
+                    <i className="icon icon-16 icon-bookmark u-vertical-middle" />
                     {entry.bookmarkCount > 0 ? entry.bookmarkCount : ''}
             </a>
         </li>
