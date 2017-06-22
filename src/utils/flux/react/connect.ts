@@ -10,7 +10,7 @@ interface Connection<TStateProps, TDispatchProps, TOwnProps> {
 }
 
 export default function connect<TStateProps, TDispatchProps, TOwnProps>(
-    connectionOrConnector: Connection<TStateProps, TDispatchProps, TOwnProps> | (() => Connection<TStateProps, TDispatchProps, TOwnProps>)
+    connectionOrConnector: Connection<TStateProps, TDispatchProps, TOwnProps> | ((store: Store<any, any>) => Connection<TStateProps, TDispatchProps, TOwnProps>)
 ): <TProps extends TStateProps & TDispatchProps & TOwnProps>(WrappedComponent: ComponentType<TProps>) => ComponentType<Partial<TProps>> {
     return <TProps extends TStateProps & TDispatchProps & TOwnProps>(WrappedComponent: ComponentType<TProps>): ComponentType<Partial<TProps>> => {
         return class StoreSubscriber extends PureComponent<Partial<TProps>, TStateProps> {
@@ -22,29 +22,29 @@ export default function connect<TStateProps, TDispatchProps, TOwnProps>(
                 }).isRequired
             };
 
+            readonly mapStateToProps: (state: any, ownProps: any) => TStateProps;
+
+            readonly mapDispatchToProps: (dispatch: (event: any) => void, ownProps: any) => TDispatchProps;
+
+            readonly mergeProps: (stateProps: TStateProps, dispatchProps: TDispatchProps, ownProps: Partial<TProps>) => TProps;
+
             context: { store: Store<any, any> };
 
-            private readonly mapStateToProps: (state: any, ownProps: any) => TStateProps;
+            dispatchProps: TDispatchProps;
 
-            private readonly mapDispatchToProps: (dispatch: (event: any) => void, ownProps: any) => TDispatchProps;
-
-            private readonly mergeProps: (stateProps: TStateProps, dispatchProps: TDispatchProps, ownProps: Partial<TProps>) => TProps;
-
-            private dispatchProps: TDispatchProps;
-
-            private subscription: (() => void) | null = null;
+            subscription: (() => void) | null = null;
 
             constructor(props: Partial<TProps>, context: { store: Store<any, any> }) {
                 super(props, context);
 
-                const { mapDispatchToProps, mapStateToProps, mergeProps } = typeof connectionOrConnector === 'function'
-                    ? connectionOrConnector()
-                    : connectionOrConnector;
                 const { store } = context;
+                const { mapDispatchToProps, mapStateToProps, mergeProps } = typeof connectionOrConnector === 'function'
+                    ? connectionOrConnector(store)
+                    : connectionOrConnector;
 
-                this.mapStateToProps = mapStateToProps || (() => ({}) as any);
-                this.mapDispatchToProps = mapDispatchToProps || (() => ({}) as any);
-                this.mergeProps = mergeProps || ((stateProps, dispatchProps, ownProps) => Object.assign({}, stateProps, dispatchProps, ownProps) as any);
+                this.mapStateToProps = mapStateToProps || returnEmptyProps;
+                this.mapDispatchToProps = mapDispatchToProps || returnEmptyProps;
+                this.mergeProps = mergeProps || defaultMergeProps;
 
                 this.state = this.mapStateToProps(store.getState(), props);
                 this.dispatchProps = this.mapDispatchToProps(store.dispatch, props);
@@ -92,4 +92,12 @@ export default function connect<TStateProps, TDispatchProps, TOwnProps>(
             }
         };
     };
+}
+
+function defaultMergeProps<TStateProps, TDispatchProps, TOwnProps>(stateProps: TStateProps, dispatchProps: TDispatchProps, ownProps: TOwnProps): TStateProps & TDispatchProps & TOwnProps {
+    return Object.assign({}, stateProps, dispatchProps, ownProps);
+}
+
+function returnEmptyProps(): any {
+    return {};
 }

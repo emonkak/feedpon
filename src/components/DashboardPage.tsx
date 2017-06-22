@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import { Link } from 'react-router';
 import { createSelector } from 'reselect';
 
-import * as CacheMap from 'utils/CacheMap';
+import * as CacheMap from 'utils/containers/CacheMap';
 import MainLayout from 'components/layouts/MainLayout';
 import Navbar from 'components/parts/Navbar';
 import RelativeTime from 'components/parts/RelativeTime';

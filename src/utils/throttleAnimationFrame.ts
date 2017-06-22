@@ -3,10 +3,10 @@ export default function throttleAnimationFrame(handler: (...args: any[]) => void
 
     const requestAnimationFrame = window.requestAnimationFrame || window.setTimeout;
 
-    return (...args: any[]) => {
+    return function(this: any, ...args: any[]) {
         if (request === null) {
             request = requestAnimationFrame(() => {
-                handler(...args);
+                handler.apply(this, args);
 
                 request = null;
             });

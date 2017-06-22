@@ -1,8 +1,8 @@
 import * as feedlyApi from 'adapters/feedly/api';
-import { AsyncEvent } from 'messaging/types';
+import { AsyncThunk } from 'messaging/types';
 import { getFeedlyToken } from 'messaging/credential/actions';
 
-export function fetchUser(): AsyncEvent {
+export function fetchUser(): AsyncThunk {
     return async ({ dispatch }) => {
         dispatch({
             type: 'USER_FETCHING'

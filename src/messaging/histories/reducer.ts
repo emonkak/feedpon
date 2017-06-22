@@ -1,4 +1,4 @@
-import * as CacheMap from 'utils/CacheMap';
+import * as CacheMap from 'utils/containers/CacheMap';
 import { Event, Histories } from 'messaging/types';
 
 export default function historiesReducer(histories: Histories, event: Event): Histories {
@@ -6,7 +6,7 @@ export default function historiesReducer(histories: Histories, event: Event): Hi
         case 'STREAM_FETCHED':
             return {
                 ...histories,
-                recentlyReadStreams: CacheMap.set(
+                recentlyReadStreams: CacheMap.update(
                     histories.recentlyReadStreams,
                     event.stream.streamId,
                     event.stream.fetchedAt

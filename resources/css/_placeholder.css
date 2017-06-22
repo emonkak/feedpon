@@ -10,14 +10,15 @@
 
 .placeholder {
   display: inline-block;
-  background: linear-gradient(to right, var(--medium-light-color) 0%, var(--medium-dark-color) 15%, var(--medium-light-color) 30%);
-  background-size: 100vw 100%;
+  background: var(--medium-light-color);
   border-radius: 4px;
   line-height: 1;
   max-width: 100%;
 }
 
 .placeholder-animated {
+  background: linear-gradient(to right, var(--medium-light-color) 0%, var(--medium-dark-color) 15%, var(--medium-light-color) 30%);
+  background-size: 100vw 100%;
   animation-duration: 2s;
   animation-fill-mode: forwards;
   animation-iteration-count: infinite;

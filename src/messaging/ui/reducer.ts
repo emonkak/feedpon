@@ -8,6 +8,24 @@ export default function uiReducer(ui: UI, event: Event): UI {
                 isScrolling: false
             };
 
+        case 'ACTIVATED_ENTRY_CAHNGED':
+            return {
+                ...ui,
+                activeEntryIndex: event.index
+            };
+
+        case 'EXPANDED_ENTRY_CHANGED':
+            return {
+                ...ui,
+                expandedEntryIndex: event.index
+            };
+
+        case 'READ_ENTRY_CHANGED':
+            return {
+                ...ui,
+                readEntryIndex: event.index
+            };
+
         case 'SIDEBAR_OPENED':
             return {
                 ...ui,
@@ -30,6 +48,12 @@ export default function uiReducer(ui: UI, event: Event): UI {
             return {
                 ...ui,
                 isScrolling: false
+            };
+
+        case 'STREAM_VIEW_CHANGED':
+            return {
+                ...ui,
+                streamView: event.streamView
             };
 
         case 'THEME_CHANGED':

@@ -69,11 +69,6 @@
   display: table;
 }
 
-.l-main-footer {
-  padding: calc(var(--baseline-height) * 2 - 1px) 0 calc(var(--baseline-height) * 2);
-  border-top: 1px solid var(--medium-dark-color);
-}
-
 .l-notifications {
   position: fixed;
   top: 0;

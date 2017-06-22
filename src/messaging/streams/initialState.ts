@@ -1,5 +1,5 @@
 import { Stream, Streams } from 'messaging/types';
-import * as CacheMap from 'utils/CacheMap';
+import * as CacheMap from 'utils/containers/CacheMap';
 
 const streams: Streams = {
     cacheLifetime: 10 * 60 * 1000,
@@ -8,7 +8,6 @@ const streams: Streams = {
         numEntries: 20,
         onlyUnread: true
     },
-    defaultStreamView: 'expanded',
     isLoaded: false,
     isLoading: false,
     isMarking: false,

@@ -4,6 +4,7 @@ import categories from 'messaging/categories/reducer';
 import combineReducers from 'utils/flux/combineReducers';
 import credential from 'messaging/credential/reducer';
 import histories from 'messaging/histories/reducer';
+import keyMappings from 'messaging/keyMappings/reducer';
 import notifications from 'messaging/notifications/reducer';
 import search from 'messaging/search/reducer';
 import sharedSiteinfo from 'messaging/sharedSiteinfo/reducer';
@@ -18,6 +19,7 @@ export default combineReducers<State, Event>({
     categories,
     credential,
     histories,
+    keyMappings,
     notifications,
     search,
     sharedSiteinfo,

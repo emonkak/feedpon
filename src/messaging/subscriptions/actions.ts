@@ -7,10 +7,10 @@ import '@emonkak/enumerable/extensions/selectMany';
 import '@emonkak/enumerable/extensions/toArray';
 
 import * as feedly from 'adapters/feedly/api';
-import { AsyncEvent, Event, Feed, Subscription, SubscriptionOrderKind } from 'messaging/types';
+import { AsyncThunk, Event, Feed, Subscription, SubscriptionOrderKind } from 'messaging/types';
 import { getFeedlyToken } from 'messaging/credential/actions';
 
-export function fetchSubscriptions(): AsyncEvent {
+export function fetchSubscriptions(): AsyncThunk {
     return async ({ dispatch, getState }) => {
         dispatch({
             type: 'SUBSCRIPTIONS_FETCHING'
@@ -76,7 +76,7 @@ export function fetchSubscriptions(): AsyncEvent {
     };
 }
 
-export function addToCategory(subscription: Subscription, labelToAdd: string): AsyncEvent {
+export function addToCategory(subscription: Subscription, labelToAdd: string): AsyncThunk {
     return async ({ dispatch, getState }) => {
         dispatch({
             type: 'FEED_SUBSCRIBING',
@@ -117,7 +117,7 @@ export function addToCategory(subscription: Subscription, labelToAdd: string): A
     };
 }
 
-export function removeFromCategory(subscription: Subscription, labelToRemove: string): AsyncEvent {
+export function removeFromCategory(subscription: Subscription, labelToRemove: string): AsyncThunk {
     return async ({ dispatch, getState }) => {
         dispatch({
             type: 'FEED_SUBSCRIBING',
@@ -156,7 +156,7 @@ export function removeFromCategory(subscription: Subscription, labelToRemove: st
     };
 }
 
-export function subscribe(feed: Feed, labels: string[]): AsyncEvent {
+export function subscribe(feed: Feed, labels: string[]): AsyncThunk {
     return async ({ dispatch, getState }) => {
         dispatch({
             type: 'FEED_SUBSCRIBING',
@@ -209,7 +209,7 @@ export function subscribe(feed: Feed, labels: string[]): AsyncEvent {
     };
 }
 
-export function unsubscribe(subscription: Subscription): AsyncEvent {
+export function unsubscribe(subscription: Subscription): AsyncThunk {
     return async ({ dispatch, getState }) => {
         dispatch({
             type: 'FEED_UNSUBSCRIBING',

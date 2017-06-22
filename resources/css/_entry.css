@@ -16,11 +16,11 @@
 }
 
 .entry.is-pinned {
-  box-shadow: 6px 0 0 var(--medium-light-color) inset;
+  box-shadow: 6px 0 0 var(--positive-background-color) inset;
 }
 
 .entry.is-pinned.is-active {
-  box-shadow: 6px 0 0 var(--medium-light-color) inset,
+  box-shadow: 6px 0 0 var(--positive-background-color) inset,
               0 2px 18px var(--shadow-color),
               0 0 6px var(--shadow-color);
 }

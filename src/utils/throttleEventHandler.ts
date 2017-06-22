@@ -2,7 +2,7 @@ export default function throttleEventHandler<T extends { timeStamp: number }>(ha
     let lastInvoked = 0;
     let timer: number | null = null;
 
-    return function(event: T): void {
+    return function(this: any, event: T): void {
         const { timeStamp } = event;
 
         if (timer === null) {
@@ -15,7 +15,7 @@ export default function throttleEventHandler<T extends { timeStamp: number }>(ha
                 const delay = throttleTime - elapsedTime;
 
                 timer = setTimeout(() => {
-                    handler(event);
+                    handler.call(this, event);
                     lastInvoked = timeStamp + delay;
                     timer = null;
                 }, delay);

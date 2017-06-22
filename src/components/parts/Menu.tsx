@@ -32,6 +32,12 @@ export class Menu extends PureComponent<MenuProps, {}> {
 
     static childContextTypes = menuContext;
 
+    constructor(props: MenuProps, context: any) {
+        super(props, context);
+
+        this.handleKeyDown = this.handleKeyDown.bind(this);
+    }
+
     getChildContext(): MenuContext {
         const { onClose, onSelect } = this.props;
 
@@ -79,11 +85,22 @@ export class Menu extends PureComponent<MenuProps, {}> {
         return { activeIndex, elements };
     }
 
+    handleKeyDown(event: React.KeyboardEvent<any>) {
+        const { onKeyDown } = this.props;
+        const target = event.target as Element;
+
+        const DENY_TAG_NAMES = ['INPUT', 'SELECT', 'TEXTAREA'];
+
+        if (onKeyDown && !DENY_TAG_NAMES.includes(target.tagName)) {
+            onKeyDown(event);
+        }
+    }
+
     render() {
-        const { children, onKeyDown } = this.props;
+        const { children } = this.props;
 
         return (
-            <div className="menu" onKeyDown={onKeyDown}>
+            <div tabIndex={0} className="menu" onKeyDown={this.handleKeyDown}>
                 {children}
             </div>
         );
@@ -220,7 +237,6 @@ export class MenuForm extends PureComponent<MenuFormProps, {}> {
         super(props, context);
 
         this.handleSubmit = this.handleSubmit.bind(this);
-        this.handleKeyDown = this.handleKeyDown.bind(this);
     }
 
     handleSubmit(event: React.FormEvent<any>) {
@@ -235,17 +251,12 @@ export class MenuForm extends PureComponent<MenuFormProps, {}> {
         this.context.menu.onClose();
     }
 
-    handleKeyDown(event: React.KeyboardEvent<any>) {
-        event.stopPropagation();
-    }
-
     render() {
         const { children } = this.props;
 
         return (
             <form
                 className="menu-form"
-                onKeyDown={this.handleKeyDown}
                 onSubmit={this.handleSubmit}>
                 {children}
             </form>

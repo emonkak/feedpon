@@ -1,17 +1,17 @@
 import React, { PureComponent } from 'react';
 import classnames from 'classnames';
-import { findDOMNode } from 'react-dom';
 
 import EntryInner from 'components/parts/EntryInner';
 import { Entry, EntryPopoverKind } from 'messaging/types';
 
 interface EntryProps {
     entry: Entry;
+    index: number;
     isActive?: boolean;
     isCollapsible?: boolean;
     isExpanded?: boolean;
     onClose: () => void;
-    onExpand: (entryId: string | number, element: Element) => void;
+    onExpand: (index: number) => void;
     onFetchComments: (entryId: string | number, url: string) => void;
     onFetchFullContent: (entryId: string | number, url: string) => void;
     onHideFullContents: (entryId: string | number) => void;
@@ -59,7 +59,7 @@ export default class EntryComponent extends PureComponent<EntryProps, EntryState
     }
 
     handleExpand(event: React.MouseEvent<any>) {
-        const { entry, isCollapsible, isExpanded, onExpand } = this.props;
+        const { index, isCollapsible, isExpanded, onExpand } = this.props;
 
         if (isCollapsible && !isExpanded && onExpand) {
             const target = event.target as HTMLElement;
@@ -68,7 +68,7 @@ export default class EntryComponent extends PureComponent<EntryProps, EntryState
                 || (!target.closest('a') && !target.closest('button'))) {
                 event.preventDefault();
 
-                onExpand(entry.entryId, findDOMNode(this));
+                onExpand(index);
             }
         }
     }
@@ -153,14 +153,14 @@ export default class EntryComponent extends PureComponent<EntryProps, EntryState
 
         return (
             <article
-                id={'entry-' + entry.entryId}
                 className={classnames('entry', {
                     'is-active': isActive,
                     'is-collapsible': isCollapsible,
                     'is-expanded': isExpanded,
                     'is-marked-as-read': entry.markedAsRead,
                     'is-pinned': entry.isPinned
-                })}>
+                })}
+                onClick={this.handleExpand}>
                 <EntryInner
                     entry={entry}
                     onClose={this.handleClose}

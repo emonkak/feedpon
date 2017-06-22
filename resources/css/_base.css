@@ -91,7 +91,30 @@ code, var, samp, kbd {
 
 kbd {
   border: 1px solid var(--medium-dark-color);
-  box-shadow: inset 0 -1px 0 var(--medium-dark-color);
+  box-shadow: 0 1px var(--medium-dark-color),
+              0 2px var(--medium-light-color);
+}
+
+code code,
+code var,
+code samp,
+code kbd,
+var code,
+var var,
+var samp,
+var kbd,
+samp code,
+samp var,
+samp samp,
+samp kbd,
+kbd code,
+kbd var,
+kbd samp,
+kbd kbd {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  box-shadow: none;
 }
 
 pre {

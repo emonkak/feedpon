@@ -1,8 +1,8 @@
 import * as feedly from 'adapters/feedly/api';
-import { AsyncEvent, Category } from 'messaging/types';
+import { AsyncThunk, Category } from 'messaging/types';
 import { getFeedlyToken } from 'messaging/credential/actions';
 
-export function createCategory(label: string, callback: (category: Category) => void): AsyncEvent {
+export function createCategory(label: string, callback: (category: Category) => void): AsyncThunk {
     return async ({ dispatch, getState }) => {
         dispatch({
             type: 'CATEGORY_CREATING'
@@ -35,7 +35,7 @@ export function createCategory(label: string, callback: (category: Category) => 
     };
 }
 
-export function deleteCategory(categoryId: string | number, label: string): AsyncEvent {
+export function deleteCategory(categoryId: string | number, label: string): AsyncThunk {
     return async ({ dispatch, getState }) => {
         dispatch({
             type: 'CATEGORY_DELETING',
@@ -65,7 +65,7 @@ export function deleteCategory(categoryId: string | number, label: string): Asyn
     };
 }
 
-export function updateCategory(category: Category, label: string): AsyncEvent {
+export function updateCategory(category: Category, label: string): AsyncThunk {
     return async ({ dispatch, getState }) => {
         dispatch({
             type: 'CATEGORY_UPDATING',

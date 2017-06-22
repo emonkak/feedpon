@@ -1,4 +1,4 @@
-import { AsyncEvent, SiteinfoItem } from 'messaging/types';
+import { AsyncThunk, SiteinfoItem } from 'messaging/types';
 import { LDRFullFeedData, WedataItem }  from 'adapters/wedata/types';
 import { getAutoPagerizeItems, getLDRFullFeedItems }  from 'adapters/wedata/api';
 import { sendNotification } from 'messaging/notifications/actions';
@@ -13,7 +13,7 @@ const LDR_FULL_FEED_TYPE_PRIORITIES: { [key: string]: number } = {
     'GENERAL': 0
 };
 
-export function updateSiteinfo(): AsyncEvent {
+export function updateSiteinfo(): AsyncThunk {
     return async ({ dispatch, getState }) => {
         dispatch({
             type: 'SITEINFO_UPDATING'
@@ -42,7 +42,7 @@ export function updateSiteinfo(): AsyncEvent {
     };
 }
 
-export function getSiteinfoItems(): AsyncEvent<SiteinfoItem[]> {
+export function getSiteinfoItems(): AsyncThunk<SiteinfoItem[]> {
     return async ({ dispatch, getState }) => {
         const { sharedSiteinfo, userSiteinfo } = getState();
 

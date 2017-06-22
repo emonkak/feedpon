@@ -7,6 +7,10 @@
   will-change: opacity;
 }
 
+.menu:focus {
+  outline: none;
+}
+
 .menu-enter.menu-enter-active,
 .menu-leave.menu-leave-active {
   transition: opacity 0.2s ease-in-out;

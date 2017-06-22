@@ -11,11 +11,10 @@ export default function createStore<TState, TEvent>(
     }
 
     function dispatch(event: TEvent): TEvent {
-        const nextState = reducer(state, event);
+        state = reducer(state, event);
         for (const subscriber of subscribers) {
-            subscriber(nextState);
+            subscriber(state);
         }
-        state = nextState;
         return event;
     }
 

@@ -75,15 +75,19 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
         switch (event.key) {
             case 'ArrowUp':
                 event.preventDefault();
+                event.stopPropagation();
                 this.menu.focusPrevious();
                 break;
 
             case 'ArrowDown':
                 event.preventDefault();
+                event.stopPropagation();
                 this.menu.focusNext();
                 break;
 
             case 'Escape':
+                event.preventDefault();
+                event.stopPropagation();
                 this.handleClose();
                 break;
         }

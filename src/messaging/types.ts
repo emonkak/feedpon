@@ -1,13 +1,16 @@
-import { CacheMap } from 'utils/CacheMap';
+import { History } from 'history';
 
-export interface Store {
-    getState(): State;
-    dispatch(event: Event): Event;
-    dispatch<TResult>(event: AsyncEvent<TResult>): Promise<TResult>;
-}
+import { CacheMap } from 'utils/containers/CacheMap';
+import { Store as FluxStore } from 'utils/flux/types';
+import { Trie } from 'utils/containers/Trie';
+
+export type Store = FluxStore<State, Event> & {
+    dispatch<TResult>(event: Thunk<TResult>): TResult;
+};
 
 export type Event
-    = { type: 'APPLICATION_INITIALIZED' }
+    = { type: 'ACTIVATED_ENTRY_CAHNGED', index: number }
+    | { type: 'APPLICATION_INITIALIZED' }
     | { type: 'BOOKMARK_COUNTS_FETCHED', bookmarkCounts: { [url: string]: number } }
     | { type: 'CATEGORY_CREATED', category: Category }
     | { type: 'CATEGORY_CREATING' }
@@ -25,7 +28,6 @@ export type Event
     | { type: 'COMMENTS_FETCHING', entryId: string | number }
     | { type: 'COMMENTS_FETCHING_FAILED', entryId: string | number }
     | { type: 'DEFAULT_STREAM_OPTIONS_CHANGED', fetchOptions: StreamFetchOptions }
-    | { type: 'DEFAULT_STREAM_VIEW_CHANGED', streamView: StreamViewKind }
     | { type: 'ENTRIES_MARKED_AS_READ', entryIds: (string | number)[], readCounts: { [streamId: string]: number } }
     | { type: 'ENTRIES_MARKING_AS_READ', entryIds: (string | number)[] }
     | { type: 'ENTRIES_MARKING_AS_READ_FAILED', entryIds: (string | number)[] }
@@ -33,6 +35,7 @@ export type Event
     | { type: 'ENTRY_PINNING', entryId: string | number }
     | { type: 'ENTRY_PINNING_FAILED', entryId: string | number }
     | { type: 'ENTRY_URLS_EXPANDED', urls: { [url: string]: string } }
+    | { type: 'EXPANDED_ENTRY_CHANGED', index: number }
     | { type: 'FEED_MARKED_AS_READ', feedId: string | number }
     | { type: 'FEED_MARKING_AS_READ', feedId: string | number }
     | { type: 'FEED_MARKING_AS_READ_FAILED', feedId: string | number }
@@ -50,11 +53,14 @@ export type Event
     | { type: 'FULL_CONTENT_FETCHED', entryId: string | number, fullContent: FullContent }
     | { type: 'FULL_CONTENT_FETCHING', entryId: string | number }
     | { type: 'FULL_CONTENT_FETCHING_FAILED', entryId: string | number }
+    | { type: 'KEY_MAPPING_ADDED', keySequence: string, commandId: string }
+    | { type: 'KEY_MAPPING_REMOVED', keySequence: string, commandId: string }
     | { type: 'MORE_ENTRIES_FETCHED', streamId: string, continuation: string | null, entries: Entry[] }
     | { type: 'MORE_ENTRIES_FETCHING', streamId: string }
     | { type: 'MORE_ENTRIES_FETCHING_FAILED', streamId: string }
     | { type: 'NOTIFICATION_DISMISSED', id: number }
     | { type: 'NOTIFICATION_SENT', notification: Notification }
+    | { type: 'READ_ENTRY_CHANGED', index: number }
     | { type: 'SCROLL_ENDED' }
     | { type: 'SCROLL_STARTED' }
     | { type: 'SIDEBAR_CLOSED' }
@@ -67,6 +73,7 @@ export type Event
     | { type: 'STREAM_FETCHING', streamId: string, fetchOptions: StreamFetchOptions, fetchedAt: number }
     | { type: 'STREAM_FETCHING_FAILED', streamId: string, fetchOptions: StreamFetchOptions, fetchedAt: number }
     | { type: 'STREAM_HISTORY_OPTIONS_CHANGED', numStreamHistories: number }
+    | { type: 'STREAM_VIEW_CHANGED', streamView: StreamViewKind }
     | { type: 'SUBSCRIPTIONS_FETCHED', subscriptions: Subscription[], categories: Category[], fetchedAt: number }
     | { type: 'SUBSCRIPTIONS_FETCHING' }
     | { type: 'SUBSCRIPTIONS_FETCHING_FAILED' }
@@ -88,16 +95,25 @@ export type Event
     | { type: 'USER_SITEINFO_ITEM_REMOVED', id: string | number }
     | { type: 'USER_SITEINFO_ITEM_UPDATED', item: SiteinfoItem };
 
-export type AsyncEvent<TResult = void> = (store: Store, context: AsyncEventContext) => Promise<TResult>;
+export type Thunk<TResult = void> = (store: Store, context: ThunkContext) => TResult;
 
-export interface AsyncEventContext {
+export type AsyncThunk<TResult = void> = Thunk<Promise<TResult>>;
+
+export interface ThunkContext {
     environment: Environment;
+    router: History;
+}
+
+export interface Command {
+    thunk: Thunk<any>;
+    title: string;
 }
 
 export interface State {
     categories: Categories;
     credential: Credential;
     histories: Histories;
+    keyMappings: KeyMappings;
     notifications: Notifications;
     search: Search;
     sharedSiteinfo: SharedSiteinfo;
@@ -153,7 +169,6 @@ export interface Category {
 export interface Streams {
     cacheLifetime: number;
     defaultFetchOptions: StreamFetchOptions;
-    defaultStreamView: StreamViewKind;
     isLoaded: boolean;
     isLoading: boolean;
     isMarking: boolean;
@@ -265,12 +280,6 @@ export interface Notification {
 
 export type NotificationKind = 'default' | 'positive' | 'negative';
 
-export interface StreamSettings {
-    defaultFetchOptions: StreamFetchOptions;
-    defaultStreamView: StreamViewKind;
-    version: number;
-}
-
 export interface TrackingUrlPatterns {
     items: string[];
     version: number;
@@ -329,8 +338,12 @@ export interface User {
 }
 
 export interface UI {
+    activeEntryIndex: number;
+    expandedEntryIndex: number;
     isScrolling: boolean;
+    readEntryIndex: number;
     sidebarIsOpened: boolean;
+    streamView: StreamViewKind;
     theme: ThemeKind;
     version: number;
 }
@@ -341,3 +354,8 @@ export interface Histories {
 }
 
 export type ThemeKind = 'theme-light' | 'theme-dark';
+
+export interface KeyMappings {
+    items: Trie<string>;
+    version: number;
+}

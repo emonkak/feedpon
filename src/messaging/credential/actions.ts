@@ -1,8 +1,8 @@
 import * as feedly from 'adapters/feedly/types';
 import * as feedlyApi from 'adapters/feedly/api';
-import { AsyncEvent } from 'messaging/types';
+import { AsyncThunk } from 'messaging/types';
 
-export function authenticate(): AsyncEvent {
+export function authenticate(): AsyncThunk {
     return async ({ dispatch, getState }, { environment }) => {
         const url = feedlyApi.createAuthUrl({
             client_id: environment.clientId,
@@ -46,7 +46,7 @@ export function authenticate(): AsyncEvent {
     };
 }
 
-export function revokeToken(): AsyncEvent {
+export function revokeToken(): AsyncThunk {
     return async ({ dispatch, getState }, { environment }) => {
         dispatch({
             type: 'TOKEN_REVOKING'
@@ -70,7 +70,7 @@ export function revokeToken(): AsyncEvent {
     };
 }
 
-export function getFeedlyToken(): AsyncEvent<feedly.ExchangeTokenResponse> {
+export function getFeedlyToken(): AsyncThunk<feedly.ExchangeTokenResponse> {
     return async ({ dispatch, getState }, { environment }) => {
         let { credential } = getState();
         let token = credential.token as feedly.ExchangeTokenResponse;

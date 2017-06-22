@@ -3,14 +3,13 @@ export default function throttleIdleCallback(handler: (...args: any[]) => void):
 
     const requestIdleCallback = window.requestIdleCallback || window.setTimeout;
 
-    return (...args: any[]) => {
+    return function(this: any, ...args: any[]) {
         if (request === null) {
             request = requestIdleCallback(() => {
-                handler(...args);
+                handler.apply(this, args);
 
                 request = null;
             });
         }
     };
 }
-

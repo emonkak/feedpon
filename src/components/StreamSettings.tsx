@@ -5,8 +5,8 @@ import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
 import formatDuration from 'utils/formatDuration';
 import parseDuration, { DURATION_PATTERN } from 'utils/parseDuration';
-import { State, StreamFetchOptions, StreamViewKind } from 'messaging/types';
-import { changeDefaultStreamFetchOptions, changeDefaultStreamView, changeStreamCacheOptions, changeStreamHistoryOptions } from 'messaging/streams/actions';
+import { State, StreamFetchOptions } from 'messaging/types';
+import { changeDefaultStreamFetchOptions, changeStreamCacheOptions, changeStreamHistoryOptions } from 'messaging/streams/actions';
 
 interface StreamSettingsProps {
     cacheCapacity: number;
@@ -14,10 +14,8 @@ interface StreamSettingsProps {
     fetchOptions: StreamFetchOptions;
     numStreamHistories: number;
     onChangeDefaultStreamFetchOptions: typeof changeDefaultStreamFetchOptions;
-    onChangeDefaultStreamView: typeof changeDefaultStreamView;
     onChangeStreamCacheOptions: typeof changeStreamCacheOptions;
     onChangeStreamHistoryOptions: typeof changeStreamHistoryOptions;
-    streamView: StreamViewKind;
 }
 
 interface StreamSettingsState {
@@ -42,7 +40,6 @@ class StreamSettings extends PureComponent<StreamSettingsProps, StreamSettingsSt
         this.handleChangeStreamCacheCapacity = this.handleChangeStreamCacheCapacity.bind(this);
         this.handleChangeStreamCacheLifetime = this.handleChangeStreamCacheLifetime.bind(this);
         this.handleChangeStreamOption = this.handleChangeStreamOption.bind(this);
-        this.handleChangeStreamView = this.handleChangeStreamView.bind(this);
         this.handleSubmitCacheOptions = this.handleSubmitCacheOptions.bind(this);
         this.handleSubmitHistoryOptions = this.handleSubmitHistoryOptions.bind(this);
         this.handleSubmitStreamFetchOptions = this.handleSubmitStreamFetchOptions.bind(this);
@@ -89,13 +86,6 @@ class StreamSettings extends PureComponent<StreamSettingsProps, StreamSettingsSt
         }));
     }
 
-    handleChangeStreamView(event: React.ChangeEvent<HTMLInputElement>) {
-        const { onChangeDefaultStreamView } = this.props;
-        const target = event.currentTarget;
-
-        onChangeDefaultStreamView(target.value as StreamViewKind);
-    }
-
     handleSubmitStreamFetchOptions(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
 
@@ -124,7 +114,6 @@ class StreamSettings extends PureComponent<StreamSettingsProps, StreamSettingsSt
     }
 
     render() {
-        const { streamView } = this.props;
         const { cacheCapacity, cacheLifetime, fetchOptions, numStreamHistories } = this.state;
 
         return (
@@ -184,31 +173,6 @@ class StreamSettings extends PureComponent<StreamSettingsProps, StreamSettingsSt
                         <button type="submit" className="button button-outline-positive">Save</button>
                     </div>
                 </form>
-                <div className="form">
-                    <div className="form-legend">Default stream view</div>
-                    <div className="form-group">
-                        <label className="form-check-label">
-                            <input
-                                type="radio"
-                                className="form-check"
-                                name="streamView"
-                                value="expanded"
-                                checked={streamView === 'expanded'}
-                                onChange={this.handleChangeStreamView}
-                                required />Expanded view
-                        </label>
-                        <label className="form-check-label">
-                            <input
-                                type="radio"
-                                className="form-check"
-                                name="streamView"
-                                value="collapsible"
-                                checked={streamView === 'collapsible'}
-                                onChange={this.handleChangeStreamView}
-                                required />Collapsible view
-                        </label>
-                    </div>
-                </div>
                 <form className="form" onSubmit={this.handleSubmitCacheOptions}>
                     <div className="form-legend">Cache options</div>
                     <div className="form-group">
@@ -271,12 +235,10 @@ export default connect({
         cacheCapacity: state.streams.items.capacity,
         cacheLifetime: state.streams.cacheLifetime,
         fetchOptions: state.streams.defaultFetchOptions,
-        numStreamHistories: state.histories.recentlyReadStreams.capacity,
-        streamView: state.streams.defaultStreamView
+        numStreamHistories: state.histories.recentlyReadStreams.capacity
     }),
     mapDispatchToProps: bindActions({
         onChangeDefaultStreamFetchOptions: changeDefaultStreamFetchOptions,
-        onChangeDefaultStreamView: changeDefaultStreamView,
         onChangeStreamCacheOptions: changeStreamCacheOptions,
         onChangeStreamHistoryOptions: changeStreamHistoryOptions
     })

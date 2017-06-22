@@ -2,17 +2,24 @@ import React, { PureComponent, cloneElement } from 'react';
 import classnames from 'classnames';
 import { History, Location } from 'history';
 
+import * as commands from 'messaging/commands';
+import KeyMapper from 'components/parts/KeyMapper';
 import Notifications from 'components/Notifications';
 import Sidebar from 'components/Sidebar';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
-import smoothScroll from 'utils/dom/smoothScroll';
-import { State } from 'messaging/types';
+import { State, Store } from 'messaging/types';
+import { Trie } from 'utils/containers/Trie';
 import { closeSidebar, endScroll, openSidebar, startScroll } from 'messaging/ui/actions';
+import { smoothScrollTo } from 'utils/dom/smoothScroll';
+
+const SCROLL_ANIMATION_TIME = 1000 / 60 * 10;
 
 interface SidebarLayoutProps {
+    store: Store;
     children: React.ReactElement<any>;
     isAuthenticating: boolean;
+    keyMappings: Trie<string>;
     location: Location;
     onCloseSidebar: typeof closeSidebar;
     onEndScroll: typeof endScroll;
@@ -28,9 +35,10 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
     constructor(props: SidebarLayoutProps, context: any) {
         super(props, context);
 
-        this.handleToggleSidebar = this.handleToggleSidebar.bind(this);
-        this.handleCloseSidebar = this.handleCloseSidebar.bind(this);
         this.handleChangeLocation = this.handleChangeLocation.bind(this);
+        this.handleCloseSidebar = this.handleCloseSidebar.bind(this);
+        this.handleInvokeCommand = this.handleInvokeCommand.bind(this);
+        this.handleToggleSidebar = this.handleToggleSidebar.bind(this);
     }
 
     componentWillMount() {
@@ -90,6 +98,16 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
         }
     }
 
+    handleInvokeCommand(commandId: keyof typeof commands) {
+        const command = commands[commandId];
+
+        if (command) {
+            const { store } = this.props;
+
+            store.dispatch(command.thunk);
+        }
+    }
+
     updateSidebarStatus(sidebarIsOpened: boolean) {
         if (sidebarIsOpened) {
             document.documentElement.classList.add('sidebar-is-opened');
@@ -98,45 +116,64 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
         }
     }
 
-    scrollTo(x: number, y: number): Promise<void> {
-        this.props.onStartScroll();
+    scrollTo(x: number, y: number, callback?: () => void): void {
+        const { onEndScroll, onStartScroll } = this.props;
 
-        return smoothScroll(document.body, x, y).then(() => {
-            this.props.onEndScroll();
+        onStartScroll();
+
+        smoothScrollTo(document.body, x, y, SCROLL_ANIMATION_TIME).then(() => {
+            onEndScroll();
+
+            if (callback) {
+                callback();
+            }
         });
     }
 
     render() {
-        const { children, isAuthenticating, location, router, sidebarIsOpened } = this.props;
+        const { 
+            children,
+            isAuthenticating,
+            keyMappings,
+            location,
+            router,
+            sidebarIsOpened
+        } = this.props;
 
         return (
-            <div
-                className={classnames('l-root', {
-                    'is-opened': sidebarIsOpened
-                })}
-                onClick={this.handleCloseSidebar}>
-                <div className={'l-sidebar'}>
-                    <Sidebar router={router} location={location} />
+            <KeyMapper
+                mappings={keyMappings}
+                onInvokeCommand={this.handleInvokeCommand}>
+                <div
+                    className={classnames('l-root', {
+                        'is-opened': sidebarIsOpened
+                    })}
+                    onClick={this.handleCloseSidebar}>
+                    <div className={'l-sidebar'}>
+                        <Sidebar router={router} location={location} />
+                    </div>
+                    <div className="l-notifications">
+                        <Notifications />
+                    </div>
+                    {cloneElement(children, {
+                        onToggleSidebar: this.handleToggleSidebar,
+                        scrollTo: this.scrollTo.bind(this)
+                    })}
+                    <div className="l-backdrop">
+                        {isAuthenticating ? <i className="icon icon-48 icon-spinner icon-rotating" /> : null}
+                    </div>
                 </div>
-                <div className="l-notifications">
-                    <Notifications />
-                </div>
-                {cloneElement(children, {
-                    onToggleSidebar: this.handleToggleSidebar,
-                    scrollTo: this.scrollTo.bind(this)
-                })}
-                <div className="l-backdrop">
-                    {isAuthenticating ? <i className="icon icon-48 icon-spinner icon-rotating" /> : null}
-                </div>
-            </div>
+            </KeyMapper>
         );
     }
 }
 
-export default connect({
+export default connect((store) => ({
     mapStateToProps: (state: State) => ({
         isAuthenticating: state.credential.isLoading,
-        sidebarIsOpened: state.ui.sidebarIsOpened
+        keyMappings: state.keyMappings.items,
+        sidebarIsOpened: state.ui.sidebarIsOpened,
+        store
     }),
     mapDispatchToProps: bindActions({
         onOpenSidebar: openSidebar,
@@ -144,4 +181,4 @@ export default connect({
         onStartScroll: startScroll,
         onEndScroll: endScroll
     })
-})(SidebarLayout);
+}))(SidebarLayout);

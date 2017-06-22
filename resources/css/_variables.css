@@ -56,7 +56,7 @@
   --backdrop-color: $x-light-color;
   --backdrop-background-color: rgba(0, 0, 0, 0.75);
 
-  --shadow-color: rgba(0, 0, 0, 0.20);
+  --shadow-color: color($x-dark-color alpha(20%));
   --transparent-color: color($x-light-color alpha(90%));
 }
 

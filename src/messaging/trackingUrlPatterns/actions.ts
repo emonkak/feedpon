@@ -1,7 +1,7 @@
-import { AsyncEvent, Event } from 'messaging/types';
+import { AsyncThunk, Event } from 'messaging/types';
 import { sendNotification } from 'messaging/notifications/actions';
 
-export function addTrackingUrlPattern(pattern: string): AsyncEvent {
+export function addTrackingUrlPattern(pattern: string): AsyncThunk {
     return async ({ dispatch }) => {
         dispatch({
             type: 'TRACKING_URL_PATTERN_ADDED',

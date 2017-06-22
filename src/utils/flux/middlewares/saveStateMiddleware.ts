@@ -1,11 +1,11 @@
-import debounceEventHandler from '../../debounceEventHandler';
+import throttleEventHandler from '../../throttleEventHandler';
 import throttleIdleCallback from '../../throttleIdleCallback';
 import { Middleware } from '../types';
 
 function saveStateMiddlewareFactory<TState, TEvent>(save: (key: string, value: any) => void, saveInterval: number): Middleware<TState, TEvent> {
     let queue: Partial<TState> = {};
 
-    const processQueue = debounceEventHandler(throttleIdleCallback(() => {
+    const processQueue = throttleEventHandler(throttleIdleCallback(() => {
         for (const key in queue) {
             save(key, queue[key]);
         }

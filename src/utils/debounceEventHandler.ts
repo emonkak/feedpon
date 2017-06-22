@@ -2,11 +2,11 @@ export default function debounceEventHandler<T extends { timeStamp: number }>(ha
     let lastCalled = 0;
     let timer: number | null = null;
 
-    function next(event: T, timeStamp: number) {
+    function next(this: any, event: T, timeStamp: number) {
         const elapsedTime = timeStamp - lastCalled;
 
         if (elapsedTime >= debounceTime) {
-            handler(event);
+            handler.call(this, event);
         } else {
             timer = setTimeout(() => {
                 const currentTime = timeStamp + debounceTime;

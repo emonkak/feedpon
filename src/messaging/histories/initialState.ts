@@ -1,4 +1,4 @@
-import * as CacheMap from 'utils/CacheMap';
+import * as CacheMap from 'utils/containers/CacheMap';
 import { Histories } from 'messaging/types';
 
 const initialState: Histories = {

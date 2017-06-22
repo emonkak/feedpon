@@ -4,12 +4,12 @@ import * as feedlyApi from 'adapters/feedly/api';
 import PromiseQueue from 'utils/PromiseQueue';
 import decodeResponseAsText from 'utils/decodeResponseAsText';
 import stripTags from 'utils/stripTags';
-import { AsyncEvent, Category, Entry, Event, Feed, Stream, StreamFetchOptions, StreamViewKind } from 'messaging/types';
+import { AsyncThunk, Category, Entry, Event, Feed, Stream, StreamFetchOptions } from 'messaging/types';
 import { getFeedlyToken } from 'messaging/credential/actions';
 import { getSiteinfoItems } from 'messaging/sharedSiteinfo/actions';
 import { sendNotification } from 'messaging/notifications/actions';
 
-export function fetchStream(streamId: string, fetchOptions: StreamFetchOptions): AsyncEvent {
+export function fetchStream(streamId: string, fetchOptions: StreamFetchOptions): AsyncThunk {
     return async ({ dispatch, getState }) => {
         const fetchedAt = Date.now();
 
@@ -74,7 +74,7 @@ export function fetchStream(streamId: string, fetchOptions: StreamFetchOptions):
     };
 }
 
-export function fetchMoreEntries(streamId: string, continuation: string, fetchOptions: StreamFetchOptions): AsyncEvent {
+export function fetchMoreEntries(streamId: string, continuation: string, fetchOptions: StreamFetchOptions): AsyncThunk {
     return async ({ dispatch }) => {
         dispatch({
             type: 'MORE_ENTRIES_FETCHING',
@@ -121,7 +121,7 @@ export function fetchMoreEntries(streamId: string, continuation: string, fetchOp
     };
 }
 
-export function fetchComments(entryId: string, url: string): AsyncEvent {
+export function fetchComments(entryId: string, url: string): AsyncThunk {
     return async ({ dispatch }) => {
         dispatch({
             type: 'COMMENTS_FETCHING',
@@ -155,7 +155,7 @@ export function fetchComments(entryId: string, url: string): AsyncEvent {
     };
 }
 
-export function fetchFullContent(entryId: string, url: string): AsyncEvent {
+export function fetchFullContent(entryId: string, url: string): AsyncThunk {
     return async ({ dispatch }) => {
         dispatch({
             type: 'FULL_CONTENT_FETCHING',
@@ -218,7 +218,7 @@ export function fetchFullContent(entryId: string, url: string): AsyncEvent {
     };
 }
 
-export function markAsRead(entries: Entry[]): AsyncEvent {
+export function markAsRead(entries: Entry[]): AsyncThunk {
     return async ({ dispatch }) => {
         const entryIds = entries.map((entry) => entry.entryId as string);
 
@@ -266,7 +266,7 @@ export function markAsRead(entries: Entry[]): AsyncEvent {
     };
 }
 
-export function markFeedAsRead(feed: Feed): AsyncEvent {
+export function markFeedAsRead(feed: Feed): AsyncThunk {
     return async ({ dispatch, getState }) => {
         dispatch({
             type: 'FEED_MARKING_AS_READ',
@@ -308,7 +308,7 @@ export function markFeedAsRead(feed: Feed): AsyncEvent {
     };
 }
 
-export function markCategoryAsRead(category: Category): AsyncEvent {
+export function markCategoryAsRead(category: Category): AsyncThunk {
     return async ({ dispatch, getState }) => {
         dispatch({
             type: 'CATEGORY_MARKING_AS_READ',
@@ -353,7 +353,7 @@ export function markCategoryAsRead(category: Category): AsyncEvent {
     };
 }
 
-export function pinEntry(entryId: string): AsyncEvent {
+export function pinEntry(entryId: string): AsyncThunk {
     return async ({ dispatch }) => {
         dispatch({
             type: 'ENTRY_PINNING',
@@ -382,7 +382,7 @@ export function pinEntry(entryId: string): AsyncEvent {
     };
 }
 
-export function unpinEntry(entryId: string): AsyncEvent {
+export function unpinEntry(entryId: string): AsyncThunk {
     return async ({ dispatch }) => {
         dispatch({
             type: 'ENTRY_PINNING',
@@ -418,7 +418,7 @@ export function changeUnreadKeeping(keepUnread: boolean): Event {
     };
 }
 
-export function changeDefaultStreamFetchOptions(fetchOptions: StreamFetchOptions): AsyncEvent {
+export function changeDefaultStreamFetchOptions(fetchOptions: StreamFetchOptions): AsyncThunk {
     return async ({ dispatch }) => {
         dispatch({
             type: 'DEFAULT_STREAM_OPTIONS_CHANGED',
@@ -432,21 +432,7 @@ export function changeDefaultStreamFetchOptions(fetchOptions: StreamFetchOptions
     };
 }
 
-export function changeDefaultStreamView(streamView: StreamViewKind): AsyncEvent {
-    return async ({ dispatch }) => {
-        dispatch({
-            type: 'DEFAULT_STREAM_VIEW_CHANGED',
-            streamView
-        });
-
-        dispatch(sendNotification(
-            'Default stream view changed',
-            'positive'
-        ));
-    };
-}
-
-export function changeStreamCacheOptions(capacity: number, lifetime: number): AsyncEvent {
+export function changeStreamCacheOptions(capacity: number, lifetime: number): AsyncThunk {
     return async ({ dispatch }) => {
         dispatch({
             type: 'STREAM_CACHE_OPTIONS_CHANGED',
@@ -475,7 +461,7 @@ export function hideFullContents(entryId: string): Event {
     };
 }
 
-export function changeStreamHistoryOptions(numStreamHistories: number): AsyncEvent {
+export function changeStreamHistoryOptions(numStreamHistories: number): AsyncThunk {
     return async ({ dispatch }) => {
         dispatch({
             type: 'STREAM_HISTORY_OPTIONS_CHANGED',
@@ -489,7 +475,7 @@ export function changeStreamHistoryOptions(numStreamHistories: number): AsyncEve
     };
 }
 
-function fetchFeedStream(streamId: string, fetchOptions: StreamFetchOptions, fetchedAt: number): AsyncEvent<Stream> {
+function fetchFeedStream(streamId: string, fetchOptions: StreamFetchOptions, fetchedAt: number): AsyncThunk<Stream> {
     return async ({ dispatch }) => {
         const token = await dispatch(getFeedlyToken());
 
@@ -527,7 +513,7 @@ function fetchFeedStream(streamId: string, fetchOptions: StreamFetchOptions, fet
     };
 }
 
-function fetchCategoryStream(streamId: string, fetchOptions: StreamFetchOptions, fetchedAt: number): AsyncEvent<Stream> {
+function fetchCategoryStream(streamId: string, fetchOptions: StreamFetchOptions, fetchedAt: number): AsyncThunk<Stream> {
     return async ({ dispatch, getState }) => {
         const token = await dispatch(getFeedlyToken());
 
@@ -556,7 +542,7 @@ function fetchCategoryStream(streamId: string, fetchOptions: StreamFetchOptions,
     };
 }
 
-function fetchAllStream(fetchOptions: StreamFetchOptions, fetchedAt: number): AsyncEvent<Stream> {
+function fetchAllStream(fetchOptions: StreamFetchOptions, fetchedAt: number): AsyncThunk<Stream> {
     return async ({ dispatch }) => {
         const token = await dispatch(getFeedlyToken());
 
@@ -587,7 +573,7 @@ function fetchAllStream(fetchOptions: StreamFetchOptions, fetchedAt: number): As
     };
 }
 
-function fetchPinsStream(fetchOptions: StreamFetchOptions, fetchedAt: number): AsyncEvent<Stream> {
+function fetchPinsStream(fetchOptions: StreamFetchOptions, fetchedAt: number): AsyncThunk<Stream> {
     return async ({ dispatch }) => {
         const token = await dispatch(getFeedlyToken());
 
@@ -618,7 +604,7 @@ function fetchPinsStream(fetchOptions: StreamFetchOptions, fetchedAt: number): A
     };
 }
 
-function fetchBookmarkCounts(urls: string[]): AsyncEvent {
+function fetchBookmarkCounts(urls: string[]): AsyncThunk {
     return async ({ dispatch }) => {
         if (urls.length > 0) {
             const bookmarkCounts = await bookmarkApi.getBookmarkCounts(urls);
@@ -711,7 +697,7 @@ function extractNextPageUrl(contentDocument: Document, url: string, nextLinkExpr
     return '';
 }
 
-function expandUrls(urls: string[]): AsyncEvent<string[]> {
+function expandUrls(urls: string[]): AsyncThunk<string[]> {
     return async ({ dispatch, getState }) => {
         const { trackingUrlPatterns } = getState();
         const trackingUrls = urls

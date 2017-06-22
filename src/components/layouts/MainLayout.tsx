@@ -2,13 +2,13 @@ import React, { PureComponent } from 'react';
 
 interface MainLayoutProps {
     footer?: React.ReactNode;
-    header?: React.ReactNode;
+    header: React.ReactNode;
 }
 
 export default class MainLayout extends PureComponent<MainLayoutProps, {}> {
     static defaultProps = {
         footer: (
-            <div>
+            <div className="u-margin-top-2 u-margin-bottom-2">
                 <div className="u-text-center">
                     <small>Copyright &copy; 2017 Shota Nozaki</small>
                 </div>
@@ -27,11 +27,11 @@ export default class MainLayout extends PureComponent<MainLayoutProps, {}> {
 
         return (
             <div className="l-main">
-                {header ? <div className="l-main-header">{header}</div> : null}
+                <div className="l-main-header">{header}</div>
                 <div className="l-main-content">
                     {children}
                 </div>
-                {footer ? <div className="l-main-footer">{footer}</div> : null}
+                <div className="l-main-footer">{footer}</div>
             </div>
         );
     }

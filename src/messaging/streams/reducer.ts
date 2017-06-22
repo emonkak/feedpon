@@ -1,4 +1,4 @@
-import * as CacheMap from 'utils/CacheMap';
+import * as CacheMap from 'utils/containers/CacheMap';
 import { Event, Streams } from 'messaging/types';
 
 export default function reducer(streams: Streams, event: Event): Streams {
@@ -35,7 +35,7 @@ export default function reducer(streams: Streams, event: Event): Streams {
                 ...streams,
                 isLoaded: false,
                 isLoading: true,
-                items: CacheMap.set(streams.items, event.streamId, {
+                items: CacheMap.update(streams.items, event.streamId, {
                     streamId: event.streamId,
                     title: 'Loading...',
                     fetchedAt: event.fetchedAt,
@@ -52,7 +52,7 @@ export default function reducer(streams: Streams, event: Event): Streams {
                 ...streams,
                 isLoaded: true,
                 isLoading: false,
-                items: CacheMap.set(streams.items, event.streamId, {
+                items: CacheMap.update(streams.items, event.streamId, {
                     streamId: event.streamId,
                     title: 'Failed to fetch',
                     fetchedAt: event.fetchedAt,
@@ -69,7 +69,7 @@ export default function reducer(streams: Streams, event: Event): Streams {
                 ...streams,
                 isLoaded: true,
                 isLoading: false,
-                items: CacheMap.set(streams.items, event.stream.streamId, event.stream)
+                items: CacheMap.update(streams.items, event.stream.streamId, event.stream)
             };
 
         case 'MORE_ENTRIES_FETCHING':
@@ -513,12 +513,6 @@ export default function reducer(streams: Streams, event: Event): Streams {
             return {
                 ...streams,
                 defaultFetchOptions: event.fetchOptions
-            };
-
-        case 'DEFAULT_STREAM_VIEW_CHANGED':
-            return {
-                ...streams,
-                defaultStreamView: event.streamView
             };
 
         case 'STREAM_CACHE_OPTIONS_CHANGED':
