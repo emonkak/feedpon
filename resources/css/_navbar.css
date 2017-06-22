@@ -38,6 +38,7 @@
   text-decoration: none;
   width: 48px;
   height: 100%;
+  transition: color 0.2s ease-in-out;
 }
 
 .navbar-action:hover,

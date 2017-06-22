@@ -135,6 +135,7 @@
   background-color: transparent;
   border-bottom: 2px solid var(--x-dark-color);
   border-radius: 0;
+  transition: border-color 0.2s ease-in-out;
 }
 
 .input-search-box:focus {
