@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { Children, PureComponent, isValidElement } from 'react';
+import React, { PureComponent } from 'react';
 import classnames from 'classnames';
 
 const treeContext = {
@@ -73,22 +73,11 @@ export class TreeBranch extends PureComponent<TreeBranchProps, TreeBranchState> 
         super(props, context);
 
         this.state = {
-            isExpanded: props.isExpanded!  ||
-                        Children.toArray(props.children).some(shouldExpand)
+            isExpanded: props.isExpanded!
         };
 
         this.handleExpand = this.handleExpand.bind(this);
         this.handleSelect = this.handleSelect.bind(this);
-    }
-
-    componentWillReceiveProps(nextProps: TreeBranchProps) {
-        if (this.props.children !== nextProps.children && !this.state.isExpanded) {
-            if (Children.toArray(nextProps.children).some(shouldExpand)) {
-                this.setState({
-                    isExpanded: true,
-                });
-            }
-        }
     }
 
     handleExpand(event: React.MouseEvent<any>) {
@@ -210,26 +199,16 @@ interface TreeChildrenProps {
 
 class TreeChildren extends PureComponent<TreeChildrenProps, {}> {
     shouldComponentUpdate(nextProps: TreeChildrenProps, nextState: {}) {
-        return nextProps.isExpanded! &&
-            this.props.children !== nextProps.children;
+        return nextProps.isExpanded!
+               && (this.props.isExpanded !== nextProps.isExpanded
+                   || this.props.children !== nextProps.children);
     }
 
     render() {
         return (
-            <div className="tree">{this.props.children}</div>
+            <div className="tree">
+                {this.props.children}
+            </div>
         );
     }
-}
-
-function shouldExpand(child: React.ReactChild): boolean {
-    if (isValidElement<any>(child)) {
-        if (child.type === TreeLeaf) {
-            return child.props.isSelected;
-        }
-        if (child.type === TreeBranch) {
-            return child.props.isSelected
-                || Children.toArray(child.props.children).some(shouldExpand)
-        }
-    }
-    return false;
 }
