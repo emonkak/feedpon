@@ -107,7 +107,6 @@ class CategoriesPage extends PureComponent<CategoriesPageProps, CategoriesPageSt
 
     renderContent() {
         const { categories, onUpdateCategory, onDeleteCategory, params } = this.props;
-        const { query } = this.state;
 
         const label = params['label'];
         const category = categories.find((category) => category.label === label);
@@ -132,9 +131,8 @@ class CategoriesPage extends PureComponent<CategoriesPageProps, CategoriesPageSt
                         ref={(ref) => this.searchInput = ref}
                         type="search"
                         className="form-control"
-                        placeholder="Search for subscriptions..."
-                        onChange={this.handleChangeSearchQuery}
-                        value={query} />
+                        placeholder="Filter for subscriptions..."
+                        onChange={this.handleChangeSearchQuery} />
                 </p>
                 <LazyList
                     assumedItemHeight={60}
