@@ -58,3 +58,10 @@ export function changeStreamView(streamView: StreamViewKind): Event {
         streamView
     };
 }
+
+export function selectStream(streamId: string): Event {
+    return {
+        type: 'STREAM_SELECTED',
+        streamId
+    };
+}

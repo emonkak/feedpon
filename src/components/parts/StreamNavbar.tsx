@@ -9,7 +9,7 @@ import { Entry, EntryOrderKind, Feed, StreamFetchOptions, StreamViewKind } from 
 import { MenuItem } from 'components/parts/Menu';
 
 interface StreamNavbarProps {
-    canMarkAllAsRead: boolean;
+    canMarkAsRead: boolean;
     feed: Feed | null;
     fetchOptions: StreamFetchOptions;
     isLoading: boolean;
@@ -31,7 +31,7 @@ interface StreamNavbarProps {
 export default class StreamNavbar extends PureComponent<StreamNavbarProps, {}> {
     render() {
         const {
-            canMarkAllAsRead,
+            canMarkAsRead,
             feed,
             fetchOptions,
             isLoading,
@@ -66,7 +66,7 @@ export default class StreamNavbar extends PureComponent<StreamNavbarProps, {}> {
                     <i className="icon icon-24 icon-refresh" />
                 </button>
                 <ReadEntriesDropdown
-                    canMarkAllAsRead={canMarkAllAsRead}
+                    canMarkAsRead={canMarkAsRead}
                     keepUnread={keepUnread}
                     onClearReadEntries={onClearReadEntries}
                     onMarkAllAsRead={onMarkAllAsRead}
@@ -87,7 +87,7 @@ export default class StreamNavbar extends PureComponent<StreamNavbarProps, {}> {
 }
 
 interface ReadEntriesDropdownProps {
-    canMarkAllAsRead: boolean;
+    canMarkAsRead: boolean;
     keepUnread: boolean;
     onClearReadEntries: () => void;
     onMarkAllAsRead: () => void;
@@ -127,7 +127,7 @@ class ReadEntriesDropdown extends PureComponent<ReadEntriesDropdownProps, ReadEn
 
     render() {
         const {
-            canMarkAllAsRead,
+            canMarkAsRead,
             keepUnread,
             onClearReadEntries,
             onMarkAllAsRead,
@@ -177,7 +177,7 @@ class ReadEntriesDropdown extends PureComponent<ReadEntriesDropdownProps, ReadEn
                         onSelect={onClearReadEntries}
                         primaryText="Clear read entries" />
                     <MenuItem
-                        isDisabled={!canMarkAllAsRead}
+                        isDisabled={!canMarkAsRead}
                         onSelect={this.handleOpenMarkAllAsReadModal}
                         primaryText="Mark all as read in stream..." />
                 </Dropdown>

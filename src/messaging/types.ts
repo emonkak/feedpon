@@ -72,6 +72,7 @@ export type Event
     | { type: 'STREAM_FETCHED', stream: Stream  }
     | { type: 'STREAM_FETCHING', streamId: string, fetchOptions: StreamFetchOptions, fetchedAt: number }
     | { type: 'STREAM_FETCHING_FAILED', streamId: string, fetchOptions: StreamFetchOptions, fetchedAt: number }
+    | { type: 'STREAM_SELECTED', streamId: string  }
     | { type: 'STREAM_HISTORY_OPTIONS_CHANGED', numStreamHistories: number }
     | { type: 'STREAM_VIEW_CHANGED', streamView: StreamViewKind }
     | { type: 'SUBSCRIPTIONS_FETCHED', subscriptions: Subscription[], categories: Category[], fetchedAt: number }

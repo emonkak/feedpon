@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 
 interface StreamFooterProps {
-    canMarkAllAsRead: boolean;
+    canMarkAsRead: boolean;
     hasMoreEntries: boolean;
     isLoading: boolean;
     onLoadMoreEntries: () => void;
@@ -25,7 +25,7 @@ export default class StreamFooter extends PureComponent<StreamFooterProps, {}> {
 
     render() {
         const {
-            canMarkAllAsRead,
+            canMarkAsRead,
             hasMoreEntries,
             isLoading,
             onMarkAllAsRead
@@ -58,7 +58,7 @@ export default class StreamFooter extends PureComponent<StreamFooterProps, {}> {
                         <button
                             className="button button-positive"
                             onClick={onMarkAllAsRead}
-                            disabled={!canMarkAllAsRead}>
+                            disabled={!canMarkAsRead}>
                             Mark all as read
                         </button>
                     </p>
