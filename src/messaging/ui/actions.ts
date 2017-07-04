@@ -65,3 +65,9 @@ export function selectStream(streamId: string): Event {
         streamId
     };
 }
+
+export function unselectStream(): Event {
+    return {
+        type: 'STREAM_UNSELECTED'
+    };
+}

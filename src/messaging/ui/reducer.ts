@@ -53,7 +53,8 @@ export default function uiReducer(ui: UI, event: Event): UI {
         case 'STREAM_VIEW_CHANGED':
             return {
                 ...ui,
-                streamView: event.streamView
+                streamView: event.streamView,
+                expandedEntryIndex: -1
             };
 
         case 'STREAM_SELECTED':
@@ -61,7 +62,17 @@ export default function uiReducer(ui: UI, event: Event): UI {
                 ...ui,
                 activeEntryIndex: -1,
                 expandedEntryIndex: -1,
-                readEntryIndex: -1
+                readEntryIndex: -1,
+                selectedStreamId: event.streamId
+            };
+
+        case 'STREAM_UNSELECTED':
+            return {
+                ...ui,
+                activeEntryIndex: -1,
+                expandedEntryIndex: -1,
+                readEntryIndex: -1,
+                selectedStreamId: ''
             };
 
         case 'THEME_CHANGED':

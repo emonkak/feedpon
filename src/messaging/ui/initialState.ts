@@ -5,6 +5,7 @@ const ui: UI = {
     expandedEntryIndex: -1,
     isScrolling: false,
     readEntryIndex: -1,
+    selectedStreamId: '',
     sidebarIsOpened: true,
     streamView: 'expanded',
     theme: 'theme-light',

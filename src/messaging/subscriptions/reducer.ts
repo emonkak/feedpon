@@ -96,7 +96,7 @@ export default function reducer(subscriptions: Subscriptions, event: Event): Sub
             return {
                 ...subscriptions,
                 items: mapObject(subscriptions.items, (subscription) => {
-                    if (subscription.feedId !== event.subscription.feedId) {
+                    if (subscription.feedId !== event.feedId) {
                         return subscription;
                     }
                     return {
@@ -110,7 +110,7 @@ export default function reducer(subscriptions: Subscriptions, event: Event): Sub
             return {
                 ...subscriptions,
                 items: mapObject(subscriptions.items, (subscription) => {
-                    if (subscription.feedId !== event.subscription.feedId) {
+                    if (subscription.feedId !== event.feedId) {
                         return subscription;
                     }
                     return {
@@ -123,8 +123,9 @@ export default function reducer(subscriptions: Subscriptions, event: Event): Sub
         case 'FEED_UNSUBSCRIBED':
             return {
                 ...subscriptions,
-                items: filterObject(subscriptions.items, (subscription) =>
-                    subscription.subscriptionId !== event.subscription.subscriptionId
+                items: filterObject(
+                    subscriptions.items,
+                    (subscription) => subscription.feedId !== event.feedId
                 )
             };
 
@@ -151,7 +152,7 @@ export default function reducer(subscriptions: Subscriptions, event: Event): Sub
                 ...subscriptions,
                 items: mapObject(subscriptions.items, (subscription) => {
                     const labels = subscription.labels
-                        .filter((label) => label !== event.prevCategory.label);
+                        .filter((label) => label !== event.prevCategoryLabel);
 
                     if (subscription.labels.length === labels.length) {
                         return subscription;

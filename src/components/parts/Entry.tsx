@@ -77,10 +77,10 @@ export default class EntryComponent extends PureComponent<EntryProps, EntryState
         const { entry, onFetchFullContent } = this.props;
 
         if (entry.fullContents.isLoaded) {
-            const latestFullContent = entry.fullContents.items[entry.fullContents.items.length - 1];
+            const lastFullContent = entry.fullContents.items[entry.fullContents.items.length - 1];
 
-            if (latestFullContent && latestFullContent.nextPageUrl) {
-                onFetchFullContent(entry.entryId, latestFullContent.nextPageUrl);
+            if (lastFullContent && lastFullContent.nextPageUrl) {
+                onFetchFullContent(entry.entryId, lastFullContent.nextPageUrl);
             }
         }
     }
@@ -98,9 +98,7 @@ export default class EntryComponent extends PureComponent<EntryProps, EntryState
 
         if (!entry.fullContents.isLoading) {
             if (!entry.fullContents.isLoaded) {
-                if (!entry.fullContents.isLoaded) {
-                    onFetchFullContent(entry.entryId, entry.url);
-                }
+                onFetchFullContent(entry.entryId, entry.url);
             }
 
             if (entry.fullContents.isShown) {

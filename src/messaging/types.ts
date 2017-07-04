@@ -8,6 +8,22 @@ export type Store = FluxStore<State, Event> & {
     dispatch<TResult>(event: Thunk<TResult>): TResult;
 };
 
+export interface State {
+    categories: Categories;
+    credential: Credential;
+    histories: Histories;
+    keyMappings: KeyMappings;
+    notifications: Notifications;
+    search: Search;
+    sharedSiteinfo: SharedSiteinfo;
+    streams: Streams;
+    subscriptions: Subscriptions;
+    trackingUrlPatterns: TrackingUrlPatterns;
+    ui: UI;
+    user: User;
+    userSiteinfo: UserSiteinfo;
+}
+
 export type Event
     = { type: 'ACTIVATED_ENTRY_CAHNGED', index: number }
     | { type: 'APPLICATION_INITIALIZED' }
@@ -21,9 +37,9 @@ export type Event
     | { type: 'CATEGORY_MARKED_AS_READ', categoryId: string | number, label: string }
     | { type: 'CATEGORY_MARKING_AS_READ', categoryId: string | number, label: string }
     | { type: 'CATEGORY_MARKING_AS_READ_FAILED', categoryId: string | number, label: string }
-    | { type: 'CATEGORY_UPDATED', prevCategory: Category, category: Category }
-    | { type: 'CATEGORY_UPDATING', category: Category }
-    | { type: 'CATEGORY_UPDATING_FAILED', category: Category }
+    | { type: 'CATEGORY_UPDATED', prevCategoryLabel: string, category: Category }
+    | { type: 'CATEGORY_UPDATING', categoryId: string | number }
+    | { type: 'CATEGORY_UPDATING_FAILED', categoryId: string | number }
     | { type: 'COMMENTS_FETCHED', entryId: string | number, comments: Comment[] }
     | { type: 'COMMENTS_FETCHING', entryId: string | number }
     | { type: 'COMMENTS_FETCHING_FAILED', entryId: string | number }
@@ -45,9 +61,9 @@ export type Event
     | { type: 'FEED_SUBSCRIBED', subscription: Subscription }
     | { type: 'FEED_SUBSCRIBING', feedId: string | number }
     | { type: 'FEED_SUBSCRIBING_FAILED', feedId: string | number }
-    | { type: 'FEED_UNSUBSCRIBED', subscription: Subscription }
-    | { type: 'FEED_UNSUBSCRIBING', subscription: Subscription }
-    | { type: 'FEED_UNSUBSCRIBING_FAILED', subscription: Subscription }
+    | { type: 'FEED_UNSUBSCRIBED', feedId: string | number }
+    | { type: 'FEED_UNSUBSCRIBING', feedId: string | number }
+    | { type: 'FEED_UNSUBSCRIBING_FAILED', feedId: string | number }
     | { type: 'FULL_CONTENTS_HIDDEN', entryId: string | number }
     | { type: 'FULL_CONTENTS_SHOWN', entryId: string | number }
     | { type: 'FULL_CONTENT_FETCHED', entryId: string | number, fullContent: FullContent }
@@ -73,6 +89,7 @@ export type Event
     | { type: 'STREAM_FETCHING', streamId: string, fetchOptions: StreamFetchOptions, fetchedAt: number }
     | { type: 'STREAM_FETCHING_FAILED', streamId: string, fetchOptions: StreamFetchOptions, fetchedAt: number }
     | { type: 'STREAM_SELECTED', streamId: string  }
+    | { type: 'STREAM_UNSELECTED'  }
     | { type: 'STREAM_HISTORY_OPTIONS_CHANGED', numStreamHistories: number }
     | { type: 'STREAM_VIEW_CHANGED', streamView: StreamViewKind }
     | { type: 'SUBSCRIPTIONS_FETCHED', subscriptions: Subscription[], categories: Category[], fetchedAt: number }
@@ -103,27 +120,24 @@ export type AsyncThunk<TResult = void> = Thunk<Promise<TResult>>;
 export interface ThunkContext {
     environment: Environment;
     router: History;
+    selectors: Selectors;
+}
+
+export interface Environment {
+    clientId: string;
+    clientSecret: string;
+    scope: string;
+    redirectUri: string;
+}
+
+export interface Selectors {
+    visibleSubscriptionsSelector: (state: State) => Subscription[];
+    sortedCategoriesSelector: (state: State) => Category[];
 }
 
 export interface Command {
     thunk: Thunk<any>;
     title: string;
-}
-
-export interface State {
-    categories: Categories;
-    credential: Credential;
-    histories: Histories;
-    keyMappings: KeyMappings;
-    notifications: Notifications;
-    search: Search;
-    sharedSiteinfo: SharedSiteinfo;
-    streams: Streams;
-    subscriptions: Subscriptions;
-    trackingUrlPatterns: TrackingUrlPatterns;
-    ui: UI;
-    user: User;
-    userSiteinfo: UserSiteinfo;
 }
 
 export interface Credential {
@@ -147,16 +161,9 @@ export interface Search {
     version: number;
 }
 
-export interface Environment {
-    clientId: string;
-    clientSecret: string;
-    scope: string;
-    redirectUri: string;
-}
-
 export interface Categories {
     isLoading: boolean;
-    items: { [categoryId: string]: Category };
+    items: { [streamId: string]: Category };
     version: number;
 }
 
@@ -186,7 +193,7 @@ export interface Stream {
     continuation: string | null;
     feed: Feed | null;
     category: Category | null;
-    fetchOptions: StreamFetchOptions | null;
+    fetchOptions: StreamFetchOptions;
 }
 
 export interface StreamFetchOptions {
@@ -309,7 +316,12 @@ export interface Subscription {
     isLoading: boolean;
 }
 
-export type SubscriptionOrderKind = 'title' | 'newest' | 'oldest';
+export type SubscriptionOrderKind = 'id' | 'title' | 'newest' | 'oldest';
+
+export interface GroupedSubscription {
+    items: Subscription[];
+    unreadCount: number;
+}
 
 export interface UserSiteinfo {
     items: SiteinfoItem[];
@@ -343,6 +355,7 @@ export interface UI {
     expandedEntryIndex: number;
     isScrolling: boolean;
     readEntryIndex: number;
+    selectedStreamId: string;
     sidebarIsOpened: boolean;
     streamView: StreamViewKind;
     theme: ThemeKind;

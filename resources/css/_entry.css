@@ -5,6 +5,7 @@
   transition: box-shadow 0.2s ease-in-out;
 }
 
+.entry.is-active .entry-nav,
 .entry:hover .entry-nav {
   visibility: visible;
 }
@@ -120,10 +121,4 @@
 
 .entry-page-title::after {
   left: 100%;
-}
-
-@media (pointer: coarse) {
-  .entry.is-active .entry-nav {
-    visibility: visible;
-  }
 }

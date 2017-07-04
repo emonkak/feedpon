@@ -48,8 +48,8 @@ export default class ScrollSpy extends PureComponent<ScrollSpyProps, {}> {
         this.update();
     }
 
-    componentWillReceiveProps(nextProps: ScrollSpyProps) {
-        if (!nextProps.isDisabled && this.props.isDisabled !== nextProps.isDisabled) {
+    componentDidUpdate(prevProps: ScrollSpyProps, prevState: {}) {
+        if (!this.props.isDisabled) {
             this.update();
         }
     }

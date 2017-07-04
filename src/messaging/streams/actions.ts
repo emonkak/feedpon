@@ -155,7 +155,7 @@ export function fetchComments(entryId: string, url: string): AsyncThunk {
     };
 }
 
-export function fetchFullContent(entryId: string, url: string): AsyncThunk {
+export function fetchFullContent(entryId: string | number, url: string): AsyncThunk {
     return async ({ dispatch }) => {
         dispatch({
             type: 'FULL_CONTENT_FETCHING',
@@ -353,7 +353,7 @@ export function markCategoryAsRead(category: Category): AsyncThunk {
     };
 }
 
-export function pinEntry(entryId: string): AsyncThunk {
+export function pinEntry(entryId: string | number): AsyncThunk {
     return async ({ dispatch }) => {
         dispatch({
             type: 'ENTRY_PINNING',
@@ -364,7 +364,7 @@ export function pinEntry(entryId: string): AsyncThunk {
             const token = await dispatch(getFeedlyToken());
             const tagId = toFeedlyStreamId('pins', token.id);
 
-            await feedlyApi.setTag(token.access_token, [entryId], [tagId]);
+            await feedlyApi.setTag(token.access_token, [entryId as string], [tagId]);
 
             dispatch({
                 type: 'ENTRY_PINNED',
@@ -382,7 +382,7 @@ export function pinEntry(entryId: string): AsyncThunk {
     };
 }
 
-export function unpinEntry(entryId: string): AsyncThunk {
+export function unpinEntry(entryId: string | number): AsyncThunk {
     return async ({ dispatch }) => {
         dispatch({
             type: 'ENTRY_PINNING',
@@ -393,7 +393,7 @@ export function unpinEntry(entryId: string): AsyncThunk {
             const token = await dispatch(getFeedlyToken());
             const tagId = toFeedlyStreamId('pins', token.id);
 
-            await feedlyApi.unsetTag(token.access_token, [entryId], [tagId]);
+            await feedlyApi.unsetTag(token.access_token, [entryId as string], [tagId]);
 
             dispatch({
                 type: 'ENTRY_PINNED',
@@ -447,14 +447,14 @@ export function changeStreamCacheOptions(capacity: number, lifetime: number): As
     };
 }
 
-export function showFullContents(entryId: string): Event {
+export function showFullContents(entryId: string | number): Event {
     return {
         type: 'FULL_CONTENTS_SHOWN',
         entryId
     };
 }
 
-export function hideFullContents(entryId: string): Event {
+export function hideFullContents(entryId: string | number): Event {
     return {
         type: 'FULL_CONTENTS_HIDDEN',
         entryId
@@ -524,8 +524,7 @@ function fetchCategoryStream(streamId: string, fetchOptions: StreamFetchOptions,
         });
 
         const { categories } = getState();
-        const category = Object.values(categories.items)
-            .find((category) => category.streamId === streamId) || null;
+        const category = categories.items[streamId] || null;
 
         const stream: Stream = {
             streamId,

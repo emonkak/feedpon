@@ -95,14 +95,9 @@ class DashboardPage extends PureComponent<DashboardProps, DashboardState> {
 }
 
 export default connect(() => {
-    const subscriptionsSelector = createSelector(
-        (state: State) => state.subscriptions.items,
-        (subscriptions) => Object.values(subscriptions)
-    );
-
     const categoryUnreadCountsSelector = createSelector(
-        subscriptionsSelector,
-        (subscriptions) => subscriptions.reduce<{ [key: string]: number }>((acc, subscription) => {
+        (state: State) => state.subscriptions.items,
+        (subscriptions) => Object.values(subscriptions).reduce<{ [key: string]: number }>((acc, subscription) => {
             for (const label of subscription.labels) {
                 acc[label] = (acc[label] || 0) + subscription.unreadCount;
             }

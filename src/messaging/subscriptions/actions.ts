@@ -86,9 +86,7 @@ export function addToCategory(subscription: Subscription, labelToAdd: string): A
         try {
             const token = await dispatch(getFeedlyToken());
 
-            const labels = subscription.labels
-                .filter((label) => label !== labelToAdd)
-                .concat([labelToAdd]);
+            const labels = [...new Set([...subscription.labels, labelToAdd])];
             const categories = labels.map((label) => ({
                 id: `user/${token.id}/category/${label}`,
                 label
@@ -213,7 +211,7 @@ export function unsubscribe(subscription: Subscription): AsyncThunk {
     return async ({ dispatch, getState }) => {
         dispatch({
             type: 'FEED_UNSUBSCRIBING',
-            subscription
+            feedId: subscription.feedId
         });
 
         try {
@@ -223,12 +221,12 @@ export function unsubscribe(subscription: Subscription): AsyncThunk {
 
             dispatch({
                 type: 'FEED_UNSUBSCRIBED',
-                subscription
+                feedId: subscription.feedId
             });
         } catch (error) {
             dispatch({
                 type: 'FEED_UNSUBSCRIBING_FAILED',
-                subscription
+                feedId: subscription.feedId
             });
 
             throw error;

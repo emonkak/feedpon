@@ -1,7 +1,6 @@
 import React, { PureComponent } from 'react';
 import { History } from 'history';
 import { Params } from 'react-router/lib/Router';
-import { createSelector } from 'reselect';
 
 import FeedComponent from 'components/parts/Feed';
 import FeedPlaceholder from 'components/parts/FeedPlaceholder';
@@ -9,9 +8,9 @@ import MainLayout from 'components/layouts/MainLayout';
 import Navbar from 'components/parts/Navbar';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
-import createAscendingComparer from 'utils/createAscendingComparer';
 import { Category, Feed, State, Subscription } from 'messaging/types';
 import { addToCategory, removeFromCategory, subscribe, unsubscribe } from 'messaging/subscriptions/actions';
+import { createSortedCategoriesSelector } from 'messaging/categories/selectors';
 import { createCategory } from 'messaging/categories/actions';
 import { searchFeeds } from 'messaging/search/actions';
 
@@ -182,17 +181,12 @@ class SearchPage extends PureComponent<SearchPageProps, {}> {
    }
 }
 
-const categoriesComparer = createAscendingComparer<Category>('categoryId');
-
 export default connect(() => {
-    const categoriesSelector = createSelector(
-        (state: State) => state.categories.items,
-        (categories) => Object.values(categories).sort(categoriesComparer)
-    );
+    const sortedCategoriesSelector = createSortedCategoriesSelector();
 
     return {
         mapStateToProps: (state: State) => ({
-            categories: categoriesSelector(state),
+            categories: sortedCategoriesSelector(state),
             feeds: state.search.feeds,
             isLoaded: state.search.isLoaded,
             isLoading: state.search.isLoading,

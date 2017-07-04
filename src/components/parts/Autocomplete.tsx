@@ -30,9 +30,9 @@ export default class Autocomplete extends PureComponent<AutoCompleteProps, Autoc
         renderExtraItems: () => null
     };
 
-    private menu: Menu | null;
+    private menu: Menu | null = null;
 
-    private queryInput: HTMLInputElement;
+    private inputControl: HTMLInputElement | null = null;
 
     constructor(props: AutoCompleteProps, context: any) {
         super(props, context);
@@ -44,19 +44,23 @@ export default class Autocomplete extends PureComponent<AutoCompleteProps, Autoc
 
         this.handleChange = debounceEventHandler(this.handleChange.bind(this), props.completeDebounceTime!);
         this.handleClose = this.handleClose.bind(this);
+        this.handleFocus = this.handleFocus.bind(this);
+        this.handleInputControl = this.handleInputControl.bind(this);
         this.handleKeyDown = this.handleKeyDown.bind(this);
-        this.handleOpen = this.handleOpen.bind(this);
+        this.handleMenuRef = this.handleMenuRef.bind(this);
         this.handleSelect = this.handleSelect.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     handleChange(event: React.FormEvent<any>) {
-        const query = this.queryInput.value;
+        if (this.inputControl) {
+            const query = this.inputControl.value;
 
-        this.setState((state) => ({
-            isOpened: true,
-            query
-        }));
+            this.setState((state) => ({
+                isOpened: true,
+                query
+            }));
+        }
     }
 
     handleClose() {
@@ -66,11 +70,15 @@ export default class Autocomplete extends PureComponent<AutoCompleteProps, Autoc
         }));
     }
 
-    handleOpen() {
+    handleFocus() {
         this.setState((state) => ({
             isOpened: true,
             query: state.query
         }));
+    }
+
+    handleInputControl(ref: HTMLInputElement | null) {
+        this.inputControl = ref;
     }
 
     handleKeyDown(event: React.KeyboardEvent<any>) {
@@ -94,9 +102,19 @@ export default class Autocomplete extends PureComponent<AutoCompleteProps, Autoc
             case 'Escape':
                 event.preventDefault();
                 event.stopPropagation();
-                this.queryInput.focus();
+                if (this.inputControl) {
+                    this.inputControl.blur();
+                }
+                this.setState((state) => ({
+                    isOpened: false,
+                    query: state.query
+                }));
                 break;
         }
+    }
+
+    handleMenuRef(ref: Menu | null) {
+        this.menu = ref;
     }
 
     handleSelect(value: any) {
@@ -117,18 +135,18 @@ export default class Autocomplete extends PureComponent<AutoCompleteProps, Autoc
 
         const { onSubmit } = this.props;
 
-        if (onSubmit) {
-            onSubmit(this.queryInput.value);
+        if (onSubmit && this.inputControl) {
+            onSubmit(this.inputControl.value);
         }
     }
 
-    renderValidatableInput() {
+    renderInputControl() {
         const { inputControl } = this.props;
 
         return cloneElement(inputControl, {
             ref: createChainedFunction(
                 inputControl.props.ref,
-                (ref: HTMLInputElement) => this.queryInput = ref
+                this.handleInputControl
             ),
             onChange: createChainedFunction(
                 inputControl.props.onChange,
@@ -140,7 +158,7 @@ export default class Autocomplete extends PureComponent<AutoCompleteProps, Autoc
             ),
             onFocus: createChainedFunction(
                 inputControl.props.onFocus,
-                this.handleOpen
+                this.handleFocus
             )
         });
     }
@@ -159,13 +177,14 @@ export default class Autocomplete extends PureComponent<AutoCompleteProps, Autoc
                 <div className={classnames('autocomplete', {
                     'is-opened': isOpened && candidates.length > 0
                 })}>
-                    <form className="autocomplete-form"
-                          onSubmit={this.handleSubmit}>
-                        {this.renderValidatableInput()}
+                    <form
+                        className="autocomplete-form"
+                        onSubmit={this.handleSubmit}>
+                        {this.renderInputControl()}
                     </form>
                     <div className="autocomplete-menu">
                         <Menu
-                            ref={(ref) => this.menu = ref}
+                            ref={this.handleMenuRef}
                             onKeyDown={this.handleKeyDown}
                             onSelect={this.handleSelect}
                             onClose={this.handleClose}>

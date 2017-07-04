@@ -17,6 +17,8 @@ import saveStateMiddleware from 'utils/flux/middlewares/saveStateMiddleware';
 import thunkMiddleware from 'utils/flux/middlewares/thunkMiddleware';
 import waitForReadyState from 'utils/dom/waitForReadyState';
 import { ThunkContext } from 'messaging/types';
+import { createSortedCategoriesSelector } from 'messaging/categories/selectors';
+import { createVisibleSubscriptionsSelector } from 'messaging/subscriptions/selectors';
 
 (window as any).Trie = Trie;
 
@@ -48,7 +50,11 @@ const context: ThunkContext = {
         scope: 'https://cloud.feedly.com/subscriptions',
         redirectUri: 'https://www.feedly.com/feedly.html'
     },
-    router: hashHistory
+    router: hashHistory,
+    selectors: {
+        visibleSubscriptionsSelector: createVisibleSubscriptionsSelector(),
+        sortedCategoriesSelector: createSortedCategoriesSelector()
+    }
 };
 
 const store = applyMiddlewares(createStore(reducer, state), [

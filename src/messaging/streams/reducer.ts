@@ -10,6 +10,10 @@ export default function reducer(streams: Streams, event: Event): Streams {
                 isMarking: false,
                 items: CacheMap.mapValues(streams.items, (stream) => ({
                     ...stream,
+                    feed: stream.feed ? {
+                        ...stream.feed,
+                        isLoading: false
+                    } : null,
                     entries: stream.entries.map((entry) => {
                         if (!(entry.isPinning || entry.comments.isLoading || entry.fullContents.isLoading)) {
                             return entry;
@@ -224,7 +228,7 @@ export default function reducer(streams: Streams, event: Event): Streams {
             return {
                 ...streams,
                 items: CacheMap.mapValues(streams.items, (stream) => {
-                    if (!stream.feed || stream.feed.feedId !== event.subscription.feedId) {
+                    if (!stream.feed || stream.feed.feedId !== event.feedId) {
                         return stream;
                     }
                     return {
@@ -242,7 +246,7 @@ export default function reducer(streams: Streams, event: Event): Streams {
             return {
                 ...streams,
                 items: CacheMap.mapValues(streams.items, (stream) => {
-                    if (!stream.feed || stream.feed.feedId !== event.subscription.feedId) {
+                    if (!stream.feed || stream.feed.feedId !== event.feedId) {
                         return stream;
                     }
                     return {
@@ -311,7 +315,7 @@ export default function reducer(streams: Streams, event: Event): Streams {
                                 isLoaded: true,
                                 isLoading: false,
                                 isShown: true,
-                                items: entry.fullContents.items.concat([event.fullContent])
+                                items: [...entry.fullContents.items, event.fullContent]
                             }
                         };
                     })

@@ -92,7 +92,7 @@ export default function reducer(search: Search, event: Event) {
             return {
                 ...search,
                 feeds: search.feeds.map((feed) => {
-                    if (feed.feedId !== event.subscription.feedId) {
+                    if (feed.feedId !== event.feedId) {
                         return feed;
                     }
                     return {
@@ -106,7 +106,7 @@ export default function reducer(search: Search, event: Event) {
             return {
                 ...search,
                 feeds: search.feeds.map((feed) => {
-                    if (feed.feedId !== event.subscription.feedId) {
+                    if (feed.feedId !== event.feedId) {
                         return feed;
                     }
                     return {
@@ -120,7 +120,7 @@ export default function reducer(search: Search, event: Event) {
             return {
                 ...search,
                 feeds: search.feeds.map((feed) => {
-                    if (feed.feedId !== event.subscription.feedId) {
+                    if (feed.feedId !== event.feedId) {
                         return feed;
                     }
                     return {

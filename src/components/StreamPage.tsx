@@ -13,12 +13,12 @@ import StreamFooter from 'components/parts/StreamFooter';
 import StreamNavbar from 'components/parts/StreamNavbar';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
-import createAscendingComparer from 'utils/createAscendingComparer';
 import { Category, Entry, EntryOrderKind, State, Stream, StreamFetchOptions, StreamViewKind, Subscription } from 'messaging/types';
 import { addToCategory, removeFromCategory, subscribe, unsubscribe } from 'messaging/subscriptions/actions';
-import { changeActiveEntry, changeExpandedEntry, changeReadEntry, changeStreamView, selectStream } from 'messaging/ui/actions';
+import { changeActiveEntry, changeExpandedEntry, changeReadEntry, changeStreamView, selectStream, unselectStream } from 'messaging/ui/actions';
 import { changeUnreadKeeping, fetchComments, fetchFullContent, fetchMoreEntries, fetchStream, hideFullContents, markAsRead, markCategoryAsRead, markFeedAsRead, pinEntry, showFullContents, unpinEntry } from 'messaging/streams/actions';
 import { createCategory } from 'messaging/categories/actions';
+import { createSortedCategoriesSelector } from 'messaging/categories/selectors';
 
 interface StreamPageProps {
     activeEntryIndex: number;
@@ -55,6 +55,7 @@ interface StreamPageProps {
     onSubscribe: typeof subscribe;
     onToggleSidebar: () => void,
     onUnpinEntry: typeof unpinEntry;
+    onUnselectStream: typeof unselectStream;
     onUnsubscribe: typeof unsubscribe;
     params: Params;
     readEntries: Entry[];
@@ -148,7 +149,9 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
     }
 
     componentWillUnmount() {
-        const { canMarkAsRead, keepUnread, onMarkAsRead, readEntries } = this.props;
+        const { canMarkAsRead, keepUnread, onMarkAsRead, onUnselectStream, readEntries } = this.props;
+
+        onUnselectStream();
 
         if (canMarkAsRead && !keepUnread && readEntries.length > 0) {
             onMarkAsRead(readEntries);
@@ -419,13 +422,8 @@ function shouldFetchStream(props: StreamPageProps) {
     return stream == null || !isLoaded || Date.now() - stream.fetchedAt > cacheLifetime;
 }
 
-const categoriesComparer = createAscendingComparer<Category>('categoryId');
-
 export default connect(() => {
-    const categoriesSelector = createSelector(
-        (state: State) => state.categories.items,
-        (categories) => Object.values(categories).sort(categoriesComparer)
-    );
+    const categoriesSelector = createSortedCategoriesSelector();
 
     const fetchOptionsSelector = createSelector(
         (state: State) => state.streams.defaultFetchOptions,
@@ -543,6 +541,7 @@ export default connect(() => {
             onShowFullContents: showFullContents,
             onSubscribe: subscribe,
             onUnpinEntry: unpinEntry,
+            onUnselectStream: unselectStream,
             onUnsubscribe: unsubscribe
         })
     };

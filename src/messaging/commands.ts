@@ -1,13 +1,12 @@
 import * as CacheMap from 'utils/containers/CacheMap';
-import { Command, Store } from 'messaging/types';
-import { Location } from 'history';
-import { changeExpandedEntry, changeStreamView, closeSidebar, endScroll, openSidebar, startScroll } from 'messaging/ui/actions';
+import * as streamActions from 'messaging/streams/actions';
+import * as subscriptionActions from 'messaging/subscriptions/actions';
+import * as uiActions from 'messaging/ui/actions';
+import { Command, Entry, Store, Stream, Thunk } from 'messaging/types';
 import { smoothScrollTo, smoothScrollBy } from 'utils/dom/smoothScroll';
 
 const SCROLL_ANIMATION_DURATION = 1000 / 60 * 10;
 const SCROLL_OFFSET = 48;
-
-const STREAM_PATH_PATTERN = /^\/streams\/([^\/]+)/;
 
 export const gotoFirstLine: Command = {
     title: 'Go to first line',
@@ -27,15 +26,50 @@ export const gotoLastLine: Command = {
     }
 };
 
-export const pinEntry: Command = {
-    title: 'Pin entry',
-    thunk(store) {
+export const fetchFullContent: Command = {
+    title: 'Fetch full content',
+    thunk({ dispatch }) {
+        const entry = dispatch(getActiveEntry);
+
+        if (entry && entry.url) {
+            if (entry.fullContents.isLoaded) {
+                const lastFullContent = entry.fullContents.items[entry.fullContents.items.length - 1];
+
+                if (lastFullContent && lastFullContent.nextPageUrl) {
+                    dispatch(streamActions.fetchFullContent(entry.entryId, lastFullContent.nextPageUrl));
+                } else {
+                    if (entry.fullContents.isShown) {
+                        dispatch(streamActions.hideFullContents(entry.entryId));
+                    } else {
+                        dispatch(streamActions.showFullContents(entry.entryId));
+                    }
+                }
+            } else {
+                dispatch(streamActions.fetchFullContent(entry.entryId, entry.url));
+            }
+        }
+    }
+};
+
+export const pinOrUnpinEntry: Command = {
+    title: 'Pin/Unpin entry',
+    thunk({ dispatch }) {
+        const entry = dispatch(getActiveEntry);
+
+        if (entry) {
+            if (entry.isPinned) {
+                dispatch(streamActions.unpinEntry(entry.entryId));
+            } else {
+                dispatch(streamActions.pinEntry(entry.entryId));
+            }
+        }
     }
 };
 
 export const reloadSubscriptions: Command = {
     title: 'Reload subscriptions',
-    thunk(store) {
+    thunk({ dispatch }) {
+        dispatch(subscriptionActions.fetchSubscriptions());
     }
 };
 
@@ -45,12 +79,14 @@ export const scrollUp: Command = {
         return scrollBy(store, 0, -200);
     }
 };
+
 export const scrollDown: Command = {
     title: 'Scroll down',
     thunk(store) {
         return scrollBy(store, 0, 200);
     }
 };
+
 export const scrollHalfPageUp: Command = {
     title: 'Scroll half page up',
     thunk(store) {
@@ -81,7 +117,18 @@ export const scrollPageDown: Command = {
 
 export const searchSubscriptions: Command = {
     title: 'Search subscriptions',
-    thunk(store) {
+    thunk({ dispatch, getState }) {
+        const { ui } = getState();
+
+        if (!ui.sidebarIsOpened) {
+            dispatch(uiActions.openSidebar());
+        }
+
+        const searchInput = document.querySelector('.input-search-box') as HTMLElement | null;
+
+        if (searchInput) {
+            searchInput.focus();
+        }
     }
 };
 
@@ -104,9 +151,16 @@ export const selectNextEntry: Command = {
             }
         }
 
-        const lastElement = elements[elements.length - 1] as HTMLElement;
-        if (lastElement) {
-            scrollTo(store, 0, lastElement.offsetTop + lastElement.offsetHeight + SCROLL_OFFSET);
+        const y = document.documentElement.scrollHeight - window.innerHeight;
+
+        if (window.scrollY === y) {
+            const stream = store.dispatch(getSelectedStream);
+
+            if (stream && stream.continuation) {
+                store.dispatch(streamActions.fetchMoreEntries(stream.streamId, stream.continuation, stream.fetchOptions));
+            }
+        } else {
+            scrollTo(store, 0, y);
         }
     }
 };
@@ -130,7 +184,9 @@ export const selectPreviousEntry: Command = {
             }
         }
 
-        scrollTo(store, 0, 0);
+        if (window.scrollY !== 0) {
+            scrollTo(store, 0, 0);
+        }
     }
 };
 
@@ -139,44 +195,105 @@ export const openEntry: Command = {
     thunk({ getState, dispatch }) {
         const { ui } = getState();
 
-        dispatch(changeExpandedEntry(ui.activeEntryIndex));
+        dispatch(uiActions.changeExpandedEntry(ui.activeEntryIndex));
     }
 };
 
 export const closeEntry: Command = {
     title: 'Close entry',
     thunk({ dispatch }) {
-        dispatch(changeExpandedEntry(-1));
+        dispatch(uiActions.changeExpandedEntry(-1));
     }
 };
 
 export const selectNextCategory: Command = {
     title: 'Select next category',
-    thunk(store) {
+    thunk({ dispatch, getState }, { router, selectors }) {
+        const state = getState();
+        const streamId = state.ui.selectedStreamId;
+
+        if (streamId) {
+            const sortedCategories = selectors.sortedCategoriesSelector(state);
+            const selectedCategoryIndex = sortedCategories
+                .findIndex((category) => category.streamId === streamId);
+            const nextCategory = selectedCategoryIndex > -1
+                ? sortedCategories[selectedCategoryIndex + 1]
+                : sortedCategories[0];
+
+            if (nextCategory) {
+                router.push(`/streams/${encodeURIComponent(nextCategory.streamId)}`);
+            }
+        }
     }
 };
 
 export const selectPreviousCategory: Command = {
-    title: 'Select previous feed',
-    thunk(store) {
+    title: 'Select previous category',
+    thunk({ dispatch, getState }, { router, selectors }) {
+        const state = getState();
+        const streamId = state.ui.selectedStreamId;
+
+        if (streamId) {
+            const sortedCategories = selectors.sortedCategoriesSelector(state);
+            const selectedCategoryIndex = sortedCategories
+                .findIndex((category) => category.streamId === streamId);
+            const previousCategory = selectedCategoryIndex > -1
+                ? sortedCategories[selectedCategoryIndex - 1]
+                : sortedCategories[sortedCategories.length - 1];
+
+            if (previousCategory) {
+                router.push(`/streams/${encodeURIComponent(previousCategory.streamId)}`);
+            }
+        }
     }
 };
 
-export const selectNextFeed: Command = {
-    title: 'Select next feed',
-    thunk(store) {
+export const selectNextSubscription: Command = {
+    title: 'Select next subscription',
+    thunk({ dispatch, getState }, { router, selectors }) {
+        const state = getState();
+        const streamId = state.ui.selectedStreamId;
+
+        if (streamId) {
+            const visibleSubscriptions = selectors.visibleSubscriptionsSelector(state);
+            const selectedSubscriptionIndex = visibleSubscriptions
+                .findIndex((subscription) => subscription.streamId === streamId);
+            const nextSubscription = selectedSubscriptionIndex > -1
+                ? visibleSubscriptions[selectedSubscriptionIndex + 1]
+                : visibleSubscriptions[0];
+
+            if (nextSubscription) {
+                router.push(`/streams/${encodeURIComponent(nextSubscription.streamId)}`);
+            }
+        }
     }
 };
 
-export const selectPreviousFeed: Command = {
-    title: 'Select previous feed',
-    thunk(store) {
+export const selectPreviousSubscription: Command = {
+    title: 'Select previous subscription',
+    thunk({ dispatch, getState }, { router, selectors }) {
+        const state = getState();
+        const streamId = state.ui.selectedStreamId;
+
+        if (streamId) {
+            const visibleSubscriptions = selectors.visibleSubscriptionsSelector(state);
+            const selectedSubscriptionIndex = visibleSubscriptions
+                .findIndex((subscription) => subscription.streamId === streamId);
+            const previousSubscription = selectedSubscriptionIndex > -1
+                ? visibleSubscriptions[selectedSubscriptionIndex - 1]
+                : visibleSubscriptions[visibleSubscriptions.length - 1];
+
+            if (previousSubscription) {
+                router.push(`/streams/${encodeURIComponent(previousSubscription.streamId)}`);
+            }
+        }
     }
 };
 
 export const showHelp: Command = {
     title: 'Show help',
     thunk(store) {
+        window.alert('help');
     }
 };
 
@@ -186,9 +303,9 @@ export const toggleSidebar: Command = {
         const { ui } = getState();
 
         if (ui.sidebarIsOpened) {
-            dispatch(closeSidebar());
+            dispatch(uiActions.closeSidebar());
         } else {
-            dispatch(openSidebar());
+            dispatch(uiActions.openSidebar());
         }
     }
 };
@@ -199,42 +316,45 @@ export const toggleStreamView: Command = {
         const { ui } = getState();
 
         if (ui.streamView === 'expanded') {
-            dispatch(changeStreamView('collapsible'));
+            dispatch(uiActions.changeStreamView('collapsible'));
         } else {
-            dispatch(changeStreamView('expanded'));
+            dispatch(uiActions.changeStreamView('expanded'));
         }
     }
 };
 
 export const visitWebsite: Command = {
     title: 'Visit website',
-    thunk(store, { router }) {
-        const location = router.getCurrentLocation();
-        const streamId = getStreamIdFromLocation(location);
-        if (streamId == null) {
-            return;
-        }
+    thunk({ dispatch }) {
+        const entry = dispatch(getActiveEntry);
 
-        const { streams } = store.getState();
-        const stream = CacheMap.get(streams.items, streamId);
-
-        if (stream) {
-            console.log(stream);
+        if (entry && entry.url) {
+            window.open(entry.url);
         }
     }
 };
 
+export const visitWebsiteInBackground: Command = {
+    title: 'Visit website in background',
+    thunk({ dispatch }) {
+        const entry = dispatch(getActiveEntry);
+
+        if (entry && entry.url) {
+            openUrlInBackground(entry.url);
+        }
+    }
+};
 
 function scrollBy({ getState, dispatch }: Store, dx: number, dy: number): Promise<void> {
     const { ui } = getState();
 
     if (!ui.isScrolling) {
-        dispatch(startScroll());
+        dispatch(uiActions.startScroll());
     }
 
     return smoothScrollBy(document.body, dx, dy, SCROLL_ANIMATION_DURATION)
         .then(() => {
-            dispatch(endScroll());
+            dispatch(uiActions.endScroll());
         });
 }
 
@@ -242,19 +362,59 @@ function scrollTo({ getState, dispatch }: Store, x: number, y: number): Promise<
     const { ui } = getState();
 
     if (!ui.isScrolling) {
-        dispatch(startScroll());
+        dispatch(uiActions.startScroll());
     }
 
     return smoothScrollTo(document.body, x, y, SCROLL_ANIMATION_DURATION)
         .then(() => {
-            dispatch(endScroll());
+            dispatch(uiActions.endScroll());
         });
 }
 
-function getStreamIdFromLocation(location: Location): string | null {
-    const matches = location.pathname.match(STREAM_PATH_PATTERN);
+function openUrlInBackground(url: string): void {
+    if (chrome) {
+        chrome.tabs.create({ url, active: false });
+    } else {
+        const a = document.createElement('a');
+        a.href = url;
 
-    return matches
-        ? decodeURIComponent(matches[1])
-        : null;
+        const event = document.createEvent('MouseEvents');
+        event.initMouseEvent(
+            'click', true, true, window,
+            0, 0, 0, 0, 0,
+            false, false, false, false,
+            1, null
+        );
+
+        a.dispatchEvent(event);
+    }
 }
+
+const getSelectedStream: Thunk<Stream | null> = ({ getState }) => {
+    const { ui, streams } = getState();
+
+    if (ui.selectedStreamId) {
+        const stream = CacheMap.get(streams.items, ui.selectedStreamId);
+
+        if (stream) {
+            return stream;
+        }
+    }
+
+    return null;
+};
+
+const getActiveEntry: Thunk<Entry | null> = ({ getState, dispatch }) => {
+    const seletedStream = dispatch(getSelectedStream);
+
+    if (seletedStream) {
+        const { ui } = getState();
+        const entry = seletedStream.entries[ui.activeEntryIndex];
+
+        if (entry) {
+            return entry;
+        }
+    }
+
+    return null;
+};

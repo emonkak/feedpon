@@ -69,7 +69,7 @@ export function mutableUpdate<T>(tree: Trie<T>, path: string[], value: T): void 
     const node = tree[key] || { children: {} };
 
     if (path.length > 1) {
-        mutableUpdate(node.children, path.slice(1), value)
+        mutableUpdate(node.children, path.slice(1), value);
     } else {
         node.value = value;
     }

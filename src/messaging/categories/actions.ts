@@ -69,7 +69,7 @@ export function updateCategory(category: Category, label: string): AsyncThunk {
     return async ({ dispatch, getState }) => {
         dispatch({
             type: 'CATEGORY_UPDATING',
-            category
+            categoryId: category.categoryId
         });
 
         try {
@@ -81,7 +81,7 @@ export function updateCategory(category: Category, label: string): AsyncThunk {
 
             dispatch({
                 type: 'CATEGORY_UPDATED',
-                prevCategory: category,
+                prevCategoryLabel: category.label,
                 category: {
                     categoryId,
                     streamId: categoryId,
@@ -92,7 +92,7 @@ export function updateCategory(category: Category, label: string): AsyncThunk {
         } catch (error) {
             dispatch({
                 type: 'CATEGORY_UPDATING_FAILED',
-                category
+                categoryId: category.categoryId
             });
 
             throw error;
