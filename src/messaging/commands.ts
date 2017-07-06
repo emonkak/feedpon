@@ -2,16 +2,14 @@ import * as CacheMap from 'utils/containers/CacheMap';
 import * as streamActions from 'messaging/streams/actions';
 import * as subscriptionActions from 'messaging/subscriptions/actions';
 import * as uiActions from 'messaging/ui/actions';
-import { AsyncThunk, Command, Entry, Stream, Thunk } from 'messaging/types';
-import { smoothScrollTo, smoothScrollBy } from 'utils/dom/smoothScroll';
+import { Command, Entry, Stream, Thunk } from 'messaging/types';
 
-const SCROLL_ANIMATION_DURATION = 1000 / 60 * 10;
 const SCROLL_OFFSET = 48;
 
 export const gotoFirstLine: Command = {
     title: 'Go to first line',
     thunk({ dispatch }) {
-        dispatch(scrollTo(0, 0));
+        dispatch(uiActions.scrollTo(0, 0));
     },
     skipNotification: true
 };
@@ -19,7 +17,7 @@ export const gotoFirstLine: Command = {
 export const gotoLastLine: Command = {
     title: 'Go to last line',
     thunk({ dispatch }) {
-        dispatch(scrollTo(
+        dispatch(uiActions.scrollTo(
             0,
             document.documentElement.scrollHeight - document.documentElement.clientHeight
         ));
@@ -109,7 +107,7 @@ export const scrollUp: Command = {
     thunk({ getState, dispatch }) {
         const { keyMappings } = getState();
 
-        dispatch(scrollBy(0, -keyMappings.scrollAmount));
+        dispatch(uiActions.scrollBy(0, -keyMappings.scrollAmount));
     },
     skipNotification: true
 };
@@ -119,7 +117,7 @@ export const scrollDown: Command = {
     thunk({ getState, dispatch }) {
         const { keyMappings } = getState();
 
-        dispatch(scrollBy(0, keyMappings.scrollAmount));
+        dispatch(uiActions.scrollBy(0, keyMappings.scrollAmount));
     },
     skipNotification: true
 };
@@ -127,7 +125,7 @@ export const scrollDown: Command = {
 export const scrollHalfPageUp: Command = {
     title: 'Scroll half page up',
     thunk({ dispatch }) {
-        dispatch(scrollBy(0, -document.documentElement.clientHeight / 2));
+        dispatch(uiActions.scrollBy(0, -document.documentElement.clientHeight / 2));
     },
     skipNotification: true
 };
@@ -135,7 +133,7 @@ export const scrollHalfPageUp: Command = {
 export const scrollHalfPageDown: Command = {
     title: 'Scroll half page down',
     thunk({ dispatch }) {
-        dispatch(scrollBy(0, document.documentElement.clientHeight / 2));
+        dispatch(uiActions.scrollBy(0, document.documentElement.clientHeight / 2));
     },
     skipNotification: true
 };
@@ -143,7 +141,7 @@ export const scrollHalfPageDown: Command = {
 export const scrollPageUp: Command = {
     title: 'Scroll page up',
     thunk({ dispatch }) {
-        dispatch(scrollBy(0, -document.documentElement.clientHeight));
+        dispatch(uiActions.scrollBy(0, -document.documentElement.clientHeight));
     },
     skipNotification: true
 };
@@ -151,7 +149,7 @@ export const scrollPageUp: Command = {
 export const scrollPageDown: Command = {
     title: 'Scroll page down',
     thunk({ dispatch }) {
-        dispatch(scrollBy(0, document.documentElement.clientHeight));
+        dispatch(uiActions.scrollBy(0, document.documentElement.clientHeight));
     },
     skipNotification: true
 };
@@ -188,7 +186,7 @@ export const selectNextEntry: Command = {
         for (let i = 0; i < elements.length; i++) {
             const element = elements[i] as HTMLElement;
             if (element.offsetTop > scrollY) {
-                dispatch(scrollTo(0, element.offsetTop - SCROLL_OFFSET));
+                dispatch(uiActions.scrollTo(0, element.offsetTop - SCROLL_OFFSET));
                 return;
             }
         }
@@ -202,7 +200,7 @@ export const selectNextEntry: Command = {
                 dispatch(streamActions.fetchMoreEntries(stream.streamId, stream.continuation, stream.fetchOptions));
             }
         } else {
-            dispatch(scrollTo(0, y));
+            dispatch(uiActions.scrollTo(0, y));
         }
     },
     skipNotification: true
@@ -223,13 +221,13 @@ export const selectPreviousEntry: Command = {
         for (let i = elements.length - 1; i >= 0; i--) {
             const element = elements[i] as HTMLElement;
             if (element.offsetTop < scrollY) {
-                dispatch(scrollTo(0, element.offsetTop - SCROLL_OFFSET));
+                dispatch(uiActions.scrollTo(0, element.offsetTop - SCROLL_OFFSET));
                 return;
             }
         }
 
         if (window.scrollY !== 0) {
-            dispatch(scrollTo(0, 0));
+            dispatch(uiActions.scrollTo(0, 0));
         }
     },
     skipNotification: true
@@ -405,36 +403,6 @@ export const visitWebsiteInBackground: Command = {
         }
     }
 };
-
-function scrollBy(dx: number, dy: number): AsyncThunk {
-    return ({ getState, dispatch }) => {
-        const { ui } = getState();
-
-        if (!ui.isScrolling) {
-            dispatch(uiActions.startScroll());
-        }
-
-        return smoothScrollBy(document.body, dx, dy, SCROLL_ANIMATION_DURATION)
-            .then(() => {
-                dispatch(uiActions.endScroll());
-            });
-    };
-}
-
-function scrollTo(x: number, y: number): AsyncThunk {
-    return ({ getState, dispatch }) => {
-        const { ui } = getState();
-
-        if (!ui.isScrolling) {
-            dispatch(uiActions.startScroll());
-        }
-
-        return smoothScrollTo(document.body, x, y, SCROLL_ANIMATION_DURATION)
-            .then(() => {
-                dispatch(uiActions.endScroll());
-            });
-    };
-}
 
 function openUrlInBackground(url: string): void {
     if (chrome) {

@@ -35,15 +35,21 @@ function smoothScroll<TScrollable extends object>(
     y: number,
     duration: number
 ): Promise<void> {
+    const runningAnimation = runningAnimations.get(scrollable);
+
+    if (runningAnimation) {
+        cancelAnimationFrame(runningAnimation.requestId);
+        runningAnimations.delete(scrollable);
+    }
+
     if (startX === x && startY === y) {
         return Promise.resolve();
     }
 
-    const runningAnimation = runningAnimations.get(scrollable);
-    const initialProgress = runningAnimation ? Math.min(0.5, runningAnimation.progress) : 0;
-    const startTime = performance.now();
-
     return new Promise((resolve) => {
+        const initialProgress = runningAnimation ? Math.min(0.5, runningAnimation.progress) : 0;
+        const startTime = performance.now();
+
         const step = () => {
             const currentTime = performance.now();
             const deltaTime = currentTime - startTime;
@@ -65,14 +71,9 @@ function smoothScroll<TScrollable extends object>(
             const requestId = requestAnimationFrame(step);
 
             runningAnimations.set(scrollable, { progress, requestId });
-        };
-
-        if (runningAnimation) {
-            cancelAnimationFrame(runningAnimation.requestId);
-            requestAnimationFrame(step);
-        } else {
-            step();
         }
+
+        step();
     });
 }
 

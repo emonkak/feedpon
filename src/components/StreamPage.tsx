@@ -19,6 +19,7 @@ import { changeActiveEntry, changeExpandedEntry, changeReadEntry, changeStreamVi
 import { changeUnreadKeeping, fetchEntryComments, fetchFullContent, fetchMoreEntries, fetchStream, hideEntryComments, hideFullContents, markAsRead, markCategoryAsRead, markFeedAsRead, pinEntry, showEntryComments, showFullContents, unpinEntry } from 'messaging/streams/actions';
 import { createCategory } from 'messaging/categories/actions';
 import { createSortedCategoriesSelector } from 'messaging/categories/selectors';
+import { scrollTo } from 'messaging/ui/actions';
 
 interface StreamPageProps {
     activeEntryIndex: number;
@@ -51,6 +52,7 @@ interface StreamPageProps {
     onMarkFeedAsRead: typeof markFeedAsRead;
     onPinEntry: typeof pinEntry;
     onRemoveFromCategory: typeof removeFromCategory;
+    onScrollTo: typeof scrollTo;
     onSelectStream: typeof selectStream;
     onShowEntryComments: typeof showEntryComments;
     onShowFullContents: typeof showFullContents;
@@ -63,7 +65,6 @@ interface StreamPageProps {
     readEntries: Entry[];
     readEntryIndex: number;
     router: History;
-    scrollTo: (x: number, y: number, callback?: () => void) => void;
     stream: Stream | null;
     streamView: StreamViewKind;
     subscription: Subscription | null;
@@ -169,9 +170,9 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
     }
 
     handleChangeEntryOrderKind(entryOrder: EntryOrderKind) {
-        const { location, router, scrollTo } = this.props;
+        const { location, onScrollTo, router } = this.props;
 
-        scrollTo(0, 0);
+        onScrollTo(0, 0);
 
         router.replace({
             pathname: location.pathname,
@@ -183,9 +184,9 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
     }
 
     handleClearReadEntries() {
-        const { onChangeReadEntry, scrollTo } = this.props;
+        const { onChangeReadEntry, onScrollTo } = this.props;
 
-        scrollTo(0, 0, () => onChangeReadEntry(-1));
+        onScrollTo(0, 0, () => onChangeReadEntry(-1));
     }
 
     handleCloseEntry() {
@@ -221,10 +222,10 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
     }
 
     handleReloadEntries() {
-        const { fetchOptions, onFetchStream, scrollTo, stream } = this.props;
+        const { fetchOptions, onFetchStream, onScrollTo, stream } = this.props;
 
         if (stream) {
-            scrollTo(0, 0);
+            onScrollTo(0, 0);
 
             onFetchStream(stream.streamId, fetchOptions);
         }
@@ -239,9 +240,9 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
     }
 
     handleToggleOnlyUnread() {
-        const { fetchOptions, location, router, scrollTo } = this.props;
+        const { fetchOptions, location, router, onScrollTo } = this.props;
 
-        scrollTo(0, 0);
+        onScrollTo(0, 0);
 
         router.push({
             pathname: location.pathname,
@@ -259,22 +260,18 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
     }
 
     scrollToEntry(index: number) {
-        const { scrollTo } = this.props;
+        const { onScrollTo } = this.props;
         const entryElements = document.getElementsByClassName('entry');
 
         if (index < entryElements.length) {
             const entryElement = entryElements[index] as HTMLElement;
             if (entryElement) {
-                requestAnimationFrame(() => {
-                    scrollTo(0, entryElement.offsetTop - SCROLL_OFFSET);
-                });
+                onScrollTo(0, entryElement.offsetTop - SCROLL_OFFSET);
             }
         } else {
             const entryElement = entryElements[entryElements.length - 1] as HTMLElement;
             if (entryElement) {
-                requestAnimationFrame(() => {
-                    scrollTo(0, entryElement.offsetTop + entryElement.offsetHeight - SCROLL_OFFSET)
-                });
+                onScrollTo(0, entryElement.offsetTop + entryElement.offsetHeight - SCROLL_OFFSET)
             }
         }
     }
@@ -544,6 +541,7 @@ export default connect(() => {
             onMarkFeedAsRead: markFeedAsRead,
             onPinEntry: pinEntry,
             onRemoveFromCategory: removeFromCategory,
+            onScrollTo: scrollTo,
             onSelectStream: selectStream,
             onShowEntryComments: showEntryComments,
             onShowFullContents: showFullContents,

@@ -11,11 +11,8 @@ import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
 import { State, Store } from 'messaging/types';
 import { Trie } from 'utils/containers/Trie';
-import { closeSidebar, endScroll, openSidebar, startScroll } from 'messaging/ui/actions';
+import { closeSidebar, openSidebar } from 'messaging/ui/actions';
 import { sendInstantNotification } from 'messaging/instantNotifications/actions';
-import { smoothScrollTo } from 'utils/dom/smoothScroll';
-
-const SCROLL_ANIMATION_TIME = 1000 / 60 * 10;
 
 interface SidebarLayoutProps {
     store: Store;
@@ -24,9 +21,7 @@ interface SidebarLayoutProps {
     keyMappings: Trie<string>;
     location: Location;
     onCloseSidebar: typeof closeSidebar;
-    onEndScroll: typeof endScroll;
     onOpenSidebar: typeof openSidebar;
-    onStartScroll: typeof startScroll;
     router: History;
     sidebarIsOpened: boolean;
 }
@@ -122,22 +117,8 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
         }
     }
 
-    scrollTo(x: number, y: number, callback?: () => void): void {
-        const { onEndScroll, onStartScroll } = this.props;
-
-        onStartScroll();
-
-        smoothScrollTo(document.body, x, y, SCROLL_ANIMATION_TIME).then(() => {
-            onEndScroll();
-
-            if (callback) {
-                callback();
-            }
-        });
-    }
-
     render() {
-        const { 
+        const {
             children,
             isAuthenticating,
             keyMappings,
@@ -165,8 +146,7 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
                         <InstantNotifications />
                     </div>
                     {cloneElement(children, {
-                        onToggleSidebar: this.handleToggleSidebar,
-                        scrollTo: this.scrollTo.bind(this)
+                        onToggleSidebar: this.handleToggleSidebar
                     })}
                     <div className="l-backdrop">
                         {isAuthenticating ? <i className="icon icon-48 icon-spinner icon-rotating" /> : null}
@@ -186,8 +166,6 @@ export default connect((store) => ({
     }),
     mapDispatchToProps: bindActions({
         onOpenSidebar: openSidebar,
-        onCloseSidebar: closeSidebar,
-        onStartScroll: startScroll,
-        onEndScroll: endScroll
+        onCloseSidebar: closeSidebar
     })
 }))(SidebarLayout);

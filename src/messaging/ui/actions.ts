@@ -1,4 +1,7 @@
-import { Event, StreamViewKind, ThemeKind } from 'messaging/types';
+import { Event, StreamViewKind, ThemeKind, Thunk } from 'messaging/types';
+import { smoothScrollTo, smoothScrollBy } from 'utils/dom/smoothScroll';
+
+const SCROLL_ANIMATION_DURATION = 1000 / 60 * 10;
 
 export function changeActiveEntry(index: number): Event {
     return {
@@ -33,18 +36,6 @@ export function closeSidebar(): Event {
     };
 }
 
-export function startScroll(): Event {
-    return {
-        type: 'SCROLL_STARTED'
-    };
-}
-
-export function endScroll(): Event {
-    return {
-        type: 'SCROLL_ENDED'
-    };
-}
-
 export function changeTheme(theme: ThemeKind): Event {
     return {
         type: 'THEME_CHANGED',
@@ -69,5 +60,51 @@ export function selectStream(streamId: string): Event {
 export function unselectStream(): Event {
     return {
         type: 'STREAM_UNSELECTED'
+    };
+}
+
+export function scrollBy(dx: number, dy: number, callback?: () => void): Thunk {
+    return ({ getState, dispatch }) => {
+        const { ui } = getState();
+
+        if (!ui.isScrolling) {
+            dispatch({
+                type: 'SCROLL_STARTED'
+            });
+        }
+
+        window.requestAnimationFrame(() => {
+            smoothScrollBy(document.body, dx, dy, SCROLL_ANIMATION_DURATION)
+                .then(() => {
+                    dispatch({
+                        type: 'SCROLL_ENDED'
+                    });
+                });
+        });
+    };
+}
+
+export function scrollTo(x: number, y: number, callback?: () => void): Thunk {
+    return ({ getState, dispatch }) => {
+        const { ui } = getState();
+
+        if (!ui.isScrolling) {
+            dispatch({
+                type: 'SCROLL_STARTED'
+            });
+        }
+
+        window.requestAnimationFrame(() => {
+            smoothScrollTo(document.body, x, y, SCROLL_ANIMATION_DURATION)
+                .then(() => {
+                    dispatch({
+                        type: 'SCROLL_ENDED'
+                    });
+
+                    if (callback) {
+                        callback();
+                    }
+                });
+        });
     };
 }
