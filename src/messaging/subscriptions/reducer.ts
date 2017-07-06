@@ -174,7 +174,7 @@ export default function reducer(subscriptions: Subscriptions, event: Event): Sub
                     }
                     return {
                         ...subscription,
-                        unreadCount: Math.max(subscription.unreadCount - event.readCounts[subscription.streamId], 0)
+                        readCount: subscription.readCount + event.readCounts[subscription.streamId]
                     };
                 })
             };
@@ -188,7 +188,7 @@ export default function reducer(subscriptions: Subscriptions, event: Event): Sub
                     }
                     return {
                         ...subscription,
-                        unreadCount: 0
+                        readCount: subscription.unreadCount
                     };
                 })
             };
@@ -202,7 +202,7 @@ export default function reducer(subscriptions: Subscriptions, event: Event): Sub
                     }
                     return {
                         ...subscription,
-                        unreadCount: 0
+                        readCount: subscription.unreadCount
                     };
                 })
             };

@@ -41,6 +41,7 @@ export function fetchSubscriptions(): AsyncThunk {
                     feedUrl: subscription.id.replace(/feed\//, ''),
                     iconUrl: subscription.iconUrl || '',
                     unreadCount: unreadCount.count,
+                    readCount: 0,
                     updatedAt: unreadCount.updated,
                     isLoading: false
                 }))
@@ -192,6 +193,7 @@ export function subscribe(feed: Feed, labels: string[]): AsyncThunk {
                     feedUrl: feed.feedUrl,
                     iconUrl: feed.iconUrl,
                     unreadCount: unreadCount ? unreadCount.count : 0,
+                    readCount: 0,
                     updatedAt: unreadCount ? unreadCount.updated : 0,
                     isLoading: false
                 }

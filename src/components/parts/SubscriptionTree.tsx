@@ -35,13 +35,16 @@ export default class SubscriptionTree extends PureComponent<SubscriptionTreeProp
     renderSubscription(subscription: Subscription) {
         const { onSelect, selectedPath } = this.props;
         const path = `/streams/${encodeURIComponent(subscription.streamId)}`;
+        const unreadCount = subscription.unreadCount > subscription.readCount
+            ? subscription.unreadCount - subscription.readCount
+            : 0;
 
         return (
             <TreeLeaf
                 key={subscription.subscriptionId}
-                className={classnames({ 'is-important': subscription.unreadCount > 0 })}
+                className={classnames({ 'is-important': unreadCount > 0 })}
                 primaryText={subscription.title}
-                secondaryText={subscription.unreadCount > 0 ? Number(subscription.unreadCount).toLocaleString() : ''}
+                secondaryText={unreadCount > 0 ? Number(unreadCount).toLocaleString() : ''}
                 icon={<SubscriptionIcon title={subscription.title} iconUrl={subscription.iconUrl} />}
                 value={path}
                 isSelected={selectedPath.startsWith(path)}

@@ -83,11 +83,15 @@ function getGroupedSubscriptions(subscriptions: Subscription[]): { [key: string]
         for (const label of labels) {
             if (acc[label]) {
                 acc[label].items.push(subscription);
-                acc[label].unreadCount += subscription.unreadCount;
+                if (subscription.unreadCount > subscription.readCount) {
+                    acc[label].unreadCount += subscription.unreadCount - subscription.readCount;
+                }
             } else {
                 acc[label] = {
                     items: [subscription],
-                    unreadCount: subscription.unreadCount
+                    unreadCount: subscription.unreadCount > subscription.readCount
+                        ? subscription.unreadCount - subscription.readCount
+                        : 0
                 };
             }
         }
@@ -96,10 +100,11 @@ function getGroupedSubscriptions(subscriptions: Subscription[]): { [key: string]
 }
 
 function getTotalUnreadCount(subscriptions: Subscription[]): number {
-    return subscriptions.reduce<number>(
-        (total, subscription) => total + subscription.unreadCount,
+    const unreadCount = subscriptions.reduce<number>(
+        (total, subscription) => total + subscription.unreadCount - subscription.readCount,
         0
     );
+    return unreadCount > 0 ? unreadCount : 0;
 }
 
 function getSubscriptionComparer(order: SubscriptionOrderKind) {

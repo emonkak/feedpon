@@ -329,6 +329,7 @@ export interface Subscription {
     feedUrl: string;
     iconUrl: string;
     unreadCount: number;
+    readCount: number;
     updatedAt: number;
     isLoading: boolean;
 }

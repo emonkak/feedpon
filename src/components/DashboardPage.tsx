@@ -99,7 +99,9 @@ export default connect(() => {
         (state: State) => state.subscriptions.items,
         (subscriptions) => Object.values(subscriptions).reduce<{ [key: string]: number }>((acc, subscription) => {
             for (const label of subscription.labels) {
-                acc[label] = (acc[label] || 0) + subscription.unreadCount;
+                if (subscription.unreadCount > subscription.readCount) {
+                    acc[label] = (acc[label] || 0) + subscription.unreadCount - subscription.readCount;
+                }
             }
             return acc;
         }, {})
@@ -120,7 +122,7 @@ export default connect(() => {
                             type: 'subscription',
                             title: subscription.title,
                             iconUrl: subscription.iconUrl,
-                            unreadCount: subscription.unreadCount,
+                            unreadCount: Math.max(0, subscription.unreadCount - subscription.readCount),
                             fetchedAt: CacheMap.get(recentlyReadStreams, streamId)!
                         });
                     } else if (categories[streamId]) {
