@@ -116,7 +116,6 @@ class CategoriesPage extends PureComponent<CategoriesPageProps, CategoriesPageSt
                     onSelectCategory={this.handleSelectCategory} />
                 {category ? <EditCategoryForm category={category} onUpdateCategory={onUpdateCategory} onDeleteCategory={onDeleteCategory} /> : null}
                 <h1 className="display-1">{label || 'Uncategorized'}</h1>
-                {description}
                 <p>
                     <input
                         ref={(ref) => this.searchInput = ref}
@@ -125,6 +124,7 @@ class CategoriesPage extends PureComponent<CategoriesPageProps, CategoriesPageSt
                         placeholder="Filter for subscriptions..."
                         onChange={this.handleChangeSearchQuery} />
                 </p>
+                {description}
                 <LazyList
                     assumedItemHeight={60}
                     getKey={getSubscriptionKey}
@@ -206,7 +206,7 @@ export default connect(() => {
         mapDispatchToProps: bindActions({
             onUpdateCategory: updateCategory,
             onCreateCategory: createCategory,
-            onDeleteCategory: deleteCategory,
+            onDeleteCategory: deleteCategory
         })
     }
 })(CategoriesPage);

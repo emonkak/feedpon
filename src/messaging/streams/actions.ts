@@ -2,6 +2,7 @@ import * as bookmarkApi from 'adapters/hatena/bookmarkApi';
 import * as feedly from 'adapters/feedly/types';
 import * as feedlyApi from 'adapters/feedly/api';
 import PromiseQueue from 'utils/PromiseQueue';
+import tryMatch from 'utils/tryMatch';
 import decodeResponseAsText from 'utils/decodeResponseAsText';
 import stripTags from 'utils/stripTags';
 import { AsyncThunk, Category, Entry, Event, Feed, Stream, StreamFetchOptions, Thunk } from 'messaging/types';
@@ -770,14 +771,6 @@ function expandUrls(urls: string[]): AsyncThunk<string[]> {
 
         return urls.map((url) => expandedUrls[url] || url);
     };
-}
-
-function tryMatch(pattern: string, str: string): boolean {
-    try {
-        return new RegExp(pattern).test(str);
-    } catch (error) {
-        return false;
-    }
 }
 
 function tryEvaluate(expression: string, contextNode: Node, resolver: XPathNSResolver | null, type: number, result: XPathResult | null): XPathResult | null {

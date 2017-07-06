@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom';
 import { Router, hashHistory } from 'react-router';
 import { createLogger } from 'redux-logger';
 
-import * as Trie from 'utils/containers/Trie';
 import StoreProvider from 'utils/flux/react/StoreProvider';
 import applyMiddlewares from 'utils/flux/applyMiddlewares';
 import createStore from 'utils/flux/createStore';
@@ -19,9 +18,6 @@ import waitForReadyState from 'utils/dom/waitForReadyState';
 import { ThunkContext } from 'messaging/types';
 import { createSortedCategoriesSelector } from 'messaging/categories/selectors';
 import { createVisibleSubscriptionsSelector } from 'messaging/subscriptions/selectors';
-
-(window as any).Trie = Trie;
-
 import { sendNotification } from 'messaging/notifications/actions';
 
 function save(key: string, value: any): void {

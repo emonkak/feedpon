@@ -97,7 +97,7 @@ export default class SettingsPage extends PureComponent<SettingsProps, {}> {
                     <NavItem
                         value="siteinfo"
                         title="Siteinfo"
-                        isSelected={value === 'Siteinfo'}>
+                        isSelected={value === 'siteinfo'}>
                         <i className="u-sm-inline-block u-md-none u-vertical-middle icon icon-20 icon-database" /><span className="u-sm-none u-md-inline">Siteinfo</span>
                     </NavItem>
                 </Nav>
