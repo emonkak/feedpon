@@ -13,7 +13,7 @@ interface UISettingsProps {
 
 class UISettings extends PureComponent<UISettingsProps, {}> {
     constructor(props: UISettingsProps, context: any) {
-        super(props);
+        super(props, context);
 
         this.handleChangeTheme = this.handleChangeTheme.bind(this);
     }

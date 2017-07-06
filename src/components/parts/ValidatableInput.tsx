@@ -2,8 +2,8 @@ import React, { PureComponent } from 'react';
 import classnames from 'classnames';
 
 interface ValidatableInputProps extends React.HTMLAttributes<HTMLInputElement> {
-    invalidClassName?: string | null;
-    validClassName?: string | null;
+    invalidClassName?: string;
+    validClassName?: string;
     validations?: { rule: (value: string) => boolean, message: string }[];
 }
 

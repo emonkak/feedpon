@@ -4,7 +4,7 @@ import * as feedlyApi from 'adapters/feedly/api';
 import PromiseQueue from 'utils/PromiseQueue';
 import decodeResponseAsText from 'utils/decodeResponseAsText';
 import stripTags from 'utils/stripTags';
-import { AsyncThunk, Category, Entry, Event, Feed, Stream, StreamFetchOptions } from 'messaging/types';
+import { AsyncThunk, Category, Entry, Event, Feed, Stream, StreamFetchOptions, Thunk } from 'messaging/types';
 import { getFeedlyToken } from 'messaging/credential/actions';
 import { getSiteinfoItems } from 'messaging/sharedSiteinfo/actions';
 import { sendNotification } from 'messaging/notifications/actions';
@@ -121,7 +121,7 @@ export function fetchMoreEntries(streamId: string, continuation: string, fetchOp
     };
 }
 
-export function fetchComments(entryId: string, url: string): AsyncThunk {
+export function fetchComments(entryId: string | number, url: string): AsyncThunk {
     return async ({ dispatch }) => {
         dispatch({
             type: 'COMMENTS_FETCHING',
@@ -432,16 +432,29 @@ export function changeDefaultStreamFetchOptions(fetchOptions: StreamFetchOptions
     };
 }
 
-export function changeStreamCacheOptions(capacity: number, lifetime: number): AsyncThunk {
+export function changeStreamCacheCapacity(capacity: number): Thunk {
+    return ({ dispatch }) => {
+        dispatch({
+            type: 'STREAM_CACHE_CAPACITY_CHANGED',
+            capacity
+        });
+
+        dispatch(sendNotification(
+            'Stream cache capacity changed',
+            'positive'
+        ));
+    };
+}
+
+export function changeStreamCacheLifetime(lifetime: number): Thunk {
     return async ({ dispatch }) => {
         dispatch({
-            type: 'STREAM_CACHE_OPTIONS_CHANGED',
-            capacity,
+            type: 'STREAM_CACHE_LIFETIME_CHANGED',
             lifetime
         });
 
         dispatch(sendNotification(
-            'Stream cache options changed',
+            'Stream cache lifetime changed',
             'positive'
         ));
     };

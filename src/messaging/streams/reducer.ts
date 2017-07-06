@@ -519,11 +519,16 @@ export default function reducer(streams: Streams, event: Event): Streams {
                 defaultFetchOptions: event.fetchOptions
             };
 
-        case 'STREAM_CACHE_OPTIONS_CHANGED':
+        case 'STREAM_CACHE_CAPACITY_CHANGED':
             return {
                 ...streams,
-                cacheLifetime: event.lifetime,
                 items: CacheMap.extend(streams.items, event.capacity)
+            };
+
+        case 'STREAM_CACHE_LIFETIME_CHANGED':
+            return {
+                ...streams,
+                cacheLifetime: event.lifetime
             };
 
         default:

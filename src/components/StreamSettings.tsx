@@ -6,7 +6,7 @@ import connect from 'utils/flux/react/connect';
 import formatDuration from 'utils/formatDuration';
 import parseDuration, { DURATION_PATTERN } from 'utils/parseDuration';
 import { State, StreamFetchOptions } from 'messaging/types';
-import { changeDefaultStreamFetchOptions, changeStreamCacheOptions, changeStreamHistoryOptions } from 'messaging/streams/actions';
+import { changeDefaultStreamFetchOptions, changeStreamCacheCapacity, changeStreamCacheLifetime, changeStreamHistoryOptions } from 'messaging/streams/actions';
 
 interface StreamSettingsProps {
     cacheCapacity: number;
@@ -14,7 +14,8 @@ interface StreamSettingsProps {
     fetchOptions: StreamFetchOptions;
     numStreamHistories: number;
     onChangeDefaultStreamFetchOptions: typeof changeDefaultStreamFetchOptions;
-    onChangeStreamCacheOptions: typeof changeStreamCacheOptions;
+    onChangeStreamCacheCapacity: typeof changeStreamCacheCapacity;
+    onChangeStreamCacheLifetime: typeof changeStreamCacheLifetime;
     onChangeStreamHistoryOptions: typeof changeStreamHistoryOptions;
 }
 
@@ -36,13 +37,14 @@ class StreamSettings extends PureComponent<StreamSettingsProps, StreamSettingsSt
             numStreamHistories: props.numStreamHistories
         };
 
+        this.handleChangeCacheCapacity = this.handleChangeCacheCapacity.bind(this);
+        this.handleChangeCacheLifetime = this.handleChangeCacheLifetime.bind(this);
+        this.handleChangeFetchOptions = this.handleChangeFetchOptions.bind(this);
         this.handleChangeNumStreamHistories = this.handleChangeNumStreamHistories.bind(this);
-        this.handleChangeStreamCacheCapacity = this.handleChangeStreamCacheCapacity.bind(this);
-        this.handleChangeStreamCacheLifetime = this.handleChangeStreamCacheLifetime.bind(this);
-        this.handleChangeStreamOption = this.handleChangeStreamOption.bind(this);
-        this.handleSubmitCacheOptions = this.handleSubmitCacheOptions.bind(this);
+        this.handleSubmitCacheCapacity = this.handleSubmitCacheCapacity.bind(this);
+        this.handleSubmitCacheLifetime = this.handleSubmitCacheLifetime.bind(this);
+        this.handleSubmitFetchOptions = this.handleSubmitFetchOptions.bind(this);
         this.handleSubmitHistoryOptions = this.handleSubmitHistoryOptions.bind(this);
-        this.handleSubmitStreamFetchOptions = this.handleSubmitStreamFetchOptions.bind(this);
     }
 
     handleChangeNumStreamHistories(event: React.ChangeEvent<HTMLInputElement>) {
@@ -54,7 +56,7 @@ class StreamSettings extends PureComponent<StreamSettingsProps, StreamSettingsSt
         }));
     }
 
-    handleChangeStreamCacheCapacity(event: React.ChangeEvent<HTMLInputElement>) {
+    handleChangeCacheCapacity(event: React.ChangeEvent<HTMLInputElement>) {
         const cacheCapacity = parseInt(event.currentTarget.value);
 
         this.setState((state) => ({
@@ -63,7 +65,7 @@ class StreamSettings extends PureComponent<StreamSettingsProps, StreamSettingsSt
         }));
     }
 
-    handleChangeStreamCacheLifetime(event: React.ChangeEvent<HTMLInputElement>) {
+    handleChangeCacheLifetime(event: React.ChangeEvent<HTMLInputElement>) {
         const cacheLifetime = event.currentTarget.value;
 
         this.setState((state) => ({
@@ -72,7 +74,7 @@ class StreamSettings extends PureComponent<StreamSettingsProps, StreamSettingsSt
         }));
     }
 
-    handleChangeStreamOption(event: React.ChangeEvent<HTMLInputElement>) {
+    handleChangeFetchOptions(event: React.ChangeEvent<HTMLInputElement>) {
         const target = event.currentTarget;
         const name = target.name;
         const value = target.type === 'checkbox' ? target.checked : target.value;
@@ -86,7 +88,7 @@ class StreamSettings extends PureComponent<StreamSettingsProps, StreamSettingsSt
         }));
     }
 
-    handleSubmitStreamFetchOptions(event: React.FormEvent<HTMLFormElement>) {
+    handleSubmitFetchOptions(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
 
         const { onChangeDefaultStreamFetchOptions } = this.props;
@@ -104,13 +106,22 @@ class StreamSettings extends PureComponent<StreamSettingsProps, StreamSettingsSt
         onChangeStreamHistoryOptions(numStreamHistories);
     }
 
-    handleSubmitCacheOptions(event: React.FormEvent<HTMLFormElement>) {
+    handleSubmitCacheCapacity(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
 
-        const { onChangeStreamCacheOptions } = this.props;
-        const { cacheCapacity, cacheLifetime } = this.state;
+        const { onChangeStreamCacheCapacity } = this.props;
+        const { cacheCapacity } = this.state;
 
-        onChangeStreamCacheOptions(cacheCapacity, parseDuration(cacheLifetime));
+        onChangeStreamCacheCapacity(cacheCapacity);
+    }
+
+    handleSubmitCacheLifetime(event: React.FormEvent<HTMLFormElement>) {
+        event.preventDefault();
+
+        const { onChangeStreamCacheLifetime } = this.props;
+        const { cacheLifetime } = this.state;
+
+        onChangeStreamCacheLifetime(parseDuration(cacheLifetime));
     }
 
     render() {
@@ -119,17 +130,17 @@ class StreamSettings extends PureComponent<StreamSettingsProps, StreamSettingsSt
         return (
             <section className="section">
                 <h1 className="display-1">Stream</h1>
-                <form className="form" onSubmit={this.handleSubmitStreamFetchOptions}>
+                <form className="form" onSubmit={this.handleSubmitFetchOptions}>
                     <div className="form-legend">Fetch options</div>
                     <div className="form-group">
                         <label>
-                            <span className="form-group-heading">Default fetch number of entries</span>
+                            <div className="form-group-heading">Default fetch number of entries</div>
                             <input
                                 type="number"
                                 className="form-control"
                                 name="numEntries"
                                 value={fetchOptions.numEntries + ''}
-                                onChange={this.handleChangeStreamOption}
+                                onChange={this.handleChangeFetchOptions}
                                 min={1}
                                 max={1000}
                                 required />
@@ -142,12 +153,12 @@ class StreamSettings extends PureComponent<StreamSettingsProps, StreamSettingsSt
                                 className="form-check"
                                 name="onlyUnread"
                                 checked={fetchOptions.onlyUnread}
-                                onChange={this.handleChangeStreamOption} />
+                                onChange={this.handleChangeFetchOptions} />
                                 Display only unread entries on default
                         </label>
                     </div>
                     <div className="form-group">
-                        <span className="form-group-heading">Default entry order</span>
+                        <div className="form-group-heading">Default entry order</div>
                         <label className="form-check-label">
                             <input
                                 type="radio"
@@ -155,7 +166,7 @@ class StreamSettings extends PureComponent<StreamSettingsProps, StreamSettingsSt
                                 name="entryOrder"
                                 value="newest"
                                 checked={fetchOptions.entryOrder === 'newest'}
-                                onChange={this.handleChangeStreamOption}
+                                onChange={this.handleChangeFetchOptions}
                                 required />Newest
                         </label>
                         <label className="form-check-label">
@@ -165,7 +176,7 @@ class StreamSettings extends PureComponent<StreamSettingsProps, StreamSettingsSt
                                 name="entryOrder"
                                 value="oldest"
                                 checked={fetchOptions.entryOrder === 'oldest'}
-                                onChange={this.handleChangeStreamOption}
+                                onChange={this.handleChangeFetchOptions}
                                 required />Oldest
                         </label>
                     </div>
@@ -173,56 +184,58 @@ class StreamSettings extends PureComponent<StreamSettingsProps, StreamSettingsSt
                         <button type="submit" className="button button-outline-positive">Save</button>
                     </div>
                 </form>
-                <form className="form" onSubmit={this.handleSubmitCacheOptions}>
+                <form className="form" onSubmit={this.handleSubmitCacheCapacity}>
                     <div className="form-legend">Cache options</div>
                     <div className="form-group">
                         <label>
-                            <span className="form-group-heading">Cache capacity</span>
-                            <input
-                                type="number"
-                                className="form-control"
-                                name="cacheCapacity"
-                                value={cacheCapacity + ''}
-                                onChange={this.handleChangeStreamCacheCapacity}
-                                min={1}
-                                required />
+                            <div className="form-group-heading">Cache capacity</div>
+                            <div className="input-group">
+                                <input
+                                    type="number"
+                                    className="form-control"
+                                    value={cacheCapacity + ''}
+                                    onChange={this.handleChangeCacheCapacity}
+                                    min={1}
+                                    required />
+                                <button type="submit" className="button button-outline-positive">Save</button>
+                            </div>
                         </label>
                     </div>
+                </form>
+                <form className="form" onSubmit={this.handleSubmitCacheLifetime}>
                     <div className="form-group">
                         <label>
-                            <span className="form-group-heading">Cache lifetime(hh:mm:ss)</span>
-                            <ValidatableInput
-                                type="text"
-                                className="form-control"
-                                name="cacheLifetime"
-                                onChange={this.handleChangeStreamCacheLifetime}
-                                pattern={DURATION_PATTERN.source}
-                                invalidClassName={null}
-                                value={cacheLifetime}
-                                required />
+                            <div className="form-group-heading">Cache lifetime(hh:mm:ss)</div>
+                            <div className="input-group">
+                                <ValidatableInput
+                                    type="text"
+                                    className="form-control"
+                                    onChange={this.handleChangeCacheLifetime}
+                                    pattern={DURATION_PATTERN.source}
+                                    value={cacheLifetime}
+                                    required />
+                                <button type="submit" className="button button-outline-positive">Save</button>
+                            </div>
                         </label>
-                    </div>
-                    <div className="form-group">
-                        <button type="submit" className="button button-outline-positive">Save</button>
                     </div>
                 </form>
                 <form className="form" onSubmit={this.handleSubmitHistoryOptions}>
                     <div className="form-legend">History options</div>
                     <div className="form-group">
                         <label>
-                            <span className="form-group-heading">Number of stream histories to display</span>
-                            <input
-                                type="number"
-                                className="form-control"
-                                name="numStreamHistories"
-                                value={numStreamHistories}
-                                onChange={this.handleChangeNumStreamHistories}
-                                min={1}
-                                required />
+                            <div className="form-group-heading">Number of stream histories to display</div>
+                            <div className="input-group">
+                                <input
+                                    type="number"
+                                    className="form-control"
+                                    name="numStreamHistories"
+                                    value={numStreamHistories}
+                                    onChange={this.handleChangeNumStreamHistories}
+                                    min={1}
+                                    required />
+                                <button type="submit" className="button button-outline-positive">Save</button>
+                            </div>
                         </label>
-                    </div>
-                    <div className="form-group">
-                        <button type="submit" className="button button-outline-positive">Save</button>
                     </div>
                 </form>
             </section>
@@ -239,7 +252,8 @@ export default connect({
     }),
     mapDispatchToProps: bindActions({
         onChangeDefaultStreamFetchOptions: changeDefaultStreamFetchOptions,
-        onChangeStreamCacheOptions: changeStreamCacheOptions,
+        onChangeStreamCacheCapacity: changeStreamCacheCapacity,
+        onChangeStreamCacheLifetime: changeStreamCacheLifetime,
         onChangeStreamHistoryOptions: changeStreamHistoryOptions
     })
 })(StreamSettings);

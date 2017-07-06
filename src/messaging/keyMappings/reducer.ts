@@ -17,6 +17,12 @@ export default function reducer(keyMappings: KeyMappings, event: Event) {
                 items: Trie.remove(keyMappings.items, splitKeySequence(event.keySequence))
             };
 
+        case 'SCROLL_AMOUNT_CHANGED':
+            return {
+                ...keyMappings,
+                scrollAmount: event.scrollAmount
+            };
+
         default:
             return keyMappings;
     }

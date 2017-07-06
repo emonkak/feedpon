@@ -82,12 +82,14 @@ export type Event
     | { type: 'READ_ENTRY_CHANGED', index: number }
     | { type: 'SCROLL_ENDED' }
     | { type: 'SCROLL_STARTED' }
+    | { type: 'SCROLL_AMOUNT_CHANGED', scrollAmount: number }
     | { type: 'SIDEBAR_CLOSED' }
     | { type: 'SIDEBAR_OPENED' }
     | { type: 'SITEINFO_UPDATED', items: SiteinfoItem[], updatedAt: number }
     | { type: 'SITEINFO_UPDATING' }
     | { type: 'SITEINFO_UPDATING_FAILED' }
-    | { type: 'STREAM_CACHE_OPTIONS_CHANGED', capacity: number, lifetime: number }
+    | { type: 'STREAM_CACHE_CAPACITY_CHANGED', capacity: number }
+    | { type: 'STREAM_CACHE_LIFETIME_CHANGED', lifetime: number }
     | { type: 'STREAM_FETCHED', stream: Stream  }
     | { type: 'STREAM_FETCHING', streamId: string, fetchOptions: StreamFetchOptions, fetchedAt: number }
     | { type: 'STREAM_FETCHING_FAILED', streamId: string, fetchOptions: StreamFetchOptions, fetchedAt: number }
@@ -385,5 +387,6 @@ export type ThemeKind = 'theme-light' | 'theme-dark';
 
 export interface KeyMappings {
     items: Trie<string>;
+    scrollAmount: number;
     version: number;
 }

@@ -52,6 +52,19 @@ export const fetchFullContent: Command = {
     }
 };
 
+export const fetchComments: Command = {
+    title: 'Fetch comments',
+    thunk({ dispatch }) {
+        const entry = dispatch(getActiveEntry);
+
+        if (entry && entry.url) {
+            if (!entry.comments.isLoaded) {
+                dispatch(streamActions.fetchComments(entry.entryId, entry.url));
+            }
+        }
+    }
+};
+
 export const pinOrUnpinEntry: Command = {
     title: 'Pin/Unpin entry',
     thunk({ dispatch }) {
@@ -74,19 +87,33 @@ export const reloadSubscriptions: Command = {
     }
 };
 
+export const reloadStream: Command = {
+    title: 'Reload stream',
+    thunk({ getState, dispatch }) {
+        const { ui, streams } = getState();
+
+        if (ui.selectedStreamId) {
+            dispatch(streamActions.fetchStream(ui.selectedStreamId, streams.defaultFetchOptions));
+        }
+    }
+};
+
 export const scrollUp: Command = {
     title: 'Scroll up',
-    thunk({ dispatch }) {
-        dispatch(scrollBy(0, -200));
+    thunk({ getState, dispatch }) {
+        const { keyMappings } = getState();
+
+        dispatch(scrollBy(0, -keyMappings.scrollAmount));
     },
     skipNotification: true
 };
 
 export const scrollDown: Command = {
     title: 'Scroll down',
-    thunk({ dispatch }) {
+    thunk({ getState, dispatch }) {
+        const { keyMappings } = getState();
 
-        dispatch(scrollBy(0, 200));
+        dispatch(scrollBy(0, keyMappings.scrollAmount));
     },
     skipNotification: true
 };
