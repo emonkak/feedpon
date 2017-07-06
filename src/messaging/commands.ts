@@ -58,8 +58,14 @@ export const fetchComments: Command = {
         const entry = dispatch(getActiveEntry);
 
         if (entry && entry.url) {
-            if (!entry.comments.isLoaded) {
-                dispatch(streamActions.fetchComments(entry.entryId, entry.url));
+            if (entry.comments.isLoaded) {
+                if (entry.comments.isShown) {
+                    dispatch(streamActions.hideEntryComments(entry.entryId));
+                } else {
+                    dispatch(streamActions.showEntryComments(entry.entryId));
+                }
+            } else {
+                dispatch(streamActions.fetchEntryComments(entry.entryId, entry.url));
             }
         }
     }
@@ -250,9 +256,9 @@ export const selectNextCategory: Command = {
     thunk({ dispatch, getState }, { router, selectors }) {
         const state = getState();
         const streamId = state.ui.selectedStreamId;
+        const sortedCategories = selectors.sortedCategoriesSelector(state);
 
         if (streamId) {
-            const sortedCategories = selectors.sortedCategoriesSelector(state);
             const selectedCategoryIndex = sortedCategories
                 .findIndex((category) => category.streamId === streamId);
             const nextCategory = selectedCategoryIndex > -1
@@ -262,9 +268,12 @@ export const selectNextCategory: Command = {
             if (nextCategory) {
                 router.push(`/streams/${encodeURIComponent(nextCategory.streamId)}`);
             }
+        } else if (sortedCategories.length > 0) {
+            const lastCategory = sortedCategories[sortedCategories.length - 1];
+
+            router.push(`/streams/${encodeURIComponent(lastCategory.streamId)}`);
         }
-    },
-    skipNotification: true
+    }
 };
 
 export const selectPreviousCategory: Command = {
@@ -272,9 +281,9 @@ export const selectPreviousCategory: Command = {
     thunk({ dispatch, getState }, { router, selectors }) {
         const state = getState();
         const streamId = state.ui.selectedStreamId;
+        const sortedCategories = selectors.sortedCategoriesSelector(state);
 
         if (streamId) {
-            const sortedCategories = selectors.sortedCategoriesSelector(state);
             const selectedCategoryIndex = sortedCategories
                 .findIndex((category) => category.streamId === streamId);
             const previousCategory = selectedCategoryIndex > -1
@@ -284,9 +293,12 @@ export const selectPreviousCategory: Command = {
             if (previousCategory) {
                 router.push(`/streams/${encodeURIComponent(previousCategory.streamId)}`);
             }
+        } else if (sortedCategories.length > 0) {
+            const firstCategory = sortedCategories[0];
+
+            router.push(`/streams/${encodeURIComponent(firstCategory.streamId)}`);
         }
-    },
-    skipNotification: true
+    }
 };
 
 export const selectNextSubscription: Command = {
@@ -294,9 +306,9 @@ export const selectNextSubscription: Command = {
     thunk({ dispatch, getState }, { router, selectors }) {
         const state = getState();
         const streamId = state.ui.selectedStreamId;
+        const visibleSubscriptions = selectors.visibleSubscriptionsSelector(state);
 
         if (streamId) {
-            const visibleSubscriptions = selectors.visibleSubscriptionsSelector(state);
             const selectedSubscriptionIndex = visibleSubscriptions
                 .findIndex((subscription) => subscription.streamId === streamId);
             const nextSubscription = selectedSubscriptionIndex > -1
@@ -306,9 +318,12 @@ export const selectNextSubscription: Command = {
             if (nextSubscription) {
                 router.push(`/streams/${encodeURIComponent(nextSubscription.streamId)}`);
             }
+        } else if (visibleSubscriptions.length > 0) {
+            const firstSubscription = visibleSubscriptions[0];
+
+            router.push(`/streams/${encodeURIComponent(firstSubscription.streamId)}`);
         }
-    },
-    skipNotification: true
+    }
 };
 
 export const selectPreviousSubscription: Command = {
@@ -316,9 +331,9 @@ export const selectPreviousSubscription: Command = {
     thunk({ dispatch, getState }, { router, selectors }) {
         const state = getState();
         const streamId = state.ui.selectedStreamId;
+        const visibleSubscriptions = selectors.visibleSubscriptionsSelector(state);
 
         if (streamId) {
-            const visibleSubscriptions = selectors.visibleSubscriptionsSelector(state);
             const selectedSubscriptionIndex = visibleSubscriptions
                 .findIndex((subscription) => subscription.streamId === streamId);
             const previousSubscription = selectedSubscriptionIndex > -1
@@ -328,9 +343,12 @@ export const selectPreviousSubscription: Command = {
             if (previousSubscription) {
                 router.push(`/streams/${encodeURIComponent(previousSubscription.streamId)}`);
             }
+        } else if (visibleSubscriptions.length > 0) {
+            const lastSubscription = visibleSubscriptions[visibleSubscriptions.length - 1];
+
+            router.push(`/streams/${encodeURIComponent(lastSubscription.streamId)}`);
         }
-    },
-    skipNotification: true
+    }
 };
 
 export const showHelp: Command = {

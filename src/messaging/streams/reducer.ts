@@ -293,7 +293,8 @@ export default function reducer(streams: Streams, event: Event): Streams {
                             fullContents: {
                                 ...entry.fullContents,
                                 isLoaded: true,
-                                isLoading: false
+                                isLoading: false,
+                                isShown: true
                             }
                         };
                     })
@@ -374,7 +375,7 @@ export default function reducer(streams: Streams, event: Event): Streams {
                 }))
             };
 
-        case 'COMMENTS_FETCHING':
+        case 'ENTRY_COMMENTS_FETCHING':
             return {
                 ...streams,
                 items: CacheMap.mapValues(streams.items, (stream) => ({
@@ -395,7 +396,7 @@ export default function reducer(streams: Streams, event: Event): Streams {
                 }))
             };
 
-        case 'COMMENTS_FETCHING_FAILED':
+        case 'ENTRY_COMMENTS_FETCHING_FAILED':
             return {
                 ...streams,
                 items: CacheMap.mapValues(streams.items, (stream) => ({
@@ -416,7 +417,7 @@ export default function reducer(streams: Streams, event: Event): Streams {
                 }))
             };
 
-        case 'COMMENTS_FETCHED':
+        case 'ENTRY_COMMENTS_FETCHED':
             return {
                 ...streams,
                 items: CacheMap.mapValues(streams.items, (stream) => ({
@@ -430,7 +431,48 @@ export default function reducer(streams: Streams, event: Event): Streams {
                             comments: {
                                 isLoaded: true,
                                 isLoading: false,
+                                isShown: true,
                                 items: event.comments
+                            }
+                        };
+                    })
+                }))
+            };
+
+        case 'ENTRY_COMMENTS_SHOWN':
+            return {
+                ...streams,
+                items: CacheMap.mapValues(streams.items, (stream) => ({
+                    ...stream,
+                    entries: stream.entries.map((entry) => {
+                        if (entry.entryId !== event.entryId) {
+                            return entry;
+                        }
+                        return {
+                            ...entry,
+                            comments: {
+                                ...entry.comments,
+                                isShown: true
+                            }
+                        };
+                    })
+                }))
+            };
+
+        case 'ENTRY_COMMENTS_HIDDEN':
+            return {
+                ...streams,
+                items: CacheMap.mapValues(streams.items, (stream) => ({
+                    ...stream,
+                    entries: stream.entries.map((entry) => {
+                        if (entry.entryId !== event.entryId) {
+                            return entry;
+                        }
+                        return {
+                            ...entry,
+                            comments: {
+                                ...entry.comments,
+                                isShown: false
                             }
                         };
                     })

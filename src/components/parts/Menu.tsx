@@ -20,6 +20,7 @@ interface MenuContext {
 interface MenuProps {
     children?: React.ReactNode;
     onClose?: () => void;
+
     onKeyDown?: (event: React.KeyboardEvent<any>) => void;
     onSelect?: (value?: any) => void;
 }
@@ -108,16 +109,19 @@ export class Menu extends PureComponent<MenuProps, {}> {
 }
 
 interface MenuItemProps {
+    href?: string;
     icon?: React.ReactNode;
     isDisabled?: boolean;
     onSelect?: (value?: any) => void;
     primaryText: string;
     secondaryText?: string;
+    target?: string;
     value?: any;
 }
 
 export class MenuItem extends PureComponent<MenuItemProps, {}> {
     static defaultProps = {
+        href: '#',
         isDisabled: false
     };
 
@@ -132,9 +136,11 @@ export class MenuItem extends PureComponent<MenuItemProps, {}> {
     }
 
     handleSelect(event: React.MouseEvent<any>) {
-        event.preventDefault();
+        const { onSelect, value, href } = this.props;
 
-        const { onSelect, value } = this.props;
+        if (href === '#') {
+            event.preventDefault();
+        }
 
         if (onSelect) {
             onSelect(value);
@@ -144,7 +150,7 @@ export class MenuItem extends PureComponent<MenuItemProps, {}> {
     }
 
     render() {
-        const { icon, isDisabled, primaryText, secondaryText } = this.props;
+        const { href, icon, isDisabled, primaryText, secondaryText, target } = this.props;
 
         const iconElement = icon ? <span className="menu-item-icon">{icon}</span> : null;
         const primaryTextElement = <span className="menu-item-primary-text">{primaryText}</span>;
@@ -152,8 +158,7 @@ export class MenuItem extends PureComponent<MenuItemProps, {}> {
 
         if (isDisabled) {
             return (
-                <div className="menu-item is-disabled"
-                     title={primaryText}>
+                <div className="menu-item is-disabled" title={primaryText}>
                     {iconElement}
                     {primaryTextElement}
                     {secondaryTextElement}
@@ -164,7 +169,8 @@ export class MenuItem extends PureComponent<MenuItemProps, {}> {
                 <a
                     className="menu-item"
                     title={primaryText}
-                    href="#"
+                    target={target}
+                    href={href}
                     onClick={this.handleSelect}>
                     {iconElement}
                     {primaryTextElement}
@@ -201,8 +207,7 @@ export class MenuLink extends PureComponent<MenuLinkProps, {}> {
 
         if (isDisabled) {
             return (
-                <div className="menu-item is-disabled"
-                     title={primaryText}>
+                <div className="menu-item is-disabled" title={primaryText}>
                     {iconElement}
                     {primaryTextElement}
                     {secondaryTextElement}

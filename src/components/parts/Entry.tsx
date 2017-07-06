@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import classnames from 'classnames';
 
 import EntryInner from 'components/parts/EntryInner';
-import { Entry, EntryPopoverKind } from 'messaging/types';
+import { Entry } from 'messaging/types';
 
 interface EntryProps {
     entry: Entry;
@@ -14,18 +14,16 @@ interface EntryProps {
     onExpand: (index: number) => void;
     onFetchComments: (entryId: string | number, url: string) => void;
     onFetchFullContent: (entryId: string | number, url: string) => void;
+    onHideComments: (entryId: string | number) => void;
     onHideFullContents: (entryId: string | number) => void;
     onPin: (entryId: string | number) => void;
+    onShowComments: (entryId: string | number) => void;
     onShowFullContents: (entryId: string | number) => void;
     onUnpin: (entryId: string | number) => void;
     sameOrigin: boolean;
 }
 
-interface EntryState {
-    popover: EntryPopoverKind;
-}
-
-export default class EntryComponent extends PureComponent<EntryProps, EntryState> {
+export default class EntryComponent extends PureComponent<EntryProps, {}> {
     static defaultProps = {
         isActive: false,
         isCollapsible: false,
@@ -35,15 +33,10 @@ export default class EntryComponent extends PureComponent<EntryProps, EntryState
     constructor(props: EntryProps, context: any) {
         super(props, context);
 
-        this.state = {
-            popover: 'none'
-        };
-
         this.handleClose = this.handleClose.bind(this);
         this.handleExpand = this.handleExpand.bind(this);
         this.handleFetchNextFullContent = this.handleFetchNextFullContent.bind(this);
-        this.handleSwitchCommentPopover = this.handleSwitchCommentPopover.bind(this);
-        this.handleSwitchSharePopover = this.handleSwitchSharePopover.bind(this);
+        this.handleToggleComments = this.handleToggleComments.bind(this);
         this.handleToggleFullContent = this.handleToggleFullContent.bind(this);
         this.handleTogglePin = this.handleTogglePin.bind(this);
     }
@@ -85,12 +78,18 @@ export default class EntryComponent extends PureComponent<EntryProps, EntryState
         }
     }
 
-    handleSwitchCommentPopover(event: React.MouseEvent<any>) {
-        this.changePopover('comment');
-    }
+    handleToggleComments(event: React.MouseEvent<any>) {
+        const { entry, onFetchComments, onHideComments, onShowComments } = this.props;
 
-    handleSwitchSharePopover(event: React.MouseEvent<any>) {
-        this.changePopover('share');
+        if (entry.comments.isLoaded) {
+            if (entry.comments.isShown) {
+                onHideComments(entry.entryId);
+            } else {
+                onShowComments(entry.entryId);
+            }
+        } else {
+            onFetchComments(entry.entryId, entry.url);
+        }
     }
 
     handleToggleFullContent(event: React.MouseEvent<any>) {
@@ -121,33 +120,8 @@ export default class EntryComponent extends PureComponent<EntryProps, EntryState
         }
     }
 
-    changePopover(nextPopover: EntryPopoverKind) {
-        const { popover } = this.state;
-
-        if (popover === nextPopover) {
-            this.setState((state) => ({
-                ...state,
-                popover: 'none'
-            }));
-        } else {
-            if (nextPopover === 'comment') {
-                const { entry, onFetchComments } = this.props;
-
-                if (!entry.comments.isLoaded) {
-                    onFetchComments(entry.entryId, entry.url);
-                }
-            }
-
-            this.setState((state) => ({
-                ...state,
-                popover: nextPopover
-            }));
-        }
-    }
-
     render() {
         const { entry, isActive, isCollapsible, isExpanded, sameOrigin } = this.props;
-        const { popover } = this.state;
 
         return (
             <article
@@ -164,11 +138,9 @@ export default class EntryComponent extends PureComponent<EntryProps, EntryState
                     onClose={this.handleClose}
                     onExpand={this.handleExpand}
                     onFetchNextFullContent={this.handleFetchNextFullContent}
-                    onSwitchCommentPopover={this.handleSwitchCommentPopover}
-                    onSwitchSharePopover={this.handleSwitchSharePopover}
+                    onToggleComments={this.handleToggleComments}
                     onToggleFullContent={this.handleToggleFullContent}
                     onTogglePin={this.handleTogglePin}
-                    popover={popover}
                     sameOrigin={sameOrigin} />
             </article>
         );

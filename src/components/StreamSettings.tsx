@@ -208,6 +208,7 @@ class StreamSettings extends PureComponent<StreamSettingsProps, StreamSettingsSt
                             <div className="form-group-heading">Cache lifetime(hh:mm:ss)</div>
                             <div className="input-group">
                                 <ValidatableInput
+                                    validClassName={null}
                                     type="text"
                                     className="form-control"
                                     onChange={this.handleChangeCacheLifetime}

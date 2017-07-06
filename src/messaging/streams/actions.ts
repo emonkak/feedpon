@@ -121,10 +121,10 @@ export function fetchMoreEntries(streamId: string, continuation: string, fetchOp
     };
 }
 
-export function fetchComments(entryId: string | number, url: string): AsyncThunk {
+export function fetchEntryComments(entryId: string | number, url: string): AsyncThunk {
     return async ({ dispatch }) => {
         dispatch({
-            type: 'COMMENTS_FETCHING',
+            type: 'ENTRY_COMMENTS_FETCHING',
             entryId
         });
 
@@ -140,13 +140,13 @@ export function fetchComments(entryId: string | number, url: string): AsyncThunk
                 }));
 
             dispatch({
-                type: 'COMMENTS_FETCHED',
+                type: 'ENTRY_COMMENTS_FETCHED',
                 entryId,
                 comments
             });
         } catch (error) {
             dispatch({
-                type: 'COMMENTS_FETCHING_FAILED',
+                type: 'ENTRY_COMMENTS_FETCHING_FAILED',
                 entryId
             });
 
@@ -474,6 +474,20 @@ export function hideFullContents(entryId: string | number): Event {
     };
 }
 
+export function showEntryComments(entryId: string | number): Event {
+    return {
+        type: 'ENTRY_COMMENTS_SHOWN',
+        entryId
+    };
+}
+
+export function hideEntryComments(entryId: string | number): Event {
+    return {
+        type: 'ENTRY_COMMENTS_HIDDEN',
+        entryId
+    };
+}
+
 export function changeStreamHistoryOptions(numStreamHistories: number): AsyncThunk {
     return async ({ dispatch }) => {
         dispatch({
@@ -658,6 +672,7 @@ function convertEntry(entry: feedly.Entry): Entry {
         comments: {
             isLoaded: false,
             isLoading: false,
+            isShown: false,
             items: []
         }
     };

@@ -2,23 +2,21 @@ import React from 'react';
 import classnames from 'classnames';
 
 import CleanHtml from 'components/parts/CleanHtml';
+import CommentPopover from 'components/parts/CommentPopover';
 import EntryActionList from 'components/parts/EntryActionList';
 import EntryNav from 'components/parts/EntryNav';
-import EntryPopover from 'components/parts/EntryPopover';
 import FullContents from 'components/parts/FullContents';
 import RelativeTime from 'components/parts/RelativeTime';
-import { Entry, EntryPopoverKind } from 'messaging/types';
+import { Entry } from 'messaging/types';
 
 interface EntryInnerProps {
     entry: Entry;
     onClose: React.MouseEventHandler<any>;
     onExpand: React.MouseEventHandler<any>;
     onFetchNextFullContent: React.MouseEventHandler<any>;
-    onSwitchCommentPopover: React.MouseEventHandler<any>;
-    onSwitchSharePopover: React.MouseEventHandler<any>;
+    onToggleComments: React.MouseEventHandler<any>;
     onToggleFullContent: React.MouseEventHandler<any>;
     onTogglePin: React.MouseEventHandler<any>;
-    popover: EntryPopoverKind;
     sameOrigin: boolean;
 }
 
@@ -27,11 +25,9 @@ const EntryInner: React.SFC<EntryInnerProps> = ({
     onClose,
     onExpand,
     onFetchNextFullContent,
-    onSwitchCommentPopover,
-    onSwitchSharePopover,
+    onToggleComments,
     onToggleFullContent,
     onTogglePin,
-    popover,
     sameOrigin
 }) => {
     const readMaker = entry.markedAsRead
@@ -78,15 +74,15 @@ const EntryInner: React.SFC<EntryInnerProps> = ({
             <footer className="entry-footer">
                 <EntryActionList
                     commentsIsLoading={entry.comments.isLoading}
-                    onSwitchCommentPopover={onSwitchCommentPopover}
-                    onSwitchSharePopover={onSwitchSharePopover}
-                    url={entry.url}
-                    popover={popover} />
-                <EntryPopover
-                    comments={entry.comments}
+                    commentsIsShown={entry.comments.isShown}
+                    onToggleComments={onToggleComments}
                     title={entry.title}
-                    url={entry.url}
-                    popover={popover} />
+                    url={entry.url} />
+                {entry.comments.isShown &&
+                    <CommentPopover
+                        arrowOffset={-44}
+                        isLoading={entry.comments.isLoading}
+                        comments={entry.comments.items} />}
             </footer>
         </div>
     );

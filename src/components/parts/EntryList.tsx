@@ -18,8 +18,10 @@ interface EntryListProps {
     onExpand: (entryId: string | number) => void;
     onFetchComments: (entryId: string | number, url: string) => void;
     onFetchFullContent: (entryId: string | number, url: string) => void;
+    onHideComments: (entryId: string | number) => void;
     onHideFullContents: (entryId: string | number) => void;
     onPin: (entryId: string | number) => void;
+    onShowComments: (entryId: string | number) => void;
     onShowFullContents: (entryId: string | number) => void;
     onUnpin: (entryId: string | number) => void;
     sameOrigin: boolean;
@@ -33,8 +35,10 @@ export default class EntryList extends PureComponent<EntryListProps, {}> {
             onExpand,
             onFetchComments,
             onFetchFullContent,
+            onHideComments,
             onHideFullContents,
             onPin,
+            onShowComments,
             onShowFullContents,
             onUnpin,
             sameOrigin,
@@ -54,8 +58,10 @@ export default class EntryList extends PureComponent<EntryListProps, {}> {
                 onExpand={onExpand}
                 onFetchComments={onFetchComments}
                 onFetchFullContent={onFetchFullContent}
+                onHideComments={onHideComments}
                 onHideFullContents={onHideFullContents}
                 onPin={onPin}
+                onShowComments={onShowComments}
                 onShowFullContents={onShowFullContents}
                 onUnpin={onUnpin}
                 sameOrigin={sameOrigin} />

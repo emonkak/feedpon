@@ -16,7 +16,7 @@ import connect from 'utils/flux/react/connect';
 import { Category, Entry, EntryOrderKind, State, Stream, StreamFetchOptions, StreamViewKind, Subscription } from 'messaging/types';
 import { addToCategory, removeFromCategory, subscribe, unsubscribe } from 'messaging/subscriptions/actions';
 import { changeActiveEntry, changeExpandedEntry, changeReadEntry, changeStreamView, selectStream, unselectStream } from 'messaging/ui/actions';
-import { changeUnreadKeeping, fetchComments, fetchFullContent, fetchMoreEntries, fetchStream, hideFullContents, markAsRead, markCategoryAsRead, markFeedAsRead, pinEntry, showFullContents, unpinEntry } from 'messaging/streams/actions';
+import { changeUnreadKeeping, fetchEntryComments, fetchFullContent, fetchMoreEntries, fetchStream, hideEntryComments, hideFullContents, markAsRead, markCategoryAsRead, markFeedAsRead, pinEntry, showEntryComments, showFullContents, unpinEntry } from 'messaging/streams/actions';
 import { createCategory } from 'messaging/categories/actions';
 import { createSortedCategoriesSelector } from 'messaging/categories/selectors';
 
@@ -40,10 +40,11 @@ interface StreamPageProps {
     onChangeStreamView: typeof changeStreamView;
     onChangeUnreadKeeping: typeof changeUnreadKeeping,
     onCreateCategory: typeof createCategory;
-    onFetchComments: typeof fetchComments;
+    onFetchEntryComments: typeof fetchEntryComments;
     onFetchFullContent: typeof fetchFullContent;
     onFetchMoreEntries: typeof fetchMoreEntries;
     onFetchStream: typeof fetchStream;
+    onHideEntryComments: typeof hideEntryComments;
     onHideFullContents: typeof hideFullContents;
     onMarkAsRead: typeof markAsRead;
     onMarkCategoryAsRead: typeof markCategoryAsRead;
@@ -51,6 +52,7 @@ interface StreamPageProps {
     onPinEntry: typeof pinEntry;
     onRemoveFromCategory: typeof removeFromCategory;
     onSelectStream: typeof selectStream;
+    onShowEntryComments: typeof showEntryComments;
     onShowFullContents: typeof showFullContents;
     onSubscribe: typeof subscribe;
     onToggleSidebar: () => void,
@@ -362,10 +364,12 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
             isLoading,
             isScrolling,
             onChangeExpandedEntry,
-            onFetchComments,
+            onFetchEntryComments,
             onFetchFullContent,
+            onHideEntryComments,
             onHideFullContents,
             onPinEntry,
+            onShowEntryComments,
             onShowFullContents,
             onUnpinEntry,
             stream,
@@ -382,10 +386,12 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
                 onChangeActiveEntry={this.handleChangeActiveEnetry}
                 onClose={this.handleCloseEntry}
                 onExpand={onChangeExpandedEntry}
-                onFetchComments={onFetchComments}
+                onFetchComments={onFetchEntryComments}
                 onFetchFullContent={onFetchFullContent}
+                onHideComments={onHideEntryComments}
                 onHideFullContents={onHideFullContents}
                 onPin={onPinEntry}
+                onShowComments={onShowEntryComments}
                 onShowFullContents={onShowFullContents}
                 onUnpin={onUnpinEntry}
                 sameOrigin={!!(stream && stream.feed)}
@@ -527,10 +533,11 @@ export default connect(() => {
             onChangeStreamView: changeStreamView,
             onChangeUnreadKeeping: changeUnreadKeeping,
             onCreateCategory: createCategory,
-            onFetchComments: fetchComments,
+            onFetchEntryComments: fetchEntryComments,
             onFetchFullContent: fetchFullContent,
             onFetchMoreEntries: fetchMoreEntries,
             onFetchStream: fetchStream,
+            onHideEntryComments: hideEntryComments,
             onHideFullContents: hideFullContents,
             onMarkAsRead: markAsRead,
             onMarkCategoryAsRead: markCategoryAsRead,
@@ -538,6 +545,7 @@ export default connect(() => {
             onPinEntry: pinEntry,
             onRemoveFromCategory: removeFromCategory,
             onSelectStream: selectStream,
+            onShowEntryComments: showEntryComments,
             onShowFullContents: showFullContents,
             onSubscribe: subscribe,
             onUnpinEntry: unpinEntry,

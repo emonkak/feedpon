@@ -41,13 +41,15 @@ export type Event
     | { type: 'CATEGORY_UPDATED', prevCategoryLabel: string, category: Category }
     | { type: 'CATEGORY_UPDATING', categoryId: string | number }
     | { type: 'CATEGORY_UPDATING_FAILED', categoryId: string | number }
-    | { type: 'COMMENTS_FETCHED', entryId: string | number, comments: Comment[] }
-    | { type: 'COMMENTS_FETCHING', entryId: string | number }
-    | { type: 'COMMENTS_FETCHING_FAILED', entryId: string | number }
     | { type: 'DEFAULT_STREAM_OPTIONS_CHANGED', fetchOptions: StreamFetchOptions }
     | { type: 'ENTRIES_MARKED_AS_READ', entryIds: (string | number)[], readCounts: { [streamId: string]: number } }
     | { type: 'ENTRIES_MARKING_AS_READ', entryIds: (string | number)[] }
     | { type: 'ENTRIES_MARKING_AS_READ_FAILED', entryIds: (string | number)[] }
+    | { type: 'ENTRY_COMMENTS_FETCHED', entryId: string | number, comments: Comment[] }
+    | { type: 'ENTRY_COMMENTS_FETCHING', entryId: string | number }
+    | { type: 'ENTRY_COMMENTS_FETCHING_FAILED', entryId: string | number }
+    | { type: 'ENTRY_COMMENTS_HIDDEN', entryId: string | number }
+    | { type: 'ENTRY_COMMENTS_SHOWN', entryId: string | number }
     | { type: 'ENTRY_PINNED', entryId: string | number, isPinned: boolean }
     | { type: 'ENTRY_PINNING', entryId: string | number }
     | { type: 'ENTRY_PINNING_FAILED', entryId: string | number }
@@ -80,9 +82,9 @@ export type Event
     | { type: 'NOTIFICATION_DISMISSED', id: number }
     | { type: 'NOTIFICATION_SENT', notification: Notification }
     | { type: 'READ_ENTRY_CHANGED', index: number }
+    | { type: 'SCROLL_AMOUNT_CHANGED', scrollAmount: number }
     | { type: 'SCROLL_ENDED' }
     | { type: 'SCROLL_STARTED' }
-    | { type: 'SCROLL_AMOUNT_CHANGED', scrollAmount: number }
     | { type: 'SIDEBAR_CLOSED' }
     | { type: 'SIDEBAR_OPENED' }
     | { type: 'SITEINFO_UPDATED', items: SiteinfoItem[], updatedAt: number }
@@ -241,8 +243,6 @@ export interface Entry {
     comments: Comments;
 }
 
-export type EntryPopoverKind = 'none' | 'comment' | 'share';
-
 export interface Origin {
     streamId: string;
     title: string;
@@ -271,6 +271,7 @@ export interface FullContent {
 export interface Comments {
     isLoaded: boolean;
     isLoading: boolean;
+    isShown: boolean;
     items: Comment[];
 }
 

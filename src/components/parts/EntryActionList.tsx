@@ -1,37 +1,67 @@
 import React from 'react';
 import classnames from 'classnames';
 
-import { EntryPopoverKind } from 'messaging/types';
+import Dropdown from 'components/parts/Dropdown';
+import { MenuItem } from 'components/parts/Menu';
 
 interface EntryActionListProps {
     commentsIsLoading: boolean;
-    onSwitchCommentPopover: React.MouseEventHandler<any>;
-    onSwitchSharePopover: React.MouseEventHandler<any>;
-    popover: EntryPopoverKind;
+    commentsIsShown: boolean;
+    onToggleComments: React.MouseEventHandler<any>;
+    title: string;
     url: string;
 }
 
 const EntryActionList: React.SFC<EntryActionListProps> = ({
     commentsIsLoading,
-    onSwitchCommentPopover,
-    onSwitchSharePopover,
-    popover,
-    url 
+    commentsIsShown,
+    onToggleComments,
+    title,
+    url
 }) => {
     return (
-        <div className="button-toolbar u-text-center">
+        <div className="button-toolbar u-flex u-flex-justify-content-center">
             <button
-                className={classnames('button button-pill', popover === 'comment' ? 'button-default' : 'button-outline-default')}
+                className={classnames('button button-pill', commentsIsShown ? 'button-default' : 'button-outline-default')}
                 title="Comments..."
-                onClick={onSwitchCommentPopover}>
+                onClick={onToggleComments}>
                 <i className={classnames('icon icon-20', commentsIsLoading ? 'icon-spinner icon-rotating' : 'icon-comments')} />
             </button>
-            <button
-                className={classnames('button button-pill', popover === 'share' ? 'button-default' : 'button-outline-default')}
-                title="Share..."
-                onClick={onSwitchSharePopover}>
-                <i className="icon icon-20 icon-share" />
-            </button>
+            <Dropdown
+                className="button-group"
+                toggleButton={
+                    <button
+                        className="button button-pill button-outline-default"
+                        title="Share...">
+                        <i className="icon icon-20 icon-share" />
+                    </button>
+                }>
+                <MenuItem
+                    href={'https://twitter.com/intent/tweet?text=' + encodeURIComponent(title + ' ' + url)}
+                    target="_blank"
+                    primaryText="Share to Twitter"
+                    icon={<i className="icon icon-20 icon-twitter u-vertical-bottom" />} />
+                <MenuItem
+                    href={'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url)}
+                    target="_blank"
+                    primaryText="Share to Facebook"
+                    icon={<i className="icon icon-20 icon-facebook u-vertical-bottom" />} />
+                <MenuItem
+                    href={'http://b.hatena.ne.jp/add?mode=confirm&title=' + encodeURIComponent(title) + '&url=' + encodeURIComponent(url)}
+                    target="_blank"
+                    primaryText="Save to Hatena Bookmark"
+                    icon={<i className="icon icon-20 icon-hatena-bookmark u-vertical-bottom" />} />
+                <MenuItem
+                    href={'https://getpocket.com/save?url=' + encodeURIComponent(url) + "&title=" + encodeURIComponent(title)}
+                    target="_blank"
+                    primaryText="Save to Pocket"
+                    icon={<i className="icon icon-20 icon-pocket u-vertical-bottom" />} />
+                <MenuItem
+                    href={'http://www.instapaper.com/text?u=' + encodeURIComponent(url)}
+                    target="_blank"
+                    primaryText="Save to Instapaper"
+                    icon={<i className="icon icon-20 icon-instapaper u-vertical-bottom" />} />
+            </Dropdown>
             <a
                 className="button button-pill button-outline-default"
                 href={url}
