@@ -3,6 +3,7 @@ import classnames from 'classnames';
 import { History, Location } from 'history';
 
 import * as commands from 'messaging/commands';
+import InstantNotifications from 'components/InstantNotifications';
 import KeyMapper from 'components/parts/KeyMapper';
 import Notifications from 'components/Notifications';
 import Sidebar from 'components/Sidebar';
@@ -11,6 +12,7 @@ import connect from 'utils/flux/react/connect';
 import { State, Store } from 'messaging/types';
 import { Trie } from 'utils/containers/Trie';
 import { closeSidebar, endScroll, openSidebar, startScroll } from 'messaging/ui/actions';
+import { sendInstantNotification } from 'messaging/instantNotifications/actions';
 import { smoothScrollTo } from 'utils/dom/smoothScroll';
 
 const SCROLL_ANIMATION_TIME = 1000 / 60 * 10;
@@ -104,6 +106,10 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
         if (command) {
             const { store } = this.props;
 
+            if (!command.skipNotification) {
+                store.dispatch(sendInstantNotification(command.title));
+            }
+
             store.dispatch(command.thunk);
         }
     }
@@ -154,6 +160,9 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
                     </div>
                     <div className="l-notifications">
                         <Notifications />
+                    </div>
+                    <div className="l-instant-notifications">
+                        <InstantNotifications />
                     </div>
                     {cloneElement(children, {
                         onToggleSidebar: this.handleToggleSidebar,

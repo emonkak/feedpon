@@ -2,7 +2,7 @@ import { Event, StreamViewKind, ThemeKind } from 'messaging/types';
 
 export function changeActiveEntry(index: number): Event {
     return {
-        type: 'ACTIVATED_ENTRY_CAHNGED',
+        type: 'ACTIVE_ENTRY_CAHNGED',
         index
     };
 }

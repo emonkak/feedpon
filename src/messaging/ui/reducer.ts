@@ -8,7 +8,7 @@ export default function uiReducer(ui: UI, event: Event): UI {
                 isScrolling: false
             };
 
-        case 'ACTIVATED_ENTRY_CAHNGED':
+        case 'ACTIVE_ENTRY_CAHNGED':
             return {
                 ...ui,
                 activeEntryIndex: event.index
@@ -55,6 +55,14 @@ export default function uiReducer(ui: UI, event: Event): UI {
                 ...ui,
                 streamView: event.streamView,
                 expandedEntryIndex: -1
+            };
+
+        case 'STREAM_FETCHED':
+            return {
+                ...ui,
+                activeEntryIndex: -1,
+                expandedEntryIndex: -1,
+                readEntryIndex: -1
             };
 
         case 'STREAM_SELECTED':

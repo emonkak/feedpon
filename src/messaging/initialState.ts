@@ -1,6 +1,7 @@
 import categories from 'messaging/categories/initialState';
 import credential from 'messaging/credential/initialState';
 import histories from 'messaging/histories/initialState';
+import instantNotifications from 'messaging/instantNotifications/initialState';
 import keyMappings from 'messaging/keyMappings/initialState';
 import notifications from 'messaging/notifications/initialState';
 import search from 'messaging/search/initialState';
@@ -17,6 +18,7 @@ const initialState: State = {
     categories,
     credential,
     histories,
+    instantNotifications,
     keyMappings,
     notifications,
     search,

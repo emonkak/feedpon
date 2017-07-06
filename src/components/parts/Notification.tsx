@@ -5,11 +5,11 @@ import { Notification } from 'messaging/types';
 
 interface NotificationProps {
     notification: Notification;
-    onClose: (id: string | number) => void;
+    onDismiss: (id: number) => void;
 }
 
 export default class NotificationComponent extends PureComponent<NotificationProps, {}> {
-    private timer: number | null = null;
+    timer: number | null = null;
 
     constructor(props: NotificationProps, context: any) {
         super(props, context);
@@ -18,11 +18,11 @@ export default class NotificationComponent extends PureComponent<NotificationPro
     }
 
     componentDidMount() {
-        const { notification, onClose } = this.props;
+        const { notification, onDismiss } = this.props;
 
         if (notification.dismissAfter > 0) {
             this.timer = setTimeout(() => {
-                onClose(notification.id);
+                onDismiss(notification.id);
                 this.timer = null;
             }, notification.dismissAfter);
         }
@@ -38,9 +38,9 @@ export default class NotificationComponent extends PureComponent<NotificationPro
     handleClose(event: React.MouseEvent<any>) {
         event.preventDefault();
 
-        const { onClose, notification } = this.props;
+        const { onDismiss, notification } = this.props;
 
-        onClose(notification.id);
+        onDismiss(notification.id);
     }
 
     render() {

@@ -1,4 +1,4 @@
-.notifications {
+.notification-list {
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -62,4 +62,31 @@
 .notification-leave {
   transform: translateY(0);
   opacity: 1;
+}
+
+.instant-notification {
+  display: inline-block;
+  margin: var(--baseline-height) auto;
+  padding: calc(var(--baseline-height) / 2) 1.5rem;
+  color: var(--backdrop-color);
+  background-color: var(--backdrop-background-color);
+  border-radius: var(--baseline-height);
+}
+
+.instant-notification-enter.instant-notification-enter-active,
+.instant-notification-leave.instant-notification-leave-active {
+  transition: opacity 0.2s cubic-bezier(0.465, 0.183, 0.153, 0.946),
+              transform 0.2s cubic-bezier(0.465, 0.183, 0.153, 0.946);
+}
+
+.instant-notification-enter,
+.instant-notification-leave.instant-notification-leave-active {
+  opacity: 0;
+  transform: scale(0.85);
+}
+
+.instant-notification-enter.instant-notification-enter-active,
+.instant-notification-leave {
+  opacity: 1;
+  transform: scale(1);
 }

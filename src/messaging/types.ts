@@ -12,6 +12,7 @@ export interface State {
     categories: Categories;
     credential: Credential;
     histories: Histories;
+    instantNotifications: InstantNotifications;
     keyMappings: KeyMappings;
     notifications: Notifications;
     search: Search;
@@ -25,7 +26,7 @@ export interface State {
 }
 
 export type Event
-    = { type: 'ACTIVATED_ENTRY_CAHNGED', index: number }
+    = { type: 'ACTIVE_ENTRY_CAHNGED', index: number }
     | { type: 'APPLICATION_INITIALIZED' }
     | { type: 'BOOKMARK_COUNTS_FETCHED', bookmarkCounts: { [url: string]: number } }
     | { type: 'CATEGORY_CREATED', category: Category }
@@ -69,6 +70,8 @@ export type Event
     | { type: 'FULL_CONTENT_FETCHED', entryId: string | number, fullContent: FullContent }
     | { type: 'FULL_CONTENT_FETCHING', entryId: string | number }
     | { type: 'FULL_CONTENT_FETCHING_FAILED', entryId: string | number }
+    | { type: 'INSTANT_NOTIFICATION_DISMISSED' }
+    | { type: 'INSTANT_NOTIFICATION_SENT', instantNotification: InstantNotification }
     | { type: 'KEY_MAPPING_ADDED', keySequence: string, commandId: string }
     | { type: 'KEY_MAPPING_REMOVED', keySequence: string, commandId: string }
     | { type: 'MORE_ENTRIES_FETCHED', streamId: string, continuation: string | null, entries: Entry[] }
@@ -88,9 +91,9 @@ export type Event
     | { type: 'STREAM_FETCHED', stream: Stream  }
     | { type: 'STREAM_FETCHING', streamId: string, fetchOptions: StreamFetchOptions, fetchedAt: number }
     | { type: 'STREAM_FETCHING_FAILED', streamId: string, fetchOptions: StreamFetchOptions, fetchedAt: number }
+    | { type: 'STREAM_HISTORY_OPTIONS_CHANGED', numStreamHistories: number }
     | { type: 'STREAM_SELECTED', streamId: string  }
     | { type: 'STREAM_UNSELECTED'  }
-    | { type: 'STREAM_HISTORY_OPTIONS_CHANGED', numStreamHistories: number }
     | { type: 'STREAM_VIEW_CHANGED', streamView: StreamViewKind }
     | { type: 'SUBSCRIPTIONS_FETCHED', subscriptions: Subscription[], categories: Category[], fetchedAt: number }
     | { type: 'SUBSCRIPTIONS_FETCHING' }
@@ -138,6 +141,7 @@ export interface Selectors {
 export interface Command {
     thunk: Thunk<any>;
     title: string;
+    skipNotification?: boolean;
 }
 
 export interface Credential {
@@ -272,6 +276,16 @@ export interface Comment {
     user: string;
     comment: string;
     timestamp: string;
+}
+
+export interface InstantNotifications {
+    item: InstantNotification | null;
+    version: number;
+}
+
+export interface InstantNotification {
+    dismissAfter: number;
+    message: string;
 }
 
 export interface Notifications {

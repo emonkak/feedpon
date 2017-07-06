@@ -24,7 +24,8 @@
 
 .l-root.is-opened > .l-main,
 .l-root.is-opened > .l-main > .l-main-header,
-.l-root.is-opened > .l-notifications {
+.l-root.is-opened > .l-notifications,
+.l-root.is-opened > .l-instant-notifications {
   padding-left: var(--sidebar-width);
 }
 
@@ -78,6 +79,16 @@
   transition: padding 0.2s ease-in-out;
 }
 
+.l-instant-notifications {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 200;
+  transition: padding 0.2s ease-in-out;
+  text-align: center;
+}
+
 .l-backdrop {
   display: flex;
   align-items: center;
@@ -116,13 +127,15 @@
 
   .l-root.is-opened > .l-main,
   .l-root.is-opened > .l-main > .l-main-header,
-  .l-root.is-opened > .l-notifications {
+  .l-root.is-opened > .l-notifications,
+  .l-root.is-opened > .l-instant-notifications {
     padding-left: var(--sidebar-width);
   }
 
   .l-main,
   .l-main > .l-main-header,
-  .l-notifications {
+  .l-notifications,
+  .l-instant-notifications {
     box-sizing: border-box;
   }
 }

@@ -19,7 +19,7 @@ class Notifications extends PureComponent<NotificationsProps, {}> {
         return (
             <CSSTransitionGroup
                 component="div"
-                className="notifications"
+                className="notification-list"
                 transitionName="notification"
                 transitionEnterTimeout={200}
                 transitionLeaveTimeout={200}>
@@ -27,7 +27,7 @@ class Notifications extends PureComponent<NotificationsProps, {}> {
                     <NotificationComponent
                         notification={notification}
                         key={notification.id}
-                        onClose={onDismissNotification} />
+                        onDismiss={onDismissNotification} />
                 )}
             </CSSTransitionGroup>
         );

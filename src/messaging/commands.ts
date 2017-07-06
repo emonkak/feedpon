@@ -2,7 +2,7 @@ import * as CacheMap from 'utils/containers/CacheMap';
 import * as streamActions from 'messaging/streams/actions';
 import * as subscriptionActions from 'messaging/subscriptions/actions';
 import * as uiActions from 'messaging/ui/actions';
-import { Command, Entry, Store, Stream, Thunk } from 'messaging/types';
+import { AsyncThunk, Command, Entry, Stream, Thunk } from 'messaging/types';
 import { smoothScrollTo, smoothScrollBy } from 'utils/dom/smoothScroll';
 
 const SCROLL_ANIMATION_DURATION = 1000 / 60 * 10;
@@ -10,20 +10,21 @@ const SCROLL_OFFSET = 48;
 
 export const gotoFirstLine: Command = {
     title: 'Go to first line',
-    thunk(store) {
-        return scrollTo(store, 0, 0);
-    }
+    thunk({ dispatch }) {
+        dispatch(scrollTo(0, 0));
+    },
+    skipNotification: true
 };
 
 export const gotoLastLine: Command = {
     title: 'Go to last line',
-    thunk(store) {
-        return scrollTo(
-            store,
+    thunk({ dispatch }) {
+        dispatch(scrollTo(
             0,
             document.documentElement.scrollHeight - document.documentElement.clientHeight
-        );
-    }
+        ));
+    },
+    skipNotification: true
 };
 
 export const fetchFullContent: Command = {
@@ -75,44 +76,51 @@ export const reloadSubscriptions: Command = {
 
 export const scrollUp: Command = {
     title: 'Scroll up',
-    thunk(store) {
-        return scrollBy(store, 0, -200);
-    }
+    thunk({ dispatch }) {
+        dispatch(scrollBy(0, -200));
+    },
+    skipNotification: true
 };
 
 export const scrollDown: Command = {
     title: 'Scroll down',
-    thunk(store) {
-        return scrollBy(store, 0, 200);
-    }
+    thunk({ dispatch }) {
+
+        dispatch(scrollBy(0, 200));
+    },
+    skipNotification: true
 };
 
 export const scrollHalfPageUp: Command = {
     title: 'Scroll half page up',
-    thunk(store) {
-        return scrollBy(store, 0, -document.documentElement.clientHeight / 2);
-    }
+    thunk({ dispatch }) {
+        dispatch(scrollBy(0, -document.documentElement.clientHeight / 2));
+    },
+    skipNotification: true
 };
 
 export const scrollHalfPageDown: Command = {
     title: 'Scroll half page down',
-    thunk(store) {
-        return scrollBy(store, 0, document.documentElement.clientHeight / 2);
-    }
+    thunk({ dispatch }) {
+        dispatch(scrollBy(0, document.documentElement.clientHeight / 2));
+    },
+    skipNotification: true
 };
 
 export const scrollPageUp: Command = {
     title: 'Scroll page up',
-    thunk(store) {
-        return scrollBy(store, 0, -document.documentElement.clientHeight);
-    }
+    thunk({ dispatch }) {
+        dispatch(scrollBy(0, -document.documentElement.clientHeight));
+    },
+    skipNotification: true
 };
 
 export const scrollPageDown: Command = {
     title: 'Scroll page down',
-    thunk(store) {
-        return scrollBy(store, 0, document.documentElement.clientHeight);
-    }
+    thunk({ dispatch }) {
+        dispatch(scrollBy(0, document.documentElement.clientHeight));
+    },
+    skipNotification: true
 };
 
 export const searchSubscriptions: Command = {
@@ -134,9 +142,10 @@ export const searchSubscriptions: Command = {
 
 export const selectNextEntry: Command = {
     title: 'Select next entry',
-    thunk(store, { router }) {
-        const { ui } = store.getState();
-        if (ui.isScrolling) {
+    thunk({ getState, dispatch }, { router }) {
+        const { ui } = getState();
+
+        if (ui.isScrolling || !ui.selectedStreamId) {
             return;
         }
 
@@ -146,7 +155,7 @@ export const selectNextEntry: Command = {
         for (let i = 0; i < elements.length; i++) {
             const element = elements[i] as HTMLElement;
             if (element.offsetTop > scrollY) {
-                scrollTo(store, 0, element.offsetTop - SCROLL_OFFSET);
+                dispatch(scrollTo(0, element.offsetTop - SCROLL_OFFSET));
                 return;
             }
         }
@@ -154,22 +163,24 @@ export const selectNextEntry: Command = {
         const y = document.documentElement.scrollHeight - window.innerHeight;
 
         if (window.scrollY === y) {
-            const stream = store.dispatch(getSelectedStream);
+            const stream = dispatch(getSelectedStream);
 
             if (stream && stream.continuation) {
-                store.dispatch(streamActions.fetchMoreEntries(stream.streamId, stream.continuation, stream.fetchOptions));
+                dispatch(streamActions.fetchMoreEntries(stream.streamId, stream.continuation, stream.fetchOptions));
             }
         } else {
-            scrollTo(store, 0, y);
+            dispatch(scrollTo(0, y));
         }
-    }
+    },
+    skipNotification: true
 };
 
 export const selectPreviousEntry: Command = {
     title: 'Select previous entry',
-    thunk(store, { router }) {
-        const { ui } = store.getState();
-        if (ui.isScrolling) {
+    thunk({ dispatch, getState }, { router }) {
+        const { ui } = getState();
+
+        if (ui.isScrolling || !ui.selectedStreamId) {
             return;
         }
 
@@ -179,15 +190,16 @@ export const selectPreviousEntry: Command = {
         for (let i = elements.length - 1; i >= 0; i--) {
             const element = elements[i] as HTMLElement;
             if (element.offsetTop < scrollY) {
-                scrollTo(store, 0, element.offsetTop - SCROLL_OFFSET);
+                dispatch(scrollTo(0, element.offsetTop - SCROLL_OFFSET));
                 return;
             }
         }
 
         if (window.scrollY !== 0) {
-            scrollTo(store, 0, 0);
+            dispatch(scrollTo(0, 0));
         }
-    }
+    },
+    skipNotification: true
 };
 
 export const openEntry: Command = {
@@ -224,7 +236,8 @@ export const selectNextCategory: Command = {
                 router.push(`/streams/${encodeURIComponent(nextCategory.streamId)}`);
             }
         }
-    }
+    },
+    skipNotification: true
 };
 
 export const selectPreviousCategory: Command = {
@@ -245,7 +258,8 @@ export const selectPreviousCategory: Command = {
                 router.push(`/streams/${encodeURIComponent(previousCategory.streamId)}`);
             }
         }
-    }
+    },
+    skipNotification: true
 };
 
 export const selectNextSubscription: Command = {
@@ -266,7 +280,8 @@ export const selectNextSubscription: Command = {
                 router.push(`/streams/${encodeURIComponent(nextSubscription.streamId)}`);
             }
         }
-    }
+    },
+    skipNotification: true
 };
 
 export const selectPreviousSubscription: Command = {
@@ -287,12 +302,13 @@ export const selectPreviousSubscription: Command = {
                 router.push(`/streams/${encodeURIComponent(previousSubscription.streamId)}`);
             }
         }
-    }
+    },
+    skipNotification: true
 };
 
 export const showHelp: Command = {
     title: 'Show help',
-    thunk(store) {
+    thunk({ dispatch }) {
         window.alert('help');
     }
 };
@@ -345,30 +361,34 @@ export const visitWebsiteInBackground: Command = {
     }
 };
 
-function scrollBy({ getState, dispatch }: Store, dx: number, dy: number): Promise<void> {
-    const { ui } = getState();
+function scrollBy(dx: number, dy: number): AsyncThunk {
+    return ({ getState, dispatch }) => {
+        const { ui } = getState();
 
-    if (!ui.isScrolling) {
-        dispatch(uiActions.startScroll());
-    }
+        if (!ui.isScrolling) {
+            dispatch(uiActions.startScroll());
+        }
 
-    return smoothScrollBy(document.body, dx, dy, SCROLL_ANIMATION_DURATION)
-        .then(() => {
-            dispatch(uiActions.endScroll());
-        });
+        return smoothScrollBy(document.body, dx, dy, SCROLL_ANIMATION_DURATION)
+            .then(() => {
+                dispatch(uiActions.endScroll());
+            });
+    };
 }
 
-function scrollTo({ getState, dispatch }: Store, x: number, y: number): Promise<void> {
-    const { ui } = getState();
+function scrollTo(x: number, y: number): AsyncThunk {
+    return ({ getState, dispatch }) => {
+        const { ui } = getState();
 
-    if (!ui.isScrolling) {
-        dispatch(uiActions.startScroll());
-    }
+        if (!ui.isScrolling) {
+            dispatch(uiActions.startScroll());
+        }
 
-    return smoothScrollTo(document.body, x, y, SCROLL_ANIMATION_DURATION)
-        .then(() => {
-            dispatch(uiActions.endScroll());
-        });
+        return smoothScrollTo(document.body, x, y, SCROLL_ANIMATION_DURATION)
+            .then(() => {
+                dispatch(uiActions.endScroll());
+            });
+    };
 }
 
 function openUrlInBackground(url: string): void {

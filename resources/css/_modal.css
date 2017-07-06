@@ -13,8 +13,8 @@
   will-change: opacity, transform;
 }
 
-.modal-leave.modal-leave-active,
-.modal-enter.modal-enter-active {
+.modal-enter.modal-enter-active,
+.modal-leave.modal-leave-active {
   transition: opacity 0.2s cubic-bezier(0.465, 0.183, 0.153, 0.946),
               transform 0.2s cubic-bezier(0.465, 0.183, 0.153, 0.946);
 }

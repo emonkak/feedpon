@@ -4,6 +4,7 @@ import { findDOMNode } from 'react-dom';
 
 import '@emonkak/enumerable/extensions/firstOrDefault';
 import '@emonkak/enumerable/extensions/maxBy';
+import '@emonkak/enumerable/extensions/minBy';
 import '@emonkak/enumerable/extensions/select';
 import '@emonkak/enumerable/extensions/where';
 
@@ -45,7 +46,9 @@ export default class ScrollSpy extends PureComponent<ScrollSpyProps, {}> {
         this.scrollable.addEventListener('scroll', this.handleScroll, { passive: true } as any);
         this.scrollable.addEventListener('touchmove', this.handleScroll, { passive: true } as any);
 
-        this.update();
+        if (!this.props.isDisabled) {
+            this.update();
+        }
     }
 
     componentDidUpdate(prevProps: ScrollSpyProps, prevState: {}) {
@@ -75,11 +78,7 @@ export default class ScrollSpy extends PureComponent<ScrollSpyProps, {}> {
     }
 
     getActiveIndex(scrollTop: number, scrollBottom: number): number {
-        const defaultIndex = this.childElements.has(0) && this.childElements.get(0)!.offsetTop >= scrollBottom
-            ? -1
-            : this.childElements.size;
-
-        return new Enumerable(this.childElements)
+        const activeIndex = new Enumerable(this.childElements)
             .where(([index, element]) => {
                 const offsetTop = element.offsetTop;
                 const offsetBottom = offsetTop + element.offsetHeight;
@@ -100,7 +99,20 @@ export default class ScrollSpy extends PureComponent<ScrollSpyProps, {}> {
                 }
             })
             .select(([index]) => index)
-            .firstOrDefault(null, defaultIndex);
+            .firstOrDefault(null, -1);
+
+        if (activeIndex > -1) {
+            return activeIndex;
+        }
+
+        const firstChild = new Enumerable(this.childElements)
+            .select(([index, element]) => element)
+            .minBy((element) => element.offsetTop)
+            .firstOrDefault();
+
+        return firstChild && firstChild.offsetTop > scrollTop
+            ? -1
+            : this.childElements.size;
     }
 
     update() {
