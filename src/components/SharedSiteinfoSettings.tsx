@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react';
 
 import LazyList from 'components/parts/LazyList';
 import RelativeTime from 'components/parts/RelativeTime';
+import SharedSiteinfoItem from 'components/parts/SharedSiteinfoItem';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
 import { State, SiteinfoItem } from 'messaging/types';
@@ -12,10 +13,6 @@ interface SharedSiteinfoProps {
     items: SiteinfoItem[];
     lastUpdatedAt: number;
     onUpdateSiteinfo: typeof updateSiteinfo;
-}
-
-interface SharedSiteinfoItemRowProps {
-    item: SiteinfoItem;
 }
 
 class SharedSiteinfoSettings extends PureComponent<SharedSiteinfoProps, {}> {
@@ -43,28 +40,6 @@ class SharedSiteinfoSettings extends PureComponent<SharedSiteinfoProps, {}> {
                     renderItem={renderSiteinfoItem}
                     renderList={renderSiteinfoList} />
             </section>
-        );
-    }
-}
-
-class SharedSiteinfoItem extends PureComponent<SharedSiteinfoItemRowProps, {}> {
-    render() {
-        const { item } = this.props;
-
-        return (
-            <li className="list-group-item">
-                <div>
-                    <div><strong>{item.name}</strong></div>
-                    <dl className="u-margin-remove">
-                        <dt>URL pattern</dt>
-                        <dd><code>{item.urlPattern}</code></dd>
-                        <dt>Content expression</dt>
-                        <dd><code>{item.contentExpression}</code></dd>
-                        <dt>Next link expression</dt>
-                        <dd><code>{item.nextLinkExpression}</code></dd>
-                    </dl>
-                </div>
-            </li>
         );
     }
 }
