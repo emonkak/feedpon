@@ -1,12 +1,12 @@
 import React from 'react';
 import classnames from 'classnames';
 
-import CleanHtml from 'components/parts/CleanHtml';
+import CleanHtml from 'components/widgets/CleanHtml';
 import CommentPopover from 'components/parts/CommentPopover';
 import EntryActionList from 'components/parts/EntryActionList';
 import EntryNav from 'components/parts/EntryNav';
 import FullContents from 'components/parts/FullContents';
-import RelativeTime from 'components/parts/RelativeTime';
+import RelativeTime from 'components/widgets/RelativeTime';
 import { Entry } from 'messaging/types';
 
 interface EntryInnerProps {

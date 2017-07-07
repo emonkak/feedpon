@@ -2,9 +2,9 @@ import React, { PureComponent, cloneElement } from 'react';
 import classnames from 'classnames';
 import { History, Location } from 'history';
 
-import * as commands from 'messaging/commands';
+import * as commands from 'messaging/keyMappings/commands';
 import InstantNotifications from 'components/InstantNotifications';
-import KeyMapper from 'components/parts/KeyMapper';
+import KeyMapper from 'components/widgets/KeyMapper';
 import Notifications from 'components/Notifications';
 import Sidebar from 'components/Sidebar';
 import bindActions from 'utils/flux/bindActions';

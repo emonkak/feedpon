@@ -1,6 +1,6 @@
 import React from 'react';
 
-import CleanHtml from 'components/parts/CleanHtml';
+import CleanHtml from 'components/widgets/CleanHtml';
 import { FullContent } from 'messaging/types';
 
 interface FullContentsProps {

@@ -35,7 +35,7 @@ class UserSiteinfoSettings extends PureComponent<UserSiteinfoProps, {}> {
                 <h2 className="display-2">User siteinfo</h2>
                 <p>This siteinfo is for user only.</p>
                 <div className="well">
-                    <UserSiteinfoForm legend="New item" onSubmit={onAddSiteinfoItem}>
+                    <UserSiteinfoForm legend="New siteinfo" onSubmit={onAddSiteinfoItem}>
                         <button className="button button-outline-positive" type="submit">Add</button>
                     </UserSiteinfoForm>
                 </div>

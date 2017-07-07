@@ -4,9 +4,9 @@ import { createSelector } from 'reselect';
 
 import CategoriesNav from 'components/parts/CategoriesNav';
 import EditCategoryForm from 'components/parts/EditCategoryForm';
-import LazyList from 'components/parts/LazyList';
+import LazyList from 'components/widgets/LazyList';
 import MainLayout from 'components/layouts/MainLayout';
-import Navbar from 'components/parts/Navbar';
+import Navbar from 'components/widgets/Navbar';
 import SubscriptionItem from 'components/parts/Subscription';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';

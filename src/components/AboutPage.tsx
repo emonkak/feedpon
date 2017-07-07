@@ -1,9 +1,9 @@
 import React, { PureComponent } from 'react';
 
-import Dropdown from 'components/parts/Dropdown';
+import Dropdown from 'components/widgets/Dropdown';
 import MainLayout from 'components/layouts/MainLayout';
-import Navbar from 'components/parts/Navbar';
-import { MenuLink } from 'components/parts/Menu';
+import Navbar from 'components/widgets/Navbar';
+import { MenuLink } from 'components/widgets/Menu';
 import { VERSION } from 'messaging/constants';
 
 interface AboutPageProps {

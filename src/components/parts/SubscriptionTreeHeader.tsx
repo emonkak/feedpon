@@ -1,9 +1,9 @@
 import React from 'react';
 import classnames from 'classnames';
 
-import Dropdown from 'components/parts/Dropdown';
-import RelativeTime from 'components/parts/RelativeTime';
-import { MenuItem, MenuLink } from 'components/parts/Menu';
+import Dropdown from 'components/widgets/Dropdown';
+import RelativeTime from 'components/widgets/RelativeTime';
+import { MenuItem, MenuLink } from 'components/widgets/Menu';
 import { SubscriptionOrderKind } from 'messaging/types';
 
 interface SubscriptionTreeHeaderProps {

@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 
-import ConfirmModal from 'components/parts/ConfirmModal';
-import ModalButton from 'components/parts/ModalButton';
+import ConfirmModal from 'components/widgets/ConfirmModal';
+import ModalButton from 'components/widgets/ModalButton';
 
 interface TrackingUrlPatternItemProps {
     onRemove: (pattern: string) => void;

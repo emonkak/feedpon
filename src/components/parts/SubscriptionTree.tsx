@@ -3,7 +3,7 @@ import classnames from 'classnames';
 
 import SubscriptionIcon from 'components/parts/SubscriptionIcon';
 import { Category, GroupedSubscription, Subscription } from 'messaging/types';
-import { Tree, TreeLeaf, TreeBranch } from 'components/parts/Tree';
+import { Tree, TreeLeaf, TreeBranch } from 'components/widgets/Tree';
 import { UNCATEGORIZED } from 'messaging/categories/constants';
 
 interface SubscriptionTreeProps {

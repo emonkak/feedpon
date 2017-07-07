@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 
-import Modal from 'components/parts/Modal';
+import Modal from 'components/widgets/Modal';
 
 interface ConfirmModalProps {
     cancelButtonClassName?: string;

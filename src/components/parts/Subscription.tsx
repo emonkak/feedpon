@@ -1,6 +1,6 @@
 import React from 'react';
 
-import RelativeTime from 'components/parts/RelativeTime';
+import RelativeTime from 'components/widgets/RelativeTime';
 import SubscriptionDropdown from 'components/parts/SubscriptionDropdown';
 import SubscriptionIcon from 'components/parts/SubscriptionIcon';
 import { Category, Subscription } from 'messaging/types';

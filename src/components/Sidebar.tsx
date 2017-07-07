@@ -9,7 +9,7 @@ import SubscriptionTreeHeader from 'components/parts/SubscriptionTreeHeader';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
 import { Category, GroupedSubscription, Profile, State, Subscription, SubscriptionOrderKind } from 'messaging/types';
-import { Tree, TreeLeaf } from 'components/parts/Tree';
+import { Tree, TreeLeaf } from 'components/widgets/Tree';
 import { changeSubscriptionOrder, changeUnreadViewing, fetchSubscriptions } from 'messaging/subscriptions/actions';
 import { createSortedCategoriesSelector } from 'messaging/categories/selectors';
 import { createGroupedSubscriptionsSelector, createTotalUnreadCountSelector, createVisibleSubscriptionsSelector } from 'messaging/subscriptions/selectors';

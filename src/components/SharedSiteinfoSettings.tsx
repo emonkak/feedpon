@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 
-import LazyList from 'components/parts/LazyList';
-import RelativeTime from 'components/parts/RelativeTime';
+import LazyList from 'components/widgets/LazyList';
+import RelativeTime from 'components/widgets/RelativeTime';
 import SharedSiteinfoItem from 'components/parts/SharedSiteinfoItem';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';

@@ -3,10 +3,10 @@ import React, { PureComponent, cloneElement } from 'react';
 import classnames from 'classnames';
 import { findDOMNode } from 'react-dom';
 
-import Closable from 'components/parts/Closable';
+import Closable from 'components/widgets/Closable';
 import createChainedFunction from 'utils/createChainedFunction';
 import getScrollableParent from 'utils/dom/getScrollableParent';
-import { Menu } from 'components/parts/Menu';
+import { Menu } from 'components/widgets/Menu';
 
 interface DropdownProps {
     className?: string;

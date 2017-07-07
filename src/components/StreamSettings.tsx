@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 
-import ValidatableInput from 'components/parts/ValidatableInput';
+import ValidatableControl from 'components/widgets/ValidatableControl';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
 import formatDuration from 'utils/formatDuration';
@@ -207,7 +207,7 @@ class StreamSettings extends PureComponent<StreamSettingsProps, StreamSettingsSt
                         <label>
                             <div className="form-group-heading">Cache lifetime(hh:mm:ss)</div>
                             <div className="input-group">
-                                <ValidatableInput
+                                <ValidatableControl
                                     validClassName={null}
                                     type="text"
                                     className="form-control"

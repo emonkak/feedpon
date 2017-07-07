@@ -4,13 +4,13 @@ import { Params } from 'react-router/lib/Router';
 
 import KeyboardSettings from 'components/KeyboardSettings';
 import MainLayout from 'components/layouts/MainLayout';
-import Navbar from 'components/parts/Navbar';
+import Navbar from 'components/widgets/Navbar';
 import SharedSiteinfoSettings from 'components/SharedSiteinfoSettings';
 import StreamSettings from 'components/StreamSettings';
 import TrackingUrlSettings from 'components/TrackingUrlSettings';
 import UISettings from 'components/UISettings';
 import UserSiteinfoSettings from 'components/UserSiteinfoSettings';
-import { Nav, NavItem } from 'components/parts/Nav';
+import { Nav, NavItem } from 'components/widgets/Nav';
 
 interface SettingsProps {
     onToggleSidebar: () => void;

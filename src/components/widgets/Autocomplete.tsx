@@ -1,10 +1,10 @@
 import React, { Children, PureComponent, cloneElement } from 'react';
 import classnames from 'classnames';
 
-import Closable from 'components/parts/Closable';
+import Closable from 'components/widgets/Closable';
 import createChainedFunction from 'utils/createChainedFunction';
 import debounceEventHandler from 'utils/debounceEventHandler';
-import { Menu } from 'components/parts/Menu';
+import { Menu } from 'components/widgets/Menu';
 
 interface AutoCompleteProps {
     completeDebounceTime?: number;

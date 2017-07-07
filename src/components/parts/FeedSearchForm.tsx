@@ -5,9 +5,9 @@ import '@emonkak/enumerable/extensions/take';
 import '@emonkak/enumerable/extensions/toArray';
 import '@emonkak/enumerable/extensions/where';
 
-import Autocomplete from 'components/parts/Autocomplete';
+import Autocomplete from 'components/widgets/Autocomplete';
 import SubscriptionIcon from 'components/parts/SubscriptionIcon';
-import { MenuItem } from 'components/parts/Menu';
+import { MenuItem } from 'components/widgets/Menu';
 import { Subscription } from 'messaging/types';
 
 interface FeedSearchFormProps {

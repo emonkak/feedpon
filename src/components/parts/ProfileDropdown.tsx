@@ -1,9 +1,9 @@
 import React, { PureComponent } from 'react';
 
-import ConfirmModal from 'components/parts/ConfirmModal';
-import Dropdown from 'components/parts/Dropdown';
-import Portal from 'components/parts/Portal';
-import { MenuItem } from 'components/parts/Menu';
+import ConfirmModal from 'components/widgets/ConfirmModal';
+import Dropdown from 'components/widgets/Dropdown';
+import Portal from 'components/widgets/Portal';
+import { MenuItem } from 'components/widgets/Menu';
 import { Profile } from 'messaging/types';
 
 interface ProfileDropdownProps {

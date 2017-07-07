@@ -1,7 +1,7 @@
 import React, { Children, PureComponent, isValidElement } from 'react';
 import classnames from 'classnames';
 
-import UpdateBlocker from 'components/parts/UpdateBlocker';
+import UpdateBlocker from 'components/widgets/UpdateBlocker';
 
 interface TreeProps {
 }

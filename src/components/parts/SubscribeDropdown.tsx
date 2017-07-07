@@ -1,11 +1,11 @@
 import React, { PureComponent } from 'react';
 
-import ConfirmModal from 'components/parts/ConfirmModal';
-import Dropdown from 'components/parts/Dropdown';
-import Portal from 'components/parts/Portal';
+import ConfirmModal from 'components/widgets/ConfirmModal';
+import Dropdown from 'components/widgets/Dropdown';
+import Portal from 'components/widgets/Portal';
 import SubscribeButton from 'components/parts/SubscribeButton';
 import { Category, Feed, Subscription } from 'messaging/types';
-import { MenuItem, MenuForm } from 'components/parts/Menu';
+import { MenuItem, MenuForm } from 'components/widgets/Menu';
 
 interface SubscribeDropdownProps {
     categories: Category[];

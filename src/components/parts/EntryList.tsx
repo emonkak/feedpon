@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 
 import EntryComponent from 'components/parts/Entry';
 import EntryPlaceholder from 'components/parts/EntryPlaceholder';
-import ScrollSpy from 'components/parts/ScrollSpy';
+import ScrollSpy from 'components/widgets/ScrollSpy';
 import { Entry, StreamViewKind } from 'messaging/types';
 
 const SCROLL_OFFSET = 48;

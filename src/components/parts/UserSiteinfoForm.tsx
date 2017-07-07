@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 
 import { SiteinfoItem } from 'messaging/types';
-import ValidatableInput from 'components/parts/ValidatableInput';
+import ValidatableControl from 'components/widgets/ValidatableControl';
 
 interface UserSiteinfoFormProps {
     item?: SiteinfoItem;
@@ -83,7 +83,7 @@ export default class UserSiteinfoForm extends PureComponent<UserSiteinfoFormProp
                 <div className="form-group">
                     <label>
                         <span className="form-group-heading form-required">Name</span>
-                        <ValidatableInput
+                        <ValidatableControl
                             className="form-control"
                             type="text"
                             name="name"
@@ -95,7 +95,7 @@ export default class UserSiteinfoForm extends PureComponent<UserSiteinfoFormProp
                 <div className="form-group">
                     <label>
                         <span className="form-group-heading form-required">URL pattern</span>
-                        <ValidatableInput
+                        <ValidatableControl
                             className="form-control"
                             validations={[{ message: 'Invalid regular expression.', rule: isValidPattern }]}
                             type="text"
@@ -109,7 +109,7 @@ export default class UserSiteinfoForm extends PureComponent<UserSiteinfoFormProp
                 <div className="form-group">
                     <label>
                         <span className="form-group-heading form-required">Content expression</span>
-                        <ValidatableInput
+                        <ValidatableControl
                             className="form-control"
                             validations={[{ message: 'Invalid XPath expression.', rule: isValidXPath }]}
                             type="text"
@@ -123,7 +123,7 @@ export default class UserSiteinfoForm extends PureComponent<UserSiteinfoFormProp
                 <div className="form-group">
                     <label>
                         <span className="form-group-heading">Next link expression</span>
-                        <ValidatableInput
+                        <ValidatableControl
                             className="form-control"
                             validations={[{ message: 'Invalid XPath expression.', rule: isValidXPath }]}
                             type="text"

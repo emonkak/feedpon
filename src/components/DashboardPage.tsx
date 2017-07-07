@@ -4,8 +4,8 @@ import { createSelector } from 'reselect';
 
 import * as CacheMap from 'utils/containers/CacheMap';
 import MainLayout from 'components/layouts/MainLayout';
-import Navbar from 'components/parts/Navbar';
-import RelativeTime from 'components/parts/RelativeTime';
+import Navbar from 'components/widgets/Navbar';
+import RelativeTime from 'components/widgets/RelativeTime';
 import SubscriptionIcon from 'components/parts/SubscriptionIcon';
 import connect from 'utils/flux/react/connect';
 import { State } from 'messaging/types';

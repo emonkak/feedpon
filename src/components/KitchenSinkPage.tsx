@@ -1,12 +1,12 @@
 import React, { PureComponent } from 'react';
 
-import Dropdown from 'components/parts/Dropdown';
+import Dropdown from 'components/widgets/Dropdown';
 import MainLayout from 'components/layouts/MainLayout';
-import Modal from 'components/parts/Modal';
-import Navbar from 'components/parts/Navbar';
+import Modal from 'components/widgets/Modal';
+import Navbar from 'components/widgets/Navbar';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
-import { MenuItem } from 'components/parts/Menu';
+import { MenuItem } from 'components/widgets/Menu';
 import { NotificationKind } from 'messaging/types';
 import { sendNotification } from 'messaging/notifications/actions';
 

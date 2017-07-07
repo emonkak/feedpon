@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Category } from 'messaging/types';
-import { Nav, NavItem } from 'components/parts/Nav';
+import { Nav, NavItem } from 'components/widgets/Nav';
 import { UNCATEGORIZED } from 'messaging/categories/constants';
 
 interface CategoriesNavProps {

@@ -1,8 +1,8 @@
 import React from 'react';
 import classnames from 'classnames';
 
-import Dropdown from 'components/parts/Dropdown';
-import { MenuItem } from 'components/parts/Menu';
+import Dropdown from 'components/widgets/Dropdown';
+import { MenuItem } from 'components/widgets/Menu';
 
 interface EntryActionListProps {
     commentsIsLoading: boolean;

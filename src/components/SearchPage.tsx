@@ -5,7 +5,7 @@ import { Params } from 'react-router/lib/Router';
 import FeedComponent from 'components/parts/Feed';
 import FeedPlaceholder from 'components/parts/FeedPlaceholder';
 import MainLayout from 'components/layouts/MainLayout';
-import Navbar from 'components/parts/Navbar';
+import Navbar from 'components/widgets/Navbar';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
 import { Category, Feed, State, Subscription } from 'messaging/types';

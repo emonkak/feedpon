@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 
-import ValidatableInput from 'components/parts/ValidatableInput';
+import ValidatableControl from 'components/widgets/ValidatableControl';
 
 interface TrackingUrlPatternFormProps {
     onAdd: (pattern: string) => void;
@@ -48,7 +48,7 @@ export default class TrackingUrlPatternForm extends PureComponent<TrackingUrlPat
             <form className="form" onSubmit={this.handleSubmit}>
                 <div className="form-legend">New tracking URL pattern</div>
                 <div className="input-group">
-                    <ValidatableInput
+                    <ValidatableControl
                         validations={[{ message: 'Invalid regular expression.', rule: isValidPattern }]}
                         type="text"
                         className="form-control"

@@ -1,12 +1,12 @@
 import React, { PureComponent } from 'react';
 import classnames from 'classnames';
 
-import ConfirmModal from 'components/parts/ConfirmModal';
-import Dropdown from 'components/parts/Dropdown';
-import Navbar from 'components/parts/Navbar';
-import Portal from 'components/parts/Portal';
+import ConfirmModal from 'components/widgets/ConfirmModal';
+import Dropdown from 'components/widgets/Dropdown';
+import Navbar from 'components/widgets/Navbar';
+import Portal from 'components/widgets/Portal';
 import { Entry, EntryOrderKind, Feed, StreamFetchOptions, StreamViewKind } from 'messaging/types';
-import { MenuItem } from 'components/parts/Menu';
+import { MenuItem } from 'components/widgets/Menu';
 
 interface StreamNavbarProps {
     canMarkAsRead: boolean;

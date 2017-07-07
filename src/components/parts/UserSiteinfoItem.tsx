@@ -1,8 +1,8 @@
 import React, { PureComponent } from 'react';
 
-import ConfirmModal from 'components/parts/ConfirmModal';
-import Modal from 'components/parts/Modal';
-import ModalButton from 'components/parts/ModalButton';
+import ConfirmModal from 'components/widgets/ConfirmModal';
+import Modal from 'components/widgets/Modal';
+import ModalButton from 'components/widgets/ModalButton';
 import UserSiteinfoForm from 'components/parts/UserSiteinfoForm';
 import { SiteinfoItem } from 'messaging/types';
 import { removeSiteinfoItem, updateSiteinfoItem } from 'messaging/userSiteinfo/actions';

@@ -1,6 +1,6 @@
 import React, { PureComponent, cloneElement } from 'react';
 
-import Portal from 'components/parts/Portal';
+import Portal from 'components/widgets/Portal';
 import createChainedFunction from 'utils/createChainedFunction';
 
 interface ModalButtonProps {
