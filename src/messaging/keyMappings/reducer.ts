@@ -1,33 +1,21 @@
 import * as Trie from 'utils/containers/Trie';
 import { Event, KeyMappings } from 'messaging/types';
 
-const KEY_SEQEUNCE_PATTERN = /(?:<(?:[SCAM]-)*(?:[A-Z][0-9A-Z]+|.)>|.)/gi;
-
 export default function reducer(keyMappings: KeyMappings, event: Event) {
     switch (event.type) {
-        case 'KEY_MAPPING_ADDED':
+        case 'KEY_MAPPING_UPDATED':
             return {
                 ...keyMappings,
-                items: Trie.update(keyMappings.items, splitKeySequence(event.keySequence), event.commandId)
+                items: Trie.update(keyMappings.items, event.keys, event.mapping)
             };
 
-        case 'KEY_MAPPING_REMOVED':
+        case 'KEY_MAPPING_DELETED':
             return {
                 ...keyMappings,
-                items: Trie.remove(keyMappings.items, splitKeySequence(event.keySequence))
-            };
-
-        case 'SCROLL_AMOUNT_CHANGED':
-            return {
-                ...keyMappings,
-                scrollAmount: event.scrollAmount
+                items: Trie.remove(keyMappings.items, event.keys)
             };
 
         default:
             return keyMappings;
     }
-}
-
-function splitKeySequence(keySequence: string): string[] {
-    return keySequence.match(KEY_SEQEUNCE_PATTERN) || [];
 }

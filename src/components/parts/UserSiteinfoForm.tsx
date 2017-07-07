@@ -16,6 +16,16 @@ interface UserSiteinfoFormState {
     nextLinkExpression: string;
 }
 
+const patternValidation = {
+    message: 'Invalid regular expression.',
+    rule: isValidPattern
+};
+
+const xPathValidation = {
+    message: 'Invalid XPath expression.',
+    rule: isValidXPath
+};
+
 export default class UserSiteinfoForm extends PureComponent<UserSiteinfoFormProps, UserSiteinfoFormState> {
     constructor(props: UserSiteinfoFormProps, context: any) {
         super(props, context);
@@ -97,12 +107,12 @@ export default class UserSiteinfoForm extends PureComponent<UserSiteinfoFormProp
                         <span className="form-group-heading form-required">URL pattern</span>
                         <ValidatableControl
                             className="form-control"
-                            validations={[{ message: 'Invalid regular expression.', rule: isValidPattern }]}
-                            type="text"
                             name="urlPattern"
-                            value={urlPattern}
                             onChange={this.handleChange}
-                            required />
+                            required
+                            type="text"
+                            validation={patternValidation}
+                            value={urlPattern} />
                     </label>
                     <span className="u-text-muted">The regular expression for the url.</span>
                 </div>
@@ -111,12 +121,12 @@ export default class UserSiteinfoForm extends PureComponent<UserSiteinfoFormProp
                         <span className="form-group-heading form-required">Content expression</span>
                         <ValidatableControl
                             className="form-control"
-                            validations={[{ message: 'Invalid XPath expression.', rule: isValidXPath }]}
-                            type="text"
                             name="contentExpression"
-                            value={contentExpression}
                             onChange={this.handleChange}
-                            required />
+                            required
+                            type="text"
+                            validation={xPathValidation}
+                            value={contentExpression} />
                     </label>
                     <span className="u-text-muted">The XPath expression to the element representing the content.</span>
                 </div>
@@ -125,11 +135,11 @@ export default class UserSiteinfoForm extends PureComponent<UserSiteinfoFormProp
                         <span className="form-group-heading">Next link expression</span>
                         <ValidatableControl
                             className="form-control"
-                            validations={[{ message: 'Invalid XPath expression.', rule: isValidXPath }]}
-                            type="text"
                             name="nextLinkExpression"
-                            value={nextLinkExpression}
-                            onChange={this.handleChange} />
+                            onChange={this.handleChange}
+                            type="text"
+                            validation={xPathValidation}
+                            value={nextLinkExpression} />
                     </label>
                     <span className="u-text-muted">The XPath expression to the anchor element representing the next link.</span>
                 </div>

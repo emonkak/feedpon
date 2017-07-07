@@ -26,7 +26,7 @@ export function find<T>(tree: Trie<T>, path: string[]): Node<T> | null {
     let node = null;
 
     for (const key of path) {
-        if (!children[key]) {
+        if (!(key in children)) {
             return null;
         }
         node = children[key];
@@ -34,6 +34,21 @@ export function find<T>(tree: Trie<T>, path: string[]): Node<T> | null {
     }
 
     return node;
+}
+
+export function has<T>(tree: Trie<T>, path: string[]): boolean {
+    let children = tree;
+    let node = null;
+
+    for (const key of path) {
+        if (!(key in children)) {
+            return false;
+        }
+        node = children[key];
+        children = node.children;
+    }
+
+    return true;
 }
 
 export function update<T>(tree: Trie<T>, path: string[], value: T): Trie<T> {

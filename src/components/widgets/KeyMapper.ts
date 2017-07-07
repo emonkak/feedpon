@@ -11,8 +11,8 @@ const SPECIAL_KEYS_TABLE: { [key: string]: string } = {
 
 interface KeyMapperProps {
     children: React.ReactElement<any>;
-    mappings: Trie.Trie<string>;
-    onInvokeCommand: (commandId: string) => void;
+    keyMappings: Trie.Trie<any>;
+    onInvokeKeyMapping: (keyMappings: any) => void;
     timeoutLength?: number;
 }
 
@@ -49,31 +49,31 @@ export default class KeyMapper extends PureComponent<KeyMapperProps, {}> {
             this.timer = null;
         }
 
-        const { mappings, onInvokeCommand, timeoutLength } = this.props;
+        const { keyMappings, onInvokeKeyMapping, timeoutLength } = this.props;
         const keyString = keyEventToKeyString(event);
         const keys = [...this.pendingKeys, keyString];
-        const mapping = Trie.find(mappings, keys);
+        const node = Trie.find(keyMappings, keys);
 
-        if (!mapping) {
+        if (!node) {
             this.pendingKeys = [];
             return;
         }
 
-        const commandId = mapping.value;
-        const hasNextMapping = !Trie.isEmpty(mapping.children);
+        const mapping = node.value;
+        const hasNextMapping = !Trie.isEmpty(node.children);
 
-        if (commandId) {
+        if (mapping) {
             event.preventDefault();
 
             if (hasNextMapping) {
                 this.timer = setTimeout(() => {
-                    onInvokeCommand(commandId);
+                    onInvokeKeyMapping(mapping);
                     this.timer = null;
                     this.pendingKeys = [];
                 }, timeoutLength);
                 this.pendingKeys = keys;
             } else {
-                onInvokeCommand(commandId);
+                onInvokeKeyMapping(mapping);
                 this.pendingKeys = [];
             }
         } else {

@@ -5,22 +5,22 @@ import TrackingUrlPatternItem from 'components/parts/TrackingUrlPatternItem';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
 import { State } from 'messaging/types';
-import { addTrackingUrlPattern, removeTrackingUrlPattern } from 'messaging/trackingUrlPatterns/actions';
+import { addTrackingUrlPattern, deleteTrackingUrlPattern } from 'messaging/trackingUrlPatterns/actions';
 
 interface TrackingUrlProps {
     onAddTrackingUrlPattern: typeof addTrackingUrlPattern;
-    onRemoveTrackingUrlPattern: typeof removeTrackingUrlPattern;
+    onDeleteTrackingUrlPattern: typeof deleteTrackingUrlPattern;
     patterns: string[];
 }
 
 class TrackingUrlSettings extends PureComponent<TrackingUrlProps, {}> {
     renderPattern(pattern: string, index: number) {
-        const { onRemoveTrackingUrlPattern } = this.props;
+        const { onDeleteTrackingUrlPattern } = this.props;
 
         return (
             <TrackingUrlPatternItem
                 key={pattern}
-                onRemove={onRemoveTrackingUrlPattern}
+                onDelete={onDeleteTrackingUrlPattern}
                 pattern={pattern} />
         );
     }
@@ -48,6 +48,6 @@ export default connect({
     }),
     mapDispatchToProps: bindActions({
         onAddTrackingUrlPattern: addTrackingUrlPattern,
-        onRemoveTrackingUrlPattern: removeTrackingUrlPattern
+        onDeleteTrackingUrlPattern: deleteTrackingUrlPattern
     })
 })(TrackingUrlSettings);

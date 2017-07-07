@@ -1,16 +1,22 @@
-import { Thunk } from 'messaging/types';
-import { sendNotification } from 'messaging/notifications/actions';
+import { Event, KeyMapping } from 'messaging/types';
 
-export function changeScrollAmount(scrollAmount: number): Thunk {
-    return ({ dispatch }) => {
-        dispatch({
-            type: 'SCROLL_AMOUNT_CHANGED',
-            scrollAmount
-        });
+const KEY_STROKE_PATTERN = /(?:<(?:[SCAM]-)*(?:[A-Z][0-9A-Z]+|.)>|.)/gi;
 
-        dispatch(sendNotification(
-            'Scroll amount changed',
-            'positive'
-        ));
+export function updateKeyMapping(keyStroke: string, mapping: KeyMapping): Event {
+    return {
+        type: 'KEY_MAPPING_UPDATED',
+        keys: splitKeyStroke(keyStroke),
+        mapping
     };
+}
+
+export function deleteKeyMapping(keyStroke: string): Event {
+    return {
+        type: 'KEY_MAPPING_DELETED',
+        keys: splitKeyStroke(keyStroke)
+    };
+}
+
+function splitKeyStroke(keyStroke: string): string[] {
+    return keyStroke.match(KEY_STROKE_PATTERN) || [];
 }

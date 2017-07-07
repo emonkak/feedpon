@@ -15,7 +15,7 @@ export default function reducer(siteinfo: UserSiteinfo, event: Event): UserSitei
                     .map((item) => item.id === event.item.id ? event.item : item)
             };
 
-        case 'USER_SITEINFO_ITEM_REMOVED':
+        case 'USER_SITEINFO_ITEM_DELETED':
             return {
                 ...siteinfo,
                 items: siteinfo.items.filter((item) => item.id !== event.id)

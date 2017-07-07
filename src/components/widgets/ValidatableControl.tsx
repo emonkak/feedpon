@@ -5,10 +5,13 @@ interface ValidatableControlProps extends React.HTMLAttributes<HTMLInputElement 
     component?: 'input' | 'select' | 'textarea';
     invalidClassName?: string | null;
     validClassName?: string | null;
-    validations?: {
-        rule: (value: string) => boolean,
-        message: string
-    }[];
+    validation?: Validation;
+    validations?: Validation[];
+}
+
+interface Validation {
+    rule: (value: string) => boolean;
+    message: string;
 }
 
 interface ValidatableControlState {
@@ -19,8 +22,7 @@ export default class ValidatableControl extends PureComponent<ValidatableControl
     static defaultProps = {
         component: 'input',
         invalidClassName: 'has-error',
-        validClassName: 'has-success',
-        validations: []
+        validClassName: 'has-success'
     };
 
     private controlElement: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | null;
@@ -52,13 +54,21 @@ export default class ValidatableControl extends PureComponent<ValidatableControl
         }
 
         if (control.value) {
-            const { validations } = this.props;
+            const { validation, validations } = this.props;
             let error = '';
 
-            for (const validation of validations!) {
+            if (validation) {
                 if (!validation.rule(control.value)) {
                     error = validation.message;
-                    break;
+                }
+            }
+
+            if (validations) {
+                for (const validation of validations) {
+                    if (!validation.rule(control.value)) {
+                        error = validation.message;
+                        break;
+                    }
                 }
             }
 
@@ -94,6 +104,7 @@ export default class ValidatableControl extends PureComponent<ValidatableControl
             component,
             invalidClassName,
             validClassName,
+            validation,
             validations,
             ...restProps
         } = this.props;

@@ -15,9 +15,9 @@ export function addTrackingUrlPattern(pattern: string): AsyncThunk {
     };
 }
 
-export function removeTrackingUrlPattern(pattern: string): Event {
+export function deleteTrackingUrlPattern(pattern: string): Event {
     return {
-        type: 'TRACKING_URL_PATTERN_REMOVED',
+        type: 'TRACKING_URL_PATTERN_DELETED',
         pattern
     };
 }

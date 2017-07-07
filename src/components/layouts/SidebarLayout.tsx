@@ -9,7 +9,7 @@ import Notifications from 'components/Notifications';
 import Sidebar from 'components/Sidebar';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
-import { State, Store } from 'messaging/types';
+import { Command, KeyMapping, State, Store } from 'messaging/types';
 import { Trie } from 'utils/containers/Trie';
 import { closeSidebar, openSidebar } from 'messaging/ui/actions';
 import { sendInstantNotification } from 'messaging/instantNotifications/actions';
@@ -18,7 +18,7 @@ interface SidebarLayoutProps {
     store: Store;
     children: React.ReactElement<any>;
     isAuthenticating: boolean;
-    keyMappings: Trie<string>;
+    keyMappings: Trie<KeyMapping>;
     location: Location;
     onCloseSidebar: typeof closeSidebar;
     onOpenSidebar: typeof openSidebar;
@@ -34,7 +34,7 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
 
         this.handleChangeLocation = this.handleChangeLocation.bind(this);
         this.handleCloseSidebar = this.handleCloseSidebar.bind(this);
-        this.handleInvokeCommand = this.handleInvokeCommand.bind(this);
+        this.handleInvokeKeyMapping = this.handleInvokeKeyMapping.bind(this);
         this.handleToggleSidebar = this.handleToggleSidebar.bind(this);
     }
 
@@ -95,17 +95,20 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
         }
     }
 
-    handleInvokeCommand(commandId: keyof typeof commands) {
-        const command = commands[commandId];
+    handleInvokeKeyMapping(keyMapping: KeyMapping) {
+        const command = commands[keyMapping.commandId as keyof typeof commands] as Command<any>;
 
         if (command) {
             const { store } = this.props;
 
-            if (!command.skipNotification) {
-                store.dispatch(sendInstantNotification(command.title));
+            if (!keyMapping.preventNotification) {
+                store.dispatch(sendInstantNotification(command.name));
             }
 
-            store.dispatch(command.thunk);
+            const params = { ...command.defaultParams, ...keyMapping.params };
+            const event = command.action(params);
+
+            store.dispatch(event as any);
         }
     }
 
@@ -129,8 +132,8 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
 
         return (
             <KeyMapper
-                mappings={keyMappings}
-                onInvokeCommand={this.handleInvokeCommand}>
+                keyMappings={keyMappings}
+                onInvokeKeyMapping={this.handleInvokeKeyMapping}>
                 <div
                     className={classnames('l-root', {
                         'is-opened': sidebarIsOpened

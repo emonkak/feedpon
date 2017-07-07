@@ -5,37 +5,37 @@ import UserSiteinfoItem from 'components/parts/UserSiteinfoItem';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
 import { State, SiteinfoItem } from 'messaging/types';
-import { addSiteinfoItem, removeSiteinfoItem, updateSiteinfoItem } from 'messaging/userSiteinfo/actions';
+import { addUserSiteinfoItem, deleteUserSiteinfoItem, updateUserSiteinfoItem } from 'messaging/userSiteinfo/actions';
 
 interface UserSiteinfoProps {
     items: SiteinfoItem[];
-    onAddSiteinfoItem: typeof addSiteinfoItem;
-    onRemoveSiteinfoItem: typeof removeSiteinfoItem;
-    onUpdateSiteinfoItem: typeof updateSiteinfoItem;
+    onAddUserSiteinfoItem: typeof addUserSiteinfoItem;
+    onDeleteUserSiteinfoItem: typeof deleteUserSiteinfoItem;
+    onUpdateUserSiteinfoItem: typeof updateUserSiteinfoItem;
 }
 
 class UserSiteinfoSettings extends PureComponent<UserSiteinfoProps, {}> {
     renderUserItem(item: SiteinfoItem) {
-        const { onRemoveSiteinfoItem, onUpdateSiteinfoItem } = this.props;
+        const { onDeleteUserSiteinfoItem, onUpdateUserSiteinfoItem } = this.props;
 
         return (
             <UserSiteinfoItem
                 key={item.id}
                 item={item}
-                onRemove={onRemoveSiteinfoItem}
-                onUpdate={onUpdateSiteinfoItem} />
+                onDelete={onDeleteUserSiteinfoItem}
+                onUpdate={onUpdateUserSiteinfoItem} />
         );
     }
 
     render() {
-        const { onAddSiteinfoItem, items } = this.props;
+        const { onAddUserSiteinfoItem, items } = this.props;
 
         return (
             <section className="section">
                 <h2 className="display-2">User siteinfo</h2>
                 <p>This siteinfo is for user only.</p>
                 <div className="well">
-                    <UserSiteinfoForm legend="New siteinfo" onSubmit={onAddSiteinfoItem}>
+                    <UserSiteinfoForm legend="New siteinfo" onSubmit={onAddUserSiteinfoItem}>
                         <button className="button button-outline-positive" type="submit">Add</button>
                     </UserSiteinfoForm>
                 </div>
@@ -63,8 +63,8 @@ export default connect({
         items: state.userSiteinfo.items
     }),
     mapDispatchToProps: bindActions({
-        onAddSiteinfoItem: addSiteinfoItem,
-        onRemoveSiteinfoItem: removeSiteinfoItem,
-        onUpdateSiteinfoItem: updateSiteinfoItem
+        onAddUserSiteinfoItem: addUserSiteinfoItem,
+        onDeleteUserSiteinfoItem: deleteUserSiteinfoItem,
+        onUpdateUserSiteinfoItem: updateUserSiteinfoItem
     })
 })(UserSiteinfoSettings);

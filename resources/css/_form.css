@@ -40,6 +40,10 @@
   z-index: 1;
 }
 
+select.form-control:not([size]):not([multiple]) {
+  height: calc(var(--baseline-height) * 1.5);
+}
+
 .form-control.has-success {
   border-color: var(--positive-color);
   background-color: var(--x-light-color);

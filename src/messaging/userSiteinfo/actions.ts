@@ -1,20 +1,20 @@
 import { SiteinfoItem, Event } from 'messaging/types';
 
-export function addSiteinfoItem(item: SiteinfoItem): Event {
+export function addUserSiteinfoItem(item: SiteinfoItem): Event {
     return {
         type: 'USER_SITEINFO_ITEM_ADDED',
         item
     };
 }
 
-export function removeSiteinfoItem(id: string | number): Event {
+export function deleteUserSiteinfoItem(id: string | number): Event {
     return {
-        type: 'USER_SITEINFO_ITEM_REMOVED',
+        type: 'USER_SITEINFO_ITEM_DELETED',
         id
     };
 }
 
-export function updateSiteinfoItem(item: SiteinfoItem): Event {
+export function updateUserSiteinfoItem(item: SiteinfoItem): Event {
     return {
         type: 'USER_SITEINFO_ITEM_UPDATED',
         item

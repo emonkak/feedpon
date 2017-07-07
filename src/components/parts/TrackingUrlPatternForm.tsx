@@ -10,6 +10,11 @@ interface TrackingUrlPatternFormState {
     pattern: string;
 }
 
+const patternValidation = {
+    message: 'Invalid regular expression.',
+    rule: isValidPattern
+};
+
 export default class TrackingUrlPatternForm extends PureComponent<TrackingUrlPatternFormProps, TrackingUrlPatternFormState> {
     constructor(props: TrackingUrlPatternFormProps, context: any) {
         super(props);
@@ -49,7 +54,7 @@ export default class TrackingUrlPatternForm extends PureComponent<TrackingUrlPat
                 <div className="form-legend">New tracking URL pattern</div>
                 <div className="input-group">
                     <ValidatableControl
-                        validations={[{ message: 'Invalid regular expression.', rule: isValidPattern }]}
+                        validation={patternValidation}
                         type="text"
                         className="form-control"
                         placeholder="^https://..."

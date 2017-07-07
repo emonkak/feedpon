@@ -91,8 +91,7 @@ code, var, samp, kbd {
 
 kbd {
   border: 1px solid var(--medium-dark-color);
-  box-shadow: 0 1px var(--medium-dark-color),
-              0 2px var(--medium-light-color);
+  box-shadow: 0 1px var(--medium-dark-color);
 }
 
 code code,
@@ -211,13 +210,9 @@ legend {
   width: 100%;
 }
 
-input:focus,
-select:focus {
-  outline: none;
-}
-
 input,
-select {
+select,
+textarea {
   padding: 0;
   margin: 0;
   font-family: inherit;
@@ -226,6 +221,12 @@ select {
   background: none;
   border: 0;
   color: inherit;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
 }
 
 button {

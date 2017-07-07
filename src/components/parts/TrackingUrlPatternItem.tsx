@@ -1,44 +1,67 @@
 import React, { PureComponent } from 'react';
 
 import ConfirmModal from 'components/widgets/ConfirmModal';
-import ModalButton from 'components/widgets/ModalButton';
 
 interface TrackingUrlPatternItemProps {
-    onRemove: (pattern: string) => void;
+    onDelete: (pattern: string) => void;
     pattern: string;
 }
 
-export default class TrackingUrlPatternItem extends PureComponent<TrackingUrlPatternItemProps, {}> {
+interface TrackingUrlPatternItemState {
+    isDeleting: boolean;
+}
+
+export default class TrackingUrlPatternItem extends PureComponent<TrackingUrlPatternItemProps, TrackingUrlPatternItemState> {
     constructor(props: TrackingUrlPatternItemProps, context: any) {
         super(props, context);
 
-        this.handleRemove = this.handleRemove.bind(this);
+        this.state = {
+            isDeleting: false
+        };
+
+        this.handleCancelDeleting = this.handleCancelDeleting.bind(this);
+        this.handleDelete = this.handleDelete.bind(this);
+        this.handleStartDeleting = this.handleStartDeleting.bind(this);
     }
 
-    handleRemove() {
-        const { onRemove, pattern } = this.props;
+    handleCancelDeleting() {
+        this.setState({
+            isDeleting: false
+        });
+    }
 
-        onRemove(pattern);
+    handleDelete() {
+        const { onDelete, pattern } = this.props;
+
+        onDelete(pattern);
+    }
+
+    handleStartDeleting() {
+        this.setState({
+            isDeleting: true
+        });
     }
 
     render() {
         const { pattern } = this.props;
+        const { isDeleting } = this.state;
 
         return (
             <li className="list-group-item">
                 <code>{pattern}</code>
-                <ModalButton
-                    modal={
-                        <ConfirmModal
-                            message="Are you sure you want to delete this pattern?"
-                            confirmButtonClassName="button button-outline-negative"
-                            confirmButtonLabel="Delete"
-                            onConfirm={this.handleRemove}
-                            title={`Delete "${pattern}"`} />
-                    }
-                    button={<button className="close u-pull-right" />} />
+                <button
+                    className="close u-pull-right"
+                    onClick={this.handleStartDeleting} />
+                <ConfirmModal
+                    confirmButtonClassName="button button-outline-negative"
+                    confirmButtonLabel="Delete"
+                    isOpened={isDeleting}
+                    message="Are you sure you want to delete this pattern?"
+                    onClose={this.handleCancelDeleting}
+                    onConfirm={this.handleDelete}
+                    title={`Delete "${pattern}"`} />
             </li>
-        )
+        );
     }
 }
 

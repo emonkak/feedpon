@@ -1,81 +1,76 @@
+import Enumerable from '@emonkak/enumerable';
 import React, { PureComponent } from 'react';
 
+import '@emonkak/enumerable/extensions/select';
+import '@emonkak/enumerable/extensions/toArray';
+import '@emonkak/enumerable/extensions/orderBy';
+
+import * as Trie from 'utils/containers/Trie';
+import * as commands from 'messaging/keyMappings/commands';
+import KeyMappingForm from 'components/parts/KeyMappingForm';
+import KeyMappingItem from 'components/parts/KeyMappingItem';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
-import { State } from 'messaging/types';
-import { changeScrollAmount } from 'messaging/keyMappings/actions';
+import { KeyMapping, State } from 'messaging/types';
+import { deleteKeyMapping, updateKeyMapping } from 'messaging/keyMappings/actions';
 
 interface KeyboardSettingsProps {
-    scrollAmount: number;
-    onChangeScrollAmount: typeof changeScrollAmount;
+    keyMappings: Trie.Trie<KeyMapping>;
+    onDeleteKeyMapping: typeof deleteKeyMapping;
+    onUpdateKeyMapping: typeof updateKeyMapping;
 }
 
-interface KeyboardSettingsState {
-    scrollAmount: number;
-}
-
-class KeyboardSettings extends PureComponent<KeyboardSettingsProps, KeyboardSettingsState> {
-    constructor(props: KeyboardSettingsProps, context: any) {
-        super(props);
-
-        this.state = {
-            scrollAmount: props.scrollAmount
-        };
-
-        this.handleChangeScrollAmount = this.handleChangeScrollAmount.bind(this);
-        this.handleSubmitScrollAmount = this.handleSubmitScrollAmount.bind(this);
-    }
-
-    handleChangeScrollAmount(event: React.ChangeEvent<HTMLInputElement>) {
-        const value = event.currentTarget.value;
-
-        this.setState((state) => ({
-            ...state,
-            scrollAmount: value
-        }));
-    }
-
-    handleSubmitScrollAmount(event: React.FormEvent<HTMLFormElement>) {
-        event.preventDefault();
-
-        const { onChangeScrollAmount } = this.props;
-        const { scrollAmount } = this.state;
-
-        onChangeScrollAmount(scrollAmount);
-    }
-
+class KeyboardSettings extends PureComponent<KeyboardSettingsProps, {}> {
     render() {
-        const { scrollAmount } = this.state;
+        const { keyMappings, onDeleteKeyMapping, onUpdateKeyMapping } = this.props;
+
+        const keyMappingItems = new Enumerable(Trie.iterate(keyMappings))
+            .orderBy(([keys]) => keys)
+            .select(([keys, keyMapping]) =>
+                <KeyMappingItem
+                    commands={commands as any}
+                    key={keys.join('')}
+                    keyMapping={keyMapping}
+                    keys={keys}
+                    onDelete={onDeleteKeyMapping}
+                    onUpdate={onUpdateKeyMapping} />
+            )
+            .toArray();
 
         return (
             <section className="section">
-                <form className="form" onSubmit={this.handleSubmitScrollAmount}>
-                    <div className="form-group">
-                        <label>
-                            <div className="form-group-heading">Scroll amount for "Scroll up/down" commands</div>
-                            <div className="input-group">
-                                <input
-                                    type="number"
-                                    className="form-control"
-                                    value={scrollAmount}
-                                    onChange={this.handleChangeScrollAmount}
-                                    min={1}
-                                    required />
-                                <button type="submit" className="button button-outline-positive">Save</button>
-                            </div>
-                        </label>
-                    </div>
-                </form>
+                <h1 className="display-1">Key mappings</h1>
+                <KeyMappingForm
+                    commands={commands as any}
+                    legend="New key mapping"
+                    onSubmit={onUpdateKeyMapping}>
+                    <button type="submit" className="button button-outline-positive">Add</button>
+                </KeyMappingForm>
+                <table className="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Key</th>
+                            <th>Command</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {keyMappingItems}
+                    </tbody>
+                </table>
             </section>
         );
     }
 }
 
-export default connect({
-    mapStateToProps: (state: State) => ({
-        scrollAmount: state.keyMappings.scrollAmount
-    }),
-    mapDispatchToProps: bindActions({
-        onChangeScrollAmount: changeScrollAmount
-    })
+export default connect(() => {
+    return {
+        mapStateToProps: (state: State) => ({
+            keyMappings: state.keyMappings.items
+        }),
+        mapDispatchToProps: bindActions({
+            onDeleteKeyMapping: deleteKeyMapping,
+            onUpdateKeyMapping: updateKeyMapping
+        })
+    };
 })(KeyboardSettings);

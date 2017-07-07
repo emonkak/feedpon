@@ -114,7 +114,11 @@ class CategoriesPage extends PureComponent<CategoriesPageProps, CategoriesPageSt
                     categories={categories}
                     label={label || UNCATEGORIZED}
                     onSelectCategory={this.handleSelectCategory} />
-                {category ? <EditCategoryForm category={category} onUpdateCategory={onUpdateCategory} onDeleteCategory={onDeleteCategory} /> : null}
+                {category &&
+                    <EditCategoryForm
+                        category={category}
+                        onUpdate={onUpdateCategory}
+                        onDelete={onDeleteCategory} />}
                 <h1 className="display-1">{label || 'Uncategorized'}</h1>
                 <p>
                     <input

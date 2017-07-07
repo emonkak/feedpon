@@ -74,15 +74,14 @@ export type Event
     | { type: 'FULL_CONTENT_FETCHING_FAILED', entryId: string | number }
     | { type: 'INSTANT_NOTIFICATION_DISMISSED' }
     | { type: 'INSTANT_NOTIFICATION_SENT', instantNotification: InstantNotification }
-    | { type: 'KEY_MAPPING_ADDED', keySequence: string, commandId: string }
-    | { type: 'KEY_MAPPING_REMOVED', keySequence: string, commandId: string }
+    | { type: 'KEY_MAPPING_DELETED', keys: string[] }
+    | { type: 'KEY_MAPPING_UPDATED', keys: string[], mapping: KeyMapping }
     | { type: 'MORE_ENTRIES_FETCHED', streamId: string, continuation: string | null, entries: Entry[] }
     | { type: 'MORE_ENTRIES_FETCHING', streamId: string }
     | { type: 'MORE_ENTRIES_FETCHING_FAILED', streamId: string }
     | { type: 'NOTIFICATION_DISMISSED', id: number }
     | { type: 'NOTIFICATION_SENT', notification: Notification }
     | { type: 'READ_ENTRY_CHANGED', index: number }
-    | { type: 'SCROLL_AMOUNT_CHANGED', scrollAmount: number }
     | { type: 'SCROLL_ENDED' }
     | { type: 'SCROLL_STARTED' }
     | { type: 'SIDEBAR_CLOSED' }
@@ -111,13 +110,13 @@ export type Event
     | { type: 'TOKEN_REVOKED' }
     | { type: 'TOKEN_REVOKING' }
     | { type: 'TRACKING_URL_PATTERN_ADDED', pattern: string }
-    | { type: 'TRACKING_URL_PATTERN_REMOVED', pattern: string }
+    | { type: 'TRACKING_URL_PATTERN_DELETED', pattern: string }
     | { type: 'UNREAD_KEEPING_CHANGED', keepUnread: boolean }
     | { type: 'USER_FETCHED', profile: Profile }
     | { type: 'USER_FETCHING' }
     | { type: 'USER_FETCHING_FAILED' }
     | { type: 'USER_SITEINFO_ITEM_ADDED', item: SiteinfoItem }
-    | { type: 'USER_SITEINFO_ITEM_REMOVED', id: string | number }
+    | { type: 'USER_SITEINFO_ITEM_DELETED', id: string | number }
     | { type: 'USER_SITEINFO_ITEM_UPDATED', item: SiteinfoItem };
 
 export type Thunk<TResult = void> = (store: Store, context: ThunkContext) => TResult;
@@ -142,10 +141,12 @@ export interface Selectors {
     sortedCategoriesSelector: (state: State) => Category[];
 }
 
-export interface Command {
-    thunk: Thunk<any>;
-    title: string;
-    skipNotification?: boolean;
+export interface Command<T extends object> {
+    commandId: string;
+    name: string;
+    description: string;
+    defaultParams?: T;
+    action(params: T): (Thunk<any> | Event);
 }
 
 export interface Credential {
@@ -388,7 +389,12 @@ export interface Histories {
 export type ThemeKind = 'theme-light' | 'theme-dark';
 
 export interface KeyMappings {
-    items: Trie<string>;
-    scrollAmount: number;
+    items: Trie<KeyMapping>;
     version: number;
+}
+
+export interface KeyMapping {
+    commandId: string;
+    params: object;
+    preventNotification?: boolean;
 }
