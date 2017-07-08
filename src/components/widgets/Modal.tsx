@@ -20,27 +20,25 @@ export default class Modal extends PureComponent<ModalProps, {}> {
     }
 
     componentDidMount() {
-        this.refreshBodyStyles(this.props.isOpened!);
+        if (this.getNumModalElements() === 1) {
+            this.refreshBodyStyles(this.props.isOpened!);
+        }
 
         document.addEventListener('keydown', this.handleDocumentKeyDown);
     }
 
     componentDidUpdate(prevProps: any, prevState: any) {
-        this.refreshBodyStyles(this.props.isOpened!);
+        if (this.getNumModalElements() === 1) {
+            this.refreshBodyStyles(this.props.isOpened!);
+        }
     }
 
     componentWillUnmount() {
-        this.refreshBodyStyles(false);
+        if (this.getNumModalElements() === 1) {
+            this.refreshBodyStyles(false);
+        }
 
         document.removeEventListener('keydown', this.handleDocumentKeyDown);
-    }
-
-    refreshBodyStyles(isOpened: boolean) {
-        if (isOpened) {
-            document.documentElement.classList.add('modal-is-opened');
-        } else {
-            document.documentElement.classList.remove('modal-is-opened');
-        }
     }
 
     handleClick(event: React.MouseEvent<any>) {
@@ -63,6 +61,18 @@ export default class Modal extends PureComponent<ModalProps, {}> {
                 onClose();
             }
         }
+    }
+
+    refreshBodyStyles(isOpened: boolean) {
+        if (isOpened) {
+            document.documentElement.classList.add('modal-is-opened');
+        } else {
+            document.documentElement.classList.remove('modal-is-opened');
+        }
+    }
+
+    getNumModalElements() {
+        return document.getElementsByClassName('modal').length;
     }
 
     renderModal() {
