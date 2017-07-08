@@ -17,6 +17,12 @@ export function deleteKeyMapping(keyStroke: string): Event {
     };
 }
 
+export function resetKeyMappings(): Event {
+    return {
+        type: 'KEY_MAPPINGS_RESET'
+    };
+}
+
 function splitKeyStroke(keyStroke: string): string[] {
     return keyStroke.match(KEY_STROKE_PATTERN) || [];
 }

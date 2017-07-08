@@ -86,11 +86,11 @@ code, var, samp, kbd {
   background-color: var(--light-color);
   margin: 0 2px;
   padding: 2px 4px;
+  border: 1px solid var(--medium-dark-color);
   border-radius: 4px;
 }
 
 kbd {
-  border: 1px solid var(--medium-dark-color);
   box-shadow: 0 1px var(--medium-dark-color);
 }
 
@@ -255,6 +255,10 @@ button::-moz-focus-inner,
 [type="submit"]::-moz-focus-inner {
   border: none;
   padding: 0;
+}
+
+summary {
+  cursor: pointer;
 }
 
 :placeholder-shown,

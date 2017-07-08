@@ -76,6 +76,7 @@ export type Event
     | { type: 'INSTANT_NOTIFICATION_SENT', instantNotification: InstantNotification }
     | { type: 'KEY_MAPPING_DELETED', keys: string[] }
     | { type: 'KEY_MAPPING_UPDATED', keys: string[], mapping: KeyMapping }
+    | { type: 'KEY_MAPPINGS_RESET' }
     | { type: 'MORE_ENTRIES_FETCHED', streamId: string, continuation: string | null, entries: Entry[] }
     | { type: 'MORE_ENTRIES_FETCHING', streamId: string }
     | { type: 'MORE_ENTRIES_FETCHING_FAILED', streamId: string }

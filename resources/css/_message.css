@@ -12,19 +12,16 @@
 .message-default {
   background-color: var(--default-background-color);
   border-color: var(--default-border-color);
-  color: var(--default-color);
 }
 
 .message-positive {
   background-color: var(--positive-background-color);
   border-color: var(--positive-border-color);
-  color: var(--positive-color);
 }
 
 .message-negative {
   background-color: var(--negative-background-color);
   border-color: var(--negative-border-color);
-  color: var(--negative-color);
 }
 
 .message-title {

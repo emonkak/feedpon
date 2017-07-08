@@ -5,6 +5,7 @@ import '@emonkak/enumerable/extensions/select';
 import '@emonkak/enumerable/extensions/toArray';
 import '@emonkak/enumerable/extensions/orderBy';
 
+import ConfirmModal from 'components/widgets/ConfirmModal';
 import * as Trie from 'utils/containers/Trie';
 import * as commands from 'messaging/keyMappings/commands';
 import KeyMappingForm from 'components/parts/KeyMappingForm';
@@ -12,17 +13,46 @@ import KeyMappingItem from 'components/parts/KeyMappingItem';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
 import { KeyMapping, State } from 'messaging/types';
-import { deleteKeyMapping, updateKeyMapping } from 'messaging/keyMappings/actions';
+import { deleteKeyMapping, resetKeyMappings, updateKeyMapping } from 'messaging/keyMappings/actions';
 
 interface KeyboardSettingsProps {
     keyMappings: Trie.Trie<KeyMapping>;
     onDeleteKeyMapping: typeof deleteKeyMapping;
+    onResetKeyMappings: typeof resetKeyMappings;
     onUpdateKeyMapping: typeof updateKeyMapping;
 }
 
-class KeyboardSettings extends PureComponent<KeyboardSettingsProps, {}> {
+interface KeyboardSettingsState {
+    isResetting: boolean;
+}
+
+class KeyboardSettings extends PureComponent<KeyboardSettingsProps, KeyboardSettingsState> {
+    constructor(props: KeyboardSettingsProps, context: any) {
+        super(props, context);
+
+        this.state = {
+            isResetting: false
+        };
+
+        this.handleCancelResetting = this.handleCancelResetting.bind(this);
+        this.handleStartResetting = this.handleStartResetting.bind(this);
+    }
+
+    handleCancelResetting() {
+        this.setState({
+            isResetting: false
+        });
+    }
+
+    handleStartResetting() {
+        this.setState({
+            isResetting: true
+        });
+    }
+
     render() {
-        const { keyMappings, onDeleteKeyMapping, onUpdateKeyMapping } = this.props;
+        const { keyMappings, onDeleteKeyMapping, onResetKeyMappings, onUpdateKeyMapping } = this.props;
+        const { isResetting } = this.state;
 
         const keyMappingItems = new Enumerable(Trie.iterate(keyMappings))
             .orderBy(([keys]) => keys)
@@ -58,6 +88,21 @@ class KeyboardSettings extends PureComponent<KeyboardSettingsProps, {}> {
                         {keyMappingItems}
                     </tbody>
                 </table>
+                <div className="form">
+                    <button
+                        className="button button-outline-negative"
+                        onClick={this.handleStartResetting}>
+                        Reset all key mappings
+                    </button>
+                </div>
+                <ConfirmModal
+                    confirmButtonClassName="button button-negative"
+                    confirmButtonLabel="Reset"
+                    isOpened={isResetting}
+                    message="Are you sure you want to reset all key mappings?"
+                    onClose={this.handleCancelResetting}
+                    onConfirm={onResetKeyMappings}
+                    title="Reset all keymappings" />
             </section>
         );
     }
@@ -70,6 +115,7 @@ export default connect(() => {
         }),
         mapDispatchToProps: bindActions({
             onDeleteKeyMapping: deleteKeyMapping,
+            onResetKeyMappings: resetKeyMappings,
             onUpdateKeyMapping: updateKeyMapping
         })
     };
