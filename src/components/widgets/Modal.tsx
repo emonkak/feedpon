@@ -16,10 +16,13 @@ export default class Modal extends PureComponent<ModalProps, {}> {
         super(props);
 
         this.handleClick = this.handleClick.bind(this);
+        this.handleDocumentKeyDown = this.handleDocumentKeyDown.bind(this);
     }
 
     componentDidMount() {
         this.refreshBodyStyles(this.props.isOpened!);
+
+        document.addEventListener('keydown', this.handleDocumentKeyDown);
     }
 
     componentDidUpdate(prevProps: any, prevState: any) {
@@ -28,6 +31,8 @@ export default class Modal extends PureComponent<ModalProps, {}> {
 
     componentWillUnmount() {
         this.refreshBodyStyles(false);
+
+        document.removeEventListener('keydown', this.handleDocumentKeyDown);
     }
 
     refreshBodyStyles(isOpened: boolean) {
@@ -42,6 +47,16 @@ export default class Modal extends PureComponent<ModalProps, {}> {
         if (event.target === event.currentTarget) {
             event.preventDefault();
 
+            const { onClose } = this.props;
+
+            if (onClose) {
+                onClose();
+            }
+        }
+    }
+
+    handleDocumentKeyDown(event: KeyboardEvent) {
+        if (event.key === 'Escape') {
             const { onClose } = this.props;
 
             if (onClose) {

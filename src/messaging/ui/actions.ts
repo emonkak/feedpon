@@ -36,6 +36,18 @@ export function closeSidebar(): Event {
     };
 }
 
+export function openHelp(): Event {
+    return {
+        type: 'HELP_OPENED'
+    };
+}
+
+export function closeHelp(): Event {
+    return {
+        type: 'HELP_CLOSED'
+    };
+}
+
 export function changeTheme(theme: ThemeKind): Event {
     return {
         type: 'THEME_CHANGED',

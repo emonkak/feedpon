@@ -3,6 +3,7 @@ import { UI } from 'messaging/types';
 const ui: UI = {
     activeEntryIndex: -1,
     expandedEntryIndex: -1,
+    helpIsOpened: true,
     isScrolling: false,
     readEntryIndex: -1,
     selectedStreamId: '',

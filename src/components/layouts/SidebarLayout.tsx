@@ -2,28 +2,33 @@ import React, { PureComponent, cloneElement } from 'react';
 import classnames from 'classnames';
 import { History, Location } from 'history';
 
+import * as Trie from 'utils/containers/Trie';
 import * as commands from 'messaging/keyMappings/commands';
 import InstantNotifications from 'components/InstantNotifications';
 import KeyMapper from 'components/widgets/KeyMapper';
+import KeyMappingsTable from 'components/parts/KeyMappingsTable';
+import Modal from 'components/widgets/Modal';
 import Notifications from 'components/Notifications';
 import Sidebar from 'components/Sidebar';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
 import { Command, KeyMapping, State, Store } from 'messaging/types';
-import { Trie } from 'utils/containers/Trie';
-import { closeSidebar, openSidebar } from 'messaging/ui/actions';
+import { closeHelp, closeSidebar, openHelp, openSidebar } from 'messaging/ui/actions';
 import { sendInstantNotification } from 'messaging/instantNotifications/actions';
 
 interface SidebarLayoutProps {
-    store: Store;
     children: React.ReactElement<any>;
+    helpIsOpened: boolean;
     isAuthenticating: boolean;
-    keyMappings: Trie<KeyMapping>;
+    keyMappings: Trie.Trie<KeyMapping>;
     location: Location;
+    onCloseHelp: typeof closeHelp;
     onCloseSidebar: typeof closeSidebar;
+    onOpenHelp: typeof openHelp;
     onOpenSidebar: typeof openSidebar;
     router: History;
     sidebarIsOpened: boolean;
+    store: Store;
 }
 
 class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
@@ -127,7 +132,9 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
             keyMappings,
             location,
             router,
-            sidebarIsOpened
+            onCloseHelp,
+            sidebarIsOpened,
+            helpIsOpened
         } = this.props;
 
         return (
@@ -154,6 +161,13 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
                     <div className="l-backdrop">
                         {isAuthenticating ? <i className="icon icon-48 icon-spinner icon-rotating" /> : null}
                     </div>
+                    <Modal
+                        onClose={onCloseHelp}
+                        isOpened={helpIsOpened}>
+                        <KeyMappingsTable
+                            commands={commands as any}
+                            keyMappings={keyMappings} />
+                    </Modal>
                 </div>
             </KeyMapper>
         );
@@ -162,13 +176,16 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
 
 export default connect((store) => ({
     mapStateToProps: (state: State) => ({
+        helpIsOpened: state.ui.helpIsOpened,
         isAuthenticating: state.credential.isLoading,
         keyMappings: state.keyMappings.items,
         sidebarIsOpened: state.ui.sidebarIsOpened,
         store
     }),
     mapDispatchToProps: bindActions({
-        onOpenSidebar: openSidebar,
-        onCloseSidebar: closeSidebar
+        onCloseHelp: closeHelp,
+        onCloseSidebar: closeSidebar,
+        onOpenHelp: openHelp,
+        onOpenSidebar: openSidebar
     })
 }))(SidebarLayout);

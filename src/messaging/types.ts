@@ -72,11 +72,13 @@ export type Event
     | { type: 'FULL_CONTENT_FETCHED', entryId: string | number, fullContent: FullContent }
     | { type: 'FULL_CONTENT_FETCHING', entryId: string | number }
     | { type: 'FULL_CONTENT_FETCHING_FAILED', entryId: string | number }
+    | { type: 'HELP_CLOSED' }
+    | { type: 'HELP_OPENED' }
     | { type: 'INSTANT_NOTIFICATION_DISMISSED' }
     | { type: 'INSTANT_NOTIFICATION_SENT', instantNotification: InstantNotification }
+    | { type: 'KEY_MAPPINGS_RESET' }
     | { type: 'KEY_MAPPING_DELETED', keys: string[] }
     | { type: 'KEY_MAPPING_UPDATED', keys: string[], mapping: KeyMapping }
-    | { type: 'KEY_MAPPINGS_RESET' }
     | { type: 'MORE_ENTRIES_FETCHED', streamId: string, continuation: string | null, entries: Entry[] }
     | { type: 'MORE_ENTRIES_FETCHING', streamId: string }
     | { type: 'MORE_ENTRIES_FETCHING_FAILED', streamId: string }
@@ -110,9 +112,9 @@ export type Event
     | { type: 'TOKEN_RECEIVING_FAILED' }
     | { type: 'TOKEN_REVOKED' }
     | { type: 'TOKEN_REVOKING' }
+    | { type: 'TRACKING_URL_PATTERNS_RESET' }
     | { type: 'TRACKING_URL_PATTERN_ADDED', pattern: string }
     | { type: 'TRACKING_URL_PATTERN_DELETED', pattern: string }
-    | { type: 'TRACKING_URL_PATTERNS_RESET' }
     | { type: 'UNREAD_KEEPING_CHANGED', keepUnread: boolean }
     | { type: 'USER_FETCHED', profile: Profile }
     | { type: 'USER_FETCHING' }
@@ -373,6 +375,7 @@ export interface User {
 export interface UI {
     activeEntryIndex: number;
     expandedEntryIndex: number;
+    helpIsOpened: boolean;
     isScrolling: boolean;
     readEntryIndex: number;
     selectedStreamId: string;

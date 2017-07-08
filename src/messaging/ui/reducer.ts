@@ -20,6 +20,18 @@ export default function uiReducer(ui: UI, event: Event): UI {
                 expandedEntryIndex: event.index
             };
 
+        case 'HELP_OPENED':
+            return {
+                ...ui,
+                helpIsOpened: true
+            };
+
+        case 'HELP_CLOSED':
+            return {
+                ...ui,
+                helpIsOpened: false
+            };
+
         case 'READ_ENTRY_CHANGED':
             return {
                 ...ui,

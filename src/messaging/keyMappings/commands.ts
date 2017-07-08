@@ -481,8 +481,14 @@ export const showHelp: Command<{}> = {
     description: 'Show the current key mappings.',
     defaultParams: {},
     action() {
-        return () => {
-            window.alert('help');
+        return ({ getState, dispatch }) => {
+            const { ui } = getState();
+
+            if (ui.helpIsOpened) {
+                dispatch(uiActions.closeHelp());
+            } else {
+                dispatch(uiActions.openHelp());
+            }
         }
     }
 };
