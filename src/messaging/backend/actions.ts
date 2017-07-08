@@ -12,7 +12,7 @@ export function authenticate(): AsyncThunk {
         });
 
         dispatch({
-            type: 'TOKEN_RECEIVING'
+            type: 'BACKEND_AUTHENTICATING'
         });
 
         try {
@@ -32,13 +32,14 @@ export function authenticate(): AsyncThunk {
             });
 
             dispatch({
-                type: 'TOKEN_RECEIVED',
-                authorizedAt: Date.now(),
+                type: 'BACKEND_AUTHENTICATED',
+                exportUrl: feedlyApi.createExportOpmlUrl(token.access_token),
+                authenticatedAt: Date.now(),
                 token
             });
         } catch (error) {
             dispatch({
-                type: 'TOKEN_RECEIVING_FAILED'
+                type: 'BACKEND_AUTHENTICATING_FAILED'
             });
 
             throw error;
@@ -52,8 +53,8 @@ export function revokeToken(): AsyncThunk {
             type: 'TOKEN_REVOKING'
         });
 
-        let { credential } = getState();
-        let token = credential.token as feedly.ExchangeTokenResponse;
+        let { backend } = getState();
+        let token = backend.token as feedly.ExchangeTokenResponse;
 
         if (token) {
             await feedlyApi.revokeToken({
@@ -72,36 +73,39 @@ export function revokeToken(): AsyncThunk {
 
 export function getFeedlyToken(): AsyncThunk<feedly.ExchangeTokenResponse> {
     return async ({ dispatch, getState }, { environment }) => {
-        let { credential } = getState();
-        let token = credential.token as feedly.ExchangeTokenResponse;
+        const { backend } = getState();
+        let originalToken = backend.token as feedly.ExchangeTokenResponse;
 
-        if (!token) {
+        if (!originalToken) {
             throw new Error('Not authenticated yet');
         }
 
         const now = Date.now();
-        const expiredAt = credential.authorizedAt + (token.expires_in * 1000);
+        const expiredAt = backend.authenticatedAt + (originalToken.expires_in * 1000);
         const isExpired = expiredAt < now + 1000 * 60;
 
-        if (isExpired) {
-            const refreshToken = await feedlyApi.refreshToken({
-                refresh_token: token.refresh_token,
-                client_id: environment.clientId,
-                client_secret: environment.clientSecret,
-                grant_type: 'refresh_token'
-            });
-
-            token = {
-                ...token,
-                ...refreshToken
-            };
-
-            dispatch({
-                type: 'TOKEN_RECEIVED',
-                authorizedAt: now,
-                token
-            });
+        if (!isExpired) {
+            return originalToken;
         }
+
+        const refreshToken = await feedlyApi.refreshToken({
+            refresh_token: originalToken.refresh_token,
+            client_id: environment.clientId,
+            client_secret: environment.clientSecret,
+            grant_type: 'refresh_token'
+        });
+
+        const token = {
+            ...originalToken,
+            ...refreshToken
+        };
+
+        dispatch({
+            type: 'BACKEND_AUTHENTICATED',
+            exportUrl: feedlyApi.createExportOpmlUrl(token.access_token),
+            authenticatedAt: now,
+            token
+        });
 
         return token;
     };

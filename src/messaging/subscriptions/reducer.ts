@@ -17,7 +17,8 @@ export default function reducer(subscriptions: Subscriptions, event: Event): Sub
                         isLoading: false
                     };
                 }),
-                isLoading: false
+                isLoading: false,
+                isImporting: false
             };
 
         case 'SUBSCRIPTIONS_FETCHING':
@@ -53,6 +54,18 @@ export default function reducer(subscriptions: Subscriptions, event: Event): Sub
             return {
                 ...subscriptions,
                 onlyUnread: event.onlyUnread
+            };
+
+        case 'SUBSCRIPTIONS_IMPORTING':
+            return {
+                ...subscriptions,
+                isImporting: true
+            };
+
+        case 'SUBSCRIPTIONS_IMPORTING_DONE':
+            return {
+                ...subscriptions,
+                isImporting: false
             };
 
         case 'FEED_SUBSCRIBING':

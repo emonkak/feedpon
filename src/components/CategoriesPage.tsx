@@ -3,6 +3,7 @@ import { History } from 'history';
 import { createSelector } from 'reselect';
 
 import CategoriesNav from 'components/parts/CategoriesNav';
+import Dropdown from 'components/widgets/Dropdown';
 import EditCategoryForm from 'components/parts/EditCategoryForm';
 import LazyList from 'components/widgets/LazyList';
 import MainLayout from 'components/layouts/MainLayout';
@@ -10,24 +11,28 @@ import Navbar from 'components/widgets/Navbar';
 import SubscriptionItem from 'components/parts/Subscription';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
+import createAscendingComparer from 'utils/createAscendingComparer';
 import debounceEventHandler from 'utils/debounceEventHandler';
 import { Category, State, Subscription } from 'messaging/types';
+import { MenuItem } from 'components/widgets/Menu';
 import { Params } from 'react-router/lib/Router';
 import { UNCATEGORIZED } from 'messaging/categories/constants';
-import { addToCategory, removeFromCategory, unsubscribe } from 'messaging/subscriptions/actions';
+import { addToCategory, importOpml, removeFromCategory, unsubscribe } from 'messaging/subscriptions/actions';
 import { createCategory, deleteCategory, updateCategory } from 'messaging/categories/actions';
 import { createSortedCategoriesSelector } from 'messaging/categories/selectors';
-import { subscriptionIdComparer } from 'messaging/subscriptions/selectors';
+import { toggleSidebar } from 'messaging/ui/actions';
 
 interface CategoriesPageProps {
     categories: Category[];
+    exportUrl: string;
     onAddToCategory: typeof addToCategory;
-    onUpdateCategory: typeof updateCategory;
     onCreateCategory: typeof createCategory;
     onDeleteCategory: typeof deleteCategory;
+    onImportOpml: typeof importOpml;
     onRemoveFromCategory: typeof removeFromCategory;
-    onToggleSidebar: () => void;
+    onToggleSidebar: typeof toggleSidebar;
     onUnsubscribe: typeof unsubscribe;
+    onUpdateCategory: typeof updateCategory;
     params: Params;
     router: History;
     subscriptions: Subscription[];
@@ -40,11 +45,17 @@ interface CategoriesPageState {
 class CategoriesPage extends PureComponent<CategoriesPageProps, CategoriesPageState> {
     private searchInput: HTMLInputElement | null;
 
+    private uploadInput: HTMLInputElement | null;
+
     constructor(props: CategoriesPageProps, context: any) {
         super(props, context);
 
-        this.handleSelectCategory = this.handleSelectCategory.bind(this);
         this.handleChangeSearchQuery = debounceEventHandler(this.handleChangeSearchQuery.bind(this), 100);
+        this.handleChangeUploadFile = this.handleChangeUploadFile.bind(this);
+        this.handleImport = this.handleImport.bind(this);
+        this.handleSearchInputRef = this.handleSearchInputRef.bind(this);
+        this.handleSelectCategory = this.handleSelectCategory.bind(this);
+        this.handleUploadInputRef = this.handleUploadInputRef.bind(this);
 
         this.state = {
             query: ''
@@ -70,13 +81,7 @@ class CategoriesPage extends PureComponent<CategoriesPageProps, CategoriesPageSt
             });
     }
 
-    handleSelectCategory(label: string | symbol) {
-        const { router } = this.props;
-
-        router.replace('/categories/' + (typeof label === 'string' ? encodeURIComponent(label) : ''));
-    }
-
-    handleChangeSearchQuery(event: React.ChangeEvent<any>) {
+    handleChangeSearchQuery(event: React.ChangeEvent<HTMLInputElement>) {
         if (!this.searchInput) {
             return;
         }
@@ -86,12 +91,72 @@ class CategoriesPage extends PureComponent<CategoriesPageProps, CategoriesPageSt
         });
     }
 
+    handleChangeUploadFile(event: React.ChangeEvent<HTMLInputElement>) {
+        const target = event.currentTarget;
+        if (!target.files) {
+            return;
+        }
+
+        const file = target.files[0];
+        if (!file) {
+            return;
+        }
+
+        const { onImportOpml } = this.props;
+        const reader = new FileReader();
+
+        reader.onload = (event) => {
+            onImportOpml(reader.result);
+        };
+
+        reader.readAsText(file);
+    }
+
+    handleImport() {
+        if (this.uploadInput) {
+            this.uploadInput.click();
+        }
+    }
+
+    handleSearchInputRef(searchInput: HTMLInputElement | null) {
+        this.searchInput = searchInput;
+    }
+
+    handleSelectCategory(label: string | symbol) {
+        const { router } = this.props;
+
+        router.replace('/categories/' + (typeof label === 'string' ? encodeURIComponent(label) : ''));
+    }
+
+    handleUploadInputRef(uploadInput: HTMLInputElement | null) {
+        this.uploadInput = uploadInput;
+    }
+
     renderNavbar() {
-        const { onToggleSidebar } = this.props;
+        const { exportUrl, onToggleSidebar } = this.props;
 
         return (
             <Navbar onToggleSidebar={onToggleSidebar}>
                 <h1 className="navbar-title">Organize subscriptions</h1>
+                <Dropdown
+                    toggleButton={
+                        <button className="navbar-action">
+                            <i className="icon icon-24 icon-menu-2" />
+                        </button>
+                    }>
+                    <MenuItem
+                        primaryText="Import OPML..."
+                        onSelect={this.handleImport} />
+                    <MenuItem
+                        primaryText="Export OPML..."
+                        href={exportUrl}
+                        target="_blank" />
+                </Dropdown>
+                <input
+                    ref={this.handleUploadInputRef}
+                    className="u-none"
+                    type="file"
+                    onChange={this.handleChangeUploadFile} />
             </Navbar>
         );
     }
@@ -185,7 +250,7 @@ function renderSubscriptionItem(subscription: Subscription) {
 
 export default connect(() => {
     const categoriesSelector = createSortedCategoriesSelector();
-
+    const subscriptionIdComparer = createAscendingComparer<Subscription>('subscriptionId');
     const visibleSubscriptionsSelector = createSelector(
         (state: State) => state.subscriptions.items,
         (state: State, props: CategoriesPageProps) => props.params['label'],
@@ -205,12 +270,15 @@ export default connect(() => {
     return {
         mapStateToProps: (state: State, props: CategoriesPageProps) => ({
             categories: categoriesSelector(state),
+            exportUrl: state.backend.exportUrl,
             subscriptions: visibleSubscriptionsSelector(state, props)
         }),
         mapDispatchToProps: bindActions({
-            onUpdateCategory: updateCategory,
             onCreateCategory: createCategory,
-            onDeleteCategory: deleteCategory
+            onDeleteCategory: deleteCategory,
+            onImportOpml: importOpml,
+            onToggleSidebar: toggleSidebar,
+            onUpdateCategory: updateCategory
         })
     }
 })(CategoriesPage);

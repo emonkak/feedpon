@@ -10,15 +10,18 @@ import StreamSettings from 'components/StreamSettings';
 import TrackingUrlSettings from 'components/TrackingUrlSettings';
 import UISettings from 'components/UISettings';
 import UserSiteinfoSettings from 'components/UserSiteinfoSettings';
+import bindActions from 'utils/flux/bindActions';
+import connect from 'utils/flux/react/connect';
 import { Nav, NavItem } from 'components/widgets/Nav';
+import { toggleSidebar } from 'messaging/ui/actions';
 
 interface SettingsProps {
-    onToggleSidebar: () => void;
+    onToggleSidebar: typeof toggleSidebar;
     params: Params;
     router: History;
 }
 
-export default class SettingsPage extends PureComponent<SettingsProps, {}> {
+class SettingsPage extends PureComponent<SettingsProps, {}> {
     constructor(props: SettingsProps, context: any) {
         super(props, context);
 
@@ -114,3 +117,9 @@ export default class SettingsPage extends PureComponent<SettingsProps, {}> {
         );
     }
 }
+
+export default connect({
+    mapDispatchToProps: bindActions({
+        onToggleSidebar: toggleSidebar
+    })
+})(SettingsPage);

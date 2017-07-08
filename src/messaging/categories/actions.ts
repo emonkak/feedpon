@@ -1,6 +1,6 @@
 import * as feedly from 'adapters/feedly/api';
 import { AsyncThunk, Category } from 'messaging/types';
-import { getFeedlyToken } from 'messaging/credential/actions';
+import { getFeedlyToken } from 'messaging/backend/actions';
 
 export function createCategory(label: string, callback: (category: Category) => void): AsyncThunk {
     return async ({ dispatch, getState }) => {

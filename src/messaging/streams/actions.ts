@@ -6,7 +6,7 @@ import tryMatch from 'utils/tryMatch';
 import decodeResponseAsText from 'utils/decodeResponseAsText';
 import stripTags from 'utils/stripTags';
 import { AsyncThunk, Category, Entry, Event, Stream, StreamFetchOptions, Subscription, Thunk } from 'messaging/types';
-import { getFeedlyToken } from 'messaging/credential/actions';
+import { getFeedlyToken } from 'messaging/backend/actions';
 import { getSiteinfoItems } from 'messaging/sharedSiteinfo/actions';
 import { sendNotification } from 'messaging/notifications/actions';
 

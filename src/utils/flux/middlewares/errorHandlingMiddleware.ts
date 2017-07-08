@@ -7,6 +7,7 @@ function errorHandlingMiddlewareFactory<TState, TEvent>(handler: (error: any, st
         if (result instanceof Promise) {
             return result.catch((error) => {
                 handler(error, store);
+
                 return Promise.reject(error);
             });
         }

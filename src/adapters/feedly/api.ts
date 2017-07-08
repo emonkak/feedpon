@@ -5,13 +5,12 @@ const ENDPOINT = 'https://cloud.feedly.com/';
 
 // Authentication API:
 export function createAuthUrl(input: types.AuthenticateInput): string {
-    return ENDPOINT + 'v3/auth/auth?' +
-        buildQueryString({
-            client_id: input.client_id,
-            redirect_uri: input.redirect_uri,
-            response_type: input.response_type,
-            scope: input.scope
-        });
+    return ENDPOINT + 'v3/auth/auth?' + buildQueryString({
+        client_id: input.client_id,
+        redirect_uri: input.redirect_uri,
+        response_type: input.response_type,
+        scope: input.scope
+    });
 }
 
 export function authCallback(urlString: string): types.AuthenticateResponse {
@@ -26,36 +25,36 @@ export function authCallback(urlString: string): types.AuthenticateResponse {
 }
 
 export function exchangeToken(input: types.ExchangeTokenInput): Promise<types.ExchangeTokenResponse> {
-    return doPost('v3/auth/token', input);
+    return doPost('v3/auth/token', input)
+        .then(decodeAsJson);
 }
 
 export function refreshToken(input: types.RefreshTokenInput): Promise<types.RefreshTokenResponse> {
-    return doPost('v3/auth/token', input);
+    return doPost('v3/auth/token', input)
+        .then(decodeAsJson);
 }
 
 export function revokeToken(input: types.RevokeTokenInput): Promise<types.RevokeTokenResponse> {
-    return doPost('v3/auth/token', input);
+    return doPost('v3/auth/token', input)
+        .then(decodeAsJson);
 }
 
 // Categories API:
 export function getCategories(accessToken: string): Promise<types.Category[]> {
-    return doGet(
-        'v3/categories',
-        null,
-        createAuthHeader(accessToken)
-    );
+    return doGet('v3/categories', null, createAuthHeader(accessToken))
+        .then(decodeAsJson);
 }
 
-export function changeCategoryLabel(accessToken: string, categoryId: string, label: string): Promise<void> {
-    return doPost<void>(
+export function changeCategoryLabel(accessToken: string, categoryId: string, label: string): Promise<Response> {
+    return doPost(
         'v3/categories/' + encodeURIComponent(categoryId),
         { label },
         createAuthHeader(accessToken)
     );
 }
 
-export function deleteCategory(accessToken: string, categoryId: string): Promise<void> {
-    return doDelete<void>(
+export function deleteCategory(accessToken: string, categoryId: string): Promise<Response> {
+    return doDelete(
         'v3/categories/' + encodeURIComponent(categoryId),
         null,
         createAuthHeader(accessToken)
@@ -68,7 +67,7 @@ export function getFeed(accessToken: string, feedId: string): Promise<types.Feed
         'v3/feeds/' + encodeURIComponent(feedId),
         null,
         createAuthHeader(accessToken)
-    );
+    ).then(decodeAsJson);
 }
 
 // Markers API:
@@ -77,11 +76,11 @@ export function getUnreadCounts(accessToken: string, input: types.GetUnreadCount
         'v3/markers/counts',
         input,
         createAuthHeader(accessToken)
-    );
+    ).then(decodeAsJson);
 }
 
-export function markAsReadForEntries(accessToken: string, entryIds: string | string[]): Promise<void> {
-    return doPost<void>(
+export function markAsReadForEntries(accessToken: string, entryIds: string | string[]): Promise<Response> {
+    return doPost(
         'v3/markers',
         {
             action: 'markAsRead',
@@ -92,8 +91,8 @@ export function markAsReadForEntries(accessToken: string, entryIds: string | str
     );
 }
 
-export function markAsReadForFeeds(accessToken: string, feedIds: string | string[]): Promise<void> {
-    return doPost<void>(
+export function markAsReadForFeeds(accessToken: string, feedIds: string | string[]): Promise<Response> {
+    return doPost(
         'v3/markers',
         {
             action: 'markAsRead',
@@ -104,8 +103,8 @@ export function markAsReadForFeeds(accessToken: string, feedIds: string | string
     );
 }
 
-export function markAsReadForCategories(accessToken: string, categoryIds: string | string[]): Promise<void> {
-    return doPost<void>(
+export function markAsReadForCategories(accessToken: string, categoryIds: string | string[]): Promise<Response> {
+    return doPost(
         'v3/markers',
         {
             action: 'markAsRead',
@@ -116,8 +115,8 @@ export function markAsReadForCategories(accessToken: string, categoryIds: string
     );
 }
 
-export function keepUnreadForEntries(accessToken: string, entryIds: string | string[]): Promise<void> {
-    return doPost<void>(
+export function keepUnreadForEntries(accessToken: string, entryIds: string | string[]): Promise<Response> {
+    return doPost(
         'v3/markers',
         {
             action: 'keepUnread',
@@ -128,8 +127,8 @@ export function keepUnreadForEntries(accessToken: string, entryIds: string | str
     );
 }
 
-export function keepUnreadForFeeds(accessToken: string, feedIds: string | string[]): Promise<void> {
-    return doPost<void>(
+export function keepUnreadForFeeds(accessToken: string, feedIds: string | string[]): Promise<Response> {
+    return doPost(
         'v3/markers',
         {
             action: 'keepUnread',
@@ -140,8 +139,8 @@ export function keepUnreadForFeeds(accessToken: string, feedIds: string | string
     );
 }
 
-export function keepUnreadForCategories(accessToken: string, categoryIds: string | string[]): Promise<void> {
-    return doPost<void>(
+export function keepUnreadForCategories(accessToken: string, categoryIds: string | string[]): Promise<Response> {
+    return doPost(
         'v3/markers',
         {
             action: 'keepUnread',
@@ -149,6 +148,22 @@ export function keepUnreadForCategories(accessToken: string, categoryIds: string
             categoryIds: Array.isArray(categoryIds) ? categoryIds : [categoryIds]
         },
         createAuthHeader(accessToken)
+    );
+}
+
+// OPML API
+export function createExportOpmlUrl(accessToken: string): string {
+    return ENDPOINT + 'v3/opml?' + buildQueryString({
+        feedlyToken: accessToken
+    });
+}
+
+export function importOpml(accessToken: string, xmlString: string): Promise<Response> {
+    return doPost(
+        'v3/opml',
+        xmlString,
+        createAuthHeader(accessToken),
+        'text/xml'
     );
 }
 
@@ -158,11 +173,11 @@ export function getProfile(accessToken: string): Promise<types.Profile> {
         'v3/profile',
         null,
         createAuthHeader(accessToken)
-    );
+    ).then(decodeAsJson);
 }
 
-export function updateProfile(accessToken: string, input: types.UpdateProfileInput): Promise<void> {
-    return doPut<void>(
+export function updateProfile(accessToken: string, input: types.UpdateProfileInput): Promise<Response> {
+    return doPut(
         'v3/profile',
         null,
         createAuthHeader(accessToken)
@@ -175,7 +190,7 @@ export function searchFeeds(accessToken: string, input: types.SearchInput): Prom
         'v3/search/feeds',
         input,
         createAuthHeader(accessToken)
-    );
+    ).then(decodeAsJson);
 }
 
 // Streams API:
@@ -184,7 +199,7 @@ export function getStreamIds(accessToken: string, input: types.GetStreamInput): 
         'v3/streams/ids',
         input,
         createAuthHeader(accessToken)
-    );
+    ).then(decodeAsJson);
 }
 
 export function getStreamContents(accessToken: string, input: types.GetStreamInput): Promise<types.Contents> {
@@ -192,7 +207,7 @@ export function getStreamContents(accessToken: string, input: types.GetStreamInp
         'v3/streams/contents',
         input,
         createAuthHeader(accessToken)
-    );
+    ).then(decodeAsJson);
 }
 
 // Subscriptions API:
@@ -201,19 +216,19 @@ export function getSubscriptions(accessToken: string): Promise<types.Subscriptio
         'v3/subscriptions',
         null,
         createAuthHeader(accessToken)
-    );
+    ).then(decodeAsJson);
 }
 
-export function subscribeFeed(accessToken: string, input: types.SubscribeFeedInput): Promise<void> {
-    return doPost<void>(
+export function subscribeFeed(accessToken: string, input: types.SubscribeFeedInput): Promise<Response> {
+    return doPost(
         'v3/subscriptions',
         input,
         createAuthHeader(accessToken)
     );
 }
 
-export function unsubscribeFeed(accessToken: string, feedId: string): Promise<void> {
-    return doDelete<void>(
+export function unsubscribeFeed(accessToken: string, feedId: string): Promise<Response> {
+    return doDelete(
         'v3/subscriptions/' + encodeURIComponent(feedId),
         null,
         createAuthHeader(accessToken)
@@ -226,35 +241,35 @@ export function getTags(accessToken: string): Promise<types.Tag[]> {
         'v3/tags',
         null,
         createAuthHeader(accessToken)
-    );
+    ).then(decodeAsJson);
 }
 
-export function changeTagLabel(accessToken: string, tagId: string, label: string): Promise<void> {
-    return doPost<void>(
+export function changeTagLabel(accessToken: string, tagId: string, label: string): Promise<Response> {
+    return doPost(
         'v3/tags/' + encodeURIComponent(tagId),
         { label },
         createAuthHeader(accessToken)
     );
 }
 
-export function setTag(accessToken: string, entryIds: string[], tagIds: string[]): Promise<void> {
-    return doPut<void>(
+export function setTag(accessToken: string, entryIds: string[], tagIds: string[]): Promise<Response> {
+    return doPut(
         'v3/tags/' + encodeURIComponent(tagIds.join(',')),
         { entryIds },
         createAuthHeader(accessToken)
     );
 }
 
-export function unsetTag(accessToken: string, entryIds: string[], tagIds: string[]): Promise<void> {
-    return doDelete<void>(
+export function unsetTag(accessToken: string, entryIds: string[], tagIds: string[]): Promise<Response> {
+    return doDelete(
         'v3/tags/' + encodeURIComponent(tagIds.join(',')) + '/' + encodeURIComponent(entryIds.join(',')),
         null,
         createAuthHeader(accessToken)
     );
 }
 
-export function deleteTag(accessToken: string, tagIds: string[]): Promise<void> {
-    return doDelete<void>(
+export function deleteTag(accessToken: string, tagIds: string[]): Promise<Response> {
+    return doDelete(
         'v3/tags/' + encodeURIComponent(tagIds.join(',')),
         null,
         createAuthHeader(accessToken)
@@ -262,47 +277,51 @@ export function deleteTag(accessToken: string, tagIds: string[]): Promise<void> 
 }
 
 // Utils:
-function doGet<T>(path: string, params?: { [key: string]: any } | null, headers?: { [key: string]: string }): Promise<T> {
-    const url = ENDPOINT + path + (params ? '?' + buildQueryString(params) : '');
+function doGet(path: string, data?: string | object | null, headers?: { [key: string]: string }): Promise<Response> {
+    const url = ENDPOINT + path + (data ? '?' + buildQueryString(data) : '');
 
-    return fetch(url, {
-            method: 'GET',
-            headers
-        })
-        .then<T>(parseAsJson);
+    const params = {
+        method: 'GET',
+        headers
+    };
+
+    return fetch(url, params).then(handleError);
 }
 
-function doPost<T>(path: string, data?: { [key: string]: any }, headers?:  { [key: string]: string }): Promise<T> {
+function doPost(path: string, data?: string | object | null, headers?: { [key: string]: string }, contentType: string = 'application/json'): Promise<Response> {
     const url = ENDPOINT + path;
 
-    return fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', ...headers },
-            body: data ? JSON.stringify(data) : null
-        })
-        .then<T>(parseAsJson);
+    const params = {
+        method: 'POST',
+        headers: { ...headers, 'Content-Type': contentType },
+        body: serializeData(data)
+    };
+
+    return fetch(url, params).then(handleError);
 }
 
-function doPut<T>(path: string, data?: { [key: string]: any } | null, headers?: { [key: string]: string }): Promise<T> {
+function doPut(path: string, data?: string | object | null, headers?: { [key: string]: string }, contentType: string = 'application/json'): Promise<Response> {
     const url = ENDPOINT + path;
 
-    return fetch(url, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json', ...headers },
-            body: data ? JSON.stringify(data) : null
-        })
-        .then<T>(parseAsJson);
+    const params = {
+        method: 'PUT',
+        headers: { ...headers, 'Content-Type': contentType },
+        body: serializeData(data)
+    };
+
+    return fetch(url, params).then(handleError);
 }
 
-function doDelete<T>(path: string, data?: { [key: string]: any } | null, headers?: { [key: string]: string }): Promise<T> {
+function doDelete(path: string, data?: string | object | null, headers?: { [key: string]: string }, contentType: string = 'application/json'): Promise<Response> {
     const url = ENDPOINT + path;
 
-    return fetch(url, {
-            method: 'DELETE',
-            headers: { 'Content-Type': 'application/json', ...headers },
-            body: data ? JSON.stringify(data) : null
-        })
-        .then<T>(parseAsJson);
+    const params = {
+        method: 'DELETE',
+        headers: { ...headers, 'Content-Type': contentType },
+        body: serializeData(data)
+    };
+
+    return fetch(url, params).then(handleError);
 }
 
 function createAuthHeader(accessToken: string): { [key: string]: string } {
@@ -311,13 +330,24 @@ function createAuthHeader(accessToken: string): { [key: string]: string } {
     };
 }
 
-function parseAsJson<T>(response: Response): Promise<T | null> {
-    if (!response.ok) {
-        return Promise.reject(new Error(response.statusText));
+function serializeData(data: string | object | null | undefined): string | null {
+    if (data == null) {
+        return null;
     }
-    if (!(response.headers.get('content-type') || '').trim().startsWith('application/json')) {
-        return Promise.resolve(null);
-    }
-    return response.json().catch(() => Promise.resolve(null));
+    return typeof data === 'object' ? JSON.stringify(data) : data;
 }
 
+function handleError(response: Response): Promise<Response> {
+    if (!response.ok) {
+        return response.json()
+            .then(
+                (error) => Promise.reject(new Error(`${error.errorMessage} (errorCode: ${error.errorCode}) (errorId: ${error.errorId})`)),
+                () => Promise.reject(new Error(`(status: ${response.status}) (statusText: ${response.statusText}) (url: ${response.url})`))
+            );
+    }
+    return Promise.resolve(response);
+}
+
+function decodeAsJson<T>(response: Response): Promise<T> {
+    return response.json();
+}

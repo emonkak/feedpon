@@ -1,5 +1,5 @@
 import { AsyncThunk } from 'messaging/types';
-import { getFeedlyToken } from 'messaging/credential/actions';
+import { getFeedlyToken } from 'messaging/backend/actions';
 import { searchFeeds as feedlySearchFeeds } from 'adapters/feedly/api';
 
 export function searchFeeds(query: string): AsyncThunk {

@@ -1,3 +1,9 @@
+export interface Error {
+    errorCode: number;
+    errorId: string;
+    errorMessage: string;
+}
+
 // Authentication API:
 export interface AuthenticateInput {
     response_type: string;

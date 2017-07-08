@@ -3,7 +3,7 @@ import { Location } from 'history';
 
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
-import { authenticate } from 'messaging/credential/actions';
+import { authenticate } from 'messaging/backend/actions';
 
 interface AuthenticationProps {
     location: Location;

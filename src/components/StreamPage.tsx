@@ -19,7 +19,7 @@ import { changeActiveEntry, changeExpandedEntry, changeReadEntry, changeStreamVi
 import { changeUnreadKeeping, fetchEntryComments, fetchFullContent, fetchMoreEntries, fetchStream, hideEntryComments, hideFullContents, markAsRead, markCategoryAsRead, markFeedAsRead, pinEntry, showEntryComments, showFullContents, unpinEntry } from 'messaging/streams/actions';
 import { createCategory } from 'messaging/categories/actions';
 import { createSortedCategoriesSelector } from 'messaging/categories/selectors';
-import { scrollTo } from 'messaging/ui/actions';
+import { scrollTo, toggleSidebar } from 'messaging/ui/actions';
 
 interface StreamPageProps {
     activeEntryIndex: number;
@@ -57,7 +57,7 @@ interface StreamPageProps {
     onShowEntryComments: typeof showEntryComments;
     onShowFullContents: typeof showFullContents;
     onSubscribe: typeof subscribe;
-    onToggleSidebar: () => void,
+    onToggleSidebar: typeof toggleSidebar;
     onUnpinEntry: typeof unpinEntry;
     onUnselectStream: typeof unselectStream;
     onUnsubscribe: typeof unsubscribe;
@@ -557,6 +557,7 @@ export default connect(() => {
             onShowEntryComments: showEntryComments,
             onShowFullContents: showFullContents,
             onSubscribe: subscribe,
+            onToggleSidebar: toggleSidebar,
             onUnpinEntry: unpinEntry,
             onUnselectStream: unselectStream,
             onUnsubscribe: unsubscribe

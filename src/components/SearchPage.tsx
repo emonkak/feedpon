@@ -12,6 +12,7 @@ import { Category, Feed, State, Subscription } from 'messaging/types';
 import { addToCategory, removeFromCategory, subscribe, unsubscribe } from 'messaging/subscriptions/actions';
 import { createSortedCategoriesSelector } from 'messaging/categories/selectors';
 import { createCategory } from 'messaging/categories/actions';
+import { toggleSidebar } from 'messaging/ui/actions';
 import { searchFeeds } from 'messaging/search/actions';
 
 interface SearchPageProps {
@@ -24,7 +25,7 @@ interface SearchPageProps {
     onRemoveFromCategory: typeof removeFromCategory;
     onSearchFeeds: typeof searchFeeds;
     onSubscribe: typeof subscribe;
-    onToggleSidebar: () => void;
+    onToggleSidebar: typeof toggleSidebar;
     onUnsubscribe: typeof unsubscribe;
     params: Params;
     query: string;
@@ -199,6 +200,7 @@ export default connect(() => {
             onRemoveFromCategory: removeFromCategory,
             onSearchFeeds: searchFeeds,
             onSubscribe: subscribe,
+            onToggleSidebar: toggleSidebar,
             onUnsubscribe: unsubscribe
         })
     };

@@ -1,6 +1,6 @@
 import * as feedlyApi from 'adapters/feedly/api';
 import { AsyncThunk } from 'messaging/types';
-import { getFeedlyToken } from 'messaging/credential/actions';
+import { getFeedlyToken } from 'messaging/backend/actions';
 
 export function fetchUser(): AsyncThunk {
     return async ({ dispatch }) => {

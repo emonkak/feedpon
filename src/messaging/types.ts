@@ -10,7 +10,7 @@ export type Store = FluxStore<State, Event> & {
 
 export interface State {
     categories: Categories;
-    credential: Credential;
+    backend: Backend;
     histories: Histories;
     instantNotifications: InstantNotifications;
     keyMappings: KeyMappings;
@@ -28,6 +28,9 @@ export interface State {
 export type Event
     = { type: 'ACTIVE_ENTRY_CAHNGED', index: number }
     | { type: 'APPLICATION_INITIALIZED' }
+    | { type: 'BACKEND_AUTHENTICATED', authenticatedAt: number, exportUrl: string, token: any }
+    | { type: 'BACKEND_AUTHENTICATING' }
+    | { type: 'BACKEND_AUTHENTICATING_FAILED' }
     | { type: 'BOOKMARK_COUNTS_FETCHED', bookmarkCounts: { [url: string]: number } }
     | { type: 'CATEGORY_CREATED', category: Category }
     | { type: 'CATEGORY_CREATING' }
@@ -104,12 +107,11 @@ export type Event
     | { type: 'SUBSCRIPTIONS_FETCHED', subscriptions: Subscription[], categories: Category[], fetchedAt: number }
     | { type: 'SUBSCRIPTIONS_FETCHING' }
     | { type: 'SUBSCRIPTIONS_FETCHING_FAILED' }
+    | { type: 'SUBSCRIPTIONS_IMPORTING' }
+    | { type: 'SUBSCRIPTIONS_IMPORTING_DONE' }
     | { type: 'SUBSCRIPTIONS_ORDER_CHANGED', order: SubscriptionOrderKind }
     | { type: 'SUBSCRIPTIONS_UNREAD_VIEWING_CHANGED', onlyUnread: boolean }
     | { type: 'THEME_CHANGED', theme: ThemeKind }
-    | { type: 'TOKEN_RECEIVED', authorizedAt: number, token: any }
-    | { type: 'TOKEN_RECEIVING' }
-    | { type: 'TOKEN_RECEIVING_FAILED' }
     | { type: 'TOKEN_REVOKED' }
     | { type: 'TOKEN_REVOKING' }
     | { type: 'TRACKING_URL_PATTERNS_RESET' }
@@ -153,8 +155,9 @@ export interface Command<T extends object> {
     action(params: T): (Thunk<any> | Event);
 }
 
-export interface Credential {
-    authorizedAt: number;
+export interface Backend {
+    authenticatedAt: number;
+    exportUrl: string;
     isLoading: boolean;
     token: object | null;
     version: number;
@@ -315,6 +318,7 @@ export interface TrackingUrlPatterns {
 }
 
 export interface Subscriptions {
+    isImporting: boolean;
     isLoading: boolean;
     items: { [streamId: string]: Subscription };
     lastUpdatedAt: number;

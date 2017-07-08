@@ -1,48 +1,49 @@
-import { Credential, Event } from 'messaging/types';
+import { Backend, Event } from 'messaging/types';
 
-export default function reduceCredential(credential: Credential, event: Event): Credential {
+export default function reduceBackend(backend: Backend, event: Event): Backend {
     switch (event.type) {
         case 'APPLICATION_INITIALIZED':
             return {
-                ...credential,
+                ...backend,
                 isLoading: false
             };
 
-        case 'TOKEN_RECEIVING':
+        case 'BACKEND_AUTHENTICATING':
             return {
-                ...credential,
+                ...backend,
                 isLoading: true
             };
 
-        case 'TOKEN_RECEIVING_FAILED':
+        case 'BACKEND_AUTHENTICATING_FAILED':
             return {
-                ...credential,
+                ...backend,
                 isLoading: false
             };
 
-        case 'TOKEN_RECEIVED':
+        case 'BACKEND_AUTHENTICATED':
             return {
-                ...credential,
-                authorizedAt: event.authorizedAt,
+                ...backend,
+                authenticatedAt: event.authenticatedAt,
+                exportUrl: event.exportUrl,
                 isLoading: false,
                 token: event.token
             };
 
         case 'TOKEN_REVOKING':
             return {
-                ...credential,
+                ...backend,
                 isLoading: true
             };
 
         case 'TOKEN_REVOKED':
             return {
-                ...credential,
-                authorizedAt: 0,
+                ...backend,
+                authenticatedAt: 0,
                 isLoading: false,
                 token: null
             };
 
         default:
-            return credential;
+            return backend;
     }
 }

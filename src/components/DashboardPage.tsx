@@ -7,11 +7,13 @@ import MainLayout from 'components/layouts/MainLayout';
 import Navbar from 'components/widgets/Navbar';
 import RelativeTime from 'components/widgets/RelativeTime';
 import SubscriptionIcon from 'components/parts/SubscriptionIcon';
+import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
 import { State } from 'messaging/types';
+import { toggleSidebar } from 'messaging/ui/actions';
 
 interface DashboardProps {
-    onToggleSidebar: () => void;
+    onToggleSidebar: typeof toggleSidebar;
     streamHistories: StreamHistory[];
 }
 
@@ -144,6 +146,9 @@ export default connect(() => {
     return {
         mapStateToProps: (state: State) => ({
             streamHistories: streamHistoriesSelector(state)
+        }),
+        mapDispatchToProps: bindActions({
+            onToggleSidebar: toggleSidebar
         })
     };
 })(DashboardPage);

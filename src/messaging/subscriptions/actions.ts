@@ -6,9 +6,9 @@ import '@emonkak/enumerable/extensions/orderBy';
 import '@emonkak/enumerable/extensions/selectMany';
 import '@emonkak/enumerable/extensions/toArray';
 
-import * as feedly from 'adapters/feedly/api';
+import * as feedlyApi from 'adapters/feedly/api';
 import { AsyncThunk, Event, Feed, Subscription, SubscriptionOrderKind } from 'messaging/types';
-import { getFeedlyToken } from 'messaging/credential/actions';
+import { getFeedlyToken } from 'messaging/backend/actions';
 
 export function fetchSubscriptions(): AsyncThunk {
     return async ({ dispatch, getState }) => {
@@ -20,8 +20,8 @@ export function fetchSubscriptions(): AsyncThunk {
             const token = await dispatch(getFeedlyToken());
 
             const [feedlySubscriptions, feedlyUnreadCounts] = await Promise.all([
-                feedly.getSubscriptions(token.access_token),
-                feedly.getUnreadCounts(token.access_token)
+                feedlyApi.getSubscriptions(token.access_token),
+                feedlyApi.getUnreadCounts(token.access_token)
             ]);
 
             const subscriptions = new Enumerable(feedlySubscriptions)
@@ -93,7 +93,7 @@ export function addToCategory(subscription: Subscription, labelToAdd: string): A
                 label
             }));
 
-            await feedly.subscribeFeed(token.access_token, {
+            await feedlyApi.subscribeFeed(token.access_token, {
                 id: subscription.feedId as string,
                 categories
             });
@@ -132,7 +132,7 @@ export function removeFromCategory(subscription: Subscription, labelToRemove: st
                 label
             }));
 
-            await feedly.subscribeFeed(token.access_token, {
+            await feedlyApi.subscribeFeed(token.access_token, {
                 id: subscription.feedId as string,
                 categories
             });
@@ -170,12 +170,12 @@ export function subscribe(feed: Feed, labels: string[]): AsyncThunk {
                 label
             }));
 
-            await feedly.subscribeFeed(token.access_token, {
+            await feedlyApi.subscribeFeed(token.access_token, {
                 id: feed.feedId as string,
                 categories
             });
 
-            const unreadCounts = await feedly.getUnreadCounts(token.access_token, {
+            const unreadCounts = await feedlyApi.getUnreadCounts(token.access_token, {
                 streamId: feed.streamId
             });
             const unreadCount = unreadCounts.unreadcounts
@@ -219,7 +219,7 @@ export function unsubscribe(subscription: Subscription): AsyncThunk {
         try {
             const token = await dispatch(getFeedlyToken());
 
-            await feedly.unsubscribeFeed(token.access_token, subscription.feedId as string);
+            await feedlyApi.unsubscribeFeed(token.access_token, subscription.feedId as string);
 
             dispatch({
                 type: 'FEED_UNSUBSCRIBED',
@@ -247,5 +247,25 @@ export function changeUnreadViewing(onlyUnread: boolean): Event {
     return {
         type: 'SUBSCRIPTIONS_UNREAD_VIEWING_CHANGED',
         onlyUnread
+    };
+}
+
+export function importOpml(xmlString: string): AsyncThunk {
+    return async ({ dispatch }) => {
+        await dispatch({
+            type: 'SUBSCRIPTIONS_IMPORTING'
+        });
+
+        try {
+            const token = await dispatch(getFeedlyToken());
+
+            await feedlyApi.importOpml(token.access_token, xmlString);
+
+            await dispatch(fetchSubscriptions());
+        } finally {
+            await dispatch({
+                type: 'SUBSCRIPTIONS_IMPORTING_DONE'
+            });
+        }
     };
 }

@@ -3,11 +3,14 @@ import React, { PureComponent } from 'react';
 import Dropdown from 'components/widgets/Dropdown';
 import MainLayout from 'components/layouts/MainLayout';
 import Navbar from 'components/widgets/Navbar';
+import bindActions from 'utils/flux/bindActions';
+import connect from 'utils/flux/react/connect';
 import { MenuLink } from 'components/widgets/Menu';
 import { VERSION } from 'messaging/constants';
+import { toggleSidebar } from 'messaging/ui/actions';
 
 interface AboutPageProps {
-    onToggleSidebar: () => void;
+    onToggleSidebar: typeof toggleSidebar;
     version: string;
 }
 
@@ -158,7 +161,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 `.trim();
 
-export default class AboutPage extends PureComponent<AboutPageProps, {}> {
+class AboutPage extends PureComponent<AboutPageProps, {}> {
     renderNavbar() {
         const { onToggleSidebar } = this.props;
 
@@ -238,3 +241,9 @@ export default class AboutPage extends PureComponent<AboutPageProps, {}> {
         );
     }
 }
+
+export default connect({
+    mapDispatchToProps: bindActions({
+        onToggleSidebar: toggleSidebar
+    })
+})(AboutPage);

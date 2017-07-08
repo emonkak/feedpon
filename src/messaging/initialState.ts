@@ -1,5 +1,5 @@
+import backend from 'messaging/backend/initialState';
 import categories from 'messaging/categories/initialState';
-import credential from 'messaging/credential/initialState';
 import histories from 'messaging/histories/initialState';
 import instantNotifications from 'messaging/instantNotifications/initialState';
 import keyMappings from 'messaging/keyMappings/initialState';
@@ -15,8 +15,8 @@ import userSiteinfo from 'messaging/userSiteinfo/initialState';
 import { State } from 'messaging/types';
 
 const initialState: State = {
+    backend,
     categories,
-    credential,
     histories,
     instantNotifications,
     keyMappings,

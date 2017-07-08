@@ -24,6 +24,18 @@ export function changeReadEntry(index: number): Event {
     };
 }
 
+export function toggleSidebar(): Thunk {
+    return ({ getState, dispatch }) => {
+        const { ui } = getState();
+
+        if (ui.sidebarIsOpened) {
+            dispatch(closeSidebar());
+        } else {
+            dispatch(openSidebar());
+        }
+    };
+}
+
 export function openSidebar(): Event {
     return {
         type: 'SIDEBAR_OPENED'

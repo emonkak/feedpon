@@ -9,10 +9,11 @@ import connect from 'utils/flux/react/connect';
 import { MenuItem } from 'components/widgets/Menu';
 import { NotificationKind } from 'messaging/types';
 import { sendNotification } from 'messaging/notifications/actions';
+import { toggleSidebar } from 'messaging/ui/actions';
 
 interface KitchenSinkProps {
     onSendNotification: typeof sendNotification;
-    onToggleSidebar: () => void;
+    onToggleSidebar: typeof toggleSidebar;
 }
 
 interface KitchenSinkState {
@@ -471,6 +472,7 @@ class KitchenSinkPage extends PureComponent<KitchenSinkProps, KitchenSinkState> 
 
 export default connect({
     mapDispatchToProps: bindActions({
-        onSendNotification: sendNotification
+        onSendNotification: sendNotification,
+        onToggleSidebar: toggleSidebar
     })
 })(KitchenSinkPage);

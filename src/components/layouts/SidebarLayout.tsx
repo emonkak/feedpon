@@ -1,4 +1,4 @@
-import React, { PureComponent, cloneElement } from 'react';
+import React, { PureComponent } from 'react';
 import classnames from 'classnames';
 import { History, Location } from 'history';
 
@@ -19,7 +19,7 @@ import { sendInstantNotification } from 'messaging/instantNotifications/actions'
 interface SidebarLayoutProps {
     children: React.ReactElement<any>;
     helpIsOpened: boolean;
-    isAuthenticating: boolean;
+    isLoading: boolean;
     keyMappings: Trie.Trie<KeyMapping>;
     location: Location;
     onCloseHelp: typeof closeHelp;
@@ -40,7 +40,6 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
         this.handleChangeLocation = this.handleChangeLocation.bind(this);
         this.handleCloseSidebar = this.handleCloseSidebar.bind(this);
         this.handleInvokeKeyMapping = this.handleInvokeKeyMapping.bind(this);
-        this.handleToggleSidebar = this.handleToggleSidebar.bind(this);
     }
 
     componentWillMount() {
@@ -90,16 +89,6 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
         }
     }
 
-    handleToggleSidebar() {
-        const { onCloseSidebar, onOpenSidebar, sidebarIsOpened } = this.props;
-
-        if (sidebarIsOpened) {
-            onCloseSidebar();
-        } else {
-            onOpenSidebar();
-        }
-    }
-
     handleInvokeKeyMapping(keyMapping: KeyMapping) {
         const command = commands[keyMapping.commandId as keyof typeof commands] as Command<any>;
 
@@ -128,7 +117,7 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
     render() {
         const {
             children,
-            isAuthenticating,
+            isLoading,
             keyMappings,
             location,
             router,
@@ -155,11 +144,9 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
                     <div className="l-instant-notifications">
                         <InstantNotifications />
                     </div>
-                    {cloneElement(children, {
-                        onToggleSidebar: this.handleToggleSidebar
-                    })}
+                    {children}
                     <div className="l-backdrop">
-                        {isAuthenticating ? <i className="icon icon-48 icon-spinner icon-rotating" /> : null}
+                        {isLoading ? <i className="icon icon-48 icon-spinner icon-rotating" /> : null}
                     </div>
                     <Modal
                         onClose={onCloseHelp}
@@ -177,7 +164,7 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
 export default connect((store) => ({
     mapStateToProps: (state: State) => ({
         helpIsOpened: state.ui.helpIsOpened,
-        isAuthenticating: state.credential.isLoading,
+        isLoading: state.backend.isLoading || state.subscriptions.isImporting,
         keyMappings: state.keyMappings.items,
         sidebarIsOpened: state.ui.sidebarIsOpened,
         store

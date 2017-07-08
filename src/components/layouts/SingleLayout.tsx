@@ -34,6 +34,6 @@ class SingleLayout extends PureComponent<SingleLayoutProps, {}> {
 
 export default connect({
     mapStateToProps: (state: State) => ({
-        isLoading: state.credential.isLoading
+        isLoading: state.backend.isLoading
     })
 })(SingleLayout);

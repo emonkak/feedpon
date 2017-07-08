@@ -14,7 +14,7 @@ import { changeSubscriptionOrder, changeUnreadViewing, fetchSubscriptions } from
 import { createSortedCategoriesSelector } from 'messaging/categories/selectors';
 import { createGroupedSubscriptionsSelector, createTotalUnreadCountSelector, createVisibleSubscriptionsSelector } from 'messaging/subscriptions/selectors';
 import { fetchUser } from 'messaging/user/actions';
-import { revokeToken } from 'messaging/credential/actions';
+import { revokeToken } from 'messaging/backend/actions';
 
 interface SidebarProps {
     categories: Category[];
