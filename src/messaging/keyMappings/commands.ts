@@ -56,10 +56,10 @@ export const expandEntry: Command<{}> = {
     }
 };
 
-export const fetchComments: Command<{}> = {
-    commandId: 'fetchComments',
-    name: 'Fetch comments',
-    description: 'Fetch comments on the active entry',
+export const toggleComments: Command<{}> = {
+    commandId: 'toggleComments',
+    name: 'Toggle comments',
+    description: 'Toggle comments display on the active entry',
     defaultParams: {},
     action() {
         return ({ dispatch }) => {
