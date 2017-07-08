@@ -20,25 +20,19 @@ export default class Modal extends PureComponent<ModalProps, {}> {
     }
 
     componentDidMount() {
-        if (this.getNumModalElements() === 1) {
-            this.refreshBodyStyles(this.props.isOpened!);
-        }
+        this.refreshBodyStyles(this.props.isOpened!);
 
-        document.addEventListener('keydown', this.handleDocumentKeyDown);
+        document.addEventListener('keydown', this.handleDocumentKeyDown, true);
     }
 
     componentDidUpdate(prevProps: any, prevState: any) {
-        if (this.getNumModalElements() === 1) {
-            this.refreshBodyStyles(this.props.isOpened!);
-        }
+        this.refreshBodyStyles(this.props.isOpened!);
     }
 
     componentWillUnmount() {
-        if (this.getNumModalElements() === 1) {
-            this.refreshBodyStyles(false);
-        }
+        this.refreshBodyStyles(false);
 
-        document.removeEventListener('keydown', this.handleDocumentKeyDown);
+        document.removeEventListener('keydown', this.handleDocumentKeyDown, true);
     }
 
     handleClick(event: React.MouseEvent<any>) {
@@ -54,9 +48,13 @@ export default class Modal extends PureComponent<ModalProps, {}> {
     }
 
     handleDocumentKeyDown(event: KeyboardEvent) {
-        if (event.key === 'Escape') {
-            event.preventDefault();
+        const { isOpened } = this.props;
 
+        if (isOpened) {
+            event.stopPropagation();
+        }
+
+        if (event.key === 'Escape') {
             const { onClose } = this.props;
 
             if (onClose) {
@@ -66,15 +64,15 @@ export default class Modal extends PureComponent<ModalProps, {}> {
     }
 
     refreshBodyStyles(isOpened: boolean) {
-        if (isOpened) {
-            document.documentElement.classList.add('modal-is-opened');
-        } else {
-            document.documentElement.classList.remove('modal-is-opened');
-        }
-    }
+        const numModals = document.getElementsByClassName('modal').length;
 
-    getNumModalElements() {
-        return document.getElementsByClassName('modal').length;
+        if (numModals === 1) {
+            if (isOpened) {
+                document.documentElement.classList.add('modal-is-opened');
+            } else {
+                document.documentElement.classList.remove('modal-is-opened');
+            }
+         }
     }
 
     renderModal() {

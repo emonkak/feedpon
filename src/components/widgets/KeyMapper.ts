@@ -32,11 +32,11 @@ export default class KeyMapper extends PureComponent<KeyMapperProps, {}> {
     }
 
     componentDidMount() {
-        document.addEventListener('keydown', this.handleKeyDown, false);
+        document.addEventListener('keydown', this.handleKeyDown);
     }
 
     componentWillUnmount() {
-        document.removeEventListener('keydown', this.handleKeyDown, false);
+        document.removeEventListener('keydown', this.handleKeyDown);
     }
 
     handleKeyDown(event: KeyboardEvent) {
