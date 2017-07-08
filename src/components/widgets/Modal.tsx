@@ -55,6 +55,8 @@ export default class Modal extends PureComponent<ModalProps, {}> {
 
     handleDocumentKeyDown(event: KeyboardEvent) {
         if (event.key === 'Escape') {
+            event.preventDefault();
+
             const { onClose } = this.props;
 
             if (onClose) {
