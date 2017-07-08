@@ -127,7 +127,8 @@ export default function reducer(categories: Categories, event: Event): Categorie
                 items: event.categories.reduce<{ [key: string]: Category }>((acc, category) => {
                     acc[category.streamId] = category;
                     return acc;
-                }, {})
+                }, {}),
+                lastUpdatedAt: event.fetchedAt
             };
 
         default:

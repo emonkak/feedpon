@@ -46,7 +46,6 @@ export default function reducer(streams: Streams, event: Event): Streams {
                     entries: [],
                     continuation: null,
                     feed: null,
-                    category: null,
                     fetchOptions: event.fetchOptions
                 })
             };
@@ -63,7 +62,6 @@ export default function reducer(streams: Streams, event: Event): Streams {
                     entries: [],
                     continuation: null,
                     feed: null,
-                    category: null,
                     fetchOptions: event.fetchOptions
                 })
             };
@@ -523,7 +521,7 @@ export default function reducer(streams: Streams, event: Event): Streams {
             return {
                 ...streams,
                 items: CacheMap.mapValues(streams.items, (stream) => {
-                    if (!stream.feed || stream.feed.feedId !== event.feedId) {
+                    if (stream.streamId !== event.streamId) {
                         return stream;
                     }
                     return {
@@ -541,7 +539,7 @@ export default function reducer(streams: Streams, event: Event): Streams {
             return {
                 ...streams,
                 items: CacheMap.mapValues(streams.items, (stream) => {
-                    if (stream.category && stream.category.categoryId !== event.categoryId) {
+                    if (stream.streamId !== event.streamId) {
                         return stream;
                     }
                     return {
@@ -565,12 +563,6 @@ export default function reducer(streams: Streams, event: Event): Streams {
             return {
                 ...streams,
                 items: CacheMap.extend(streams.items, event.capacity)
-            };
-
-        case 'STREAM_CACHE_LIFETIME_CHANGED':
-            return {
-                ...streams,
-                cacheLifetime: event.lifetime
             };
 
         default:

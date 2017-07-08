@@ -35,9 +35,9 @@ export type Event
     | { type: 'CATEGORY_DELETED', categoryId: string | number, label: string }
     | { type: 'CATEGORY_DELETING', categoryId: string | number, label: string }
     | { type: 'CATEGORY_DELETING_FAILED', categoryId: string | number, label: string }
-    | { type: 'CATEGORY_MARKED_AS_READ', categoryId: string | number, label: string }
-    | { type: 'CATEGORY_MARKING_AS_READ', categoryId: string | number, label: string }
-    | { type: 'CATEGORY_MARKING_AS_READ_FAILED', categoryId: string | number, label: string }
+    | { type: 'CATEGORY_MARKED_AS_READ', categoryId: string | number, streamId: string, label: string }
+    | { type: 'CATEGORY_MARKING_AS_READ', categoryId: string | number, streamId: string, label: string }
+    | { type: 'CATEGORY_MARKING_AS_READ_FAILED', categoryId: string | number, streamId: string, label: string }
     | { type: 'CATEGORY_UPDATED', prevCategoryLabel: string, category: Category }
     | { type: 'CATEGORY_UPDATING', categoryId: string | number }
     | { type: 'CATEGORY_UPDATING_FAILED', categoryId: string | number }
@@ -55,9 +55,9 @@ export type Event
     | { type: 'ENTRY_PINNING_FAILED', entryId: string | number }
     | { type: 'ENTRY_URLS_EXPANDED', urls: { [url: string]: string } }
     | { type: 'EXPANDED_ENTRY_CHANGED', index: number }
-    | { type: 'FEED_MARKED_AS_READ', feedId: string | number }
-    | { type: 'FEED_MARKING_AS_READ', feedId: string | number }
-    | { type: 'FEED_MARKING_AS_READ_FAILED', feedId: string | number }
+    | { type: 'FEED_MARKED_AS_READ', feedId: string | number, streamId: string }
+    | { type: 'FEED_MARKING_AS_READ', feedId: string | number, streamId: string }
+    | { type: 'FEED_MARKING_AS_READ_FAILED', feedId: string | number, streamId: string }
     | { type: 'FEED_SEARCHED', query: string, feeds: Feed[] }
     | { type: 'FEED_SEARCHING', query: string }
     | { type: 'FEED_SEARCHING_FAILED', query: string }
@@ -174,6 +174,7 @@ export interface Categories {
     isLoading: boolean;
     items: { [streamId: string]: Category };
     version: number;
+    lastUpdatedAt: number;
 }
 
 export interface Category {
@@ -184,7 +185,6 @@ export interface Category {
 }
 
 export interface Streams {
-    cacheLifetime: number;
     defaultFetchOptions: StreamFetchOptions;
     isLoaded: boolean;
     isLoading: boolean;
@@ -201,7 +201,6 @@ export interface Stream {
     entries: Entry[];
     continuation: string | null;
     feed: Feed | null;
-    category: Category | null;
     fetchOptions: StreamFetchOptions;
 }
 

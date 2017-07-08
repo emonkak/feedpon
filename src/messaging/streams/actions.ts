@@ -5,7 +5,7 @@ import PromiseQueue from 'utils/PromiseQueue';
 import tryMatch from 'utils/tryMatch';
 import decodeResponseAsText from 'utils/decodeResponseAsText';
 import stripTags from 'utils/stripTags';
-import { AsyncThunk, Category, Entry, Event, Feed, Stream, StreamFetchOptions, Thunk } from 'messaging/types';
+import { AsyncThunk, Category, Entry, Event, Stream, StreamFetchOptions, Subscription, Thunk } from 'messaging/types';
 import { getFeedlyToken } from 'messaging/credential/actions';
 import { getSiteinfoItems } from 'messaging/sharedSiteinfo/actions';
 import { sendNotification } from 'messaging/notifications/actions';
@@ -267,27 +267,25 @@ export function markAsRead(entries: Entry[]): AsyncThunk {
     };
 }
 
-export function markFeedAsRead(feed: Feed): AsyncThunk {
+export function markFeedAsRead(subscription: Subscription): AsyncThunk {
     return async ({ dispatch, getState }) => {
         dispatch({
             type: 'FEED_MARKING_AS_READ',
-            feedId: feed.feedId
+            feedId: subscription.feedId,
+            streamId: subscription.streamId
         });
 
         try {
             const token = await dispatch(getFeedlyToken());
 
-            await feedlyApi.markAsReadForFeeds(token.access_token, feed.feedId as string);
+            await feedlyApi.markAsReadForFeeds(token.access_token, subscription.feedId as string);
 
-            const { subscriptions } = getState();
-            const numEntries = Object.values(subscriptions.items).reduce(
-                (total, subscription) => total + (subscription.feedId === feed.feedId ? subscription.unreadCount : 0),
-                0
-            );
+            const numEntries = Math.max(0, subscription.unreadCount - subscription.readCount);
 
             dispatch({
                 type: 'FEED_MARKED_AS_READ',
-                feedId: feed.feedId
+                feedId: subscription.feedId,
+                streamId: subscription.streamId
             });
 
             const message = numEntries === 1
@@ -301,7 +299,8 @@ export function markFeedAsRead(feed: Feed): AsyncThunk {
         } catch (error) {
             dispatch({
                 type: 'FEED_MARKING_AS_READ_FAILED',
-                feedId: feed.feedId
+                feedId: subscription.feedId,
+                streamId: subscription.streamId
             });
 
             throw error;
@@ -314,6 +313,7 @@ export function markCategoryAsRead(category: Category): AsyncThunk {
         dispatch({
             type: 'CATEGORY_MARKING_AS_READ',
             categoryId: category.categoryId,
+            streamId: category.streamId,
             label: category.label
         });
 
@@ -331,6 +331,7 @@ export function markCategoryAsRead(category: Category): AsyncThunk {
             dispatch({
                 type: 'CATEGORY_MARKED_AS_READ',
                 categoryId: category.categoryId,
+                streamId: category.streamId,
                 label: category.label
             });
 
@@ -346,6 +347,7 @@ export function markCategoryAsRead(category: Category): AsyncThunk {
             dispatch({
                 type: 'CATEGORY_MARKING_AS_READ_FAILED',
                 categoryId: category.categoryId,
+                streamId: category.streamId,
                 label: category.label
             });
 
@@ -556,7 +558,6 @@ function fetchCategoryStream(streamId: string, fetchOptions: StreamFetchOptions,
 
         const stream: Stream = {
             streamId,
-            category: category,
             title: category ? category.label : '',
             fetchedAt,
             entries: contents.items.map(convertEntry),
@@ -587,7 +588,6 @@ function fetchAllStream(fetchOptions: StreamFetchOptions, fetchedAt: number): As
             fetchedAt,
             continuation: contents.continuation || null,
             feed: null,
-            category: null,
             fetchOptions
         };
 
@@ -618,7 +618,6 @@ function fetchPinsStream(fetchOptions: StreamFetchOptions, fetchedAt: number): A
             fetchedAt,
             continuation: contents.continuation || null,
             feed: null,
-            category: null,
             fetchOptions
         };
 

@@ -23,9 +23,9 @@ import { scrollTo } from 'messaging/ui/actions';
 
 interface StreamPageProps {
     activeEntryIndex: number;
-    cacheLifetime: number;
     canMarkAsRead: boolean;
     categories: Category[];
+    category: Category;
     expandedEntryIndex: number;
     fetchOptions: StreamFetchOptions;
     isLoaded: boolean;
@@ -65,6 +65,7 @@ interface StreamPageProps {
     readEntries: Entry[];
     readEntryIndex: number;
     router: History;
+    shouldFetchStream: boolean;
     stream: Stream | null;
     streamView: StreamViewKind;
     subscription: Subscription | null;
@@ -93,12 +94,13 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
             fetchOptions,
             onFetchStream,
             onSelectStream,
-            params 
+            params,
+            shouldFetchStream
         } = this.props;
 
         onSelectStream(params['stream_id']);
 
-        if (shouldFetchStream(this.props)) {
+        if (shouldFetchStream) {
             onFetchStream(params['stream_id'], fetchOptions);
         }
     }
@@ -108,14 +110,15 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
         if (this.props.location.pathname !== nextProps.location.pathname
             || !shallowEqual(this.props.location.query, nextProps.location.query)) {
             const { 
-                onSelectStream,
                 canMarkAsRead,
                 fetchOptions,
                 keepUnread,
                 onFetchStream,
                 onMarkAsRead,
+                onSelectStream,
                 params,
-                readEntries
+                readEntries,
+                shouldFetchStream
             } = nextProps;
 
             onSelectStream(params['stream_id']);
@@ -124,7 +127,7 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
                 onMarkAsRead(readEntries);
             }
 
-            if (shouldFetchStream(nextProps)) {
+            if (shouldFetchStream) {
                 onFetchStream(params['stream_id'], fetchOptions);
             }
         }
@@ -210,14 +213,12 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
     }
 
     handleMarkAllAsRead() {
-        const { onMarkCategoryAsRead, onMarkFeedAsRead, stream } = this.props;
+        const { category, onMarkCategoryAsRead, onMarkFeedAsRead, subscription } = this.props;
 
-        if (stream) {
-            if (stream.category) {
-                onMarkCategoryAsRead(stream.category);
-            } else if (stream.feed) {
-                onMarkFeedAsRead(stream.feed);
-            }
+        if (category) {
+            onMarkCategoryAsRead(category);
+        } else if (subscription) {
+            onMarkFeedAsRead(subscription);
         }
     }
 
@@ -311,20 +312,21 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
     }
 
     renderStreamHeader() {
-        const { stream } = this.props;
+        const {
+            categories,
+            category,
+            numSubscriptions,
+            onAddToCategory,
+            onCreateCategory,
+            onRemoveFromCategory,
+            onSubscribe,
+            onUnsubscribe,
+            stream,
+            subscription
+        } = this.props;
 
         if (stream) {
             if (stream.feed) {
-                const {
-                    categories,
-                    onAddToCategory,
-                    onCreateCategory,
-                    onRemoveFromCategory,
-                    onSubscribe,
-                    onUnsubscribe,
-                    subscription
-                } = this.props;
-
                 return (
                     <FeedHeader
                         categories={categories}
@@ -339,12 +341,10 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
                 );
             }
 
-            if (stream.category) {
-                const { numSubscriptions } = this.props;
-
+            if (category) {
                 return (
                     <CategoryHeader
-                        category={stream.category}
+                        category={category}
                         numEntries={stream.entries.length}
                         numSubscriptions={numSubscriptions} />
                 );
@@ -419,12 +419,6 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
     }
 }
 
-function shouldFetchStream(props: StreamPageProps) {
-    const { cacheLifetime, isLoaded, stream } = props;
-
-    return stream == null || !isLoaded || Date.now() - stream.fetchedAt > cacheLifetime;
-}
-
 export default connect(() => {
     const categoriesSelector = createSortedCategoriesSelector();
 
@@ -479,15 +473,21 @@ export default connect(() => {
         (subscriptions, streamId) => subscriptions[streamId] || null
     );
 
+    const categorySelector: (state: State, props: StreamPageProps) => Category | null = createSelector(
+        (state: State) => state.categories.items,
+        (state: State, props: StreamPageProps) => props.params['stream_id'],
+        (categories, streamId) => categories[streamId] || null
+    );
+
     const numSubscriptionsSelector = createSelector(
-        streamSelector,
+        categorySelector,
         (state: State) => state.subscriptions.items,
-        (stream, subscriptions) => {
-            if (!stream || !stream.category) {
+        (category, subscriptions) => {
+            if (!category) {
                 return 0;
             }
 
-            const label = stream.category.label;
+            const label = category.label;
 
             return Object.values(subscriptions).reduce(
                 (acc, subscription) => acc + (subscription.labels.includes(label) ? 1 : 0),
@@ -499,16 +499,26 @@ export default connect(() => {
     const canMarkAsReadSelector = createSelector(
         streamSelector,
         subscriptionSelector,
+        categorySelector,
         (state: State) => state.streams.isMarking,
-        (stream, subscription, isMarking) => !!(!isMarking && stream && ((stream.feed && subscription) || stream.category))
+        (stream, subscription, category, isMarking) => !!(!isMarking && stream && (subscription || category))
+    );
+
+    const shouldFetchStreamSelector = createSelector(
+        streamSelector,
+        (state: State) => state.streams.isLoaded,
+        (state: State) => state.subscriptions.lastUpdatedAt,
+        (stream, isLoaded, lastUpdateOfsubscriptions) => {
+            return !stream || !isLoaded || lastUpdateOfsubscriptions > stream.fetchedAt;
+        }
     );
 
     return {
         mapStateToProps: (state: State, props: StreamPageProps) => ({
             activeEntryIndex: state.ui.activeEntryIndex,
-            cacheLifetime: state.streams.cacheLifetime,
             canMarkAsRead: canMarkAsReadSelector(state, props),
             categories: categoriesSelector(state),
+            category: categorySelector(state, props),
             expandedEntryIndex: state.ui.expandedEntryIndex,
             fetchOptions: fetchOptionsSelector(state, props),
             isLoaded: state.streams.isLoaded,
@@ -518,6 +528,7 @@ export default connect(() => {
             numSubscriptions: numSubscriptionsSelector(state, props),
             readEntries: readEntriesSelector(state, props),
             readEntryIndex: state.ui.readEntryIndex,
+            shouldFetchStream: shouldFetchStreamSelector(state, props),
             stream: streamSelector(state, props),
             streamView: state.ui.streamView,
             subscription: subscriptionSelector(state, props) as Subscription | null

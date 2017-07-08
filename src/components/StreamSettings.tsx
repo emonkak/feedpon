@@ -1,27 +1,21 @@
 import React, { PureComponent } from 'react';
 
-import ValidatableControl from 'components/widgets/ValidatableControl';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
-import formatDuration from 'utils/formatDuration';
-import parseDuration, { DURATION_PATTERN } from 'utils/parseDuration';
 import { State, StreamFetchOptions } from 'messaging/types';
-import { changeDefaultStreamFetchOptions, changeStreamCacheCapacity, changeStreamCacheLifetime, changeStreamHistoryOptions } from 'messaging/streams/actions';
+import { changeDefaultStreamFetchOptions, changeStreamCacheCapacity, changeStreamHistoryOptions } from 'messaging/streams/actions';
 
 interface StreamSettingsProps {
     cacheCapacity: number;
-    cacheLifetime: number;
     fetchOptions: StreamFetchOptions;
     numStreamHistories: number;
     onChangeDefaultStreamFetchOptions: typeof changeDefaultStreamFetchOptions;
     onChangeStreamCacheCapacity: typeof changeStreamCacheCapacity;
-    onChangeStreamCacheLifetime: typeof changeStreamCacheLifetime;
     onChangeStreamHistoryOptions: typeof changeStreamHistoryOptions;
 }
 
 interface StreamSettingsState {
     cacheCapacity: number;
-    cacheLifetime: string;
     fetchOptions: StreamFetchOptions;
     numStreamHistories: number;
 }
@@ -32,17 +26,14 @@ class StreamSettings extends PureComponent<StreamSettingsProps, StreamSettingsSt
 
         this.state = {
             cacheCapacity: props.cacheCapacity,
-            cacheLifetime: formatDuration(props.cacheLifetime),
             fetchOptions: props.fetchOptions,
             numStreamHistories: props.numStreamHistories
         };
 
         this.handleChangeCacheCapacity = this.handleChangeCacheCapacity.bind(this);
-        this.handleChangeCacheLifetime = this.handleChangeCacheLifetime.bind(this);
         this.handleChangeFetchOptions = this.handleChangeFetchOptions.bind(this);
         this.handleChangeNumStreamHistories = this.handleChangeNumStreamHistories.bind(this);
         this.handleSubmitCacheCapacity = this.handleSubmitCacheCapacity.bind(this);
-        this.handleSubmitCacheLifetime = this.handleSubmitCacheLifetime.bind(this);
         this.handleSubmitFetchOptions = this.handleSubmitFetchOptions.bind(this);
         this.handleSubmitHistoryOptions = this.handleSubmitHistoryOptions.bind(this);
     }
@@ -62,15 +53,6 @@ class StreamSettings extends PureComponent<StreamSettingsProps, StreamSettingsSt
         this.setState((state) => ({
             ...state,
             cacheCapacity
-        }));
-    }
-
-    handleChangeCacheLifetime(event: React.ChangeEvent<HTMLInputElement>) {
-        const cacheLifetime = event.currentTarget.value;
-
-        this.setState((state) => ({
-            ...state,
-            cacheLifetime
         }));
     }
 
@@ -115,17 +97,8 @@ class StreamSettings extends PureComponent<StreamSettingsProps, StreamSettingsSt
         onChangeStreamCacheCapacity(cacheCapacity);
     }
 
-    handleSubmitCacheLifetime(event: React.FormEvent<HTMLFormElement>) {
-        event.preventDefault();
-
-        const { onChangeStreamCacheLifetime } = this.props;
-        const { cacheLifetime } = this.state;
-
-        onChangeStreamCacheLifetime(parseDuration(cacheLifetime));
-    }
-
     render() {
-        const { cacheCapacity, cacheLifetime, fetchOptions, numStreamHistories } = this.state;
+        const { cacheCapacity, fetchOptions, numStreamHistories } = this.state;
 
         return (
             <section className="section">
@@ -202,24 +175,6 @@ class StreamSettings extends PureComponent<StreamSettingsProps, StreamSettingsSt
                         </label>
                     </div>
                 </form>
-                <form className="form" onSubmit={this.handleSubmitCacheLifetime}>
-                    <div className="form-group">
-                        <label>
-                            <div className="form-group-heading">Cache lifetime(hh:mm:ss)</div>
-                            <div className="input-group">
-                                <ValidatableControl
-                                    validClassName={null}
-                                    type="text"
-                                    className="form-control"
-                                    onChange={this.handleChangeCacheLifetime}
-                                    pattern={DURATION_PATTERN.source}
-                                    value={cacheLifetime}
-                                    required />
-                                <button type="submit" className="button button-outline-positive">Save</button>
-                            </div>
-                        </label>
-                    </div>
-                </form>
                 <form className="form" onSubmit={this.handleSubmitHistoryOptions}>
                     <div className="form-legend">History options</div>
                     <div className="form-group">
@@ -247,14 +202,12 @@ class StreamSettings extends PureComponent<StreamSettingsProps, StreamSettingsSt
 export default connect({
     mapStateToProps: (state: State) => ({
         cacheCapacity: state.streams.items.capacity,
-        cacheLifetime: state.streams.cacheLifetime,
         fetchOptions: state.streams.defaultFetchOptions,
         numStreamHistories: state.histories.recentlyReadStreams.capacity
     }),
     mapDispatchToProps: bindActions({
         onChangeDefaultStreamFetchOptions: changeDefaultStreamFetchOptions,
         onChangeStreamCacheCapacity: changeStreamCacheCapacity,
-        onChangeStreamCacheLifetime: changeStreamCacheLifetime,
         onChangeStreamHistoryOptions: changeStreamHistoryOptions
     })
 })(StreamSettings);
