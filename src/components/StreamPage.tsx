@@ -226,9 +226,9 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
         const { fetchOptions, onFetchStream, onScrollTo, stream } = this.props;
 
         if (stream) {
-            onScrollTo(0, 0);
-
-            onFetchStream(stream.streamId, fetchOptions);
+            onScrollTo(0, 0, () => {
+                onFetchStream(stream.streamId, fetchOptions);
+            });
         }
     }
 
