@@ -21,3 +21,9 @@ export function deleteTrackingUrlPattern(pattern: string): Event {
         pattern
     };
 }
+
+export function resetTrackingUrlPatterns(): Event {
+    return {
+        type: 'TRACKING_URL_PATTERNS_RESET'
+    };
+}

@@ -112,6 +112,7 @@ export type Event
     | { type: 'TOKEN_REVOKING' }
     | { type: 'TRACKING_URL_PATTERN_ADDED', pattern: string }
     | { type: 'TRACKING_URL_PATTERN_DELETED', pattern: string }
+    | { type: 'TRACKING_URL_PATTERNS_RESET' }
     | { type: 'UNREAD_KEEPING_CHANGED', keepUnread: boolean }
     | { type: 'USER_FETCHED', profile: Profile }
     | { type: 'USER_FETCHING' }
