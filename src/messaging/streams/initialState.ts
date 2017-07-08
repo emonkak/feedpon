@@ -11,7 +11,7 @@ const streams: Streams = {
     isLoading: false,
     isMarking: false,
     items: CacheMap.empty<Stream>(10),
-    keepUnread: true,
+    keepUnread: false,
     version: 1
 };
 
