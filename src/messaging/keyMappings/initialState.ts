@@ -18,6 +18,7 @@ const initialState: KeyMappings = {
         [['b'], { commandId: 'openUrl', params: { template: 'http://b.hatena.ne.jp/entry/${url}', inBackground: false } }],
         [['c'], { commandId: 'toggleStreamView', params: {} }],
         [['f'], { commandId: 'fetchFullContent', params: {} }],
+        [['g', 'c'], { commandId: 'clearReadEntries', params: {} }],
         [['g', 'g'], { commandId: 'gotoFirstLine', params: {}, preventNotification: true }],
         [['h'], { commandId: 'closeEntry', params: {} }],
         [['j'], { commandId: 'selectNextEntry', params: {} }],

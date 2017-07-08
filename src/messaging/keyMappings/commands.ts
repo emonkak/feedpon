@@ -12,6 +12,7 @@ export const gotoFirstLine: Command<{}> = {
     commandId: 'gotoFirstLine',
     name: 'Go to first line',
     description: 'Command description here.',
+    defaultParams: {},
     action() {
         return uiActions.scrollTo(0, 0);
     }
@@ -21,6 +22,7 @@ export const gotoLastLine: Command<{}> = {
     commandId: 'gotoLastLine',
     name: 'Go to last line',
     description: 'Command description here.',
+    defaultParams: {},
     action() {
         return uiActions.scrollTo(
             0,
@@ -33,6 +35,7 @@ export const fetchFullContent: Command<{}> = {
     commandId: 'fetchFullContent',
     name: 'Fetch full content',
     description: 'Command description here.',
+    defaultParams: {},
     action() {
         return ({ dispatch }) => {
             const entry = dispatch(getActiveEntry);
@@ -62,6 +65,7 @@ export const fetchComments: Command<{}> = {
     commandId: 'fetchComments',
     name: 'Fetch comments',
     description: 'Command description here.',
+    defaultParams: {},
     action() {
         return ({ dispatch }) => {
             const entry = dispatch(getActiveEntry);
@@ -85,6 +89,7 @@ export const pinOrUnpinEntry: Command<{}> = {
     commandId: 'pinOrUnpinEntry',
     name: 'Pin/Unpin entry',
     description: 'Command description here.',
+    defaultParams: {},
     action() {
         return ({ dispatch }) => {
             const entry = dispatch(getActiveEntry);
@@ -104,6 +109,7 @@ export const reloadSubscriptions: Command<{}> = {
     commandId: 'reloadSubscriptions',
     name: 'Reload subscriptions',
     description: 'Command description here.',
+    defaultParams: {},
     action() {
         return subscriptionActions.fetchSubscriptions();
     }
@@ -113,6 +119,7 @@ export const reloadStream: Command<{}> = {
     commandId: 'reloadStream',
     name: 'Reload stream',
     description: 'Command description here.',
+    defaultParams: {},
     action() {
         return ({ getState, dispatch }) => {
             const { ui, streams } = getState();
@@ -176,6 +183,7 @@ export const searchSubscriptions: Command<{}> = {
     commandId: 'searchSubscriptions',
     name: 'Search subscriptions',
     description: 'Command description here.',
+    defaultParams: {},
     action() {
         return ({ dispatch, getState }) => {
             const { ui } = getState();
@@ -197,6 +205,7 @@ export const selectNextEntry: Command<{}> = {
     commandId: 'selectNextEntry',
     name: 'Select next entry',
     description: 'Command description here.',
+    defaultParams: {},
     action() {
         return ({ getState, dispatch }, { router }) => {
             const { ui } = getState();
@@ -235,6 +244,7 @@ export const selectPreviousEntry: Command<{}> = {
     commandId: 'selectPreviousEntry',
     name: 'Select previous entry',
     description: 'Command description here.',
+    defaultParams: {},
     action() {
         return ({ dispatch, getState }, { router }) => {
             const { ui } = getState();
@@ -265,6 +275,7 @@ export const openEntry: Command<{}> = {
     commandId: 'openEntry',
     name: 'Open entry',
     description: 'Command description here.',
+    defaultParams: {},
     action() {
         return ({ getState, dispatch }) => {
             const { ui } = getState();
@@ -278,6 +289,7 @@ export const closeEntry: Command<{}> = {
     commandId: 'closeEntry',
     name: 'Close entry',
     description: 'Command description here.',
+    defaultParams: {},
     action() {
         return uiActions.changeExpandedEntry(-1);
     }
@@ -287,6 +299,7 @@ export const selectNextCategory: Command<{}> = {
     commandId: 'selectNextCategory',
     name: 'Select next category',
     description: 'Command description here.',
+    defaultParams: {},
     action() {
         return ({ dispatch, getState }, { router, selectors }) => {
             const state = getState();
@@ -316,6 +329,7 @@ export const selectPreviousCategory: Command<{}> = {
     commandId: 'selectPreviousCategory',
     name: 'Select previous category',
     description: 'Command description here.',
+    defaultParams: {},
     action() {
         return ({ dispatch, getState }, { router, selectors }) => {
             const state = getState();
@@ -345,6 +359,7 @@ export const selectNextSubscription: Command<{}> = {
     commandId: 'selectNextSubscription',
     name: 'Select next subscription',
     description: 'Command description here.',
+    defaultParams: {},
     action() {
         return ({ getState }, { router, selectors }) => {
             const state = getState();
@@ -374,6 +389,7 @@ export const selectPreviousSubscription: Command<{}> = {
     commandId: 'selectPreviousSubscription',
     name: 'Select previous subscription',
     description: 'Command description here.',
+    defaultParams: {},
     action() {
         return ({ getState }, { router, selectors }) => {
             const state = getState();
@@ -403,6 +419,7 @@ export const showHelp: Command<{}> = {
     commandId: 'showHelp',
     name: 'Show help',
     description: 'Command description here.',
+    defaultParams: {},
     action() {
         return () => {
             window.alert('help');
@@ -414,6 +431,7 @@ export const toggleSidebar: Command<{}> = {
     commandId: 'toggleSidebar',
     name: 'Toggle sidebar',
     description: 'Command description here.',
+    defaultParams: {},
     action() {
         return ({ getState, dispatch }) => {
             const { ui } = getState();
@@ -431,6 +449,7 @@ export const closeSidebar: Command<{}> = {
     commandId: 'closeSidebar',
     name: 'Close sidebar',
     description: 'Command description here.',
+    defaultParams: {},
     action() {
         return uiActions.closeSidebar();
     }
@@ -511,6 +530,20 @@ export const openUrl: Command<{ template: string, inBackground: boolean }> = {
         };
     }
 }
+
+export const clearReadEntries: Command<{}> = {
+    commandId: 'clearReadEntries',
+    name: 'Clear read entries',
+    description: 'Clear read entries',
+    defaultParams: {},
+    action() {
+        return ({ dispatch }) => {
+            dispatch(uiActions.scrollTo(0, 0, () => {
+                dispatch(uiActions.changeReadEntry(-1));
+            }));
+        };
+    }
+};
 
 function openUrlInBackground(url: string): void {
     if (chrome) {

@@ -145,7 +145,7 @@ export interface Command<T extends object> {
     commandId: string;
     name: string;
     description: string;
-    defaultParams?: T;
+    defaultParams: T;
     action(params: T): (Thunk<any> | Event);
 }
 

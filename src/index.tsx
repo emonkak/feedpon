@@ -63,7 +63,7 @@ const store = applyMiddlewares(createStore(reducer, state), [
         ));
     }),
     thunkMiddleware(context),
-    saveStateMiddleware(save, 10000),
+    saveStateMiddleware(save, 1000),
     reduxMiddleware(createLogger({ duration: true }))
 ]);
 
