@@ -19,7 +19,7 @@ export interface State {
     sharedSiteinfo: SharedSiteinfo;
     streams: Streams;
     subscriptions: Subscriptions;
-    trackingUrlPatterns: TrackingUrlPatterns;
+    trackingUrls: TrackingUrls;
     ui: UI;
     user: User;
     userSiteinfo: UserSiteinfo;
@@ -114,6 +114,8 @@ export type Event
     | { type: 'THEME_CHANGED', theme: ThemeKind }
     | { type: 'TOKEN_REVOKED' }
     | { type: 'TOKEN_REVOKING' }
+    | { type: 'TRACKING_URL_CACHED', originalUrl: string, expandedUrl: string }
+    | { type: 'TRACKING_URL_CACHE_CAPACITY_CHANGED', capacity: number }
     | { type: 'TRACKING_URL_PATTERNS_RESET' }
     | { type: 'TRACKING_URL_PATTERN_ADDED', pattern: string }
     | { type: 'TRACKING_URL_PATTERN_DELETED', pattern: string }
@@ -312,8 +314,9 @@ export interface Notification {
 
 export type NotificationKind = 'default' | 'positive' | 'negative';
 
-export interface TrackingUrlPatterns {
-    items: string[];
+export interface TrackingUrls {
+    items: CacheMap<string>;
+    patterns: string[];
     version: number;
 }
 

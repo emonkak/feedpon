@@ -11,7 +11,7 @@ import search from 'messaging/search/reducer';
 import sharedSiteinfo from 'messaging/sharedSiteinfo/reducer';
 import streams from 'messaging/streams/reducer';
 import subscriptions from 'messaging/subscriptions/reducer';
-import trackingUrlPatterns from 'messaging/trackingUrlPatterns/reducer';
+import trackingUrls from 'messaging/trackingUrls/reducer';
 import ui from 'messaging/ui/reducer';
 import user from 'messaging/user/reducer';
 import userSiteinfo from 'messaging/userSiteinfo/reducer';
@@ -27,7 +27,7 @@ export default combineReducers<State, Event>({
     sharedSiteinfo,
     streams,
     subscriptions,
-    trackingUrlPatterns,
+    trackingUrls,
     ui,
     user,
     userSiteinfo

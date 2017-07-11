@@ -2,10 +2,11 @@ import * as bookmarkApi from 'adapters/hatena/bookmarkApi';
 import * as feedly from 'adapters/feedly/types';
 import * as feedlyApi from 'adapters/feedly/api';
 import PromiseQueue from 'utils/PromiseQueue';
-import tryMatch from 'utils/tryMatch';
 import decodeResponseAsText from 'utils/decodeResponseAsText';
 import stripTags from 'utils/stripTags';
+import tryMatch from 'utils/tryMatch';
 import { AsyncThunk, Category, Entry, Event, Stream, StreamFetchOptions, Subscription, Thunk } from 'messaging/types';
+import { expandUrl } from 'messaging/trackingUrls/actions';
 import { getFeedlyToken } from 'messaging/backend/actions';
 import { getSiteinfoItems } from 'messaging/sharedSiteinfo/actions';
 import { sendNotification } from 'messaging/notifications/actions';
@@ -726,40 +727,23 @@ function extractNextPageUrl(contentDocument: Document, url: string, nextLinkExpr
 
 function expandUrls(urls: string[]): AsyncThunk<string[]> {
     return async ({ dispatch, getState }) => {
-        const { trackingUrlPatterns } = getState();
-        const trackingUrls = urls
-            .filter((url) => trackingUrlPatterns.items.some((pattern) => tryMatch(pattern, url)));
+        const { trackingUrls } = getState();
+        const matchedUrls = urls
+            .filter((url) => trackingUrls.patterns.some((pattern) => tryMatch(pattern, url)));
 
-        if (trackingUrls.length === 0) {
+        if (matchedUrls.length === 0) {
             return urls;
         }
 
         const queue = new PromiseQueue(8);
-        const cache = await caches.open('trackingUrls');
 
-        for (const url of trackingUrls) {
-            queue.enqueue(async () => {
-                const request = new Request(url, {
-                    method: 'HEAD'
-                });
-
-                const cachedResponse = await cache.match(request, {
-                    ignoreMethod: true
-                });
-                if (cachedResponse) {
-                    return { url, redirectUrl: cachedResponse.url };
-                }
-
-                const response = await fetch(request);
-                await cache.put(url, response);
-
-                return { url, redirectUrl: response.url };
-            });
+        for (const url of matchedUrls) {
+            queue.enqueue(() => dispatch(expandUrl(url)));
         }
 
         const { results } = await queue.getResults();
-        const expandedUrls = results.reduce<{ [key: string]: string }>((acc, { url, redirectUrl }) => {
-            acc[url] = redirectUrl;
+        const expandedUrls = results.reduce<{ [key: string]: string }>((acc, { originalUrl, expandedUrl }) => {
+            acc[originalUrl] = expandedUrl;
             return acc;
         }, {});
 

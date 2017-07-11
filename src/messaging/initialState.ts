@@ -8,7 +8,7 @@ import search from 'messaging/search/initialState';
 import sharedSiteinfo from 'messaging/sharedSiteinfo/initialState';
 import streams from 'messaging/streams/initialState';
 import subscriptions from 'messaging/subscriptions/initialState';
-import trackingUrlPatterns from 'messaging/trackingUrlPatterns/initialState';
+import trackingUrls from 'messaging/trackingUrls/initialState';
 import ui from 'messaging/ui/initialState';
 import user from 'messaging/user/initialState';
 import userSiteinfo from 'messaging/userSiteinfo/initialState';
@@ -25,7 +25,7 @@ const initialState: State = {
     sharedSiteinfo,
     streams,
     subscriptions,
-    trackingUrlPatterns,
+    trackingUrls,
     ui,
     user,
     userSiteinfo

@@ -6,10 +6,12 @@ import TrackingUrlPatternItem from 'components/parts/TrackingUrlPatternItem';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
 import { State } from 'messaging/types';
-import { addTrackingUrlPattern, deleteTrackingUrlPattern, resetTrackingUrlPatterns } from 'messaging/trackingUrlPatterns/actions';
+import { addTrackingUrlPattern, changeTrakingUrlCacheCapacity, deleteTrackingUrlPattern, resetTrackingUrlPatterns } from 'messaging/trackingUrls/actions';
 
 interface TrackingUrlProps {
+    cacheCapacity: number;
     onAddTrackingUrlPattern: typeof addTrackingUrlPattern;
+    onChangeTrakingUrlCacheCapacity: typeof changeTrakingUrlCacheCapacity;
     onDeleteTrackingUrlPattern: typeof deleteTrackingUrlPattern;
     onResetTrackingUrlPatterns: typeof resetTrackingUrlPatterns;
     patterns: string[];
@@ -17,6 +19,7 @@ interface TrackingUrlProps {
 
 interface TrackingUrlState {
     isResetting: boolean;
+    cacheCapacity: number;
 }
 
 class TrackingUrlSettings extends PureComponent<TrackingUrlProps, TrackingUrlState> {
@@ -24,23 +27,46 @@ class TrackingUrlSettings extends PureComponent<TrackingUrlProps, TrackingUrlSta
         super(props, context);
 
         this.state = {
+            cacheCapacity: props.cacheCapacity,
             isResetting: false
         };
 
         this.handleCancelResetting = this.handleCancelResetting.bind(this);
+        this.handleChangeCacheCapacity = this.handleChangeCacheCapacity.bind(this);
         this.handleStartResetting = this.handleStartResetting.bind(this);
+        this.handleSubmitCacheCapacity = this.handleSubmitCacheCapacity.bind(this);
+    }
+
+    handleChangeCacheCapacity(event: React.ChangeEvent<HTMLInputElement>) {
+        const cacheCapacity = event.currentTarget.value;
+
+        this.setState((state) => ({
+            ...state,
+            cacheCapacity
+        }));
     }
 
     handleCancelResetting() {
-        this.setState({
+        this.setState((state) => ({
+            ...state,
             isResetting: false
-        });
+        }));
     }
 
     handleStartResetting() {
-        this.setState({
+        this.setState((state) => ({
+            ...state,
             isResetting: true
-        });
+        }));
+    }
+
+    handleSubmitCacheCapacity(event: React.FormEvent<HTMLFormElement>) {
+        event.preventDefault();
+
+        const { onChangeTrakingUrlCacheCapacity } = this.props;
+        const { cacheCapacity } = this.state;
+
+        onChangeTrakingUrlCacheCapacity(cacheCapacity);
     }
 
     renderPattern(pattern: string, index: number) {
@@ -56,12 +82,29 @@ class TrackingUrlSettings extends PureComponent<TrackingUrlProps, TrackingUrlSta
 
     render() {
         const { onAddTrackingUrlPattern, onResetTrackingUrlPatterns, patterns } = this.props;
-        const { isResetting } = this.state;
+        const { cacheCapacity, isResetting } = this.state;
 
         return (
             <section className="section">
                 <h1 className="display-1">Tracking URL</h1>
                 <p>It expands the url that matches any tracking url pattern. Thereby you can get the correct number of bookmarks.</p>
+                <form className="form" onSubmit={this.handleSubmitCacheCapacity}>
+                    <div className="form-group">
+                        <label>
+                            <div className="form-group-heading">Cache capacity</div>
+                            <div className="input-group">
+                                <input
+                                    type="number"
+                                    className="form-control"
+                                    value={cacheCapacity + ''}
+                                    onChange={this.handleChangeCacheCapacity}
+                                    min={1}
+                                    required />
+                                <button type="submit" className="button button-outline-positive">Save</button>
+                            </div>
+                        </label>
+                    </div>
+                </form>
                 <TrackingUrlPatternForm onAdd={onAddTrackingUrlPattern} />
                 <h2 className="display-2">Available patterns</h2>
                 <ul className="list-group">
@@ -87,10 +130,12 @@ class TrackingUrlSettings extends PureComponent<TrackingUrlProps, TrackingUrlSta
 
 export default connect({
     mapStateToProps: (state: State) => ({
-        patterns: state.trackingUrlPatterns.items
+        cacheCapacity: state.trackingUrls.items.capacity,
+        patterns: state.trackingUrls.patterns
     }),
     mapDispatchToProps: bindActions({
         onAddTrackingUrlPattern: addTrackingUrlPattern,
+        onChangeTrakingUrlCacheCapacity: changeTrakingUrlCacheCapacity,
         onDeleteTrackingUrlPattern: deleteTrackingUrlPattern,
         onResetTrackingUrlPatterns: resetTrackingUrlPatterns
     })
