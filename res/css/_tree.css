@@ -55,7 +55,7 @@ a.tree-node-label {
   display: flex;
   align-items: center;
   flex: 1;
-  padding: calc(var(--baseline-height) / 4) 0.5rem;
+  padding: calc(var(--baseline-height) / 4) 0.5em;
   min-height: var(--baseline-height);
 }
 
@@ -69,10 +69,10 @@ a.tree-node-label {
 }
 
 .tree-node-secondary-text {
-  font-size: 0.875rem;
+  font-size: 0.875em;
   white-space: nowrap;
 }
 
 .tree-node-primary-text + .tree-node-secondary-text {
-  margin-left: 1rem;
+  margin-left: 1em;
 }

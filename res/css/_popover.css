@@ -29,21 +29,18 @@
 
 .popover-default,
 .popover-default .popover-arrow {
-  color: var(--default-color);
   background-color: var(--default-background-color);
   border-color: var(--default-border-color);
 }
 
 .popover-positive,
 .popover-positive .popover-arrow {
-  color: var(--positive-color);
   background-color: var(--positive-background-color);
   border-color: var(--positive-border-color);
 }
 
 .popover-negative,
 .popover-negative .popover-arrow {
-  color: var(--negative-color);
   background-color: var(--negative-background-color);
   border-color: var(--negative-border-color);
 }
@@ -72,7 +69,7 @@
 
 .popover-content {
   position: relative;
-  padding: calc(var(--baseline-height) / 2 - 1px) calc(1.5rem - 1px);
+  padding: calc(var(--baseline-height) / 2 - 1px) calc(1.5em - 1px);
 }
 
 .popover-content > p:last-child {

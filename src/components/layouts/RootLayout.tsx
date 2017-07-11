@@ -1,4 +1,4 @@
-import React, { Children, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
 
 import connect from 'utils/flux/react/connect';
 import { State, ThemeKind } from 'messaging/types';
@@ -6,6 +6,7 @@ import { THEMES } from 'messaging/ui/constants';
 
 interface RootLayoutProps {
     children: React.ReactElement<any>;
+    customStyles: string;
     theme: ThemeKind,
 }
 
@@ -45,12 +46,20 @@ class RootLayout extends PureComponent<RootLayoutProps, any> {
     }
 
     render() {
-        return Children.only(this.props.children);
+        const { customStyles, children } = this.props;
+
+        return (
+            <div>
+                <style dangerouslySetInnerHTML={{ __html: customStyles }} />
+                {children}
+            </div>
+        );
     }
 }
 
 export default connect({
     mapStateToProps: (state: State) => ({
+        customStyles: state.ui.customStyles,
         theme: state.ui.theme
     })
 })(RootLayout);

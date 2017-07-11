@@ -14,6 +14,12 @@ export default function uiReducer(ui: UI, event: Event): UI {
                 activeEntryIndex: event.index
             };
 
+        case 'CUSTOM_STYLE_CHANGED':
+            return {
+                ...ui,
+                customStyles: event.customStyles
+            };
+
         case 'EXPANDED_ENTRY_CHANGED':
             return {
                 ...ui,

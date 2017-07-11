@@ -6,7 +6,7 @@
   bottom: 0;
   left: 0;
   z-index: 1000;
-  padding: var(--baseline-height) 1.5rem;
+  padding: var(--baseline-height) 1.5em;
   overflow-y: auto;
   overflow-x: hidden;
   background-color: var(--backdrop-background-color);
@@ -32,7 +32,7 @@
 }
 
 .modal-dialog {
-  padding: var(--baseline-height) 1.5rem;
+  padding: var(--baseline-height) 1.5em;
   margin: 0 0 var(--baseline-height);
   background-color: var(--x-light-color);
   border-radius: 4px;
@@ -50,11 +50,13 @@
 
 .modal-title {
   margin: 0;
-  font-size: 2.0rem;
+  font-size: 2.0em;
   font-weight: 300;
   line-height: calc(var(--baseline-height) * 2);
 }
 
 .modal-is-opened {
   overflow: hidden;
+  position: relative;
+  height: 100%;
 }

@@ -8,7 +8,7 @@
 .nav-item {
   position: relative;
   margin: calc(var(--baseline-height) / 4) 0 calc(var(--baseline-height) / 4) -1px;
-  padding: calc(var(--baseline-height) / 4 - 1px) 1.5rem;
+  padding: calc(var(--baseline-height) / 4 - 1px) 1.5em;
   min-height: var(--baseline-height);
   border: 1px solid var(--medium-dark-color);
 }

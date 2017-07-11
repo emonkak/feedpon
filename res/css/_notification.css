@@ -67,7 +67,7 @@
 .instant-notification {
   display: inline-block;
   margin: var(--baseline-height) auto;
-  padding: calc(var(--baseline-height) / 2) 1.5rem;
+  padding: calc(var(--baseline-height) / 2) 1.5em;
   color: var(--backdrop-color);
   background-color: var(--backdrop-background-color);
   border-radius: var(--baseline-height);

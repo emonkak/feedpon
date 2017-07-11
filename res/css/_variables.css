@@ -3,7 +3,6 @@
 @custom-media --lg-viewport (min-width: 980px);
 
 :root {
-  --font-size: 14px;
   --baseline-height: 24px;
   --navbar-height: 48px;
   --sidebar-width: 272px;

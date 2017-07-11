@@ -2,7 +2,7 @@
   display: inline-block;
   position: relative;
   box-sizing: border-box;
-  padding: calc(var(--baseline-height) / 4 - 1px) calc(1rem - 1px);
+  padding: calc(var(--baseline-height) / 4 - 1px) calc(1em - 1px);
   border: 1px solid transparent;
   border-radius: 4px;
   text-align: center;
@@ -28,8 +28,8 @@
 }
 
 .button-large {
-  padding: calc(var(--baseline-height) / 2 - 1px) calc(1.25rem - 1px);
-  font-size: 1.25rem;
+  padding: calc(var(--baseline-height) / 2 - 1px) calc(1.25em - 1px);
+  font-size: 1.25em;
 }
 
 .button-pill {
@@ -42,7 +42,7 @@
 .button-pill > .icon {
   width: 100%;
   height: 100%;
-  vertical-align: middle;
+  vertical-align: baseline;
 }
 
 .button-default {
@@ -198,36 +198,11 @@
   width: 100%;
 }
 
-.button-icon {
-  display: inline-block;
-  height: var(--baseline-height);
-  transition: color 0.2s ease-in-out;
-}
-
-.button-icon:hover,
-.button-icon:focus {
-  color: var(--positive-color);
-}
-
-.button-icon-24 {
-  width: 24px;
-}
-
-.button-icon-32 {
-  width: 32px;
-}
-
-.button-icon > .icon {
-  width: 100%;
-  height: 100%;
-  vertical-align: middle;
-}
-
 .button-toolbar > .button + .button,
 .button-toolbar > .button + .button-group,
 .button-toolbar > .button-group + .button,
 .button-toolbar > .button-group + .button-group {
-  margin-left: 0.5rem;
+  margin-left: 0.5em;
 }
 
 .button-group {

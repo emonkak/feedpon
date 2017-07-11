@@ -77,14 +77,14 @@ a.menu-item.is-disabled {
 
 .menu-item-secondary-text {
   color: var(--dark-color);
-  font-size: 0.875rem;
+  font-size: 0.875em;
 }
 
 .menu-heading {
   padding: 0 24px 0 32px;
   color: var(--dark-color);
   font-weight: 600;
-  font-size: 0.875rem;
+  font-size: 0.875em;
 }
 
 .menu-form {

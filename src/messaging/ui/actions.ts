@@ -24,6 +24,13 @@ export function changeReadEntry(index: number): Event {
     };
 }
 
+export function changeCustomStyles(customStyles: string): Event {
+    return {
+        type: 'CUSTOM_STYLE_CHANGED',
+        customStyles
+    };
+}
+
 export function toggleSidebar(): Thunk {
     return ({ getState, dispatch }) => {
         const { ui } = getState();

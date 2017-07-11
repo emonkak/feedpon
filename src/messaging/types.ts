@@ -44,6 +44,7 @@ export type Event
     | { type: 'CATEGORY_UPDATED', prevCategoryLabel: string, category: Category }
     | { type: 'CATEGORY_UPDATING', categoryId: string | number }
     | { type: 'CATEGORY_UPDATING_FAILED', categoryId: string | number }
+    | { type: 'CUSTOM_STYLE_CHANGED', customStyles: string }
     | { type: 'DEFAULT_STREAM_OPTIONS_CHANGED', fetchOptions: StreamFetchOptions }
     | { type: 'ENTRIES_MARKED_AS_READ', entryIds: (string | number)[], readCounts: { [streamId: string]: number } }
     | { type: 'ENTRIES_MARKING_AS_READ', entryIds: (string | number)[] }
@@ -381,6 +382,7 @@ export interface User {
 
 export interface UI {
     activeEntryIndex: number;
+    customStyles: string;
     expandedEntryIndex: number;
     helpIsOpened: boolean;
     isScrolling: boolean;

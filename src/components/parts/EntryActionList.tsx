@@ -20,7 +20,7 @@ const EntryActionList: React.SFC<EntryActionListProps> = ({
     url
 }) => {
     return (
-        <div className="button-toolbar u-flex u-flex-justify-content-center">
+        <div className="button-toolbar u-flex u-flex-align-items-center u-flex-justify-content-center">
             <button
                 className={classnames('button button-pill', commentsIsShown ? 'button-default' : 'button-outline-default')}
                 title="Comments..."

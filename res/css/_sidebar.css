@@ -1,5 +1,5 @@
 .sidebar {
-  padding: calc(var(--baseline-height) / 2) 1.5rem;
+  padding: calc(var(--baseline-height) / 2) 1.5em;
 }
 
 .sidebar-group {
@@ -8,7 +8,7 @@
 
 .sidebar-group-header {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   padding: calc(var(--baseline-height) / 4) 0 calc(var(--baseline-height) / 4 - 1px);
   border-bottom: 1px solid var(--x-dark-color);
 }

@@ -9,31 +9,31 @@
 }
 
 .display-1 {
-  font-size: 2.5rem;
+  font-size: 2.5em;
   line-height: calc(var(--baseline-height) * 2);
 }
 
 .display-2 {
-  font-size: 2.0rem;
+  font-size: 2.0em;
   line-height: calc(var(--baseline-height) * 1.5);
 }
 
 .display-3 {
-  font-size: 1.5rem;
+  font-size: 1.5em;
   line-height: var(--baseline-height);
 }
 
 .display-4 {
-  font-size: 1.375rem;
+  font-size: 1.375em;
   line-height: var(--baseline-height);
 }
 
 .display-5 {
-  font-size: 1.25rem;
+  font-size: 1.25em;
   line-height: var(--baseline-height);
 }
 
 .display-6 {
-  font-size: 1.125rem;
+  font-size: 1.125em;
   line-height: var(--baseline-height);
 }

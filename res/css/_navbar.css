@@ -17,7 +17,7 @@
   display: flex;
   align-items: center;
   margin: 0;
-  padding: 0 1rem;
+  padding: 0 1em;
   min-width: 0;
   color: inherit;
   font-size: inherit;
@@ -34,7 +34,6 @@
   text-decoration: none;
   width: var(--navbar-height);
   height: calc(var(--navbar-height) - 1px);
-  transition: color 0.2s ease-in-out;
 }
 
 .navbar-action:hover,
@@ -54,7 +53,7 @@
 
 @media (--md-viewport) {
   .navbar-container {
-    padding-left: 2.5rem;
-    padding-right: 2.5rem;
+    padding-left: 2.5em;
+    padding-right: 2.5em;
   }
 }

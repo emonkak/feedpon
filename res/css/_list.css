@@ -17,7 +17,7 @@
 }
 
 .list-inline-divided > .list-inline-item {
-  padding: 0 calc(1rem - 1px);
+  padding: 0 calc(1em - 1px);
   border-left: 1px solid transparent;
   border-right: 1px solid transparent;
 }
@@ -35,7 +35,7 @@
 .list-group-item,
 a.list-group-item {
   display: block;
-  padding: calc(var(--baseline-height) / 4) 1rem;
+  padding: calc(var(--baseline-height) / 4) 1em;
   color: inherit;
   text-decoration: none;
 }

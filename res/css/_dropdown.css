@@ -47,16 +47,16 @@
   display: inline-block;
   width: 0;
   height: 0;
-  margin-left: 0.25rem;
+  margin-left: 0.25em;
   vertical-align: middle;
-  border-right: 0.25rem solid transparent;
-  border-left: 0.25rem solid transparent;
+  border-right: 0.25em solid transparent;
+  border-left: 0.25em solid transparent;
 }
 
 .dropdown-arrow::after {
-  border-top: 0.25rem solid;
+  border-top: 0.25em solid;
 }
 
 .dropup-arrow::after {
-  border-bottom: 0.25rem solid;
+  border-bottom: 0.25em solid;
 }

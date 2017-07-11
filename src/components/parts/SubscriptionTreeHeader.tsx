@@ -32,10 +32,10 @@ const SubscriptionTreeHeader: React.SFC<SubscriptionTreeHeaderProps> = ({
     return (
         <header className="sidebar-group-header">
             <button
-                className="u-flex-shrink-0 button-icon button-icon-32"
+                className="link-soft u-flex-shrink-0"
                 disabled={isLoading}
                 onClick={onReload}>
-                <i className={classnames('icon', 'icon-16', 'icon-refresh', {
+                <i className={classnames('icon icon-16 icon-width-32 icon-refresh', {
                     'icon-rotating': isLoading
                 })} />
             </button>
@@ -43,8 +43,8 @@ const SubscriptionTreeHeader: React.SFC<SubscriptionTreeHeaderProps> = ({
             <Dropdown
                 pullUp={false}
                 toggleButton={
-                    <button className="u-flex-shrink-0 button-icon button-icon-32">
-                        <i className="icon icon-16 icon-menu-2" />
+                    <button className="link-soft u-flex-shrink-0">
+                        <i className="icon icon-16 icon-width-32 icon-menu-2" />
                     </button>
                 }>
                 <div className="menu-heading">Order</div>

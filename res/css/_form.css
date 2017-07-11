@@ -32,7 +32,7 @@ input.form-control {
   position: relative;
   box-sizing: border-box;
   width: 100%;
-  padding: calc(var(--baseline-height) / 4 - 1px) calc(0.5rem - 1px);
+  padding: calc(var(--baseline-height) / 4 - 1px) calc(0.5em - 1px);
   background-color: var(--x-light-color);
   border: 1px solid var(--medium-dark-color);
   border-radius: 4px;
@@ -71,7 +71,7 @@ select.form-control:not([size]):not([multiple]) {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 0.5rem;
+  padding: 0 0.5em;
   background-color: var(--light-color);
   border: 1px solid var(--medium-dark-color);
   border-radius: 4px;
@@ -90,7 +90,7 @@ select.form-control:not([size]):not([multiple]) {
 
 .form-check {
   margin-top: -1px;
-  margin-right: 0.5rem;
+  margin-right: 0.5em;
   vertical-align: middle;
 }
 
@@ -147,7 +147,7 @@ input.input-search-box {
   display: block;
   box-sizing: border-box;
   width: 100%;
-  padding: calc(var(--baseline-height) / 4) 0.5rem calc(var(--baseline-height) / 4 - 2px);
+  padding: calc(var(--baseline-height) / 4) 0.5em calc(var(--baseline-height) / 4 - 2px);
   background-color: transparent;
   border: 0;
   border-bottom: 2px solid var(--x-dark-color);

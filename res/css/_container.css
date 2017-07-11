@@ -1,6 +1,6 @@
 .container {
   margin: 0 auto;
-  padding: 0 1.5rem;
+  padding: 0 1.5em;
   max-width: var(--container-width);
 }
 
@@ -10,6 +10,6 @@
 
 @media (--md-viewport) {
   .container {
-    padding: 0 2.5rem;
+    padding: 0 2.5em;
   }
 }
