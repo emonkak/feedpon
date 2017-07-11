@@ -141,7 +141,7 @@ function chromeOpenWindow(url: string, onTransition: (url: string) => boolean): 
             const handleRemoveWindow = (windowId: number) => {
                 if (windowId === window!.id) {
                     unregisterListeners();
-                    reject(new Error('Window did not transition to the expected URL'));
+                    reject(new Error('Authentication was not completed.'));
                 }
             }
 
@@ -170,7 +170,7 @@ function cordovaOpenWindow(url: string, onTransition: (url: string) => boolean):
 
         const handleExit = (event: InAppBrowserEvent) => {
             unregisterListeners();
-            reject(new Error('Window did not transition to the expected URL'));
+            reject(new Error('Authentication was not completed.'));
         };
 
         const unregisterListeners = () => {
