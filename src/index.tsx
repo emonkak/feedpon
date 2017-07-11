@@ -43,7 +43,8 @@ function main() {
 
             dispatch(sendNotification(
                 errorString,
-                'negative'
+                'negative',
+                0
             ));
         }),
         thunkMiddleware(context),
