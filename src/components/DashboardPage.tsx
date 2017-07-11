@@ -56,7 +56,7 @@ class DashboardPage extends PureComponent<DashboardProps, DashboardState> {
                         </div>
                     </div>
                     {streamHistory.unreadCount > 0 &&
-                        <div><span className="badge badge-positive">{streamHistory.unreadCount}</span></div>}
+                        <div className="u-flex-shrink-0"><span className="badge badge-positive">{streamHistory.unreadCount}</span></div>}
                 </div>
             </Link>
         );

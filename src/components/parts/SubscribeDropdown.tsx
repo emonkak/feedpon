@@ -9,6 +9,7 @@ import { MenuItem, MenuForm } from 'components/widgets/Menu';
 
 interface SubscribeDropdownProps {
     categories: Category[];
+    className?: string;
     feed: Feed;
     onAddToCategory: (subscription: Subscription, label: string) => void;
     onCreateCategory: (label: string, callback: (category: Category) => void) => void;
@@ -126,7 +127,7 @@ export default class SubscribeDropdown extends PureComponent<SubscribeDropdownPr
     }
 
     render() {
-        const { categories, feed, subscription } = this.props;
+        const { categories, className, feed, subscription } = this.props;
         const { unsubscribeModalIsOpened } = this.state;
 
         return (
@@ -141,6 +142,7 @@ export default class SubscribeDropdown extends PureComponent<SubscribeDropdownPr
                     title={`Unsubscribe "${feed.title}"`} />
             }>
                 <Dropdown
+                    className={className}
                     toggleButton={<SubscribeButton isSubscribed={!!subscription} isLoading={feed.isLoading} />}>
                     <div className="menu-heading">Category</div>
                     {categories.map(this.renderCategoryMenuItem, this)}

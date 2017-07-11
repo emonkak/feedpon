@@ -32,7 +32,7 @@ const FeedHeader: React.SFC<FeedHeaderProps> = ({
         <header className="stream-header">
             <div className="container">
                 <div className="u-flex u-flex-align-items-center u-flex-justify-content-between">
-                    <div className="u-margin-right-2">
+                    <div className="u-margin-right-2 u-flex-grow-1">
                         <div className="list-inline list-inline-dotted">
                             <div className="list-inline-item u-text-muted"><span className="u-text-x-large">{numEntries}</span> entries</div>
                             <div className="list-inline-item u-text-muted"><span className="u-text-x-large">{feed.subscribers}</span> subscribers</div>
@@ -41,6 +41,7 @@ const FeedHeader: React.SFC<FeedHeaderProps> = ({
                         <div><a target="_blank" href={feed.feedUrl}>{feed.feedUrl}</a></div>
                     </div>
                     <SubscribeDropdown
+                        className="u-flex-shrink-0"
                         categories={categories}
                         feed={feed}
                         onAddToCategory={onAddToCategory}

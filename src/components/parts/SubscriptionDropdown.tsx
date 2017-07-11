@@ -9,11 +9,12 @@ import { MenuItem, MenuForm } from 'components/widgets/Menu';
 
 interface SubscriptionDropdownProps {
     categories: Category[];
-    subscription: Subscription;
+    className?: string;
     onAddToCategory: (subscription: Subscription, label: string) => void;
     onCreateCategory: (label: string, callback: (category: Category) => void) => void;
     onRemoveFromCategory: (subscription: Subscription, label: string) => void;
     onUnsubscribe: (subscription: Subscription) => void;
+    subscription: Subscription;
 }
 
 interface SubscriptionDropdownState {
@@ -100,7 +101,7 @@ export default class SubscriptionDropdown extends PureComponent<SubscriptionDrop
     }
 
     render() {
-        const { categories, subscription } = this.props;
+        const { categories, className, subscription } = this.props;
         const { unsubscribeModalIsOpened } = this.state;
 
         return (
@@ -115,6 +116,7 @@ export default class SubscriptionDropdown extends PureComponent<SubscriptionDrop
                     title={`Unsubscribe "${subscription.title}"`} />
             }>
                 <Dropdown
+                    className={className}
                     toggleButton={
                         <button className="button-icon button-icon-24 u-margin-left-2" disabled={subscription.isLoading}>
                             <i className={classnames('icon icon-20', subscription.isLoading ? 'icon-spinner icon-rotating' : 'icon-menu-2' )} />

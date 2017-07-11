@@ -113,6 +113,10 @@ select.form-control:not([size]):not([multiple]) {
   margin-left: -1px;
 }
 
+.input-group > .form-control {
+  flex: 1;
+}
+
 .input-group > .form-control:not(:first-child) {
   border-left: 0;
 }

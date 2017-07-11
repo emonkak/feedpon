@@ -45,6 +45,7 @@ const SubscriptionComponent: React.SFC<SubscriptionProps> = ({
                     <RelativeTime className="u-text-small u-text-muted" time={subscription.updatedAt} />
                 </div>
                 <SubscriptionDropdown
+                    className="u-flex-shrink-0"
                     categories={categories}
                     onAddToCategory={onAddToCategory}
                     onCreateCategory={onCreateCategory}
