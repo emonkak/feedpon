@@ -136,7 +136,7 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
                 <div className="sidebar-group">
                     <Tree>
                         <TreeLeaf
-                            value="/settings/"
+                            value="/settings/ui"
                             primaryText="Settings"
                             isSelected={location.pathname.startsWith('/settings/')}
                             onSelect={this.handleSelect} />

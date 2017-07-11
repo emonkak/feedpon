@@ -76,18 +76,20 @@ class KeyboardSettings extends PureComponent<KeyboardSettingsProps, KeyboardSett
                     onSubmit={onUpdateKeyMapping}>
                     <button type="submit" className="button button-outline-positive">Add</button>
                 </KeyMappingForm>
-                <table className="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Key</th>
-                            <th>Command</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {keyMappingItems}
-                    </tbody>
-                </table>
+                <div className="u-responsive">
+                    <table className="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Key</th>
+                                <th>Command</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {keyMappingItems}
+                        </tbody>
+                    </table>
+                </div>
                 <div className="form">
                     <button
                         className="button button-outline-negative"

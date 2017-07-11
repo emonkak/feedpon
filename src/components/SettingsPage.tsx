@@ -1,23 +1,17 @@
 import React, { PureComponent } from 'react';
-import { History } from 'history';
-import { Params } from 'react-router/lib/Router';
+import { Location, History } from 'history';
 
-import KeyboardSettings from 'components/KeyboardSettings';
 import MainLayout from 'components/layouts/MainLayout';
 import Navbar from 'components/widgets/Navbar';
-import SharedSiteinfoSettings from 'components/SharedSiteinfoSettings';
-import StreamSettings from 'components/StreamSettings';
-import TrackingUrlSettings from 'components/TrackingUrlSettings';
-import UISettings from 'components/UISettings';
-import UserSiteinfoSettings from 'components/UserSiteinfoSettings';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
 import { Nav, NavItem } from 'components/widgets/Nav';
 import { toggleSidebar } from 'messaging/ui/actions';
 
 interface SettingsProps {
+    children: React.ReactElement<any>
+    location: Location;
     onToggleSidebar: typeof toggleSidebar;
-    params: Params;
     router: History;
 }
 
@@ -28,10 +22,10 @@ class SettingsPage extends PureComponent<SettingsProps, {}> {
         this.handleSelectNavItem = this.handleSelectNavItem.bind(this);
     }
 
-    handleSelectNavItem(value: string) {
+    handleSelectNavItem(path: string) {
         const { router } = this.props;
 
-        router.replace('/settings/' + value);
+        router.replace(path);
     }
 
     renderNavbar() {
@@ -44,67 +38,44 @@ class SettingsPage extends PureComponent<SettingsProps, {}> {
         );
     }
 
-    renderNavContent() {
-        const { params } = this.props;
-
-        switch (params['setting_id'] || 'general') {
-            case 'general':
-                return (
-                    <div>
-                        <UISettings />
-                        <StreamSettings />
-                        <TrackingUrlSettings />
-                    </div>
-                );
-
-            case 'keyboard':
-                return (
-                    <KeyboardSettings />
-                );
-
-            case 'siteinfo':
-                return (
-                    <section>
-                        <h1 className="display-1">Siteinfo</h1>
-                        <p>Siteinfo is used for extracting the full content.</p>
-                        <UserSiteinfoSettings />
-                        <SharedSiteinfoSettings />
-                    </section>
-                );
-
-            default:
-                return null;
-        }
-    }
-
     renderContent() {
-        const { params } = this.props;
-        const value = params['setting_id'] || 'general';
+        const { children, location } = this.props;
 
         return (
             <div className="container">
                 <Nav onSelect={this.handleSelectNavItem}>
                     <NavItem
-                        value="general"
-                        title="General"
-                        isSelected={value === 'general'}>
-                        <i className="u-sm-inline-block u-md-none icon icon-20 icon-settings" /><span className="u-sm-none u-md-inline">General</span>
+                        value="/settings/ui"
+                        title="UI"
+                        isSelected={location.pathname === '/settings/ui'}>
+                        <i className="u-sm-inline-block u-md-none icon icon-20 icon-browser-window" /><span className="u-sm-none u-md-inline">UI</span>
                     </NavItem>
                     <NavItem
-                        value="keyboard"
-                        title="Keyboard"
-                        isSelected={value === 'keyboard'}
-                        >
-                        <i className="u-sm-inline-block u-md-none icon icon-20 icon-keyboard" /><span className="u-sm-none u-md-inline">Keyboard</span>
+                        value="/settings/stream"
+                        title="Stream"
+                        isSelected={location.pathname === '/settings/stream'}>
+                        <i className="u-sm-inline-block u-md-none icon icon-20 icon-news-feed" /><span className="u-sm-none u-md-inline">Stream</span>
                     </NavItem>
                     <NavItem
-                        value="siteinfo"
+                        value="/settings/tracking_url"
+                        title="Tracking URL"
+                        isSelected={location.pathname === '/settings/tracking_url'}>
+                        <i className="u-sm-inline-block u-md-none icon icon-20 icon-link" /><span className="u-sm-none u-md-inline">Tracking URL</span>
+                    </NavItem>
+                    <NavItem
+                        value="/settings/siteinfo"
                         title="Siteinfo"
-                        isSelected={value === 'siteinfo'}>
+                        isSelected={location.pathname === '/settings/siteinfo'}>
                         <i className="u-sm-inline-block u-md-none icon icon-20 icon-database" /><span className="u-sm-none u-md-inline">Siteinfo</span>
                     </NavItem>
+                    <NavItem
+                        value="/settings/keyboard"
+                        title="Keyboard"
+                        isSelected={location.pathname === '/settings/keyboard'}>
+                        <i className="u-sm-inline-block u-md-none icon icon-20 icon-keyboard" /><span className="u-sm-none u-md-inline">Keyboard</span>
+                    </NavItem>
                 </Nav>
-                {this.renderNavContent()}
+                {children}
             </div>
         );
     }

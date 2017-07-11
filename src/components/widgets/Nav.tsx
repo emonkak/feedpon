@@ -96,14 +96,24 @@ export class NavItem extends PureComponent<NavItemProps, {}> {
     render() {
         const { children, isSelected, title } = this.props;
 
-        return (
-            <a
-                className={classnames('nav-item', { 'is-selected': isSelected })}
-                href="#"
-                title={title}
-                onClick={this.handleSelect}>
-                {children}
-            </a>
-        );
+        if (isSelected) {
+            return (
+                <span
+                    className={classnames('nav-item', { 'is-selected': isSelected })}
+                    title={title}>
+                    {children}
+                </span>
+            );
+        } else {
+            return (
+                <a
+                    className={classnames('nav-item', { 'is-selected': isSelected })}
+                    href="#"
+                    title={title}
+                    onClick={this.handleSelect}>
+                    {children}
+                </a>
+            );
+        }
     }
 }
