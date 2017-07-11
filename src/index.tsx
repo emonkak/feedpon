@@ -1,5 +1,3 @@
-import './bootstrap';
-
 import FastClick from 'fastclick';
 import React from 'react';
 import ReactDOM from 'react-dom';

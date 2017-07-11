@@ -3,7 +3,8 @@ const path = require('path');
 const config = {
     entry: {
         'background': './src/background.ts',
-        'index': './src/index.tsx'
+        'index': './src/index.tsx',
+        'runtime': './src/runtime.ts'
     },
     output: {
         path: path.join(__dirname, 'www', 'js'),

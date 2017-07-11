@@ -186,6 +186,16 @@ export function fetchFullContent(entryId: string | number, url: string): AsyncTh
                             nextPageUrl = extractNextPageUrl(parsedDocument, response.url, item.nextLinkExpression);
                         }
 
+                        debugger;
+
+                        console.log('matched', {
+                            content,
+                            contentExpression: item.contentExpression,
+                            nextPageUrl,
+                            url: response.url,
+                            urlPattern: item.urlPattern, 
+                        });
+
                         if (content && nextPageUrl) {
                             break;
                         }
@@ -725,6 +735,14 @@ function extractNextPageUrl(contentDocument: Document, url: string, nextLinkExpr
     return '';
 }
 
+function tryEvaluate(expression: string, contextNode: Node, resolver: XPathNSResolver | null, type: number, result: XPathResult | null): XPathResult | null {
+    try {
+        return document.evaluate(expression, contextNode, resolver, type, result);
+    } catch (_error) {
+        return null;
+    }
+}
+
 function expandUrls(urls: string[]): AsyncThunk<string[]> {
     return async ({ dispatch, getState }) => {
         const { trackingUrls } = getState();
@@ -754,14 +772,6 @@ function expandUrls(urls: string[]): AsyncThunk<string[]> {
 
         return urls.map((url) => expandedUrls[url] || url);
     };
-}
-
-function tryEvaluate(expression: string, contextNode: Node, resolver: XPathNSResolver | null, type: number, result: XPathResult | null): XPathResult | null {
-    try {
-        return document.evaluate(expression, contextNode, resolver, type, result);
-    } catch (_error) {
-        return null;
-    }
 }
 
 function toFeedlyStreamId(streamId: string, uid: string): string {
