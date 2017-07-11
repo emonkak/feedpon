@@ -11,6 +11,7 @@
 html, body {
   -webkit-text-size-adjust: 100%;
   font-family: -apple-system, BlinkMacSystemFont, '.SFNSDisplay-Regular', 'San Francisco Text', 'Segoe UI', Helvetica, YuGothic, 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+  font-family: Nunito, YuGothic, 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
   font-size: var(--font-size);
   font-weight: 400;
   line-height: var(--baseline-height);

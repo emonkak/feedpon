@@ -20,7 +20,7 @@ const SubscriptionIcon: React.SFC<SubscriptionIconProps> = ({
         );
     } else {
         return (
-            <i className="icon icon-16 icon-file u-vertical-middle " />
+            <i className="icon icon-16 icon-file " />
         );
     }
 }

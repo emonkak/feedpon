@@ -12,6 +12,7 @@
   background-size: 100%;
   background-color: currentColor;
   display: inline-block;
+  vertical-align: middle;
 }
 
 .icon-angle-up,

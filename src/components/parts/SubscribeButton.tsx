@@ -22,7 +22,7 @@ const SubscribeButton: React.SFC<SubscribeButtonProps> = ({
                 className="button button-outline-default dropdown-arrow"
                 disabled={isLoading}>
                 <i className={classnames(
-                    'icon icon-20 u-vertical-middle',
+                    'icon icon-20',
                     isLoading ? 'icon-spinner icon-rotating' : 'icon-settings'
                 )} />
             </button>
@@ -35,7 +35,7 @@ const SubscribeButton: React.SFC<SubscribeButtonProps> = ({
                 className="button button-outline-positive dropdown-arrow"
                 disabled={isLoading}>
                 <i className={classnames(
-                    'icon icon-20 u-vertical-middle',
+                    'icon icon-20',
                     isLoading ? 'icon-spinner icon-rotating' : 'icon-plus-math'
                 )} />
             </button>

@@ -29,7 +29,7 @@ const CategoryHeader: React.SFC<CategoryHeaderProps> = ({
                             className="button button-outline-default"
                             to={`/categories/${category.label}`}
                             title="Organize category...">
-                            <i className="icon icon-20 icon-edit u-vertical-middle" />
+                            <i className="icon icon-20 icon-edit" />
                         </Link>
                     </div>
                 </div>
