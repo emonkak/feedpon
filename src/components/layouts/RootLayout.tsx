@@ -31,16 +31,16 @@ class RootLayout extends PureComponent<RootLayoutProps, any> {
     updateTheme(nextTheme: ThemeKind) {
         for (const theme of THEMES) {
             if (theme.value !== nextTheme) {
-                document.documentElement.classList.remove(theme.value);
+                document.body.classList.remove(theme.value);
             }
         }
 
-        document.documentElement.classList.add(nextTheme);
+        document.body.classList.add(nextTheme);
     }
 
     clearTheme() {
         for (const theme of THEMES) {
-            document.documentElement.classList.remove(theme.value);
+            document.body.classList.remove(theme.value);
         }
     }
 
