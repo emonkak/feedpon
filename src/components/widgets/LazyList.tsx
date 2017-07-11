@@ -33,13 +33,15 @@ export default class LazyList extends PureComponent<LazyListProps, LazyListState
         scrollThrottleTime: 100
     };
 
-    private readonly elements: { [key: string]: HTMLElement } = {};
+    readonly elements: { [key: string]: HTMLElement } = {};
 
-    private heights: { [key: string]: number } = {};
+    heights: { [key: string]: number } = {};
 
-    private containerElement: HTMLElement;
+    containerElement: HTMLElement;
 
-    private scrollable: Element | Window;
+    scrollable: Element | Window;
+
+    isUnmounted: boolean = false;
 
     constructor(props: LazyListProps, context: any) {
         super(props, context);
@@ -78,6 +80,8 @@ export default class LazyList extends PureComponent<LazyListProps, LazyListState
         this.scrollable.removeEventListener('resize', this.handleUpdateHeight);
         this.scrollable.removeEventListener('scroll', this.handleScroll);
         this.scrollable.removeEventListener('touchmove', this.handleScroll);
+
+        this.isUnmounted = true;
     }
 
     getScrollRect() {
@@ -163,10 +167,16 @@ export default class LazyList extends PureComponent<LazyListProps, LazyListState
     }
 
     handleScroll(event: Event) {
+        if (this.isUnmounted) {
+            return;
+        }
         this.updateScrollPosition();
     }
 
     handleUpdateHeight() {
+        if (this.isUnmounted) {
+            return;
+        }
         this.recalclateHeights();
         this.updateScrollPosition();
     }

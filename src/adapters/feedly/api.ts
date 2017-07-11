@@ -1,11 +1,12 @@
+import querystring from 'query-string';
+
 import * as types from './types';
-import buildQueryString from 'utils/buildQueryString';
 
 const ENDPOINT = 'https://cloud.feedly.com/';
 
 // Authentication API:
 export function createAuthUrl(input: types.AuthenticateInput): string {
-    return ENDPOINT + 'v3/auth/auth?' + buildQueryString({
+    return ENDPOINT + 'v3/auth/auth?' + querystring.stringify({
         client_id: input.client_id,
         redirect_uri: input.redirect_uri,
         response_type: input.response_type,
@@ -14,13 +15,13 @@ export function createAuthUrl(input: types.AuthenticateInput): string {
 }
 
 export function authCallback(urlString: string): types.AuthenticateResponse {
-    const url = new URL(urlString);
-    const { searchParams } = url as any;  // XXX: Avoid the type definition bug
+    const paramsString = urlString.slice(urlString.indexOf('?') + 1);
+    const params = querystring.parse(paramsString);
 
     return {
-        code: searchParams.get('code'),
-        state: searchParams.get('state'),
-        error: searchParams.get('error')
+        code: params['code'],
+        state: params['state'],
+        error: params['error']
     };
 }
 
@@ -153,7 +154,7 @@ export function keepUnreadForCategories(accessToken: string, categoryIds: string
 
 // OPML API
 export function createExportOpmlUrl(accessToken: string): string {
-    return ENDPOINT + 'v3/opml?' + buildQueryString({
+    return ENDPOINT + 'v3/opml?' + querystring.stringify({
         feedlyToken: accessToken
     });
 }
@@ -277,8 +278,8 @@ export function deleteTag(accessToken: string, tagIds: string[]): Promise<Respon
 }
 
 // Utils:
-function doGet(path: string, data?: string | object | null, headers?: { [key: string]: string }): Promise<Response> {
-    const url = ENDPOINT + path + (data ? '?' + buildQueryString(data) : '');
+function doGet(path: string, data?: object | null, headers?: { [key: string]: string }): Promise<Response> {
+    const url = ENDPOINT + path + (data ? '?' + querystring.stringify(data) : '');
 
     const params = {
         method: 'GET',

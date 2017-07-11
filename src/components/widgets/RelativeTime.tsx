@@ -3,7 +3,7 @@ import React, { PureComponent } from 'react';
 
 interface RelativeTimeProps {
     className?: string;
-    locales?: string[];
+    locales?: string | string[];
     refreshInterval?: number;
     time: Date | number;
 }
@@ -14,6 +14,7 @@ interface RelativeTimeState {
 
 export default class RelativeTime extends PureComponent<RelativeTimeProps, RelativeTimeState> {
     static defaultProps = {
+        locales: 'en',
         refreshInterval: 1000 * 60
     };
 

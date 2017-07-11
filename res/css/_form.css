@@ -23,6 +23,10 @@
   color: var(--negative-color);
 }
 
+input.form-control {
+  -webkit-appearance: none;
+}
+
 .form-control {
   display: block;
   position: relative;
@@ -131,12 +135,17 @@ select.form-control:not([size]):not([multiple]) {
   border-top-right-radius: 0;
 }
 
+input.input-search-box {
+  -webkit-appearance: none;
+}
+
 .input-search-box {
   display: block;
   box-sizing: border-box;
   width: 100%;
   padding: calc(var(--baseline-height) / 4) 0.5rem calc(var(--baseline-height) / 4 - 2px);
   background-color: transparent;
+  border: 0;
   border-bottom: 2px solid var(--x-dark-color);
   border-radius: 0;
   transition: border-color 0.2s ease-in-out;

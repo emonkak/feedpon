@@ -1,9 +1,10 @@
 .DS_Store
 .vscode
 /platforms/ios/www/
-/public/css/
-/public/fonts/
-/public/js/
-/src/json/
+/www/css/
+/www/fonts/
+/www/js/
 node_modules/
 npm-debug.log*
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj

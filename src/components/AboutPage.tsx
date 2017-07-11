@@ -189,7 +189,7 @@ class AboutPage extends PureComponent<AboutPageProps, {}> {
                     <div className="container">
                         <div>
                             <a href="https://github.com/emonkak/feedpon" target="_blank">
-                                <img src="/img/feedpon.svg" width="320" height="96" />
+                                <img src="./img/logo.svg" width="320" height="96" />
                             </a>
                         </div>
                         <div className="u-margin-bottom-1">

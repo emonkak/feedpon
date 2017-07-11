@@ -1,13 +1,13 @@
 export default function buildQueryString(input: any): string {
-    const params = new URLSearchParams();
+    const params = [];
     for (const key of Object.keys(input)) {
         if (Array.isArray(input[key])) {
             for (const value of input[key]) {
-                params.append(key, value);
+                params.push(encodeURIComponent(key) + '=' + encodeURIComponent(value));
             }
         } else {
-            params.append(key, input[key]);
+            params.push(encodeURIComponent(key) + '=' + encodeURIComponent(input[key]));
         }
     }
-    return params.toString();
+    return params.join('&');
 }

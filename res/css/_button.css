@@ -1,7 +1,5 @@
 .button {
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
+  display: inline-block;
   position: relative;
   box-sizing: border-box;
   padding: calc(var(--baseline-height) / 4 - 1px) calc(1rem - 1px);
@@ -38,6 +36,12 @@
   height: 36px;
   padding: 0;
   border-radius: 50%;
+}
+
+.button-pill > .icon {
+  width: 100%;
+  height: 100%;
+  vertical-align: middle;
 }
 
 .button-default {
@@ -194,9 +198,7 @@
 }
 
 .button-icon {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  display: inline-block;
   height: var(--baseline-height);
   transition: color 0.2s ease-in-out;
 }
@@ -212,6 +214,12 @@
 
 .button-icon-32 {
   width: 32px;
+}
+
+.button-icon > .icon {
+  width: 100%;
+  height: 100%;
+  vertical-align: middle;
 }
 
 .button-toolbar > .button + .button,

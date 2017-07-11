@@ -7,7 +7,6 @@
 
 .navbar-container {
   display: flex;
-  align-items: stretch;
   margin: 0 auto;
   max-width: var(--container-width);
   height: 100%;
@@ -30,14 +29,11 @@
 }
 
 .navbar-action {
-  display: flex;
   box-sizing: border-box;
-  align-items: center;
-  justify-content: center;
   color: inherit;
   text-decoration: none;
-  width: 48px;
-  height: 100%;
+  width: var(--navbar-height);
+  height: calc(var(--navbar-height) - 1px);
   transition: color 0.2s ease-in-out;
 }
 
@@ -48,6 +44,12 @@
 
 .navbar-action:disabled {
   color: var(--dark-color);
+}
+
+.navbar-action > button,
+.navbar-action > .icon {
+  width: 100%;
+  height: 100%;
 }
 
 @media (--md-viewport) {

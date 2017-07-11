@@ -3,11 +3,10 @@ const path = require('path');
 const config = {
     entry: {
         'background': './src/background.ts',
-        'index': './src/index.tsx',
-        'perf': 'react-addons-perf'
+        'index': './src/index.tsx'
     },
     output: {
-        path: path.join(__dirname, 'public', 'js'),
+        path: path.join(__dirname, 'www', 'js'),
         filename: '[name].js'
     },
     resolve: {
@@ -20,18 +19,17 @@ const config = {
     module: {
         rules: [
             {
-                test: /\.tsx?$/,
+                test: /\.js?$/,
+                include: path.join(__dirname, 'node_modules', '@emonkak', 'enumerable'),
                 use: [
-                    'ts-loader'
+                    'babel-loader'
                 ]
             },
             {
-                test: require.resolve('react-addons-perf'),
+                test: /\.tsx?$/,
                 use: [
-                    {
-                        loader: 'expose-loader',
-                        options: 'Perf'
-                    }
+                    'babel-loader',
+                    'ts-loader'
                 ]
             }
         ]

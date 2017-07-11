@@ -22,7 +22,7 @@ class AuthenticationPage extends PureComponent<AuthenticationProps, {}> {
             <div className="container container-narrow">
                 <div className="u-text-center u-margin-bottom-1">
                     <a href="https://github.com/emonkak/feedpon" target="_blank">
-                        <img src="/img/feedpon.svg" width="320" height="96" />
+                        <img src="./img/logo.svg" width="278" height="84" />
                     </a>
                 </div>
                 <div className="u-text-muted u-text-center u-margin-bottom-1">

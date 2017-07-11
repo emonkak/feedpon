@@ -35,6 +35,8 @@ export default class ScrollSpy extends PureComponent<ScrollSpyProps, {}> {
 
     scrollable: Element | Window;
 
+    isUnmounted: boolean = false;
+
     constructor(props: ScrollSpyProps, context: any) {
         super(props, context);
 
@@ -54,6 +56,8 @@ export default class ScrollSpy extends PureComponent<ScrollSpyProps, {}> {
     componentWillUnmount() {
         this.scrollable.removeEventListener('scroll', this.handleScroll);
         this.scrollable.removeEventListener('touchmove', this.handleScroll);
+
+        this.isUnmounted = true;
     }
 
     getViewportRect() {
@@ -121,6 +125,10 @@ export default class ScrollSpy extends PureComponent<ScrollSpyProps, {}> {
     }
 
     handleScroll(event: Event) {
+        if (this.isUnmounted) {
+            return;
+        }
+
         const { isDisabled } = this.props;
 
         if (!isDisabled) {

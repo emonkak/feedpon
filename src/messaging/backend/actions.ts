@@ -112,13 +112,23 @@ export function getFeedlyToken(): AsyncThunk<feedly.ExchangeTokenResponse> {
 }
 
 function openWindow(url: string, onTransition: (url: string) => boolean): Promise<string> {
+    if (typeof chrome === 'object') {
+        return chromeOpenWindow(url, onTransition);
+    }
+    if (typeof cordova === 'object') {
+        return cordovaOpenWindow(url, onTransition);
+    }
+    return Promise.reject(new Error('Can not open the window in this platform.'));
+}
+
+function chromeOpenWindow(url: string, onTransition: (url: string) => boolean): Promise<string> {
     return new Promise<string>((resolve, reject) => {
         chrome.windows.create({ url, type: 'popup' }, (window) => {
             if (window == null) {
                 reject(new Error('Failed to create the window'));
             }
 
-            function handleUpdateTab(tabId: number, changeInfo: chrome.tabs.TabChangeInfo, tab: chrome.tabs.Tab): void {
+            const handleUpdateTab = (tabId: number, changeInfo: chrome.tabs.TabChangeInfo, tab: chrome.tabs.Tab) => {
                 if (tab.windowId === window!.id && tab.status === 'complete' && tab.url != null) {
                     if (onTransition(tab.url)) {
                         unregisterListeners();
@@ -128,14 +138,14 @@ function openWindow(url: string, onTransition: (url: string) => boolean): Promis
                 }
             }
 
-            function handleRemoveWindow(windowId: number): void {
+            const handleRemoveWindow = (windowId: number) => {
                 if (windowId === window!.id) {
                     unregisterListeners();
                     reject(new Error('Window did not transition to the expected URL'));
                 }
             }
 
-            function unregisterListeners(): void {
+            const unregisterListeners = () => {
                 chrome.tabs.onUpdated.removeListener(handleUpdateTab);
                 chrome.windows.onRemoved.removeListener(handleRemoveWindow);
             }
@@ -143,5 +153,32 @@ function openWindow(url: string, onTransition: (url: string) => boolean): Promis
             chrome.tabs.onUpdated.addListener(handleUpdateTab);
             chrome.windows.onRemoved.addListener(handleRemoveWindow);
         });
+    });
+}
+
+function cordovaOpenWindow(url: string, onTransition: (url: string) => boolean): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+        const ref = cordova.InAppBrowser.open(url, '_blank', 'location=no');
+
+        const handleLoadStart = (event: InAppBrowserEvent) => {
+            if (onTransition(event.url)) {
+                unregisterListeners();
+                ref.close();
+                resolve(event.url);
+            }
+        };
+
+        const handleExit = (event: InAppBrowserEvent) => {
+            unregisterListeners();
+            reject(new Error('Window did not transition to the expected URL'));
+        };
+
+        const unregisterListeners = () => {
+            ref.removeEventListener('loadstart', handleLoadStart);
+            ref.removeEventListener('exit', handleExit);
+        }
+
+        ref.addEventListener('loadstart', handleLoadStart);
+        ref.addEventListener('exit', handleExit);
     });
 }
