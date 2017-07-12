@@ -18,7 +18,7 @@ export function expandUrl(url: string): AsyncThunk<{ originalUrl: string, expand
         const expandedUrl = response.url;
 
         dispatch({
-            type: 'TRACKING_URL_CACHED',
+            type: 'TRACKING_URL_EXPANDED',
             originalUrl: url,
             expandedUrl
         });

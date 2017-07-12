@@ -4,7 +4,7 @@ import { Event, TrackingUrls } from 'messaging/types';
 
 export default function reduceTrackingUrlPatterns(trackingUrls: TrackingUrls, event: Event): TrackingUrls {
     switch (event.type) {
-        case 'TRACKING_URL_CACHED':
+        case 'TRACKING_URL_EXPANDED':
             return {
                 ...trackingUrls,
                 items: CacheMap.update(trackingUrls.items, event.originalUrl, event.expandedUrl)

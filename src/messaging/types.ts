@@ -115,8 +115,8 @@ export type Event
     | { type: 'THEME_CHANGED', theme: ThemeKind }
     | { type: 'TOKEN_REVOKED' }
     | { type: 'TOKEN_REVOKING' }
-    | { type: 'TRACKING_URL_CACHED', originalUrl: string, expandedUrl: string }
     | { type: 'TRACKING_URL_CACHE_CAPACITY_CHANGED', capacity: number }
+    | { type: 'TRACKING_URL_EXPANDED', originalUrl: string, expandedUrl: string }
     | { type: 'TRACKING_URL_PATTERNS_RESET' }
     | { type: 'TRACKING_URL_PATTERN_ADDED', pattern: string }
     | { type: 'TRACKING_URL_PATTERN_DELETED', pattern: string }
