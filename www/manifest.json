@@ -1,8 +1,13 @@
 {
-    "name": "Feedpon",
-    "description": "The feed reader for me",
-    "version": "0.0.0",
     "manifest_version": 2,
+    "name": "Feedpon",
+    "version": "0.0.0",
+    "description": "The feed reader for me",
+    "icons": {
+        "16": "./img/icon-16.png",
+        "32": "./img/icon-32.png",
+        "128": "./img/icon-128.png"
+    },
     "background": {
         "scripts": ["js/background.js"],
         "persistent": false
