@@ -11,6 +11,7 @@ interface EntryListProps {
     activeEntryIndex: number;
     entries: Entry[];
     expandedEntryIndex: number;
+    isLoaded: boolean;
     isLoading: boolean;
     isScrolling: boolean;
     onChangeActiveEntry: (index: number) => void;
@@ -69,9 +70,9 @@ export default class EntryList extends PureComponent<EntryListProps, {}> {
     }
 
     render() {
-        const { isLoading, streamView } = this.props;
+        const { isLoaded, isLoading, streamView } = this.props;
 
-        if (isLoading) {
+        if (isLoading && !isLoaded) {
             const isExpanded = streamView === 'expanded';
 
             return (

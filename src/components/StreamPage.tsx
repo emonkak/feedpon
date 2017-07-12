@@ -357,6 +357,7 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
         const {
             activeEntryIndex,
             expandedEntryIndex,
+            isLoaded,
             isLoading,
             isScrolling,
             onChangeExpandedEntry,
@@ -377,6 +378,7 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
                 activeEntryIndex={activeEntryIndex}
                 entries={stream ? stream.entries : []}
                 expandedEntryIndex={expandedEntryIndex}
+                isLoaded={isLoaded}
                 isLoading={isLoading}
                 isScrolling={isScrolling}
                 onChangeActiveEntry={this.handleChangeActiveEnetry}
