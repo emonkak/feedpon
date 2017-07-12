@@ -109,23 +109,21 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
         // When transition to different stream
         if (this.props.location.pathname !== nextProps.location.pathname
             || !shallowEqual(this.props.location.query, nextProps.location.query)) {
-            const { 
-                canMarkAsRead,
-                fetchOptions,
-                keepUnread,
-                onFetchStream,
-                onMarkAsRead,
-                onSelectStream,
-                params,
-                readEntries,
-                shouldFetchStream
-            } = nextProps;
-
-            onSelectStream(params['stream_id']);
+            const { canMarkAsRead, keepUnread, onMarkAsRead, readEntries } = this.props;
 
             if (canMarkAsRead && !keepUnread && readEntries.length > 0) {
                 onMarkAsRead(readEntries);
             }
+
+            const { 
+                fetchOptions,
+                onFetchStream,
+                onSelectStream,
+                params,
+                shouldFetchStream
+            } = nextProps;
+
+            onSelectStream(params['stream_id']);
 
             if (shouldFetchStream) {
                 onFetchStream(params['stream_id'], fetchOptions);
