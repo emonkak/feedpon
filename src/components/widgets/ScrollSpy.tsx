@@ -1,5 +1,6 @@
 import Enumerable from '@emonkak/enumerable';
 import React, { Children, PureComponent, cloneElement, isValidElement } from 'react';
+import throttle from 'lodash.throttle';
 import { findDOMNode } from 'react-dom';
 
 import '@emonkak/enumerable/extensions/firstOrDefault';
@@ -10,7 +11,6 @@ import '@emonkak/enumerable/extensions/where';
 
 import createChainedFunction from 'utils/createChainedFunction';
 import getScrollableParent from 'utils/dom/getScrollableParent';
-import throttleEventHandler from 'utils/throttleEventHandler';
 
 interface ScrollSpyProps {
     getScrollableParent?: (element: Element) => Element | Window;
@@ -40,7 +40,7 @@ export default class ScrollSpy extends PureComponent<ScrollSpyProps, {}> {
     constructor(props: ScrollSpyProps, context: any) {
         super(props, context);
 
-        this.handleScroll = throttleEventHandler(this.handleScroll.bind(this), props.scrollThrottleTime!);
+        this.handleScroll = throttle(this.handleScroll.bind(this), props.scrollThrottleTime!);
     }
 
     componentDidMount() {

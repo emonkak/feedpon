@@ -1,9 +1,9 @@
 import React, { Children, PureComponent, cloneElement } from 'react';
 import classnames from 'classnames';
+import debounce from 'lodash.debounce';
 
 import Closable from 'components/widgets/Closable';
 import createChainedFunction from 'utils/createChainedFunction';
-import debounceEventHandler from 'utils/debounceEventHandler';
 import { Menu } from 'components/widgets/Menu';
 
 interface AutoCompleteProps {
@@ -42,7 +42,7 @@ export default class Autocomplete extends PureComponent<AutoCompleteProps, Autoc
             query: ''
         };
 
-        this.handleChange = debounceEventHandler(this.handleChange.bind(this), props.completeDebounceTime!);
+        this.handleChange = debounce(this.handleChange.bind(this), props.completeDebounceTime!);
         this.handleClose = this.handleClose.bind(this);
         this.handleFocus = this.handleFocus.bind(this);
         this.handleInputControl = this.handleInputControl.bind(this);

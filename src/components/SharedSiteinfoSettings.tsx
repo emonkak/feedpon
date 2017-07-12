@@ -1,11 +1,11 @@
 import React, { PureComponent } from 'react';
+import debounce from 'lodash.debounce';
 
 import LazyList from 'components/widgets/LazyList';
 import RelativeTime from 'components/widgets/RelativeTime';
 import SharedSiteinfoItem from 'components/parts/SharedSiteinfoItem';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
-import debounceEventHandler from 'utils/debounceEventHandler';
 import tryMatch from 'utils/tryMatch';
 import { State, SiteinfoItem } from 'messaging/types';
 import { updateSiteinfo } from 'messaging/sharedSiteinfo/actions';
@@ -31,7 +31,7 @@ class SharedSiteinfoSettings extends PureComponent<SharedSiteinfoProps, SharedSi
             testUrl: ''
         };
 
-        this.handleChangeTestUrl = debounceEventHandler(this.handleChangeTestUrl.bind(this), 100);
+        this.handleChangeTestUrl = debounce(this.handleChangeTestUrl.bind(this), 100);
         this.handleInputControlRef = this.handleInputControlRef.bind(this);
     }
 

@@ -1,9 +1,9 @@
 import React, { PureComponent } from 'react';
 import classnames from 'classnames';
+import throttle from 'lodash.throttle';
 import { findDOMNode } from 'react-dom';
 
 import getScrollableParent from 'utils/dom/getScrollableParent';
-import throttleEventHandler from 'utils/throttleEventHandler';
 
 interface AutoHidingHeaderProps {
     children?: React.ReactNode;
@@ -41,7 +41,7 @@ export default class AutoHidingHeader extends PureComponent<AutoHidingHeaderProp
             isPinned: props.isPinned!
         };
 
-        this.handleScroll = throttleEventHandler(this.handleScroll.bind(this), props.scrollThrottleTime!);
+        this.handleScroll = throttle(this.handleScroll.bind(this), props.scrollThrottleTime!);
     }
 
     componentDidMount() {

@@ -1,4 +1,5 @@
 import React, { PureComponent } from 'react';
+import debounce from 'lodash.debounce';
 import { History } from 'history';
 import { createSelector } from 'reselect';
 
@@ -12,7 +13,6 @@ import SubscriptionItem from 'components/parts/Subscription';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
 import createAscendingComparer from 'utils/createAscendingComparer';
-import debounceEventHandler from 'utils/debounceEventHandler';
 import { Category, State, Subscription } from 'messaging/types';
 import { MenuItem } from 'components/widgets/Menu';
 import { Params } from 'react-router/lib/Router';
@@ -50,7 +50,7 @@ class CategoriesPage extends PureComponent<CategoriesPageProps, CategoriesPageSt
     constructor(props: CategoriesPageProps, context: any) {
         super(props, context);
 
-        this.handleChangeSearchQuery = debounceEventHandler(this.handleChangeSearchQuery.bind(this), 100);
+        this.handleChangeSearchQuery = debounce(this.handleChangeSearchQuery.bind(this), 100);
         this.handleChangeUploadFile = this.handleChangeUploadFile.bind(this);
         this.handleImport = this.handleImport.bind(this);
         this.handleSearchInputRef = this.handleSearchInputRef.bind(this);

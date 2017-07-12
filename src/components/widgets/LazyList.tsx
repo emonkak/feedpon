@@ -3,8 +3,8 @@ import { findDOMNode } from 'react-dom';
 
 import createChainedFunction from 'utils/createChainedFunction';
 import getScrollableParent from 'utils/dom/getScrollableParent';
+import throttle from 'lodash.throttle';
 import throttleAnimationFrame from 'utils/throttleAnimationFrame';
-import throttleEventHandler from 'utils/throttleEventHandler';
 
 interface LazyListProps {
     assumedItemHeight: number;
@@ -53,7 +53,7 @@ export default class LazyList extends PureComponent<LazyListProps, LazyListState
             endIndex: 0
         };
 
-        this.handleScroll = throttleEventHandler(throttleAnimationFrame(this.handleScroll.bind(this)), props.scrollThrottleTime!);
+        this.handleScroll = throttle(throttleAnimationFrame(this.handleScroll.bind(this)), props.scrollThrottleTime!);
         this.handleUpdateHeight = throttleAnimationFrame(this.handleUpdateHeight.bind(this));
     }
 
