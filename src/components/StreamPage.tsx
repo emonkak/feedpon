@@ -283,14 +283,16 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
             keepUnread,
             onChangeStreamView,
             onToggleSidebar,
-            readEntries,
+            readEntryIndex,
             stream,
             streamView
         } = this.props;
         return (
             <StreamNavbar
                 canMarkAsRead={canMarkAsRead}
+                entries={stream ? stream.entries : []}
                 feed={stream ? stream.feed : null}
+                fetchOptions={fetchOptions}
                 isLoading={isLoading}
                 keepUnread={keepUnread}
                 onChangeEntryOrderKind={this.handleChangeEntryOrderKind}
@@ -302,8 +304,7 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
                 onToggleOnlyUnread={this.handleToggleOnlyUnread}
                 onToggleSidebar={onToggleSidebar}
                 onToggleUnreadKeeping={this.handleToggleUnreadKeeping}
-                fetchOptions={fetchOptions}
-                readEntries={readEntries}
+                readEntryIndex={readEntryIndex}
                 streamView={streamView}
                 title={stream ? stream.title : ''} />
         );
@@ -462,7 +463,7 @@ export default connect(() => {
     const readEntriesSelector = createSelector(
         entriesSelector,
         (state: State) => state.ui.readEntryIndex,
-        (entries, readEntryIndex) => entries.slice(0, readEntryIndex + 1)
+        (entries, readEntryIndex) => entries.slice(0, readEntryIndex + 1).filter((entry) => !entry.markedAsRead)
     );
 
     const subscriptionSelector: (state: State, props: StreamPageProps) => Subscription | null = createSelector(

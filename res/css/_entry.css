@@ -42,11 +42,9 @@
   font-size: 1.25em;
 }
 
-.entry.is-expanded .entry-action-visit-website,
 .entry.is-expanded .entry-summary,
-.entry.is-expanded:not(.is-collapsible) .entry-action-close,
-.entry:not(.is-expanded) .entry-action-close,
-.entry:not(.is-expanded) .entry-action-fetch-full-content,
+.entry.is-expanded:not(.is-collapsible) .entry-close,
+.entry:not(.is-expanded) .entry-nav,
 .entry:not(.is-expanded) .entry-footer,
 .entry:not(.is-expanded) .entry-content {
   display: none;
