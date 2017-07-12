@@ -5,9 +5,9 @@ import '@emonkak/enumerable/extensions/select';
 import '@emonkak/enumerable/extensions/toArray';
 import '@emonkak/enumerable/extensions/orderBy';
 
-import ConfirmModal from 'components/widgets/ConfirmModal';
 import * as Trie from 'utils/containers/Trie';
 import * as commands from 'messaging/keyMappings/commands';
+import ConfirmModal from 'components/widgets/ConfirmModal';
 import KeyMappingForm from 'components/parts/KeyMappingForm';
 import KeyMappingItem from 'components/parts/KeyMappingItem';
 import bindActions from 'utils/flux/bindActions';

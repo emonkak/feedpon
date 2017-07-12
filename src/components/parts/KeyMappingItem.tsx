@@ -91,7 +91,7 @@ export default class KeyMappingItem extends PureComponent<KeyMappingItemProps, K
             <tr key={keys.join('')}>
                 <td>{keys.map((key, index) => <kbd key={index}>{key}</kbd>)}</td>
                 <td><span>{commandName}</span></td>
-                <td>
+                <td className="u-text-nowrap">
                     <div className="button-toolbar">
                         <button
                             className="button button-small button-outline-default"

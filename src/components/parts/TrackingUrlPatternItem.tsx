@@ -47,20 +47,24 @@ export default class TrackingUrlPatternItem extends PureComponent<TrackingUrlPat
         const { isDeleting } = this.state;
 
         return (
-            <li className="list-group-item">
-                <code>{pattern}</code>
-                <button
-                    className="close u-pull-right"
-                    onClick={this.handleStartDeleting} />
-                <ConfirmModal
-                    confirmButtonClassName="button button-outline-negative"
-                    confirmButtonLabel="Delete"
-                    isOpened={isDeleting}
-                    message="Are you sure you want to delete this pattern?"
-                    onClose={this.handleCancelDeleting}
-                    onConfirm={this.handleDelete}
-                    title={`Delete "${pattern}"`} />
-            </li>
+            <tr>
+                <td>
+                    <code>{pattern}</code>
+                    <ConfirmModal
+                        confirmButtonClassName="button button-outline-negative"
+                        confirmButtonLabel="Delete"
+                        isOpened={isDeleting}
+                        message="Are you sure you want to delete this pattern?"
+                        onClose={this.handleCancelDeleting}
+                        onConfirm={this.handleDelete}
+                        title={`Delete "${pattern}"`} />
+                </td>
+                <td className="u-text-right">
+                    <button
+                        className="close"
+                        onClick={this.handleStartDeleting} />
+                </td>
+            </tr>
         );
     }
 }
