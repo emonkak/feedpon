@@ -7,7 +7,7 @@ const config = {
         'runtime': './src/runtime.ts'
     },
     output: {
-        path: path.join(__dirname, 'www', 'js'),
+        path: path.join(__dirname, 'build'),
         filename: '[name].js'
     },
     resolve: {

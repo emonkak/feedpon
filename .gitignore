@@ -2,10 +2,12 @@
 *.xcodeproj/*
 .DS_Store
 .vscode
+/build/
 /platforms/ios/Feedpon/config.xml
 /platforms/ios/www/
+/webextension/css/
+/webextension/js/
 /www/css/
-/www/fonts/
 /www/js/
 node_modules/
 npm-debug.log*

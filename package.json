@@ -10,18 +10,20 @@
     "url": "https://github.com/emonkak/feedpon.git"
   },
   "scripts": {
-    "build": "npm-run-all -p build:css build:js -s build:cordova",
-    "build:cordova": "cordova prepare",
-    "build:css": "postcss -o ./www/css/index.css ./res/css/index.css",
+    "build": "npm-run-all -p build:css build:js -p build:cordova build:webextension",
+    "build:cordova": "mkdir -p ./www/{css,js} && cp ./build/{index,runtime}.js ./www/js/ && cp ./build/index.css ./www/css/ && cordova prepare",
+    "build:css": "postcss -o ./build/index.css ./res/css/index.css",
     "build:js": "webpack",
-    "clean": "rm -f -r ./www/{js,css}",
+    "build:webextension": "mkdir -p ./webextension/{css,js} && cp ./build/{index,background}.js ./webextension/js/ && cp ./build/index.css ./webextension/css/",
+    "clean": "rm -f -r ./build ./webextension/{css,js} ./www/{css,js}",
     "lint": "tslint './src/**/*.ts'",
-    "start": "http-server -c-1 ./www",
+    "start": "http-server -c-1 ./build",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "watch": "npm-run-all -p watch:css watch:js watch:cordova",
-    "watch:css": "postcss -w -o ./www/css/index.css ./res/css/index.css",
-    "watch:cordova": "watch 'cordova prepare' ./www",
-    "watch:js": "webpack --watch --devtool source-map"
+    "watch": "npm-run-all -p 'watch:*'",
+    "watch:cordova": "watch 'npm run --silent build:cordova' ./build",
+    "watch:css": "postcss -w -o ./build/index.css ./res/css/index.css",
+    "watch:js": "webpack --watch --devtool source-map",
+    "watch:webextension": "watch 'npm run --silent build:webextension' ./build"
   },
   "dependencies": {
     "@emonkak/enumerable": "^2.0.0",
@@ -68,6 +70,7 @@
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-env": "^1.6.0",
     "cash-cp": "^0.2.0",
+    "cash-mkdir": "^0.2.0",
     "cash-rm": "^0.2.0",
     "cssnano": "^3.10.0",
     "http-server": "^0.10.0",
