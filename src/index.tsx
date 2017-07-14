@@ -37,7 +37,7 @@ function main() {
         }
     };
 
-    const store = applyMiddlewares(createStore(reducer, state), [
+    const middlewares = [
         errorHandlingMiddleware((error, { dispatch }) => {
             const errorString = (error + '') || 'Unknown error occured';
 
@@ -49,8 +49,13 @@ function main() {
         }),
         thunkMiddleware(context),
         saveStateMiddleware(save, 1000),
-        reduxMiddleware(createLogger({ duration: true }))
-    ]);
+    ];
+
+    if (process.env.NODE_ENV !== 'production') {
+        middlewares.push(reduxMiddleware(createLogger({ duration: true })));
+    }
+
+    const store = applyMiddlewares(createStore(reducer, state), middlewares);
 
     store.dispatch({
         type: 'APPLICATION_INITIALIZED'

@@ -17,3 +17,9 @@ interface Window {
     cancelIdleCallback(id: number): void;
     requestIdleCallback(callback: (deadline: RequestIdleCallback) => void, options?: RequestIdleOptions): number;
 }
+
+declare var process: {
+  env: {
+    NODE_ENV: string
+  }
+};
