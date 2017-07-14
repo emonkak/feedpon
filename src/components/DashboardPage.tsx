@@ -62,6 +62,22 @@ class DashboardPage extends PureComponent<DashboardProps, DashboardState> {
         );
     }
 
+    renderStreamHistoryList() {
+        const { streamHistories } = this.props;
+
+        if (streamHistories.length === 0) {
+            return (
+                <p>{`Recently read stream does not exist yet. Let's subscribe to feeds and read the stream.`}</p>
+            );
+        } 
+
+        return (
+            <ol className="list-group">
+                {streamHistories.map(this.renderStreamHistory, this)}
+            </ol>
+        );
+    }
+
     renderNavbar() {
         const { onToggleSidebar } = this.props;
 
@@ -73,15 +89,11 @@ class DashboardPage extends PureComponent<DashboardProps, DashboardState> {
     }
 
     renderContent() {
-        const { streamHistories } = this.props;
-
         return (
             <div className="container">
                 <section className="section">
                     <h1 className="display-1">Recently read streams</h1>
-                    <ol className="list-group">
-                        {streamHistories.map(this.renderStreamHistory, this)}
-                    </ol>
+                    {this.renderStreamHistoryList()}
                 </section>
             </div>
         );
