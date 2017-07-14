@@ -72,10 +72,6 @@
 
 .entry-content {
   margin: 0 0 var(--baseline-height);
-  hyphens: auto;
-  overflow-wrap: break-word;
-  text-align: justify;
-  text-justify: inter-ideograph;
 }
 
 .entry-content img,
