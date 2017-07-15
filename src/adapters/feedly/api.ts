@@ -27,23 +27,23 @@ export function authCallback(urlString: string): types.AuthenticateResponse {
 
 export function exchangeToken(input: types.ExchangeTokenInput): Promise<types.ExchangeTokenResponse> {
     return doPost('v3/auth/token', input)
-        .then(decodeAsJson);
+        .then<types.ExchangeTokenResponse>(decodeAsJson);
 }
 
 export function refreshToken(input: types.RefreshTokenInput): Promise<types.RefreshTokenResponse> {
     return doPost('v3/auth/token', input)
-        .then(decodeAsJson);
+        .then<types.RefreshTokenResponse>(decodeAsJson);
 }
 
 export function revokeToken(input: types.RevokeTokenInput): Promise<types.RevokeTokenResponse> {
     return doPost('v3/auth/token', input)
-        .then(decodeAsJson);
+        .then<types.RevokeTokenResponse>(decodeAsJson);
 }
 
 // Categories API:
 export function getCategories(accessToken: string): Promise<types.Category[]> {
     return doGet('v3/categories', null, createAuthHeader(accessToken))
-        .then(decodeAsJson);
+        .then<types.Category[]>(decodeAsJson);
 }
 
 export function changeCategoryLabel(accessToken: string, categoryId: string, label: string): Promise<Response> {
@@ -68,7 +68,7 @@ export function getFeed(accessToken: string, feedId: string): Promise<types.Feed
         'v3/feeds/' + encodeURIComponent(feedId),
         null,
         createAuthHeader(accessToken)
-    ).then(decodeAsJson);
+    ).then<types.Feed>(decodeAsJson);
 }
 
 // Markers API:
@@ -77,7 +77,7 @@ export function getUnreadCounts(accessToken: string, input: types.GetUnreadCount
         'v3/markers/counts',
         input,
         createAuthHeader(accessToken)
-    ).then(decodeAsJson);
+    ).then<types.GetUnreadCountsResponce>(decodeAsJson);
 }
 
 export function markAsReadForEntries(accessToken: string, entryIds: string | string[]): Promise<Response> {
@@ -174,7 +174,7 @@ export function getProfile(accessToken: string): Promise<types.Profile> {
         'v3/profile',
         null,
         createAuthHeader(accessToken)
-    ).then(decodeAsJson);
+    ).then<types.Profile>(decodeAsJson);
 }
 
 export function updateProfile(accessToken: string, input: types.UpdateProfileInput): Promise<Response> {
@@ -191,7 +191,7 @@ export function searchFeeds(accessToken: string, input: types.SearchInput): Prom
         'v3/search/feeds',
         input,
         createAuthHeader(accessToken)
-    ).then(decodeAsJson);
+    ).then<types.SearchResponse>(decodeAsJson);
 }
 
 // Streams API:
@@ -200,7 +200,7 @@ export function getStreamIds(accessToken: string, input: types.GetStreamInput): 
         'v3/streams/ids',
         input,
         createAuthHeader(accessToken)
-    ).then(decodeAsJson);
+    ).then<types.GetEntryIdsResponse>(decodeAsJson);
 }
 
 export function getStreamContents(accessToken: string, input: types.GetStreamInput): Promise<types.Contents> {
@@ -208,7 +208,7 @@ export function getStreamContents(accessToken: string, input: types.GetStreamInp
         'v3/streams/contents',
         input,
         createAuthHeader(accessToken)
-    ).then(decodeAsJson);
+    ).then<types.Contents>(decodeAsJson);
 }
 
 // Subscriptions API:
@@ -217,7 +217,7 @@ export function getSubscriptions(accessToken: string): Promise<types.Subscriptio
         'v3/subscriptions',
         null,
         createAuthHeader(accessToken)
-    ).then(decodeAsJson);
+    ).then<types.Subscription[]>(decodeAsJson);
 }
 
 export function subscribeFeed(accessToken: string, input: types.SubscribeFeedInput): Promise<Response> {
@@ -242,7 +242,7 @@ export function getTags(accessToken: string): Promise<types.Tag[]> {
         'v3/tags',
         null,
         createAuthHeader(accessToken)
-    ).then(decodeAsJson);
+    ).then<types.Tag[]>(decodeAsJson);
 }
 
 export function changeTagLabel(accessToken: string, tagId: string, label: string): Promise<Response> {

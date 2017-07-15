@@ -19,9 +19,9 @@ interface ReduxMiddleware {
 
 function reduxMiddlewareFactory<TState, TEvent extends ReduxAction>(middleware: ReduxMiddleware): Middleware<TState, TEvent> {
     return (store) => {
-       const handler = middleware(store);
+       const handler = middleware(store as any);
 
-       return (event, next) => handler(next)(event);
+       return (event, next) => handler(next as any)(event as any);
     };
 }
 

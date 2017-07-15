@@ -44,7 +44,7 @@ export default function connect<TStateProps, TDispatchProps, TOwnProps>(
 
                 this.mapStateToProps = mapStateToProps || returnEmptyProps;
                 this.mapDispatchToProps = mapDispatchToProps || returnEmptyProps;
-                this.mergeProps = mergeProps || defaultMergeProps;
+                this.mergeProps = mergeProps || defaultMergeProps as any;
 
                 this.state = this.mapStateToProps(store.getState(), props);
                 this.dispatchProps = this.mapDispatchToProps(store.dispatch, props);

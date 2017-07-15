@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import classnames from 'classnames';
 
-interface ValidatableControlProps extends React.HTMLAttributes<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement> {
+interface ValidatableControlProps extends React.AllHTMLAttributes<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement> {
     component?: 'input' | 'select' | 'textarea';
     invalidClassName?: string | null;
     validClassName?: string | null;
@@ -84,7 +84,7 @@ export default class ValidatableControl extends PureComponent<ValidatableControl
         }
     }
 
-    handleChange(event: React.FormEvent<HTMLInputElement>) {
+    handleChange(event: React.FormEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
         const { onChange } = this.props;
 
         if (onChange) {

@@ -3,8 +3,8 @@
 .DS_Store
 .vscode
 /build/
-/platforms/ios/Feedpon/config.xml
-/platforms/ios/www/
+/platforms/
+/plugins/
 /webextension/css/
 /webextension/js/
 /www/css/
