@@ -67,7 +67,7 @@ class DashboardPage extends PureComponent<DashboardProps, DashboardState> {
 
         if (streamHistories.length === 0) {
             return (
-                <p>{`Recently read stream does not exist yet. Let's subscribe to feeds and read the stream.`}</p>
+                <p>{`Recently read streams does not exist yet. Let's subscribe to feeds and read the stream.`}</p>
             );
         } 
 
