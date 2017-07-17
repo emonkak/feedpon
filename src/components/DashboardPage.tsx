@@ -92,7 +92,7 @@ class DashboardPage extends PureComponent<DashboardProps, DashboardState> {
         return (
             <div className="container">
                 <section className="section">
-                    <h1 className="display-1">Recently read streams</h1>
+                    <h1 className="display-1">Recently read</h1>
                     {this.renderStreamHistoryList()}
                 </section>
             </div>
