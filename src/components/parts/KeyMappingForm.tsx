@@ -203,14 +203,16 @@ export default class KeyMappingForm extends PureComponent<KeyMappingFormProps, K
                         <div className="form-group-heading">Command parameters(JSON)</div>
                         <ValidatableControl
                             component="textarea"
-                            validation={jsonValidation}
-                            validClassName={null}
-                            className="form-control"
-                            rows={6}
-                            value={paramsJson}
-                            onChange={this.handleChangeParamsJson}
-                            spellCheck={false}
-                            required/>
+                            validations={[jsonValidation]}
+                            validClassName={null}>
+                            <textarea
+                                className="form-control"
+                                rows={6}
+                                value={paramsJson}
+                                onChange={this.handleChangeParamsJson}
+                                spellCheck={false}
+                                required />
+                        </ValidatableControl>
                     </label>
                 </div>
                 <div className="form-group">

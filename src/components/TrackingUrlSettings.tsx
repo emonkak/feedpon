@@ -109,7 +109,9 @@ class TrackingUrlSettings extends PureComponent<TrackingUrlProps, TrackingUrlSta
                 <h2 className="display-2">Available patterns</h2>
                 <div className="u-responsive">
                     <table className="table">
-                        {patterns.map(this.renderPattern, this)}
+                        <tbody>
+                            {patterns.map(this.renderPattern, this)}
+                        </tbody>
                     </table>
                 </div>
                 <div className="form">

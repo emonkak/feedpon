@@ -54,13 +54,15 @@ export default class TrackingUrlPatternForm extends PureComponent<TrackingUrlPat
                 <div className="form-legend">New tracking URL pattern</div>
                 <div className="input-group">
                     <ValidatableControl
-                        validation={patternValidation}
-                        type="text"
-                        className="form-control"
-                        placeholder="^https://..."
-                        value={pattern}
-                        onChange={this.handleChange}
-                        required />
+                        validations={[patternValidation]}>
+                        <input
+                            type="text"
+                            className="form-control"
+                            placeholder="^https://..."
+                            value={pattern}
+                            onChange={this.handleChange}
+                            required />
+                    </ValidatableControl>
                     <button type="submit" className="button button-outline-positive">Add</button>
                 </div>
                 <span className="u-text-muted">The regular expression for the tracking url.</span>

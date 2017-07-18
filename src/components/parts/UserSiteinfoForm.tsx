@@ -93,26 +93,30 @@ export default class UserSiteinfoForm extends PureComponent<UserSiteinfoFormProp
                 <div className="form-group">
                     <label>
                         <span className="form-group-heading form-required">Name</span>
-                        <ValidatableControl
-                            className="form-control"
-                            type="text"
-                            name="name"
-                            value={name}
-                            onChange={this.handleChange}
-                            required />
+                        <ValidatableControl>
+                            <input
+                                className="form-control"
+                                type="text"
+                                name="name"
+                                value={name}
+                                onChange={this.handleChange}
+                                required />
+                        </ValidatableControl>
                     </label>
                 </div>
                 <div className="form-group">
                     <label>
                         <span className="form-group-heading form-required">URL pattern</span>
                         <ValidatableControl
-                            className="form-control"
-                            name="urlPattern"
-                            onChange={this.handleChange}
-                            required
-                            type="text"
-                            validation={patternValidation}
-                            value={urlPattern} />
+                            validations={[patternValidation]}>
+                            <input
+                                className="form-control"
+                                name="urlPattern"
+                                onChange={this.handleChange}
+                                required
+                                type="text"
+                                value={urlPattern} />
+                        </ValidatableControl>
                     </label>
                     <span className="u-text-muted">The regular expression for the url.</span>
                 </div>
@@ -120,13 +124,15 @@ export default class UserSiteinfoForm extends PureComponent<UserSiteinfoFormProp
                     <label>
                         <span className="form-group-heading form-required">Content expression</span>
                         <ValidatableControl
-                            className="form-control"
-                            name="contentExpression"
-                            onChange={this.handleChange}
-                            required
-                            type="text"
-                            validation={xPathValidation}
-                            value={contentExpression} />
+                            validations={[xPathValidation]}>
+                            <input
+                                className="form-control"
+                                name="contentExpression"
+                                onChange={this.handleChange}
+                                required
+                                type="text"
+                                value={contentExpression} />
+                        </ValidatableControl>
                     </label>
                     <span className="u-text-muted">The XPath expression to the element representing the content.</span>
                 </div>
@@ -134,12 +140,14 @@ export default class UserSiteinfoForm extends PureComponent<UserSiteinfoFormProp
                     <label>
                         <span className="form-group-heading">Next link expression</span>
                         <ValidatableControl
-                            className="form-control"
-                            name="nextLinkExpression"
-                            onChange={this.handleChange}
-                            type="text"
-                            validation={xPathValidation}
-                            value={nextLinkExpression} />
+                            validations={[xPathValidation]}>
+                            <input
+                                className="form-control"
+                                name="nextLinkExpression"
+                                onChange={this.handleChange}
+                                type="text"
+                                value={nextLinkExpression} />
+                        </ValidatableControl>
                     </label>
                     <span className="u-text-muted">The XPath expression to the anchor element representing the next link.</span>
                 </div>

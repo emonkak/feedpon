@@ -1,11 +1,13 @@
-import React, { PureComponent } from 'react';
+import React, { PureComponent, Children,  cloneElement } from 'react';
 import classnames from 'classnames';
 
-interface ValidatableControlProps extends React.AllHTMLAttributes<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement> {
+import createChainedFunction from 'utils/createChainedFunction';
+
+interface ValidatableControlProps {
+    children: React.ReactElement<any>;
     component?: 'input' | 'select' | 'textarea';
     invalidClassName?: string | null;
     validClassName?: string | null;
-    validation?: Validation;
     validations?: Validation[];
 }
 
@@ -41,9 +43,7 @@ export default class ValidatableControl extends PureComponent<ValidatableControl
     }
 
     componentDidUpdate(prevProps: ValidatableControlProps, prevState: ValidatableControlState) {
-        if (this.props.value !== prevProps.value) {
-            this.update();
-        }
+        this.update();
     }
 
     update() {
@@ -54,14 +54,8 @@ export default class ValidatableControl extends PureComponent<ValidatableControl
         }
 
         if (control.value) {
-            const { validation, validations } = this.props;
+            const { validations } = this.props;
             let error = '';
-
-            if (validation) {
-                if (!validation.rule(control.value)) {
-                    error = validation.message;
-                }
-            }
 
             if (validations) {
                 for (const validation of validations) {
@@ -85,12 +79,6 @@ export default class ValidatableControl extends PureComponent<ValidatableControl
     }
 
     handleChange(event: React.FormEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
-        const { onChange } = this.props;
-
-        if (onChange) {
-            onChange(event);
-        }
-
         this.update();
     }
 
@@ -98,30 +86,23 @@ export default class ValidatableControl extends PureComponent<ValidatableControl
         this.controlElement = ref;
     }
 
-    render() {
-        const {
-            className,
-            component,
-            invalidClassName,
-            validClassName,
-            validation,
-            validations,
-            ...restProps
-        } = this.props;
+    renderChild(child: React.ReactElement<any>) {
+        const { invalidClassName, validClassName } = this.props;
         const { status } = this.state;
 
-        const Component = component!;
+        return cloneElement(child, {
+            ...child.props,
+            ref: createChainedFunction((child as any).ref, this.handleRef),
+            className: classnames(
+                child.props.className,
+                status === 'invalid' ? invalidClassName : null,
+                status === 'valid' ? validClassName : null
+            ),
+            onChange: createChainedFunction(child.props.onChange, this.handleChange)
+        });
+    }
 
-        return (
-            <Component
-                {...restProps}
-                ref={this.handleRef}
-                className={classnames(
-                    className,
-                    status === 'invalid' ? invalidClassName : null,
-                    status === 'valid' ? validClassName : null
-                )}
-                onChange={this.handleChange} />
-        );
+    render() {
+        return this.renderChild(Children.only(this.props.children));
     }
 }
