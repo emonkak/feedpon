@@ -23,7 +23,7 @@ import { scrollTo, toggleSidebar } from 'messaging/ui/actions';
 
 interface StreamPageProps {
     activeEntryIndex: number;
-    canMarkAsRead: boolean;
+    canMarkAllAsRead: boolean;
     categories: Category[];
     category: Category;
     expandedEntryIndex: number;
@@ -109,9 +109,9 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
         // When transition to different stream
         if (this.props.location.pathname !== nextProps.location.pathname
             || !shallowEqual(this.props.location.query, nextProps.location.query)) {
-            const { canMarkAsRead, keepUnread, onMarkAsRead, readEntries } = this.props;
+            const { keepUnread, onMarkAsRead, readEntries } = this.props;
 
-            if (canMarkAsRead && !keepUnread && readEntries.length > 0) {
+            if (!keepUnread && readEntries.length > 0) {
                 onMarkAsRead(readEntries);
             }
 
@@ -153,11 +153,11 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
     }
 
     componentWillUnmount() {
-        const { canMarkAsRead, keepUnread, onMarkAsRead, onUnselectStream, readEntries } = this.props;
+        const { keepUnread, onMarkAsRead, onUnselectStream, readEntries } = this.props;
 
         onUnselectStream();
 
-        if (canMarkAsRead && !keepUnread && readEntries.length > 0) {
+        if (!keepUnread && readEntries.length > 0) {
             onMarkAsRead(readEntries);
         }
     }
@@ -277,7 +277,7 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
 
     renderNavbar() {
         const {
-            canMarkAsRead,
+            canMarkAllAsRead,
             fetchOptions,
             isLoading,
             keepUnread,
@@ -289,7 +289,7 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
         } = this.props;
         return (
             <StreamNavbar
-                canMarkAsRead={canMarkAsRead}
+                canMarkAllAsRead={canMarkAllAsRead}
                 entries={stream ? stream.entries : []}
                 feed={stream ? stream.feed : null}
                 fetchOptions={fetchOptions}
@@ -398,11 +398,11 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
     }
 
     renderFooter() {
-        const { canMarkAsRead, isLoading, stream } = this.props;
+        const { canMarkAllAsRead, isLoading, stream } = this.props;
 
         return (
             <StreamFooter
-                canMarkAsRead={canMarkAsRead}
+                canMarkAllAsRead={canMarkAllAsRead}
                 hasMoreEntries={!!(stream && stream.continuation)}
                 isLoading={isLoading}
                 onLoadMoreEntries={this.handleLoadMoreEntries}
@@ -497,7 +497,7 @@ export default connect(() => {
         }
     );
 
-    const canMarkAsReadSelector = createSelector(
+    const canMarkAllAsReadSelector = createSelector(
         streamSelector,
         subscriptionSelector,
         categorySelector,
@@ -517,7 +517,7 @@ export default connect(() => {
     return {
         mapStateToProps: (state: State, props: StreamPageProps) => ({
             activeEntryIndex: state.ui.activeEntryIndex,
-            canMarkAsRead: canMarkAsReadSelector(state, props),
+            canMarkAllAsRead: canMarkAllAsReadSelector(state, props),
             categories: categoriesSelector(state),
             category: categorySelector(state, props),
             expandedEntryIndex: state.ui.expandedEntryIndex,

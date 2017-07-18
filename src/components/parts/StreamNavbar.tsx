@@ -6,7 +6,7 @@ import StreamFetchOptionsDropdown from 'components/parts/StreamFetchOptionsDropd
 import { Entry, EntryOrderKind, Feed, StreamFetchOptions, StreamViewKind } from 'messaging/types';
 
 interface StreamNavbarProps {
-    canMarkAsRead: boolean;
+    canMarkAllAsRead: boolean;
     entries: Entry[];
     feed: Feed | null;
     fetchOptions: StreamFetchOptions;
@@ -30,7 +30,7 @@ export default class StreamNavbar extends PureComponent<StreamNavbarProps, {}> {
     render() {
         const {
             readEntryIndex,
-            canMarkAsRead,
+            canMarkAllAsRead,
             entries,
             feed,
             fetchOptions,
@@ -65,7 +65,7 @@ export default class StreamNavbar extends PureComponent<StreamNavbarProps, {}> {
                     <i className="icon icon-24 icon-refresh" />
                 </button>
                 <EntriesDropdown
-                    canMarkAsRead={canMarkAsRead}
+                    canMarkAllAsRead={canMarkAllAsRead}
                     entries={entries}
                     keepUnread={keepUnread}
                     onClearReadEntries={onClearReadEntries}

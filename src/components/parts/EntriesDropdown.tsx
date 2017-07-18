@@ -8,7 +8,7 @@ import { Entry } from 'messaging/types';
 import { MenuItem } from 'components/widgets/Menu';
 
 interface EntriesDropdownProps {
-    canMarkAsRead: boolean;
+    canMarkAllAsRead: boolean;
     entries: Entry[];
     keepUnread: boolean;
     onClearReadEntries: () => void;
@@ -68,7 +68,7 @@ export default class EntriesDropdown extends PureComponent<EntriesDropdownProps,
 
     render() {
         const {
-            canMarkAsRead,
+            canMarkAllAsRead,
             entries,
             keepUnread,
             onClearReadEntries,
@@ -115,7 +115,7 @@ export default class EntriesDropdown extends PureComponent<EntriesDropdownProps,
                         onSelect={onClearReadEntries}
                         primaryText="Clear read entries" />
                     <MenuItem
-                        isDisabled={!canMarkAsRead}
+                        isDisabled={!canMarkAllAsRead}
                         onSelect={this.handleOpenMarkAllAsReadModal}
                         primaryText="Mark all as read in stream..." />
                 </Dropdown>
