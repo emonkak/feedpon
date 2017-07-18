@@ -5,6 +5,7 @@ import PromiseQueue from 'utils/PromiseQueue';
 import decodeResponseAsText from 'utils/decodeResponseAsText';
 import stripTags from 'utils/stripTags';
 import tryMatch from 'utils/tryMatch';
+import { ALL_STREAM_ID, PINS_STREAM_ID } from 'messaging/streams/constants';
 import { AsyncThunk, Category, Entry, Event, Stream, StreamFetchOptions, Subscription, Thunk } from 'messaging/types';
 import { expandUrl } from 'messaging/trackingUrls/actions';
 import { getFeedlyToken } from 'messaging/backend/actions';
@@ -29,9 +30,9 @@ export function fetchStream(streamId: string, fetchOptions: StreamFetchOptions):
                 stream = await dispatch(fetchFeedStream(streamId, fetchOptions, fetchedAt));
             } else if (streamId.startsWith('user/')) {
                 stream = await dispatch(fetchCategoryStream(streamId, fetchOptions, fetchedAt));
-            } else if (streamId === 'all') {
+            } else if (streamId === ALL_STREAM_ID) {
                 stream = await dispatch(fetchAllStream(fetchOptions, fetchedAt));
-            } else if (streamId === 'pins') {
+            } else if (streamId === PINS_STREAM_ID) {
                 stream = await dispatch(fetchPinsStream(fetchOptions, fetchedAt));
             }
         } catch (error) {
@@ -278,6 +279,43 @@ export function markAsRead(entries: Entry[]): AsyncThunk {
     };
 }
 
+export function markAllAsRead(): AsyncThunk {
+    return async ({ dispatch, getState }) => {
+        dispatch({
+            type: 'ALL_ENTRIES_MARKING_AS_READ'
+        });
+
+        try {
+            const token = await dispatch(getFeedlyToken());
+            const categoryId = allStreamIdOf(token.id);
+
+            await feedlyApi.markAsReadForCategories(token.access_token, categoryId);
+
+            dispatch({
+                type: 'ALL_ENTRIES_MARKED_AS_READ'
+            });
+
+            const { subscriptions } = getState();
+            const numEntries = Object.values(subscriptions)
+                .reduce((total, subscription) => total + subscription.unreadCount, 0);
+            const message = numEntries === 1
+                ? `${numEntries} entry is marked as read.`
+                : `${numEntries} entries are marked as read.`;
+
+            dispatch(sendNotification(
+                message,
+                'positive'
+            ));
+        } catch (error) {
+            dispatch({
+                type: 'ALL_ENTRIES_MARKING_AS_READ_FAILED'
+            });
+
+            throw error;
+        }
+    };
+}
+
 export function markFeedAsRead(subscription: Subscription): AsyncThunk {
     return async ({ dispatch, getState }) => {
         dispatch({
@@ -291,14 +329,13 @@ export function markFeedAsRead(subscription: Subscription): AsyncThunk {
 
             await feedlyApi.markAsReadForFeeds(token.access_token, subscription.feedId as string);
 
-            const numEntries = Math.max(0, subscription.unreadCount - subscription.readCount);
-
             dispatch({
                 type: 'FEED_MARKED_AS_READ',
                 feedId: subscription.feedId,
                 streamId: subscription.streamId
             });
 
+            const numEntries = Math.max(0, subscription.unreadCount - subscription.readCount);
             const message = numEntries === 1
                 ? `${numEntries} entry is marked as read.`
                 : `${numEntries} entries are marked as read.`;
@@ -333,12 +370,6 @@ export function markCategoryAsRead(category: Category): AsyncThunk {
 
             await feedlyApi.markAsReadForCategories(token.access_token, category.categoryId as string);
 
-            const { subscriptions } = getState();
-            const numEntries = Object.values(subscriptions.items).reduce(
-                (total, subscription) => total + (subscription.labels.includes(category.label) ? subscription.unreadCount : 0),
-                0
-            );
-
             dispatch({
                 type: 'CATEGORY_MARKED_AS_READ',
                 categoryId: category.categoryId,
@@ -346,6 +377,11 @@ export function markCategoryAsRead(category: Category): AsyncThunk {
                 label: category.label
             });
 
+            const { subscriptions } = getState();
+            const numEntries = Object.values(subscriptions.items).reduce(
+                (total, subscription) => total + (subscription.labels.includes(category.label) ? subscription.unreadCount : 0),
+                0
+            );
             const message = numEntries === 1
                 ? `${numEntries} entry is marked as read.`
                 : `${numEntries} entries are marked as read.`;
@@ -376,7 +412,7 @@ export function pinEntry(entryId: string | number): AsyncThunk {
 
         try {
             const token = await dispatch(getFeedlyToken());
-            const tagId = toFeedlyStreamId('pins', token.id);
+            const tagId = pinsStreamIdOf(token.id);
 
             await feedlyApi.setTag(token.access_token, [entryId as string], [tagId]);
 
@@ -405,7 +441,7 @@ export function unpinEntry(entryId: string | number): AsyncThunk {
 
         try {
             const token = await dispatch(getFeedlyToken());
-            const tagId = toFeedlyStreamId('pins', token.id);
+            const tagId = pinsStreamIdOf(token.id);
 
             await feedlyApi.unsetTag(token.access_token, [entryId as string], [tagId]);
 
@@ -585,7 +621,7 @@ function fetchAllStream(fetchOptions: StreamFetchOptions, fetchedAt: number): As
     return async ({ dispatch }) => {
         const token = await dispatch(getFeedlyToken());
 
-        const streamId = toFeedlyStreamId('all', token.id);
+        const streamId = allStreamIdOf(token.id);
         const contents = await feedlyApi.getStreamContents(token.access_token, {
             streamId,
             ranked: fetchOptions.entryOrder,
@@ -593,7 +629,7 @@ function fetchAllStream(fetchOptions: StreamFetchOptions, fetchedAt: number): As
         });
 
         const stream: Stream = {
-            streamId: 'all',
+            streamId: ALL_STREAM_ID,
             title: 'All',
             entries: contents.items.map(convertEntry),
             fetchedAt,
@@ -615,7 +651,7 @@ function fetchPinsStream(fetchOptions: StreamFetchOptions, fetchedAt: number): A
     return async ({ dispatch }) => {
         const token = await dispatch(getFeedlyToken());
 
-        const streamId = toFeedlyStreamId('pins', token.id);
+        const streamId = pinsStreamIdOf(token.id);
         const contents = await feedlyApi.getStreamContents(token.access_token, {
             streamId,
             ranked: fetchOptions.entryOrder,
@@ -776,11 +812,19 @@ function expandUrls(urls: string[]): AsyncThunk<string[]> {
 
 function toFeedlyStreamId(streamId: string, uid: string): string {
     switch (streamId) {
-        case 'all':
-            return `user/${uid}/category/global.all`;
-        case 'pins':
-            return `user/${uid}/tag/global.saved`;
+        case ALL_STREAM_ID:
+            return allStreamIdOf(uid);
+        case PINS_STREAM_ID:
+            return pinsStreamIdOf(uid);
         default:
             return streamId;
     }
+}
+
+function allStreamIdOf(uid: string): string {
+    return `user/${uid}/category/global.all`;
+}
+
+function pinsStreamIdOf(uid: string): string {
+    return `user/${uid}/tag/global.saved`;
 }

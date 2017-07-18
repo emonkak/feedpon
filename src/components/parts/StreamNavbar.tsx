@@ -6,7 +6,7 @@ import StreamFetchOptionsDropdown from 'components/parts/StreamFetchOptionsDropd
 import { Entry, EntryOrderKind, Feed, StreamFetchOptions, StreamViewKind } from 'messaging/types';
 
 interface StreamNavbarProps {
-    canMarkAllAsRead: boolean;
+    canMarkStreamAsRead: boolean;
     entries: Entry[];
     feed: Feed | null;
     fetchOptions: StreamFetchOptions;
@@ -15,7 +15,7 @@ interface StreamNavbarProps {
     onChangeEntryOrderKind: (order: EntryOrderKind) => void,
     onChangeStreamView: (streamView: StreamViewKind) => void,
     onClearReadEntries: () => void;
-    onMarkAllAsRead: () => void;
+    onMarkStreamAsRead: () => void;
     onReloadEntries: () => void;
     onScrollToEntry: (entryId: string | number) => void;
     onToggleOnlyUnread: () => void;
@@ -30,7 +30,7 @@ export default class StreamNavbar extends PureComponent<StreamNavbarProps, {}> {
     render() {
         const {
             readEntryIndex,
-            canMarkAllAsRead,
+            canMarkStreamAsRead,
             entries,
             feed,
             fetchOptions,
@@ -39,7 +39,7 @@ export default class StreamNavbar extends PureComponent<StreamNavbarProps, {}> {
             onChangeEntryOrderKind,
             onChangeStreamView,
             onClearReadEntries,
-            onMarkAllAsRead,
+            onMarkStreamAsRead,
             onReloadEntries,
             onScrollToEntry,
             onToggleOnlyUnread,
@@ -65,11 +65,11 @@ export default class StreamNavbar extends PureComponent<StreamNavbarProps, {}> {
                     <i className="icon icon-24 icon-refresh" />
                 </button>
                 <EntriesDropdown
-                    canMarkAllAsRead={canMarkAllAsRead}
+                    canMarkStreamAsRead={canMarkStreamAsRead}
                     entries={entries}
                     keepUnread={keepUnread}
                     onClearReadEntries={onClearReadEntries}
-                    onMarkAllAsRead={onMarkAllAsRead}
+                    onMarkStreamAsRead={onMarkStreamAsRead}
                     onScrollToEntry={onScrollToEntry}
                     onToggleUnreadKeeping={onToggleUnreadKeeping}
                     readEntryIndex={readEntryIndex}

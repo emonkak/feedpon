@@ -178,6 +178,17 @@ export default function reducer(subscriptions: Subscriptions, event: Event): Sub
                 })
             };
 
+        case 'ALL_ENTRIES_MARKED_AS_READ':
+            return {
+                ...subscriptions,
+                items: mapObject(subscriptions.items, (subscription) => {
+                    return {
+                        ...subscription,
+                        readCount: subscription.unreadCount
+                    };
+                })
+            };
+
         case 'ENTRIES_MARKED_AS_READ':
             return {
                 ...subscriptions,

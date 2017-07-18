@@ -16,14 +16,15 @@ import connect from 'utils/flux/react/connect';
 import { Category, Entry, EntryOrderKind, State, Stream, StreamFetchOptions, StreamViewKind, Subscription } from 'messaging/types';
 import { addToCategory, removeFromCategory, subscribe, unsubscribe } from 'messaging/subscriptions/actions';
 import { changeActiveEntry, changeExpandedEntry, changeReadEntry, changeStreamView, selectStream, unselectStream } from 'messaging/ui/actions';
-import { changeUnreadKeeping, fetchEntryComments, fetchFullContent, fetchMoreEntries, fetchStream, hideEntryComments, hideFullContents, markAsRead, markCategoryAsRead, markFeedAsRead, pinEntry, showEntryComments, showFullContents, unpinEntry } from 'messaging/streams/actions';
+import { changeUnreadKeeping, fetchEntryComments, fetchFullContent, fetchMoreEntries, fetchStream, hideEntryComments, hideFullContents, markAllAsRead, markAsRead, markCategoryAsRead, markFeedAsRead, pinEntry, showEntryComments, showFullContents, unpinEntry } from 'messaging/streams/actions';
 import { createCategory } from 'messaging/categories/actions';
 import { createSortedCategoriesSelector } from 'messaging/categories/selectors';
 import { scrollTo, toggleSidebar } from 'messaging/ui/actions';
+import { ALL_STREAM_ID } from 'messaging/streams/constants';
 
 interface StreamPageProps {
     activeEntryIndex: number;
-    canMarkAllAsRead: boolean;
+    canMarkStreamAsRead: boolean;
     categories: Category[];
     category: Category;
     expandedEntryIndex: number;
@@ -47,6 +48,7 @@ interface StreamPageProps {
     onFetchStream: typeof fetchStream;
     onHideEntryComments: typeof hideEntryComments;
     onHideFullContents: typeof hideFullContents;
+    onMarkAllAsRead: typeof markAllAsRead;
     onMarkAsRead: typeof markAsRead;
     onMarkCategoryAsRead: typeof markCategoryAsRead;
     onMarkFeedAsRead: typeof markFeedAsRead;
@@ -82,7 +84,7 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
         this.handleClearReadEntries = this.handleClearReadEntries.bind(this);
         this.handleCloseEntry = this.handleCloseEntry.bind(this);
         this.handleLoadMoreEntries = this.handleLoadMoreEntries.bind(this);
-        this.handleMarkAllAsRead = this.handleMarkAllAsRead.bind(this);
+        this.handleMarkStreamAsRead = this.handleMarkStreamAsRead.bind(this);
         this.handleReloadEntries = this.handleReloadEntries.bind(this);
         this.handleScrollToEntry = this.handleScrollToEntry.bind(this);
         this.handleToggleOnlyUnread = this.handleToggleOnlyUnread.bind(this);
@@ -210,10 +212,12 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
         }
     }
 
-    handleMarkAllAsRead() {
-        const { category, onMarkCategoryAsRead, onMarkFeedAsRead, subscription } = this.props;
+    handleMarkStreamAsRead() {
+        const { category, onMarkAllAsRead, onMarkCategoryAsRead, onMarkFeedAsRead, stream, subscription } = this.props;
 
-        if (category) {
+        if (stream && stream.streamId === ALL_STREAM_ID) {
+            onMarkAllAsRead();
+        } else if (category) {
             onMarkCategoryAsRead(category);
         } else if (subscription) {
             onMarkFeedAsRead(subscription);
@@ -277,7 +281,7 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
 
     renderNavbar() {
         const {
-            canMarkAllAsRead,
+            canMarkStreamAsRead,
             fetchOptions,
             isLoading,
             keepUnread,
@@ -289,7 +293,7 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
         } = this.props;
         return (
             <StreamNavbar
-                canMarkAllAsRead={canMarkAllAsRead}
+                canMarkStreamAsRead={canMarkStreamAsRead}
                 entries={stream ? stream.entries : []}
                 feed={stream ? stream.feed : null}
                 fetchOptions={fetchOptions}
@@ -298,7 +302,7 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
                 onChangeEntryOrderKind={this.handleChangeEntryOrderKind}
                 onChangeStreamView={onChangeStreamView}
                 onClearReadEntries={this.handleClearReadEntries}
-                onMarkAllAsRead={this.handleMarkAllAsRead}
+                onMarkStreamAsRead={this.handleMarkStreamAsRead}
                 onReloadEntries={this.handleReloadEntries}
                 onScrollToEntry={this.handleScrollToEntry}
                 onToggleOnlyUnread={this.handleToggleOnlyUnread}
@@ -398,15 +402,15 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
     }
 
     renderFooter() {
-        const { canMarkAllAsRead, isLoading, stream } = this.props;
+        const { canMarkStreamAsRead, isLoading, stream } = this.props;
 
         return (
             <StreamFooter
-                canMarkAllAsRead={canMarkAllAsRead}
+                canMarkStreamAsRead={canMarkStreamAsRead}
                 hasMoreEntries={!!(stream && stream.continuation)}
                 isLoading={isLoading}
                 onLoadMoreEntries={this.handleLoadMoreEntries}
-                onMarkAllAsRead={this.handleMarkAllAsRead} />
+                onMarkStreamAsRead={this.handleMarkStreamAsRead} />
         );
     }
 
@@ -497,12 +501,12 @@ export default connect(() => {
         }
     );
 
-    const canMarkAllAsReadSelector = createSelector(
+    const canMarkStreamAsReadSelector = createSelector(
         streamSelector,
         subscriptionSelector,
         categorySelector,
         (state: State) => state.streams.isMarking,
-        (stream, subscription, category, isMarking) => !!(!isMarking && stream && (subscription || category))
+        (stream, subscription, category, isMarking) => !!(!isMarking && stream && (stream.streamId === ALL_STREAM_ID || subscription || category))
     );
 
     const shouldFetchStreamSelector = createSelector(
@@ -517,7 +521,7 @@ export default connect(() => {
     return {
         mapStateToProps: (state: State, props: StreamPageProps) => ({
             activeEntryIndex: state.ui.activeEntryIndex,
-            canMarkAllAsRead: canMarkAllAsReadSelector(state, props),
+            canMarkStreamAsRead: canMarkStreamAsReadSelector(state, props),
             categories: categoriesSelector(state),
             category: categorySelector(state, props),
             expandedEntryIndex: state.ui.expandedEntryIndex,
@@ -548,6 +552,7 @@ export default connect(() => {
             onFetchStream: fetchStream,
             onHideEntryComments: hideEntryComments,
             onHideFullContents: hideFullContents,
+            onMarkAllAsRead: markAllAsRead,
             onMarkAsRead: markAsRead,
             onMarkCategoryAsRead: markCategoryAsRead,
             onMarkFeedAsRead: markFeedAsRead,

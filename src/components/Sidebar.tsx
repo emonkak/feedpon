@@ -15,6 +15,7 @@ import { createSortedCategoriesSelector } from 'messaging/categories/selectors';
 import { createGroupedSubscriptionsSelector, createTotalUnreadCountSelector, createVisibleSubscriptionsSelector } from 'messaging/subscriptions/selectors';
 import { fetchUser } from 'messaging/user/actions';
 import { revokeToken } from 'messaging/backend/actions';
+import { ALL_STREAM_ID, PINS_STREAM_ID } from 'messaging/streams/constants';
 
 interface SidebarProps {
     categories: Category[];
@@ -106,15 +107,15 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
                             isSelected={location.pathname === '/'}
                             onSelect={this.handleSelect} />
                         <TreeLeaf
-                            value="/streams/all"
+                            value={`/streams/${ALL_STREAM_ID}`}
                             primaryText="All"
                             secondaryText={Number(totalUnreadCount).toLocaleString()}
-                            isSelected={location.pathname.startsWith('/streams/all')}
+                            isSelected={location.pathname.startsWith('/streams/' + ALL_STREAM_ID)}
                             onSelect={this.handleSelect} />
                         <TreeLeaf
-                            value="/streams/pins?onlyUnread=0"
+                            value={`/streams/${PINS_STREAM_ID}?onlyUnread=0`}
                             primaryText="Pins"
-                            isSelected={location.pathname.startsWith('/streams/pins')}
+                            isSelected={location.pathname.startsWith('/streams/' + PINS_STREAM_ID)}
                             onSelect={this.handleSelect} />
                     </Tree>
                 </div>

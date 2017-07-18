@@ -27,6 +27,9 @@ export interface State {
 
 export type Event
     = { type: 'ACTIVE_ENTRY_CAHNGED', index: number }
+    | { type: 'ALL_ENTRIES_MARKED_AS_READ' }
+    | { type: 'ALL_ENTRIES_MARKING_AS_READ' }
+    | { type: 'ALL_ENTRIES_MARKING_AS_READ_FAILED' }
     | { type: 'APPLICATION_INITIALIZED' }
     | { type: 'BACKEND_AUTHENTICATED', authenticatedAt: number, exportUrl: string, token: any }
     | { type: 'BACKEND_AUTHENTICATING' }

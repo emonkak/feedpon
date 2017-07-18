@@ -483,6 +483,7 @@ export default function reducer(streams: Streams, event: Event): Streams {
                 keepUnread: event.keepUnread
             };
 
+        case 'ALL_ENTRIES_MARKING_AS_READ':
         case 'ENTRIES_MARKING_AS_READ':
         case 'CATEGORY_MARKING_AS_READ':
         case 'FEED_MARKING_AS_READ':
@@ -491,11 +492,27 @@ export default function reducer(streams: Streams, event: Event): Streams {
                 isMarking: true
             };
 
+        case 'ALL_ENTRIES_MARKING_AS_READ':
         case 'ENTRIES_MARKING_AS_READ_FAILED':
         case 'CATEGORY_MARKING_AS_READ_FAILED':
         case 'FEED_MARKING_AS_READ_FAILED':
             return {
                 ...streams,
+                isMarking: false
+            };
+
+        case 'ALL_ENTRIES_MARKED_AS_READ':
+            return {
+                ...streams,
+                items: CacheMap.mapValues(streams.items, (stream) => ({
+                    ...stream,
+                    entries: stream.entries.map((entry) => {
+                        return {
+                            ...entry,
+                            markedAsRead: true
+                        };
+                    })
+                })),
                 isMarking: false
             };
 
