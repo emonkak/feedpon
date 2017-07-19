@@ -93,6 +93,7 @@ export function fetchMoreEntries(streamId: string, continuation: string, fetchOp
             const contents = await feedlyApi.getStreamContents(token.access_token, {
                 streamId: feedlyStreamId,
                 continuation,
+                count: fetchOptions.numEntries,
                 ranked: fetchOptions.entryOrder,
                 unreadOnly: fetchOptions.onlyUnread
             });
@@ -548,6 +549,7 @@ function fetchFeedStream(streamId: string, fetchOptions: StreamFetchOptions, fet
         const [contents, feed] = await Promise.all([
             feedlyApi.getStreamContents(token.access_token, {
                 streamId,
+                count: fetchOptions.numEntries,
                 ranked: fetchOptions.entryOrder,
                 unreadOnly: fetchOptions.onlyUnread
             }),
@@ -585,6 +587,7 @@ function fetchCategoryStream(streamId: string, fetchOptions: StreamFetchOptions,
 
         const contents = await feedlyApi.getStreamContents(token.access_token, {
             streamId,
+            count: fetchOptions.numEntries,
             ranked: fetchOptions.entryOrder,
             unreadOnly: fetchOptions.onlyUnread
         });
@@ -613,6 +616,7 @@ function fetchAllStream(fetchOptions: StreamFetchOptions, fetchedAt: number): As
         const streamId = allStreamIdOf(token.id);
         const contents = await feedlyApi.getStreamContents(token.access_token, {
             streamId,
+            count: fetchOptions.numEntries,
             ranked: fetchOptions.entryOrder,
             unreadOnly: fetchOptions.onlyUnread
         });
@@ -643,6 +647,7 @@ function fetchPinsStream(fetchOptions: StreamFetchOptions, fetchedAt: number): A
         const streamId = pinsStreamIdOf(token.id);
         const contents = await feedlyApi.getStreamContents(token.access_token, {
             streamId,
+            count: fetchOptions.numEntries,
             ranked: fetchOptions.entryOrder,
             unreadOnly: fetchOptions.onlyUnread
         });
