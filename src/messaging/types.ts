@@ -79,6 +79,7 @@ export type Event
     | { type: 'FULL_CONTENT_FETCHED', entryId: string | number, fullContent: FullContent }
     | { type: 'FULL_CONTENT_FETCHING', entryId: string | number }
     | { type: 'FULL_CONTENT_FETCHING_FAILED', entryId: string | number }
+    | { type: 'FULL_CONTENT_WAS_NOT_FOUND', entryId: string | number }
     | { type: 'HELP_CLOSED' }
     | { type: 'HELP_OPENED' }
     | { type: 'INSTANT_NOTIFICATION_DISMISSED' }

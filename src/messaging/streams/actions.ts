@@ -174,7 +174,6 @@ export function fetchFullContent(entryId: string | number, url: string): AsyncTh
             if (response.ok) {
                 const responseText = await decodeResponseAsText(response);
                 const parsedDocument = new DOMParser().parseFromString(responseText, 'text/html');
-
                 const siteinfoItems = await dispatch(getSiteinfoItems());
 
                 for (const item of siteinfoItems) {
@@ -186,16 +185,6 @@ export function fetchFullContent(entryId: string | number, url: string): AsyncTh
                         if (!nextPageUrl && item.nextLinkExpression) {
                             nextPageUrl = extractNextPageUrl(parsedDocument, response.url, item.nextLinkExpression);
                         }
-
-                        debugger;
-
-                        console.log('matched', {
-                            content,
-                            contentExpression: item.contentExpression,
-                            nextPageUrl,
-                            url: response.url,
-                            urlPattern: item.urlPattern, 
-                        });
 
                         if (content && nextPageUrl) {
                             break;
@@ -216,7 +205,7 @@ export function fetchFullContent(entryId: string | number, url: string): AsyncTh
                 });
             } else {
                 dispatch({
-                    type: 'FULL_CONTENT_FETCHING_FAILED',
+                    type: 'FULL_CONTENT_WAS_NOT_FOUND',
                     entryId
                 });
             }

@@ -290,9 +290,7 @@ export default function reducer(streams: Streams, event: Event): Streams {
                             ...entry,
                             fullContents: {
                                 ...entry.fullContents,
-                                isLoaded: true,
-                                isLoading: false,
-                                isShown: true
+                                isLoading: false
                             }
                         };
                     })
@@ -315,6 +313,28 @@ export default function reducer(streams: Streams, event: Event): Streams {
                                 isLoading: false,
                                 isShown: true,
                                 items: [...entry.fullContents.items, event.fullContent]
+                            }
+                        };
+                    })
+                }))
+            };
+
+        case 'FULL_CONTENT_WAS_NOT_FOUND':
+            return {
+                ...streams,
+                items: CacheMap.mapValues(streams.items, (stream) => ({
+                    ...stream,
+                    entries: stream.entries.map((entry) => {
+                        if (entry.entryId !== event.entryId) {
+                            return entry;
+                        }
+                        return {
+                            ...entry,
+                            fullContents: {
+                                ...entry.fullContents,
+                                isLoaded: true,
+                                isLoading: false,
+                                isShown: true
                             }
                         };
                     })
@@ -407,7 +427,6 @@ export default function reducer(streams: Streams, event: Event): Streams {
                             ...entry,
                             comments: {
                                 ...entry.comments,
-                                isLoaded: true,
                                 isLoading: false
                             }
                         };
