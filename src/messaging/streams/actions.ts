@@ -723,6 +723,7 @@ function extractContent(contentDocument: Document, url: string, contentExpressio
     let content = '';
 
     const contentResult = tryEvaluate(
+        contentDocument,
         contentExpression,
         contentDocument.body,
         null,
@@ -747,6 +748,7 @@ function extractContent(contentDocument: Document, url: string, contentExpressio
 
 function extractNextPageUrl(contentDocument: Document, url: string, nextLinkExpression: string): string {
     const nextLinkResult = tryEvaluate(
+        contentDocument,
         nextLinkExpression,
         contentDocument.body,
         null,
@@ -765,7 +767,7 @@ function extractNextPageUrl(contentDocument: Document, url: string, nextLinkExpr
     return '';
 }
 
-function tryEvaluate(expression: string, contextNode: Node, resolver: XPathNSResolver | null, type: number, result: XPathResult | null): XPathResult | null {
+function tryEvaluate(document: Document, expression: string, contextNode: Node, resolver: XPathNSResolver | null, type: number, result: XPathResult | null): XPathResult | null {
     try {
         return document.evaluate(expression, contextNode, resolver, type, result);
     } catch (_error) {
