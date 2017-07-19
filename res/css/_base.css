@@ -224,6 +224,7 @@ textarea {
   line-height: inherit;
   border: initial;
   color: inherit;
+  box-shadow: none;
 }
 
 input:focus,
