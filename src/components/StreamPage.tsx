@@ -503,10 +503,18 @@ export default connect(() => {
 
     const canMarkStreamAsReadSelector = createSelector(
         streamSelector,
+        entriesSelector,
         subscriptionSelector,
         categorySelector,
         (state: State) => state.streams.isMarking,
-        (stream, subscription, category, isMarking) => !!(!isMarking && stream && (stream.streamId === ALL_STREAM_ID || subscription || category))
+        (stream, entries, subscription, category, isMarking) => {
+            if (isMarking
+                || !stream
+                || entries.every((entry) => entry.markedAsRead)) {
+                return false;
+            }
+            return stream.streamId === ALL_STREAM_ID || !!subscription || !!category;
+        }
     );
 
     const shouldFetchStreamSelector = createSelector(
