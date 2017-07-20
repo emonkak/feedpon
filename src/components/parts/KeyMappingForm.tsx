@@ -189,7 +189,7 @@ export default class KeyMappingForm extends PureComponent<KeyMappingFormProps, K
                             value={commandId}
                             onChange={this.handleChangeCommand}
                             required>
-                            <option value="">&lt;Please select a command&gt;</option>)
+                            <option value="">&lt;Please select the command&gt;</option>)
                             {Object.keys(commands).map((key) =>
                                 <option key={key} value={key}>{commands[key].name}</option>)
                             }
