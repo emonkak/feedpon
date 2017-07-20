@@ -167,7 +167,7 @@ export default class Autocomplete extends PureComponent<AutoCompleteProps, Autoc
         const { getCandidates, renderCandidate, renderExtraItems } = this.props;
         const { isOpened, query } = this.state;
 
-        const candidates = getCandidates(query);
+        const candidates = getCandidates(query).map((candidate) => renderCandidate(candidate, query));
         const extraItems = renderExtraItems!(query);
 
         return (
@@ -175,7 +175,7 @@ export default class Autocomplete extends PureComponent<AutoCompleteProps, Autoc
                 onClose={this.handleClose}
                 isDisabled={!isOpened}>
                 <div className={classnames('autocomplete', {
-                    'is-opened': isOpened && candidates.length > 0
+                    'is-opened': isOpened
                 })}>
                     <form
                         className="autocomplete-form"
@@ -188,8 +188,8 @@ export default class Autocomplete extends PureComponent<AutoCompleteProps, Autoc
                             onKeyDown={this.handleKeyDown}
                             onSelect={this.handleSelect}
                             onClose={this.handleClose}>
-                            {candidates.map((candidate) => renderCandidate(candidate, query))}
-                            {candidates.length > 0 && Children.count(extraItems) > 0 ? <div className="menu-divider" /> : null}
+                            {candidates}
+                            {candidates.length > 0 && Children.count(extraItems) > 0 && <div className="menu-divider" />}
                             {extraItems}
                         </Menu>
                     </div>
