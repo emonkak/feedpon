@@ -3,10 +3,16 @@ import * as streamActions from 'messaging/streams/actions';
 import * as subscriptionActions from 'messaging/subscriptions/actions';
 import * as uiActions from 'messaging/ui/actions';
 import { Command, Entry, Stream, Thunk } from 'messaging/types';
+import { createVisibleCategoriesSelector } from 'messaging/categories/selectors';
+import { createGroupedSubscriptionsSelector, createVisibleSubscriptionsSelector } from 'messaging/subscriptions/selectors';
 
 const SCROLL_OFFSET = 48;
 
 const TEMPLATE_PATTERN = /\${([A-Z_]\w+)}/i;
+
+const visibleSubscriptionsSelector = createVisibleSubscriptionsSelector();
+const groupedSubscriptionsSelector = createGroupedSubscriptionsSelector(visibleSubscriptionsSelector);
+const visibleCategoriesSelector = createVisibleCategoriesSelector(groupedSubscriptionsSelector);
 
 export const clearReadEntries: Command<{}> = {
     commandId: 'clearReadEntries',
@@ -152,8 +158,6 @@ export const openUrl: Command<{ template: string, inBackground: boolean }> = {
                 } as { [key: string]: string };
 
                 const url = template.replace(TEMPLATE_PATTERN, (match, p1) => {
-                    console.log(variables[p1]);
-
                     return encodeURIComponent(variables[p1] || '');
                 });
 
@@ -291,23 +295,23 @@ export const selectNextCategory: Command<{}> = {
     description: 'Select the next category.',
     defaultParams: {},
     action() {
-        return ({ dispatch, getState }, { router, selectors }) => {
+        return ({ dispatch, getState }, { router }) => {
             const state = getState();
             const streamId = state.ui.selectedStreamId;
-            const sortedCategories = selectors.sortedCategoriesSelector(state);
+            const visibleCategories = visibleCategoriesSelector(state);
 
             if (streamId) {
-                const selectedCategoryIndex = sortedCategories
+                const selectedCategoryIndex = visibleCategories
                     .findIndex((category) => category.streamId === streamId);
                 const nextCategory = selectedCategoryIndex > -1
-                    ? sortedCategories[selectedCategoryIndex + 1]
-                    : sortedCategories[0];
+                    ? visibleCategories[selectedCategoryIndex + 1]
+                    : visibleCategories[0];
 
                 if (nextCategory) {
                     router.push(`/streams/${encodeURIComponent(nextCategory.streamId)}`);
                 }
-            } else if (sortedCategories.length > 0) {
-                const lastCategory = sortedCategories[sortedCategories.length - 1];
+            } else if (visibleCategories.length > 0) {
+                const lastCategory = visibleCategories[visibleCategories.length - 1];
 
                 router.push(`/streams/${encodeURIComponent(lastCategory.streamId)}`);
             }
@@ -360,10 +364,10 @@ export const selectNextSubscription: Command<{}> = {
     description: 'Select the next subscription.',
     defaultParams: {},
     action() {
-        return ({ getState }, { router, selectors }) => {
+        return ({ getState }, { router }) => {
             const state = getState();
             const streamId = state.ui.selectedStreamId;
-            const visibleSubscriptions = selectors.visibleSubscriptionsSelector(state);
+            const visibleSubscriptions = visibleSubscriptionsSelector(state);
 
             if (streamId) {
                 const selectedSubscriptionIndex = visibleSubscriptions
@@ -390,23 +394,23 @@ export const selectPreviousCategory: Command<{}> = {
     description: 'Select the previous category.',
     defaultParams: {},
     action() {
-        return ({ dispatch, getState }, { router, selectors }) => {
+        return ({ dispatch, getState }, { router }) => {
             const state = getState();
             const streamId = state.ui.selectedStreamId;
-            const sortedCategories = selectors.sortedCategoriesSelector(state);
+            const visibleCategories = visibleCategoriesSelector(state);
 
             if (streamId) {
-                const selectedCategoryIndex = sortedCategories
+                const selectedCategoryIndex = visibleCategories
                     .findIndex((category) => category.streamId === streamId);
                 const previousCategory = selectedCategoryIndex > -1
-                    ? sortedCategories[selectedCategoryIndex - 1]
-                    : sortedCategories[sortedCategories.length - 1];
+                    ? visibleCategories[selectedCategoryIndex - 1]
+                    : visibleCategories[visibleCategories.length - 1];
 
                 if (previousCategory) {
                     router.push(`/streams/${encodeURIComponent(previousCategory.streamId)}`);
                 }
-            } else if (sortedCategories.length > 0) {
-                const firstCategory = sortedCategories[0];
+            } else if (visibleCategories.length > 0) {
+                const firstCategory = visibleCategories[0];
 
                 router.push(`/streams/${encodeURIComponent(firstCategory.streamId)}`);
             }
@@ -451,10 +455,10 @@ export const selectPreviousSubscription: Command<{}> = {
     description: 'Select the previous subscription.',
     defaultParams: {},
     action() {
-        return ({ getState }, { router, selectors }) => {
+        return ({ getState }, { router }) => {
             const state = getState();
             const streamId = state.ui.selectedStreamId;
-            const visibleSubscriptions = selectors.visibleSubscriptionsSelector(state);
+            const visibleSubscriptions = visibleSubscriptionsSelector(state);
 
             if (streamId) {
                 const selectedSubscriptionIndex = visibleSubscriptions

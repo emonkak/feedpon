@@ -16,8 +16,6 @@ import routes from 'components/routes';
 import saveStateMiddleware from 'utils/flux/middlewares/saveStateMiddleware';
 import thunkMiddleware from 'utils/flux/middlewares/thunkMiddleware';
 import { ThunkContext } from 'messaging/types';
-import { createSortedCategoriesSelector } from 'messaging/categories/selectors';
-import { createVisibleSubscriptionsSelector } from 'messaging/subscriptions/selectors';
 import { sendNotification } from 'messaging/notifications/actions';
 
 function main() {
@@ -30,11 +28,7 @@ function main() {
             scope: 'https://cloud.feedly.com/subscriptions',
             redirectUri: 'https://www.feedly.com/feedly.html'
         },
-        router: hashHistory,
-        selectors: {
-            visibleSubscriptionsSelector: createVisibleSubscriptionsSelector(),
-            sortedCategoriesSelector: createSortedCategoriesSelector()
-        }
+        router: hashHistory
     };
 
     const middlewares = [

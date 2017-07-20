@@ -139,7 +139,6 @@ export type AsyncThunk<TResult = void> = Thunk<Promise<TResult>>;
 export interface ThunkContext {
     environment: Environment;
     router: History;
-    selectors: Selectors;
 }
 
 export interface Environment {
@@ -147,11 +146,6 @@ export interface Environment {
     clientSecret: string;
     scope: string;
     redirectUri: string;
-}
-
-export interface Selectors {
-    visibleSubscriptionsSelector: (state: State) => Subscription[];
-    sortedCategoriesSelector: (state: State) => Category[];
 }
 
 export interface Command<T extends object> {

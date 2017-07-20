@@ -13,8 +13,6 @@ export default function parseDuration(input: string): number {
         return 0;
     }
 
-    console.log(matches);
-
     const h = matches[1] ? parseInt(matches[1]) : 0;
     const m = matches[2] ? parseInt(matches[2]) : 0;
     const s = matches[3] ? parseInt(matches[3]) : 0;
