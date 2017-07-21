@@ -12,35 +12,34 @@ interface CleanHtmlProps {
 
 export default class CleanHtml extends PureComponent<CleanHtmlProps, {}> {
     componentDidMount() {
-        this.update();
+        this.updateContent();
     }
 
     componentDidUpdate() {
-        this.update();
+        this.updateContent();
     }
 
-    update() {
+    updateContent() {
         const { baseUrl, html } = this.props;
 
+        const content = document.createElement('div');
+
         if (html) {
-            const parser = new DOMParser();
-            const { body } = parser.parseFromString(html, 'text/html');
+            content.insertAdjacentHTML('beforeend', html);
 
-            walkNode(body, (node) => cleanNode(node, baseUrl));
+            walkNode(content, (child) => cleanNode(child, baseUrl));
+        }
 
-            const fragment = document.createDocumentFragment();
+        this.replaceContent(content);
+    }
 
-            for (let node = body.firstChild; node; node = body.firstChild) {
-                fragment.appendChild(node);
-            }
+    replaceContent(element: HTMLElement) {
+        const container = findDOMNode(this);
 
-            const container = findDOMNode(this);
-
-            if (container.firstChild) {
-                container.replaceChild(fragment, container.firstChild);
-            } else {
-                container.appendChild(fragment);
-            }
+        if (container.firstChild) {
+            container.replaceChild(element, container.firstChild);
+        } else {
+            container.appendChild(element);
         }
     }
 
