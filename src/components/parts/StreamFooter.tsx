@@ -5,7 +5,7 @@ interface StreamFooterProps {
     hasMoreEntries: boolean;
     isLoading: boolean;
     onLoadMoreEntries: () => void;
-    onMarkStreamAsRead: () => void;
+    onMarkAllAsRead: () => void;
 }
 
 export default class StreamFooter extends PureComponent<StreamFooterProps, {}> {
@@ -28,7 +28,7 @@ export default class StreamFooter extends PureComponent<StreamFooterProps, {}> {
             canMarkStreamAsRead,
             hasMoreEntries,
             isLoading,
-            onMarkStreamAsRead
+            onMarkAllAsRead
         } = this.props;
 
         if (hasMoreEntries) {
@@ -57,7 +57,7 @@ export default class StreamFooter extends PureComponent<StreamFooterProps, {}> {
                     <p>
                         <button
                             className="button button-positive"
-                            onClick={onMarkStreamAsRead}
+                            onClick={onMarkAllAsRead}
                             disabled={!canMarkStreamAsRead}>
                             Mark all as read
                         </button>

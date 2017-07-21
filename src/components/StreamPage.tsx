@@ -84,6 +84,7 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
         this.handleClearReadEntries = this.handleClearReadEntries.bind(this);
         this.handleCloseEntry = this.handleCloseEntry.bind(this);
         this.handleLoadMoreEntries = this.handleLoadMoreEntries.bind(this);
+        this.handleMarkAllAsRead = this.handleMarkAllAsRead.bind(this);
         this.handleMarkStreamAsRead = this.handleMarkStreamAsRead.bind(this);
         this.handleReloadEntries = this.handleReloadEntries.bind(this);
         this.handleScrollToEntry = this.handleScrollToEntry.bind(this);
@@ -209,6 +210,15 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
             if (!keepUnread && readEntries.length > 0) {
                 onMarkAsRead(readEntries);
             }
+        }
+    }
+
+    handleMarkAllAsRead() {
+        const { stream, onMarkAsRead } = this.props;
+        const unreadEntries = stream ? stream.entries.filter((entry) => !entry.markedAsRead) : [];
+
+        if (unreadEntries.length > 0) {
+            onMarkAsRead(unreadEntries);
         }
     }
 
@@ -410,7 +420,7 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
                 hasMoreEntries={!!(stream && stream.continuation)}
                 isLoading={isLoading}
                 onLoadMoreEntries={this.handleLoadMoreEntries}
-                onMarkStreamAsRead={this.handleMarkStreamAsRead} />
+                onMarkAllAsRead={this.handleMarkAllAsRead} />
         );
     }
 
