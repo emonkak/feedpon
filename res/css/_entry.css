@@ -74,8 +74,7 @@
   margin: 0 0 var(--baseline-height);
 }
 
-.entry-content img,
-.entry-content video {
+.entry-content img {
   max-width: 100%;
   object-fit: cover;
 }
