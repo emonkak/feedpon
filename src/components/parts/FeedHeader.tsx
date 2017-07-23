@@ -33,13 +33,18 @@ const FeedHeader: React.SFC<FeedHeaderProps> = ({
             <div className="container">
                 <div className="u-flex u-flex-align-items-center u-flex-justify-content-between">
                     <div className="u-margin-right-2 u-flex-grow-1">
-                        <div className="list-inline list-inline-dotted">
-                            <div className="list-inline-item u-text-muted"><span className="u-text-x-large">{numEntries}</span> entries</div>
-                            <div className="list-inline-item u-text-muted"><span className="u-text-x-large">{feed.subscribers}</span> subscribers</div>
+                        <div>
+                            {feed.url ?
+                                <a target="_blank" className="link-strong" href={feed.url}>{feed.title}</a> :
+                                <strong>{feed.title}</strong>}
                         </div>
                         <div>{feed.description}</div>
-                        <div>{feed.url && <a target="_blank" href={feed.url}>{feed.url}</a>}</div>
                         <div><a target="_blank" href={feed.feedUrl}>{feed.feedUrl}</a></div>
+                        <div className="list-inline list-inline-dotted">
+                            <div className="list-inline-item u-text-muted"><span className="u-text-x-large">{numEntries}</span> entries</div>
+                            <div className="list-inline-item u-text-muted"><span className="u-text-x-large">{subscription ? subscription.unreadCount : 0}</span> unreads</div>
+                            <div className="list-inline-item u-text-muted"><span className="u-text-x-large">{feed.subscribers}</span> subscribers</div>
+                        </div>
                     </div>
                     <SubscribeDropdown
                         className="u-flex-shrink-0"

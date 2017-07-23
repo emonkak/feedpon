@@ -27,6 +27,7 @@ interface StreamPageProps {
     canMarkStreamAsRead: boolean;
     categories: Category[];
     category: Category;
+    categoryUnreadCount: number;
     expandedEntryIndex: number;
     fetchOptions: StreamFetchOptions;
     isLoaded: boolean;
@@ -34,7 +35,6 @@ interface StreamPageProps {
     isScrolling: boolean;
     keepUnread: boolean;
     location: Location;
-    numSubscriptions: number;
     onAddToCategory: typeof addToCategory;
     onChangeActiveEntry: typeof changeActiveEntry;
     onChangeExpandedEntry: typeof changeExpandedEntry;
@@ -335,7 +335,7 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
         const {
             categories,
             category,
-            numSubscriptions,
+            categoryUnreadCount,
             onAddToCategory,
             onCreateCategory,
             onRemoveFromCategory,
@@ -366,7 +366,7 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
                     <CategoryHeader
                         category={category}
                         numEntries={stream.entries.length}
-                        numSubscriptions={numSubscriptions} />
+                        unreadCount={categoryUnreadCount} />
                 );
             }
         }
@@ -500,7 +500,7 @@ export default connect(() => {
         (categories, streamId) => categories[streamId] || null
     );
 
-    const numSubscriptionsSelector = createSelector(
+    const categoryUnreadCountSelector = createSelector(
         categorySelector,
         (state: State) => state.subscriptions.items,
         (category, subscriptions) => {
@@ -510,10 +510,14 @@ export default connect(() => {
 
             const label = category.label;
 
-            return Object.values(subscriptions).reduce(
-                (acc, subscription) => acc + (subscription.labels.includes(label) ? 1 : 0),
-                0
-            );
+            return Object.values(subscriptions)
+                .reduce((acc, subscription) => {
+                    if (!subscription.labels.includes(label)
+                        || subscription.unreadCount < subscription.readCount) {
+                        return acc;
+                    }
+                    return acc + (subscription.unreadCount - subscription.readCount);
+                }, 0);
         }
     );
 
@@ -548,13 +552,13 @@ export default connect(() => {
             canMarkStreamAsRead: canMarkStreamAsReadSelector(state, props),
             categories: categoriesSelector(state),
             category: categorySelector(state, props),
+            categoryUnreadCount: categoryUnreadCountSelector(state, props),
             expandedEntryIndex: state.ui.expandedEntryIndex,
             fetchOptions: fetchOptionsSelector(state, props),
             isLoaded: state.streams.isLoaded,
             isLoading: state.streams.isLoading,
             isScrolling: state.ui.isScrolling,
             keepUnread: state.streams.keepUnread,
-            numSubscriptions: numSubscriptionsSelector(state, props),
             readEntries: readEntriesSelector(state, props),
             readEntryIndex: state.ui.readEntryIndex,
             shouldFetchStream: shouldFetchStreamSelector(state, props),
