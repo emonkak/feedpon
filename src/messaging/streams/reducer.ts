@@ -386,10 +386,16 @@ export default function reducer(streams: Streams, event: Event): Streams {
                 ...streams,
                 items: CacheMap.mapValues(streams.items, (stream) => ({
                     ...stream,
-                    entries: stream.entries.map((entry) => ({
-                        ...entry,
-                        bookmarkCount: event.bookmarkCounts[entry.url] || 0
-                    }))
+                    entries: stream.entries.map((entry) => {
+                        const bookmarkCount = event.bookmarkCounts[entry.url];
+                        if (bookmarkCount == null) {
+                            return entry;
+                        }
+                        return {
+                            ...entry,
+                            bookmarkCount
+                        };
+                    })
                 }))
             };
 
