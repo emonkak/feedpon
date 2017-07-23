@@ -15,7 +15,6 @@ interface EntryListProps {
     isLoading: boolean;
     isScrolling: boolean;
     onChangeActiveEntry: (index: number) => void;
-    onClose: () => void;
     onExpand: (entryId: string | number) => void;
     onFetchComments: (entryId: string | number, url: string) => void;
     onFetchFullContent: (entryId: string | number, url: string) => void;
@@ -32,7 +31,6 @@ interface EntryListProps {
 export default class EntryList extends PureComponent<EntryListProps, {}> {
     renderEntry(entry: Entry, index: number) {
         const { 
-            onClose,
             onExpand,
             onFetchComments,
             onFetchFullContent,
@@ -55,7 +53,6 @@ export default class EntryList extends PureComponent<EntryListProps, {}> {
                 isCollapsible={streamView === 'collapsible'}
                 isExpanded={streamView === 'expanded' || index === expandedEntryIndex}
                 key={entry.entryId}
-                onClose={onClose}
                 onExpand={onExpand}
                 onFetchComments={onFetchComments}
                 onFetchFullContent={onFetchFullContent}

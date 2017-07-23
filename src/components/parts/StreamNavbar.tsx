@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React from 'react';
 
 import Navbar from 'components/widgets/Navbar';
 import EntriesDropdown from 'components/parts/EntriesDropdown';
@@ -10,11 +10,13 @@ interface StreamNavbarProps {
     entries: Entry[];
     feed: Feed | null;
     fetchOptions: StreamFetchOptions;
+    isExpanded: boolean;
     isLoading: boolean;
     keepUnread: boolean;
     onChangeEntryOrderKind: (order: EntryOrderKind) => void,
     onChangeStreamView: (streamView: StreamViewKind) => void,
     onClearReadEntries: () => void;
+    onCloseEntry: () => void;
     onMarkStreamAsRead: () => void;
     onReloadEntries: () => void;
     onScrollToEntry: (entryId: string | number) => void;
@@ -26,62 +28,62 @@ interface StreamNavbarProps {
     title: string;
 }
 
-export default class StreamNavbar extends PureComponent<StreamNavbarProps, {}> {
-    render() {
-        const {
-            readEntryIndex,
-            canMarkStreamAsRead,
-            entries,
-            feed,
-            fetchOptions,
-            isLoading,
-            keepUnread,
-            onChangeEntryOrderKind,
-            onChangeStreamView,
-            onClearReadEntries,
-            onMarkStreamAsRead,
-            onReloadEntries,
-            onScrollToEntry,
-            onToggleOnlyUnread,
-            onToggleSidebar,
-            onToggleUnreadKeeping,
-            streamView,
-            title
-        } = this.props;
-
-        const titleElement = feed && feed.url
-            ? <a className="stream-title u-text-truncate" href={feed.url} target="_blank">{title}</a>
-            : <span className="stream-title u-text-truncate">{title}</span>;
-
-        return (
-            <Navbar onToggleSidebar={onToggleSidebar}>
-                <h1 className="navbar-title">
-                    {titleElement}
-                </h1>
-                <button
-                    disabled={isLoading}
-                    className="navbar-action"
-                    onClick={onReloadEntries}>
-                    <i className="icon icon-24 icon-refresh" />
-                </button>
-                <EntriesDropdown
-                    canMarkStreamAsRead={canMarkStreamAsRead}
-                    entries={entries}
-                    keepUnread={keepUnread}
-                    onClearReadEntries={onClearReadEntries}
-                    onMarkStreamAsRead={onMarkStreamAsRead}
-                    onScrollToEntry={onScrollToEntry}
-                    onToggleUnreadKeeping={onToggleUnreadKeeping}
-                    readEntryIndex={readEntryIndex}
-                    title={title} />
+const StreamNavbar: React.SFC<StreamNavbarProps> = ({
+    canMarkStreamAsRead,
+    entries,
+    feed,
+    fetchOptions,
+    isExpanded,
+    isLoading,
+    keepUnread,
+    onChangeEntryOrderKind,
+    onChangeStreamView,
+    onClearReadEntries,
+    onCloseEntry,
+    onMarkStreamAsRead,
+    onReloadEntries,
+    onScrollToEntry,
+    onToggleOnlyUnread,
+    onToggleSidebar,
+    onToggleUnreadKeeping,
+    readEntryIndex,
+    streamView,
+    title
+}) => {
+    return (
+        <Navbar onToggleSidebar={onToggleSidebar}>
+            <h1 className="navbar-title">
+                <span className="stream-title u-text-truncate">{title}</span>
+            </h1>
+            <button
+                disabled={isLoading}
+                className="navbar-action"
+                onClick={onReloadEntries}>
+                <i className="icon icon-24 icon-refresh" />
+            </button>
+            <EntriesDropdown
+                canMarkStreamAsRead={canMarkStreamAsRead}
+                entries={entries}
+                keepUnread={keepUnread}
+                onClearReadEntries={onClearReadEntries}
+                onMarkStreamAsRead={onMarkStreamAsRead}
+                onScrollToEntry={onScrollToEntry}
+                onToggleUnreadKeeping={onToggleUnreadKeeping}
+                readEntryIndex={readEntryIndex}
+                title={title} />
+            {isExpanded ?
+                <button className="navbar-action" onClick={onCloseEntry}>
+                    <i className="icon icon-24 icon-close" />
+                </button> :
                 <StreamFetchOptionsDropdown
                     fetchOptions={fetchOptions}
                     isLoading={isLoading}
                     onChangeEntryOrderKind={onChangeEntryOrderKind}
                     onChangeStreamView={onChangeStreamView}
                     onToggleOnlyUnread={onToggleOnlyUnread}
-                    streamView={streamView} />
-            </Navbar>
-        );
-    }
+                    streamView={streamView} />}
+        </Navbar>
+    );
 }
+
+export default StreamNavbar;

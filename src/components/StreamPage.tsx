@@ -149,7 +149,11 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
         const { activeEntryIndex, expandedEntryIndex } = this.props;
 
         if (expandedEntryIndex !== prevProps.expandedEntryIndex) {
-            this.scrollToEntry(expandedEntryIndex);
+            if (expandedEntryIndex > -1) {
+                this.scrollToEntry(expandedEntryIndex);
+            } else {
+                this.scrollToEntry(prevProps.expandedEntryIndex);
+            }
         } else if (this.props.streamView !== prevProps.streamView) {
             this.scrollToEntry(activeEntryIndex);
         }
@@ -292,6 +296,7 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
     renderNavbar() {
         const {
             canMarkStreamAsRead,
+            expandedEntryIndex,
             fetchOptions,
             isLoading,
             keepUnread,
@@ -307,11 +312,13 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
                 entries={stream ? stream.entries : []}
                 feed={stream ? stream.feed : null}
                 fetchOptions={fetchOptions}
+                isExpanded={expandedEntryIndex > -1}
                 isLoading={isLoading}
                 keepUnread={keepUnread}
                 onChangeEntryOrderKind={this.handleChangeEntryOrderKind}
                 onChangeStreamView={onChangeStreamView}
                 onClearReadEntries={this.handleClearReadEntries}
+                onCloseEntry={this.handleCloseEntry}
                 onMarkStreamAsRead={this.handleMarkStreamAsRead}
                 onReloadEntries={this.handleReloadEntries}
                 onScrollToEntry={this.handleScrollToEntry}
@@ -396,7 +403,6 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
                 isLoading={isLoading}
                 isScrolling={isScrolling}
                 onChangeActiveEntry={this.handleChangeActiveEnetry}
-                onClose={this.handleCloseEntry}
                 onExpand={onChangeExpandedEntry}
                 onFetchComments={onFetchEntryComments}
                 onFetchFullContent={onFetchFullContent}

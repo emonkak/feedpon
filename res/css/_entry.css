@@ -43,7 +43,6 @@
 }
 
 .entry.is-expanded .entry-summary,
-.entry.is-expanded:not(.is-collapsible) .entry-close,
 .entry:not(.is-expanded) .entry-nav,
 .entry:not(.is-expanded) .entry-footer,
 .entry:not(.is-expanded) .entry-content {

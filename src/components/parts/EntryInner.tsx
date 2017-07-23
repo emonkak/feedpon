@@ -11,7 +11,6 @@ import { Entry } from 'messaging/types';
 
 interface EntryInnerProps {
     entry: Entry;
-    onClose: React.MouseEventHandler<any>;
     onExpand: React.MouseEventHandler<any>;
     onFetchNextFullContent: React.MouseEventHandler<any>;
     onToggleComments: React.MouseEventHandler<any>;
@@ -22,7 +21,6 @@ interface EntryInnerProps {
 
 const EntryInner: React.SFC<EntryInnerProps> = ({
     entry,
-    onClose,
     onExpand,
     onFetchNextFullContent,
     onToggleComments,
@@ -52,7 +50,6 @@ const EntryInner: React.SFC<EntryInnerProps> = ({
                     fullContentsIsShown={entry.fullContents.isShown}
                     isPinned={entry.isPinned}
                     isPinning={entry.isPinning}
-                    onClose={onClose}
                     onToggleFullContent={onToggleFullContent}
                     onTogglePin={onTogglePin}
                     url={entry.url} />

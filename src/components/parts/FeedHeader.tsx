@@ -38,6 +38,7 @@ const FeedHeader: React.SFC<FeedHeaderProps> = ({
                             <div className="list-inline-item u-text-muted"><span className="u-text-x-large">{feed.subscribers}</span> subscribers</div>
                         </div>
                         <div>{feed.description}</div>
+                        <div>{feed.url && <a target="_blank" href={feed.url}>{feed.url}</a>}</div>
                         <div><a target="_blank" href={feed.feedUrl}>{feed.feedUrl}</a></div>
                     </div>
                     <SubscribeDropdown

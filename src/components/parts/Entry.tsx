@@ -10,7 +10,6 @@ interface EntryProps {
     isActive?: boolean;
     isCollapsible?: boolean;
     isExpanded?: boolean;
-    onClose: () => void;
     onExpand: (index: number) => void;
     onFetchComments: (entryId: string | number, url: string) => void;
     onFetchFullContent: (entryId: string | number, url: string) => void;
@@ -33,22 +32,11 @@ export default class EntryComponent extends PureComponent<EntryProps, {}> {
     constructor(props: EntryProps, context: any) {
         super(props, context);
 
-        this.handleClose = this.handleClose.bind(this);
         this.handleExpand = this.handleExpand.bind(this);
         this.handleFetchNextFullContent = this.handleFetchNextFullContent.bind(this);
         this.handleToggleComments = this.handleToggleComments.bind(this);
         this.handleToggleFullContent = this.handleToggleFullContent.bind(this);
         this.handleTogglePin = this.handleTogglePin.bind(this);
-    }
-
-    handleClose(event: React.MouseEvent<any>) {
-        event.preventDefault();
-
-        const { isCollapsible, isExpanded, onClose } = this.props;
-
-        if (onClose && isCollapsible && isExpanded) {
-            onClose();
-        }
     }
 
     handleExpand(event: React.MouseEvent<any>) {
@@ -135,7 +123,6 @@ export default class EntryComponent extends PureComponent<EntryProps, {}> {
                 onClick={this.handleExpand}>
                 <EntryInner
                     entry={entry}
-                    onClose={this.handleClose}
                     onExpand={this.handleExpand}
                     onFetchNextFullContent={this.handleFetchNextFullContent}
                     onToggleComments={this.handleToggleComments}
