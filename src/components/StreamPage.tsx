@@ -204,16 +204,10 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
     }
 
     handleLoadMoreEntries() {
-        const { fetchOptions, keepUnread, onFetchMoreEntries, onMarkAsRead, readEntries, stream } = this.props;
+        const { fetchOptions, onFetchMoreEntries, stream } = this.props;
 
-        if (stream) {
-            if (stream.continuation) {
-                onFetchMoreEntries(stream.streamId, stream.continuation, fetchOptions);
-            }
-
-            if (!keepUnread && readEntries.length > 0) {
-                onMarkAsRead(readEntries);
-            }
+        if (stream && stream.continuation) {
+            onFetchMoreEntries(stream.streamId, stream.continuation, fetchOptions);
         }
     }
 
