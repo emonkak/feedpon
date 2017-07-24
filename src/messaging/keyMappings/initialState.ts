@@ -23,7 +23,7 @@ const initialState: KeyMappings = {
         [['h'], { commandId: 'closeEntry', params: {}, preventNotification: true }],
         [['j'], { commandId: 'selectNextEntry', params: {}, preventNotification: true }],
         [['k'], { commandId: 'selectPreviousEntry', params: {}, preventNotification: true }],
-        [['l'], { commandId: 'expandEntry', params: {} }],
+        [['l'], { commandId: 'expandEntry', params: {}, preventNotification: true }],
         [['p'], { commandId: 'pinOrUnpinEntry', params: {} }],
         [['r'], { commandId: 'reloadSubscriptions', params: {} }],
         [['s'], { commandId: 'selectNextSubscription', params: {} }],
