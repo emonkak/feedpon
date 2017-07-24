@@ -77,9 +77,9 @@ export default class LazyList extends PureComponent<LazyListProps, LazyListState
     }
 
     componentWillUnmount() {
-        this.scrollable.removeEventListener('resize', this.handleUpdateHeight);
-        this.scrollable.removeEventListener('scroll', this.handleScroll);
-        this.scrollable.removeEventListener('touchmove', this.handleScroll);
+        this.scrollable.removeEventListener('resize', this.handleUpdateHeight, { passive: true } as any);
+        this.scrollable.removeEventListener('scroll', this.handleScroll, { passive: true } as any);
+        this.scrollable.removeEventListener('touchmove', this.handleScroll, { passive: true } as any);
 
         this.isUnmounted = true;
     }

@@ -54,8 +54,8 @@ export default class ScrollSpy extends PureComponent<ScrollSpyProps, {}> {
     }
 
     componentWillUnmount() {
-        this.scrollable.removeEventListener('scroll', this.handleScroll);
-        this.scrollable.removeEventListener('touchmove', this.handleScroll);
+        this.scrollable.removeEventListener('scroll', this.handleScroll, { passive: true } as any);
+        this.scrollable.removeEventListener('touchmove', this.handleScroll, { passive: true } as any);
 
         this.isUnmounted = true;
     }
