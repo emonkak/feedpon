@@ -15,7 +15,6 @@ const groupedSubscriptionsSelector = createGroupedSubscriptionsSelector(visibleS
 const visibleCategoriesSelector = createVisibleCategoriesSelector(groupedSubscriptionsSelector);
 
 export const clearReadEntries: Command<{}> = {
-    commandId: 'clearReadEntries',
     name: 'Clear read entries',
     description: 'Clear read entries in the current selected stream.',
     defaultParams: {},
@@ -29,7 +28,6 @@ export const clearReadEntries: Command<{}> = {
 };
 
 export const closeEntry: Command<{}> = {
-    commandId: 'closeEntry',
     name: 'Close entry',
     description: 'Close the active entry if expanded.',
     defaultParams: {},
@@ -39,7 +37,6 @@ export const closeEntry: Command<{}> = {
 };
 
 export const closeSidebar: Command<{}> = {
-    commandId: 'closeSidebar',
     name: 'Close sidebar',
     description: 'Close the sidebar if opened.',
     defaultParams: {},
@@ -49,7 +46,6 @@ export const closeSidebar: Command<{}> = {
 };
 
 export const expandEntry: Command<{}> = {
-    commandId: 'expandEntry',
     name: 'Expand entry',
     description: 'Expand the active entry if collapsed.',
     defaultParams: {},
@@ -63,7 +59,6 @@ export const expandEntry: Command<{}> = {
 };
 
 export const toggleComments: Command<{}> = {
-    commandId: 'toggleComments',
     name: 'Toggle comments',
     description: 'Toggle comments display on the active entry',
     defaultParams: {},
@@ -87,7 +82,6 @@ export const toggleComments: Command<{}> = {
 };
 
 export const fetchFullContent: Command<{}> = {
-    commandId: 'fetchFullContent',
     name: 'Fetch full content',
     description: 'Fetch contents on the active entry',
     defaultParams: {},
@@ -117,7 +111,6 @@ export const fetchFullContent: Command<{}> = {
 };
 
 export const gotoFirstLine: Command<{}> = {
-    commandId: 'gotoFirstLine',
     name: 'Go to first line',
     description: 'Scroll to first line.',
     defaultParams: {},
@@ -127,7 +120,6 @@ export const gotoFirstLine: Command<{}> = {
 };
 
 export const gotoLastLine: Command<{}> = {
-    commandId: 'gotoLastLine',
     name: 'Go to last line',
     description: 'Scroll to last line.',
     defaultParams: {},
@@ -139,8 +131,26 @@ export const gotoLastLine: Command<{}> = {
     }
 };
 
+export const markAllEntriesAsRead: Command<{}> = {
+    name: 'Mark all entries as read',
+    description: 'Mark all viewing entries as read.',
+    defaultParams: {},
+    action() {
+        return ({ dispatch }) => {
+            const stream = dispatch(getSelectedStream);
+
+            if (stream) {
+                const unreadEntries = stream.entries.filter((entry) => !entry.markedAsRead);
+
+                if (unreadEntries.length > 0) {
+                    dispatch(streamActions.markAsRead(unreadEntries));
+                }
+            }
+        };
+    }
+};
+
 export const openUrl: Command<{ template: string, inBackground: boolean }> = {
-    commandId: 'openUrl',
     name: 'Open URL',
     description: 'Open the URL from template format.',
     defaultParams: {
@@ -172,7 +182,6 @@ export const openUrl: Command<{ template: string, inBackground: boolean }> = {
 }
 
 export const pinOrUnpinEntry: Command<{}> = {
-    commandId: 'pinOrUnpinEntry',
     name: 'Pin/Unpin entry',
     description: 'Toggle pinned state on the active entry.',
     defaultParams: {},
@@ -192,7 +201,6 @@ export const pinOrUnpinEntry: Command<{}> = {
 };
 
 export const reloadStream: Command<{}> = {
-    commandId: 'reloadStream',
     name: 'Reload stream',
     description: 'Reload the current selected stream.',
     defaultParams: {},
@@ -210,7 +218,6 @@ export const reloadStream: Command<{}> = {
 };
 
 export const reloadSubscriptions: Command<{}> = {
-    commandId: 'reloadSubscriptions',
     name: 'Reload subscriptions',
     description: 'Reload subscriptions and categories.',
     defaultParams: {},
@@ -220,7 +227,6 @@ export const reloadSubscriptions: Command<{}> = {
 };
 
 export const scrollDown: Command<{ scrollAmount: number }> = {
-    commandId: 'scrollDown',
     name: 'Scroll down',
     description: 'Scroll down by the specified pixel.',
     defaultParams: {
@@ -232,7 +238,6 @@ export const scrollDown: Command<{ scrollAmount: number }> = {
 };
 
 export const scrollPageDown: Command<{ numPages: number }> = {
-    commandId: 'scrollPageDown',
     name: 'Scroll page down',
     description: 'Scroll down by the specified number of pages.',
     defaultParams: {
@@ -244,7 +249,6 @@ export const scrollPageDown: Command<{ numPages: number }> = {
 };
 
 export const scrollPageUp: Command<{ numPages: number }> = {
-    commandId: 'scrollPageUp',
     name: 'Scroll page up',
     description: 'Scroll up by the specified number of pages.',
     defaultParams: {
@@ -256,7 +260,6 @@ export const scrollPageUp: Command<{ numPages: number }> = {
 };
 
 export const scrollUp: Command<{ scrollAmount: number }> = {
-    commandId: 'scrollUp',
     name: 'Scroll up',
     description: 'Scroll up by the specified pixel.',
     defaultParams: {
@@ -268,7 +271,6 @@ export const scrollUp: Command<{ scrollAmount: number }> = {
 };
 
 export const searchSubscriptions: Command<{}> = {
-    commandId: 'searchSubscriptions',
     name: 'Search subscriptions',
     description: 'Focus to the search form.',
     defaultParams: {},
@@ -290,7 +292,6 @@ export const searchSubscriptions: Command<{}> = {
 };
 
 export const selectNextCategory: Command<{}> = {
-    commandId: 'selectNextCategory',
     name: 'Select next category',
     description: 'Select the next category.',
     defaultParams: {},
@@ -320,7 +321,6 @@ export const selectNextCategory: Command<{}> = {
 };
 
 export const selectNextEntry: Command<{}> = {
-    commandId: 'selectNextEntry',
     name: 'Select next entry',
     description: 'Scroll to the previous entry.',
     defaultParams: {},
@@ -359,7 +359,6 @@ export const selectNextEntry: Command<{}> = {
 };
 
 export const selectNextSubscription: Command<{}> = {
-    commandId: 'selectNextSubscription',
     name: 'Select next subscription',
     description: 'Select the next subscription.',
     defaultParams: {},
@@ -389,7 +388,6 @@ export const selectNextSubscription: Command<{}> = {
 };
 
 export const selectPreviousCategory: Command<{}> = {
-    commandId: 'selectPreviousCategory',
     name: 'Select previous category',
     description: 'Select the previous category.',
     defaultParams: {},
@@ -419,7 +417,6 @@ export const selectPreviousCategory: Command<{}> = {
 };
 
 export const selectPreviousEntry: Command<{}> = {
-    commandId: 'selectPreviousEntry',
     name: 'Select previous entry',
     description: 'Scroll to the previous entry.',
     defaultParams: {},
@@ -450,7 +447,6 @@ export const selectPreviousEntry: Command<{}> = {
 };
 
 export const selectPreviousSubscription: Command<{}> = {
-    commandId: 'selectPreviousSubscription',
     name: 'Select previous subscription',
     description: 'Select the previous subscription.',
     defaultParams: {},
@@ -480,7 +476,6 @@ export const selectPreviousSubscription: Command<{}> = {
 };
 
 export const showHelp: Command<{}> = {
-    commandId: 'showHelp',
     name: 'Show help',
     description: 'Show the current key mappings.',
     defaultParams: {},
@@ -498,7 +493,6 @@ export const showHelp: Command<{}> = {
 };
 
 export const toggleSidebar: Command<{}> = {
-    commandId: 'toggleSidebar',
     name: 'Toggle sidebar',
     description: 'Toggle the sidebar display.',
     defaultParams: {},
@@ -516,12 +510,9 @@ export const toggleSidebar: Command<{}> = {
 };
 
 export const toggleStreamView: Command<{}> = {
-    commandId: 'toggleStreamView',
     name: 'Toggle stream view',
     description: 'Toggle between expanded stream view and collapsible stream view.',
-    defaultParams: {
-        inBackground: false
-    },
+    defaultParams: {},
     action() {
         return ({ getState, dispatch }) => {
             const { ui } = getState();
@@ -536,7 +527,6 @@ export const toggleStreamView: Command<{}> = {
 };
 
 export const visitWebsite: Command<{ inBackground: boolean }> = {
-    commandId: 'visitWebsite',
     name: 'Visit website',
     description: 'Open the permalink of the active entry.',
     defaultParams: {

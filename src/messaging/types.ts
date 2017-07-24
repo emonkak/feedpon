@@ -149,7 +149,6 @@ export interface Environment {
 }
 
 export interface Command<T extends object> {
-    commandId: string;
     name: string;
     description: string;
     defaultParams: T;

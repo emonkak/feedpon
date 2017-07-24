@@ -60,7 +60,7 @@ export default class KeyMappingForm extends PureComponent<KeyMappingFormProps, K
         if (selectedCommand) {
             this.setState((state) => ({
                 keyStroke: state.keyStroke,
-                commandId: selectedCommand.commandId,
+                commandId,
                 paramsJson: prettyPrintJson(selectedCommand.defaultParams)
             }));
         } else {
