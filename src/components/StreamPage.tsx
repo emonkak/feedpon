@@ -151,8 +151,8 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
         if (expandedEntryIndex !== prevProps.expandedEntryIndex) {
             if (expandedEntryIndex > -1) {
                 this.scrollToEntry(expandedEntryIndex);
-            } else {
-                this.scrollToEntry(prevProps.expandedEntryIndex);
+            } else if (activeEntryIndex > -1) {
+                this.scrollToEntry(activeEntryIndex);
             }
         } else if (this.props.streamView !== prevProps.streamView) {
             this.scrollToEntry(activeEntryIndex);

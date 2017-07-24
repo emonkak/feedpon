@@ -86,7 +86,7 @@ export default function uiReducer(ui: UI, event: Event): UI {
         case 'STREAM_SELECTED':
             return {
                 ...ui,
-                activeEntryIndex: 0,
+                activeEntryIndex: -1,
                 expandedEntryIndex: -1,
                 readEntryIndex: -1,
                 selectedStreamId: event.streamId
