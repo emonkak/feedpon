@@ -28,6 +28,10 @@ const FeedHeader: React.SFC<FeedHeaderProps> = ({
     onUnsubscribe,
     subscription
 }: FeedHeaderProps) => {
+    const unreadCount = subscription && subscription.unreadCount > subscription.readCount
+        ? subscription.unreadCount - subscription.readCount
+        : 0;
+
     return (
         <header className="stream-header">
             <div className="container">
@@ -42,7 +46,7 @@ const FeedHeader: React.SFC<FeedHeaderProps> = ({
                         <div><a target="_blank" href={feed.feedUrl}>{feed.feedUrl}</a></div>
                         <div className="list-inline list-inline-dotted">
                             <div className="list-inline-item u-text-muted"><span className="u-text-x-large">{numEntries}</span> entries</div>
-                            <div className="list-inline-item u-text-muted"><span className="u-text-x-large">{subscription ? subscription.unreadCount : 0}</span> unreads</div>
+                            <div className="list-inline-item u-text-muted"><span className="u-text-x-large">{unreadCount}</span> unreads</div>
                             <div className="list-inline-item u-text-muted"><span className="u-text-x-large">{feed.subscribers}</span> subscribers</div>
                         </div>
                     </div>
