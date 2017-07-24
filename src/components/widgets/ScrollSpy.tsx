@@ -53,6 +53,13 @@ export default class ScrollSpy extends PureComponent<ScrollSpyProps, {}> {
         }
     }
 
+    componentWillReceiveProps(nextProps: ScrollSpyProps) {
+        if (this.props.isDisabled !== nextProps.isDisabled
+            && !nextProps.isDisabled) {
+            this.update();
+        }
+    }
+
     componentWillUnmount() {
         this.scrollable.removeEventListener('scroll', this.handleScroll, { passive: true } as any);
         this.scrollable.removeEventListener('touchmove', this.handleScroll, { passive: true } as any);
