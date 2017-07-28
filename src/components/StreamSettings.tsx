@@ -1,9 +1,10 @@
 import React, { PureComponent } from 'react';
 
+import ConfirmModal from 'components/widgets/ConfirmModal';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
 import { State, StreamFetchOptions } from 'messaging/types';
-import { changeDefaultStreamFetchOptions, changeStreamCacheCapacity, changeStreamHistoryOptions } from 'messaging/streams/actions';
+import { changeDefaultStreamFetchOptions, changeStreamCacheCapacity, changeStreamHistoryOptions, clearStreamCaches } from 'messaging/streams/actions';
 
 interface StreamSettingsProps {
     cacheCapacity: number;
@@ -12,11 +13,13 @@ interface StreamSettingsProps {
     onChangeDefaultStreamFetchOptions: typeof changeDefaultStreamFetchOptions;
     onChangeStreamCacheCapacity: typeof changeStreamCacheCapacity;
     onChangeStreamHistoryOptions: typeof changeStreamHistoryOptions;
+    onClearStreamCaches: typeof clearStreamCaches;
 }
 
 interface StreamSettingsState {
     cacheCapacity: number;
     fetchOptions: StreamFetchOptions;
+    isClearingStreamCaches: boolean;
     numStreamHistories: number;
 }
 
@@ -27,15 +30,25 @@ class StreamSettings extends PureComponent<StreamSettingsProps, StreamSettingsSt
         this.state = {
             cacheCapacity: props.cacheCapacity,
             fetchOptions: props.fetchOptions,
+            isClearingStreamCaches: false,
             numStreamHistories: props.numStreamHistories
         };
 
+        this.handleCancelClearingStreamCaches = this.handleCancelClearingStreamCaches.bind(this);
         this.handleChangeCacheCapacity = this.handleChangeCacheCapacity.bind(this);
         this.handleChangeFetchOptions = this.handleChangeFetchOptions.bind(this);
         this.handleChangeNumStreamHistories = this.handleChangeNumStreamHistories.bind(this);
+        this.handleStartClearingStreamCaches = this.handleStartClearingStreamCaches.bind(this);
         this.handleSubmitCacheCapacity = this.handleSubmitCacheCapacity.bind(this);
         this.handleSubmitFetchOptions = this.handleSubmitFetchOptions.bind(this);
         this.handleSubmitHistoryOptions = this.handleSubmitHistoryOptions.bind(this);
+    }
+
+    handleCancelClearingStreamCaches() {
+        this.setState((state) => ({
+            ...state,
+            isClearingStreamCaches: false
+        }));
     }
 
     handleChangeNumStreamHistories(event: React.ChangeEvent<HTMLInputElement>) {
@@ -70,6 +83,13 @@ class StreamSettings extends PureComponent<StreamSettingsProps, StreamSettingsSt
         }));
     }
 
+    handleStartClearingStreamCaches() {
+        this.setState((state) => ({
+            ...state,
+            isClearingStreamCaches: true
+        }));
+    }
+
     handleSubmitFetchOptions(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
 
@@ -98,7 +118,8 @@ class StreamSettings extends PureComponent<StreamSettingsProps, StreamSettingsSt
     }
 
     render() {
-        const { cacheCapacity, fetchOptions, numStreamHistories } = this.state;
+        const { onClearStreamCaches } = this.props;
+        const { cacheCapacity, fetchOptions, isClearingStreamCaches, numStreamHistories } = this.state;
 
         return (
             <section className="section">
@@ -174,6 +195,14 @@ class StreamSettings extends PureComponent<StreamSettingsProps, StreamSettingsSt
                             </div>
                         </label>
                     </div>
+                    <div className="form-group">
+                        <button
+                            type="button"
+                            className="button button-outline-negative"
+                            onClick={this.handleStartClearingStreamCaches}>
+                        Clear stream caches...
+                        </button>
+                    </div>
                 </form>
                 <form className="form" onSubmit={this.handleSubmitHistoryOptions}>
                     <div className="form-legend">History options</div>
@@ -194,6 +223,14 @@ class StreamSettings extends PureComponent<StreamSettingsProps, StreamSettingsSt
                         </label>
                     </div>
                 </form>
+                <ConfirmModal
+                    confirmButtonClassName="button button-negative"
+                    confirmButtonLabel="Clear"
+                    isOpened={isClearingStreamCaches}
+                    message="Are you sure you want to clear stream caches?"
+                    onClose={this.handleCancelClearingStreamCaches}
+                    onConfirm={onClearStreamCaches}
+                    title="Clear stream caches" />
             </section>
         );
     }
@@ -208,6 +245,7 @@ export default connect({
     mapDispatchToProps: bindActions({
         onChangeDefaultStreamFetchOptions: changeDefaultStreamFetchOptions,
         onChangeStreamCacheCapacity: changeStreamCacheCapacity,
-        onChangeStreamHistoryOptions: changeStreamHistoryOptions
+        onChangeStreamHistoryOptions: changeStreamHistoryOptions,
+        onClearStreamCaches: clearStreamCaches
     })
 })(StreamSettings);

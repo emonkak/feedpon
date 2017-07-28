@@ -74,6 +74,12 @@ export default function reducer(streams: Streams, event: Event): Streams {
                 items: CacheMap.update(streams.items, event.stream.streamId, event.stream)
             };
 
+        case 'STREAM_CACHES_CLEARED':
+            return {
+                ...streams,
+                items: CacheMap.empty(streams.items.capacity)
+            };
+
         case 'MORE_ENTRIES_FETCHING':
             return {
                 ...streams,

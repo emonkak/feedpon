@@ -234,6 +234,12 @@ export function fetchFullContent(entryId: string | number, url: string): AsyncTh
     };
 }
 
+export function clearStreamCaches(): Event {
+    return {
+        type: 'STREAM_CACHES_CLEARED'
+    };
+}
+
 export function markAsRead(entries: Entry[]): AsyncThunk {
     return async ({ dispatch }) => {
         const entryIds = entries.map((entry) => entry.entryId as string);

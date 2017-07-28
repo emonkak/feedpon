@@ -102,6 +102,7 @@ export type Event
     | { type: 'SITEINFO_UPDATING_FAILED' }
     | { type: 'STREAM_CACHE_CAPACITY_CHANGED', capacity: number }
     | { type: 'STREAM_CACHE_LIFETIME_CHANGED', lifetime: number }
+    | { type: 'STREAM_CACHES_CLEARED' }
     | { type: 'STREAM_FETCHED', stream: Stream  }
     | { type: 'STREAM_FETCHING', streamId: string, fetchOptions: StreamFetchOptions, fetchedAt: number }
     | { type: 'STREAM_FETCHING_FAILED', streamId: string, fetchOptions: StreamFetchOptions, fetchedAt: number }
