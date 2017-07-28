@@ -27,7 +27,6 @@ interface StreamPageProps {
     canMarkStreamAsRead: boolean;
     categories: Category[];
     category: Category;
-    categoryUnreadCount: number;
     expandedEntryIndex: number;
     fetchOptions: StreamFetchOptions;
     isLoaded: boolean;
@@ -329,7 +328,6 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
         const {
             categories,
             category,
-            categoryUnreadCount,
             onAddToCategory,
             onCreateCategory,
             onRemoveFromCategory,
@@ -340,12 +338,16 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
         } = this.props;
 
         if (stream) {
+            const numUnreads = stream.entries
+                .reduce((acc, entry) => acc + (entry.markedAsRead ? 0 : 1), 0);
+
             if (stream.feed) {
                 return (
                     <FeedHeader
                         categories={categories}
                         feed={stream.feed}
                         numEntries={stream.entries.length}
+                        numUnreads={numUnreads}
                         onAddToCategory={onAddToCategory}
                         onCreateCategory={onCreateCategory}
                         onRemoveFromCategory={onRemoveFromCategory}
@@ -360,7 +362,7 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
                     <CategoryHeader
                         category={category}
                         numEntries={stream.entries.length}
-                        unreadCount={categoryUnreadCount} />
+                        numUnreads={numUnreads} />
                 );
             }
         }
@@ -494,27 +496,6 @@ export default connect(() => {
         (categories, streamId) => categories[streamId] || null
     );
 
-    const categoryUnreadCountSelector = createSelector(
-        categorySelector,
-        (state: State) => state.subscriptions.items,
-        (category, subscriptions) => {
-            if (!category) {
-                return 0;
-            }
-
-            const label = category.label;
-
-            return Object.values(subscriptions)
-                .reduce((acc, subscription) => {
-                    if (!subscription.labels.includes(label)
-                        || subscription.unreadCount < subscription.readCount) {
-                        return acc;
-                    }
-                    return acc + (subscription.unreadCount - subscription.readCount);
-                }, 0);
-        }
-    );
-
     const canMarkStreamAsReadSelector = createSelector(
         streamSelector,
         entriesSelector,
@@ -546,7 +527,6 @@ export default connect(() => {
             canMarkStreamAsRead: canMarkStreamAsReadSelector(state, props),
             categories: categoriesSelector(state),
             category: categorySelector(state, props),
-            categoryUnreadCount: categoryUnreadCountSelector(state, props),
             expandedEntryIndex: state.ui.expandedEntryIndex,
             fetchOptions: fetchOptionsSelector(state, props),
             isLoaded: state.streams.isLoaded,

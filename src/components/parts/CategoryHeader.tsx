@@ -6,13 +6,13 @@ import { Category } from 'messaging/types';
 interface CategoryHeaderProps {
     category: Category;
     numEntries: number;
-    unreadCount: number;
+    numUnreads: number;
 }
 
 const CategoryHeader: React.SFC<CategoryHeaderProps> = ({
     category,
     numEntries,
-    unreadCount
+    numUnreads
 }: CategoryHeaderProps) => {
     return (
         <header className="stream-header">
@@ -21,7 +21,7 @@ const CategoryHeader: React.SFC<CategoryHeaderProps> = ({
                     <div className="u-margin-right-2 u-flex-grow-1">
                         <div className="list-inline list-inline-dotted">
                             <div className="list-inline-item u-text-muted"><span className="u-text-x-large">{numEntries}</span> entries</div>
-                            <div className="list-inline-item u-text-muted"><span className="u-text-x-large">{unreadCount}</span> unreads</div>
+                            <div className="list-inline-item u-text-muted"><span className="u-text-x-large">{numUnreads}</span> unreads</div>
                         </div>
                     </div>
                     <div className="u-flex-shrink-0">

@@ -8,6 +8,7 @@ import { createCategory } from 'messaging/categories/actions';
 interface FeedHeaderProps {
     categories: Category[];
     feed: Feed;
+    numUnreads: number;
     numEntries: number;
     onAddToCategory: typeof addToCategory;
     onCreateCategory: typeof createCategory;
@@ -21,6 +22,7 @@ const FeedHeader: React.SFC<FeedHeaderProps> = ({
     categories,
     feed,
     numEntries,
+    numUnreads,
     onAddToCategory,
     onCreateCategory,
     onRemoveFromCategory,
@@ -28,10 +30,6 @@ const FeedHeader: React.SFC<FeedHeaderProps> = ({
     onUnsubscribe,
     subscription
 }: FeedHeaderProps) => {
-    const unreadCount = subscription && subscription.unreadCount > subscription.readCount
-        ? subscription.unreadCount - subscription.readCount
-        : 0;
-
     return (
         <header className="stream-header">
             <div className="container">
@@ -46,7 +44,7 @@ const FeedHeader: React.SFC<FeedHeaderProps> = ({
                         <div><a target="_blank" href={feed.feedUrl}>{feed.feedUrl}</a></div>
                         <div className="list-inline list-inline-dotted">
                             <div className="list-inline-item u-text-muted"><span className="u-text-x-large">{numEntries}</span> entries</div>
-                            <div className="list-inline-item u-text-muted"><span className="u-text-x-large">{unreadCount}</span> unreads</div>
+                            <div className="list-inline-item u-text-muted"><span className="u-text-x-large">{numUnreads}</span> unreads</div>
                             <div className="list-inline-item u-text-muted"><span className="u-text-x-large">{feed.subscribers}</span> subscribers</div>
                         </div>
                     </div>
