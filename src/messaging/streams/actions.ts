@@ -12,9 +12,22 @@ import { getFeedlyToken } from 'messaging/backend/actions';
 import { getSiteinfoItems } from 'messaging/sharedSiteinfo/actions';
 import { sendNotification } from 'messaging/notifications/actions';
 
-export function fetchStream(streamId: string, fetchOptions: StreamFetchOptions): AsyncThunk {
+export function fetchStream(streamId: string, fetchOptions?: StreamFetchOptions): AsyncThunk {
     return async ({ dispatch, getState }) => {
         const fetchedAt = Date.now();
+
+        if (!fetchOptions) {
+            const { streams } = getState();
+
+            fetchOptions = streams.defaultFetchOptions;
+
+            if (streamId === PINS_STREAM_ID) {
+                fetchOptions = {
+                    ...fetchOptions,
+                    onlyUnread: false
+                };
+            }
+        }
 
         dispatch({
             type: 'STREAM_FETCHING',

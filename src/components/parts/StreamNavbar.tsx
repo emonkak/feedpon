@@ -9,7 +9,7 @@ interface StreamNavbarProps {
     canMarkStreamAsRead: boolean;
     entries: Entry[];
     feed: Feed | null;
-    fetchOptions: StreamFetchOptions;
+    fetchOptions: StreamFetchOptions | null;
     isExpanded: boolean;
     isLoading: boolean;
     keepUnread: boolean;
@@ -71,10 +71,11 @@ const StreamNavbar: React.SFC<StreamNavbarProps> = ({
                 onToggleUnreadKeeping={onToggleUnreadKeeping}
                 readEntryIndex={readEntryIndex}
                 title={title} />
-            {isExpanded ?
+            {isExpanded &&
                 <button className="navbar-action" onClick={onCloseEntry}>
                     <i className="icon icon-24 icon-close" />
-                </button> :
+                </button>}
+            {!isExpanded && fetchOptions &&
                 <StreamFetchOptionsDropdown
                     fetchOptions={fetchOptions}
                     isLoading={isLoading}

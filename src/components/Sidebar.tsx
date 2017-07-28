@@ -113,7 +113,7 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
                             isSelected={location.pathname.startsWith('/streams/' + ALL_STREAM_ID)}
                             onSelect={this.handleSelect} />
                         <TreeLeaf
-                            value={`/streams/${PINS_STREAM_ID}?onlyUnread=0`}
+                            value={`/streams/${PINS_STREAM_ID}`}
                             primaryText="Pins"
                             isSelected={location.pathname.startsWith('/streams/' + PINS_STREAM_ID)}
                             onSelect={this.handleSelect} />
