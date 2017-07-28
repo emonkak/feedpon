@@ -5,12 +5,14 @@ import { Category } from 'messaging/types';
 
 interface CategoryHeaderProps {
     category: Category;
+    hasMoreEntries: boolean;
     numEntries: number;
     numUnreads: number;
 }
 
 const CategoryHeader: React.SFC<CategoryHeaderProps> = ({
     category,
+    hasMoreEntries,
     numEntries,
     numUnreads
 }: CategoryHeaderProps) => {
@@ -20,8 +22,12 @@ const CategoryHeader: React.SFC<CategoryHeaderProps> = ({
                 <div className="u-flex u-flex-align-items-center u-flex-justify-content-between">
                     <div className="u-margin-right-2 u-flex-grow-1">
                         <div className="list-inline list-inline-dotted">
-                            <div className="list-inline-item u-text-muted"><span className="u-text-x-large">{numEntries}</span> entries</div>
-                            <div className="list-inline-item u-text-muted"><span className="u-text-x-large">{numUnreads}</span> unreads</div>
+                            <div className="list-inline-item u-text-muted">
+                                <span className="u-text-x-large">{numUnreads}</span> unreads
+                            </div>
+                            <div className="list-inline-item u-text-muted">
+                                <span className="u-text-x-large">{numEntries}{hasMoreEntries && '+'}</span> entries
+                            </div>
                         </div>
                     </div>
                     <div className="u-flex-shrink-0">

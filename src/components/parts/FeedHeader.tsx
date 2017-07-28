@@ -8,8 +8,9 @@ import { createCategory } from 'messaging/categories/actions';
 interface FeedHeaderProps {
     categories: Category[];
     feed: Feed;
-    numUnreads: number;
+    hasMoreEntries: boolean;
     numEntries: number;
+    numUnreads: number;
     onAddToCategory: typeof addToCategory;
     onCreateCategory: typeof createCategory;
     onRemoveFromCategory: typeof removeFromCategory;
@@ -21,6 +22,7 @@ interface FeedHeaderProps {
 const FeedHeader: React.SFC<FeedHeaderProps> = ({
     categories,
     feed,
+    hasMoreEntries,
     numEntries,
     numUnreads,
     onAddToCategory,
@@ -43,9 +45,15 @@ const FeedHeader: React.SFC<FeedHeaderProps> = ({
                         <div>{feed.description}</div>
                         <div><a target="_blank" href={feed.feedUrl}>{feed.feedUrl}</a></div>
                         <div className="list-inline list-inline-dotted">
-                            <div className="list-inline-item u-text-muted"><span className="u-text-x-large">{numEntries}</span> entries</div>
-                            <div className="list-inline-item u-text-muted"><span className="u-text-x-large">{numUnreads}</span> unreads</div>
-                            <div className="list-inline-item u-text-muted"><span className="u-text-x-large">{feed.subscribers}</span> subscribers</div>
+                            <div className="list-inline-item u-text-muted">
+                                <span className="u-text-x-large">{numUnreads}</span> unreads
+                            </div>
+                            <div className="list-inline-item u-text-muted">
+                                <span className="u-text-x-large">{numEntries}{hasMoreEntries && '+'}</span> entries
+                            </div>
+                            <div className="list-inline-item u-text-muted">
+                                <span className="u-text-x-large">{feed.subscribers}</span> subscribers
+                            </div>
                         </div>
                     </div>
                     <SubscribeDropdown

@@ -335,6 +335,7 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
                     <FeedHeader
                         categories={categories}
                         feed={stream.feed}
+                        hasMoreEntries={!!stream.continuation}
                         numEntries={stream.entries.length}
                         numUnreads={numUnreads}
                         onAddToCategory={onAddToCategory}
@@ -350,6 +351,7 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
                 return (
                     <CategoryHeader
                         category={category}
+                        hasMoreEntries={!!stream.continuation}
                         numEntries={stream.entries.length}
                         numUnreads={numUnreads} />
                 );
