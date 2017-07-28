@@ -13,18 +13,16 @@ export function fetchUser(): AsyncThunk {
 
             const profile = await feedlyApi.getProfile(token.access_token);
 
-            const userId = profile.facebookUserId
-                        || profile.google
-                        || profile.reader
-                        || '@' + profile.twitter
-                        || profile.windowsLiveId
-                        || profile.wordPressId
+            const userName = (profile.twitter ? '@' + profile.twitter : '')
+                        || profile.email
+                        || profile.fullName
+                        || profile.id
                         || '<unknown>';
 
             dispatch({
                 type: 'USER_FETCHED',
                 profile: {
-                    userId,
+                    userName,
                     picture: profile.picture || '',
                     source: 'Feedly'
                 }

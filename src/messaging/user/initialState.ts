@@ -4,7 +4,7 @@ const user: User = {
     isLoaded: false,
     isLoading: false,
     profile: {
-        userId: '<unknown>',
+        userName: '<unknown>',
         source: '<unknown>',
         picture: ''
     },

@@ -58,7 +58,7 @@ export default class ProfileDropdown extends PureComponent<ProfileDropdownProps,
                     message="Are you sure you want to logout in current user?"
                     onClose={this.handleCloseLogoutModal}
                     onConfirm={onLogout}
-                    title={`Logout "${profile.userId}"`} />
+                    title={`Logout "${profile.userName}"`} />
             }>
                 <Dropdown
                     className="dropdown-block"
@@ -69,7 +69,7 @@ export default class ProfileDropdown extends PureComponent<ProfileDropdownProps,
                             <div className="u-flex u-flex-align-items-center dropdown-arrow">
                                 {icon}
                                 <span className="u-flex-grow-1 u-margin-left-1 u-text-left">
-                                    <div className="u-text-wrap"><strong>{profile.userId}</strong></div>
+                                    <div className="u-text-wrap"><strong>{profile.userName}</strong></div>
                                     <div className="u-text-wrap u-text-small">via <strong>{profile.source}</strong></div>
                                 </span>
                             </div>

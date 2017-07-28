@@ -166,7 +166,7 @@ export interface Backend {
 export interface Profile {
     picture: string;
     source: string;
-    userId: string;
+    userName: string;
 }
 
 export interface Search {
