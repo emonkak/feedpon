@@ -13,10 +13,10 @@ export default function parseDuration(input: string): number {
         return 0;
     }
 
-    const h = matches[1] ? parseInt(matches[1]) : 0;
-    const m = matches[2] ? parseInt(matches[2]) : 0;
-    const s = matches[3] ? parseInt(matches[3]) : 0;
-    const ms = matches[4] ? parseInt(matches[4]) : 0;
+    const h = matches[1] ? parseInt(matches[1], 10) : 0;
+    const m = matches[2] ? parseInt(matches[2], 10) : 0;
+    const s = matches[3] ? parseInt(matches[3], 10) : 0;
+    const ms = matches[4] ? parseInt(matches[4], 10) : 0;
 
     return h * MILLISECONDS_OF_HOUR +
            m * MILLISECONDS_OF_MINUTE +

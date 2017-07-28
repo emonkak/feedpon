@@ -230,7 +230,7 @@ export class MenuLink extends PureComponent<MenuLinkProps, {}> {
 }
 
 interface MenuFormProps {
-    onSubmit?: () => void;
+    onSubmit?: React.FormEventHandler<HTMLFormElement>;
 }
 
 export class MenuForm extends PureComponent<MenuFormProps, {}> {
@@ -244,13 +244,13 @@ export class MenuForm extends PureComponent<MenuFormProps, {}> {
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    handleSubmit(event: React.FormEvent<any>) {
+    handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
 
         const { onSubmit } = this.props;
 
         if (onSubmit) {
-            onSubmit();
+            onSubmit(event);
         }
 
         this.context.menu.onClose();

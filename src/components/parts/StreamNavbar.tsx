@@ -14,6 +14,7 @@ interface StreamNavbarProps {
     isLoading: boolean;
     keepUnread: boolean;
     onChangeEntryOrderKind: (order: EntryOrderKind) => void,
+    onChangeNumberOfEntries: (numEntries: number) => void,
     onChangeStreamView: (streamView: StreamViewKind) => void,
     onClearReadEntries: () => void;
     onCloseEntry: () => void;
@@ -37,6 +38,7 @@ const StreamNavbar: React.SFC<StreamNavbarProps> = ({
     isLoading,
     keepUnread,
     onChangeEntryOrderKind,
+    onChangeNumberOfEntries,
     onChangeStreamView,
     onClearReadEntries,
     onCloseEntry,
@@ -80,6 +82,7 @@ const StreamNavbar: React.SFC<StreamNavbarProps> = ({
                     fetchOptions={fetchOptions}
                     isLoading={isLoading}
                     onChangeEntryOrderKind={onChangeEntryOrderKind}
+                    onChangeNumberOfEntries={onChangeNumberOfEntries}
                     onChangeStreamView={onChangeStreamView}
                     onToggleOnlyUnread={onToggleOnlyUnread}
                     streamView={streamView} />}

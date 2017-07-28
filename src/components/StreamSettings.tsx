@@ -52,7 +52,7 @@ class StreamSettings extends PureComponent<StreamSettingsProps, StreamSettingsSt
     }
 
     handleChangeNumStreamHistories(event: React.ChangeEvent<HTMLInputElement>) {
-        const numStreamHistories = parseInt(event.currentTarget.value);
+        const numStreamHistories = parseInt(event.currentTarget.value, 10);
 
         this.setState((state) => ({
             ...state,
@@ -61,7 +61,7 @@ class StreamSettings extends PureComponent<StreamSettingsProps, StreamSettingsSt
     }
 
     handleChangeCacheCapacity(event: React.ChangeEvent<HTMLInputElement>) {
-        const cacheCapacity = parseInt(event.currentTarget.value);
+        const cacheCapacity = parseInt(event.currentTarget.value, 10);
 
         this.setState((state) => ({
             ...state,

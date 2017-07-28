@@ -75,6 +75,7 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
 
         this.handleChangeActiveEnetry = this.handleChangeActiveEnetry.bind(this);
         this.handleChangeEntryOrderKind = this.handleChangeEntryOrderKind.bind(this);
+        this.handleChangeNumberOfEntries = this.handleChangeNumberOfEntries.bind(this);
         this.handleClearReadEntries = this.handleClearReadEntries.bind(this);
         this.handleCloseEntry = this.handleCloseEntry.bind(this);
         this.handleLoadMoreEntries = this.handleLoadMoreEntries.bind(this);
@@ -177,6 +178,19 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
             onFetchStream(stream.streamId, {
                 ...stream.fetchOptions,
                 entryOrder
+            });
+        }
+    }
+
+    handleChangeNumberOfEntries(numEntries: number) {
+        const { onFetchStream, onScrollTo, stream } = this.props;
+
+        if (stream) {
+            onScrollTo(0, 0);
+
+            onFetchStream(stream.streamId, {
+                ...stream.fetchOptions,
+                numEntries
             });
         }
     }
@@ -298,6 +312,7 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
                 isLoading={isLoading}
                 keepUnread={keepUnread}
                 onChangeEntryOrderKind={this.handleChangeEntryOrderKind}
+                onChangeNumberOfEntries={this.handleChangeNumberOfEntries}
                 onChangeStreamView={onChangeStreamView}
                 onClearReadEntries={this.handleClearReadEntries}
                 onCloseEntry={this.handleCloseEntry}

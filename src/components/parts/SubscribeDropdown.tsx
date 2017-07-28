@@ -20,20 +20,21 @@ interface SubscribeDropdownProps {
 }
 
 interface SubscribeDropdownState {
+    categoryLabel: string;
     unsubscribeModalIsOpened: boolean;
 }
 
 export default class SubscribeDropdown extends PureComponent<SubscribeDropdownProps, SubscribeDropdownState> {
-    private categoryLabelInput: HTMLInputElement | null;
-
     constructor(props: SubscribeDropdownProps, context: any) {
         super(props, context);
 
         this.state = {
+            categoryLabel: '',
             unsubscribeModalIsOpened: false
         };
 
         this.handleAddToCategory = this.handleAddToCategory.bind(this);
+        this.handleChangeCategoryLabel = this.handleChangeCategoryLabel.bind(this);
         this.handleCloseUnsubscribeModal = this.handleCloseUnsubscribeModal.bind(this);
         this.handleCreateCategory = this.handleCreateCategory.bind(this);
         this.handleOpenUnsubscribeModal = this.handleOpenUnsubscribeModal.bind(this);
@@ -50,6 +51,15 @@ export default class SubscribeDropdown extends PureComponent<SubscribeDropdownPr
         }
     }
 
+    handleChangeCategoryLabel(event: React.ChangeEvent<HTMLInputElement>) {
+        const categoryLabel = event.currentTarget.value;
+
+        this.setState((state) => ({
+            ...state,
+            categoryLabel
+        }));
+    }
+
     handleCloseUnsubscribeModal() {
         this.setState({
             unsubscribeModalIsOpened: false
@@ -57,20 +67,19 @@ export default class SubscribeDropdown extends PureComponent<SubscribeDropdownPr
     }
 
     handleCreateCategory() {
-        if (!this.categoryLabelInput) {
-            return;
-        }
-
         const { feed, onAddToCategory, onCreateCategory, onSubscribe, subscription } = this.props;
-        const label = this.categoryLabelInput.value;
+        const { categoryLabel } = this.state;
 
         if (subscription) {
-            onCreateCategory(label, () => onAddToCategory(subscription, label));
+            onCreateCategory(categoryLabel, () => onAddToCategory(subscription, categoryLabel));
         } else {
-            onCreateCategory(label, () => onSubscribe(feed, [label]));
+            onCreateCategory(categoryLabel, () => onSubscribe(feed, [categoryLabel]));
         }
 
-        this.categoryLabelInput.value = '';
+        this.setState((state) => ({
+            ...state,
+            categoryLabel: ''
+        }));
     }
 
     handleOpenUnsubscribeModal() {
@@ -128,7 +137,7 @@ export default class SubscribeDropdown extends PureComponent<SubscribeDropdownPr
 
     render() {
         const { categories, className, feed, subscription } = this.props;
-        const { unsubscribeModalIsOpened } = this.state;
+        const { categoryLabel, unsubscribeModalIsOpened } = this.state;
 
         return (
             <Portal overlay={
@@ -154,7 +163,8 @@ export default class SubscribeDropdown extends PureComponent<SubscribeDropdownPr
                                 type="text"
                                 className="form-control"
                                 style={{ width: '12rem' }}
-                                ref={(ref) => this.categoryLabelInput = ref} />
+                                value={categoryLabel}
+                                onChange={this.handleChangeCategoryLabel} />
                             <button type="submit" className="button button-positive">OK</button>
                         </div>
                     </MenuForm>
