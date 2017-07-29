@@ -672,7 +672,7 @@ function fetchPinsStream(fetchOptions: StreamFetchOptions, fetchedAt: number): A
         });
 
         const stream: Stream = {
-            streamId: 'pins',
+            streamId: PINS_STREAM_ID,
             title: 'Pins',
             entries: contents.items.map(convertEntry),
             fetchedAt,
