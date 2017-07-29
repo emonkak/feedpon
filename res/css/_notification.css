@@ -39,6 +39,7 @@
   display: flex;
   align-items: center;
   margin: calc(var(--baseline-height) / 2) 0 calc(var(--baseline-height) / 2 - 1px);
+  min-width: 0;
 }
 
 .notification-enter,
