@@ -58,6 +58,12 @@
   float: right;
 }
 
+.u-clearfix::after {
+  content: ' ';
+  display: block;
+  clear: both;
+}
+
 .u-text-truncate {
   text-overflow: ellipsis;
   white-space: nowrap;

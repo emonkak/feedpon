@@ -49,7 +49,7 @@ const FullContents: React.SFC<FullContentsProps> = ({
     }
 
     return (
-        <div className="entry-content">
+        <div className="entry-content u-clearfix">
             {pages}
             {nextPageButton}
         </div>

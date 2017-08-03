@@ -39,7 +39,7 @@ const EntryInner: React.SFC<EntryInnerProps> = ({
             onFetchNext={onFetchNextFullContent} />
         : <CleanHtml
             baseUrl={entry.url}
-            className="entry-content"
+            className="entry-content u-clearfix"
             html={entry.content} />;
 
     return (
