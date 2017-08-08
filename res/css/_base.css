@@ -113,7 +113,6 @@ blockquote, dl, figure, ol, p, pre, table, ul {
 
 dt {
   font-weight: 600;
-  color: var(--dark-color);
 }
 
 dd {
