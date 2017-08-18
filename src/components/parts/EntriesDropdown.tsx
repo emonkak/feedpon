@@ -8,6 +8,7 @@ import { Entry } from 'messaging/types';
 import { MenuItem } from 'components/widgets/Menu';
 
 interface EntriesDropdownProps {
+    activeEntryIndex: number;
     canMarkStreamAsRead: boolean;
     entries: Entry[];
     keepUnread: boolean;
@@ -48,10 +49,12 @@ export default class EntriesDropdown extends PureComponent<EntriesDropdownProps,
     }
 
     renderEntryMenuItem(entry: Entry, index: number) {
-        const { onScrollToEntry, readEntryIndex } = this.props;
+        const { activeEntryIndex, onScrollToEntry, readEntryIndex } = this.props;
 
         const icon = entry.markedAsRead
             ? <i className="icon icon-16 icon-dot u-text-muted" />
+            : index == activeEntryIndex
+            ? <i className="icon icon-16 icon-dot u-text-negative" />
             : index <= readEntryIndex
             ? <i className="icon icon-16 icon-dot u-text-positive" />
             : null;

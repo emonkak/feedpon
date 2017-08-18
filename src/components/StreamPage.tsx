@@ -292,6 +292,7 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
 
     renderNavbar() {
         const {
+            activeEntryIndex,
             canMarkStreamAsRead,
             expandedEntryIndex,
             isLoading,
@@ -304,6 +305,7 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
         } = this.props;
         return (
             <StreamNavbar
+                activeEntryIndex={activeEntryIndex}
                 canMarkStreamAsRead={canMarkStreamAsRead}
                 entries={stream ? stream.entries : []}
                 feed={stream ? stream.feed : null}

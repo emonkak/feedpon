@@ -6,6 +6,7 @@ import StreamFetchOptionsDropdown from 'components/parts/StreamFetchOptionsDropd
 import { Entry, EntryOrderKind, Feed, StreamFetchOptions, StreamViewKind } from 'messaging/types';
 
 interface StreamNavbarProps {
+    activeEntryIndex: number;
     canMarkStreamAsRead: boolean;
     entries: Entry[];
     feed: Feed | null;
@@ -30,6 +31,7 @@ interface StreamNavbarProps {
 }
 
 const StreamNavbar: React.SFC<StreamNavbarProps> = ({
+    activeEntryIndex,
     canMarkStreamAsRead,
     entries,
     feed,
@@ -64,6 +66,7 @@ const StreamNavbar: React.SFC<StreamNavbarProps> = ({
                 <i className="icon icon-24 icon-refresh" />
             </button>
             <EntriesDropdown
+                activeEntryIndex={activeEntryIndex}
                 canMarkStreamAsRead={canMarkStreamAsRead}
                 entries={entries}
                 keepUnread={keepUnread}
