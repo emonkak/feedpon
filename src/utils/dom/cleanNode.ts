@@ -23,7 +23,7 @@ function qualifySrcset(srcsetString: string, baseUrlString: string): string {
 
 function responsify(element: HTMLElement & { width: number, height: number }): void {
     if (element.width < RESPONSIVE_ELEMENT_WIDTH
-        && element.height < RESPONSIVE_ELEMENT_HEIGHT) {
+        || element.height < RESPONSIVE_ELEMENT_HEIGHT) {
         return;
     }
 
