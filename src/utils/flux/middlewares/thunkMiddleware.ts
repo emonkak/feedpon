@@ -1,14 +1,12 @@
-import { Middleware, Store } from '../types';
-
-type Thunk<TState, TEvent, TContext> = <TResult>(store: Store<TState, TEvent>, context: TContext) => TResult;
+import { Middleware } from '../types';
 
 function thunkMiddlewareFactory<TState, TEvent, TContext>(
     context: TContext
-): Middleware<TState, TEvent | Thunk<TState, TEvent, TContext>> {
-    return ({ getState, subscribe }) => (event, next) => {
-        const dispatch = (event: TEvent | Thunk<TState, TEvent, TContext>): any => {
+): Middleware<TState, TEvent> {
+    return ({ getState, replaceState, subscribe }) => (event, next) => {
+        const dispatch = (event: TEvent): any => {
             if (typeof event === 'function') {
-                return event({ dispatch, getState, subscribe }, context);
+                return event({ dispatch, getState, replaceState, subscribe }, context);
             } else {
                 return next(event);
             }

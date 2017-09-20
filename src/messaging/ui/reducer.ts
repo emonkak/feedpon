@@ -5,6 +5,7 @@ export default function uiReducer(ui: UI, event: Event): UI {
         case 'APPLICATION_INITIALIZED':
             return {
                 ...ui,
+                isBooting: false,
                 isScrolling: false
             };
 

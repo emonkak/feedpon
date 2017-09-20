@@ -35,3 +35,17 @@
   animation-name: shining;
   animation-timing-function: linear;
 }
+
+@keyframes blink {
+  75% {
+    opacity: 0.0;
+  }
+}
+
+.a-blink {
+  animation-duration: 3s;
+  animation-fill-mode: forwards;
+  animation-iteration-count: infinite;
+  animation-name: blink;
+  animation-timing-function: linear;
+}

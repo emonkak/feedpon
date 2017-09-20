@@ -383,6 +383,7 @@ export interface UI {
     customStyles: string;
     expandedEntryIndex: number;
     helpIsOpened: boolean;
+    isBooting: boolean;
     isScrolling: boolean;
     readEntryIndex: number;
     selectedStreamId: string;

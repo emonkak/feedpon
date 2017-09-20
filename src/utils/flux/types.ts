@@ -1,5 +1,6 @@
 export interface Store<TState, TEvent> {
     getState(): TState;
+    replaceState(state: TState): void;
     dispatch(event: TEvent): TEvent;
     subscribe(subscriber: Subscriber<TState>): () => void;
 }

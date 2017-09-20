@@ -116,6 +116,14 @@
   margin: calc(var(--baseline-height) * 4) 0 var(--baseline-height);
 }
 
+.l-boot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+}
+
 @media (--md-viewport) {
   .l-root.is-opened::before {
     display: none;
