@@ -44,7 +44,7 @@ const FullContents: React.SFC<FullContentsProps> = ({
 
     if (latestItem && latestItem.nextPageUrl) {
         nextPageButton = isLoading
-            ? <button className="button button-block button-outline-positive" disabled={true}><i className="icon icon-20 icon-spinner icon-rotating" /></button> 
+            ? <button className="button button-block button-outline-positive" disabled={true}><i className="icon icon-20 icon-spinner a-rotating" /></button> 
             : <button className="button button-block button-outline-positive" onClick={onFetchNext}>Next page</button>;
     }
 

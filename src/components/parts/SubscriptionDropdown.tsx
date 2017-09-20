@@ -129,7 +129,7 @@ export default class SubscriptionDropdown extends PureComponent<SubscriptionDrop
                     className={className}
                     toggleButton={
                         <button className="link-soft u-margin-left-2" disabled={subscription.isLoading}>
-                            <i className={classnames('icon icon-20 icon-width-32', subscription.isLoading ? 'icon-spinner icon-rotating' : 'icon-menu-2' )} />
+                            <i className={classnames('icon icon-20 icon-width-32', subscription.isLoading ? 'icon-spinner a-rotating' : 'icon-menu-2' )} />
                         </button>
                     }>
                     <div className="menu-heading">Category</div>

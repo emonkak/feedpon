@@ -2,6 +2,7 @@
 @import './_base.css';
 @import './_form.css';
 
+@import './_animations.css';
 @import './_autocomplete.css';
 @import './_badge.css';
 @import './_button.css';

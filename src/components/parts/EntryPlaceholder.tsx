@@ -13,33 +13,33 @@ const EntryPlaceholder: React.SFC<EntryPlaceholderProps> = ({ isExpanded }) => {
             <div className="container">
                 <header className="entry-header">
                     <h2 className="entry-title">
-                        <span className="placeholder placeholder-animated placeholder-80" />
+                        <span className="placeholder placeholder-80 a-shining" />
                     </h2>
                     <div className="entry-metadata">
-                        <span className="placeholder placeholder-animated placeholder-60" />
+                        <span className="placeholder placeholder-60 a-shining" />
                     </div>
                 </header>
                 <div className="entry-summary">
-                    <span className="placeholder placeholder-animated placeholder-100" />
+                    <span className="placeholder placeholder-100 a-shining" />
                 </div>
                 <div className="entry-content">
                     <p>
-                        <span className="placeholder placeholder-animated placeholder-100" />
-                        <span className="placeholder placeholder-animated placeholder-100" />
-                        <span className="placeholder placeholder-animated placeholder-100" />
-                        <span className="placeholder placeholder-animated placeholder-60" />
+                        <span className="placeholder placeholder-100 a-shining" />
+                        <span className="placeholder placeholder-100 a-shining" />
+                        <span className="placeholder placeholder-100 a-shining" />
+                        <span className="placeholder placeholder-60 a-shining" />
                     </p>
                     <p>
-                        <span className="placeholder placeholder-animated placeholder-100" />
-                        <span className="placeholder placeholder-animated placeholder-100" />
-                        <span className="placeholder placeholder-animated placeholder-100" />
-                        <span className="placeholder placeholder-animated placeholder-100" />
-                        <span className="placeholder placeholder-animated placeholder-80" />
+                        <span className="placeholder placeholder-100 a-shining" />
+                        <span className="placeholder placeholder-100 a-shining" />
+                        <span className="placeholder placeholder-100 a-shining" />
+                        <span className="placeholder placeholder-100 a-shining" />
+                        <span className="placeholder placeholder-80 a-shining" />
                     </p>
                     <p>
-                        <span className="placeholder placeholder-animated placeholder-100" />
-                        <span className="placeholder placeholder-animated placeholder-100" />
-                        <span className="placeholder placeholder-animated placeholder-40" />
+                        <span className="placeholder placeholder-100 a-shining" />
+                        <span className="placeholder placeholder-100 a-shining" />
+                        <span className="placeholder placeholder-40 a-shining" />
                     </p>
                 </div>
                 <footer className="entry-footer">

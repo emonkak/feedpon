@@ -35,7 +35,7 @@ export default class StreamFooter extends PureComponent<StreamFooterProps, {}> {
             if (isLoading) {
                 return (
                     <footer className="stream-footer">
-                        <i className="icon icon-32 icon-spinner icon-rotating" />
+                        <i className="icon icon-32 icon-spinner a-rotating" />
                     </footer>
                 );
             } else {

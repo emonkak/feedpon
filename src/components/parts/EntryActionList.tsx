@@ -25,7 +25,7 @@ const EntryActionList: React.SFC<EntryActionListProps> = ({
                 className={classnames('button button-pill', commentsIsShown ? 'button-default' : 'button-outline-default')}
                 title="Comments..."
                 onClick={onToggleComments}>
-                <i className={classnames('icon icon-20', commentsIsLoading ? 'icon-spinner icon-rotating' : 'icon-comments')} />
+                <i className={classnames('icon icon-20', commentsIsLoading ? 'icon-spinner a-rotating' : 'icon-comments')} />
             </button>
             <Dropdown
                 className="button-group"
