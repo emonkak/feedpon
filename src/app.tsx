@@ -87,13 +87,13 @@ async function restoreState<TState extends Record<keyof TState, { version: numbe
         let data;
 
         try {
-            data = await restore(key);
+            data = await restore(key) as any;
         } catch (_error) {
         }
 
-        const { version } = initialState[key];
+        const initialData = initialState[key] as any;
 
-        if (data != null && data.version === version) {
+        if (data != null && data.version === initialData.version) {
             state[key] = data;
         }
     }
