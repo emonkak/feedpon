@@ -13,7 +13,6 @@ a.stream-title:hover {
   position: relative;
   padding: calc(var(--baseline-height) / 2) 0 calc(var(--baseline-height) / 2 - 1px);
   background-color: var(--light-color);
-  border-bottom: 1px solid var(--medium-dark-color);
   z-index: 20;
 }
 
@@ -28,7 +27,6 @@ a.stream-title:hover {
   justify-content: center;
   width: 100%;
   height: calc(100vh - var(--navbar-height));
-  background-color: var(--light-color);
   text-align: center;
 }
 

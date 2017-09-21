@@ -3,6 +3,7 @@
 .DS_Store
 .vscode
 /build/
+/dist/
 /platforms/
 /plugins/
 /webextension/css/
