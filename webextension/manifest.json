@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "Feedpon",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "description": "A feed reader which was developed for me",
     "icons": {
         "16": "./img/icon-16.png",

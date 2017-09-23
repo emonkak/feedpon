@@ -102,7 +102,6 @@ export default class StreamFetchOptionsDropdown extends PureComponent<StreamFetc
                             className="form-control u-text-right"
                             style={{ width: '6rem' }}
                             value={numEntries + ''}
-                            step={10}
                             min={1}
                             onChange={this.handleChangeNumberOfEntries} />
                         <button type="submit" className="button button-positive">OK</button>
