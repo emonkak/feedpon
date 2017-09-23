@@ -19,6 +19,10 @@ Therefore you will need a Feedly account.
 
 ![Screenshot 2](https://farm5.staticflickr.com/4333/37222953671_9eac78fc88_o.png)
 
+![Screenshot Android](https://farm5.staticflickr.com/4336/37211803196_a0eeb25777_o.png)
+
+![Screenshot iOS](https://farm5.staticflickr.com/4479/37258841101_0e28c98f68_o.png)
+
 ## Installation
 
 - Google Chrome
@@ -27,4 +31,10 @@ Therefore you will need a Feedly account.
 
 - Firefox
 
-    You can install Add-on from [AMO](https://addons.mozilla.org/firefox/addon/feedpon/).
+    You can install Add-on from [Mozilla Add-ons](https://addons.mozilla.org/firefox/addon/feedpon/).
+
+- Android & iOS
+
+    Sorry. This app has not been uploaded to Google Play and App Store.
+    You need to build and install this app yourself.
+    Please read [Cordova Document](https://cordova.apache.org/docs/en/latest/guide/cli/index.html) for build and installation.
