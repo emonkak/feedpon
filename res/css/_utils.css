@@ -76,6 +76,11 @@
   white-space: normal;
 }
 
+.u-text-prewrap {
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
+
 .u-text-nowrap {
   white-space: nowrap;
 }
