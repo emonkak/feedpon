@@ -340,12 +340,12 @@ class KitchenSinkPage extends PureComponent<KitchenSinkProps, KitchenSinkState> 
                 </p>
 
                 <h2>Placeholder</h2>
-                <h2 className="placeholder placeholder-60"></h2>
+                <h2 className="placeholder placeholder-60 a-shining"></h2>
                 <p>
-                    <span className="placeholder placeholder-100" />
-                    <span className="placeholder placeholder-100" />
-                    <span className="placeholder placeholder-100" />
-                    <span className="placeholder placeholder-80" />
+                    <span className="placeholder placeholder-100 a-shining" />
+                    <span className="placeholder placeholder-100 a-shining" />
+                    <span className="placeholder placeholder-100 a-shining" />
+                    <span className="placeholder placeholder-80 a-shining" />
                 </p>
 
                 <h2>List</h2>
