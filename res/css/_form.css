@@ -115,6 +115,7 @@ select.form-control:not([size]):not([multiple]) {
 
 .input-group > .form-control {
   flex: 1;
+  min-width: 0;
 }
 
 .input-group > .form-control:not(:first-child) {
