@@ -15,7 +15,7 @@ function main() {
 
             if (currentTotalUnreadCount !== nextTotalUnreadCount) {
                 chrome.browserAction.setBadgeText({
-                    text: nextTotalUnreadCount + ''
+                    text: nextTotalUnreadCount > 0 ? nextTotalUnreadCount + '' : ''
                 });
 
                 currentTotalUnreadCount = nextTotalUnreadCount;
