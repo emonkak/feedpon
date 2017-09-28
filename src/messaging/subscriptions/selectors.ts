@@ -101,7 +101,10 @@ function getGroupedSubscriptions(subscriptions: Subscription[]): { [key: string]
 
 function getTotalUnreadCount(subscriptions: Subscription[]): number {
     const unreadCount = subscriptions.reduce<number>(
-        (total, subscription) => total + subscription.unreadCount - subscription.readCount,
+        (total, subscription) =>
+            subscription.unreadCount > subscription.readCount ?
+                total + subscription.unreadCount - subscription.readCount :
+                total,
         0
     );
     return unreadCount > 0 ? unreadCount : 0;
