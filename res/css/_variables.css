@@ -1,5 +1,5 @@
 @custom-media --sm-viewport (max-width: 768px);
-@custom-media --md-viewport (max-width: 980px);
+@custom-media --md-viewport (min-width: 769px) and (max-width: 980px);
 @custom-media --lg-viewport (min-width: 981px);
 
 :root {
