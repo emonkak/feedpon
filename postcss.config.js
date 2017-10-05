@@ -10,8 +10,4 @@ const config = {
     ]
 }
 
-if (process.env.NODE_ENV === 'production') {
-    config.plugins.push(require('postcss-csso')());
-}
-
 module.exports = config;
