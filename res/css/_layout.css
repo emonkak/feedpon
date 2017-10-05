@@ -1,23 +1,3 @@
-.l-root::before {
-  content: '';
-  position: fixed;
-  visibility: hidden;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 200;
-  opacity: 0;
-  background-color: var(--backdrop-background-color);
-  transition: visibility 0s ease-in-out 0.2s, opacity 0.2s ease-in-out;
-}
-
-.l-root.is-opened::before {
-  visibility: visible;
-  opacity: 1;
-  transition-delay: 0s;
-}
-
 .l-root.is-opened > .l-sidebar {
   left: 0;
 }
@@ -30,13 +10,14 @@
 }
 
 .l-sidebar {
-  box-sizing: border-box;
   position: fixed;
   top: 0;
   left: calc(var(--sidebar-width) * -1);
   width: var(--sidebar-width);
   height: 100%;
+  padding: calc(var(--baseline-height) / 2) 1.5em;
   z-index: 300;
+  box-sizing: border-box;
   overflow-x: hidden;
   overflow-y: auto;
   background-color: var(--light-color);
@@ -46,8 +27,9 @@
 }
 
 .l-main {
-  transition: padding 0.2s ease-in-out;
   width: 100%;
+  box-sizing: border-box;
+  transition: padding 0.2s ease-in-out;
 }
 
 .l-main-header {
@@ -57,6 +39,7 @@
   width: 100%;
   z-index: 100;
   background-color: var(--transparent-color);
+  box-sizing: border-box;
   transition: padding 0.2s ease-in-out, transform 0.2s ease-in-out;
 }
 
@@ -77,6 +60,7 @@
   left: 0;
   width: 100%;
   z-index: 200;
+  box-sizing: border-box;
   transition: padding 0.2s ease-in-out;
 }
 
@@ -86,8 +70,9 @@
   left: 0;
   width: 100%;
   z-index: 200;
-  transition: padding 0.2s ease-in-out;
   text-align: center;
+  box-sizing: border-box;
+  transition: padding 0.2s ease-in-out;
 }
 
 .l-backdrop {
@@ -125,26 +110,31 @@
   height: 100vh;
 }
 
-@media (--md-viewport) {
-  .l-root.is-opened::before {
-    display: none;
-  }
-
-  .l-root.is-opened > .l-sidebar {
+@media (--sm-viewport) {
+  .l-root::before {
+    content: '';
+    position: fixed;
+    visibility: hidden;
+    top: 0;
     left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 200;
+    opacity: 0;
+    background-color: var(--backdrop-background-color);
+    transition: visibility 0s ease-in-out 0.2s, opacity 0.2s ease-in-out;
   }
 
-  .l-root.is-opened > .l-main,
-  .l-root.is-opened > .l-main > .l-main-header,
-  .l-root.is-opened > .l-notifications,
-  .l-root.is-opened > .l-instant-notifications {
-    padding-left: var(--sidebar-width);
+  .l-root.is-opened::before {
+    visibility: visible;
+    opacity: 1;
+    transition-delay: 0s;
   }
 
   .l-main,
-  .l-main > .l-main-header,
+  .l-main-header,
   .l-notifications,
   .l-instant-notifications {
-    box-sizing: border-box;
+    box-sizing: content-box;
   }
 }

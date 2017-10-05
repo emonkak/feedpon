@@ -10,6 +10,7 @@
   margin: 0 auto;
   max-width: var(--container-width);
   height: 100%;
+  padding: 0 1.5em;
 }
 
 .navbar-title {
@@ -51,9 +52,9 @@
   height: 100%;
 }
 
-@media (--md-viewport) {
+@media (--sm-viewport) {
   .navbar-container {
-    padding-left: 2.5em;
-    padding-right: 2.5em;
+    padding-left: 0;
+    padding-right: 0;
   }
 }

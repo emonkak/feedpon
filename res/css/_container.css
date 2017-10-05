@@ -8,8 +8,8 @@
   max-width: 480px;
 }
 
-@media (--md-viewport) {
+@media (--sm-viewport) {
   .container {
-    padding: 0 2.5em;
+    padding: 0 1em;
   }
 }

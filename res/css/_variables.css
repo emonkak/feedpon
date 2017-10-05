@@ -1,6 +1,6 @@
 @custom-media --sm-viewport (max-width: 768px);
-@custom-media --md-viewport (min-width: 769px);
-@custom-media --lg-viewport (min-width: 980px);
+@custom-media --md-viewport (max-width: 980px);
+@custom-media --lg-viewport (min-width: 981px);
 
 :root {
   --baseline-height: 24px;
