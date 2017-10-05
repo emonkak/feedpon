@@ -46,10 +46,7 @@ const FeedHeader: React.SFC<FeedHeaderProps> = ({
                         <div><a target="_blank" href={feed.feedUrl}>{feed.feedUrl}</a></div>
                         <div className="list-inline list-inline-dotted">
                             <div className="list-inline-item u-text-muted">
-                                <span className="u-text-x-large">{numUnreads}</span> unreads
-                            </div>
-                            <div className="list-inline-item u-text-muted">
-                                <span className="u-text-x-large">{numEntries}{hasMoreEntries && '+'}</span> entries
+                                <span className="u-text-x-large">{numUnreads}</span>/<span className="u-text-x-large">{numEntries}{hasMoreEntries && '+'}</span> unreads
                             </div>
                             <div className="list-inline-item u-text-muted">
                                 <span className="u-text-x-large">{feed.subscribers}</span> subscribers
