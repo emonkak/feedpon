@@ -9,7 +9,7 @@ Therefore you will need a Feedly account.
 
 - Full content extraction
 - Tracking url extraction
-- Full keyborad mapping customization
+- Full keyboard mapping customization
 - Hatena Bookmark integration
 - Night mode
 
