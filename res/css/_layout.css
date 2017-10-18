@@ -15,7 +15,7 @@
   left: calc(var(--sidebar-width) * -1);
   width: var(--sidebar-width);
   height: 100%;
-  padding: calc(var(--baseline-height) / 2) 1.5em;
+  padding: calc(var(--baseline-height) / 2) 1em;
   z-index: 300;
   box-sizing: border-box;
   overflow-x: hidden;
