@@ -110,7 +110,18 @@ function shouldIgnoreEvent(event: KeyboardEvent): boolean {
         return true;
     }
 
-    return event.target !== document.body;
+    if (event.target instanceof HTMLElement) {
+        const element = event.target;
+
+        if (element.tagName === 'INPUT' ||
+            element.tagName === 'SELECT' ||
+            element.tagName === 'TEXTAREA' ||
+            element.isContentEditable) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 function isModifier(key: string): boolean {

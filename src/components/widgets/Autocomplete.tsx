@@ -90,18 +90,21 @@ export default class Autocomplete extends PureComponent<AutoCompleteProps, Autoc
             case 'ArrowUp':
                 event.preventDefault();
                 event.stopPropagation();
+                event.nativeEvent.stopImmediatePropagation();
                 this.menu.focusPrevious();
                 break;
 
             case 'ArrowDown':
                 event.preventDefault();
                 event.stopPropagation();
+                event.nativeEvent.stopImmediatePropagation();
                 this.menu.focusNext();
                 break;
 
             case 'Escape':
                 event.preventDefault();
                 event.stopPropagation();
+                event.nativeEvent.stopImmediatePropagation();
                 if (this.inputControl) {
                     this.inputControl.blur();
                 }
