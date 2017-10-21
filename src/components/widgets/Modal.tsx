@@ -52,13 +52,13 @@ export default class Modal extends PureComponent<ModalProps, {}> {
 
         if (isOpened) {
             event.stopPropagation();
-        }
 
-        if (event.key === 'Escape') {
-            const { onClose } = this.props;
+            if (event.key === 'Escape') {
+                const { onClose } = this.props;
 
-            if (onClose) {
-                onClose();
+                if (onClose) {
+                    onClose();
+                }
             }
         }
     }
