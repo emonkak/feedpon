@@ -1,11 +1,11 @@
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 
 interface UpdateBlockerProps {
     children: React.ReactElement<any>;
     shouldUpdate: boolean;
 }
 
-export default class UpdateBlocker extends PureComponent<UpdateBlockerProps, {}> {
+export default class UpdateBlocker extends Component<UpdateBlockerProps, {}> {
     shouldComponentUpdate(nextProps: UpdateBlockerProps) {
         return nextProps.shouldUpdate;
     }
