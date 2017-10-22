@@ -89,7 +89,7 @@ export const fetchFullContent: Command<{}> = {
         return ({ dispatch }) => {
             const entry = dispatch(getActiveEntry);
 
-            if (entry && entry.url) {
+            if (entry && entry.url && !entry.fullContents.isLoading) {
                 if (entry.fullContents.isLoaded) {
                     const lastFullContent = entry.fullContents.items[entry.fullContents.items.length - 1];
 
