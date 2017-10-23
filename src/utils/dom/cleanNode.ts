@@ -21,7 +21,7 @@ function qualifySrcset(srcsetString: string, baseUrlString: string): string {
         .join(',');
 }
 
-function responsify(element: HTMLElement & { width: number, height: number }): void {
+function responsifyImage(element: HTMLImageElement): void {
     if (element.width < RESPONSIVE_ELEMENT_WIDTH
         || element.height < RESPONSIVE_ELEMENT_HEIGHT) {
         return;
@@ -50,6 +50,12 @@ function responsify(element: HTMLElement & { width: number, height: number }): v
     }
 }
 
+function resolveLazyLoading(element: HTMLImageElement): void {
+    if (!element.src && element.dataset.src) {
+        element.src = element.dataset.src!;
+    }
+}
+
 export default function cleanNode(node: Node, baseUrl: string): boolean {
     switch (node.nodeType) {
         case node.TEXT_NODE:
@@ -57,12 +63,6 @@ export default function cleanNode(node: Node, baseUrl: string): boolean {
 
         case node.ELEMENT_NODE:
             const element = node as Element;
-
-            if (!sanitizeElement(element)) {
-                element.remove();
-
-                return false;
-            }
 
             for (const attrName of URI_ATTRS) {
                 if (element.hasAttribute(attrName)) {
@@ -82,8 +82,15 @@ export default function cleanNode(node: Node, baseUrl: string): boolean {
                     break;
 
                 case 'IMG':
-                    responsify(element as HTMLImageElement);
+                    responsifyImage(element as HTMLImageElement);
+                    resolveLazyLoading(element as HTMLImageElement);
                     break;
+            }
+
+            if (!sanitizeElement(element)) {
+                element.remove();
+
+                return false;
             }
 
             return true;
