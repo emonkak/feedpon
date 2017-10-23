@@ -59,7 +59,7 @@ export default class StreamFooter extends PureComponent<StreamFooterProps, {}> {
                             className="button button-positive"
                             onClick={onMarkAllAsRead}
                             disabled={!canMarkStreamAsRead}>
-                            Mark all as read
+                            Mark above as read
                         </button>
                     </p>
                 </footer>
