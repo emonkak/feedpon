@@ -35,6 +35,7 @@ function responsifyImage(element: HTMLImageElement): void {
     const wrapper = document.createElement('div');
     wrapper.style.maxWidth = element.width + 'px';
     wrapper.style.maxHeight = element.height + 'px';
+    wrapper.style.overflow = 'hidden';
     wrapper.appendChild(container);
 
     if (element.parentNode) {
@@ -64,6 +65,18 @@ export default function cleanNode(node: Node, baseUrl: string): boolean {
         case node.ELEMENT_NODE:
             const element = node as Element;
 
+            switch (element.tagName) {
+                case 'IMG':
+                    resolveLazyLoading(element as HTMLImageElement);
+                    break;
+            }
+
+            if (!sanitizeElement(element)) {
+                element.remove();
+
+                return false;
+            }
+
             for (const attrName of URI_ATTRS) {
                 if (element.hasAttribute(attrName)) {
                     element.setAttribute(attrName, qualifyUrl(element.getAttribute(attrName)!, baseUrl));
@@ -83,14 +96,7 @@ export default function cleanNode(node: Node, baseUrl: string): boolean {
 
                 case 'IMG':
                     responsifyImage(element as HTMLImageElement);
-                    resolveLazyLoading(element as HTMLImageElement);
                     break;
-            }
-
-            if (!sanitizeElement(element)) {
-                element.remove();
-
-                return false;
             }
 
             return true;
