@@ -27,27 +27,20 @@ function responsifyImage(element: HTMLImageElement): void {
         return;
     }
 
-    const container = document.createElement('div');
-    container.style.position = 'relative';
-    container.style.width = '100%';
-    container.style.paddingBottom = (element.height / element.width * 100) + '%';
+    const inner = document.createElement('div');
+    inner.className = 'responsive-container-inner';
+    inner.style.paddingBottom = (element.height / element.width * 100) + '%';
 
-    const wrapper = document.createElement('div');
-    wrapper.style.maxWidth = element.width + 'px';
-    wrapper.style.maxHeight = element.height + 'px';
-    wrapper.style.overflow = 'hidden';
-    wrapper.appendChild(container);
+    const container = document.createElement('div');
+    container.className = 'responsive-container';
+    container.style.maxWidth = element.width + 'px';
+    container.style.maxHeight = element.height + 'px';
+    container.appendChild(inner);
 
     if (element.parentNode) {
-        element.parentNode.replaceChild(wrapper, element);
+        element.parentNode.replaceChild(container, element);
 
-        element.style.position = 'absolute';
-        element.style.top = '0';
-        element.style.left = '0';
-        element.style.width = '100%';
-        element.style.height = '100%';
-
-        container.appendChild(element);
+        inner.appendChild(element);
     }
 }
 
