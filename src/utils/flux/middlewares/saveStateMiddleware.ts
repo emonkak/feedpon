@@ -3,24 +3,20 @@ import throttle from 'lodash.throttle';
 import throttleIdleCallback from '../../throttleIdleCallback';
 import { Middleware } from '../types';
 
-function saveStateMiddlewareFactory<TState, TEvent>(save: (key: string, value: any) => Promise<void>, saveInterval: number): Middleware<TState, TEvent> {
+function saveStateMiddlewareFactory<TState, TEvent>(save: (state: any) => Promise<void>, saveInterval: number): Middleware<TState, TEvent> {
     let queue: Partial<TState> = {};
 
     const processQueue = throttle(throttleIdleCallback(async () => {
-        const data = queue;
+        const items = queue;
 
         queue = {};
 
-        for (const key in data) {
-            await save(key, data[key]);
-        }
+        await save(items);
     }), saveInterval);
 
     return ({ getState }) => (event, next) => {
         const state = getState();
-
         const result = next(event);
-
         const nextState = getState();
 
         let shouldSave = false;

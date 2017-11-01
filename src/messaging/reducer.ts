@@ -4,6 +4,7 @@ import backend from 'messaging/backend/reducer';
 import categories from 'messaging/categories/reducer';
 import combineReducers from 'utils/flux/combineReducers';
 import histories from 'messaging/histories/reducer';
+import identityFunction from 'utils/identityFunction';
 import instantNotifications from 'messaging/instantNotifications/reducer';
 import keyMappings from 'messaging/keyMappings/reducer';
 import notifications from 'messaging/notifications/reducer';
@@ -30,5 +31,6 @@ export default combineReducers<State, Event>({
     trackingUrls,
     ui,
     user,
-    userSiteinfo
+    userSiteinfo,
+    version: identityFunction
 });

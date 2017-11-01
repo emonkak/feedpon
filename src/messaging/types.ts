@@ -9,8 +9,8 @@ export type Store = FluxStore<State, Event> & {
 };
 
 export interface State {
-    categories: Categories;
     backend: Backend;
+    categories: Categories;
     histories: Histories;
     instantNotifications: InstantNotifications;
     keyMappings: KeyMappings;
@@ -23,6 +23,7 @@ export interface State {
     ui: UI;
     user: User;
     userSiteinfo: UserSiteinfo;
+    version: string;
 }
 
 export type Event

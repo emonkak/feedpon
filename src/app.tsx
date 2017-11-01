@@ -9,6 +9,7 @@ import applyMiddlewares from 'utils/flux/applyMiddlewares';
 import createStore from 'utils/flux/createStore';
 import errorHandlingMiddleware from 'utils/flux/middlewares/errorHandlingMiddleware';
 import initialState from 'messaging/initialState';
+import packageJson from '../package.json';
 import reducer from 'messaging/reducer';
 import reduxMiddleware from 'utils/flux/middlewares/reduxMiddleware';
 import routes from 'components/routes';
@@ -18,7 +19,7 @@ import { Event, State, ThunkContext } from 'messaging/types';
 import { Middleware, Store } from 'utils/flux/types';
 import { sendNotification } from 'messaging/notifications/actions';
 
-export default function app(save: (key: string, value: any) => Promise<void>, restore: (key: string) => Promise<any>): Store<State, Event> {
+export default function app(save: (state: Object) => Promise<void>, restore: (keys: string[]) => Promise<any>): Store<State, Event> {
     const context: ThunkContext = {
         environment: {
             clientId: 'feedly',
@@ -49,10 +50,11 @@ export default function app(save: (key: string, value: any) => Promise<void>, re
 
     const store = applyMiddlewares(createStore(reducer, initialState), middlewares);
 
-    restoreState(initialState, restore).then((partialState) => {
+    restore(Object.keys(initialState)).then((partialState) => {
         const state = {
             ...store.getState(),
-            ...partialState
+            ...partialState,
+            version: packageJson.version
         };
 
         store.replaceState(state);
@@ -75,28 +77,4 @@ export default function app(save: (key: string, value: any) => Promise<void>, re
     ), element);
 
     return store;
-}
-
-async function restoreState<TState extends Record<keyof TState, { version: number }>>(
-    initialState: TState,
-    restore: <TKey extends keyof TState>(key: TKey) => Promise<TState[TKey] | null>
-): Promise<Partial<TState>> {
-    const state: Partial<TState> = {};
-
-    for (const key in initialState) {
-        let data;
-
-        try {
-            data = await restore(key) as any;
-        } catch (_error) {
-        }
-
-        const initialData = initialState[key] as any;
-
-        if (data != null && data.version === initialData.version) {
-            state[key] = data;
-        }
-    }
-
-    return state;
 }

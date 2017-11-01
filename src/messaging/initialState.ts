@@ -28,7 +28,8 @@ const initialState: State = {
     trackingUrls,
     ui,
     user,
-    userSiteinfo
+    userSiteinfo,
+    version: '0.0.0'
 };
 
 export default initialState;

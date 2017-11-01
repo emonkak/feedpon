@@ -1,5 +1,4 @@
 import React, { PureComponent } from 'react';
-import packageJson from '../../package.json';
 
 import Dropdown from 'components/widgets/Dropdown';
 import MainLayout from 'components/layouts/MainLayout';
@@ -7,6 +6,7 @@ import Navbar from 'components/widgets/Navbar';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
 import { MenuLink } from 'components/widgets/Menu';
+import { State } from 'messaging/types';
 import { toggleSidebar } from 'messaging/ui/actions';
 
 const CLASSNAMES_LICENSE = `
@@ -434,6 +434,8 @@ class AboutPage extends PureComponent<AboutPageProps, {}> {
     }
 
     renderContent() {
+        const { version } = this.props;
+
         return (
             <div>
                 <section className="section u-text-center">
@@ -441,7 +443,7 @@ class AboutPage extends PureComponent<AboutPageProps, {}> {
                         <a href="https://github.com/emonkak/feedpon" target="_blank">
                             <img src="./img/logo.svg" width="278" height="100" />
                         </a>
-                        <div>Version <strong>{packageJson.version}</strong></div>
+                        <div>Version <strong>{version}</strong></div>
                     </div>
                 </section>
                 <section className="section">
@@ -513,6 +515,9 @@ class AboutPage extends PureComponent<AboutPageProps, {}> {
 }
 
 export default connect({
+    mapStateToProps: (state: State) => ({
+        version: state.version
+    }),
     mapDispatchToProps: bindActions({
         onToggleSidebar: toggleSidebar
     })
