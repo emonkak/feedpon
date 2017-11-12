@@ -58,7 +58,7 @@ export default class LazyList extends PureComponent<LazyListProps, LazyListState
     }
 
     componentDidMount() {
-        this.containerElement = findDOMNode<HTMLElement>(this);
+        this.containerElement = findDOMNode(this) as HTMLElement;
 
         this.scrollable = this.props.getScrollableParent!(this.containerElement);
         this.scrollable.addEventListener('resize', this.handleUpdateHeight, { passive: true } as any);
@@ -191,7 +191,7 @@ export default class LazyList extends PureComponent<LazyListProps, LazyListState
         const ref = (ref: React.ReactInstance) => {
             if (ref) {
                 const { getHeight } = this.props;
-                const element = findDOMNode<HTMLElement>(ref);
+                const element = findDOMNode(ref) as HTMLElement;
                 this.elements[key] = element;
                 this.heights[key] = getHeight!(element);
             } else {

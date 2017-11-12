@@ -283,7 +283,7 @@ function doGet(path: string, data?: object | null, headers?: { [key: string]: st
 
     const params = {
         method: 'GET',
-        headers
+        headers: new Headers(headers)
     };
 
     return fetch(url, params).then(handleError);
@@ -294,7 +294,7 @@ function doPost(path: string, data?: string | object | null, headers?: { [key: s
 
     const params = {
         method: 'POST',
-        headers: { ...headers, 'Content-Type': contentType },
+        headers: new Headers({ 'Content-Type': contentType, ...headers }),
         body: serializeData(data)
     };
 
@@ -306,7 +306,7 @@ function doPut(path: string, data?: string | object | null, headers?: { [key: st
 
     const params = {
         method: 'PUT',
-        headers: { ...headers, 'Content-Type': contentType },
+        headers: new Headers({ 'Content-Type': contentType, ...headers }),
         body: serializeData(data)
     };
 
@@ -318,7 +318,7 @@ function doDelete(path: string, data?: string | object | null, headers?: { [key:
 
     const params = {
         method: 'DELETE',
-        headers: { ...headers, 'Content-Type': contentType },
+        headers: new Headers({ 'Content-Type': contentType, ...headers }),
         body: serializeData(data)
     };
 

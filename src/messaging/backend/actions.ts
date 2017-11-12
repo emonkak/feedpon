@@ -159,6 +159,10 @@ function chromeOpenWindow(url: string, onTransition: (url: string) => boolean): 
 function cordovaOpenWindow(url: string, onTransition: (url: string) => boolean): Promise<string> {
     return new Promise<string>((resolve, reject) => {
         const ref = cordova.InAppBrowser.open(url, '_blank', 'location=no');
+        if (ref == null) {
+            reject(new Error('Unable open to InAppBrowser.'));
+            return;
+        }
 
         const handleLoadStart = (event: InAppBrowserEvent) => {
             if (onTransition(event.url)) {
@@ -176,7 +180,7 @@ function cordovaOpenWindow(url: string, onTransition: (url: string) => boolean):
         const unregisterListeners = () => {
             ref.removeEventListener('loadstart', handleLoadStart);
             ref.removeEventListener('exit', handleExit);
-        }
+        };
 
         ref.addEventListener('loadstart', handleLoadStart);
         ref.addEventListener('exit', handleExit);

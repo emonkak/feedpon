@@ -150,7 +150,7 @@ export default class ScrollSpy extends PureComponent<ScrollSpyProps, {}> {
 
         const ref = (instance: React.ReactInstance) => {
             if (child) {
-                const element = findDOMNode<HTMLElement>(instance);
+                const element = findDOMNode(instance) as HTMLElement;
 
                 if (element) {
                     this.childElements.set(index, element);
