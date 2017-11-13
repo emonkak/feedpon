@@ -68,7 +68,7 @@ class SharedSiteinfoSettings extends PureComponent<SharedSiteinfoProps, SharedSi
                         ref={this.handleInputControlRef}
                         type="search"
                         className="form-control"
-                        placeholder="Search by url"
+                        placeholder="Search by url..."
                         onChange={this.handleChangeTestUrl} />
                 </p>
                 {lastUpdate}
