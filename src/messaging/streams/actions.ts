@@ -183,7 +183,10 @@ export function fetchFullContent(entryId: string | number, url: string): AsyncTh
         let nextPageUrl = '';
 
         try {
-            const response = await fetch(url);
+            const response = await fetch(url, {
+                mode: 'cors',
+                credentials: 'include'
+            });
 
             if (response.ok) {
                 const responseText = await decodeResponseAsText(response);
