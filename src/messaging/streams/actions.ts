@@ -726,6 +726,7 @@ function convertEntry(entry: feedly.Entry): Entry {
         fullContents: {
             isLoaded: false,
             isLoading: false,
+            isNotFound: false,
             isShown: false,
             items: []
         },

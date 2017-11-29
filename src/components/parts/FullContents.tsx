@@ -5,20 +5,22 @@ import { FullContent } from 'messaging/types';
 
 interface FullContentsProps {
     isLoading: boolean;
+    isNotFound: boolean;
     items: FullContent[];
     onFetchNext: React.MouseEventHandler<any>;
 }
 
 const FullContents: React.SFC<FullContentsProps> = ({
     isLoading,
+    isNotFound,
     items,
-    onFetchNext 
+    onFetchNext
 }) => {
     if (items.length === 0) {
         return (
             <div className="entry-content">
                 <div className="message message-positive">
-                    The full content of this entry can not be extracted.
+                    This entry cannot be extracted.
                 </div>
             </div>
         );
@@ -38,14 +40,17 @@ const FullContents: React.SFC<FullContentsProps> = ({
         </section>
     );
 
-    const latestItem = items[items.length - 1];
-
     let nextPageButton: React.ReactElement<any> | null = null;
 
-    if (latestItem && latestItem.nextPageUrl) {
-        nextPageButton = isLoading
-            ? <button className="button button-block button-outline-positive" disabled={true}><i className="icon icon-20 icon-spinner a-rotating" /></button> 
-            : <button className="button button-block button-outline-positive" onClick={onFetchNext}>Next page</button>;
+    if (isNotFound) {
+        nextPageButton = <div className="message message-positive">The next page cannot be extracted.</div>;
+    } else {
+        const latestItem = items[items.length - 1];
+        if (latestItem && latestItem.nextPageUrl) {
+            nextPageButton = isLoading
+                ? <button className="button button-block button-outline-positive" disabled={true}><i className="icon icon-20 icon-spinner a-rotating" /></button>
+                : <button className="button button-block button-outline-positive" onClick={onFetchNext}>Next page</button>;
+        }
     }
 
     return (

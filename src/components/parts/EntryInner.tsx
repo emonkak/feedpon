@@ -35,6 +35,7 @@ const EntryInner: React.SFC<EntryInnerProps> = ({
     const contents = entry.fullContents.isShown && entry.fullContents.isLoaded
         ? <FullContents
             isLoading={entry.fullContents.isLoading}
+            isNotFound={entry.fullContents.isNotFound}
             items={entry.fullContents.items}
             onFetchNext={onFetchNextFullContent} />
         : <CleanHtml

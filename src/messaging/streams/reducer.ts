@@ -317,6 +317,7 @@ export default function reducer(streams: Streams, event: Event): Streams {
                             fullContents: {
                                 isLoaded: true,
                                 isLoading: false,
+                                isNotFound: false,
                                 isShown: true,
                                 items: [...entry.fullContents.items, event.fullContent]
                             }
@@ -340,6 +341,7 @@ export default function reducer(streams: Streams, event: Event): Streams {
                                 ...entry.fullContents,
                                 isLoaded: true,
                                 isLoading: false,
+                                isNotFound: true,
                                 isShown: true
                             }
                         };

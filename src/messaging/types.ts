@@ -266,6 +266,7 @@ export interface Visual {
 export interface FullContents {
     isLoaded: boolean;
     isLoading: boolean;
+    isNotFound: boolean;
     isShown: boolean;
     items: FullContent[];
 }
