@@ -56,7 +56,7 @@ export default class SubscriptionTree extends PureComponent<SubscriptionTreeProp
         const { categories, groupedSubscriptions } = this.props;
 
         const visibleCategories = categories
-            .filter((category) => !!groupedSubscriptions[category.label])
+            .filter((category) => groupedSubscriptions.hasOwnProperty(category.label))
             .map((category) => ({ category, groupedSubscription: groupedSubscriptions[category.label]! }));
 
         const uncategorizedSubscriptions = groupedSubscriptions[UNCATEGORIZED]
