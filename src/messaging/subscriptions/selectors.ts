@@ -88,6 +88,7 @@ function getGroupedSubscriptions(subscriptions: Subscription[]): { [key: string]
                 }
             } else {
                 acc[label] = {
+                    label,
                     items: [subscription],
                     unreadCount: subscription.unreadCount > subscription.readCount
                         ? subscription.unreadCount - subscription.readCount

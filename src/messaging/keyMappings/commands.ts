@@ -3,7 +3,7 @@ import * as streamActions from 'messaging/streams/actions';
 import * as subscriptionActions from 'messaging/subscriptions/actions';
 import * as uiActions from 'messaging/ui/actions';
 import { Command, Entry, Stream, Thunk } from 'messaging/types';
-import { createVisibleCategoriesSelector } from 'messaging/categories/selectors';
+import { createSortedCategoriesSelector, createJoinedCategoriesSelector } from 'messaging/categories/selectors';
 import { createGroupedSubscriptionsSelector, createVisibleSubscriptionsSelector } from 'messaging/subscriptions/selectors';
 
 const SCROLL_OFFSET = 48;
@@ -12,7 +12,8 @@ const TEMPLATE_PATTERN = /\${([A-Z_]\w+)}/i;
 
 const visibleSubscriptionsSelector = createVisibleSubscriptionsSelector();
 const groupedSubscriptionsSelector = createGroupedSubscriptionsSelector(visibleSubscriptionsSelector);
-const visibleCategoriesSelector = createVisibleCategoriesSelector(groupedSubscriptionsSelector);
+const sortedCategoriesSelector = createSortedCategoriesSelector();
+const joinedCategoriesSelector = createJoinedCategoriesSelector(sortedCategoriesSelector, groupedSubscriptionsSelector);
 
 export const clearReadEntries: Command<{}> = {
     name: 'Clear read entries',
@@ -299,22 +300,24 @@ export const selectNextCategory: Command<{}> = {
         return ({ dispatch, getState }, { router }) => {
             const state = getState();
             const streamId = state.ui.selectedStreamId;
-            const visibleCategories = visibleCategoriesSelector(state);
+            const joinedCategories = joinedCategoriesSelector(state);
+
+            let targetIndex: number;
 
             if (streamId) {
-                const selectedCategoryIndex = visibleCategories
-                    .findIndex((category) => category.streamId === streamId);
-                const nextCategory = selectedCategoryIndex > -1
-                    ? visibleCategories[selectedCategoryIndex + 1]
-                    : visibleCategories[0];
+                const selectedIndex = joinedCategories
+                    .findIndex(({ category, subscriptions }) =>
+                        category.streamId === streamId ||
+                            subscriptions.findIndex((subscription) => subscription.streamId === streamId) !== -1
+                    );
+                targetIndex = selectedIndex > -1 ? selectedIndex + 1 : 0;
+            } else {
+                targetIndex = 0;
+            }
 
-                if (nextCategory) {
-                    router.push(`/streams/${encodeURIComponent(nextCategory.streamId)}`);
-                }
-            } else if (visibleCategories.length > 0) {
-                const lastCategory = visibleCategories[visibleCategories.length - 1];
-
-                router.push(`/streams/${encodeURIComponent(lastCategory.streamId)}`);
+            if (joinedCategories[targetIndex]) {
+                const targetCategory = joinedCategories[targetIndex].category;
+                router.push(`/streams/${encodeURIComponent(targetCategory.streamId)}`);
             }
         };
     }
@@ -368,20 +371,27 @@ export const selectNextSubscription: Command<{}> = {
             const streamId = state.ui.selectedStreamId;
             const visibleSubscriptions = visibleSubscriptionsSelector(state);
 
+            let targetIndex: number;
+
             if (streamId) {
-                const selectedSubscriptionIndex = visibleSubscriptions
-                    .findIndex((subscription) => subscription.streamId === streamId);
-                const nextSubscription = selectedSubscriptionIndex > -1
-                    ? visibleSubscriptions[selectedSubscriptionIndex + 1]
-                    : visibleSubscriptions[0];
+                const sortedCategories = sortedCategoriesSelector(state);
+                const selectedCategory = sortedCategories.find((category) => category.streamId === streamId);
 
-                if (nextSubscription) {
-                    router.push(`/streams/${encodeURIComponent(nextSubscription.streamId)}`);
+                if (selectedCategory) {
+                    targetIndex = visibleSubscriptions
+                        .findIndex((subscription) => subscription.labels.indexOf(selectedCategory.label) !== -1);
+                } else {
+                    const selectedIndex = visibleSubscriptions
+                        .findIndex((subscription) => subscription.streamId === streamId);
+                    targetIndex = selectedIndex > -1 ? selectedIndex + 1 : 0;
                 }
-            } else if (visibleSubscriptions.length > 0) {
-                const firstSubscription = visibleSubscriptions[0];
+            } else {
+                targetIndex = 0;
+            }
 
-                router.push(`/streams/${encodeURIComponent(firstSubscription.streamId)}`);
+            if (visibleSubscriptions[targetIndex]) {
+                const targetSubscription = visibleSubscriptions[targetIndex];
+                router.push(`/streams/${encodeURIComponent(targetSubscription.streamId)}`);
             }
         };
     }
@@ -395,22 +405,29 @@ export const selectPreviousCategory: Command<{}> = {
         return ({ dispatch, getState }, { router }) => {
             const state = getState();
             const streamId = state.ui.selectedStreamId;
-            const visibleCategories = visibleCategoriesSelector(state);
+            const joinedCategories = joinedCategoriesSelector(state);
+
+            let targetIndex: number;
 
             if (streamId) {
-                const selectedCategoryIndex = visibleCategories
-                    .findIndex((category) => category.streamId === streamId);
-                const previousCategory = selectedCategoryIndex > -1
-                    ? visibleCategories[selectedCategoryIndex - 1]
-                    : visibleCategories[visibleCategories.length - 1];
-
-                if (previousCategory) {
-                    router.push(`/streams/${encodeURIComponent(previousCategory.streamId)}`);
+                const selectedIndex = joinedCategories
+                    .findIndex(({ category, subscriptions }) =>
+                        category.streamId === streamId ||
+                            subscriptions.findIndex((subscription) => subscription.streamId === streamId) !== -1
+                    );
+                if (selectedIndex > -1) {
+                    const selectedCategory = joinedCategories[selectedIndex].category;
+                    targetIndex = selectedCategory.streamId === streamId ? selectedIndex - 1 : selectedIndex;
+                } else {
+                    targetIndex = joinedCategories.length - 1;
                 }
-            } else if (visibleCategories.length > 0) {
-                const firstCategory = visibleCategories[0];
+            } else {
+                targetIndex = joinedCategories.length - 1;
+            }
 
-                router.push(`/streams/${encodeURIComponent(firstCategory.streamId)}`);
+            if (joinedCategories[targetIndex]) {
+                const targetCategory = joinedCategories[targetIndex].category;
+                router.push(`/streams/${encodeURIComponent(targetCategory.streamId)}`);
             }
         };
     }
@@ -456,20 +473,27 @@ export const selectPreviousSubscription: Command<{}> = {
             const streamId = state.ui.selectedStreamId;
             const visibleSubscriptions = visibleSubscriptionsSelector(state);
 
+            let targetIndex: number;
             if (streamId) {
-                const selectedSubscriptionIndex = visibleSubscriptions
-                    .findIndex((subscription) => subscription.streamId === streamId);
-                const previousSubscription = selectedSubscriptionIndex > -1
-                    ? visibleSubscriptions[selectedSubscriptionIndex - 1]
-                    : visibleSubscriptions[visibleSubscriptions.length - 1];
+                const sortedCategories = sortedCategoriesSelector(state);
+                const selectedCategory = sortedCategories.find((category) => category.streamId === streamId);
 
-                if (previousSubscription) {
-                    router.push(`/streams/${encodeURIComponent(previousSubscription.streamId)}`);
+                if (selectedCategory) {
+                    const firstIndex = visibleSubscriptions
+                        .findIndex((subscription) => subscription.labels.indexOf(selectedCategory.label) !== -1);
+                    targetIndex = firstIndex > -1 ? firstIndex - 1 : visibleSubscriptions.length - 1;
+                } else {
+                    const selectedIndex = visibleSubscriptions
+                        .findIndex((subscription) => subscription.streamId === streamId);
+                    targetIndex = selectedIndex > -1 ? selectedIndex - 1 : visibleSubscriptions.length - 1;
                 }
-            } else if (visibleSubscriptions.length > 0) {
-                const lastSubscription = visibleSubscriptions[visibleSubscriptions.length - 1];
+            } else {
+                targetIndex = visibleSubscriptions.length - 1;
+            }
 
-                router.push(`/streams/${encodeURIComponent(lastSubscription.streamId)}`);
+            if (visibleSubscriptions[targetIndex]) {
+                const targetSubscription = visibleSubscriptions[targetIndex];
+                router.push(`/streams/${encodeURIComponent(targetSubscription.streamId)}`);
             }
         };
     }

@@ -349,6 +349,7 @@ export type SubscriptionOrderKind = 'id' | 'title' | 'newest' | 'oldest';
 
 export interface GroupedSubscription {
     items: Subscription[];
+    label: string | symbol;
     unreadCount: number;
 }
 
