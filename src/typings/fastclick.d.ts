@@ -3,7 +3,7 @@
 // Definitions by: Shinnosuke Watanabe <https://github.com/shinnn>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 
-declare module "fastclick" {
+declare module 'fastclick' {
     interface FastClickObject {
         lastTouchIdentifier: number;
         layer: Element;
@@ -33,7 +33,7 @@ declare module "fastclick" {
             attach(layer: any, options?: FastClickOptions): FastClickObject;
     }
 
-    var FastClick: FastClickStatic;
+    const FastClick: FastClickStatic;
 
     export = FastClick;
 }

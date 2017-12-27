@@ -136,19 +136,19 @@ function chromeOpenWindow(url: string, onTransition: (url: string) => boolean): 
                         resolve(tab.url);
                     }
                 }
-            }
+            };
 
             const handleRemoveWindow = (windowId: number) => {
                 if (windowId === window!.id) {
                     unregisterListeners();
                     reject(new Error('Authentication was not completed.'));
                 }
-            }
+            };
 
             const unregisterListeners = () => {
                 chrome.tabs.onUpdated.removeListener(handleUpdateTab);
                 chrome.windows.onRemoved.removeListener(handleRemoveWindow);
-            }
+            };
 
             chrome.tabs.onUpdated.addListener(handleUpdateTab);
             chrome.windows.onRemoved.addListener(handleRemoveWindow);

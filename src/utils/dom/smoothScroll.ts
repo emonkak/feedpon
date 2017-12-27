@@ -71,7 +71,7 @@ function smoothScroll<TScrollable extends object>(
             const requestId = requestAnimationFrame(step);
 
             runningAnimations.set(scrollable, { progress, requestId });
-        }
+        };
 
         step();
     });

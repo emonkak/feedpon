@@ -78,7 +78,7 @@ export const toggleComments: Command<{}> = {
                     dispatch(streamActions.fetchEntryComments(entry.entryId, entry.url));
                 }
             }
-        }
+        };
     }
 };
 
@@ -107,7 +107,7 @@ export const fetchFullContent: Command<{}> = {
                     dispatch(streamActions.fetchFullContent(entry.entryId, entry.url));
                 }
             }
-        }
+        };
     }
 };
 
@@ -180,7 +180,7 @@ export const openUrl: Command<{ template: string, inBackground: boolean }> = {
             }
         };
     }
-}
+};
 
 export const pinOrUnpinEntry: Command<{}> = {
     name: 'Pin/Unpin entry',
@@ -212,9 +212,9 @@ export const reloadStream: Command<{}> = {
             if (ui.selectedStreamId) {
                 dispatch(uiActions.scrollTo(0, 0, () => {
                     dispatch(streamActions.fetchStream(ui.selectedStreamId, streams.defaultFetchOptions));
-                }))
+                }));
             }
-        }
+        };
     }
 };
 
@@ -512,7 +512,7 @@ export const showHelp: Command<{}> = {
             } else {
                 dispatch(uiActions.openHelp());
             }
-        }
+        };
     }
 };
 
@@ -529,7 +529,7 @@ export const toggleSidebar: Command<{}> = {
             } else {
                 dispatch(uiActions.openSidebar());
             }
-        }
+        };
     }
 };
 
@@ -567,7 +567,7 @@ export const visitWebsite: Command<{ inBackground: boolean }> = {
                     window.open(entry.url);
                 }
             }
-        }
+        };
     }
 };
 
