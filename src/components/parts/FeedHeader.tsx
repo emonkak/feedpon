@@ -42,7 +42,7 @@ const FeedHeader: React.SFC<FeedHeaderProps> = ({
                                 <a target="_blank" className="link-strong" href={feed.url}>{feed.title}</a> :
                                 <strong>{feed.title}</strong>}
                         </div>
-                        <div>{feed.description}</div>
+                        <div className="u-text-wrap">{feed.description}</div>
                         <div><a target="_blank" href={feed.feedUrl}>{feed.feedUrl}</a></div>
                         <div className="list-inline list-inline-dotted">
                             <div className="list-inline-item u-text-muted">
