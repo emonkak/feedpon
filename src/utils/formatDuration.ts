@@ -6,9 +6,9 @@ const MILLISECONDS_OF_MINUTE = SECONDS_OF_MINUTE * MILLISECONDS_OF_SECOND;
 const MILLISECONDS_OF_HOUR = MINUTES_OF_HOUR * MILLISECONDS_OF_MINUTE;
 
 export default function formatDuration(millisecond: number): string {
-    const h = (millisecond / MILLISECONDS_OF_HOUR | 0);
-    const m = (millisecond / MILLISECONDS_OF_MINUTE | 0) % MINUTES_OF_HOUR;
-    const s = (millisecond / MILLISECONDS_OF_SECOND | 0) % SECONDS_OF_MINUTE;
+    const h = Number(millisecond / MILLISECONDS_OF_HOUR);
+    const m = Number(millisecond / MILLISECONDS_OF_MINUTE) % MINUTES_OF_HOUR;
+    const s = Number(millisecond / MILLISECONDS_OF_SECOND) % SECONDS_OF_MINUTE;
     const ms = millisecond % MILLISECONDS_OF_SECOND;
 
     let str = (h > 9 ? h : '0' + h) +
