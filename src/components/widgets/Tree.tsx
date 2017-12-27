@@ -90,10 +90,11 @@ export class TreeBranch extends PureComponent<TreeBranchProps, TreeBranchState> 
 
     shouldExpand(child: React.ReactChild): boolean {
         if (isValidElement(child)) {
-            if (child.type === TreeLeaf) {
+            const type = child.type as any;
+            if (type === TreeLeaf) {
                 return (child.props as TreeLeafProps).isSelected!;
             }
-            if (child.type === TreeBranch) {
+            if (type === TreeBranch) {
                 return Children.toArray((child.props as TreeBranchProps).children).some(this.shouldExpand, this);
             }
         }

@@ -15,7 +15,7 @@ interface EntryListProps {
     isLoading: boolean;
     isScrolling: boolean;
     onChangeActiveEntry: (index: number) => void;
-    onExpand: (entryId: string | number) => void;
+    onExpand: (index: number) => void;
     onFetchComments: (entryId: string | number, url: string) => void;
     onFetchFullContent: (entryId: string | number, url: string) => void;
     onHideComments: (entryId: string | number) => void;

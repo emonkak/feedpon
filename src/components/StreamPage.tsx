@@ -246,7 +246,7 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
         }
     }
 
-    handleScrollToEntry(entryId: string) {
+    handleScrollToEntry(entryId: string | number) {
         const { stream } = this.props;
         const entries = stream ? stream.entries : [];
         const entryIndex = entries.findIndex((entry) => entry.entryId === entryId);

@@ -808,7 +808,7 @@ function expandUrls(urls: string[]): AsyncThunk<string[]> {
             return urls;
         }
 
-        const queue = new PromiseQueue(8);
+        const queue = new PromiseQueue<{ originalUrl: string, expandedUrl: string }>(8);
 
         for (const url of matchedUrls) {
             queue.enqueue(() => dispatch(expandUrl(url)));

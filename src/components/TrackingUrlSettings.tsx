@@ -38,10 +38,10 @@ class TrackingUrlSettings extends PureComponent<TrackingUrlProps, TrackingUrlSta
     }
 
     handleChangeCacheCapacity(event: React.ChangeEvent<HTMLInputElement>) {
-        const cacheCapacity = event.currentTarget.value;
+        const cacheCapacity = Number(event.currentTarget.value);
 
         this.setState((state) => ({
-            ...state,
+            isResetting: state.isResetting,
             cacheCapacity
         }));
     }

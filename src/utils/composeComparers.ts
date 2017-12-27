@@ -10,6 +10,6 @@ export default function composeComparers<T>(...comparers: ((x: T, y: T) => numbe
     }, emptyComparer);
 }
 
-function emptyComparer(x: never, y: never): number {
+function emptyComparer(x: any, y: any): number {
     return 0;
 }

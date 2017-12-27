@@ -178,11 +178,11 @@ function cordovaOpenWindow(url: string, onTransition: (url: string) => boolean):
         };
 
         const unregisterListeners = () => {
-            ref.removeEventListener('loadstart', handleLoadStart);
-            ref.removeEventListener('exit', handleExit);
+            ref.removeEventListener('loadstart', handleLoadStart as any);
+            ref.removeEventListener('exit', handleExit as any);
         };
 
-        ref.addEventListener('loadstart', handleLoadStart);
-        ref.addEventListener('exit', handleExit);
+        ref.addEventListener('loadstart', handleLoadStart as any);
+        ref.addEventListener('exit', handleExit as any);
     });
 }

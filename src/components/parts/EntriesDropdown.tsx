@@ -14,7 +14,7 @@ interface EntriesDropdownProps {
     keepUnread: boolean;
     onClearReadEntries: () => void;
     onMarkStreamAsRead: () => void;
-    onScrollToEntry: (entryId: string) => void;
+    onScrollToEntry: (entryId: string | number) => void;
     onToggleUnreadKeeping: () => void;
     readEntryIndex: number;
     title: string;
