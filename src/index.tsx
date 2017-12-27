@@ -1,9 +1,19 @@
+import * as browserLocalStorage from 'storages/browserLocalStorage';
+import * as chromeLocalStorage from 'storages/chromeLocalStorage';
+import * as indexedDBStorage from 'storages/indexedDBStorage';
 import app from './app';
 import { createTotalUnreadCountSelector, createVisibleSubscriptionsSelector } from 'messaging/subscriptions/selectors';
 
+interface Storage {
+    save: (state: any) => Promise<any>;
+    restore: (keys: string[]) => Promise<any>;
+}
+
 function main() {
+    const { save, restore } = detectStorage();
+    const store = app(save, restore);
+
     if (typeof chrome === 'object') {
-        const store = app(chromeStorageSave, chromeStorageRestore);
         const visibleSubscriptionsSelector = createVisibleSubscriptionsSelector();
         const totalUnreadCountSelector = createTotalUnreadCountSelector(visibleSubscriptionsSelector);
 
@@ -20,56 +30,41 @@ function main() {
                 currentTotalUnreadCount = nextTotalUnreadCount;
             }
         });
-    } else {
-        app(localStorageSave, localStorageRestore);
     }
 }
 
-function localStorageSave(state: any): Promise<void> {
-    for (const key in state) {
-        localStorage.setItem(key, JSON.stringify(state[key]));
+function detectStorage(): Storage {
+    if (typeof chrome === 'object') {
+        return {
+            save: chromeLocalStorage.save,
+            restore: migrateFromLocalStorage(chromeLocalStorage)
+        };
     }
-
-    return Promise.resolve();
-}
-
-function localStorageRestore(keys: string[]): Promise<any> {
-    let state: { [key: string]: any } = {};
-
-    for (const key of keys) {
-        const jsonString = localStorage.getItem(key);
-
-        if (typeof jsonString === 'string' && jsonString !== '') {
-            try {
-                state[key] = JSON.parse(jsonString);
-            } catch (_error) {
-            }
-        }
+    if (typeof indexedDB === 'object') {
+        return {
+            save: indexedDBStorage.save,
+            restore: migrateFromLocalStorage(indexedDBStorage)
+        };
     }
-
-    return Promise.resolve(state);
+    return browserLocalStorage;
 }
 
-function chromeStorageSave(state: any): Promise<void> {
-    return new Promise((resolve) => {
-        chrome.storage.local.set(state, resolve);
-    });
-}
+function migrateFromLocalStorage(storage: Storage): (keys: string[]) => Promise<any> {
+    return async (keys) => {
+        const isMigrated = !!localStorage.getItem('__isMigratedToAnotherStorage');
 
-function chromeStorageRestore(keys: string[]): Promise<any> {
-    const isMigrated = !!localStorage.getItem('__isMigratedToChromeStorage');
-    if (!isMigrated) {
-        const state = localStorageRestore(keys);
+        if (!isMigrated) {
+            const state = await browserLocalStorage.restore(keys);
 
-        return chromeStorageSave(state).then(() => {
-            localStorage.setItem('__isMigratedToChromeStorage', '' + Date.now());
+            await storage.save(state);
+
+            localStorage.setItem('__isMigratedToAnotherStorage', '' + Date.now());
+
             return state;
-        });
-    }
+        }
 
-    return new Promise((resolve) => {
-        chrome.storage.local.get(keys, resolve);
-    });
+        return await storage.restore(keys);
+    };
 }
 
 if (typeof cordova === 'object') {

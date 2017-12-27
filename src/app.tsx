@@ -19,7 +19,10 @@ import { Event, State, ThunkContext } from 'messaging/types';
 import { Middleware, Store } from 'utils/flux/types';
 import { sendNotification } from 'messaging/notifications/actions';
 
-export default function app(save: (state: Object) => Promise<void>, restore: (keys: string[]) => Promise<any>): Store<State, Event> {
+export default function app(
+    save: (state: Object) => Promise<void>,
+    restore: (keys: string[]) => Promise<any>
+): Store<State, Event> {
     const context: ThunkContext = {
         environment: {
             clientId: 'feedly',
