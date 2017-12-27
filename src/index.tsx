@@ -1,7 +1,14 @@
+import React from 'react';
+import FastClick from 'fastclick';
+import ReactDOM from 'react-dom';
+import { Router, hashHistory } from 'react-router';
+
 import * as browserLocalStorage from 'storages/browserLocalStorage';
 import * as chromeLocalStorage from 'storages/chromeLocalStorage';
 import * as indexedDBStorage from 'storages/indexedDBStorage';
-import app from './app';
+import StoreProvider from 'utils/flux/react/StoreProvider';
+import createApplicationStore from './createApplicationStore';
+import routes from 'components/routes';
 import { createTotalUnreadCountSelector, createVisibleSubscriptionsSelector } from 'messaging/subscriptions/selectors';
 
 interface Storage {
@@ -11,7 +18,7 @@ interface Storage {
 
 function main() {
     const { save, restore } = detectStorage();
-    const store = app(save, restore);
+    const store = createApplicationStore(save, restore);
 
     if (typeof chrome === 'object') {
         const visibleSubscriptionsSelector = createVisibleSubscriptionsSelector();
@@ -31,6 +38,18 @@ function main() {
             }
         });
     }
+
+    FastClick.attach(document.body);
+
+    const element = document.getElementById('app');
+
+    ReactDOM.render((
+        <StoreProvider store={store}>
+            <Router history={hashHistory}>
+                {routes}
+            </Router>
+        </StoreProvider>
+    ), element);
 }
 
 function detectStorage(): Storage {

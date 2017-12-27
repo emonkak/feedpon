@@ -1,10 +1,6 @@
-import FastClick from 'fastclick';
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { Router, hashHistory } from 'react-router';
+import { hashHistory } from 'react-router';
 import { createLogger } from 'redux-logger';
 
-import StoreProvider from 'utils/flux/react/StoreProvider';
 import applyMiddlewares from 'utils/flux/applyMiddlewares';
 import createStore from 'utils/flux/createStore';
 import errorHandlingMiddleware from 'utils/flux/middlewares/errorHandlingMiddleware';
@@ -12,14 +8,13 @@ import initialState from 'messaging/initialState';
 import packageJson from '../package.json';
 import reducer from 'messaging/reducer';
 import reduxMiddleware from 'utils/flux/middlewares/reduxMiddleware';
-import routes from 'components/routes';
 import saveStateMiddleware from 'utils/flux/middlewares/saveStateMiddleware';
 import thunkMiddleware from 'utils/flux/middlewares/thunkMiddleware';
 import { Event, State, ThunkContext } from 'messaging/types';
 import { Middleware, Store } from 'utils/flux/types';
 import { sendNotification } from 'messaging/notifications/actions';
 
-export default function app(
+export default function createApplicationStore(
     save: (state: Object) => Promise<void>,
     restore: (keys: string[]) => Promise<any>
 ): Store<State, Event> {
@@ -66,18 +61,6 @@ export default function app(
             type: 'APPLICATION_INITIALIZED'
         });
     });
-
-    FastClick.attach(document.body);
-
-    const element = document.getElementById('app');
-
-    ReactDOM.render((
-        <StoreProvider store={store}>
-            <Router history={hashHistory}>
-                {routes}
-            </Router>
-        </StoreProvider>
-    ), element);
 
     return store;
 }
