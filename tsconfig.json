@@ -15,6 +15,7 @@
         "noImplicitReturns": true,
         "noImplicitThis": true,
         "noUnusedLocals": true,
+        "strictFunctionTypes": true,
         "strictNullChecks": true,
         "target": "es2017"
     },
