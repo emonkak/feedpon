@@ -22,7 +22,7 @@ const EntryPlaceholder: React.SFC<EntryPlaceholderProps> = ({ isExpanded }) => {
                 <div className="entry-summary">
                     <span className="placeholder placeholder-100 a-shining" />
                 </div>
-                <div className="entry-content">
+                <div className="entry-content u-clearfix u-text-wrap">
                     <p>
                         <span className="placeholder placeholder-100 a-shining" />
                         <span className="placeholder placeholder-100 a-shining" />

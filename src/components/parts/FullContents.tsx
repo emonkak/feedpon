@@ -18,7 +18,7 @@ const FullContents: React.SFC<FullContentsProps> = ({
 }) => {
     if (items.length === 0) {
         return (
-            <div className="entry-content">
+            <div className="entry-content u-clearfix u-text-wrap">
                 <div className="message message-positive">
                     This entry cannot be extracted.
                 </div>
@@ -54,7 +54,7 @@ const FullContents: React.SFC<FullContentsProps> = ({
     }
 
     return (
-        <div className="entry-content u-clearfix">
+        <div className="entry-content u-clearfix u-text-wrap">
             {pages}
             {nextPageButton}
         </div>
