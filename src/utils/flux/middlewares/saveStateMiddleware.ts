@@ -4,19 +4,26 @@ import throttleIdleCallback from '../../throttleIdleCallback';
 import { Middleware } from '../types';
 
 function saveStateMiddlewareFactory<TState, TEvent>(save: (state: any) => Promise<void>, saveInterval: number): Middleware<TState, TEvent> {
+    let promise = Promise.resolve();
     let changes: Partial<TState> = {};
     let numChanges = 0;
 
-    const processQueue = throttle(throttleIdleCallback(() => {
-        if (numChanges > 0) {
-            const items = changes;
+    const saveChanges = async () => {
+        try {
+            await promise;
+        } finally {
+            if (numChanges > 0) {
+                const savingChanges = changes;
 
-            changes = {};
-            numChanges = 0;
+                changes = {};
+                numChanges = 0;
 
-            save(items);
+                promise = save(savingChanges);
+            }
         }
-    }), saveInterval);
+    };
+
+    const processChanges = throttle(throttleIdleCallback(saveChanges), saveInterval);
 
     return ({ getState }) => (event, next) => {
         const state = getState();
@@ -31,7 +38,7 @@ function saveStateMiddlewareFactory<TState, TEvent>(save: (state: any) => Promis
         }
 
         if (numChanges > 0) {
-            processQueue();
+            processChanges();
         }
 
         return result;
