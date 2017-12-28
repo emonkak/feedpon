@@ -71,6 +71,8 @@
 
 .entry-content {
   margin: 0 0 var(--baseline-height);
+  hyphens: auto;
+  text-align: justify;
 }
 
 .entry-content img {
