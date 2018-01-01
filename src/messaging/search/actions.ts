@@ -25,7 +25,7 @@ export function searchFeeds(query: string): AsyncThunk {
                     url: feed.website || '',
                     feedUrl: feed.feedId.replace(/^feed\//, ''),
                     iconUrl: feed.iconUrl || '',
-                    subscribers: feed.subscribers,
+                    subscribers: feed.subscribers || 0,
                     isLoading: false
                 }));
 

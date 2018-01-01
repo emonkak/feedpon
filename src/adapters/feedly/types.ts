@@ -74,7 +74,7 @@ export interface Category {
 // Feeds API:
 export interface Feed {
     id: string;
-    subscribers: number;
+    subscribers?: number;
     title: string;
     description?: string;
     language?: string;

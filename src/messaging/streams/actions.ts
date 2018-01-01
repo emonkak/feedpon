@@ -593,7 +593,7 @@ function fetchFeedStream(streamId: string, fetchOptions: StreamFetchOptions, fet
                 url: feed.website || '',
                 feedUrl: feed.id.replace(/^feed\//, ''),
                 iconUrl: feed.iconUrl || '',
-                subscribers: feed.subscribers,
+                subscribers: feed.subscribers || 0,
                 isLoading: false
             },
             fetchOptions
