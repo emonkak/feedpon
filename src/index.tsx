@@ -7,7 +7,7 @@ import * as browserLocalStorage from 'storages/browserLocalStorage';
 import * as chromeLocalStorage from 'storages/chromeLocalStorage';
 import * as indexedDBStorage from 'storages/indexedDBStorage';
 import StoreProvider from 'utils/flux/react/StoreProvider';
-import createApplicationStore from './createApplicationStore';
+import initializeStore from './initializeStore';
 import routes from 'components/routes';
 import { createTotalUnreadCountSelector, createVisibleSubscriptionsSelector } from 'messaging/subscriptions/selectors';
 
@@ -18,7 +18,7 @@ interface Storage {
 
 function main() {
     const { save, restore } = detectStorage();
-    const store = createApplicationStore(save, restore);
+    const store = initializeStore(save, restore);
 
     if (typeof chrome === 'object') {
         const visibleSubscriptionsSelector = createVisibleSubscriptionsSelector();

@@ -14,7 +14,7 @@ import { Event, State, ThunkContext } from 'messaging/types';
 import { Middleware, Store } from 'utils/flux/types';
 import { sendNotification } from 'messaging/notifications/actions';
 
-export default function createApplicationStore(
+export default function initializeStore(
     save: (state: Object) => Promise<void>,
     restore: (keys: string[]) => Promise<any>
 ): Store<State, Event> {
@@ -50,8 +50,7 @@ export default function createApplicationStore(
 
     restore(Object.keys(initialState)).then((partialState) => {
         const state = {
-            ...store.getState(),
-            ...partialState,
+            ...mergeState(store.getState(), partialState),
             version: packageJson.version
         };
 
@@ -63,4 +62,18 @@ export default function createApplicationStore(
     });
 
     return store;
+}
+
+function mergeState(currentState: any, restoredState: any): any {
+    const state = { ...currentState };
+
+    for (const key in restoredState) {
+        if (typeof state[key] !== 'object' ||
+            typeof restoredState[key] !== 'object' ||
+            state[key].version === restoredState[key].version) {
+                state[key] = restoredState[key];
+        }
+    }
+
+    return state;
 }
