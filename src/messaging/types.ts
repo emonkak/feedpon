@@ -93,7 +93,7 @@ export type Event
     | { type: 'MORE_ENTRIES_FETCHING_FAILED', streamId: string }
     | { type: 'NOTIFICATION_DISMISSED', id: number }
     | { type: 'NOTIFICATION_SENT', notification: Notification }
-    | { type: 'READ_ENTRY_CHANGED', index: number }
+    | { type: 'READ_ENTRY_RESET' }
     | { type: 'SCROLL_ENDED' }
     | { type: 'SCROLL_STARTED' }
     | { type: 'SIDEBAR_CLOSED' }

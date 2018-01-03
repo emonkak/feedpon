@@ -12,7 +12,8 @@ export default function uiReducer(ui: UI, event: Event): UI {
         case 'ACTIVE_ENTRY_CAHNGED':
             return {
                 ...ui,
-                activeEntryIndex: event.index
+                activeEntryIndex: event.index,
+                readEntryIndex: event.index > ui.readEntryIndex ? event.index - 1 : ui.readEntryIndex
             };
 
         case 'CUSTOM_STYLE_CHANGED':
@@ -39,10 +40,10 @@ export default function uiReducer(ui: UI, event: Event): UI {
                 helpIsOpened: false
             };
 
-        case 'READ_ENTRY_CHANGED':
+        case 'READ_ENTRY_RESET':
             return {
                 ...ui,
-                readEntryIndex: event.index
+                readEntryIndex: -1
             };
 
         case 'SIDEBAR_OPENED':

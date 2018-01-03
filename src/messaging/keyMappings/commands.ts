@@ -22,7 +22,7 @@ export const clearReadEntries: Command<{}> = {
     action() {
         return ({ dispatch }) => {
             dispatch(uiActions.scrollTo(0, 0, () => {
-                dispatch(uiActions.changeReadEntry(-1));
+                dispatch(uiActions.resetReadEntry());
             }));
         };
     }

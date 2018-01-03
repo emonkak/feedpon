@@ -13,7 +13,7 @@ import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
 import { Category, Entry, EntryOrderKind, State, Stream, StreamViewKind, Subscription } from 'messaging/types';
 import { addToCategory, removeFromCategory, subscribe, unsubscribe } from 'messaging/subscriptions/actions';
-import { changeActiveEntry, changeExpandedEntry, changeReadEntry, changeStreamView, selectStream, unselectStream } from 'messaging/ui/actions';
+import { changeActiveEntry, changeExpandedEntry, resetReadEntry, changeStreamView, selectStream, unselectStream } from 'messaging/ui/actions';
 import { changeUnreadKeeping, fetchEntryComments, fetchFullContent, fetchMoreEntries, fetchStream, hideEntryComments, hideFullContents, markAllAsRead, markAsRead, markCategoryAsRead, markFeedAsRead, pinEntry, showEntryComments, showFullContents, unpinEntry } from 'messaging/streams/actions';
 import { createCategory } from 'messaging/categories/actions';
 import { createSortedCategoriesSelector } from 'messaging/categories/selectors';
@@ -33,7 +33,6 @@ interface StreamPageProps {
     onAddToCategory: typeof addToCategory;
     onChangeActiveEntry: typeof changeActiveEntry;
     onChangeExpandedEntry: typeof changeExpandedEntry;
-    onChangeReadEntry: typeof changeReadEntry;
     onChangeStreamView: typeof changeStreamView;
     onChangeUnreadKeeping: typeof changeUnreadKeeping,
     onCreateCategory: typeof createCategory;
@@ -49,6 +48,7 @@ interface StreamPageProps {
     onMarkFeedAsRead: typeof markFeedAsRead;
     onPinEntry: typeof pinEntry;
     onRemoveFromCategory: typeof removeFromCategory;
+    onResetReadEntry: typeof resetReadEntry;
     onScrollTo: typeof scrollTo;
     onSelectStream: typeof selectStream;
     onShowEntryComments: typeof showEntryComments;
@@ -124,17 +124,6 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
                 onFetchStream(params['stream_id']);
             }
         }
-
-        if (this.props.activeEntryIndex !== nextProps.activeEntryIndex) {
-            if (nextProps.activeEntryIndex > -1) {
-                const { onChangeReadEntry, readEntryIndex } = nextProps;
-                const nextReadEntryIndex = nextProps.activeEntryIndex - 1;
-
-                if (nextReadEntryIndex > readEntryIndex) {
-                    onChangeReadEntry(nextReadEntryIndex);
-                }
-            }
-        }
     }
 
     componentDidUpdate(prevProps: StreamPageProps, prevState: {}) {
@@ -196,9 +185,9 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
     }
 
     handleClearReadEntries() {
-        const { onChangeReadEntry, onScrollTo } = this.props;
+        const { onResetReadEntry, onScrollTo } = this.props;
 
-        onScrollTo(0, 0, () => onChangeReadEntry(-1));
+        onScrollTo(0, 0, () => onResetReadEntry());
     }
 
     handleCloseEntry() {
@@ -523,7 +512,6 @@ export default connect(() => {
             onAddToCategory: addToCategory,
             onChangeActiveEntry: changeActiveEntry,
             onChangeExpandedEntry: changeExpandedEntry,
-            onChangeReadEntry: changeReadEntry,
             onChangeStreamView: changeStreamView,
             onChangeUnreadKeeping: changeUnreadKeeping,
             onCreateCategory: createCategory,
@@ -539,6 +527,7 @@ export default connect(() => {
             onMarkFeedAsRead: markFeedAsRead,
             onPinEntry: pinEntry,
             onRemoveFromCategory: removeFromCategory,
+            onResetReadEntry: resetReadEntry,
             onScrollTo: scrollTo,
             onSelectStream: selectStream,
             onShowEntryComments: showEntryComments,

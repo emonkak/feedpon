@@ -17,10 +17,9 @@ export function changeExpandedEntry(index: number): Event {
     };
 }
 
-export function changeReadEntry(index: number): Event {
+export function resetReadEntry(): Event {
     return {
-        type: 'READ_ENTRY_CHANGED',
-        index
+        type: 'READ_ENTRY_RESET'
     };
 }
 
