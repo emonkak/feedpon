@@ -5,8 +5,8 @@ import { findDOMNode } from 'react-dom';
 
 import '@emonkak/enumerable/extensions/firstOrDefault';
 import '@emonkak/enumerable/extensions/maxBy';
-import '@emonkak/enumerable/extensions/minBy';
 import '@emonkak/enumerable/extensions/select';
+import '@emonkak/enumerable/extensions/toArray';
 import '@emonkak/enumerable/extensions/where';
 
 import createChainedFunction from 'utils/createChainedFunction';
@@ -14,28 +14,35 @@ import getScrollableParent from 'utils/dom/getScrollableParent';
 
 interface ScrollSpyProps {
     getScrollableParent?: (element: Element) => Element | Window;
-    isDisabled?: boolean;
     marginBottom?: number;
+    marginLeft?: number;
+    marginRight?: number;
     marginTop?: number;
-    onUpdate: (index: number) => void;
+    onUpdateActiveIndex: (index: number) => void;
     renderList: (children: React.ReactNode) => React.ReactElement<any>;
     scrollThrottleTime?: number;
+}
+
+interface Rect {
+    left: number;
+    right: number;
+    top: number;
+    bottom: number;
 }
 
 export default class ScrollSpy extends PureComponent<ScrollSpyProps, {}> {
     static defaultProps = {
         getScrollableParent,
-        isDisabled: false,
         marginBottom: 0,
+        marginLeft: 0,
+        marginRight: 0,
         marginTop: 0,
         scrollThrottleTime: 100
     };
 
-    readonly childElements: Map<number, HTMLElement> = new Map();
+    private readonly childElements: Map<number, HTMLElement> = new Map();
 
-    scrollable: Element | Window;
-
-    isUnmounted: boolean = false;
+    private scrollable: Element | Window | null = null;
 
     constructor(props: ScrollSpyProps, context: any) {
         super(props, context);
@@ -46,101 +53,104 @@ export default class ScrollSpy extends PureComponent<ScrollSpyProps, {}> {
     componentDidMount() {
         this.scrollable = this.props.getScrollableParent!(findDOMNode(this));
         this.scrollable.addEventListener('scroll', this.handleScroll, { passive: true } as any);
-        this.scrollable.addEventListener('touchmove', this.handleScroll, { passive: true } as any);
 
-        if (!this.props.isDisabled) {
-            this.update();
-        }
-    }
-
-    componentWillReceiveProps(nextProps: ScrollSpyProps) {
-        if (this.props.isDisabled !== nextProps.isDisabled
-            && !nextProps.isDisabled) {
-            this.update();
-        }
+        this.updateActiveIndex();
     }
 
     componentWillUnmount() {
-        this.scrollable.removeEventListener('scroll', this.handleScroll, { passive: true } as any);
-        this.scrollable.removeEventListener('touchmove', this.handleScroll, { passive: true } as any);
-
-        this.isUnmounted = true;
+        if (this.scrollable) {
+            this.scrollable.removeEventListener('scroll', this.handleScroll, { passive: true } as any);
+            this.scrollable = null;
+        }
     }
 
-    getViewportRect() {
+    getScrollRect(): Rect {
+        let left = 0;
+        let right = 0;
         let top = 0;
-        let height = 0;
+        let bottom = 0;
 
         if (this.scrollable instanceof Element) {
+            left = this.scrollable.scrollLeft;
+            right = left + this.scrollable.clientWidth;
             top = this.scrollable.scrollTop;
-            height = this.scrollable.clientHeight;
+            bottom = top + this.scrollable.clientHeight;
         } else if (this.scrollable instanceof Window) {
+            left = this.scrollable.scrollX;
+            right = left + this.scrollable.innerWidth;
             top = this.scrollable.scrollY;
-            height = this.scrollable.innerHeight;
+            bottom = top + this.scrollable.innerHeight;
         }
 
-        return { top, height };
+        const { marginLeft, marginRight, marginTop, marginBottom } = this.props;
+        left += marginLeft!;
+        right += marginRight!;
+        top += marginTop!;
+        bottom += marginBottom!;
+
+        return {
+            left,
+            right,
+            top,
+            bottom
+        };
     }
 
-    getActiveIndex(scrollTop: number, scrollBottom: number): number {
-        const activeIndex = new Enumerable(this.childElements)
-            .where(([index, element]) => {
-                const offsetTop = element.offsetTop;
-                const offsetBottom = offsetTop + element.offsetHeight;
+    getActiveIndex(scroll: Rect): number {
+        const childOffsets = new Enumerable(this.childElements)
+            .select(([index, element]) => ({
+                index,
+                offset: getOffsetRect(element)
+            }))
+            .toArray();
 
-                return offsetTop < scrollBottom && offsetBottom > scrollTop;
-            })
-            .maxBy(([index, element]) => {
-                const offsetTop = element.offsetTop;
-                const offsetBottom = offsetTop + element.offsetHeight;
-
-                if (offsetTop >= scrollTop && offsetBottom <= scrollBottom) {
-                    return scrollBottom - offsetTop;
+        const activeIndex = new Enumerable(childOffsets)
+            .where(({ offset }) =>
+                offset.left < scroll.right &&
+                    offset.right > scroll.left &&
+                    offset.top < scroll.bottom &&
+                    offset.bottom > scroll.top
+            )
+            .maxBy(({ offset }) => {
+                if (offset.left >= scroll.left &&
+                    offset.right <= scroll.right &&
+                    offset.top >= scroll.top &&
+                    offset.bottom <= scroll.bottom) {
+                    return (scroll.right - offset.left) * (scroll.bottom - offset.top);
                 } else {
-                    const displayTop = Math.max(offsetTop, scrollTop);
-                    const displayBottom = Math.min(offsetBottom, scrollBottom);
-
-                    return displayBottom - displayTop;
+                    return (Math.min(offset.right, scroll.right) - Math.max(offset.left, scroll.left)) *
+                        (Math.min(offset.bottom, scroll.bottom) - Math.max(offset.top, scroll.top));
                 }
             })
-            .select(([index]) => index)
+            .select(({ index }) => index)
             .firstOrDefault(null, -1);
 
-        if (activeIndex > -1) {
+        if (activeIndex >= 0) {
             return activeIndex;
         }
 
-        const firstChild = new Enumerable(this.childElements)
-            .select(([index, element]) => element)
-            .minBy((element) => element.offsetTop)
-            .firstOrDefault();
+        const isReachedIndex = new Enumerable(childOffsets)
+            .maxBy(({ offset }) => offset.left + offset.top)
+            .select(({ offset }) => offset.left <= scroll.left && offset.top <= scroll.top)
+            .firstOrDefault(null, false);
 
-        return firstChild && firstChild.offsetTop > scrollTop
-            ? -1
-            : this.childElements.size;
+        return isReachedIndex ? this.childElements.size : -1;
     }
 
-    update() {
-        const { marginBottom, marginTop, onUpdate } = this.props;
-        const { top, height } = this.getViewportRect();
+    updateActiveIndex(): void {
+        const { onUpdateActiveIndex } = this.props;
+        const scrollRect = this.getScrollRect();
+        const activeIndex = this.getActiveIndex(scrollRect);
 
-        const scrollTop = top + (marginTop || 0);
-        const scrollBottom = top + height - (marginBottom || 0);
-        const activeIndex = this.getActiveIndex(scrollTop, scrollBottom);
-
-        onUpdate(activeIndex);
+        onUpdateActiveIndex(activeIndex);
     }
 
-    handleScroll(event: Event) {
-        if (this.isUnmounted) {
+    handleScroll(event: Event): void {
+        if (!this.scrollable) {
             return;
         }
 
-        const { isDisabled } = this.props;
-
-        if (!isDisabled) {
-            this.update();
-        }
+        this.updateActiveIndex();
     }
 
     renderChild(child: React.ReactChild, index: number) {
@@ -148,8 +158,8 @@ export default class ScrollSpy extends PureComponent<ScrollSpyProps, {}> {
             return child;
         }
 
-        const ref = (instance: React.ReactInstance) => {
-            if (child) {
+        const ref = (instance: React.ReactInstance | null) => {
+            if (instance) {
                 const element = findDOMNode(instance) as HTMLElement;
 
                 if (element) {
@@ -171,4 +181,14 @@ export default class ScrollSpy extends PureComponent<ScrollSpyProps, {}> {
 
         return renderList(Children.map(children, this.renderChild.bind(this)));
     }
+}
+
+function getOffsetRect(element: HTMLElement): Rect {
+    const { offsetTop, offsetLeft, offsetWidth, offsetHeight } = element;
+    return {
+        top: offsetTop,
+        bottom: offsetTop + offsetHeight,
+        left: offsetLeft,
+        right: offsetLeft + offsetWidth
+    };
 }

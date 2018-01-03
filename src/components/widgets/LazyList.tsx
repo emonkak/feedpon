@@ -33,15 +33,13 @@ export default class LazyList extends PureComponent<LazyListProps, LazyListState
         scrollThrottleTime: 100
     };
 
-    readonly elements: { [key: string]: HTMLElement } = {};
+    private readonly itemElements: { [key: string]: HTMLElement } = {};
 
-    heights: { [key: string]: number } = {};
+    private itemHeights: { [key: string]: number } = {};
 
-    containerElement: HTMLElement;
+    private containerElement: HTMLElement;
 
-    scrollable: Element | Window;
-
-    isUnmounted: boolean = false;
+    private scrollable: Element | Window | null = null;
 
     constructor(props: LazyListProps, context: any) {
         super(props, context);
@@ -63,7 +61,6 @@ export default class LazyList extends PureComponent<LazyListProps, LazyListState
         this.scrollable = this.props.getScrollableParent!(this.containerElement);
         this.scrollable.addEventListener('resize', this.handleUpdateHeight, { passive: true } as any);
         this.scrollable.addEventListener('scroll', this.handleScroll, { passive: true } as any);
-        this.scrollable.addEventListener('touchmove', this.handleScroll, { passive: true } as any);
 
         this.updateScrollPosition();
     }
@@ -77,11 +74,11 @@ export default class LazyList extends PureComponent<LazyListProps, LazyListState
     }
 
     componentWillUnmount() {
-        this.scrollable.removeEventListener('resize', this.handleUpdateHeight, { passive: true } as any);
-        this.scrollable.removeEventListener('scroll', this.handleScroll, { passive: true } as any);
-        this.scrollable.removeEventListener('touchmove', this.handleScroll, { passive: true } as any);
-
-        this.isUnmounted = true;
+        if (this.scrollable) {
+            this.scrollable.removeEventListener('resize', this.handleUpdateHeight, { passive: true } as any);
+            this.scrollable.removeEventListener('scroll', this.handleScroll, { passive: true } as any);
+            this.scrollable = null;
+        }
     }
 
     getScrollRect() {
@@ -101,24 +98,23 @@ export default class LazyList extends PureComponent<LazyListProps, LazyListState
 
     refreshHeights() {
         const { getKey, items } = this.props;
-        const heights: { [key: string]: number } = {};
 
-        for (const item in items) {
+        this.itemHeights = items.reduce((acc, item) => {
             const key = getKey(item);
 
-            if (this.heights[key]) {
-                heights[key] = this.heights[key];
+            if (this.itemHeights[key]) {
+                acc[key] = this.itemHeights[key];
             }
-        }
 
-        this.heights = heights;
+            return acc;
+        }, {});
     }
 
     recalclateHeights() {
         const { getHeight } = this.props;
 
-        for (const key in this.elements) {
-            this.heights[key] = getHeight!(this.elements[key]);
+        for (const key in this.itemElements) {
+            this.itemHeights[key] = getHeight!(this.itemElements[key]);
         }
     }
 
@@ -138,7 +134,7 @@ export default class LazyList extends PureComponent<LazyListProps, LazyListState
         for (let i = 0, l = items.length; i < l; i++) {
             const item = items[i]!;
             const key = getKey(item);
-            const height = this.heights[key] || assumedItemHeight;
+            const height = this.itemHeights[key] || assumedItemHeight;
             const currentBottom = currentTop + height;
 
             if (currentTop <= effectiveBottom && currentBottom >= effectiveTop) {
@@ -167,14 +163,14 @@ export default class LazyList extends PureComponent<LazyListProps, LazyListState
     }
 
     handleScroll(event: Event) {
-        if (this.isUnmounted) {
+        if (!this.scrollable) {
             return;
         }
         this.updateScrollPosition();
     }
 
     handleUpdateHeight() {
-        if (this.isUnmounted) {
+        if (!this.scrollable) {
             return;
         }
         this.recalclateHeights();
@@ -182,20 +178,18 @@ export default class LazyList extends PureComponent<LazyListProps, LazyListState
     }
 
     renderItem(item: any, index: number): React.ReactElement<any> {
-        const { getKey, renderItem } = this.props;
-        const { startIndex } = this.state;
+        const { getHeight, getKey, renderItem } = this.props;
 
-        const child = renderItem(item, index + startIndex);
         const key = getKey(item);
+        const child = renderItem(item, index);
 
-        const ref = (ref: React.ReactInstance) => {
-            if (ref) {
-                const { getHeight } = this.props;
-                const element = findDOMNode(ref) as HTMLElement;
-                this.elements[key] = element;
-                this.heights[key] = getHeight!(element);
+        const ref = (instance: React.ReactInstance) => {
+            if (instance) {
+                const element = findDOMNode(instance) as HTMLElement;
+                this.itemElements[key] = element;
+                this.itemHeights[key] = getHeight!(element);
             } else {
-                delete this.elements[key];
+                delete this.itemElements[key];
             }
         };
 
@@ -210,7 +204,7 @@ export default class LazyList extends PureComponent<LazyListProps, LazyListState
         const { aboveSpace, belowSpace, endIndex, startIndex } = this.state;
 
         return renderList(
-            items.slice(startIndex, endIndex).map(this.renderItem.bind(this)),
+            items.slice(startIndex, endIndex).map((item, index) => this.renderItem(item, index + startIndex)),
             aboveSpace,
             belowSpace
         );

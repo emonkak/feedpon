@@ -13,7 +13,6 @@ interface EntryListProps {
     expandedEntryIndex: number;
     isLoaded: boolean;
     isLoading: boolean;
-    isScrolling: boolean;
     onChangeActiveEntry: (index: number) => void;
     onExpand: (index: number) => void;
     onFetchComments: (entryId: string | number, url: string) => void;
@@ -30,7 +29,7 @@ interface EntryListProps {
 
 export default class EntryList extends PureComponent<EntryListProps, {}> {
     renderEntry(entry: Entry, index: number) {
-        const { 
+        const {
             onExpand,
             onFetchComments,
             onFetchFullContent,
@@ -88,13 +87,12 @@ export default class EntryList extends PureComponent<EntryListProps, {}> {
             );
         }
 
-        const { entries, isScrolling, onChangeActiveEntry } = this.props;
+        const { entries, onChangeActiveEntry } = this.props;
 
         return (
             <ScrollSpy
-                isDisabled={isScrolling}
                 marginTop={SCROLL_OFFSET}
-                onUpdate={onChangeActiveEntry}
+                onUpdateActiveIndex={onChangeActiveEntry}
                 renderList={renderList}>
                 {entries.map(this.renderEntry, this)}
             </ScrollSpy>

@@ -121,7 +121,7 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
     openDropdown() {
         const { pullRight, pullUp } = this.props;
 
-        const viewportDimensions = this.getViewportDimensions();
+        const viewportDimensions = this.getViewportDimension();
         const containerRect = this.containerElement.getBoundingClientRect();
 
         const topSpace = containerRect.top;
@@ -144,7 +144,7 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
         }));
     }
 
-    getViewportDimensions() {
+    getViewportDimension() {
         let height = 0;
         let width = 0;
 

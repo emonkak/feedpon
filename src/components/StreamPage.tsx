@@ -28,7 +28,6 @@ interface StreamPageProps {
     expandedEntryIndex: number;
     isLoaded: boolean;
     isLoading: boolean;
-    isScrolling: boolean;
     keepUnread: boolean;
     onAddToCategory: typeof addToCategory;
     onChangeActiveEntry: typeof changeActiveEntry;
@@ -373,7 +372,6 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
             expandedEntryIndex,
             isLoaded,
             isLoading,
-            isScrolling,
             onChangeExpandedEntry,
             onFetchEntryComments,
             onFetchFullContent,
@@ -394,7 +392,6 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
                 expandedEntryIndex={expandedEntryIndex}
                 isLoaded={isLoaded}
                 isLoading={isLoading}
-                isScrolling={isScrolling}
                 onChangeActiveEntry={this.handleChangeActiveEnetry}
                 onExpand={onChangeExpandedEntry}
                 onFetchComments={onFetchEntryComments}
@@ -499,7 +496,6 @@ export default connect(() => {
             expandedEntryIndex: state.ui.expandedEntryIndex,
             isLoaded: state.streams.isLoaded,
             isLoading: state.streams.isLoading,
-            isScrolling: state.ui.isScrolling,
             keepUnread: state.streams.keepUnread,
             readEntries: readEntriesSelector(state, props),
             readEntryIndex: state.ui.readEntryIndex,
