@@ -12,7 +12,7 @@ import { Category, GroupedSubscription, Profile, State, Subscription, Subscripti
 import { Tree, TreeLeaf } from 'components/widgets/Tree';
 import { changeSubscriptionOrder, changeUnreadViewing, fetchSubscriptions } from 'messaging/subscriptions/actions';
 import { createSortedCategoriesSelector } from 'messaging/categories/selectors';
-import { createGroupedSubscriptionsSelector, createTotalUnreadCountSelector, createVisibleSubscriptionsSelector } from 'messaging/subscriptions/selectors';
+import { createAllSubscriptionsSelector, createGroupedSubscriptionsSelector, createTotalUnreadCountSelector, createVisibleSubscriptionsSelector } from 'messaging/subscriptions/selectors';
 import { fetchUser } from 'messaging/user/actions';
 import { revokeToken } from 'messaging/backend/actions';
 import { ALL_STREAM_ID, PINS_STREAM_ID } from 'messaging/streams/constants';
@@ -169,7 +169,8 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
 
 export default connect(() => {
     const categoriesSelector = createSortedCategoriesSelector();
-    const visibleSubscriptionsSelector = createVisibleSubscriptionsSelector();
+    const allSubscriptionsSelector = createAllSubscriptionsSelector();
+    const visibleSubscriptionsSelector = createVisibleSubscriptionsSelector(allSubscriptionsSelector);
     const groupedSubscriptionsSelector = createGroupedSubscriptionsSelector(visibleSubscriptionsSelector);
     const totalUnreadCountSelector = createTotalUnreadCountSelector(visibleSubscriptionsSelector);
 
@@ -180,7 +181,7 @@ export default connect(() => {
             lastUpdatedAt: state.subscriptions.lastUpdatedAt,
             onlyUnread: state.subscriptions.onlyUnread,
             profile: state.user.profile,
-            subscriptions: visibleSubscriptionsSelector(state),
+            subscriptions: allSubscriptionsSelector(state),
             subscriptionsIsLoading: state.subscriptions.isLoading,
             subscriptionOrder: state.subscriptions.order,
             totalUnreadCount: totalUnreadCountSelector(state),

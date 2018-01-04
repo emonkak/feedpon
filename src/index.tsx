@@ -9,7 +9,7 @@ import * as indexedDBStorage from 'storages/indexedDBStorage';
 import StoreProvider from 'utils/flux/react/StoreProvider';
 import initializeStore from './initializeStore';
 import routes from 'components/routes';
-import { createTotalUnreadCountSelector, createVisibleSubscriptionsSelector } from 'messaging/subscriptions/selectors';
+import { createAllSubscriptionsSelector, createTotalUnreadCountSelector, createVisibleSubscriptionsSelector } from 'messaging/subscriptions/selectors';
 
 interface Storage {
     save: (state: any) => Promise<any>;
@@ -21,7 +21,8 @@ function main() {
     const store = initializeStore(save, restore);
 
     if (typeof chrome === 'object') {
-        const visibleSubscriptionsSelector = createVisibleSubscriptionsSelector();
+        const allSubscriptionsSelector = createAllSubscriptionsSelector();
+        const visibleSubscriptionsSelector = createVisibleSubscriptionsSelector(allSubscriptionsSelector);
         const totalUnreadCountSelector = createTotalUnreadCountSelector(visibleSubscriptionsSelector);
 
         let currentTotalUnreadCount = totalUnreadCountSelector(store.getState());

@@ -37,7 +37,16 @@ export const subscriptionOldestComparer = composeComparers(
     createAscendingComparer<Subscription>('updatedAt')
 );
 
-export function createVisibleSubscriptionsSelector() {
+export function createAllSubscriptionsSelector() {
+    return createSelector(
+        (state: State) => state.subscriptions.items,
+        getAllSubscriptions
+    );
+}
+
+export function createVisibleSubscriptionsSelector(
+    subscriptionsSelector: (state: State) => Subscription[]
+) {
     return createSelector(
         (state: State) => state.subscriptions.items,
         (state: State) => state.subscriptions.order,
@@ -64,7 +73,11 @@ export function createTotalUnreadCountSelector(
     );
 }
 
-export function getVisibleSubscriptions(subscriptions: { [streamId: string]: Subscription }, order: SubscriptionOrderKind, onlyUnread: boolean): Subscription[] {
+function getAllSubscriptions(subscriptions: { [streamId: string]: Subscription }): Subscription[] {
+    return Object.values(subscriptions);
+}
+
+function getVisibleSubscriptions(subscriptions: { [streamId: string]: Subscription }, order: SubscriptionOrderKind, onlyUnread: boolean): Subscription[] {
     const comparer = getSubscriptionComparer(order);
 
     if (onlyUnread) {

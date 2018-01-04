@@ -4,13 +4,14 @@ import * as subscriptionActions from 'messaging/subscriptions/actions';
 import * as uiActions from 'messaging/ui/actions';
 import { Command, Entry, Stream, Thunk } from 'messaging/types';
 import { createSortedCategoriesSelector, createJoinedCategoriesSelector } from 'messaging/categories/selectors';
-import { createGroupedSubscriptionsSelector, createVisibleSubscriptionsSelector } from 'messaging/subscriptions/selectors';
+import { createAllSubscriptionsSelector, createGroupedSubscriptionsSelector, createVisibleSubscriptionsSelector } from 'messaging/subscriptions/selectors';
 
 const SCROLL_OFFSET = 48;
 
 const TEMPLATE_PATTERN = /\${([A-Z_]\w+)}/i;
 
-const visibleSubscriptionsSelector = createVisibleSubscriptionsSelector();
+const allSubscriptionsSelector = createAllSubscriptionsSelector();
+const visibleSubscriptionsSelector = createVisibleSubscriptionsSelector(allSubscriptionsSelector);
 const groupedSubscriptionsSelector = createGroupedSubscriptionsSelector(visibleSubscriptionsSelector);
 const sortedCategoriesSelector = createSortedCategoriesSelector();
 const joinedCategoriesSelector = createJoinedCategoriesSelector(sortedCategoriesSelector, groupedSubscriptionsSelector);
