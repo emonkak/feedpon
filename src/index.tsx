@@ -1,5 +1,5 @@
-import React from 'react';
 import FastClick from 'fastclick';
+import React from 'react';
 import ReactDOM from 'react-dom';
 import { Router, hashHistory } from 'react-router';
 
@@ -7,9 +7,9 @@ import * as browserLocalStorage from 'storages/browserLocalStorage';
 import * as chromeLocalStorage from 'storages/chromeLocalStorage';
 import * as indexedDBStorage from 'storages/indexedDBStorage';
 import StoreProvider from 'utils/flux/react/StoreProvider';
+import createSelectors from 'messaging/createSelectors';
 import initializeStore from './initializeStore';
 import routes from 'components/routes';
-import { createAllSubscriptionsSelector, createTotalUnreadCountSelector, createVisibleSubscriptionsSelector } from 'messaging/subscriptions/selectors';
 
 interface Storage {
     save: (state: any) => Promise<any>;
@@ -17,18 +17,25 @@ interface Storage {
 }
 
 function main() {
+    const selectors = createSelectors();
+    const context = {
+        environment: {
+            clientId: 'feedly',
+            clientSecret: '0XP4XQ07VVMDWBKUHTJM4WUQ',
+            scope: 'https://cloud.feedly.com/subscriptions',
+            redirectUri: 'https://www.feedly.com/feedly.html'
+        },
+        router: hashHistory,
+        selectors
+    };
     const { save, restore } = detectStorage();
-    const store = initializeStore(save, restore);
+    const store = initializeStore(context, save, restore);
 
     if (typeof chrome === 'object') {
-        const allSubscriptionsSelector = createAllSubscriptionsSelector();
-        const visibleSubscriptionsSelector = createVisibleSubscriptionsSelector(allSubscriptionsSelector);
-        const totalUnreadCountSelector = createTotalUnreadCountSelector(visibleSubscriptionsSelector);
-
-        let currentTotalUnreadCount = totalUnreadCountSelector(store.getState());
+        let currentTotalUnreadCount = selectors.totalUnreadCountSelector(store.getState());
 
         store.subscribe((state) => {
-            const nextTotalUnreadCount = totalUnreadCountSelector(state);
+            const nextTotalUnreadCount = selectors.totalUnreadCountSelector(state);
 
             if (currentTotalUnreadCount !== nextTotalUnreadCount) {
                 chrome.browserAction.setBadgeText({

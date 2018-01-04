@@ -141,6 +141,15 @@ export type AsyncThunk<TResult = void> = Thunk<Promise<TResult>>;
 export interface ThunkContext {
     environment: Environment;
     router: History;
+    selectors: Selectors;
+}
+
+export interface Selectors {
+    sortedCategoriesSelector: (state: State) => Category[];
+    allSubscriptionsSelector: (state: State) => Subscription[];
+    visibleSubscriptionsSelector: (state: State) => Subscription[];
+    groupedSubscriptionsSelector: (state: State) => { [key: string]: GroupedSubscription };
+    totalUnreadCountSelector: (state: State) => number;
 }
 
 export interface Environment {

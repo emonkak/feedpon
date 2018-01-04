@@ -3,7 +3,7 @@ import classnames from 'classnames';
 import { History, Location } from 'history';
 
 import * as Trie from 'utils/containers/Trie';
-import * as commands from 'messaging/keyMappings/commands';
+import * as commandTable from 'messaging/keyMappings/commandTable';
 import InstantNotifications from 'components/InstantNotifications';
 import KeyMapper from 'components/widgets/KeyMapper';
 import KeyMappingsTable from 'components/parts/KeyMappingsTable';
@@ -90,7 +90,7 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
     }
 
     handleInvokeKeyMapping(keyMapping: KeyMapping) {
-        const command = commands[keyMapping.commandId as keyof typeof commands] as Command<any>;
+        const command = (commandTable as { [key: string]: Command<any> })[keyMapping.commandId];
 
         if (command) {
             const { store } = this.props;
@@ -152,7 +152,7 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
                         onClose={onCloseHelp}
                         isOpened={helpIsOpened}>
                         <KeyMappingsTable
-                            commands={commands as any}
+                            commandTable={commandTable as any}
                             keyMappings={keyMappings} />
                     </Modal>
                 </div>

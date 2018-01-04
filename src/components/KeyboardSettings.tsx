@@ -6,7 +6,7 @@ import '@emonkak/enumerable/extensions/toArray';
 import '@emonkak/enumerable/extensions/orderBy';
 
 import * as Trie from 'utils/containers/Trie';
-import * as commands from 'messaging/keyMappings/commands';
+import * as commandTable from 'messaging/keyMappings/commandTable';
 import ConfirmModal from 'components/widgets/ConfirmModal';
 import KeyMappingForm from 'components/parts/KeyMappingForm';
 import KeyMappingItem from 'components/parts/KeyMappingItem';
@@ -58,7 +58,7 @@ class KeyboardSettings extends PureComponent<KeyboardSettingsProps, KeyboardSett
             .orderBy(([keys]) => keys)
             .select(([keys, keyMapping]) =>
                 <KeyMappingItem
-                    commands={commands as any}
+                    commandTable={commandTable as any}
                     key={keys.join('')}
                     keyMapping={keyMapping}
                     keys={keys}
@@ -71,7 +71,7 @@ class KeyboardSettings extends PureComponent<KeyboardSettingsProps, KeyboardSett
             <section className="section">
                 <h1 className="display-1">Key mappings</h1>
                 <KeyMappingForm
-                    commands={commands as any}
+                    commandTable={commandTable as any}
                     legend="New key mapping"
                     onSubmit={onUpdateKeyMapping}>
                     <button type="submit" className="button button-outline-positive">Add</button>

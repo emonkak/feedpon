@@ -3,18 +3,9 @@ import * as streamActions from 'messaging/streams/actions';
 import * as subscriptionActions from 'messaging/subscriptions/actions';
 import * as uiActions from 'messaging/ui/actions';
 import { Command, Entry, Stream, Thunk } from 'messaging/types';
-import { createSortedCategoriesSelector, createJoinedCategoriesSelector } from 'messaging/categories/selectors';
-import { createAllSubscriptionsSelector, createGroupedSubscriptionsSelector, createVisibleSubscriptionsSelector } from 'messaging/subscriptions/selectors';
 
 const SCROLL_OFFSET = 48;
-
 const TEMPLATE_PATTERN = /\${([A-Z_]\w+)}/i;
-
-const allSubscriptionsSelector = createAllSubscriptionsSelector();
-const visibleSubscriptionsSelector = createVisibleSubscriptionsSelector(allSubscriptionsSelector);
-const groupedSubscriptionsSelector = createGroupedSubscriptionsSelector(visibleSubscriptionsSelector);
-const sortedCategoriesSelector = createSortedCategoriesSelector();
-const joinedCategoriesSelector = createJoinedCategoriesSelector(sortedCategoriesSelector, groupedSubscriptionsSelector);
 
 export const clearReadEntries: Command<{}> = {
     name: 'Clear read entries',
@@ -298,26 +289,27 @@ export const selectNextCategory: Command<{}> = {
     description: 'Select the next category.',
     defaultParams: {},
     action() {
-        return ({ dispatch, getState }, { router }) => {
+        return ({ dispatch, getState }, { router, selectors }) => {
             const state = getState();
             const streamId = state.ui.selectedStreamId;
-            const joinedCategories = joinedCategoriesSelector(state);
+            const categories = selectors.sortedCategoriesSelector(state);
+            const groupedSubscriptions = selectors.groupedSubscriptionsSelector(state);
 
             let targetIndex: number;
 
             if (streamId) {
-                const selectedIndex = joinedCategories
-                    .findIndex(({ category, subscriptions }) =>
-                        category.streamId === streamId ||
-                            subscriptions.findIndex((subscription) => subscription.streamId === streamId) !== -1
-                    );
+                const selectedIndex = categories.findIndex((category) =>
+                    category.streamId === streamId ||
+                        (groupedSubscriptions[category.label] &&
+                         groupedSubscriptions[category.label].items.findIndex((subscription) => subscription.streamId === streamId) !== -1)
+                );
                 targetIndex = selectedIndex > -1 ? selectedIndex + 1 : 0;
             } else {
                 targetIndex = 0;
             }
 
-            if (joinedCategories[targetIndex]) {
-                const targetCategory = joinedCategories[targetIndex].category;
+            if (categories[targetIndex]) {
+                const targetCategory = categories[targetIndex];
                 router.push(`/streams/${encodeURIComponent(targetCategory.streamId)}`);
             }
         };
@@ -367,15 +359,15 @@ export const selectNextSubscription: Command<{}> = {
     description: 'Select the next subscription.',
     defaultParams: {},
     action() {
-        return ({ getState }, { router }) => {
+        return ({ getState }, { router, selectors }) => {
             const state = getState();
             const streamId = state.ui.selectedStreamId;
-            const visibleSubscriptions = visibleSubscriptionsSelector(state);
+            const visibleSubscriptions = selectors.visibleSubscriptionsSelector(state);
 
             let targetIndex: number;
 
             if (streamId) {
-                const sortedCategories = sortedCategoriesSelector(state);
+                const sortedCategories = selectors.sortedCategoriesSelector(state);
                 const selectedCategory = sortedCategories.find((category) => category.streamId === streamId);
 
                 if (selectedCategory) {
@@ -403,31 +395,32 @@ export const selectPreviousCategory: Command<{}> = {
     description: 'Select the previous category.',
     defaultParams: {},
     action() {
-        return ({ dispatch, getState }, { router }) => {
+        return ({ dispatch, getState }, { router, selectors }) => {
             const state = getState();
             const streamId = state.ui.selectedStreamId;
-            const joinedCategories = joinedCategoriesSelector(state);
+            const categories = selectors.sortedCategoriesSelector(state);
+            const groupedSubscriptions = selectors.groupedSubscriptionsSelector(state);
 
             let targetIndex: number;
 
             if (streamId) {
-                const selectedIndex = joinedCategories
-                    .findIndex(({ category, subscriptions }) =>
-                        category.streamId === streamId ||
-                            subscriptions.findIndex((subscription) => subscription.streamId === streamId) !== -1
-                    );
+                const selectedIndex = categories.findIndex((category) =>
+                    category.streamId === streamId ||
+                        (groupedSubscriptions[category.label] &&
+                         groupedSubscriptions[category.label].items.findIndex((subscription) => subscription.streamId === streamId) !== -1)
+                );
                 if (selectedIndex > -1) {
-                    const selectedCategory = joinedCategories[selectedIndex].category;
+                    const selectedCategory = categories[selectedIndex];
                     targetIndex = selectedCategory.streamId === streamId ? selectedIndex - 1 : selectedIndex;
                 } else {
-                    targetIndex = joinedCategories.length - 1;
+                    targetIndex = categories.length - 1;
                 }
             } else {
-                targetIndex = joinedCategories.length - 1;
+                targetIndex = categories.length - 1;
             }
 
-            if (joinedCategories[targetIndex]) {
-                const targetCategory = joinedCategories[targetIndex].category;
+            if (categories[targetIndex]) {
+                const targetCategory = categories[targetIndex];
                 router.push(`/streams/${encodeURIComponent(targetCategory.streamId)}`);
             }
         };
@@ -469,14 +462,14 @@ export const selectPreviousSubscription: Command<{}> = {
     description: 'Select the previous subscription.',
     defaultParams: {},
     action() {
-        return ({ getState }, { router }) => {
+        return ({ getState }, { router, selectors }) => {
             const state = getState();
             const streamId = state.ui.selectedStreamId;
-            const visibleSubscriptions = visibleSubscriptionsSelector(state);
+            const visibleSubscriptions = selectors.visibleSubscriptionsSelector(state);
 
             let targetIndex: number;
             if (streamId) {
-                const sortedCategories = sortedCategoriesSelector(state);
+                const sortedCategories = selectors.sortedCategoriesSelector(state);
                 const selectedCategory = sortedCategories.find((category) => category.streamId === streamId);
 
                 if (selectedCategory) {

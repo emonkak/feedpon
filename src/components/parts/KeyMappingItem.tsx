@@ -6,7 +6,7 @@ import Modal from 'components/widgets/Modal';
 import { Command, KeyMapping } from 'messaging/types';
 
 interface KeyMappingItemProps {
-    commands: { [commandId: string]: Command<any> };
+    commandTable: { [commandId: string]: Command<any> };
     keyMapping: KeyMapping;
     keys: string[];
     onDelete: (keyStroke: string) => void;
@@ -81,10 +81,10 @@ export default class KeyMappingItem extends PureComponent<KeyMappingItemProps, K
     }
 
     render() {
-        const { commands, keys, keyMapping } = this.props;
+        const { commandTable, keys, keyMapping } = this.props;
         const { isDeleting, isEditing } = this.state;
 
-        const command = commands[keyMapping.commandId];
+        const command = commandTable[keyMapping.commandId];
         const commandName = command ? command.name : `<${keyMapping.commandId}>`;
 
         return (
@@ -118,7 +118,7 @@ export default class KeyMappingItem extends PureComponent<KeyMappingItemProps, K
                         <KeyMappingForm
                             keyStroke={keys.join('')}
                             keyMapping={keyMapping}
-                            commands={commands}
+                            commandTable={commandTable}
                             legend="Edit key mapping"
                             onSubmit={this.handleUpdate}>
                             <div className="button-toolbar">

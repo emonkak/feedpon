@@ -8,14 +8,14 @@ import * as Trie from 'utils/containers/Trie';
 import { Command, KeyMapping } from 'messaging/types';
 
 interface KeyMappingsTableProps {
-    commands: { [key: string]: Command<any> };
+    commandTable: { [key: string]: Command<any> };
     keyMappings: Trie.Trie<KeyMapping>;
 }
 
 export default class KeyMappingsTable extends PureComponent<KeyMappingsTableProps, {}> {
     renderRow(keys: string[], keyMapping: KeyMapping) {
-        const { commands } = this.props;
-        const command = commands[keyMapping.commandId as keyof typeof commands] as Command<any>;
+        const { commandTable } = this.props;
+        const command = commandTable[keyMapping.commandId];
         const commandName = command ? command.name : `<${keyMapping.commandId}>`;
 
         return (

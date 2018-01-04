@@ -4,7 +4,7 @@ import ValidatableControl from 'components/widgets/ValidatableControl';
 import { Command, KeyMapping } from 'messaging/types';
 
 interface KeyMappingFormProps {
-    commands: { [commandId: string]: Command<any> };
+    commandTable: { [commandId: string]: Command<any> };
     keyMapping?: KeyMapping;
     keyStroke?: string;
     legend: string;
@@ -53,9 +53,9 @@ export default class KeyMappingForm extends PureComponent<KeyMappingFormProps, K
     }
 
     handleChangeCommand(event: React.ChangeEvent<HTMLSelectElement>) {
-        const { commands } = this.props;
+        const { commandTable } = this.props;
         const commandId = event.currentTarget.value;
-        const selectedCommand = commands[commandId];
+        const selectedCommand = commandTable[commandId];
 
         if (selectedCommand) {
             this.setState((state) => ({
@@ -126,10 +126,10 @@ export default class KeyMappingForm extends PureComponent<KeyMappingFormProps, K
     }
 
     render() {
-        const { children, commands, legend } = this.props;
+        const { children, commandTable, legend } = this.props;
         const { commandId, keyStroke, paramsJson, preventNotification } = this.state;
 
-        const selectedCommand = commands[commandId];
+        const selectedCommand = commandTable[commandId];
 
         return (
             <form className="form" onSubmit={this.handleSubmit}>
@@ -190,8 +190,8 @@ export default class KeyMappingForm extends PureComponent<KeyMappingFormProps, K
                             onChange={this.handleChangeCommand}
                             required>
                             <option value="">&lt;Please select the command&gt;</option>)
-                            {Object.keys(commands).map((key) =>
-                                <option key={key} value={key}>{commands[key].name}</option>)
+                            {Object.keys(commandTable).map((key) =>
+                                <option key={key} value={key}>{commandTable[key].name}</option>)
                             }
                         </select>
                         {selectedCommand &&

@@ -1,4 +1,3 @@
-import { hashHistory } from 'react-router';
 import { createLogger } from 'redux-logger';
 
 import applyMiddlewares from 'utils/flux/applyMiddlewares';
@@ -15,19 +14,10 @@ import { Middleware, Store } from 'utils/flux/types';
 import { sendNotification } from 'messaging/notifications/actions';
 
 export default function initializeStore(
+    context: ThunkContext,
     save: (state: Object) => Promise<void>,
     restore: (keys: string[]) => Promise<any>
 ): Store<State, Event> {
-    const context: ThunkContext = {
-        environment: {
-            clientId: 'feedly',
-            clientSecret: '0XP4XQ07VVMDWBKUHTJM4WUQ',
-            scope: 'https://cloud.feedly.com/subscriptions',
-            redirectUri: 'https://www.feedly.com/feedly.html'
-        },
-        router: hashHistory
-    };
-
     const middlewares: Middleware<State, Event>[] = [
         errorHandlingMiddleware((error, { dispatch }) => {
             const errorString = (error + '') || 'Unknown error occured';

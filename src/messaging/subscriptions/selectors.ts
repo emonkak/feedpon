@@ -7,19 +7,6 @@ import createDescendingComparer from 'utils/createDescendingComparer';
 import { GroupedSubscription, State, Subscription, SubscriptionOrderKind } from 'messaging/types';
 import { UNCATEGORIZED } from 'messaging/categories/constants';
 
-const labelsComparer = (x: Subscription, y: Subscription) => {
-    if (x.labels.length === 0) {
-        return y.labels.length > 0 ? 1 : 0;
-    }
-    if (y.labels.length === 0) {
-        return x.labels.length > 0 ? -1 : 0;
-    }
-    if (shallowEqual(x.labels, y.labels)) {
-        return 0;
-    }
-    return x.labels < y.labels ? -1 : 1;
-};
-
 export const subscriptionIdComparer = composeComparers(
     labelsComparer,
     createAscendingComparer<Subscription>('subscriptionId')
@@ -48,7 +35,7 @@ export function createVisibleSubscriptionsSelector(
     subscriptionsSelector: (state: State) => Subscription[]
 ) {
     return createSelector(
-        (state: State) => state.subscriptions.items,
+        subscriptionsSelector,
         (state: State) => state.subscriptions.order,
         (state: State) => state.subscriptions.onlyUnread,
         getVisibleSubscriptions
@@ -77,7 +64,7 @@ function getAllSubscriptions(subscriptions: { [streamId: string]: Subscription }
     return Object.values(subscriptions);
 }
 
-function getVisibleSubscriptions(subscriptions: { [streamId: string]: Subscription }, order: SubscriptionOrderKind, onlyUnread: boolean): Subscription[] {
+function getVisibleSubscriptions(subscriptions: Subscription[], order: SubscriptionOrderKind, onlyUnread: boolean): Subscription[] {
     const comparer = getSubscriptionComparer(order);
 
     if (onlyUnread) {
@@ -139,3 +126,16 @@ function getSubscriptionComparer(order: SubscriptionOrderKind) {
             return subscriptionOldestComparer;
     }
 }
+
+function labelsComparer(x: Subscription, y: Subscription): number {
+    if (x.labels.length === 0) {
+        return y.labels.length > 0 ? 1 : 0;
+    }
+    if (y.labels.length === 0) {
+        return x.labels.length > 0 ? -1 : 0;
+    }
+    if (shallowEqual(x.labels, y.labels)) {
+        return 0;
+    }
+    return x.labels < y.labels ? -1 : 1;
+};
