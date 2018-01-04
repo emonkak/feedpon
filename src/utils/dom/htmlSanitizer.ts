@@ -12,7 +12,7 @@ export const BLOCK_ELEMENTS = new Set(['address', 'article', 'aside', 'blockquot
 // Inline Elements - HTML5
 export const INLINE_ELEMENTS = new Set(['a', 'abbr', 'acronym', 'audio', 'b', 'bdi', 'bdo', 'big', 'br', 'cite', 'code', 'del', 'dfn', 'em', 'font', 'i', 'img', 'ins', 'kbd', 'label', 'map', 'mark', 'picture', 'q', 'rp', 'rt', 'ruby', 's', 'samp', 'small', 'span', 'strike', 'strong', 'sub', 'sup', 'time', 'track',  'tt', 'u', 'var', 'video']);
 
-export const VALID_ELEMENTS = new Set([
+export const ALLOWED_ELEMENTS = new Set([
     ...VOID_ELEMENTS,
     ...OPTIONAL_END_TAG_ELEMENTS,
     ...BLOCK_ELEMENTS,
@@ -25,7 +25,7 @@ export const SRCSET_ATTRS = new Set(['srcset']);
 
 export const HTML_ATTRS = new Set(['abbr', 'accesskey', 'align', 'alt', 'autoplay', 'axis', 'bgcolor', 'border', 'cellpadding', 'cellspacing', 'clear', 'color', 'cols', 'colspan',  'compact', 'controls', 'coords', 'datetime', 'default', 'dir', 'download', 'face', 'headers', 'height', 'hidden', 'hreflang', 'hspace',  'ismap', 'itemprop', 'itemscope', 'kind', 'label', 'lang', 'language', 'loop', 'media', 'muted', 'nohref', 'nowrap', 'open', 'preload', 'rel', 'rev', 'role', 'rows', 'rowspan', 'rules',  'scope', 'scrolling', 'shape', 'size', 'sizes', 'span', 'srclang', 'start', 'summary', 'tabindex', 'target', 'title', 'translate', 'type', 'usemap',  'valign', 'value', 'vspace', 'width']);
 
-export const VAILD_ATTRS = new Set([
+export const ALLOWED_ATTRS = new Set([
     ...HTML_ATTRS,
     ...SRCSET_ATTRS,
     ...URI_ATTRS
@@ -36,20 +36,33 @@ const SAFE_URL_PATTERN = /^(?:(?:https?|mailto|ftp|tel|file):|[^&:/?#]*(?:[/?#]|
 const DATA_URL_PATTERN =
     /^data:(?:image\/(?:bmp|gif|jpeg|jpg|png|tiff|webp)|video\/(?:mpeg|mp4|ogg|webm)|audio\/(?:mp3|oga|ogg|opus));base64,[a-z0-9+\/]+=*$/i;
 
-function isValidElement(tagName: string): boolean {
-    return VALID_ELEMENTS.has(tagName.toLowerCase());
+export function sanitizeElement(element: Element): boolean {
+    if (isAllowedElement(element.tagName)) {
+        const { attributes } = element;
+
+        for (let i = attributes.length - 1; i >= 0; i--) {
+            sanitizeAttribute(element, attributes[i]);
+        }
+
+        return true;
+    } else {
+        element.remove();
+
+        return false;
+    }
 }
 
-function isUriAttribute(attrName: string): boolean {
-    return URI_ATTRS.has(attrName.toLowerCase());
-}
-
-function isSrcsetAttribute(attrName: string): boolean {
-    return SRCSET_ATTRS.has(attrName.toLowerCase());
-}
-
-function isValidAttribute(attrName: string): boolean {
-    return VAILD_ATTRS.has(attrName.toLowerCase());
+function sanitizeAttribute(element: Element, attr: Attr): void {
+    if (isAllowedAttribute(attr.name)) {
+        if (isUriAttribute(attr.name)) {
+            element.setAttribute(attr.name, sanitizeUrl(attr.value));
+        }
+        if (isSrcsetAttribute(attr.name)) {
+            element.setAttribute(attr.name, sanitizeSrcset(attr.value));
+        }
+    } else {
+        element.removeAttribute(attr.name);
+    }
 }
 
 function sanitizeUrl(urlString: string): string {
@@ -68,29 +81,18 @@ function sanitizeSrcset(srcsetString: string): string {
         .join(',');
 }
 
-function sanitizeAttribute(element: Element, attr: Attr): void {
-    if (isValidAttribute(attr.name)) {
-        if (isUriAttribute(attr.name)) {
-            element.setAttribute(attr.name, sanitizeUrl(attr.value));
-        }
-        if (isSrcsetAttribute(attr.name)) {
-            element.setAttribute(attr.name, sanitizeSrcset(attr.value));
-        }
-    } else {
-        element.removeAttribute(attr.name);
-    }
+function isAllowedElement(tagName: string): boolean {
+    return ALLOWED_ELEMENTS.has(tagName.toLowerCase());
 }
 
-export default function sanitizeElement(element: Element): boolean {
-    if (isValidElement(element.tagName)) {
-        const { attributes } = element;
+function isAllowedAttribute(attrName: string): boolean {
+    return ALLOWED_ATTRS.has(attrName.toLowerCase());
+}
 
-        for (let i = attributes.length - 1; i >= 0; i--) {
-            sanitizeAttribute(element, attributes[i]);
-        }
+function isUriAttribute(attrName: string): boolean {
+    return URI_ATTRS.has(attrName.toLowerCase());
+}
 
-        return true;
-    } else {
-        return false;
-    }
+function isSrcsetAttribute(attrName: string): boolean {
+    return SRCSET_ATTRS.has(attrName.toLowerCase());
 }
