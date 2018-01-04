@@ -51,10 +51,10 @@ export default class EntriesDropdown extends PureComponent<EntriesDropdownProps,
     renderEntryMenuItem(entry: Entry, index: number) {
         const { activeEntryIndex, onScrollToEntry, readEntryIndex } = this.props;
 
-        const icon = entry.markedAsRead
-            ? <i className="icon icon-16 icon-dot u-text-muted" />
-            : index == activeEntryIndex
+        const icon = index == activeEntryIndex
             ? <i className="icon icon-16 icon-dot u-text-negative" />
+            : entry.markedAsRead
+            ? <i className="icon icon-16 icon-dot u-text-muted" />
             : index <= readEntryIndex
             ? <i className="icon icon-16 icon-dot u-text-positive" />
             : null;
