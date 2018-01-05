@@ -111,10 +111,6 @@ blockquote, dl, figure, ol, p, pre, table, ul {
   margin: 0 0 var(--baseline-height);
 }
 
-dt {
-  font-weight: 600;
-}
-
 dd {
   margin: 0 0 0 1.5em;
 }
