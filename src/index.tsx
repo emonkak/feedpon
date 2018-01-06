@@ -32,7 +32,7 @@ function main() {
     const store = initializeStore(context, save, restore);
 
     if (typeof chrome === 'object') {
-        let currentTotalUnreadCount = selectors.totalUnreadCountSelector(store.getState());
+        let currentTotalUnreadCount = 0;
 
         store.subscribe((state) => {
             const nextTotalUnreadCount = selectors.totalUnreadCountSelector(state);
