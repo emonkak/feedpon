@@ -90,18 +90,13 @@ export default class EntryList extends PureComponent<EntryListProps, {}> {
         const { entries, onChangeActiveEntry } = this.props;
 
         return (
-            <ScrollSpy
-                marginTop={SCROLL_OFFSET}
-                onUpdateActiveIndex={onChangeActiveEntry}
-                renderList={renderList}>
-                {entries.map(this.renderEntry, this)}
-            </ScrollSpy>
+            <div className="entry-list">
+                <ScrollSpy
+                    marginTop={SCROLL_OFFSET}
+                    onUpdate={onChangeActiveEntry}>
+                    {entries.map(this.renderEntry, this)}
+                </ScrollSpy>
+            </div>
         );
     }
-}
-
-function renderList(children: React.ReactNode): React.ReactElement<any> {
-    return (
-        <div className="entry-list">{children}</div>
-    );
 }
