@@ -6,7 +6,7 @@ import { createSelector } from 'reselect';
 import CategoriesNav from 'components/parts/CategoriesNav';
 import Dropdown from 'components/widgets/Dropdown';
 import EditCategoryForm from 'components/parts/EditCategoryForm';
-import LazyList from 'components/widgets/LazyList';
+import LazyListRenderer from 'components/widgets/LazyListRenderer';
 import MainLayout from 'components/layouts/MainLayout';
 import Navbar from 'components/widgets/Navbar';
 import SubscriptionItem from 'components/parts/Subscription';
@@ -194,9 +194,9 @@ class CategoriesPage extends PureComponent<CategoriesPageProps, CategoriesPageSt
                         onChange={this.handleChangeSearchQuery} />
                 </p>
                 {description}
-                <LazyList
+                <LazyListRenderer
                     assumedItemHeight={60}
-                    getKey={getSubscriptionKey}
+                    idAttribute="subscriptionId"
                     items={subscriptions}
                     renderItem={renderSubscriptionItem}
                     renderList={renderSubscriptionList} />
@@ -227,10 +227,6 @@ const ConnectedSubscriptionItem = connect(() => {
         })
     }
 })(SubscriptionItem);
-
-function getSubscriptionKey(subscription: Subscription): string | number {
-    return subscription.subscriptionId;
-}
 
 function renderSubscriptionList(children: React.ReactNode, aboveSpace: number, belowSpace: number): React.ReactElement<any> {
     return (

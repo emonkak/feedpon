@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import debounce from 'lodash.debounce';
 
-import LazyList from 'components/widgets/LazyList';
+import LazyListRenderer from 'components/widgets/LazyListRenderer';
 import RelativeTime from 'components/widgets/RelativeTime';
 import SharedSiteinfoItem from 'components/parts/SharedSiteinfoItem';
 import bindActions from 'utils/flux/bindActions';
@@ -77,19 +77,15 @@ class SharedSiteinfoSettings extends PureComponent<SharedSiteinfoProps, SharedSi
                         Update
                     </button>
                 </p>
-                <LazyList
+                <LazyListRenderer
                     assumedItemHeight={24 * 7}
-                    getKey={getSiteinfoItemKey}
+                    idAttribute="id"
                     items={matchedItems}
                     renderItem={renderSiteinfoItem}
                     renderList={renderSiteinfoList} />
             </section>
         );
     }
-}
-
-function getSiteinfoItemKey(item: SiteinfoItem) {
-    return item.id;
 }
 
 function renderSiteinfoList(children: React.ReactNode, aboveSpace: number, belowSpace: number) {
