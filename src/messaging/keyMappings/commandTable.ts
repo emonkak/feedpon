@@ -46,7 +46,9 @@ export const expandEntry: Command<{}> = {
         return ({ getState, dispatch }) => {
             const { ui } = getState();
 
-            dispatch(uiActions.changeExpandedEntry(ui.activeEntryIndex));
+            if (ui.streamView === 'collapsible') {
+                dispatch(uiActions.changeExpandedEntry(ui.activeEntryIndex));
+            }
         };
     }
 };
