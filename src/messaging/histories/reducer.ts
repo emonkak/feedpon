@@ -6,7 +6,7 @@ export default function historiesReducer(histories: Histories, event: Event): Hi
         case 'STREAM_FETCHED':
             return {
                 ...histories,
-                recentlyReadStreams: CacheMap.update(
+                recentlyReadStreams: CacheMap.set(
                     histories.recentlyReadStreams,
                     event.stream.streamId,
                     event.stream.fetchedAt
@@ -26,4 +26,3 @@ export default function historiesReducer(histories: Histories, event: Event): Hi
             return histories;
     }
 }
-

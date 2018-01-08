@@ -40,7 +40,7 @@ export function get<T, TDefault>(map: CacheMap<T>, key: string, defaultValue?: T
     return has(map, key) ? map.indices[key]! : defaultValue;
 }
 
-export function update<T>(map: CacheMap<T>, key: string, value: T): CacheMap<T> {
+export function set<T>(map: CacheMap<T>, key: string, value: T): CacheMap<T> {
     const keys = has(map, key)
         ? [...map.keys.filter((k) => k !== key), key]
         : [...map.keys, key];

@@ -39,7 +39,7 @@ export default function reducer(streams: Streams, event: Event): Streams {
                 ...streams,
                 isLoaded: false,
                 isLoading: true,
-                items: CacheMap.update(streams.items, event.streamId, {
+                items: CacheMap.set(streams.items, event.streamId, {
                     streamId: event.streamId,
                     title: 'Loading...',
                     fetchedAt: event.fetchedAt,
@@ -55,7 +55,7 @@ export default function reducer(streams: Streams, event: Event): Streams {
                 ...streams,
                 isLoaded: true,
                 isLoading: false,
-                items: CacheMap.update(streams.items, event.streamId, {
+                items: CacheMap.set(streams.items, event.streamId, {
                     streamId: event.streamId,
                     title: 'Failed to fetch',
                     fetchedAt: event.fetchedAt,
@@ -71,7 +71,7 @@ export default function reducer(streams: Streams, event: Event): Streams {
                 ...streams,
                 isLoaded: true,
                 isLoading: false,
-                items: CacheMap.update(streams.items, event.stream.streamId, event.stream)
+                items: CacheMap.set(streams.items, event.stream.streamId, event.stream)
             };
 
         case 'STREAM_CACHES_CLEARED':

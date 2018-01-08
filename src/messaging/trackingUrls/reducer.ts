@@ -7,7 +7,7 @@ export default function reduceTrackingUrlPatterns(trackingUrls: TrackingUrls, ev
         case 'TRACKING_URL_EXPANDED':
             return {
                 ...trackingUrls,
-                items: CacheMap.update(trackingUrls.items, event.originalUrl, event.expandedUrl)
+                items: CacheMap.set(trackingUrls.items, event.originalUrl, event.expandedUrl)
             };
 
         case 'TRACKING_URL_CACHE_CAPACITY_CHANGED':
