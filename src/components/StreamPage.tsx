@@ -22,6 +22,7 @@ import { ALL_STREAM_ID } from 'messaging/streams/constants';
 
 interface StreamPageProps {
     activeEntryIndex: number;
+    canMarkAllEntriesAsRead: boolean;
     canMarkStreamAsRead: boolean;
     categories: Category[];
     category: Category;
@@ -78,7 +79,7 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
         this.handleClearReadEntries = this.handleClearReadEntries.bind(this);
         this.handleCloseEntry = this.handleCloseEntry.bind(this);
         this.handleLoadMoreEntries = this.handleLoadMoreEntries.bind(this);
-        this.handleMarkAllAsRead = this.handleMarkAllAsRead.bind(this);
+        this.handleMarkAllEntriesAsRead = this.handleMarkAllEntriesAsRead.bind(this);
         this.handleMarkStreamAsRead = this.handleMarkStreamAsRead.bind(this);
         this.handleReloadEntries = this.handleReloadEntries.bind(this);
         this.handleScrollToEntry = this.handleScrollToEntry.bind(this);
@@ -203,7 +204,7 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
         }
     }
 
-    handleMarkAllAsRead() {
+    handleMarkAllEntriesAsRead() {
         const { stream, onMarkAsRead } = this.props;
         const unreadEntries = stream ? stream.entries.filter((entry) => !entry.markedAsRead) : [];
 
@@ -408,15 +409,15 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
     }
 
     renderFooter() {
-        const { canMarkStreamAsRead, isLoading, stream } = this.props;
+        const { canMarkAllEntriesAsRead, isLoading, stream } = this.props;
 
         return (
             <StreamFooter
-                canMarkStreamAsRead={canMarkStreamAsRead}
+                canMarkAllEntriesAsRead={canMarkAllEntriesAsRead}
                 hasMoreEntries={!!(stream && stream.continuation)}
                 isLoading={isLoading}
                 onLoadMoreEntries={this.handleLoadMoreEntries}
-                onMarkAllAsRead={this.handleMarkAllAsRead} />
+                onMarkAllEntiresAsRead={this.handleMarkAllEntriesAsRead} />
         );
     }
 
@@ -462,19 +463,21 @@ export default connect(() => {
         (categories, streamId) => categories[streamId] || null
     );
 
+    const canMarkAllEntriesAsReadSelector = createSelector(
+        entriesSelector,
+        (state: State) => state.streams.isMarking,
+        (entries, isMarking) => {
+            return !isMarking && entries.some((entry) => !entry.markedAsRead);
+        }
+    );
+
     const canMarkStreamAsReadSelector = createSelector(
         streamSelector,
-        entriesSelector,
         subscriptionSelector,
         categorySelector,
         (state: State) => state.streams.isMarking,
-        (stream, entries, subscription, category, isMarking) => {
-            if (isMarking
-                || !stream
-                || entries.every((entry) => entry.markedAsRead)) {
-                return false;
-            }
-            return stream.streamId === ALL_STREAM_ID || !!subscription || !!category;
+        (stream, subscription, category, isMarking) => {
+            return !isMarking && ((stream && stream.streamId === ALL_STREAM_ID) || subscription !== null || category !== null);
         }
     );
 
@@ -490,6 +493,7 @@ export default connect(() => {
     return {
         mapStateToProps: (state: State, props: StreamPageProps) => ({
             activeEntryIndex: state.ui.activeEntryIndex,
+            canMarkAllEntriesAsRead: canMarkAllEntriesAsReadSelector(state, props),
             canMarkStreamAsRead: canMarkStreamAsReadSelector(state, props),
             categories: categoriesSelector(state),
             category: categorySelector(state, props),
