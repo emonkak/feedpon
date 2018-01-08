@@ -536,12 +536,9 @@ export const toggleStreamView: Command<{}> = {
     action() {
         return ({ getState, dispatch }) => {
             const { ui } = getState();
+            const newStreamView = ui.streamView === 'collapsible' ? 'expanded' : 'collapsible';
 
-            if (ui.streamView === 'expanded') {
-                dispatch(uiActions.changeStreamView('collapsible'));
-            } else {
-                dispatch(uiActions.changeStreamView('expanded'));
-            }
+            dispatch(uiActions.changeStreamView(newStreamView));
         };
     }
 };
