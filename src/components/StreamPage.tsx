@@ -15,7 +15,7 @@ import { ALL_STREAM_ID } from 'messaging/streams/constants';
 import { Category, Entry, EntryOrderKind, State, Stream, StreamViewKind, Subscription } from 'messaging/types';
 import { addToCategory, removeFromCategory, subscribe, unsubscribe } from 'messaging/subscriptions/actions';
 import { changeActiveEntry, changeExpandedEntry, resetReadEntry, changeStreamView, selectStream, unselectStream } from 'messaging/ui/actions';
-import { changeUnreadKeeping, fetchEntryComments, fetchFullContent, fetchMoreEntries, fetchStream, hideEntryComments, hideFullContents, markAllAsRead, markAsRead, markCategoryAsRead, markFeedAsRead, pinEntry, showEntryComments, showFullContents, unpinEntry } from 'messaging/streams/actions';
+import { changeUnreadKeeping, fetchEntryComments, fetchFullContent, fetchMoreEntries, fetchStream, hideEntryComments, hideFullContents, markAllAsRead, markAsRead, markCategoryAsRead, markFeedAsRead, pinEntry, showEntryComments, showFullContents, unpinEntry, updateHeightCache } from 'messaging/streams/actions';
 import { createCategory } from 'messaging/categories/actions';
 import { createSortedCategoriesSelector } from 'messaging/categories/selectors';
 import { smoothScrollTo } from 'utils/dom/smoothScroll';
@@ -58,6 +58,7 @@ interface StreamPageProps {
     onUnpinEntry: typeof unpinEntry;
     onUnselectStream: typeof unselectStream;
     onUnsubscribe: typeof unsubscribe;
+    onUpdateHeightCache: typeof updateHeightCache;
     params: Params;
     readEntries: Entry[];
     readEntryIndex: number;
@@ -67,9 +68,9 @@ interface StreamPageProps {
     subscription: Subscription | null;
 };
 
-const SCROLL_OFFSET = 48;
-
 class StreamPage extends PureComponent<StreamPageProps, {}> {
+    private _entryList: EntryList | null = null;
+
     constructor(props: StreamPageProps, context: any) {
         super(props, context);
 
@@ -78,6 +79,7 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
         this.handleChangeNumberOfEntries = this.handleChangeNumberOfEntries.bind(this);
         this.handleClearReadEntries = this.handleClearReadEntries.bind(this);
         this.handleCloseEntry = this.handleCloseEntry.bind(this);
+        this.handleHeightUpdated = this.handleHeightUpdated.bind(this);
         this.handleLoadMoreEntries = this.handleLoadMoreEntries.bind(this);
         this.handleMarkAllEntriesAsRead = this.handleMarkAllEntriesAsRead.bind(this);
         this.handleMarkStreamAsRead = this.handleMarkStreamAsRead.bind(this);
@@ -123,20 +125,6 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
             if (shouldFetchStream) {
                 onFetchStream(params['stream_id']);
             }
-        }
-    }
-
-    componentDidUpdate(prevProps: StreamPageProps, prevState: {}) {
-        const { activeEntryIndex, expandedEntryIndex } = this.props;
-
-        if (expandedEntryIndex !== prevProps.expandedEntryIndex) {
-            if (expandedEntryIndex > -1) {
-                this.scrollToEntry(expandedEntryIndex);
-            } else if (activeEntryIndex > -1) {
-                this.scrollToEntry(activeEntryIndex);
-            }
-        } else if (this.props.streamView !== prevProps.streamView) {
-            this.scrollToEntry(activeEntryIndex);
         }
     }
 
@@ -196,6 +184,14 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
         onChangeExpandedEntry(-1);
     }
 
+    handleHeightUpdated(heights: { [id: string]: number }): void {
+        const { onUpdateHeightCache, stream } = this.props;
+
+        if (stream) {
+            onUpdateHeightCache(stream.streamId, heights);
+        }
+    }
+
     handleLoadMoreEntries() {
         const { onFetchMoreEntries, stream } = this.props;
 
@@ -235,12 +231,10 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
         }
     }
 
-    handleScrollToEntry(entryId: string | number) {
-        const { stream } = this.props;
-        const entries = stream ? stream.entries : [];
-        const entryIndex = entries.findIndex((entry) => entry.entryId === entryId);
-
-        this.scrollToEntry(entryIndex);
+    handleScrollToEntry(index: number) {
+        if (this._entryList) {
+            this._entryList.scrollToIndex(index);
+        }
     }
 
     handleToggleOnlyUnread() {
@@ -262,23 +256,6 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
         onChangeUnreadKeeping(!keepUnread);
     }
 
-    scrollToEntry(index: number) {
-        const { onScrollTo } = this.props;
-        const entryElements = document.getElementsByClassName('entry');
-
-        if (index < entryElements.length) {
-            const entryElement = entryElements[index] as HTMLElement;
-            if (entryElement) {
-                onScrollTo(0, entryElement.offsetTop - SCROLL_OFFSET);
-            }
-        } else {
-            const entryElement = entryElements[entryElements.length - 1] as HTMLElement;
-            if (entryElement) {
-                onScrollTo(0, entryElement.offsetTop + entryElement.offsetHeight - SCROLL_OFFSET)
-            }
-        }
-    }
-
     renderNavbar() {
         const {
             activeEntryIndex,
@@ -292,6 +269,7 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
             stream,
             streamView
         } = this.props;
+
         return (
             <StreamNavbar
                 activeEntryIndex={activeEntryIndex}
@@ -391,18 +369,21 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
                 activeEntryIndex={activeEntryIndex}
                 entries={stream ? stream.entries : []}
                 expandedEntryIndex={expandedEntryIndex}
+                heightCache={stream ? stream.heightCache : {}}
                 isLoaded={isLoaded}
                 isLoading={isLoading}
                 onChangeActiveEntry={this.handleChangeActiveEnetry}
                 onExpand={onChangeExpandedEntry}
                 onFetchComments={onFetchEntryComments}
                 onFetchFullContent={onFetchFullContent}
+                onHeightUpdated={this.handleHeightUpdated}
                 onHideComments={onHideEntryComments}
                 onHideFullContents={onHideFullContents}
                 onPin={onPinEntry}
                 onShowComments={onShowEntryComments}
                 onShowFullContents={onShowFullContents}
                 onUnpin={onUnpinEntry}
+                ref={this._handleEntryList}
                 sameOrigin={!!(stream && stream.feed)}
                 streamView={streamView} />
         );
@@ -428,6 +409,10 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
                 {this.renderStreamEntries()}
             </MainLayout>
         );
+    }
+
+    private _handleEntryList = (entryList: EntryList | null) => {
+        this._entryList = entryList;
     }
 }
 
@@ -535,7 +520,8 @@ export default connect(() => {
             onToggleSidebar: toggleSidebar,
             onUnpinEntry: unpinEntry,
             onUnselectStream: unselectStream,
-            onUnsubscribe: unsubscribe
+            onUnsubscribe: unsubscribe,
+            onUpdateHeightCache: updateHeightCache
         })
     };
 })(StreamPage);

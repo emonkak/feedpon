@@ -14,7 +14,7 @@ interface EntriesDropdownProps {
     keepUnread: boolean;
     onClearReadEntries: () => void;
     onMarkStreamAsRead: () => void;
-    onScrollToEntry: (entryId: string | number) => void;
+    onScrollToEntry: (index: number) => void;
     onToggleUnreadKeeping: () => void;
     readEntryIndex: number;
     title: string;
@@ -65,7 +65,7 @@ export default class EntriesDropdown extends PureComponent<EntriesDropdownProps,
                 key={entry.entryId}
                 onSelect={onScrollToEntry}
                 primaryText={entry.title}
-                value={entry.entryId} />
+                value={index} />
         );
     }
 

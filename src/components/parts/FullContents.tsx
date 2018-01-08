@@ -28,11 +28,12 @@ const FullContents: React.SFC<FullContentsProps> = ({
 
     const pages = items.map((fullContent, index) =>
         <section key={index} className="entry-page">
-            <header className="entry-page-header">
-                <h2 className="entry-page-title">
-                    <a className="link-soft" href={fullContent.url} target="_blank">{'Page ' + (index + 1)}</a>
-                </h2>
-            </header>
+            {index > 0 &&
+                <header className="entry-page-header">
+                    <h2 className="entry-page-title">
+                        <a className="link-soft" href={fullContent.url} target="_blank">{'Page ' + (index + 1)}</a>
+                    </h2>
+                </header>}
             <CleanHtml
                 baseUrl={fullContent.url}
                 className="entry-page-content"

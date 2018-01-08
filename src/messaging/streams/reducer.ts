@@ -46,7 +46,8 @@ export default function reducer(streams: Streams, event: Event): Streams {
                     entries: [],
                     continuation: null,
                     feed: null,
-                    fetchOptions: event.fetchOptions
+                    fetchOptions: event.fetchOptions,
+                    heightCache: {}
                 })
             };
 
@@ -62,7 +63,8 @@ export default function reducer(streams: Streams, event: Event): Streams {
                     entries: [],
                     continuation: null,
                     feed: null,
-                    fetchOptions: event.fetchOptions
+                    fetchOptions: event.fetchOptions,
+                    heightCache: {}
                 })
             };
 
@@ -78,6 +80,17 @@ export default function reducer(streams: Streams, event: Event): Streams {
             return {
                 ...streams,
                 items: CacheMap.empty(streams.items.capacity)
+            };
+
+        case 'STREAM_HEIGHT_CACHE_UPDATED':
+            return {
+                ...streams,
+                items: CacheMap.update(streams.items, event.streamId, (stream) => {
+                    return {
+                        ...stream,
+                        heightCache: event.heights
+                    };
+                })
             };
 
         case 'MORE_ENTRIES_FETCHING':

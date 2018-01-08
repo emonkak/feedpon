@@ -1,15 +1,19 @@
 import React, { PureComponent } from 'react';
 import classnames from 'classnames';
 
-import EntryInner from 'components/parts/EntryInner';
+import CleanHtml from 'components/widgets/CleanHtml';
+import CommentPopover from 'components/parts/CommentPopover';
+import EntryActionList from 'components/parts/EntryActionList';
+import EntryNav from 'components/parts/EntryNav';
+import FullContents from 'components/parts/FullContents';
+import RelativeTime from 'components/widgets/RelativeTime';
 import { Entry } from 'messaging/types';
 
 interface EntryProps {
     entry: Entry;
     index: number;
-    isActive?: boolean;
-    isCollapsible?: boolean;
-    isExpanded?: boolean;
+    isActive: boolean;
+    isExpanded: boolean;
     onExpand: (index: number) => void;
     onFetchComments: (entryId: string | number, url: string) => void;
     onFetchFullContent: (entryId: string | number, url: string) => void;
@@ -22,27 +26,64 @@ interface EntryProps {
     sameOrigin: boolean;
 }
 
-export default class EntryComponent extends PureComponent<EntryProps, {}> {
-    static defaultProps = {
-        isActive: false,
-        isCollapsible: false,
-        isExpanded: false
-    };
+interface ExpandedEntryContentProps {
+    entry: Entry;
+    onFetchNextFullContent: React.MouseEventHandler<any>;
+    onToggleComments: React.MouseEventHandler<any>;
+    onToggleFullContent: React.MouseEventHandler<any>;
+    onTogglePin: React.MouseEventHandler<any>;
+    sameOrigin: boolean;
+}
 
-    constructor(props: EntryProps, context: any) {
-        super(props, context);
+interface CollapsedEntryContentProps {
+    entry: Entry;
+    sameOrigin: boolean;
+}
 
-        this.handleExpand = this.handleExpand.bind(this);
-        this.handleFetchNextFullContent = this.handleFetchNextFullContent.bind(this);
-        this.handleToggleComments = this.handleToggleComments.bind(this);
-        this.handleToggleFullContent = this.handleToggleFullContent.bind(this);
-        this.handleTogglePin = this.handleTogglePin.bind(this);
+export default class EntryFrame extends PureComponent<EntryProps, {}> {
+    render() {
+        const { entry, isActive, isExpanded } = this.props;
+
+        return (
+            <article
+                className={classnames('entry', {
+                    'is-active': isActive,
+                    'is-expanded': isExpanded,
+                    'is-marked-as-read': entry.markedAsRead,
+                    'is-pinned': entry.isPinned
+                })}
+                onClick={this._handleExpand}>
+                {this._renderContent()}
+            </article>
+        );
     }
 
-    handleExpand(event: React.MouseEvent<any>) {
-        const { index, isCollapsible, isExpanded, onExpand } = this.props;
+    private _renderContent() {
+        const { entry, isExpanded, sameOrigin } = this.props;
 
-        if (isCollapsible && !isExpanded && onExpand) {
+        if (isExpanded) {
+            return (
+                <ExpandedEntryContent
+                    entry={entry}
+                    onFetchNextFullContent={this._handleFetchNextFullContent}
+                    onToggleComments={this._handleToggleComments}
+                    onToggleFullContent={this._handleToggleFullContent}
+                    onTogglePin={this._handleTogglePin}
+                    sameOrigin={sameOrigin} />
+            );
+        } else {
+            return (
+                <CollapsedEntryContent
+                    entry={entry}
+                    sameOrigin={sameOrigin} />
+            );
+        }
+    }
+
+    private _handleExpand = (event: React.MouseEvent<any>) => {
+        const { index, isExpanded, onExpand } = this.props;
+
+        if (!isExpanded) {
             const target = event.target as HTMLElement;
 
             if (target === event.currentTarget
@@ -52,9 +93,9 @@ export default class EntryComponent extends PureComponent<EntryProps, {}> {
                 onExpand(index);
             }
         }
-    }
+    };
 
-    handleFetchNextFullContent() {
+    private _handleFetchNextFullContent = () => {
         const { entry, onFetchFullContent } = this.props;
 
         if (entry.fullContents.isLoaded) {
@@ -64,9 +105,9 @@ export default class EntryComponent extends PureComponent<EntryProps, {}> {
                 onFetchFullContent(entry.entryId, lastFullContent.nextPageUrl);
             }
         }
-    }
+    };
 
-    handleToggleComments(event: React.MouseEvent<any>) {
+    private _handleToggleComments = (event: React.MouseEvent<any>) => {
         const { entry, onFetchComments, onHideComments, onShowComments } = this.props;
 
         if (entry.comments.isLoaded) {
@@ -78,9 +119,9 @@ export default class EntryComponent extends PureComponent<EntryProps, {}> {
         } else {
             onFetchComments(entry.entryId, entry.url);
         }
-    }
+    };
 
-    handleToggleFullContent(event: React.MouseEvent<any>) {
+    private _handleToggleFullContent = (event: React.MouseEvent<any>) => {
         const { entry, onFetchFullContent, onHideFullContents, onShowFullContents } = this.props;
 
         if (!entry.fullContents.isLoading) {
@@ -94,9 +135,9 @@ export default class EntryComponent extends PureComponent<EntryProps, {}> {
                 onShowFullContents(entry.entryId);
             }
         }
-    }
+    };
 
-    handleTogglePin(event: React.MouseEvent<any>) {
+    private _handleTogglePin = (event: React.MouseEvent<any>) => {
         const { entry, onPin, onUnpin } = this.props;
 
         if (!entry.isPinning) {
@@ -106,30 +147,152 @@ export default class EntryComponent extends PureComponent<EntryProps, {}> {
                 onPin(entry.entryId);
             }
         }
-    }
+    };
+}
 
-    render() {
-        const { entry, isActive, isCollapsible, isExpanded, sameOrigin } = this.props;
+const ExpandedEntryContent: React.SFC<ExpandedEntryContentProps> = ({
+    entry,
+    onFetchNextFullContent,
+    onToggleComments,
+    onToggleFullContent,
+    onTogglePin,
+    sameOrigin
+}) => {
+    const content = entry.fullContents.isShown && entry.fullContents.isLoaded
+        ? <FullContents
+            isLoading={entry.fullContents.isLoading}
+            isNotFound={entry.fullContents.isNotFound}
+            items={entry.fullContents.items}
+            onFetchNext={onFetchNextFullContent} />
+        : <CleanHtml
+            baseUrl={entry.url}
+            className="entry-content u-clearfix u-text-wrap"
+            html={entry.content} />;
 
-        return (
-            <article
-                className={classnames('entry', {
-                    'is-active': isActive,
-                    'is-collapsible': isCollapsible,
-                    'is-expanded': isExpanded,
-                    'is-marked-as-read': entry.markedAsRead,
-                    'is-pinned': entry.isPinned
+    return (
+        <div className="container">
+            <header className="entry-header">
+                <EntryNav
+                    fullContentsIsLoading={entry.fullContents.isLoading}
+                    fullContentsIsShown={entry.fullContents.isShown}
+                    isPinned={entry.isPinned}
+                    isPinning={entry.isPinning}
+                    onToggleFullContent={onToggleFullContent}
+                    onTogglePin={onTogglePin}
+                    url={entry.url} />
+                <h2 className="entry-title">
+                    <a className="link-soft" target="_blank" href={entry.url}>{entry.title}</a>
+                    {renderReadMarker(entry)}
+                </h2>
+                <div className="u-text-muted">
+                    <ul className="list-inline list-inline-dotted">
+                        {renderBookmarks(entry)}
+                        {renderOrign(entry, sameOrigin)}
+                        {renderAuthor(entry)}
+                        {renderPublishedAt(entry)}
+                    </ul>
+                </div>
+            </header>
+            {content}
+            <footer className="entry-footer">
+                <EntryActionList
+                    commentsIsLoading={entry.comments.isLoading}
+                    commentsIsShown={entry.comments.isShown}
+                    onToggleComments={onToggleComments}
+                    title={entry.title}
+                    url={entry.url} />
+                {entry.comments.isShown &&
+                    <CommentPopover
+                        arrowOffset={-44}
+                        isLoading={entry.comments.isLoading}
+                        comments={entry.comments.items} />}
+            </footer>
+        </div>
+    );
+}
+
+const CollapsedEntryContent: React.SFC<CollapsedEntryContentProps> = ({
+    entry,
+    sameOrigin
+}) => {
+    return (
+        <div className="container">
+            <header className="entry-header">
+                <h2 className="entry-title">
+                    <a className="link-soft" target="_blank" href={entry.url}>{entry.title}</a>
+                    {renderReadMarker(entry)}
+                </h2>
+                <div className="u-text-muted">
+                    <ul className="list-inline list-inline-dotted">
+                        {renderBookmarks(entry)}
+                        {renderOrign(entry, sameOrigin)}
+                        {renderAuthor(entry)}
+                        {renderPublishedAt(entry)}
+                    </ul>
+                </div>
+            </header>
+            <div className="entry-summary">{entry.summary}</div>
+        </div>
+    );
+}
+
+function renderBookmarks(entry: Entry) {
+    return (
+        <li className="list-inline-item">
+            <a
+                className={classnames('link-soft badge', {
+                    'u-text-negative': entry.bookmarkCount > 0,
+                    'badge-negative': entry.bookmarkCount >= 10
                 })}
-                onClick={this.handleExpand}>
-                <EntryInner
-                    entry={entry}
-                    onExpand={this.handleExpand}
-                    onFetchNextFullContent={this.handleFetchNextFullContent}
-                    onToggleComments={this.handleToggleComments}
-                    onToggleFullContent={this.handleToggleFullContent}
-                    onTogglePin={this.handleTogglePin}
-                    sameOrigin={sameOrigin} />
-            </article>
-        );
+                target="_blank"
+                href={'http://b.hatena.ne.jp/entry/' + encodeURIComponent(entry.url)}>
+                    <i className="icon icon-16 icon-bookmark" />
+                    {entry.bookmarkCount > 0 ? entry.bookmarkCount : ''}
+            </a>
+        </li>
+    );
+}
+
+function renderOrign(entry: Entry, sameOrigin: boolean) {
+    if (sameOrigin || !entry.origin) {
+        return null;
     }
+
+    return (
+        <li className="list-inline-item">
+            <a className="link-strong" href={entry.origin.url} target="_blank">
+                {entry.origin.title}
+            </a>
+        </li>
+    );
+}
+
+function renderAuthor(entry: Entry) {
+    if (!entry.author) {
+        return null;
+    }
+
+    return (
+        <li className="list-inline-item">
+            <span>by {entry.author}</span>
+        </li>
+    );
+}
+
+function renderPublishedAt(entry: Entry) {
+    if (!entry.publishedAt) {
+        return null;
+    }
+
+    return (
+        <li className="list-inline-item">
+            <RelativeTime time={entry.publishedAt} />
+        </li>
+    );
+}
+
+function renderReadMarker(entry: Entry) {
+    return entry.markedAsRead
+        ? <span className="badge badge-small badge-default">READ</span>
+        : null;
 }

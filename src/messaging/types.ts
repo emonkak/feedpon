@@ -99,12 +99,13 @@ export type Event
     | { type: 'SITEINFO_UPDATED', items: SiteinfoItem[], updatedAt: number }
     | { type: 'SITEINFO_UPDATING' }
     | { type: 'SITEINFO_UPDATING_FAILED' }
+    | { type: 'STREAM_CACHES_CLEARED' }
     | { type: 'STREAM_CACHE_CAPACITY_CHANGED', capacity: number }
     | { type: 'STREAM_CACHE_LIFETIME_CHANGED', lifetime: number }
-    | { type: 'STREAM_CACHES_CLEARED' }
     | { type: 'STREAM_FETCHED', stream: Stream  }
     | { type: 'STREAM_FETCHING', streamId: string, fetchOptions: StreamFetchOptions, fetchedAt: number }
     | { type: 'STREAM_FETCHING_FAILED', streamId: string, fetchOptions: StreamFetchOptions, fetchedAt: number }
+    | { type: 'STREAM_HEIGHT_CACHE_UPDATED', streamId: string, heights: { [id: string]: number } }
     | { type: 'STREAM_HISTORY_OPTIONS_CHANGED', numStreamHistories: number }
     | { type: 'STREAM_SELECTED', streamId: string  }
     | { type: 'STREAM_UNSELECTED'  }
@@ -218,6 +219,7 @@ export interface Stream {
     continuation: string | null;
     feed: Feed | null;
     fetchOptions: StreamFetchOptions;
+    heightCache: { [id: string]: number };
 }
 
 export interface StreamFetchOptions {

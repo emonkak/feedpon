@@ -83,7 +83,8 @@ export function fetchStream(streamId: string, fetchOptions?: StreamFetchOptions)
                     continuation: null,
                     feed: null,
                     category: null,
-                    fetchOptions
+                    fetchOptions,
+                    heightCache: {}
                 }
             });
         }
@@ -234,6 +235,54 @@ export function fetchFullContent(entryId: string | number, url: string): AsyncTh
 
             throw error;
         }
+    };
+}
+
+function fetchFeedStream(streamId: string, fetchOptions: StreamFetchOptions, fetchedAt: number): AsyncThunk<Stream> {
+    return async ({ dispatch }) => {
+        const token = await dispatch(getFeedlyToken());
+
+        const [contents, feed] = await Promise.all([
+            feedlyApi.getStreamContents(token.access_token, {
+                streamId,
+                count: fetchOptions.numEntries,
+                ranked: fetchOptions.entryOrder,
+                unreadOnly: fetchOptions.onlyUnread
+            }),
+            feedlyApi.getFeed(token.access_token, streamId)
+        ]);
+
+        const stream = {
+            streamId,
+            category: null,
+            title: feed.title || feed.website || feed.id.replace(/^feed\//, ''),
+            fetchedAt,
+            entries: contents.items.map(convertEntry),
+            continuation: contents.continuation || null,
+            feed: {
+                feedId: feed.id,
+                streamId: feed.id,
+                title: feed.title,
+                description: feed.description || '',
+                url: feed.website || '',
+                feedUrl: feed.id.replace(/^feed\//, ''),
+                iconUrl: feed.iconUrl || '',
+                subscribers: feed.subscribers || 0,
+                isLoading: false
+            },
+            fetchOptions,
+            heightCache: {}
+        };
+
+        return stream;
+    };
+}
+
+export function updateHeightCache(streamId: string, heights: { [ id: string ]: number }): Event {
+    return {
+        type: 'STREAM_HEIGHT_CACHE_UPDATED',
+        streamId,
+        heights
     };
 }
 
@@ -564,45 +613,6 @@ export function changeStreamHistoryOptions(numStreamHistories: number): AsyncThu
     };
 }
 
-function fetchFeedStream(streamId: string, fetchOptions: StreamFetchOptions, fetchedAt: number): AsyncThunk<Stream> {
-    return async ({ dispatch }) => {
-        const token = await dispatch(getFeedlyToken());
-
-        const [contents, feed] = await Promise.all([
-            feedlyApi.getStreamContents(token.access_token, {
-                streamId,
-                count: fetchOptions.numEntries,
-                ranked: fetchOptions.entryOrder,
-                unreadOnly: fetchOptions.onlyUnread
-            }),
-            feedlyApi.getFeed(token.access_token, streamId)
-        ]);
-
-        const stream = {
-            streamId,
-            category: null,
-            title: feed.title || feed.website || feed.id.replace(/^feed\//, ''),
-            fetchedAt,
-            entries: contents.items.map(convertEntry),
-            continuation: contents.continuation || null,
-            feed: {
-                feedId: feed.id,
-                streamId: feed.id,
-                title: feed.title,
-                description: feed.description || '',
-                url: feed.website || '',
-                feedUrl: feed.id.replace(/^feed\//, ''),
-                iconUrl: feed.iconUrl || '',
-                subscribers: feed.subscribers || 0,
-                isLoading: false
-            },
-            fetchOptions
-        };
-
-        return stream;
-    };
-}
-
 function fetchCategoryStream(streamId: string, fetchOptions: StreamFetchOptions, fetchedAt: number): AsyncThunk<Stream> {
     return async ({ dispatch, getState }) => {
         const token = await dispatch(getFeedlyToken());
@@ -624,7 +634,8 @@ function fetchCategoryStream(streamId: string, fetchOptions: StreamFetchOptions,
             entries: contents.items.map(convertEntry),
             continuation: contents.continuation || null,
             feed: null,
-            fetchOptions
+            fetchOptions,
+            heightCache: {}
         };
 
         return stream;
@@ -650,7 +661,8 @@ function fetchAllStream(fetchOptions: StreamFetchOptions, fetchedAt: number): As
             fetchedAt,
             continuation: contents.continuation || null,
             feed: null,
-            fetchOptions
+            fetchOptions,
+            heightCache: {}
         };
 
         dispatch({
@@ -681,7 +693,8 @@ function fetchPinsStream(fetchOptions: StreamFetchOptions, fetchedAt: number): A
             fetchedAt,
             continuation: contents.continuation || null,
             feed: null,
-            fetchOptions
+            fetchOptions,
+            heightCache: {}
         };
 
         dispatch({

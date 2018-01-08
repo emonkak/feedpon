@@ -1,3 +1,15 @@
+.entry-list {
+  opacity: 1.0;
+}
+
+.entry-list.is-hidden {
+  opacity: 0.0;
+}
+
+.entry-list:not(.is-hidden) {
+  transition: opacity 0.2s ease-in-out;
+}
+
 .entry {
   position: relative;
   padding: calc(var(--baseline-height) / 2) 0 calc(var(--baseline-height) / 2 - 1px);
@@ -26,7 +38,7 @@
               0 0 6px var(--shadow-color);
 }
 
-.entry.is-collapsible:not(.is-expanded) {
+.entry:not(.is-expanded) {
   cursor: pointer;
 }
 
@@ -40,13 +52,6 @@
 
 .entry.is-expanded .entry-title {
   font-size: 1.25em;
-}
-
-.entry.is-expanded .entry-summary,
-.entry:not(.is-expanded) .entry-nav,
-.entry:not(.is-expanded) .entry-footer,
-.entry:not(.is-expanded) .entry-content {
-  display: none;
 }
 
 .entry-nav {

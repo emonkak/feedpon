@@ -21,7 +21,7 @@ interface StreamNavbarProps {
     onCloseEntry: () => void;
     onMarkStreamAsRead: () => void;
     onReloadEntries: () => void;
-    onScrollToEntry: (entryId: string | number) => void;
+    onScrollToEntry: (index: number) => void;
     onToggleOnlyUnread: () => void;
     onToggleSidebar: () => void;
     onToggleUnreadKeeping: () => void;
