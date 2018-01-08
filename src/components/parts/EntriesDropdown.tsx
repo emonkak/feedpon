@@ -85,8 +85,34 @@ export default class EntriesDropdown extends PureComponent<EntriesDropdownProps,
         const numCurrentReadEntries = entries.slice(0, readEntryIndex + 1)
             .reduce((total, entry) => total + (entry.markedAsRead ? 0 : 1), 0);
 
-        return (
-            <Portal overlay={
+        return <>
+            <Dropdown
+                toggleButton={
+                    <button className="navbar-action">
+                        <i className="icon icon-24 icon-checkmark" />
+                        <span className={classnames('badge badge-small badge-pill badge-overlap', keepUnread ? 'badge-default' : 'badge-negative')}>
+                            {numCurrentReadEntries || ''}
+                        </span>
+                    </button>
+                }>
+                <div className="menu-heading">Entries</div>
+                {entries.map(this.renderEntryMenuItem, this)}
+                <div className="menu-divider" />
+                <MenuItem
+                    icon={keepUnread ? <i className="icon icon-16 icon-checkmark" /> : null}
+                    onSelect={onToggleUnreadKeeping}
+                    primaryText="Keep unread" />
+                <div className="menu-divider" />
+                <MenuItem
+                    isDisabled={numCurrentReadEntries === 0}
+                    onSelect={onClearReadEntries}
+                    primaryText="Clear read entries" />
+                <MenuItem
+                    isDisabled={!canMarkStreamAsRead}
+                    onSelect={this.handleOpenMarkAllAsReadModal}
+                    primaryText="Mark all as read in stream..." />
+            </Dropdown>
+            <Portal>
                 <ConfirmModal
                     isOpened={isMarkingAllAsRead}
                     onClose={this.handleCloseMarkAllAsReadModal}
@@ -95,34 +121,7 @@ export default class EntriesDropdown extends PureComponent<EntriesDropdownProps,
                     confirmButtonLabel="Mark all as read"
                     onConfirm={onMarkStreamAsRead}
                     title={`Mark all as read in "${title}"`} />
-            }>
-                <Dropdown
-                    toggleButton={
-                        <button className="navbar-action">
-                            <i className="icon icon-24 icon-checkmark" />
-                            <span className={classnames('badge badge-small badge-pill badge-overlap', keepUnread ? 'badge-default' : 'badge-negative')}>
-                                {numCurrentReadEntries || ''}
-                            </span>
-                        </button>
-                    }>
-                    <div className="menu-heading">Entries</div>
-                    {entries.map(this.renderEntryMenuItem, this)}
-                    <div className="menu-divider" />
-                    <MenuItem
-                        icon={keepUnread ? <i className="icon icon-16 icon-checkmark" /> : null}
-                        onSelect={onToggleUnreadKeeping}
-                        primaryText="Keep unread" />
-                    <div className="menu-divider" />
-                    <MenuItem
-                        isDisabled={numCurrentReadEntries === 0}
-                        onSelect={onClearReadEntries}
-                        primaryText="Clear read entries" />
-                    <MenuItem
-                        isDisabled={!canMarkStreamAsRead}
-                        onSelect={this.handleOpenMarkAllAsReadModal}
-                        primaryText="Mark all as read in stream..." />
-                </Dropdown>
             </Portal>
-        );
+        </>;
     }
 }

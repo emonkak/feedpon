@@ -49,8 +49,30 @@ export default class ProfileDropdown extends PureComponent<ProfileDropdownProps,
             ? <img className="u-flex-shrink-0 u-rounded-circle" height="40" width="40" src={profile.picture} />
             : <span className="u-flex-shrink-0"><i className="icon icon-40 icon-contacts" /></span>;
 
-        return (
-            <Portal overlay={
+        return <>
+            <Dropdown
+                className="dropdown-block"
+                toggleButton={
+                    <button
+                        className="button button-outline-default button-block"
+                        disabled={isLoading}>
+                        <div className="u-flex u-flex-align-items-center dropdown-arrow">
+                            {icon}
+                            <span className="u-flex-grow-1 u-margin-left-1 u-text-left">
+                                <div className="u-text-wrap u-text-small"><strong>{profile.userName}</strong></div>
+                                <div className="u-text-wrap u-text-small">via <strong>{profile.source}</strong></div>
+                            </span>
+                        </div>
+                    </button>
+                }>
+                <MenuItem
+                    onSelect={onRefresh}
+                    primaryText="Refresh" />
+                <MenuItem
+                    onSelect={this.handleOpenLogoutModal}
+                    primaryText="Logout..." />
+            </Dropdown>
+            <Portal>
                 <ConfirmModal
                     confirmButtonClassName="button button-negative"
                     confirmButtonLabel="Logout"
@@ -59,30 +81,7 @@ export default class ProfileDropdown extends PureComponent<ProfileDropdownProps,
                     onClose={this.handleCloseLogoutModal}
                     onConfirm={onLogout}
                     title={`Logout "${profile.userName}"`} />
-            }>
-                <Dropdown
-                    className="dropdown-block"
-                    toggleButton={
-                        <button
-                            className="button button-outline-default button-block"
-                            disabled={isLoading}>
-                            <div className="u-flex u-flex-align-items-center dropdown-arrow">
-                                {icon}
-                                <span className="u-flex-grow-1 u-margin-left-1 u-text-left">
-                                    <div className="u-text-wrap u-text-small"><strong>{profile.userName}</strong></div>
-                                    <div className="u-text-wrap u-text-small">via <strong>{profile.source}</strong></div>
-                                </span>
-                            </div>
-                        </button>
-                    }>
-                    <MenuItem
-                        onSelect={onRefresh}
-                        primaryText="Refresh" />
-                    <MenuItem
-                        onSelect={this.handleOpenLogoutModal}
-                        primaryText="Logout..." />
-                </Dropdown>
             </Portal>
-        );
+        </>;
     }
 }

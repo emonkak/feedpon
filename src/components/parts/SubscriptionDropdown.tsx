@@ -114,8 +114,42 @@ export default class SubscriptionDropdown extends PureComponent<SubscriptionDrop
         const { categories, className, subscription } = this.props;
         const { categoryLabel, unsubscribeModalIsOpened } = this.state;
 
-        return (
-            <Portal overlay={
+        return <>
+            <Dropdown
+                className={className}
+                toggleButton={
+                    <button className="link-soft u-margin-left-2" disabled={subscription.isLoading}>
+                        <i className={classnames('icon icon-20 icon-width-32', subscription.isLoading ? 'icon-spinner a-rotating' : 'icon-menu-2' )} />
+                    </button>
+                }>
+                <div className="menu-heading">Category</div>
+                {categories.map(this.renderCategoryMenuItem, this)}
+                <div className="menu-divider" />
+                <div className="menu-heading">New category</div>
+                <MenuForm onSubmit={this.handleCreateCategory}>
+                    <div className="input-group">
+                        <input
+                            type="text"
+                            className="form-control"
+                            style={{ width: '12rem' }}
+                            value={categoryLabel}
+                            disabled={subscription.isLoading}
+                            onChange={this.handleChangeCategoryLabel} />
+                        <button
+                            type="submit"
+                            className="button button-positive"
+                            disabled={subscription.isLoading}>
+                            OK
+                        </button>
+                    </div>
+                </MenuForm>
+                <div className="menu-divider" />
+                <MenuItem
+                    onSelect={this.handleOpenUnsubscribeModal}
+                    primaryText="Unsubscribe..."
+                    isDisabled={subscription.isLoading} />
+            </Dropdown>
+            <Portal>
                 <ConfirmModal
                     confirmButtonClassName="button button-negative"
                     confirmButtonLabel="Unsubscribe"
@@ -124,43 +158,8 @@ export default class SubscriptionDropdown extends PureComponent<SubscriptionDrop
                     onClose={this.handleCloseUnsubscribeModal}
                     onConfirm={this.handleUnsubscribe}
                     title={`Unsubscribe "${subscription.title}"`} />
-            }>
-                <Dropdown
-                    className={className}
-                    toggleButton={
-                        <button className="link-soft u-margin-left-2" disabled={subscription.isLoading}>
-                            <i className={classnames('icon icon-20 icon-width-32', subscription.isLoading ? 'icon-spinner a-rotating' : 'icon-menu-2' )} />
-                        </button>
-                    }>
-                    <div className="menu-heading">Category</div>
-                    {categories.map(this.renderCategoryMenuItem, this)}
-                    <div className="menu-divider" />
-                    <div className="menu-heading">New category</div>
-                    <MenuForm onSubmit={this.handleCreateCategory}>
-                        <div className="input-group">
-                            <input
-                                type="text"
-                                className="form-control"
-                                style={{ width: '12rem' }}
-                                value={categoryLabel}
-                                disabled={subscription.isLoading}
-                                onChange={this.handleChangeCategoryLabel} />
-                            <button
-                                type="submit"
-                                className="button button-positive"
-                                disabled={subscription.isLoading}>
-                                OK
-                            </button>
-                        </div>
-                    </MenuForm>
-                    <div className="menu-divider" />
-                    <MenuItem
-                        onSelect={this.handleOpenUnsubscribeModal}
-                        primaryText="Unsubscribe..."
-                        isDisabled={subscription.isLoading} />
-                </Dropdown>
             </Portal>
-        );
+        </>;
     }
 }
 

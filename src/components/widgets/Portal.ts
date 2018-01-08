@@ -1,70 +1,35 @@
-import { Children, PureComponent } from 'react';
-import { unmountComponentAtNode, unstable_renderSubtreeIntoContainer } from 'react-dom';
+import { PureComponent } from 'react';
+import { createPortal } from 'react-dom';
 
 interface PortalProps {
-    children?: React.ReactElement<any>;
-    getContainerElement?: () => Element;
-    overlay?: React.ReactElement<any>;
+    getRootElement?: () => Element;
 }
 
 export default class Portal extends PureComponent<PortalProps, {}> {
     static defaultProps = {
-        getContainerElement: () => document.body
+        getRootElement: () => document.body
     };
 
-    containerElement: Element | null = null;
+    private _rootElement: Element;
 
-    overlayElement: Element | null = null;
+    private _containerElement: Element;
 
-    componentDidMount() {
-        this.updateOverlay();
+    constructor(props: PortalProps, context: any) {
+        super(props, context);
+
+        this._rootElement = props.getRootElement!();
+        this._containerElement = document.createElement('div');
     }
 
-    componentDidUpdate() {
-        this.updateOverlay();
+    componentDidMount() {
+        this._rootElement.appendChild(this._containerElement);
     }
 
     componentWillUnmount() {
-        this.unrenderOverlay();
-    }
-
-    updateOverlay() {
-        const { overlay } = this.props;
-
-        if (overlay) {
-            this.renderOverlay(overlay);
-         } else {
-            this.unrenderOverlay();
-         }
-    }
-
-    renderOverlay(overlay: React.ReactElement<any>) {
-        if (!this.overlayElement) {
-            this.overlayElement = document.createElement('div');
-
-            this.containerElement = this.props.getContainerElement!();
-            this.containerElement.appendChild(this.overlayElement);
-        }
-
-        unstable_renderSubtreeIntoContainer(
-            this,
-            overlay,
-            this.overlayElement
-        );
-    }
-
-    unrenderOverlay() {
-        if (this.overlayElement && this.containerElement) {
-            unmountComponentAtNode(this.overlayElement);
-
-            this.containerElement.removeChild(this.overlayElement);
-
-            this.overlayElement = null;
-            this.containerElement = null;
-        }
+        this._rootElement.removeChild(this._containerElement);
     }
 
     render() {
-        return Children.only(this.props.children);
+        return createPortal(this.props.children, this._containerElement);
     }
 }
