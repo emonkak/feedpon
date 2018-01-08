@@ -11,14 +11,15 @@ import StreamFooter from 'components/parts/StreamFooter';
 import StreamNavbar from 'components/parts/StreamNavbar';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
+import { ALL_STREAM_ID } from 'messaging/streams/constants';
 import { Category, Entry, EntryOrderKind, State, Stream, StreamViewKind, Subscription } from 'messaging/types';
 import { addToCategory, removeFromCategory, subscribe, unsubscribe } from 'messaging/subscriptions/actions';
 import { changeActiveEntry, changeExpandedEntry, resetReadEntry, changeStreamView, selectStream, unselectStream } from 'messaging/ui/actions';
 import { changeUnreadKeeping, fetchEntryComments, fetchFullContent, fetchMoreEntries, fetchStream, hideEntryComments, hideFullContents, markAllAsRead, markAsRead, markCategoryAsRead, markFeedAsRead, pinEntry, showEntryComments, showFullContents, unpinEntry } from 'messaging/streams/actions';
 import { createCategory } from 'messaging/categories/actions';
 import { createSortedCategoriesSelector } from 'messaging/categories/selectors';
-import { scrollTo, toggleSidebar } from 'messaging/ui/actions';
-import { ALL_STREAM_ID } from 'messaging/streams/constants';
+import { smoothScrollTo } from 'utils/dom/smoothScroll';
+import { toggleSidebar } from 'messaging/ui/actions';
 
 interface StreamPageProps {
     activeEntryIndex: number;
@@ -49,7 +50,6 @@ interface StreamPageProps {
     onPinEntry: typeof pinEntry;
     onRemoveFromCategory: typeof removeFromCategory;
     onResetReadEntry: typeof resetReadEntry;
-    onScrollTo: typeof scrollTo;
     onSelectStream: typeof selectStream;
     onShowEntryComments: typeof showEntryComments;
     onShowFullContents: typeof showFullContents;
@@ -159,10 +159,10 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
     }
 
     handleChangeEntryOrderKind(entryOrder: EntryOrderKind) {
-        const { onFetchStream, onScrollTo, stream } = this.props;
+        const { onFetchStream, stream } = this.props;
 
         if (stream) {
-            onScrollTo(0, 0, () => {
+            smoothScrollTo(window, 0, 0).then(() => {
                 onFetchStream(stream.streamId, {
                     ...stream.fetchOptions,
                     entryOrder
@@ -172,10 +172,10 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
     }
 
     handleChangeNumberOfEntries(numEntries: number) {
-        const { onFetchStream, onScrollTo, stream } = this.props;
+        const { onFetchStream, stream } = this.props;
 
         if (stream) {
-            onScrollTo(0, 0, () => {
+            smoothScrollTo(window, 0, 0).then(() => {
                 onFetchStream(stream.streamId, {
                     ...stream.fetchOptions,
                     numEntries
@@ -185,9 +185,9 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
     }
 
     handleClearReadEntries() {
-        const { onResetReadEntry, onScrollTo } = this.props;
+        const { onResetReadEntry } = this.props;
 
-        onScrollTo(0, 0, () => onResetReadEntry());
+        smoothScrollTo(window, 0, 0).then(() => onResetReadEntry());
     }
 
     handleCloseEntry() {
@@ -226,10 +226,10 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
     }
 
     handleReloadEntries() {
-        const { onFetchStream, onScrollTo, stream } = this.props;
+        const { onFetchStream, stream } = this.props;
 
         if (stream) {
-            onScrollTo(0, 0, () => {
+            smoothScrollTo(window, 0, 0).then(() => {
                 onFetchStream(stream.streamId, stream.fetchOptions);
             });
         }
@@ -244,10 +244,10 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
     }
 
     handleToggleOnlyUnread() {
-        const { onFetchStream, onScrollTo, stream } = this.props;
+        const { onFetchStream, stream } = this.props;
 
         if (stream) {
-            onScrollTo(0, 0, () => {
+            smoothScrollTo(window, 0, 0).then(() => {
                 onFetchStream(stream.streamId, {
                     ...stream.fetchOptions,
                     onlyUnread: !stream.fetchOptions.onlyUnread
@@ -528,7 +528,6 @@ export default connect(() => {
             onPinEntry: pinEntry,
             onRemoveFromCategory: removeFromCategory,
             onResetReadEntry: resetReadEntry,
-            onScrollTo: scrollTo,
             onSelectStream: selectStream,
             onShowEntryComments: showEntryComments,
             onShowFullContents: showFullContents,

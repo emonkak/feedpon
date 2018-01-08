@@ -5,8 +5,7 @@ export default function uiReducer(ui: UI, event: Event): UI {
         case 'APPLICATION_INITIALIZED':
             return {
                 ...ui,
-                isBooting: false,
-                isScrolling: false
+                isBooting: false
             };
 
         case 'ACTIVE_ENTRY_CAHNGED':
@@ -56,18 +55,6 @@ export default function uiReducer(ui: UI, event: Event): UI {
             return {
                 ...ui,
                 sidebarIsOpened: false
-            };
-
-        case 'SCROLL_STARTED':
-            return {
-                ...ui,
-                isScrolling: true
-            };
-
-        case 'SCROLL_ENDED':
-            return {
-                ...ui,
-                isScrolling: false
             };
 
         case 'STREAM_VIEW_CHANGED':

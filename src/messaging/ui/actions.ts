@@ -1,7 +1,4 @@
 import { Event, StreamViewKind, ThemeKind, Thunk } from 'messaging/types';
-import { smoothScrollTo, smoothScrollBy } from 'utils/dom/smoothScroll';
-
-const SCROLL_ANIMATION_DURATION = 1000 / 60 * 10;
 
 export function changeActiveEntry(index: number): Event {
     return {
@@ -90,55 +87,5 @@ export function selectStream(streamId: string): Event {
 export function unselectStream(): Event {
     return {
         type: 'STREAM_UNSELECTED'
-    };
-}
-
-export function scrollBy(dx: number, dy: number, callback?: () => void): Thunk {
-    return ({ getState, dispatch }) => {
-        const { ui } = getState();
-
-        if (!ui.isScrolling) {
-            dispatch({
-                type: 'SCROLL_STARTED'
-            });
-        }
-
-        window.requestAnimationFrame(() => {
-            smoothScrollBy(document.body, dx, dy, SCROLL_ANIMATION_DURATION)
-                .then(() => {
-                    dispatch({
-                        type: 'SCROLL_ENDED'
-                    });
-
-                    if (callback) {
-                        callback();
-                    }
-                });
-        });
-    };
-}
-
-export function scrollTo(x: number, y: number, callback?: () => void): Thunk {
-    return ({ getState, dispatch }) => {
-        const { ui } = getState();
-
-        if (!ui.isScrolling) {
-            dispatch({
-                type: 'SCROLL_STARTED'
-            });
-        }
-
-        window.requestAnimationFrame(() => {
-            smoothScrollTo(document.body, x, y, SCROLL_ANIMATION_DURATION)
-                .then(() => {
-                    dispatch({
-                        type: 'SCROLL_ENDED'
-                    });
-
-                    if (callback) {
-                        callback();
-                    }
-                });
-        });
     };
 }

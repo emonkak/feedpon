@@ -6,7 +6,6 @@ const ui: UI = {
     expandedEntryIndex: -1,
     helpIsOpened: false,
     isBooting: true,
-    isScrolling: false,
     readEntryIndex: -1,
     selectedStreamId: '',
     sidebarIsOpened: true,

@@ -1,11 +1,12 @@
 const runningAnimations = new WeakMap<object, { requestId: number, progress: number }>();
 
-export function smoothScrollTo(el: HTMLElement, x: number, y: number, duration: number): Promise<void> {
-    if (el === el.ownerDocument.body) {
-        const w = el.ownerDocument.defaultView;
-        const startX = w.scrollX;
-        const startY = w.scrollY;
-        return smoothScroll(w, scrollWindow, startX, startY, x, y, duration);
+const DEFAULT_DURATION = 1000 / 60 * 10;
+
+export function smoothScrollTo(el: HTMLElement | Window, x: number, y: number, duration: number = DEFAULT_DURATION): Promise<void> {
+    if (el instanceof Window) {
+        const startX = el.scrollX;
+        const startY = el.scrollY;
+        return smoothScroll(el, scrollWindow, startX, startY, x, y, duration);
     } else {
         const startX = el.scrollLeft;
         const startY = el.scrollTop;
@@ -13,12 +14,11 @@ export function smoothScrollTo(el: HTMLElement, x: number, y: number, duration: 
     }
 }
 
-export function smoothScrollBy(el: HTMLElement, dx: number, dy: number, duration: number): Promise<void> {
-    if (el === el.ownerDocument.body) {
-        const w = el.ownerDocument.defaultView;
-        const x = w.scrollX;
-        const y = w.scrollY;
-        return smoothScroll(w, scrollWindow, x, y, x + dx, y + dy, duration);
+export function smoothScrollBy(el: HTMLElement | Window, dx: number, dy: number, duration: number = DEFAULT_DURATION): Promise<void> {
+    if (el instanceof Window) {
+        const x = el.scrollX;
+        const y = el.scrollY;
+        return smoothScroll(el, scrollWindow, x, y, x + dx, y + dy, duration);
     } else {
         const x = el.scrollLeft;
         const y = el.scrollTop;
@@ -73,7 +73,7 @@ function smoothScroll<TScrollable extends object>(
             runningAnimations.set(scrollable, { progress, requestId });
         };
 
-        step();
+        requestAnimationFrame(step);
     });
 }
 
