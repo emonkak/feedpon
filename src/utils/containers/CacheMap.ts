@@ -57,6 +57,26 @@ export function set<T>(map: CacheMap<T>, key: string, value: T): CacheMap<T> {
     });
 }
 
+export function update<T>(map: CacheMap<T>, key: string, updater: (value: T) => T): CacheMap<T> {
+    if (!has(map, key)) {
+        return map;
+    }
+
+    const keys = [...map.keys.filter((k) => k !== key), key];
+
+    const value = map.indices[key];
+    const indices = {
+        ...map.indices,
+        [key]: updater(value)
+    };
+
+    return deleteOverflowEntries({
+        capacity: map.capacity,
+        keys,
+        indices
+    });
+}
+
 export function has<T>(map: CacheMap<T>, key: string): boolean {
     return map.indices.hasOwnProperty(key);
 }

@@ -96,16 +96,11 @@ export default function reducer(streams: Streams, event: Event): Streams {
             return {
                 ...streams,
                 isLoading: false,
-                items: CacheMap.mapValues(streams.items, (stream) => {
-                    if (stream.streamId !== event.streamId) {
-                        return stream;
-                    }
-                    return {
-                        ...stream,
-                        continuation: event.continuation,
-                        entries: stream.entries.concat(event.entries)
-                    };
-                })
+                items: CacheMap.update(streams.items, event.streamId, (stream) => ({
+                    ...stream,
+                    continuation: event.continuation,
+                    entries: stream.entries.concat(event.entries)
+                }))
             };
 
         case 'ENTRY_PINNING':
@@ -570,36 +565,26 @@ export default function reducer(streams: Streams, event: Event): Streams {
         case 'FEED_MARKED_AS_READ':
             return {
                 ...streams,
-                items: CacheMap.mapValues(streams.items, (stream) => {
-                    if (stream.streamId !== event.streamId) {
-                        return stream;
-                    }
-                    return {
-                        ...stream,
-                        entries: stream.entries.map((entry) => ({
-                            ...entry,
-                            markedAsRead: true
-                        }))
-                    };
-                }),
+                items: CacheMap.update(streams.items, event.streamId, (stream) => ({
+                    ...stream,
+                    entries: stream.entries.map((entry) => ({
+                        ...entry,
+                        markedAsRead: true
+                    }))
+                })),
                 isMarking: false
             };
 
         case 'CATEGORY_MARKED_AS_READ':
             return {
                 ...streams,
-                items: CacheMap.mapValues(streams.items, (stream) => {
-                    if (stream.streamId !== event.streamId) {
-                        return stream;
-                    }
-                    return {
-                        ...stream,
-                        entries: stream.entries.map((entry) => ({
-                            ...entry,
-                            markedAsRead: true
-                        }))
-                    };
-                }),
+                items: CacheMap.update(streams.items, event.streamId, (stream) => ({
+                    ...stream,
+                    entries: stream.entries.map((entry) => ({
+                        ...entry,
+                        markedAsRead: true
+                    }))
+                })),
                 isMarking: false
             };
 
