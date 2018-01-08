@@ -161,11 +161,11 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
         const { onFetchStream, onScrollTo, stream } = this.props;
 
         if (stream) {
-            onScrollTo(0, 0);
-
-            onFetchStream(stream.streamId, {
-                ...stream.fetchOptions,
-                entryOrder
+            onScrollTo(0, 0, () => {
+                onFetchStream(stream.streamId, {
+                    ...stream.fetchOptions,
+                    entryOrder
+                });
             });
         }
     }
@@ -174,11 +174,11 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
         const { onFetchStream, onScrollTo, stream } = this.props;
 
         if (stream) {
-            onScrollTo(0, 0);
-
-            onFetchStream(stream.streamId, {
-                ...stream.fetchOptions,
-                numEntries
+            onScrollTo(0, 0, () => {
+                onFetchStream(stream.streamId, {
+                    ...stream.fetchOptions,
+                    numEntries
+                });
             });
         }
     }
@@ -246,11 +246,11 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
         const { onFetchStream, onScrollTo, stream } = this.props;
 
         if (stream) {
-            onScrollTo(0, 0);
-
-            onFetchStream(stream.streamId, {
-                ...stream.fetchOptions,
-                onlyUnread: !stream.fetchOptions.onlyUnread
+            onScrollTo(0, 0, () => {
+                onFetchStream(stream.streamId, {
+                    ...stream.fetchOptions,
+                    onlyUnread: !stream.fetchOptions.onlyUnread
+                });
             });
         }
     }
