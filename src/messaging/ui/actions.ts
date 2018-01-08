@@ -109,6 +109,10 @@ export function scrollBy(dx: number, dy: number, callback?: () => void): Thunk {
                     dispatch({
                         type: 'SCROLL_ENDED'
                     });
+
+                    if (callback) {
+                        callback();
+                    }
                 });
         });
     };
