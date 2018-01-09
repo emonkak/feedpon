@@ -121,13 +121,13 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
     openDropdown() {
         const { pullRight, pullUp } = this.props;
 
-        const viewportDimensions = this.getViewportDimension();
+        const scrollDimension = this.getScrollDimension();
         const containerRect = this.containerElement.getBoundingClientRect();
 
         const topSpace = containerRect.top;
-        const bottomSpace = viewportDimensions.height - containerRect.bottom;
+        const bottomSpace = scrollDimension.height - containerRect.bottom;
         const leftSpace = containerRect.left;
-        const rightSpace = viewportDimensions.width - containerRect.right;
+        const rightSpace = scrollDimension.width - containerRect.right;
 
         this.setState({
             isOpened: true,
@@ -144,7 +144,7 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
         }));
     }
 
-    getViewportDimension() {
+    getScrollDimension() {
         let height = 0;
         let width = 0;
 
