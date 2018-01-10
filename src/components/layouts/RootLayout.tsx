@@ -51,7 +51,7 @@ class RootLayout extends PureComponent<RootLayoutProps, any> {
 
         if (isBooting) {
             return (
-                <div>
+                <div className="l-root">
                     <style dangerouslySetInnerHTML={{ __html: customStyles }} />
                     <div className="l-boot">
                         <img className="a-blink" src="./img/logo.svg" width="278" height="100" />
@@ -60,7 +60,7 @@ class RootLayout extends PureComponent<RootLayoutProps, any> {
             );
         } else {
             return (
-                <div>
+                <div className="l-root">
                     <style dangerouslySetInnerHTML={{ __html: customStyles }} />
                     {children}
                 </div>

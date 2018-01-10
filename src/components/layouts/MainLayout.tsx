@@ -26,13 +26,13 @@ export default class MainLayout extends PureComponent<MainLayoutProps, {}> {
         const { children, footer, header } = this.props;
 
         return (
-            <div className="l-main">
-                <div className="l-main-header">{header}</div>
-                <div className="l-main-content">
+            <>
+                <div className="l-header">{header}</div>
+                <div className="l-content">
                     {children}
                 </div>
-                <div className="l-main-footer">{footer}</div>
-            </div>
+                <div className="l-footer">{footer}</div>
+            </>
         );
     }
 }

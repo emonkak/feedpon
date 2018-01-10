@@ -38,7 +38,6 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
         super(props, context);
 
         this.handleChangeLocation = this.handleChangeLocation.bind(this);
-        this.handleCloseSidebar = this.handleCloseSidebar.bind(this);
         this.handleInvokeKeyMapping = this.handleInvokeKeyMapping.bind(this);
     }
 
@@ -81,14 +80,6 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
         }
     }
 
-    handleCloseSidebar(event: React.MouseEvent<any>) {
-        const { onCloseSidebar, sidebarIsOpened } = this.props;
-
-        if (sidebarIsOpened && event.target === event.currentTarget) {
-            onCloseSidebar();
-        }
-    }
-
     handleInvokeKeyMapping(keyMapping: KeyMapping) {
         const command = (commandTable as { [key: string]: Command<any> })[keyMapping.commandId];
 
@@ -117,27 +108,22 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
     render() {
         const {
             children,
+            helpIsOpened,
             isLoading,
             keyMappings,
             location,
-            router,
             onCloseHelp,
-            sidebarIsOpened,
-            helpIsOpened
+            onCloseSidebar,
+            router,
+            sidebarIsOpened
         } = this.props;
 
         return (
-            <KeyMapper
-                keyMappings={keyMappings}
-                onInvokeKeyMapping={this.handleInvokeKeyMapping}>
-                <div
-                    className={classnames('l-root', {
-                        'is-opened': sidebarIsOpened
-                    })}
-                    onClick={this.handleCloseSidebar}>
-                    <div className={'l-sidebar'}>
-                        <Sidebar router={router} location={location} />
-                    </div>
+            <>
+                <div className={classnames('l-sidebar', { 'is-opened': sidebarIsOpened })}>
+                    <Sidebar router={router} location={location} />
+                </div>
+                <div className="l-main">
                     <div className="l-notifications">
                         <Notifications />
                     </div>
@@ -145,18 +131,22 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
                         <InstantNotifications />
                     </div>
                     {children}
-                    <div className="l-backdrop">
-                        {isLoading ? <i className="icon icon-48 icon-spinner a-rotating" /> : null}
-                    </div>
-                    <Modal
-                        onClose={onCloseHelp}
-                        isOpened={helpIsOpened}>
-                        <KeyMappingsTable
-                            commandTable={commandTable as any}
-                            keyMappings={keyMappings} />
-                    </Modal>
+                    <div className="l-overlay" onClick={onCloseSidebar} />
                 </div>
-            </KeyMapper>
+                <div className="l-backdrop">
+                    {isLoading ? <i className="icon icon-48 icon-spinner a-rotating" /> : null}
+                </div>
+                <Modal
+                    onClose={onCloseHelp}
+                    isOpened={helpIsOpened}>
+                    <KeyMappingsTable
+                        commandTable={commandTable as any}
+                        keyMappings={keyMappings} />
+                </Modal>
+                <KeyMapper
+                    keyMappings={keyMappings}
+                    onInvokeKeyMapping={this.handleInvokeKeyMapping} />
+            </>
         );
     }
 }

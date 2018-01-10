@@ -14,20 +14,20 @@ class SingleLayout extends PureComponent<SingleLayoutProps, {}> {
         const { children, isLoading } = this.props;
 
         return (
-            <div>
-                <div className="l-notifications">
-                    <Notifications />
-                </div>
-                <div className="l-instant-notifications">
-                    <InstantNotifications />
+            <>
+                <div className="l-main">
+                    <div className="l-notifications">
+                        <Notifications />
+                    </div>
+                    <div className="l-instant-notifications">
+                        <InstantNotifications />
+                    </div>
+                    {children}
                 </div>
                 <div className="l-backdrop">
                     {isLoading ? <i className="icon icon-48 icon-spinner a-rotating" /> : null}
                 </div>
-                <div className="l-content">
-                    {children}
-                </div>
-            </div>
+            </>
         );
     }
 }

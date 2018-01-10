@@ -1,4 +1,4 @@
-import React, { Children, PureComponent } from 'react';
+import { Component } from 'react';
 
 import * as Trie from 'utils/containers/Trie';
 
@@ -10,13 +10,12 @@ const SPECIAL_KEYS_TABLE: { [key: string]: string } = {
 };
 
 interface KeyMapperProps {
-    children: React.ReactElement<any>;
     keyMappings: Trie.Trie<any>;
     onInvokeKeyMapping: (keyMappings: any) => void;
     timeoutLength?: number;
 }
 
-export default class KeyMapper extends PureComponent<KeyMapperProps, {}> {
+export default class KeyMapper extends Component<KeyMapperProps, {}> {
     static defaultProps = {
         timeoutLength: 1000
     };
@@ -37,6 +36,10 @@ export default class KeyMapper extends PureComponent<KeyMapperProps, {}> {
 
     componentWillUnmount() {
         document.removeEventListener('keydown', this.handleKeyDown);
+    }
+
+    shouldComponentUpdate() {
+        return false;
     }
 
     handleKeyDown(event: KeyboardEvent) {
@@ -82,7 +85,7 @@ export default class KeyMapper extends PureComponent<KeyMapperProps, {}> {
     }
 
     render() {
-        return Children.only(this.props.children);
+        return null;
     }
 }
 

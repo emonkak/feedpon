@@ -5,7 +5,7 @@
 }
 
 .container-narrow {
-  max-width: 480px;
+  --container-width: 480px;
 }
 
 @media (--sm-viewport) {
