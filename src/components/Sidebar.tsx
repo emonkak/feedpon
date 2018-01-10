@@ -1,21 +1,29 @@
+import Enumerable from '@emonkak/enumerable';
 import React, { PureComponent } from 'react';
 import { History, Location } from 'history';
 import { Link } from 'react-router';
 
-import FeedSearchForm from 'components/parts/FeedSearchForm';
+import '@emonkak/enumerable/extensions/take';
+import '@emonkak/enumerable/extensions/select';
+import '@emonkak/enumerable/extensions/toArray';
+import '@emonkak/enumerable/extensions/where';
+
+import AutocompleteForm from 'components/widgets/AutocompleteForm';
 import ProfileDropdown from 'components/parts/ProfileDropdown';
+import SubscriptionIcon from 'components/parts/SubscriptionIcon';
 import SubscriptionTree from 'components/parts/SubscriptionTree';
 import SubscriptionTreeHeader from 'components/parts/SubscriptionTreeHeader';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
+import { ALL_STREAM_ID, PINS_STREAM_ID } from 'messaging/streams/constants';
 import { Category, GroupedSubscription, Profile, State, Subscription, SubscriptionOrderKind } from 'messaging/types';
+import { MenuItem } from 'components/widgets/Menu';
 import { Tree, TreeLeaf } from 'components/widgets/Tree';
 import { changeSubscriptionOrder, changeUnreadViewing, fetchSubscriptions } from 'messaging/subscriptions/actions';
-import { createSortedCategoriesSelector } from 'messaging/categories/selectors';
 import { createAllSubscriptionsSelector, createGroupedSubscriptionsSelector, createTotalUnreadCountSelector, createVisibleSubscriptionsSelector } from 'messaging/subscriptions/selectors';
+import { createSortedCategoriesSelector } from 'messaging/categories/selectors';
 import { fetchUser } from 'messaging/user/actions';
 import { revokeToken } from 'messaging/backend/actions';
-import { ALL_STREAM_ID, PINS_STREAM_ID } from 'messaging/streams/constants';
 
 interface SidebarProps {
     categories: Category[];
@@ -94,10 +102,12 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
         return (
             <nav className="sidebar">
                 <div className="sidebar-group">
-                    <FeedSearchForm
-                        onSearch={this.handleSearch}
+                    <AutocompleteForm
+                        items={subscriptions}
+                        onSubmit={this.handleSearch}
                         onSelect={this.handleSelect}
-                        subscriptions={subscriptions} />
+                        renderInput={renderSearchFeedInput}
+                        renderCandidates={completeSubscriptions} />
                 </div>
                 <div className="sidebar-group">
                     <Tree>
@@ -165,6 +175,55 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
             </nav>
         );
     }
+}
+
+function completeSubscriptions(subscriptions: Subscription[], query: string) {
+    if (query.trim() === '') {
+        return [];
+    }
+
+    const splittedQueries = query.trim().toLowerCase().split(/\s+/);
+    const candidates = new Enumerable(subscriptions)
+        .where((subscription) => {
+            const text = (subscription.title + ' ' + subscription.url).toLowerCase();
+            return splittedQueries.every(query => text.includes(query));
+        })
+        .take(10)
+        .select((subscription) => (
+            <MenuItem
+                key={subscription.subscriptionId}
+                value={'streams/' + encodeURIComponent(subscription.streamId)}
+                primaryText={subscription.title}
+                secondaryText={subscription.unreadCount > 0 ? Number(subscription.unreadCount).toLocaleString() : ''}
+                icon={<SubscriptionIcon title={subscription.title} iconUrl={subscription.iconUrl} />} />
+        ))
+        .toArray();
+
+    return <>
+        {candidates}
+        {candidates.length > 0 && <div className="menu-divider" />}
+        <MenuItem
+            value={'search/' + encodeURIComponent(query)}
+            primaryText={`Search for "${query}"`} />
+    </>;
+}
+
+function renderSearchFeedInput(props: {
+    onChange: React.FormEventHandler<any>,
+    onKeyDown: React.KeyboardEventHandler<any>,
+    onFocus: React.FocusEventHandler<any>,
+    ref: (element: HTMLInputElement | null) => void
+}) {
+    return (
+        <input
+            onChange={props.onChange}
+            onKeyDown={props.onKeyDown}
+            onFocus={props.onFocus}
+            ref={props.ref}
+            type="search"
+            className="input-search-box"
+            placeholder="Search for feeds ..." />
+    );
 }
 
 export default connect(() => {
