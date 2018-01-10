@@ -87,7 +87,7 @@ class UISettings extends PureComponent<UISettingsProps, UISettingsState> {
                             <ul>
                                 <li><code>--baseline-height</code>: Base line height</li>
                                 <li><code>--navbar-height</code>: Global navigation bar height</li>
-                                <li><code>--sidebar-height</code>: Global sidebar width</li>
+                                <li><code>--sidebar-width</code>: Global sidebar width</li>
                                 <li><code>--container-width</code>: Main container width</li>
                             </ul>
                         </details>
