@@ -71,13 +71,12 @@
 }
 
 .u-text-wrap {
-  word-wrap: break-word;
-  word-break: break-word;
+  overflow-wrap: break-word;
   white-space: normal;
 }
 
 .u-text-prewrap {
-  word-wrap: break-word;
+  overflow-wrap: break-word;
   white-space: pre-wrap;
 }
 
