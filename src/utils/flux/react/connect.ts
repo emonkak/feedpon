@@ -88,7 +88,7 @@ export default function connect<TStateProps, TDispatchProps, TOwnProps>(
                     this.props
                 );
 
-                return createElement<TProps>(WrappedComponent as any, props, children);
+                return createElement(WrappedComponent, props, children);
             }
         };
     };
