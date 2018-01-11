@@ -10,6 +10,7 @@ import KeyMappingsTable from 'components/parts/KeyMappingsTable';
 import Modal from 'components/widgets/Modal';
 import Notifications from 'components/Notifications';
 import Sidebar from 'components/Sidebar';
+import Swipeable, { SwipableRenderProps, Swipe } from 'components/widgets/Swipeable';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
 import { Command, KeyMapping, State, Store } from 'messaging/types';
@@ -32,55 +33,157 @@ interface SidebarLayoutProps {
 }
 
 class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
-    private routerSubscription: (() => void) | null = null;
+    private _unlistenRouter: (() => void) | null = null;
 
-    constructor(props: SidebarLayoutProps, context: any) {
-        super(props, context);
+    private _sidebarRef: HTMLElement | null = null;
 
-        this.handleChangeLocation = this.handleChangeLocation.bind(this);
-        this.handleInvokeKeyMapping = this.handleInvokeKeyMapping.bind(this);
-    }
+    private _sidebarWidth: number = 0;
 
     componentWillMount() {
         const { router } = this.props;
 
-        this.routerSubscription = router.listen(this.handleChangeLocation);
+        this._unlistenRouter = router.listen(() => {
+            const { onCloseSidebar } = this.props;
+
+            window.scrollTo(0, 0);
+
+            if (window.matchMedia('(max-width: 768px)').matches) {
+                onCloseSidebar();
+            }
+        });
     }
 
     componentDidMount() {
         const { sidebarIsOpened } = this.props;
 
-        this.updateSidebarStatus(sidebarIsOpened);
+        this._updateSidebarStatus(sidebarIsOpened);
     }
 
     componentDidUpdate(prevProps: SidebarLayoutProps, prevState: {}) {
         const { sidebarIsOpened } = this.props;
 
         if (sidebarIsOpened !== prevProps.sidebarIsOpened) {
-            this.updateSidebarStatus(sidebarIsOpened);
+            this._updateSidebarStatus(sidebarIsOpened);
         }
     }
 
     componentWillUnmount() {
-        this.updateSidebarStatus(false);
+        this._updateSidebarStatus(false);
 
-        if (this.routerSubscription) {
-            this.routerSubscription();
-            this.routerSubscription = null;
+        if (this._unlistenRouter) {
+            this._unlistenRouter();
+            this._unlistenRouter = null;
         }
     }
 
-    handleChangeLocation() {
-        const { onCloseSidebar } = this.props;
+    render() {
+        return (
+            <Swipeable
+                onSwipeStart={this._handleSwipeStart}
+                onSwipeEnd={this._handleSwipeEnd}
+                render={this._renderSwipableContent.bind(this)} />
+        );
+    }
 
-        window.scrollTo(0, 0);
+    private _renderSwipableContent(props: SwipableRenderProps) {
+        const {
+            swiping,
+            initialX,
+            x,
+            onTouchStart,
+            onTouchMove,
+            onTouchEnd,
+        } = props;
+        const {
+            children,
+            helpIsOpened,
+            isLoading,
+            keyMappings,
+            location,
+            onCloseHelp,
+            onCloseSidebar,
+            router,
+            sidebarIsOpened
+        } = this.props;
 
-        if (window.matchMedia('(max-width: 768px)').matches) {
-            onCloseSidebar();
+        const sidebarWidth = this._sidebarWidth;
+        const translateX = getTranslateX(initialX, x, sidebarWidth, sidebarIsOpened);
+        const progress = Math.abs(translateX) / sidebarWidth;
+
+        const leftStyle = swiping ? {
+            left: sidebarIsOpened ? translateX : -sidebarWidth + translateX
+        } : {};
+        const paddingStyle = swiping ? {
+            paddingLeft: sidebarIsOpened ? sidebarWidth + translateX : translateX
+        } : {};
+        const opacityStyle = swiping ? {
+            opacity: sidebarIsOpened ? 1 - progress : progress,
+            visibility: 'visible'
+        } : {};
+
+        return (
+            <div className={classnames('l-root', { 'is-swiping': swiping })}>
+                <div
+                    className={classnames('l-sidebar', { 'is-opened': sidebarIsOpened })}
+                    style={leftStyle}
+                    ref={this._handleSidebarRef}>
+                    <Sidebar router={router} location={location} />
+                </div>
+                <div className="l-notifications" style={paddingStyle}>
+                    <Notifications />
+                </div>
+                <div className="l-instant-notifications" style={paddingStyle}>
+                    <InstantNotifications />
+                </div>
+                <div className="l-main" style={paddingStyle}>
+                    {children}
+                    <div
+                        className="l-overlay"
+                        style={opacityStyle}
+                        onClick={onCloseSidebar}
+                        onTouchStart={onTouchStart}
+                        onTouchMove={onTouchMove}
+                        onTouchEnd={onTouchEnd} />
+                    <div
+                        className="l-swipeable-edge"
+                        onTouchStart={onTouchStart}
+                        onTouchMove={onTouchMove}
+                        onTouchEnd={onTouchEnd} />
+                </div>
+                <div className="l-backdrop">
+                    {isLoading ? <i className="icon icon-48 icon-spinner a-rotating" /> : null}
+                </div>
+                <Modal
+                    onClose={onCloseHelp}
+                    isOpened={helpIsOpened}>
+                    <KeyMappingsTable
+                        commandTable={commandTable as any}
+                        keyMappings={keyMappings} />
+                </Modal>
+                <KeyMapper
+                    keyMappings={keyMappings}
+                    onInvokeKeyMapping={this._handleInvokeKeyMapping} />
+            </div>
+        );
+    }
+
+    private _updateSidebarStatus(sidebarIsOpened: boolean) {
+        if (sidebarIsOpened) {
+            document.documentElement.classList.add('sidebar-is-opened');
+        } else {
+            document.documentElement.classList.remove('sidebar-is-opened');
         }
     }
 
-    handleInvokeKeyMapping(keyMapping: KeyMapping) {
+    private _updateSwipingStatus(sidebarIsSwping: boolean) {
+        if (sidebarIsSwping) {
+            document.documentElement.classList.add('sidebar-is-swiping');
+        } else {
+            document.documentElement.classList.remove('sidebar-is-swiping');
+        }
+    }
+
+    private _handleInvokeKeyMapping = (keyMapping: KeyMapping) => {
         const command = (commandTable as { [key: string]: Command<any> })[keyMapping.commandId];
 
         if (command) {
@@ -95,59 +198,41 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
 
             store.dispatch(event as any);
         }
-    }
+    };
 
-    updateSidebarStatus(sidebarIsOpened: boolean) {
+    private _handleSwipeStart = (): void => {
+        this._updateSwipingStatus(true);
+
+        this._sidebarWidth = this._sidebarRef ? this._sidebarRef.getBoundingClientRect().width : 0;
+    };
+
+    private _handleSwipeEnd = ({ initialX, x }: Swipe): void => {
+        const { onCloseSidebar, onOpenSidebar, sidebarIsOpened } = this.props;
+        const tolerance = this._sidebarWidth / 2;
+
         if (sidebarIsOpened) {
-            document.documentElement.classList.add('sidebar-is-opened');
+            if (initialX > x && initialX - x > tolerance) {
+                onCloseSidebar();
+            }
         } else {
-            document.documentElement.classList.remove('sidebar-is-opened');
+            if (initialX < x && x - initialX > tolerance) {
+                onOpenSidebar();
+            }
         }
+
+        this._updateSwipingStatus(false);
+    };
+
+    private _handleSidebarRef = (ref: HTMLElement | null) => {
+        this._sidebarRef = ref;
     }
+}
 
-    render() {
-        const {
-            children,
-            helpIsOpened,
-            isLoading,
-            keyMappings,
-            location,
-            onCloseHelp,
-            onCloseSidebar,
-            router,
-            sidebarIsOpened
-        } = this.props;
-
-        return (
-            <>
-                <div className={classnames('l-sidebar', { 'is-opened': sidebarIsOpened })}>
-                    <Sidebar router={router} location={location} />
-                </div>
-                <div className="l-main">
-                    <div className="l-notifications">
-                        <Notifications />
-                    </div>
-                    <div className="l-instant-notifications">
-                        <InstantNotifications />
-                    </div>
-                    {children}
-                    <div className="l-overlay" onClick={onCloseSidebar} />
-                </div>
-                <div className="l-backdrop">
-                    {isLoading ? <i className="icon icon-48 icon-spinner a-rotating" /> : null}
-                </div>
-                <Modal
-                    onClose={onCloseHelp}
-                    isOpened={helpIsOpened}>
-                    <KeyMappingsTable
-                        commandTable={commandTable as any}
-                        keyMappings={keyMappings} />
-                </Modal>
-                <KeyMapper
-                    keyMappings={keyMappings}
-                    onInvokeKeyMapping={this.handleInvokeKeyMapping} />
-            </>
-        );
+function getTranslateX(initialX: number, x: number, width: number, isOpened: boolean): number {
+    if (isOpened) {
+        return Math.min(0, Math.max(-width, x - initialX));
+    } else {
+        return Math.max(0, Math.min(width, x - initialX));
     }
 }
 
