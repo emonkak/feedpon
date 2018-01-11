@@ -94,7 +94,7 @@ export default class StreamFetchOptionsDropdown extends PureComponent<StreamFetc
                     primaryText="Oldest first"
                     value="oldest" />
                 <div className="menu-divider" />
-                <div className="menu-heading">Number of entries: {fetchOptions.numEntries}</div>
+                <div className="menu-heading">{fetchOptions.numEntries} entries fetching</div>
                 <MenuForm onSubmit={this.handleSubmitNumberOfEntries}>
                     <div className="input-group">
                         <input
