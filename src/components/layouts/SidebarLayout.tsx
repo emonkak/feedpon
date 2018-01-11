@@ -10,14 +10,14 @@ import KeyMappingsTable from 'components/parts/KeyMappingsTable';
 import Modal from 'components/widgets/Modal';
 import Notifications from 'components/Notifications';
 import Sidebar from 'components/Sidebar';
-import Swipeable, { SwipableRenderProps, Swipe } from 'components/widgets/Swipeable';
+import toSwipeable, { SwipeableProps } from 'components/hoc/toSwipeable';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
 import { Command, KeyMapping, State, Store } from 'messaging/types';
 import { closeHelp, closeSidebar, openHelp, openSidebar } from 'messaging/ui/actions';
 import { sendInstantNotification } from 'messaging/instantNotifications/actions';
 
-interface SidebarLayoutProps {
+interface SidebarLayoutProps extends SwipeableProps {
     children: React.ReactElement<any>;
     helpIsOpened: boolean;
     isLoading: boolean;
@@ -59,6 +59,18 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
         this._updateSidebarStatus(sidebarIsOpened);
     }
 
+    componentWillUpdate(nextProps: SidebarLayoutProps, nextState: {}) {
+        const { isSwiping } = this.props;
+
+        if (isSwiping !== nextProps.isSwiping) {
+            if (nextProps.isSwiping) {
+                this._notifySwipeStart();
+            } else {
+                this._notifySwipeEnd(nextProps.initialX, nextProps.destX);
+            }
+        }
+    }
+
     componentDidUpdate(prevProps: SidebarLayoutProps, prevState: {}) {
         const { sidebarIsOpened } = this.props;
 
@@ -77,23 +89,6 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
     }
 
     render() {
-        return (
-            <Swipeable
-                onSwipeStart={this._handleSwipeStart}
-                onSwipeEnd={this._handleSwipeEnd}
-                render={this._renderSwipableContent.bind(this)} />
-        );
-    }
-
-    private _renderSwipableContent(props: SwipableRenderProps) {
-        const {
-            swiping,
-            initialX,
-            x,
-            onTouchStart,
-            onTouchMove,
-            onTouchEnd,
-        } = props;
         const {
             children,
             helpIsOpened,
@@ -103,26 +98,32 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
             onCloseHelp,
             onCloseSidebar,
             router,
-            sidebarIsOpened
+            sidebarIsOpened,
+            isSwiping,
+            initialX,
+            destX,
+            onTouchStart,
+            onTouchMove,
+            onTouchEnd
         } = this.props;
 
         const sidebarWidth = this._sidebarWidth;
-        const translateX = getTranslateX(initialX, x, sidebarWidth, sidebarIsOpened);
+        const translateX = getTranslateX(initialX, destX, sidebarWidth, sidebarIsOpened);
         const progress = Math.abs(translateX) / sidebarWidth;
 
-        const leftStyle = swiping ? {
+        const leftStyle = isSwiping ? {
             left: sidebarIsOpened ? translateX : -sidebarWidth + translateX
         } : {};
-        const paddingStyle = swiping ? {
+        const paddingStyle = isSwiping ? {
             paddingLeft: sidebarIsOpened ? sidebarWidth + translateX : translateX
         } : {};
-        const opacityStyle = swiping ? {
+        const opacityStyle = isSwiping ? {
             opacity: sidebarIsOpened ? 1 - progress : progress,
             visibility: 'visible'
         } : {};
 
         return (
-            <div className={classnames('l-root', { 'is-swiping': swiping })}>
+            <div className={classnames('l-root', { 'is-swiping': isSwiping })}>
                 <div
                     className={classnames('l-sidebar', { 'is-opened': sidebarIsOpened })}
                     style={leftStyle}
@@ -167,7 +168,29 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
         );
     }
 
-    private _updateSidebarStatus(sidebarIsOpened: boolean) {
+    private _notifySwipeStart(): void {
+        this._updateSwipingStatus(true);
+        this._updateSidebarWidth();
+    }
+
+    private _notifySwipeEnd(initialX: number, destX: number): void {
+        const { onCloseSidebar, onOpenSidebar, sidebarIsOpened } = this.props;
+        const tolerance = this._sidebarWidth / 2;
+
+        if (sidebarIsOpened) {
+            if (initialX > destX && initialX - destX > tolerance) {
+                onCloseSidebar();
+            }
+        } else {
+            if (initialX < destX && destX - initialX > tolerance) {
+                onOpenSidebar();
+            }
+        }
+
+        this._updateSwipingStatus(false);
+    }
+
+    private _updateSidebarStatus(sidebarIsOpened: boolean): void {
         if (sidebarIsOpened) {
             document.documentElement.classList.add('sidebar-is-opened');
         } else {
@@ -175,11 +198,17 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
         }
     }
 
-    private _updateSwipingStatus(sidebarIsSwping: boolean) {
-        if (sidebarIsSwping) {
+    private _updateSwipingStatus(isSwiping: boolean): void {
+        if (isSwiping) {
             document.documentElement.classList.add('sidebar-is-swiping');
         } else {
             document.documentElement.classList.remove('sidebar-is-swiping');
+        }
+    }
+
+    private _updateSidebarWidth(): void {
+        if (this._sidebarRef) {
+            this._sidebarWidth = this._sidebarRef.getBoundingClientRect().width;
         }
     }
 
@@ -200,39 +229,16 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
         }
     };
 
-    private _handleSwipeStart = (): void => {
-        this._updateSwipingStatus(true);
-
-        this._sidebarWidth = this._sidebarRef ? this._sidebarRef.getBoundingClientRect().width : 0;
-    };
-
-    private _handleSwipeEnd = ({ initialX, x }: Swipe): void => {
-        const { onCloseSidebar, onOpenSidebar, sidebarIsOpened } = this.props;
-        const tolerance = this._sidebarWidth / 2;
-
-        if (sidebarIsOpened) {
-            if (initialX > x && initialX - x > tolerance) {
-                onCloseSidebar();
-            }
-        } else {
-            if (initialX < x && x - initialX > tolerance) {
-                onOpenSidebar();
-            }
-        }
-
-        this._updateSwipingStatus(false);
-    };
-
     private _handleSidebarRef = (ref: HTMLElement | null) => {
         this._sidebarRef = ref;
     }
 }
 
-function getTranslateX(initialX: number, x: number, width: number, isOpened: boolean): number {
+function getTranslateX(initialX: number, destX: number, width: number, isOpened: boolean): number {
     if (isOpened) {
-        return Math.min(0, Math.max(-width, x - initialX));
+        return Math.min(0, Math.max(-width, destX - initialX));
     } else {
-        return Math.max(0, Math.min(width, x - initialX));
+        return Math.max(0, Math.min(width, destX - initialX));
     }
 }
 
@@ -250,4 +256,4 @@ export default connect((store) => ({
         onOpenHelp: openHelp,
         onOpenSidebar: openSidebar
     })
-}))(SidebarLayout);
+}))(toSwipeable(SidebarLayout));
