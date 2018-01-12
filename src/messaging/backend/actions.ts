@@ -88,26 +88,34 @@ export function getFeedlyToken(): AsyncThunk<feedly.ExchangeTokenResponse> {
             return originalToken;
         }
 
-        const refreshToken = await feedlyApi.refreshToken({
-            refresh_token: originalToken.refresh_token,
-            client_id: environment.clientId,
-            client_secret: environment.clientSecret,
-            grant_type: 'refresh_token'
-        });
+        try {
+            const refreshToken = await feedlyApi.refreshToken({
+                refresh_token: originalToken.refresh_token,
+                client_id: environment.clientId,
+                client_secret: environment.clientSecret,
+                grant_type: 'refresh_token'
+            });
 
-        const token = {
-            ...originalToken,
-            ...refreshToken
-        };
+            const token = {
+                ...originalToken,
+                ...refreshToken
+            };
 
-        dispatch({
-            type: 'BACKEND_AUTHENTICATED',
-            exportUrl: feedlyApi.createExportOpmlUrl(token.access_token),
-            authenticatedAt: now,
-            token
-        });
+            dispatch({
+                type: 'BACKEND_AUTHENTICATED',
+                exportUrl: feedlyApi.createExportOpmlUrl(token.access_token),
+                authenticatedAt: now,
+                token
+            });
 
-        return token;
+            return token;
+        } catch (error) {
+            dispatch({
+                type: 'TOKEN_REVOKED'
+            });
+
+            throw error;
+        }
     };
 }
 
