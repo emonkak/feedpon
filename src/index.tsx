@@ -3,18 +3,11 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Router, hashHistory } from 'react-router';
 
-import * as browserLocalStorage from 'storages/browserLocalStorage';
-import * as chromeLocalStorage from 'storages/chromeLocalStorage';
-import * as indexedDBStorage from 'storages/indexedDBStorage';
 import StoreProvider from 'utils/flux/react/StoreProvider';
 import createSelectors from 'messaging/createSelectors';
-import initializeStore from './initializeStore';
+import packageJson from '../package.json';
+import prepareStore from './prepareStore';
 import routes from 'components/routes';
-
-interface Storage {
-    save: (state: any) => Promise<any>;
-    restore: (keys: string[]) => Promise<any>;
-}
 
 function main() {
     const selectors = createSelectors();
@@ -28,70 +21,25 @@ function main() {
         router: hashHistory,
         selectors
     };
-    const { save, restore } = detectStorage();
-    const store = initializeStore(context, save, restore);
 
-    if (typeof chrome === 'object') {
-        let currentTotalUnreadCount = 0;
-
-        store.subscribe((state) => {
-            const nextTotalUnreadCount = selectors.totalUnreadCountSelector(state);
-
-            if (currentTotalUnreadCount !== nextTotalUnreadCount) {
-                chrome.browserAction.setBadgeText({
-                    text: nextTotalUnreadCount > 0 ? nextTotalUnreadCount + '' : ''
-                });
-
-                currentTotalUnreadCount = nextTotalUnreadCount;
-            }
+    prepareStore(context).then((store) => {
+        store.dispatch({
+            type: 'APPLICATION_INITIALIZED',
+            version: packageJson.version
         });
-    }
 
-    FastClick.attach(document.body);
+        FastClick.attach(document.body);
 
-    const element = document.getElementById('app');
+        const element = document.getElementById('app');
 
-    ReactDOM.render((
-        <StoreProvider store={store}>
-            <Router history={hashHistory}>
-                {routes}
-            </Router>
-        </StoreProvider>
-    ), element);
-}
-
-function detectStorage(): Storage {
-    if (typeof chrome === 'object') {
-        return {
-            save: chromeLocalStorage.save,
-            restore: migrateFromLocalStorage(chromeLocalStorage)
-        };
-    }
-    if (typeof indexedDB === 'object') {
-        return {
-            save: indexedDBStorage.save,
-            restore: migrateFromLocalStorage(indexedDBStorage)
-        };
-    }
-    return browserLocalStorage;
-}
-
-function migrateFromLocalStorage(storage: Storage): (keys: string[]) => Promise<any> {
-    return async (keys) => {
-        const isMigrated = !!localStorage.getItem('__isMigratedToAnotherStorage');
-
-        if (!isMigrated) {
-            const state = await browserLocalStorage.restore(keys);
-
-            await storage.save(state);
-
-            localStorage.setItem('__isMigratedToAnotherStorage', '' + Date.now());
-
-            return state;
-        }
-
-        return await storage.restore(keys);
-    };
+        ReactDOM.render((
+            <StoreProvider store={store}>
+                <Router history={hashHistory}>
+                    {routes}
+                </Router>
+            </StoreProvider>
+        ), element);
+    });
 }
 
 if (typeof cordova === 'object') {

@@ -11,9 +11,11 @@ export default function createStore<TState, TEvent>(
     }
 
     function replaceState(nextState: TState): void {
-        state = nextState;
-        for (const subscriber of subscribers) {
-            subscriber(nextState);
+        if (state !== nextState) {
+            state = nextState;
+            for (const subscriber of subscribers) {
+                subscriber(nextState);
+            }
         }
     }
 

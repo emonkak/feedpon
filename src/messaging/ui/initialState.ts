@@ -5,7 +5,6 @@ const ui: UI = {
     customStyles: '',
     expandedEntryIndex: -1,
     helpIsOpened: false,
-    isBooting: true,
     readEntryIndex: -1,
     selectedStreamId: '',
     sidebarIsOpened: true,

@@ -2,12 +2,6 @@ import { Event, UI } from 'messaging/types';
 
 export default function uiReducer(ui: UI, event: Event): UI {
     switch (event.type) {
-        case 'APPLICATION_INITIALIZED':
-            return {
-                ...ui,
-                isBooting: false
-            };
-
         case 'ACTIVE_ENTRY_CAHNGED':
             return {
                 ...ui,

@@ -7,7 +7,6 @@ import { THEMES } from 'messaging/ui/constants';
 interface RootLayoutProps {
     children: React.ReactElement<any>;
     customStyles: string;
-    isBooting: boolean;
     theme: ThemeKind,
 }
 
@@ -47,32 +46,20 @@ class RootLayout extends PureComponent<RootLayoutProps, any> {
     }
 
     render() {
-        const { children, customStyles, isBooting } = this.props;
+        const { children, customStyles } = this.props;
 
-        if (isBooting) {
-            return (
-                <div>
-                    <style dangerouslySetInnerHTML={{ __html: customStyles }} />
-                    <div className="l-boot">
-                        <img className="a-blink" src="./img/logo.svg" width="278" height="100" />
-                    </div>
-                </div>
-            );
-        } else {
-            return (
-                <div>
-                    <style dangerouslySetInnerHTML={{ __html: customStyles }} />
-                    {children}
-                </div>
-            );
-        }
+        return (
+            <div>
+                <style dangerouslySetInnerHTML={{ __html: customStyles }} />
+                {children}
+            </div>
+        );
     }
 }
 
 export default connect({
     mapStateToProps: (state: State) => ({
         customStyles: state.ui.customStyles,
-        isBooting: state.ui.isBooting,
         theme: state.ui.theme
     })
 })(RootLayout);

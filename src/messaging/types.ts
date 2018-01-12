@@ -31,7 +31,7 @@ export type Event
     | { type: 'ALL_ENTRIES_MARKED_AS_READ' }
     | { type: 'ALL_ENTRIES_MARKING_AS_READ' }
     | { type: 'ALL_ENTRIES_MARKING_AS_READ_FAILED' }
-    | { type: 'APPLICATION_INITIALIZED' }
+    | { type: 'APPLICATION_INITIALIZED', version: string }
     | { type: 'BACKEND_AUTHENTICATED', authenticatedAt: number, exportUrl: string, token: any }
     | { type: 'BACKEND_AUTHENTICATING' }
     | { type: 'BACKEND_AUTHENTICATING_FAILED' }
@@ -395,7 +395,6 @@ export interface UI {
     customStyles: string;
     expandedEntryIndex: number;
     helpIsOpened: boolean;
-    isBooting: boolean;
     readEntryIndex: number;
     selectedStreamId: string;
     sidebarIsOpened: boolean;
