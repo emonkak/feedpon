@@ -1,7 +1,7 @@
 import { SRCSET_ATTRS, URI_ATTRS, sanitizeElement } from './htmlSanitizer';
 
-const RESPONSIVE_ELEMENT_WIDTH = 128;
-const RESPONSIVE_ELEMENT_HEIGHT = 128;
+const MINIUM_RESPONSIVE_ELEMENT_WIDTH = 128;
+const MINIUM_RESPONSIVE_ELEMENT_HEIGHT = 128;
 
 export default function cleanNode(node: Node, baseUrl: string): boolean {
     switch (node.nodeType) {
@@ -49,7 +49,16 @@ function cleanElement(element: Element, baseUrl: string): boolean {
             break;
 
         case 'IMG':
-            responsifyImage(element as HTMLImageElement);
+            responsify(element as HTMLImageElement);
+            break;
+
+        case 'VIDEO':
+            responsify(element as HTMLVideoElement);
+            break;
+
+        case 'IFRAME':
+            responsify(element as any);  // BUG: defnied 'width' as 'string'
+            sandboxifyIframe(element as HTMLIFrameElement);
             break;
     }
 
@@ -74,9 +83,15 @@ function qualifySrcset(srcsetString: string, baseUrlString: string): string {
         .join(',');
 }
 
-function responsifyImage(element: HTMLImageElement): void {
-    if (element.width < RESPONSIVE_ELEMENT_WIDTH
-        || element.height < RESPONSIVE_ELEMENT_HEIGHT) {
+function resolveLazyLoading(element: HTMLImageElement): void {
+    if (!element.src && element.dataset.src) {
+        element.src = element.dataset.src!;
+    }
+}
+
+function responsify(element: HTMLElement & { width: number, height: number }): void {
+    if (element.width < MINIUM_RESPONSIVE_ELEMENT_WIDTH
+        || element.height < MINIUM_RESPONSIVE_ELEMENT_HEIGHT) {
         return;
     }
 
@@ -97,8 +112,6 @@ function responsifyImage(element: HTMLImageElement): void {
     }
 }
 
-function resolveLazyLoading(element: HTMLImageElement): void {
-    if (!element.src && element.dataset.src) {
-        element.src = element.dataset.src!;
-    }
+function sandboxifyIframe(element: HTMLElement): void {
+    element.setAttribute('sandbox', 'allow-popups allow-same-origin allow-scripts');
 }

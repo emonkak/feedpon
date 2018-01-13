@@ -260,6 +260,10 @@ summary {
   cursor: pointer;
 }
 
+iframe {
+  border: 0;
+}
+
 :placeholder-shown,
 ::-webkit-input-placeholder {
   color: var(--dark-color);

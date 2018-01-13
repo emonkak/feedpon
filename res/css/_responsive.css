@@ -8,7 +8,9 @@
   width: 100%;
 }
 
-.responsive-container-inner > img {
+.responsive-container-inner > img,
+.responsive-container-inner > video,
+.responsive-container-inner > iframe {
   position: absolute;
   top: 0;
   left: 0;
