@@ -18,9 +18,7 @@
   left: 0;
 }
 
-.l-sidebar.is-opened ~ .l-main,
-.l-sidebar.is-opened ~ .l-notifications,
-.l-sidebar.is-opened ~ .l-instant-notifications {
+.l-sidebar.is-opened ~ .l-main {
   padding-left: var(--sidebar-width);
 }
 
@@ -29,21 +27,24 @@
 }
 
 .l-main {
+  position: relative;
   width: 100%;
   box-sizing: border-box;
-  position: relative;
 }
 
 .l-header {
-  position: sticky;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
+  padding-left: inherit;
+  box-sizing: border-box;
   z-index: 100;
   background-color: var(--transparent-color);
 }
 
 .l-content {
+  padding-top: var(--navbar-height);
   background-color: var(--x-light-color);
   box-shadow: 0 -1px var(--medium-dark-color) inset;
 }
@@ -59,8 +60,9 @@
   top: 0;
   left: 0;
   width: 100%;
-  z-index: 200;
+  padding-left: inherit;
   box-sizing: border-box;
+  z-index: 200;
 }
 
 .l-instant-notifications {
@@ -68,9 +70,10 @@
   bottom: 0;
   left: 0;
   width: 100%;
+  padding-left: inherit;
+  box-sizing: border-box;
   z-index: 200;
   text-align: center;
-  box-sizing: border-box;
 }
 
 .l-backdrop {
@@ -88,6 +91,7 @@
   opacity: 0;
   visibility: hidden;
   transition: visibility 0s linear 0.2s, opacity 0.2s linear;
+  transform: translate3d(0, 0, 0);
 }
 
 .l-backdrop:not(:empty) {
@@ -107,6 +111,7 @@
   opacity: 0;
   background-color: var(--backdrop-background-color);
   transition: visibility 0s linear 0.2s, opacity 0.2s linear;
+  transform: translate3d(0, 0, 0);
 }
 
 .l-swipeable-edge {
@@ -131,10 +136,14 @@
     transition: left 0.2s ease-in-out;
   }
 
+  .l-main {
+    transition: padding 0.2s ease-in-out;
+  }
+
   .l-main,
+  .l-header,
   .l-notifications,
   .l-instant-notifications {
-    transition: padding 0.2s ease-in-out;
     box-sizing: content-box;
   }
 

@@ -130,13 +130,13 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
                     ref={this._handleSidebarRef}>
                     <Sidebar router={router} location={location} />
                 </div>
-                <div className="l-notifications" style={paddingStyle}>
-                    <Notifications />
-                </div>
-                <div className="l-instant-notifications" style={paddingStyle}>
-                    <InstantNotifications />
-                </div>
                 <div className="l-main" style={paddingStyle}>
+                    <div className="l-notifications">
+                        <Notifications />
+                    </div>
+                    <div className="l-instant-notifications">
+                        <InstantNotifications />
+                    </div>
                     {children}
                     <div
                         className="l-overlay"
