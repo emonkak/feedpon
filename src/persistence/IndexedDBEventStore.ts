@@ -6,7 +6,7 @@ const EVENTS_STORE_NAME = 'events';
 const SNAPSHOTS_STORE_NAME = 'snapshots';
 
 export default class IndexedDBEventStore<TState, TEvent> implements EventStore<TState, TEvent> {
-    private _db: Promise<IDBDatabase> | null = null;
+    private _db: IDBDatabase | null = null;
 
     saveEvents(events: IdentifiedEvent<TEvent>[]): Promise<void> {
         return this._transaction([EVENTS_STORE_NAME], 'readwrite', (transaction) => {
@@ -22,15 +22,21 @@ export default class IndexedDBEventStore<TState, TEvent> implements EventStore<T
     }
 
     saveSnapshot(snapshot: Snapshot<TState>): Promise<void> {
-        return this._transaction([SNAPSHOTS_STORE_NAME, EVENTS_STORE_NAME], 'readwrite', (transaction) => {
+        // Can't handle multiple object stores on iOS 9
+        // https://bugs.webkit.org/show_bug.cgi?id=136937
+        const tx1 = this._transaction([SNAPSHOTS_STORE_NAME], 'readwrite', (transaction) => {
             const transactionCompletion = promisifyTransaction(transaction);
             const snapshotsStore = transaction.objectStore(SNAPSHOTS_STORE_NAME);
-            const eventsStore = transaction.objectStore(EVENTS_STORE_NAME);
             snapshotsStore.clear();
-            snapshotsStore.add(snapshot);
+            return transactionCompletion;
+        });
+        const tx2 = this._transaction([EVENTS_STORE_NAME], 'readwrite', (transaction) => {
+            const transactionCompletion = promisifyTransaction(transaction);
+            const eventsStore = transaction.objectStore(EVENTS_STORE_NAME);
             eventsStore.delete(IDBKeyRange.upperBound(snapshot.version));
             return transactionCompletion;
         });
+        return Promise.all([tx1, tx2]) as any;
     }
 
     restoreUnappliedEvents(version: number): Promise<IdentifiedEvent<TEvent>[]> {
@@ -51,16 +57,16 @@ export default class IndexedDBEventStore<TState, TEvent> implements EventStore<T
     }
 
     private async _getDatabase(): Promise<IDBDatabase> {
-        if (!this._db) {
-            this._db = openDatabase();
+        if (this._db) {
+            return this._db;
         }
 
-        try {
-            return await this._db;
-        } catch (e) {
-            this._db = null;
-            throw e;
-        }
+        const db = await openDatabase();
+
+        db.addEventListener('abort', this._disconnect);
+        db.addEventListener('error', this._disconnect);
+
+        return this._db = db;
     }
 
     private async _transaction<T>(storeNames: string[], mode: IDBTransactionMode, callback: (transaction: IDBTransaction) => Promise<T>): Promise<T> {
@@ -68,9 +74,13 @@ export default class IndexedDBEventStore<TState, TEvent> implements EventStore<T
         const transaction = db.transaction(storeNames, mode);
         return callback(transaction);
     }
+
+    private _disconnect = (): void => {
+        this._db = null;
+    }
 }
 
-async function openDatabase(): Promise<IDBDatabase> {
+function openDatabase(): Promise<IDBDatabase> {
     const request = indexedDB.open(DB_NAME, DB_VERSION);
 
     request.onupgradeneeded = (event) => {
