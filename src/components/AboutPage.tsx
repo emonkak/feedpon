@@ -441,7 +441,7 @@ class AboutPage extends PureComponent<AboutPageProps, {}> {
                 <section className="section u-text-center">
                     <div className="container">
                         <a href="https://github.com/emonkak/feedpon" target="_blank">
-                            <img src="./img/logo.svg" width="278" height="100" />
+                            <img src="./img/logo.svg" width="244" height="88" />
                         </a>
                         <div>Version <strong>{version}</strong></div>
                     </div>
