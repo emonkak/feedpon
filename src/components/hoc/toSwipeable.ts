@@ -60,6 +60,8 @@ export default function toSwipeable<TProps>(Component: React.ComponentType<TProp
         };
 
         private _handleTouchMove = (event: React.TouchEvent<any>): void => {
+            event.preventDefault();
+
             const { clientX, clientY } = event.targetTouches[0];
 
             this.setState({
