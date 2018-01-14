@@ -1,4 +1,5 @@
 import * as types from './types';
+import fetch from 'adapters/http/fetch';
 
 const ENDPOINT = 'http://wedata.net/';
 

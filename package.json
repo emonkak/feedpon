@@ -31,10 +31,12 @@
     "classnames": "^2.2.5",
     "cordova-android": "^6.4.0",
     "cordova-ios": "^4.5.3",
+    "cordova-labs-local-webserver": "https://github.com/emonkak/cordova-labs-local-webserver",
+    "cordova-plugin-fetch-api": "https://github.com/emonkak/cordova-plugin-fetch-api",
     "cordova-plugin-inappbrowser": "^1.7.2",
-    "cordova-plugin-statusbar": "^2.4.0",
+    "cordova-plugin-statusbar": "^2.4.1",
     "cordova-plugin-whitelist": "^1.3.3",
-    "fastclick": "^1.0.6",
+    "cordova-plugin-wkwebview-engine": "^1.1.4",
     "fbjs": "^0.8.16",
     "intl": "^1.2.5",
     "intl-relativeformat": "^2.1.0",
@@ -91,8 +93,11 @@
   "cordova": {
     "plugins": {
       "cordova-plugin-whitelist": {},
+      "cordova-plugin-inappbrowser": {},
       "cordova-plugin-statusbar": {},
-      "cordova-plugin-inappbrowser": {}
+      "cordova-plugin-wkwebview-engine": {},
+      "cordova-labs-local-webserver": {},
+      "cordova-plugin-fetch-api": {}
     },
     "platforms": [
       "android",

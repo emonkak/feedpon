@@ -1,6 +1,7 @@
 import querystring from 'query-string';
 
 import * as types from './types';
+import fetch from 'adapters/http/fetch';
 
 const ENDPOINT = 'https://cloud.feedly.com/';
 

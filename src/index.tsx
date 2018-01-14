@@ -1,4 +1,3 @@
-import FastClick from 'fastclick';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Router, hashHistory } from 'react-router';
@@ -22,24 +21,26 @@ function main() {
         selectors
     };
 
-    prepareStore(context).then((store) => {
-        store.dispatch({
-            type: 'APPLICATION_INITIALIZED',
-            version: packageJson.version
+    prepareStore(context)
+        .then((store) => {
+            store.dispatch({
+                type: 'APPLICATION_INITIALIZED',
+                version: packageJson.version
+            });
+
+            const element = document.getElementById('app');
+
+            ReactDOM.render((
+                <StoreProvider store={store}>
+                    <Router history={hashHistory}>
+                        {routes}
+                    </Router>
+                </StoreProvider>
+            ), element);
+        })
+        .catch((error) => {
+            console.error(error);
         });
-
-        FastClick.attach(document.body);
-
-        const element = document.getElementById('app');
-
-        ReactDOM.render((
-            <StoreProvider store={store}>
-                <Router history={hashHistory}>
-                    {routes}
-                </Router>
-            </StoreProvider>
-        ), element);
-    });
 }
 
 if (typeof cordova === 'object') {

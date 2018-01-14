@@ -1,4 +1,5 @@
 import * as CacheMap from 'utils/containers/CacheMap';
+import fetch from 'adapters/http/fetch';
 import { AsyncThunk, Event, Thunk } from 'messaging/types';
 import { sendNotification } from 'messaging/notifications/actions';
 

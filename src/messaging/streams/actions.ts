@@ -3,6 +3,7 @@ import * as feedly from 'adapters/feedly/types';
 import * as feedlyApi from 'adapters/feedly/api';
 import PromiseQueue from 'utils/PromiseQueue';
 import decodeResponseAsText from 'utils/decodeResponseAsText';
+import fetch from 'adapters/http/fetch';
 import stripTags from 'utils/stripTags';
 import tryMatch from 'utils/tryMatch';
 import { ALL_STREAM_ID, PINS_STREAM_ID } from 'messaging/streams/constants';

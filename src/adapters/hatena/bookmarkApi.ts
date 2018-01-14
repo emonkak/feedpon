@@ -1,5 +1,6 @@
 import * as types from './types';
 import buildQueryString from 'utils/buildQueryString';
+import fetch from 'adapters/http/fetch';
 
 const URL_CHUNK_LIMIT = 50;
 const URL_LRNGTH_LIMIT = 4096;

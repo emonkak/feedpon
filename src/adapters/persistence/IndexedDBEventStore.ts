@@ -21,22 +21,22 @@ export default class IndexedDBEventStore<TState, TEvent> implements EventStore<T
         });
     }
 
-    saveSnapshot(snapshot: Snapshot<TState>): Promise<void> {
+    async saveSnapshot(snapshot: Snapshot<TState>): Promise<void> {
         // Can't handle multiple object stores on iOS 9
         // https://bugs.webkit.org/show_bug.cgi?id=136937
-        const tx1 = this._transaction([SNAPSHOTS_STORE_NAME], 'readwrite', (transaction) => {
+        await this._transaction([SNAPSHOTS_STORE_NAME], 'readwrite', (transaction) => {
             const transactionCompletion = promisifyTransaction(transaction);
             const snapshotsStore = transaction.objectStore(SNAPSHOTS_STORE_NAME);
             snapshotsStore.clear();
+            snapshotsStore.add(snapshot);
             return transactionCompletion;
         });
-        const tx2 = this._transaction([EVENTS_STORE_NAME], 'readwrite', (transaction) => {
+        await this._transaction([EVENTS_STORE_NAME], 'readwrite', (transaction) => {
             const transactionCompletion = promisifyTransaction(transaction);
             const eventsStore = transaction.objectStore(EVENTS_STORE_NAME);
             eventsStore.delete(IDBKeyRange.upperBound(snapshot.version));
             return transactionCompletion;
         });
-        return Promise.all([tx1, tx2]) as any;
     }
 
     restoreUnappliedEvents(version: number): Promise<IdentifiedEvent<TEvent>[]> {

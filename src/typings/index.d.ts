@@ -1,22 +1,9 @@
-/// <reference path="./fastclick.d.ts" />
+/// <reference path="./cordova-plugins.d.ts" />
 /// <reference path="./fbjs.d.ts" />
 /// <reference path="./intl-relativeformat.d.ts" />
 /// <reference path="./intl.d.ts" />
 /// <reference path="./object.values.d.ts" />
-
-interface RequestIdleCallback {
-    didTimeout: boolean;
-    timeRemaining(): number;
-}
-
-interface RequestIdleOptions {
-    timeout?: number;
-}
-
-interface Window {
-    cancelIdleCallback(id: number): void;
-    requestIdleCallback(callback: (deadline: RequestIdleCallback) => void, options?: RequestIdleOptions): number;
-}
+/// <reference path="./requestIdleCallback.d.ts" />
 
 declare var process: {
   env: {
