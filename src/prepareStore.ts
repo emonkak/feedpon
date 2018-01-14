@@ -1,17 +1,17 @@
 import { createLogger } from 'redux-logger';
 
-import IndexedDBEventStore from 'persistence/IndexedDBEventStore';
+import IndexedDBEventStore from 'adapters/persistence/IndexedDBEventStore';
 import applyMiddlewares from 'utils/flux/applyMiddlewares';
 import createStore from 'utils/flux/createStore';
 import errorHandlingMiddleware from 'utils/flux/middlewares/errorHandlingMiddleware';
-import eventSourcingMiddleware from 'persistence/eventSourcingMiddleware';
+import eventSourcingMiddleware from 'adapters/persistence/eventSourcingMiddleware';
 import initialState from 'messaging/initialState';
 import reducer from 'messaging/reducer';
 import reduxMiddleware from 'utils/flux/middlewares/reduxMiddleware';
-import restoreSnapshot from 'persistence/restoreSnapshot';
+import restoreSnapshot from 'adapters/persistence/restoreSnapshot';
 import thunkMiddleware from 'utils/flux/middlewares/thunkMiddleware';
 import { Event, State, ThunkContext } from 'messaging/types';
-import { EventStore } from 'persistence/types';
+import { EventStore } from 'adapters/persistence/types';
 import { Middleware, Store } from 'utils/flux/types';
 import { sendNotification } from 'messaging/notifications/actions';
 
