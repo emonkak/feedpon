@@ -14,6 +14,7 @@ interface LazyListRendererProps {
     onPositioningUpdated?: (positioning: Positioning) => void;
     renderItem: (item: any, index: number) => React.ReactElement<any>;
     renderList: (items: React.ReactElement<any>[], blankSpaceAbove: number, blankSpaceBelow: number) => React.ReactElement<any>;
+    scrollAdjustment?: boolean;
     scrollThrottleTime?: number;
 }
 
@@ -67,6 +68,7 @@ export default class LazyListRenderer extends Component<LazyListRendererProps, L
         getHeightForDomNode,
         initialItemIndex: 0,
         offscreenToViewportRatio: 1.8,
+        scrollAdjustment: false,
         scrollThrottleTime: 100
     };
 
@@ -187,13 +189,14 @@ export default class LazyListRenderer extends Component<LazyListRendererProps, L
         const wasHeightChanged = this._recomputeHeights();
 
         if (wasHeightChanged || hasItemsChanged) {
+            const { scrollAdjustment } = this.props;
             this._rectangles = this._getRectangles();
 
-            if (this._prevPositioning) {
+            if (scrollAdjustment && this._prevPositioning) {
                 const viewportRectangle = this._getRelativeViewportRectangle();
-                const scrollAdjustment = getScrollAdjustment(this._prevPositioning, this._getPositioning(viewportRectangle));
-                if (scrollAdjustment !== 0) {
-                    window.scrollBy(0, scrollAdjustment);
+                const scrollAdjustmentDelta = getScrollAdjustmentDelta(this._prevPositioning, this._getPositioning(viewportRectangle));
+                if (scrollAdjustmentDelta !== 0) {
+                    window.scrollBy(0, scrollAdjustmentDelta);
                 }
             }
 
@@ -454,7 +457,7 @@ function createScheduledTask(task: () => void, scheduler: (task: () => void) => 
     };
 }
 
-function getScrollAdjustment(prevPos: Positioning, nextPos: Positioning): number {
+function getScrollAdjustmentDelta(prevPos: Positioning, nextPos: Positioning): number {
     const nextRenderedIndexes: { [id: string]: number } = {};
 
     for (let i = nextPos.sliceStart; i < nextPos.sliceEnd; i++) {

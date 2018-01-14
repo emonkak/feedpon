@@ -199,7 +199,8 @@ class CategoriesPage extends PureComponent<CategoriesPageProps, CategoriesPageSt
                     idAttribute="subscriptionId"
                     items={subscriptions}
                     renderItem={renderSubscriptionItem}
-                    renderList={renderSubscriptionList} />
+                    renderList={renderSubscriptionList}
+                    scrollAdjustment={true} />
             </div>
         );
     }

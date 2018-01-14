@@ -106,7 +106,8 @@ export default class EntryList extends PureComponent<EntryListProps, EntryListSt
                     onPositioningUpdated={this._handlePositioningUpdated}
                     ref={this._handleLazyListRenderer}
                     renderItem={this._renderEntry}
-                    renderList={renderListWrapper} />
+                    renderList={renderListWrapper}
+                    scrollAdjustment={true} />
             </div>
         );
     }
