@@ -1,5 +1,4 @@
 import React, { PureComponent } from 'react';
-import classnames from 'classnames';
 
 import SubscriptionIcon from 'components/parts/SubscriptionIcon';
 import { Category, GroupedSubscription, Subscription } from 'messaging/types';
@@ -22,8 +21,8 @@ export default class SubscriptionTree extends PureComponent<SubscriptionTreeProp
             <TreeBranch
                 key={category.categoryId}
                 value={path}
+                isImportant={unreadCount > 0}
                 isSelected={selectedPath.startsWith(path)}
-                className={classnames({ 'is-important': unreadCount > 0 })}
                 primaryText={category.label}
                 secondaryText={unreadCount > 0 ? Number(unreadCount).toLocaleString() : ''}
                 onSelect={onSelect}>
@@ -42,11 +41,11 @@ export default class SubscriptionTree extends PureComponent<SubscriptionTreeProp
         return (
             <TreeLeaf
                 key={subscription.subscriptionId}
-                className={classnames({ 'is-important': unreadCount > 0 })}
                 primaryText={subscription.title}
                 secondaryText={unreadCount > 0 ? Number(unreadCount).toLocaleString() : ''}
                 icon={<SubscriptionIcon title={subscription.title} iconUrl={subscription.iconUrl} />}
                 value={path}
+                isImportant={unreadCount > 0}
                 isSelected={selectedPath.startsWith(path)}
                 onSelect={onSelect} />
         );

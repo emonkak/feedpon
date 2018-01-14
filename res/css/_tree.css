@@ -1,19 +1,16 @@
 .tree {
+  display: none;
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
+.tree.is-expanded {
+  display: block;
+}
+
 .tree .tree {
   padding-left: 32px;
-}
-
-.tree-branch > .tree {
-  display: none;
-}
-
-.tree-branch.is-expanded > .tree {
-  display: block;
 }
 
 .tree-node {
