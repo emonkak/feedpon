@@ -3,7 +3,7 @@
   top: 0;
   left: calc(var(--sidebar-width) * -1);
   width: var(--sidebar-width);
-  height: 100%;
+  height: 100vh;
   padding: calc(var(--baseline-height) / 2) 1em;
   z-index: 300;
   box-sizing: border-box;
@@ -96,12 +96,17 @@
   transition-delay: 0s;
 }
 
-.l-boot {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100vw;
-  height: 100vh;
+.l-overlay {
+  position: fixed;
+  visibility: hidden;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  z-index: 200;
+  opacity: 0;
+  background-color: var(--backdrop-background-color);
+  transition: visibility 0s linear 0.2s, opacity 0.2s linear;
 }
 
 .l-swipeable-edge {
@@ -111,6 +116,14 @@
   width: 1em;
   height: 100%;
   z-index: 200;
+}
+
+.l-boot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
 }
 
 @media (--sm-viewport) {
@@ -123,19 +136,6 @@
   .l-instant-notifications {
     transition: padding 0.2s ease-in-out;
     box-sizing: content-box;
-  }
-
-  .l-overlay {
-    position: absolute;
-    visibility: hidden;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-    z-index: 200;
-    opacity: 0;
-    background-color: var(--backdrop-background-color);
-    transition: visibility 0s linear 0.2s, opacity 0.2s linear;
   }
 
   .l-root.is-swiping > .l-sidebar,

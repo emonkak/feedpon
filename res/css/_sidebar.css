@@ -11,7 +11,9 @@
 
 @media (--sm-viewport) {
   .sidebar-is-swiping,
-  .sidebar-is-opened {
+  .sidebar-is-swiping > body,
+  .sidebar-is-opened,
+  .sidebar-is-opened > body {
     overflow: hidden;
   }
 }
