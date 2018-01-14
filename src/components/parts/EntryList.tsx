@@ -132,6 +132,11 @@ export default class EntryList extends PureComponent<EntryListProps, EntryListSt
                     this.setState({
                         scrollingIndex: null
                     });
+
+                    const { activeEntryIndex, onChangeActiveEntry } = this.props;
+                    if (index !== activeEntryIndex) {
+                        onChangeActiveEntry(index);
+                    }
                 } else {
                     window.scrollTo(0, scrollPosition);
                 }
@@ -197,15 +202,14 @@ export default class EntryList extends PureComponent<EntryListProps, EntryListSt
     );
 
     private _handlePositioningUpdated = (positioning: Positioning) => {
-        const activeIndex = getActiveIndex(positioning);
-
-        this.props.onChangeActiveEntry(activeIndex);
-
         const { scrollingIndex } = this.state;
-
         if (scrollingIndex !== null) {
             this._scheduleScrollToIndex(scrollingIndex);
+            return;
         }
+
+        const activeIndex = getActiveIndex(positioning);
+        this.props.onChangeActiveEntry(activeIndex);
     };
 
     private _handleLazyListRenderer = (lazyListRenderer: LazyListRenderer | null) => {
