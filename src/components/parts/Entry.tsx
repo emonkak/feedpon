@@ -84,14 +84,9 @@ export default class EntryFrame extends PureComponent<EntryProps, {}> {
         const { index, isExpanded, onExpand } = this.props;
 
         if (!isExpanded) {
-            const target = event.target as HTMLElement;
+            event.preventDefault();
 
-            if (target === event.currentTarget
-                || (!target.closest('a') && !target.closest('button'))) {
-                event.preventDefault();
-
-                onExpand(index);
-            }
+            onExpand(index);
         }
     };
 
