@@ -19,7 +19,7 @@ export default function reduceTrackingUrlPatterns(trackingUrls: TrackingUrls, ev
         case 'TRACKING_URL_PATTERN_ADDED':
             return {
                 ...trackingUrls,
-                patterns: [...new Set([...trackingUrls.patterns, event.pattern])]
+                patterns: Array.from([...trackingUrls.patterns, event.pattern])
             };
 
         case 'TRACKING_URL_PATTERN_DELETED':

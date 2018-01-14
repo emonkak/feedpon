@@ -54,7 +54,7 @@ class KeyboardSettings extends PureComponent<KeyboardSettingsProps, KeyboardSett
         const { keyMappings, onDeleteKeyMapping, onResetKeyMappings, onUpdateKeyMapping } = this.props;
         const { isResetting } = this.state;
 
-        const keyMappingItems = new Enumerable(Trie.iterate(keyMappings))
+        const keyMappingItems = new Enumerable(Trie.toArray(keyMappings))
             .orderBy(([keys]) => keys)
             .select(([keys, keyMapping]) =>
                 <KeyMappingItem

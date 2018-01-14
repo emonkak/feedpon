@@ -11,10 +11,10 @@ export function empty<T>(): Trie<T> {
     return {};
 }
 
-export function create<T>(iterable: Iterable<[string[], T]>): Trie<T> {
+export function create<T>(elements: [string[], T][]): Trie<T> {
     const tree = {};
 
-    for (const [path, value] of iterable) {
+    for (const [path, value] of elements) {
         mutableUpdate(tree, path, value);
     }
 
@@ -133,27 +133,23 @@ export function isEmpty<T>(tree: Trie<T>): boolean {
     return true;
 }
 
-export function* iterate<T>(tree: Trie<T>, root: string[] = []): Iterable<[string[], T]> {
+export function toArray<T>(tree: Trie<T>): [string[], T][] {
+    return collect(tree, [], []);
+}
+
+function collect<T>(tree: Trie<T>, root: string[], results: [string[], T][]): [string[], T][] {
     for (const key in tree) {
         const node = tree[key];
         const path = [...root, key];
 
         if (node.value !== undefined) {
-            yield [path, node.value];
+            results.push([path, node.value]);
         }
 
-        yield* iterate(node.children, path);
-    }
-}
-
-export function map<T, U>(tree: Trie<T>, selector: (path: string[], value: T) => U): Trie<U> {
-    const nxetTree = {};
-
-    for (const [path, value] of iterate(tree)) {
-        mutableUpdate(nxetTree, path, selector(path, value));
+        collect(node.children, path, results);
     }
 
-    return nxetTree;
+    return results;
 }
 
 function deleteObjectKey<T extends object>(source: T, key: keyof T): T {

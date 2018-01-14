@@ -7,7 +7,7 @@
         "experimentalDecorators": true,
         "importHelpers": true,
         "jsx": "react",
-        "lib": ["es2016", "es2017", "dom"],
+        "lib": ["es2015", "es2016", "es2017", "dom"],
         "module": "es2015",
         "moduleResolution": "node",
         "noFallthroughCasesInSwitch": true,
@@ -17,7 +17,7 @@
         "noUnusedLocals": true,
         "strictFunctionTypes": true,
         "strictNullChecks": true,
-        "target": "es2017"
+        "target": "es5"
     },
     "exclude": [
         "node_modules",

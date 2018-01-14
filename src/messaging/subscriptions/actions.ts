@@ -87,7 +87,7 @@ export function addToCategory(subscription: Subscription, labelToAdd: string): A
         try {
             const token = await dispatch(getFeedlyToken());
 
-            const labels = [...new Set([...subscription.labels, labelToAdd])];
+            const labels = Array.from(new Set([...subscription.labels, labelToAdd]));
             const categories = labels.map((label) => ({
                 id: `user/${token.id}/category/${label}`,
                 label

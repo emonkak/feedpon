@@ -13,9 +13,9 @@ export default function createStore<TState, TEvent>(
     function replaceState(nextState: TState): void {
         if (state !== nextState) {
             state = nextState;
-            for (const subscriber of subscribers) {
+            subscribers.forEach((subscriber) => {
                 subscriber(nextState);
-            }
+            });
         }
     }
 

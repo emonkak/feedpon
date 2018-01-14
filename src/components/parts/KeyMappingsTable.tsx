@@ -1,8 +1,4 @@
-import Enumerable from '@emonkak/enumerable';
 import React, { PureComponent } from 'react';
-
-import '@emonkak/enumerable/extensions/select';
-import '@emonkak/enumerable/extensions/toArray';
 
 import * as Trie from 'utils/containers/Trie';
 import { Command, KeyMapping } from 'messaging/types';
@@ -29,9 +25,8 @@ export default class KeyMappingsTable extends PureComponent<KeyMappingsTableProp
     render() {
         const { keyMappings } = this.props;
 
-        const rows = new Enumerable(Trie.iterate(keyMappings))
-            .select(([keys, keyMapping]) => this.renderRow(keys, keyMapping))
-            .toArray();
+        const rows = Trie.toArray(keyMappings)
+            .map(([keys, keyMapping]) => this.renderRow(keys, keyMapping));
 
         return (
             <table className="table">

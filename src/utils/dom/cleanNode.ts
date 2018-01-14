@@ -31,13 +31,13 @@ function cleanElement(element: Element, baseUrl: string): boolean {
         return false;
     }
 
-    for (const attrName of URI_ATTRS) {
+    for (const attrName in URI_ATTRS) {
         if (element.hasAttribute(attrName)) {
             element.setAttribute(attrName, qualifyUrl(element.getAttribute(attrName)!, baseUrl));
         }
     }
 
-    for (const attrName of SRCSET_ATTRS) {
+    for (const attrName in SRCSET_ATTRS) {
         if (element.hasAttribute(attrName)) {
             element.setAttribute(attrName, qualifySrcset(element.getAttribute(attrName)!, baseUrl));
         }

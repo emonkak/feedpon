@@ -29,7 +29,6 @@ const config = {
             {
                 test: /\.tsx?$/,
                 use: [
-                    'babel-loader',
                     'ts-loader'
                 ]
             }
