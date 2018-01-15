@@ -8,7 +8,7 @@ interface MainLayoutProps {
 export default class MainLayout extends PureComponent<MainLayoutProps, {}> {
     static defaultProps = {
         footer: (
-            <div className="u-margin-top-2 u-margin-bottom-2">
+            <footer className="u-margin-top-4 u-margin-bottom-4">
                 <div className="u-text-center">
                     <small>Copyright &copy; 2017 Shota Nozaki</small>
                 </div>
@@ -18,7 +18,7 @@ export default class MainLayout extends PureComponent<MainLayoutProps, {}> {
                         <li className="list-inline-item"><a href="https://github.com/emonkak/feedpon/issues" target="_blank">Issues</a></li>
                     </ul>
                 </div>
-            </div>
+            </footer>
         )
     };
 

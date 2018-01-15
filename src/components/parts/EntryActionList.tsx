@@ -1,8 +1,7 @@
 import React from 'react';
 import classnames from 'classnames';
 
-import Dropdown from 'components/widgets/Dropdown';
-import { MenuItem } from 'components/widgets/Menu';
+import EntryShareButton from 'components/parts/EntryShareButton';
 
 interface EntryActionListProps {
     commentsIsLoading: boolean;
@@ -27,41 +26,7 @@ const EntryActionList: React.SFC<EntryActionListProps> = ({
                 onClick={onToggleComments}>
                 <i className={classnames('icon icon-20', commentsIsLoading ? 'icon-spinner a-rotating' : 'icon-comments')} />
             </button>
-            <Dropdown
-                className="button-group"
-                toggleButton={
-                    <button
-                        className="button button-pill button-outline-default"
-                        title="Share...">
-                        <i className="icon icon-20 icon-share" />
-                    </button>
-                }>
-                <MenuItem
-                    href={'https://twitter.com/intent/tweet?text=' + encodeURIComponent(title + ' ' + url)}
-                    target="_blank"
-                    primaryText="Share to Twitter"
-                    icon={<i className="icon icon-20 icon-twitter" />} />
-                <MenuItem
-                    href={'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url)}
-                    target="_blank"
-                    primaryText="Share to Facebook"
-                    icon={<i className="icon icon-20 icon-facebook" />} />
-                <MenuItem
-                    href={'http://b.hatena.ne.jp/add?mode=confirm&title=' + encodeURIComponent(title) + '&url=' + encodeURIComponent(url)}
-                    target="_blank"
-                    primaryText="Save to Hatena Bookmark"
-                    icon={<i className="icon icon-20 icon-hatena-bookmark" />} />
-                <MenuItem
-                    href={'https://getpocket.com/save?url=' + encodeURIComponent(url) + "&title=" + encodeURIComponent(title)}
-                    target="_blank"
-                    primaryText="Save to Pocket"
-                    icon={<i className="icon icon-20 icon-pocket" />} />
-                <MenuItem
-                    href={'http://www.instapaper.com/text?u=' + encodeURIComponent(url)}
-                    target="_blank"
-                    primaryText="Save to Instapaper"
-                    icon={<i className="icon icon-20 icon-instapaper" />} />
-            </Dropdown>
+            <EntryShareButton url={url} title={title} />
             <a
                 className="button button-pill button-outline-default"
                 href={url}

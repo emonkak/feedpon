@@ -1,0 +1,4 @@
+.authentication {
+  margin: calc(var(--baseline-height) * 4) 0 var(--baseline-height);
+  --container-width: 480px;
+}

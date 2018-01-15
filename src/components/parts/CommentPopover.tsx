@@ -16,7 +16,7 @@ const CommentPopover: React.SFC<CommentPopoverProps> = ({
 }) => {
     if (isLoading) {
         return (
-            <div className="popover popover-default popover-bottom">
+            <div className="popover popover-default is-pull-down">
                 <div className="popover-arrow" style={{ left: `calc(50% + ${arrowOffset}px)` }} />
                 <div className="popover-content">
                     <div className="comment">
@@ -34,7 +34,7 @@ const CommentPopover: React.SFC<CommentPopoverProps> = ({
         : 'No comments yet in this entry.';
 
     return (
-        <div className="popover popover-default popover-bottom">
+        <div className="popover popover-default is-pull-down">
             <div className="popover-arrow" style={{ left: 'calc(50% - 44px)' }} />
             <div className="popover-content">
                 {commentItems}

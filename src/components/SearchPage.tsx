@@ -155,7 +155,7 @@ class SearchPage extends PureComponent<SearchPageProps, {}> {
         const { params } = this.props;
 
         return (
-            <div className="container u-margin-top-1 u-margin-bottom-2">
+            <div className="container u-margin-top-2 u-margin-bottom-4">
                 <h1 className="display-1">Search for feeds to subscribe</h1>
                 <form className="form" onSubmit={this.handleSearch}>
                     <div className="input-group">

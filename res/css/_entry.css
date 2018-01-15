@@ -11,7 +11,6 @@
 }
 
 .entry {
-  position: relative;
   padding: calc(var(--baseline-height) / 2) 0 calc(var(--baseline-height) / 2 - 1px);
   border-bottom: 1px solid var(--medium-dark-color);
   transition: box-shadow 0.2s ease-in-out;
@@ -25,7 +24,6 @@
 .entry.is-active {
   box-shadow: 0 2px 18px var(--shadow-color),
               0 0 6px var(--shadow-color);
-  z-index: 10;
 }
 
 .entry.is-pinned {

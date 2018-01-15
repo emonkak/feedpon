@@ -1,6 +1,5 @@
 import CSSTransitionGroup from 'react-addons-css-transition-group';
 import React, { PureComponent, cloneElement } from 'react';
-import classnames from 'classnames';
 import { findDOMNode } from 'react-dom';
 
 import Closable from 'components/widgets/Closable';
@@ -17,12 +16,7 @@ interface DropdownProps {
 
 interface DropdownState {
     isOpened: boolean;
-    left: string | null;
-    right: string | null;
-    bottom: string | null;
-    top: string | null;
-    maxHeight: string | null;
-    maxWidth: string | null;
+    dropdownStyle: React.CSSProperties;
 }
 
 export default class Dropdown extends PureComponent<DropdownProps, DropdownState> {
@@ -37,35 +31,23 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
 
         this.state = {
             isOpened: false,
-            top: null,
-            bottom: null,
-            left: null,
-            right: null,
-            maxWidth: null,
-            maxHeight: null
+            dropdownStyle: {}
         };
     }
 
     render() {
         const { className, component } = this.props;
-        const { isOpened, top, right, left, bottom, maxWidth, maxHeight } = this.state;
+        const { isOpened, dropdownStyle } = this.state;
 
         const Component = component!;
 
         return (
-            <Component className={classnames('dropdown', className)}>
+            <Component className={className}>
                 {this._renderToggleButton()}
                 <CSSTransitionGroup
                     component="div"
-                    className="dropdown-menu"
-                    style={{
-                        left,
-                        right,
-                        top,
-                        bottom,
-                        maxWidth,
-                        maxHeight
-                    }}
+                    className="dropdown"
+                    style={dropdownStyle}
                     transitionEnterTimeout={200}
                     transitionLeaveTimeout={200}
                     transitionName="menu">
@@ -118,37 +100,27 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
         const leftSpace = containerRect.left;
         const rightSpace = viewportWidth - containerRect.right;
 
-        let left: string | null = null;
-        let right: string | null = null;
-        let top: string | null = null;
-        let bottom: string | null = null;
-        let maxWidth: string | null = null;
-        let maxHeight: string | null = null;
+        let dropdownStyle: React.CSSProperties = {};
 
         if (leftSpace <= rightSpace) {
-            left = containerRect.left + 'px';
-            maxWidth = `calc(100% - ${containerRect.left}px)`;
+            dropdownStyle.left = containerRect.left;
+            dropdownStyle.maxWidth = `calc(100% - ${containerRect.left}px)`;
         } else {
-            right = `calc(100% - ${containerRect.right}px)`;
-            maxWidth = `calc(100% - (100% - ${containerRect.right}px))`;
+            dropdownStyle.right = `calc(100% - ${containerRect.right}px)`;
+            dropdownStyle.maxWidth = `calc(100% - (100% - ${containerRect.right}px))`;
         }
 
         if (topSpace <= bottomSpace) {
-            top = containerRect.bottom + 'px';
-            maxHeight = `calc(100% - ${containerRect.bottom}px)`;
+            dropdownStyle.top = containerRect.bottom;
+            dropdownStyle.maxHeight = `calc(100% - ${containerRect.bottom}px)`;
         } else {
-            bottom = `calc(100% - ${containerRect.top}px)`;
-            maxHeight = `calc(100% - (100% - ${containerRect.top}px))`;
+            dropdownStyle.bottom = `calc(100% - ${containerRect.top}px)`;
+            dropdownStyle.maxHeight = `calc(100% - (100% - ${containerRect.top}px))`;
         }
 
         this.setState({
             isOpened: true,
-            left,
-            right,
-            top,
-            bottom,
-            maxWidth,
-            maxHeight
+            dropdownStyle
         });
     }
 

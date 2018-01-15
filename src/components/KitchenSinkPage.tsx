@@ -128,7 +128,7 @@ class KitchenSinkPage extends PureComponent<KitchenSinkProps, KitchenSinkState> 
                 </p>
 
                 <h2>Group Button</h2>
-                <div className="button-toolbar u-margin-bottom-1">
+                <div className="button-toolbar u-margin-bottom-2">
                     <span className="button-group">
                         <button className="button button-default">First</button>
                         <button className="button button-default">Second</button>
@@ -142,7 +142,7 @@ class KitchenSinkPage extends PureComponent<KitchenSinkProps, KitchenSinkState> 
                 </div>
 
                 <h2>Badge</h2>
-                <div className="button-toolbar u-margin-bottom-1">
+                <div className="button-toolbar u-margin-bottom-2">
                     <span className="badge badge-small badge-default">Default</span>
                     <span className="badge badge-small badge-positive">Positive</span>
                     <span className="badge badge-small badge-negative">Negative</span>
@@ -155,7 +155,7 @@ class KitchenSinkPage extends PureComponent<KitchenSinkProps, KitchenSinkState> 
                 </div>
 
                 <h2>Pill Badge</h2>
-                <div className="button-toolbar u-margin-bottom-1">
+                <div className="button-toolbar u-margin-bottom-2">
                     <span className="badge badge-small badge-pill badge-default">12</span>
                     <span className="badge badge-small badge-pill badge-positive">34</span>
                     <span className="badge badge-small badge-pill badge-negative">56</span>
@@ -173,7 +173,7 @@ class KitchenSinkPage extends PureComponent<KitchenSinkProps, KitchenSinkState> 
                 <p><em>Lorem Ipsum</em> is simply dummy text of the printing and typesetting industry. <strong>Lorem Ipsum</strong> has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
 
                 <h2>Navigation</h2>
-                <div className="u-margin-bottom-1">
+                <div className="u-margin-bottom-2">
                     <nav className="nav">
                         <a className="nav-item" href="#">First</a>
                         <a className="nav-item is-selected" href="#">Second</a>
@@ -182,37 +182,37 @@ class KitchenSinkPage extends PureComponent<KitchenSinkProps, KitchenSinkState> 
                 </div>
 
                 <h2>Popover</h2>
-                <div className="popover popover-default popover-bottom">
+                <div className="popover popover-default is-pull-down">
                     <div className="popover-arrow" />
                     <div className="popover-content">
                         <p>Popover Content</p>
                     </div>
                 </div>
-                <div className="popover popover-positive popover-bottom">
+                <div className="popover popover-positive is-pull-down">
                     <div className="popover-arrow" />
                     <div className="popover-content">
                         <p>Popover Content</p>
                     </div>
                 </div>
-                <div className="popover popover-negative popover-bottom">
+                <div className="popover popover-negative is-pull-down">
                     <div className="popover-arrow" />
                     <div className="popover-content">
                         <p>Popover Content</p>
                     </div>
                 </div>
-                <div className="popover popover-default popover-top">
+                <div className="popover popover-default is-pull-up">
                     <div className="popover-arrow" />
                     <div className="popover-content">
                         <p>Popover Content</p>
                     </div>
                 </div>
-                <div className="popover popover-positive popover-top">
+                <div className="popover popover-positive is-pull-up">
                     <div className="popover-arrow" />
                     <div className="popover-content">
                         <p>Popover Content</p>
                     </div>
                 </div>
-                <div className="popover popover-negative popover-top">
+                <div className="popover popover-negative is-pull-up">
                     <div className="popover-arrow" />
                     <div className="popover-content">
                         <p>Popover Content</p>
@@ -220,7 +220,7 @@ class KitchenSinkPage extends PureComponent<KitchenSinkProps, KitchenSinkState> 
                 </div>
 
                 <h2>Dropdown</h2>
-                <div className="u-margin-bottom-1">
+                <div className="u-margin-bottom-2">
                     <Dropdown
                         toggleButton={<button className="button button-outline-default dropdown-arrow">Dropdown</button>}>
                         <MenuItem primaryText="First Action" secondaryText="First"></MenuItem>

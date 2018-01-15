@@ -15,21 +15,6 @@
   outline: none;
 }
 
-.menu-enter.menu-enter-active,
-.menu-leave.menu-leave-active {
-  transition: opacity 0.2s ease-in-out;
-}
-
-.menu-enter,
-.menu-leave.menu-leave-active {
-  opacity: 0;
-}
-
-.menu-enter.menu-enter-active,
-.menu-leave {
-  opacity: 1;
-}
-
 .menu-item,
 a.menu-item {
   display: flex;
@@ -104,4 +89,19 @@ a.menu-item.is-disabled {
   margin: calc(var(--baseline-height) / 4) 0 calc(var(--baseline-height) / 4 - 1px);
   overflow: hidden;
   background-color: var(--medium-dark-color);
+}
+
+.menu-enter.menu-enter-active,
+.menu-leave.menu-leave-active {
+  transition: opacity 0.2s ease-in-out;
+}
+
+.menu-enter,
+.menu-leave.menu-leave-active {
+  opacity: 0;
+}
+
+.menu-enter.menu-enter-active,
+.menu-leave {
+  opacity: 1;
 }

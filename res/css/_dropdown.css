@@ -1,25 +1,16 @@
 .dropdown {
-  display: inline-block;
-  position: relative;
-}
-
-.dropdown-block {
-  display: block;
-  position: relative;
-}
-
-.dropdown-menu {
   position: fixed;
   display: flex;
   align-items: stretch;
   z-index: 2000;
 }
 
-.dropdown-menu > .menu {
+.dropdown > .menu {
   width: 100%;
   min-width: 192px;
   max-width: 480px;
   overflow-y: auto;
+  box-shadow: 0 1px 2px var(--shadow-color);
 }
 
 .dropdown-arrow::after,

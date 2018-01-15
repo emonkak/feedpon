@@ -36,6 +36,7 @@
   margin: 0 0 var(--baseline-height);
   background-color: var(--x-light-color);
   border-radius: 4px;
+  box-shadow: 0 1px 2px var(--shadow-color);
 }
 
 .modal-dialog > *:last-child {

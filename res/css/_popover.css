@@ -5,73 +5,88 @@
   border-radius: 4px;
 }
 
-.popover-arrow {
-  display: block;
-  position: absolute;
-  left: 50%;
-  width: 16px;
-  height: 16px;
-  box-sizing: border-box;
-  border: 1px solid transparent;
-  transition: left 0.2s ease-in-out;
-}
-
-.popover-arrow::before {
-  content: '';
-  display: block;
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -1;
-}
-
-.popover-default,
-.popover-default .popover-arrow {
-  background-color: var(--default-background-color);
-  border-color: var(--default-border-color);
-}
-
-.popover-positive,
-.popover-positive .popover-arrow {
-  background-color: var(--positive-background-color);
-  border-color: var(--positive-border-color);
-}
-
-.popover-negative,
-.popover-negative .popover-arrow {
-  background-color: var(--negative-background-color);
-  border-color: var(--negative-border-color);
-}
-
-.popover-top .popover-arrow {
-  bottom: 0;
-  transform: translate(-50%, 50%) rotate(-45deg);
-  border-top-color: transparent;
-  border-right-color: transparent;
-}
-
-.popover-top .popover-arrow::before {
-  clip-path: polygon(-100% -100%, -100% 200%, 200% 200%);
-}
-
-.popover-bottom .popover-arrow {
-  top: 0;
-  transform: translate(-50%, -50%) rotate(-45deg);
-  border-bottom-color: transparent;
-  border-left-color: transparent;
-}
-
-.popover-bottom .popover-arrow::before {
-  clip-path: polygon(-100% -100%, 200% -100%, 200% 200%)
-}
-
 .popover-content {
-  position: relative;
   padding: calc(var(--baseline-height) / 2 - 1px) calc(1.5em - 1px);
 }
 
 .popover-content > p:last-child {
   margin-bottom: 0;
+}
+
+.popover-arrow {
+  display: block;
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  box-sizing: border-box;
+  border: 1px solid transparent;
+}
+
+.popover-default,
+.popover-default > .popover-arrow {
+  background-color: var(--default-background-color);
+  border-color: var(--default-border-color);
+}
+
+.popover-positive,
+.popover-positive > .popover-arrow {
+  background-color: var(--positive-background-color);
+  border-color: var(--positive-border-color);
+}
+
+.popover-negative,
+.popover-negative > .popover-arrow {
+  background-color: var(--negative-background-color);
+  border-color: var(--negative-border-color);
+}
+
+.popover.is-pull-up > .popover-arrow {
+  bottom: 0;
+  left: 50%;
+  transform: translate(-50%, 50%) rotate(-45deg);
+  border-top-color: transparent;
+  border-right-color: transparent;
+  clip-path: polygon(-100% -100%, -100% 200%, 200% 200%);
+}
+
+.popover.is-pull-down > .popover-arrow {
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-45deg);
+  border-bottom-color: transparent;
+  border-left-color: transparent;
+  clip-path: polygon(-100% -100%, 200% -100%, 200% 200%);
+}
+
+.popover.is-pull-left > .popover-arrow {
+  top: 50%;
+  right: 0;
+  transform: translate(50%, -50%) rotate(-45deg);
+  border-left-color: transparent;
+  border-top-color: transparent;
+  clip-path: polygon(200% -100%, 200% 200%, -100% 200%);
+}
+
+.popover.is-pull-right > .popover-arrow {
+  top: 50%;
+  left: 0;
+  transform: translate(-50%, -50%) rotate(-45deg);
+  border-right-color: transparent;
+  border-bottom-color: transparent;
+  clip-path: polygon(200% -100%, -100% -100%, -100% 200%);
+}
+
+.popover-enter.popover-enter-active,
+.popover-leave.popover-leave-active {
+  transition: opacity 0.2s ease-in-out;
+}
+
+.popover-enter,
+.popover-leave.popover-leave-active {
+  opacity: 0;
+}
+
+.popover-enter.popover-enter-active,
+.popover-leave {
+  opacity: 1;
 }

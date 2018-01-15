@@ -1,0 +1,49 @@
+.popup {
+  position: fixed;
+  display: flex;
+  align-items: stretch;
+  z-index: 2000;
+  box-sizing: border-box;
+}
+
+.popup.is-pull-up {
+  padding-bottom: 16px;
+}
+
+.popup.is-pull-down {
+  padding-top: 16px;
+}
+
+.popup.is-pull-left {
+  padding-right: 16px;
+}
+
+.popup.is-pull-right {
+  padding-left: 16px;
+}
+
+.popup.is-pull-up,
+.popup.is-pull-down {
+  transform: translateX(-50%);
+}
+
+.popup.is-pull-left,
+.popup.is-pull-right {
+  transform: translateY(-50%);
+}
+
+.popup > .popover {
+  display: flex;
+  align-items: stretch;
+  margin: 0;
+}
+
+.popup > .popover > .popover-content {
+  overflow: scroll;
+  box-sizing: border-box;
+}
+
+.popup > .popover,
+.popup > .popover > .popover-arrow {
+  box-shadow: 0 1px 2px var(--shadow-color);
+}

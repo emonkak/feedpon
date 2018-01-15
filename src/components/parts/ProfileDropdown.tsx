@@ -51,7 +51,6 @@ export default class ProfileDropdown extends PureComponent<ProfileDropdownProps,
 
         return <>
             <Dropdown
-                className="dropdown-block"
                 toggleButton={
                     <button
                         className="button button-outline-default button-block"
