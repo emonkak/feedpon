@@ -3,13 +3,6 @@ import React, { PureComponent } from 'react';
 import { Link } from 'react-router';
 import { findDOMNode } from 'react-dom';
 
-const menuContext = {
-    menu: PropTypes.shape({
-        onClose: PropTypes.func.isRequired,
-        onSelect: PropTypes.func.isRequired
-    }).isRequired
-};
-
 interface MenuContext {
     menu: {
         onClose: () => void,
@@ -20,92 +13,8 @@ interface MenuContext {
 interface MenuProps {
     children?: React.ReactNode;
     onClose?: () => void;
-
     onKeyDown?: (event: React.KeyboardEvent<any>) => void;
     onSelect?: (value?: any) => void;
-}
-
-export class Menu extends PureComponent<MenuProps, {}> {
-    static defaultProps = {
-        onClose: () => ({}),
-        onSelect: () => ({})
-    };
-
-    static childContextTypes = menuContext;
-
-    constructor(props: MenuProps, context: any) {
-        super(props, context);
-
-        this.handleKeyDown = this.handleKeyDown.bind(this);
-    }
-
-    getChildContext(): MenuContext {
-        const { onClose, onSelect } = this.props;
-
-        return {
-            menu: {
-                onClose: onClose!,
-                onSelect: onSelect!
-            }
-        };
-    }
-
-    focusPrevious() {
-        const { activeIndex, elements } = this.getFocusableElements();
-
-        if (elements.length > 0) {
-            const previousIndex = activeIndex > 0 ? activeIndex - 1 : elements.length - 1;
-            const previousElement = elements[previousIndex];
-
-            if (previousElement instanceof HTMLElement) {
-                previousElement.focus();
-            }
-        }
-    }
-
-    focusNext() {
-        const { activeIndex, elements } = this.getFocusableElements();
-
-        if (elements.length > 0) {
-            const nextIndex = activeIndex < elements.length - 1 ? activeIndex + 1 : 0;
-            const nextElement = elements[nextIndex];
-
-            if (nextElement instanceof HTMLElement) {
-                nextElement.focus();
-            }
-        }
-    }
-
-    getFocusableElements() {
-        const container = findDOMNode(this);
-        const elements = Array.from(container.querySelectorAll('.menu-item:not(.is-disabled)'));
-
-        const { activeElement } = document;
-        const activeIndex = elements.findIndex((el) => el.contains(activeElement));
-
-        return { activeIndex, elements };
-    }
-
-    handleKeyDown(event: React.KeyboardEvent<any>) {
-        const { onKeyDown } = this.props;
-        const target = event.target as Element;
-
-        const DENY_TAG_NAMES = ['INPUT', 'SELECT', 'TEXTAREA'];
-
-        if (onKeyDown && !DENY_TAG_NAMES.includes(target.tagName)) {
-            onKeyDown(event);
-        }
-    }
-
-    render() {
-        const { children } = this.props;
-
-        return (
-            <div tabIndex={0} className="menu" onKeyDown={this.handleKeyDown}>
-                {children}
-            </div>
-        );
-    }
 }
 
 interface MenuItemProps {
@@ -119,6 +28,96 @@ interface MenuItemProps {
     value?: any;
 }
 
+interface MenuLinkProps {
+    icon?: React.ReactNode;
+    isDisabled?: boolean;
+    primaryText: string;
+    secondaryText?: string;
+    to: string;
+}
+
+interface MenuFormProps {
+    onSubmit?: React.FormEventHandler<HTMLFormElement>;
+}
+
+const menuContext = {
+    menu: PropTypes.shape({
+        onClose: PropTypes.func.isRequired,
+        onSelect: PropTypes.func.isRequired
+    }).isRequired
+};
+
+export class Menu extends PureComponent<MenuProps, {}> {
+    static defaultProps = {
+        onClose: () => ({}),
+        onSelect: () => ({})
+    };
+
+    static childContextTypes = menuContext;
+
+    getChildContext(): MenuContext {
+        const { onClose, onSelect } = this.props;
+
+        return {
+            menu: {
+                onClose: onClose!,
+                onSelect: onSelect!
+            }
+        };
+    }
+
+    focusPrevious(): void {
+        const { activeIndex, elements } = this._getFocusableElements();
+
+        if (elements.length > 0) {
+            const previousIndex = activeIndex > 0 ? activeIndex - 1 : elements.length - 1;
+            const previousElement = elements[previousIndex];
+            previousElement.focus();
+        }
+    }
+
+    focusNext(): void {
+        const { activeIndex, elements } = this._getFocusableElements();
+
+        if (elements.length > 0) {
+            const nextIndex = activeIndex < elements.length - 1 ? activeIndex + 1 : 0;
+            const nextElement = elements[nextIndex];
+            nextElement.focus();
+        }
+    }
+
+    render() {
+        const { children } = this.props;
+
+        return (
+            <div tabIndex={0} className="menu" onKeyDown={this._handleKeyDown}>
+                {children}
+            </div>
+        );
+    }
+
+    private _getFocusableElements(): { activeIndex: number, elements: HTMLElement[] } {
+        const container = findDOMNode(this);
+        const elements = Array.from(container.querySelectorAll<HTMLElement>('.menu-item:not(.is-disabled)'));
+
+        const { activeElement } = document;
+        const activeIndex = elements.findIndex((el) => el.contains(activeElement));
+
+        return { activeIndex, elements };
+    }
+
+    private _handleKeyDown = (event: React.KeyboardEvent<any>): void => {
+        const { onKeyDown } = this.props;
+        const target = event.target as Element;
+
+        const DENY_TAG_NAMES = ['INPUT', 'SELECT', 'TEXTAREA'];
+
+        if (onKeyDown && !DENY_TAG_NAMES.includes(target.tagName)) {
+            onKeyDown(event);
+        }
+    }
+}
+
 export class MenuItem extends PureComponent<MenuItemProps, {}> {
     static defaultProps = {
         href: '#',
@@ -129,32 +128,12 @@ export class MenuItem extends PureComponent<MenuItemProps, {}> {
 
     context: MenuContext;
 
-    constructor(props: MenuItemProps, context: any) {
-        super(props, context);
-
-        this.handleSelect = this.handleSelect.bind(this);
-    }
-
-    handleSelect(event: React.MouseEvent<any>) {
-        const { onSelect, value, href } = this.props;
-
-        if (href === '#') {
-            event.preventDefault();
-        }
-
-        if (onSelect) {
-            onSelect(value);
-        }
-
-        this.context.menu.onSelect(value);
-    }
-
     render() {
         const { href, icon, isDisabled, primaryText, secondaryText, target } = this.props;
 
-        const iconElement = icon ? <span className="menu-item-icon">{icon}</span> : null;
+        const iconElement = icon && <span className="menu-item-icon">{icon}</span>;
         const primaryTextElement = <span className="menu-item-primary-text">{primaryText}</span>;
-        const secondaryTextElement = <span className="menu-item-secondary-text">{secondaryText}</span>;
+        const secondaryTextElement = secondaryText && <span className="menu-item-secondary-text">{secondaryText}</span>;
 
         if (isDisabled) {
             return (
@@ -171,7 +150,7 @@ export class MenuItem extends PureComponent<MenuItemProps, {}> {
                     title={primaryText}
                     target={target}
                     href={href}
-                    onClick={this.handleSelect}>
+                    onClick={this._handleSelect}>
                     {iconElement}
                     {primaryTextElement}
                     {secondaryTextElement}
@@ -179,14 +158,20 @@ export class MenuItem extends PureComponent<MenuItemProps, {}> {
             );
         }
     }
-}
 
-interface MenuLinkProps {
-    icon?: React.ReactNode;
-    isDisabled?: boolean;
-    primaryText: string;
-    secondaryText?: string;
-    to: string;
+    private _handleSelect = (event: React.MouseEvent<any>): void => {
+        const { onSelect, value, href } = this.props;
+
+        if (href === '#') {
+            event.preventDefault();
+        }
+
+        if (onSelect) {
+            onSelect(value);
+        }
+
+        this.context.menu.onSelect(value);
+    }
 }
 
 export class MenuLink extends PureComponent<MenuLinkProps, {}> {
@@ -201,9 +186,9 @@ export class MenuLink extends PureComponent<MenuLinkProps, {}> {
     render() {
         const { icon, isDisabled, primaryText, secondaryText, to } = this.props;
 
-        const iconElement = icon ? <span className="menu-item-icon">{icon}</span> : null;
+        const iconElement = icon && <span className="menu-item-icon">{icon}</span>;
         const primaryTextElement = <span className="menu-item-primary-text">{primaryText}</span>;
-        const secondaryTextElement = <span className="menu-item-secondary-text">{secondaryText}</span>;
+        const secondaryTextElement = secondaryText && <span className="menu-item-secondary-text">{secondaryText}</span>;
 
         if (isDisabled) {
             return (
@@ -229,22 +214,24 @@ export class MenuLink extends PureComponent<MenuLinkProps, {}> {
     }
 }
 
-interface MenuFormProps {
-    onSubmit?: React.FormEventHandler<HTMLFormElement>;
-}
-
 export class MenuForm extends PureComponent<MenuFormProps, {}> {
     static contextTypes = menuContext;
 
     context: MenuContext;
 
-    constructor(props: MenuFormProps, context: any) {
-        super(props, context);
+    render() {
+        const { children } = this.props;
 
-        this.handleSubmit = this.handleSubmit.bind(this);
+        return (
+            <form
+                className="menu-form"
+                onSubmit={this._handleSubmit}>
+                {children}
+            </form>
+        );
     }
 
-    handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    private _handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
         event.preventDefault();
 
         const { onSubmit } = this.props;
@@ -254,17 +241,5 @@ export class MenuForm extends PureComponent<MenuFormProps, {}> {
         }
 
         this.context.menu.onClose();
-    }
-
-    render() {
-        const { children } = this.props;
-
-        return (
-            <form
-                className="menu-form"
-                onSubmit={this.handleSubmit}>
-                {children}
-            </form>
-        );
     }
 }

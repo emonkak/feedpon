@@ -9,36 +9,17 @@
 }
 
 .dropdown-menu {
+  position: fixed;
   display: flex;
   align-items: stretch;
-  position: absolute;
-  top: 100%;
-  left: 0;
-  min-width: 192px;
-  max-width: 480px;
-  max-height: calc(100vh - 100%);
   z-index: 2000;
 }
 
 .dropdown-menu > .menu {
   width: 100%;
+  min-width: 192px;
+  max-width: 480px;
   overflow-y: auto;
-}
-
-@media (--sm-viewport) {
-  .dropdown-menu {
-    max-width: calc(100vw - 100%);
-  }
-}
-
-.dropdown-menu.is-pull-right {
-  left: auto;
-  right: 0;
-}
-
-.dropdown-menu.is-pull-up {
-  top: auto;
-  bottom: 100%;
 }
 
 .dropdown-arrow::after,

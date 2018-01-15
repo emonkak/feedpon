@@ -10,19 +10,13 @@ interface ClosableProps {
 export default class Closable extends PureComponent<ClosableProps, {}> {
     static defaultProps = {
         isDisabled: false
-    }
-
-    constructor(props: ClosableProps, context: any) {
-        super(props, context);
-
-        this.handleMouseCapture = this.handleMouseCapture.bind(this);
-    }
+    };
 
     componentDidMount() {
         const { isDisabled } = this.props;
 
         if (!isDisabled) {
-            this.registerDocumentListeners();
+            this._registerDocumentListeners();
         }
     }
 
@@ -31,9 +25,9 @@ export default class Closable extends PureComponent<ClosableProps, {}> {
 
         if (prevProps.isDisabled !== isDisabled) {
             if (isDisabled) {
-                this.unregisterDocumentListeners();
+                this._unregisterDocumentListeners();
             } else {
-                this.registerDocumentListeners();
+                this._registerDocumentListeners();
             }
         }
     }
@@ -42,31 +36,32 @@ export default class Closable extends PureComponent<ClosableProps, {}> {
         const { isDisabled } = this.props;
 
         if (!isDisabled) {
-            this.unregisterDocumentListeners();
+            this._unregisterDocumentListeners();
         }
-    }
-
-    handleMouseCapture(event: MouseEvent) {
-        const { onClose } = this.props;
-
-        if (onClose) {
-            const node = findDOMNode(this);
-
-            if (!node.contains(event.target as Node)) {
-                onClose();
-            }
-        }
-    }
-
-    registerDocumentListeners() {
-        document.addEventListener('click', this.handleMouseCapture);
-    }
-
-    unregisterDocumentListeners() {
-        document.removeEventListener('click', this.handleMouseCapture);
     }
 
     render() {
         return Children.only(this.props.children);
     }
+
+    private _registerDocumentListeners(): void {
+        document.addEventListener('click', this._handleMouseCapture);
+    }
+
+    private _unregisterDocumentListeners(): void {
+        document.removeEventListener('click', this._handleMouseCapture);
+    }
+
+    private _handleMouseCapture = (event: MouseEvent): void => {
+        const { onClose } = this.props;
+
+        if (onClose) {
+            const target = event.target as HTMLElement;
+            const container = findDOMNode(this) as HTMLElement;
+
+            if (!container.contains(target) && target.offsetParent !== null) {
+                onClose();
+            }
+        }
+    };
 }

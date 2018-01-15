@@ -5,70 +5,181 @@ import { findDOMNode } from 'react-dom';
 
 import Closable from 'components/widgets/Closable';
 import createChainedFunction from 'utils/createChainedFunction';
-import getScrollableParent from 'utils/dom/getScrollableParent';
 import { Menu } from 'components/widgets/Menu';
 
 interface DropdownProps {
     className?: string;
     component?: React.ReactType;
-    getScrollableParent?: (element: Element) => Element | Window;
     onClose?: () => void;
     onSelect?: (value?: any) => void;
-    pullRight?: boolean;
-    pullUp?: boolean;
     toggleButton: React.ReactElement<any>;
 }
 
 interface DropdownState {
     isOpened: boolean;
-    pullRight: boolean;
-    pullUp: boolean;
+    left: string | null;
+    right: string | null;
+    bottom: string | null;
+    top: string | null;
+    maxHeight: string | null;
+    maxWidth: string | null;
 }
 
 export default class Dropdown extends PureComponent<DropdownProps, DropdownState> {
     static defaultProps = {
         component: 'div',
-        getScrollableParent
     };
 
-    private containerElement: Element;
-
-    private scrollable: Element | Window;
-
-    private menu: Menu | null;
+    private _menu: Menu | null;
 
     constructor(props: DropdownProps, context: any) {
         super(props, context);
 
         this.state = {
             isOpened: false,
-            pullRight: false,
-            pullUp: false
+            top: null,
+            bottom: null,
+            left: null,
+            right: null,
+            maxWidth: null,
+            maxHeight: null
         };
-
-        this.handleClose = this.handleClose.bind(this);
-        this.handleKeyDown = this.handleKeyDown.bind(this);
-        this.handleSelect = this.handleSelect.bind(this);
-        this.handleToggle = this.handleToggle.bind(this);
     }
 
-    componentDidMount() {
-        this.containerElement = findDOMNode(this);
-        this.scrollable = this.props.getScrollableParent!(this.containerElement);
+    render() {
+        const { className, component } = this.props;
+        const { isOpened, top, right, left, bottom, maxWidth, maxHeight } = this.state;
+
+        const Component = component!;
+
+        return (
+            <Component className={classnames('dropdown', className)}>
+                {this._renderToggleButton()}
+                <CSSTransitionGroup
+                    component="div"
+                    className="dropdown-menu"
+                    style={{
+                        left,
+                        right,
+                        top,
+                        bottom,
+                        maxWidth,
+                        maxHeight
+                    }}
+                    transitionEnterTimeout={200}
+                    transitionLeaveTimeout={200}
+                    transitionName="menu">
+                    {isOpened ? this._renderMenu() : null}
+                </CSSTransitionGroup>
+            </Component>
+        );
     }
 
-    handleClose() {
+    private _renderToggleButton() {
+        const { toggleButton } = this.props;
+
+        return cloneElement(toggleButton, {
+            ...toggleButton.props,
+            onClick: createChainedFunction(
+                toggleButton.props.onClick,
+                this._handleToggle
+            ),
+            onKeyDown: createChainedFunction(
+                toggleButton.props.onKeyDown,
+                this._handleKeyDown
+            )
+        });
+    }
+
+    private _renderMenu() {
+        const { children } = this.props;
+
+        return (
+            <Closable onClose={this._handleClose}>
+                <Menu
+                    ref={this._handleMenuRef}
+                    onKeyDown={this._handleKeyDown}
+                    onSelect={this._handleSelect}
+                    onClose={this._handleClose}>
+                    {children}
+                </Menu>
+            </Closable>
+        );
+    }
+
+    private _openDropdown() {
+        const container = findDOMNode(this);
+        const containerRect = container.getBoundingClientRect();
+        const viewportHeight =  window.innerHeight;
+        const viewportWidth = window.innerWidth;
+
+        const topSpace = containerRect.top;
+        const bottomSpace = viewportHeight - containerRect.bottom;
+        const leftSpace = containerRect.left;
+        const rightSpace = viewportWidth - containerRect.right;
+
+        let left: string | null = null;
+        let right: string | null = null;
+        let top: string | null = null;
+        let bottom: string | null = null;
+        let maxWidth: string | null = null;
+        let maxHeight: string | null = null;
+
+        if (leftSpace <= rightSpace) {
+            left = containerRect.left + 'px';
+            maxWidth = `calc(100% - ${containerRect.left}px)`;
+        } else {
+            right = `calc(100% - ${containerRect.right}px)`;
+            maxWidth = `calc(100% - (100% - ${containerRect.right}px))`;
+        }
+
+        if (topSpace <= bottomSpace) {
+            top = containerRect.bottom + 'px';
+            maxHeight = `calc(100% - ${containerRect.bottom}px)`;
+        } else {
+            bottom = `calc(100% - ${containerRect.top}px)`;
+            maxHeight = `calc(100% - (100% - ${containerRect.top}px))`;
+        }
+
+        this.setState({
+            isOpened: true,
+            left,
+            right,
+            top,
+            bottom,
+            maxWidth,
+            maxHeight
+        });
+    }
+
+    private _closeDropdown() {
         const { onClose } = this.props;
 
         if (onClose) {
             onClose();
         }
 
-        this.closeDropdown();
+        this.setState({
+            isOpened: false,
+        });
     }
 
-    handleKeyDown(event: React.KeyboardEvent<any>) {
-        if (!this.menu) {
+    private _handleMenuRef = (menu: Menu | null): void => {
+        this._menu = menu;
+    };
+
+    private _handleClose = (): void => {
+        const { onClose } = this.props;
+
+        if (onClose) {
+            onClose();
+        }
+
+        this._closeDropdown();
+    };
+
+    private _handleKeyDown = (event: React.KeyboardEvent<any>): void => {
+        if (!this._menu) {
             return;
         }
 
@@ -77,141 +188,44 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
                 event.preventDefault();
                 event.stopPropagation();
                 event.nativeEvent.stopImmediatePropagation();
-                this.menu.focusPrevious();
+                this._menu.focusPrevious();
                 break;
 
             case 'ArrowDown':
                 event.preventDefault();
                 event.stopPropagation();
                 event.nativeEvent.stopImmediatePropagation();
-                this.menu.focusNext();
+                this._menu.focusNext();
                 break;
 
             case 'Escape':
                 event.preventDefault();
                 event.stopPropagation();
                 event.nativeEvent.stopImmediatePropagation();
-                this.handleClose();
+                this._handleClose();
                 break;
         }
-    }
+    };
 
-    handleSelect(value?: any) {
-        const { onClose, onSelect } = this.props;
-
-        if (onClose) {
-            onClose();
-        }
+    private _handleSelect = (value?: any): void => {
+        const { onSelect } = this.props;
 
         if (onSelect) {
             onSelect(value);
         }
 
-        this.closeDropdown();
-    }
+        this._closeDropdown();
+    };
 
-    handleToggle(event: React.MouseEvent<any>) {
+    private _handleToggle = (event: React.MouseEvent<any>): void => {
         event.preventDefault();
 
         const { isOpened } = this.state;
 
-        isOpened ? this.closeDropdown() : this.openDropdown();
-    }
-
-    openDropdown() {
-        const { pullRight, pullUp } = this.props;
-
-        const scrollDimension = this.getScrollDimension();
-        const containerRect = this.containerElement.getBoundingClientRect();
-
-        const topSpace = containerRect.top;
-        const bottomSpace = scrollDimension.height - containerRect.bottom;
-        const leftSpace = containerRect.left;
-        const rightSpace = scrollDimension.width - containerRect.right;
-
-        this.setState({
-            isOpened: true,
-            pullRight: pullRight != null ? pullRight : leftSpace > rightSpace,
-            pullUp: pullUp != null ? pullUp : topSpace > bottomSpace
-        });
-    }
-
-    closeDropdown() {
-        this.setState((state) => ({
-            isOpened: false,
-            pullRight: state.pullRight,
-            pullUp: state.pullUp
-        }));
-    }
-
-    getScrollDimension() {
-        let height = 0;
-        let width = 0;
-
-        if (this.scrollable instanceof Element) {
-            height = this.scrollable.clientHeight;
-            width = this.scrollable.clientWidth;
-        } else if (this.scrollable instanceof Window) {
-            height = this.scrollable.innerHeight;
-            width = this.scrollable.innerWidth;
+        if (isOpened) {
+            this._closeDropdown();
+        } else{
+            this._openDropdown();
         }
-
-        return { height, width };
-    }
-
-    renderToggleButton() {
-        const { toggleButton } = this.props;
-
-        return cloneElement(toggleButton, {
-            ...toggleButton.props,
-            onClick: createChainedFunction(
-                toggleButton.props.onClick,
-                this.handleToggle
-            ),
-            onKeyDown: createChainedFunction(
-                toggleButton.props.onKeyDown,
-                this.handleKeyDown
-            )
-        });
-    }
-
-    renderMenu() {
-        const { children } = this.props;
-
-        return (
-            <Closable onClose={this.handleClose}>
-                <Menu
-                    ref={(ref) => this.menu = ref}
-                    onKeyDown={this.handleKeyDown}
-                    onSelect={this.handleSelect}
-                    onClose={this.handleClose}>
-                    {children}
-                </Menu>
-            </Closable>
-        )
-    }
-
-    render() {
-        const { className, component } = this.props;
-        const { isOpened, pullRight, pullUp } = this.state;
-
-        const Component = component!;
-
-        return (
-            <Component className={classnames('dropdown', className)}>
-                {this.renderToggleButton()}
-                <CSSTransitionGroup
-                    component="div"
-                    className={classnames('dropdown-menu', {
-                        'is-pull-right': pullRight,
-                        'is-pull-up': pullUp
-                    })}
-                    transitionEnterTimeout={200}
-                    transitionLeaveTimeout={200}
-                    transitionName="menu">
-                    {isOpened ? this.renderMenu() : null}
-                </CSSTransitionGroup>
-            </Component>
-        );
-    }
+    };
 }

@@ -41,7 +41,6 @@ const SubscriptionTreeHeader: React.SFC<SubscriptionTreeHeaderProps> = ({
             </button>
             <strong className="u-flex-grow-1 u-text-small">{lastUpdate}</strong>
             <Dropdown
-                pullUp={false}
                 toggleButton={
                     <button className="link-soft u-flex-shrink-0">
                         <i className="icon icon-16 icon-width-32 icon-menu-2" />
