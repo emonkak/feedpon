@@ -268,12 +268,6 @@ export interface Origin {
     url: string;
 }
 
-export interface Visual {
-    url: string;
-    width: number;
-    height: number;
-}
-
 export interface FullContents {
     isLoaded: boolean;
     isLoading: boolean;
