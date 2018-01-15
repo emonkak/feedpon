@@ -1,8 +1,9 @@
 import { Event, StreamViewKind, ThemeKind, Thunk } from 'messaging/types';
 
-export function changeActiveEntry(index: number): Event {
+export function changeActiveEntry(streamId: string, index: number): Event {
     return {
         type: 'ACTIVE_ENTRY_CAHNGED',
+        streamId,
         index
     };
 }
@@ -14,9 +15,10 @@ export function changeExpandedEntry(index: number): Event {
     };
 }
 
-export function resetReadEntry(): Event {
+export function resetReadEntry(streamId: string): Event {
     return {
-        type: 'READ_ENTRY_RESET'
+        type: 'READ_ENTRY_RESET',
+        streamId
     };
 }
 

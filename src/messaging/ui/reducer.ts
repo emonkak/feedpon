@@ -5,8 +5,7 @@ export default function uiReducer(ui: UI, event: Event): UI {
         case 'ACTIVE_ENTRY_CAHNGED':
             return {
                 ...ui,
-                activeEntryIndex: event.index,
-                readEntryIndex: event.index > ui.readEntryIndex ? event.index - 1 : ui.readEntryIndex
+                activeEntryIndex: event.index
             };
 
         case 'CUSTOM_STYLE_CHANGED':
@@ -33,12 +32,6 @@ export default function uiReducer(ui: UI, event: Event): UI {
                 helpIsOpened: false
             };
 
-        case 'READ_ENTRY_RESET':
-            return {
-                ...ui,
-                readEntryIndex: -1
-            };
-
         case 'SIDEBAR_OPENED':
             return {
                 ...ui,
@@ -62,8 +55,7 @@ export default function uiReducer(ui: UI, event: Event): UI {
             return {
                 ...ui,
                 activeEntryIndex: -1,
-                expandedEntryIndex: -1,
-                readEntryIndex: -1
+                expandedEntryIndex: -1
             };
 
         case 'STREAM_SELECTED':
@@ -71,7 +63,6 @@ export default function uiReducer(ui: UI, event: Event): UI {
                 ...ui,
                 activeEntryIndex: -1,
                 expandedEntryIndex: -1,
-                readEntryIndex: -1,
                 selectedStreamId: event.streamId
             };
 
@@ -80,7 +71,6 @@ export default function uiReducer(ui: UI, event: Event): UI {
                 ...ui,
                 activeEntryIndex: -1,
                 expandedEntryIndex: -1,
-                readEntryIndex: -1,
                 selectedStreamId: ''
             };
 

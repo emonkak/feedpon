@@ -17,7 +17,7 @@ const initialState: KeyMappings = {
         [['b'], { commandId: 'toggleComments', params: {} }],
         [['c'], { commandId: 'toggleStreamView', params: {} }],
         [['f'], { commandId: 'fetchFullContent', params: {} }],
-        [['g', 'c'], { commandId: 'clearReadEntries', params: {} }],
+        [['g', 'c'], { commandId: 'clearReadPosition', params: {} }],
         [['g', 'g'], { commandId: 'gotoFirstLine', params: {}, preventNotification: true }],
         [['g', 'm'], { commandId: 'markAllEntriesAsRead', params: {} }],
         [['h'], { commandId: 'closeEntry', params: {}, preventNotification: true }],
@@ -31,7 +31,7 @@ const initialState: KeyMappings = {
         [['v'], { commandId: 'visitWebsite', params: { inBackground: false } }],
         [['z'], { commandId: 'toggleSidebar', params: {}, preventNotification: true }]
     ]),
-    version: 1
+    version: 2
 };
 
 export default initialState;

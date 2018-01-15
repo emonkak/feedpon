@@ -17,7 +17,7 @@ interface StreamNavbarProps {
     onChangeEntryOrderKind: (order: EntryOrderKind) => void,
     onChangeNumberOfEntries: (numEntries: number) => void,
     onChangeStreamView: (streamView: StreamViewKind) => void,
-    onClearReadEntries: () => void;
+    onClearReadPosition: () => void;
     onCloseEntry: () => void;
     onMarkStreamAsRead: () => void;
     onReloadEntries: () => void;
@@ -42,7 +42,7 @@ const StreamNavbar: React.SFC<StreamNavbarProps> = ({
     onChangeEntryOrderKind,
     onChangeNumberOfEntries,
     onChangeStreamView,
-    onClearReadEntries,
+    onClearReadPosition,
     onCloseEntry,
     onMarkStreamAsRead,
     onReloadEntries,
@@ -70,7 +70,7 @@ const StreamNavbar: React.SFC<StreamNavbarProps> = ({
                 canMarkStreamAsRead={canMarkStreamAsRead}
                 entries={entries}
                 keepUnread={keepUnread}
-                onClearReadEntries={onClearReadEntries}
+                onClearReadPosition={onClearReadPosition}
                 onMarkStreamAsRead={onMarkStreamAsRead}
                 onScrollToEntry={onScrollToEntry}
                 onToggleUnreadKeeping={onToggleUnreadKeeping}

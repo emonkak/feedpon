@@ -30,8 +30,31 @@ export default function reducer(streams: Streams, event: Event): Streams {
                                 isLoading: false
                             }
                         };
-                    })
+                    }),
+                    readEntryIndex: stream.readEntryIndex != null ? stream.readEntryIndex : -1
                 }))
+            };
+
+        case 'ACTIVE_ENTRY_CAHNGED':
+            return {
+                ...streams,
+                items: CacheMap.update(streams.items, event.streamId, (stream) => {
+                    return {
+                        ...stream,
+                        readEntryIndex: event.index > stream.readEntryIndex ? event.index - 1 : stream.readEntryIndex
+                    };
+                })
+            };
+
+        case 'READ_ENTRY_RESET':
+            return {
+                ...streams,
+                items: CacheMap.update(streams.items, event.streamId, (stream) => {
+                    return {
+                        ...stream,
+                        readEntryIndex: -1
+                    };
+                })
             };
 
         case 'STREAM_FETCHING':
@@ -47,6 +70,7 @@ export default function reducer(streams: Streams, event: Event): Streams {
                     continuation: null,
                     feed: null,
                     fetchOptions: event.fetchOptions,
+                    readEntryIndex: -1,
                     heightCache: {}
                 })
             };
@@ -64,6 +88,7 @@ export default function reducer(streams: Streams, event: Event): Streams {
                     continuation: null,
                     feed: null,
                     fetchOptions: event.fetchOptions,
+                    readEntryIndex: -1,
                     heightCache: {}
                 })
             };

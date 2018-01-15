@@ -85,6 +85,7 @@ export function fetchStream(streamId: string, fetchOptions?: StreamFetchOptions)
                     feed: null,
                     category: null,
                     fetchOptions,
+                    readEntryIndex: -1,
                     heightCache: {}
                 }
             });
@@ -272,6 +273,7 @@ function fetchFeedStream(streamId: string, fetchOptions: StreamFetchOptions, fet
                 isLoading: false
             },
             fetchOptions,
+            readEntryIndex: -1,
             heightCache: {}
         };
 
@@ -636,6 +638,7 @@ function fetchCategoryStream(streamId: string, fetchOptions: StreamFetchOptions,
             continuation: contents.continuation || null,
             feed: null,
             fetchOptions,
+            readEntryIndex: -1,
             heightCache: {}
         };
 
@@ -663,6 +666,7 @@ function fetchAllStream(fetchOptions: StreamFetchOptions, fetchedAt: number): As
             continuation: contents.continuation || null,
             feed: null,
             fetchOptions,
+            readEntryIndex: -1,
             heightCache: {}
         };
 
@@ -695,6 +699,7 @@ function fetchPinsStream(fetchOptions: StreamFetchOptions, fetchedAt: number): A
             continuation: contents.continuation || null,
             feed: null,
             fetchOptions,
+            readEntryIndex: -1,
             heightCache: {}
         };
 

@@ -1,9 +1,30 @@
 import * as Trie from 'utils/containers/Trie';
 import initialState from 'messaging/keyMappings/initialState';
-import { Event, KeyMappings } from 'messaging/types';
+import { Event, KeyMapping, KeyMappings } from 'messaging/types';
 
 export default function reducer(keyMappings: KeyMappings, event: Event) {
     switch (event.type) {
+        case 'APPLICATION_INITIALIZED':
+            if (keyMappings.version === 1) {
+                return {
+                    ...keyMappings,
+                    items: Trie.map<KeyMapping, KeyMapping>(keyMappings.items, (path, keyMapping) => {
+                        if (keyMapping.commandId === 'clearReadEntries') {
+                            return [
+                                path,
+                                {
+                                    ...keyMapping,
+                                    commandId: 'clearReadPosition'
+                                }
+                            ];
+                        }
+                        return [path, keyMapping];
+                    }),
+                    version: 2
+                };
+            }
+            return keyMappings;
+
         case 'KEY_MAPPING_UPDATED':
             return {
                 ...keyMappings,

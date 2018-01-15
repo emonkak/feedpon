@@ -134,22 +134,36 @@ export function isEmpty<T>(tree: Trie<T>): boolean {
 }
 
 export function toArray<T>(tree: Trie<T>): [string[], T][] {
-    return collect(tree, [], []);
+    const results: [string[], T][] = [];
+
+    forEach(tree, [], (path, value) => {
+        results.push([path, value]);
+    });
+
+    return results;
 }
 
-function collect<T>(tree: Trie<T>, root: string[], results: [string[], T][]): [string[], T][] {
+export function map<T, U>(tree: Trie<T>, selector: (path: string[], value: T) => [string[], T]): Trie<U> {
+    const nextTree = {};
+
+    forEach(tree, [], (path, value) => {
+        mutableUpdate(nextTree, path, value);
+    });
+
+    return nextTree;
+}
+
+function forEach<T>(tree: Trie<T>, root: string[], callback: (path: string[], value: T) => void): void {
     for (const key in tree) {
         const node = tree[key];
         const path = [...root, key];
 
-        if (node.value !== undefined) {
-            results.push([path, node.value]);
+        if (typeof node.value !== 'undefined') {
+            callback(path, node.value);
         }
 
-        collect(node.children, path, results);
+        forEach(node.children, path, callback);
     }
-
-    return results;
 }
 
 function deleteObjectKey<T extends object>(source: T, key: keyof T): T {

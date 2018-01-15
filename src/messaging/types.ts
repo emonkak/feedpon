@@ -27,7 +27,7 @@ export interface State {
 }
 
 export type Event
-    = { type: 'ACTIVE_ENTRY_CAHNGED', index: number }
+    = { type: 'ACTIVE_ENTRY_CAHNGED', streamId: string, index: number }
     | { type: 'ALL_ENTRIES_MARKED_AS_READ' }
     | { type: 'ALL_ENTRIES_MARKING_AS_READ' }
     | { type: 'ALL_ENTRIES_MARKING_AS_READ_FAILED' }
@@ -93,7 +93,7 @@ export type Event
     | { type: 'MORE_ENTRIES_FETCHING_FAILED', streamId: string }
     | { type: 'NOTIFICATION_DISMISSED', id: number }
     | { type: 'NOTIFICATION_SENT', notification: Notification }
-    | { type: 'READ_ENTRY_RESET' }
+    | { type: 'READ_ENTRY_RESET', streamId: string }
     | { type: 'SIDEBAR_CLOSED' }
     | { type: 'SIDEBAR_OPENED' }
     | { type: 'SITEINFO_UPDATED', items: SiteinfoItem[], updatedAt: number }
@@ -220,6 +220,7 @@ export interface Stream {
     feed: Feed | null;
     fetchOptions: StreamFetchOptions;
     heightCache: { [id: string]: number };
+    readEntryIndex: number;
 }
 
 export interface StreamFetchOptions {
@@ -395,7 +396,6 @@ export interface UI {
     customStyles: string;
     expandedEntryIndex: number;
     helpIsOpened: boolean;
-    readEntryIndex: number;
     selectedStreamId: string;
     sidebarIsOpened: boolean;
     streamView: StreamViewKind;

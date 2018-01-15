@@ -8,15 +8,20 @@ import { getNextEntryScrollPosition, getPreviousEntryScrollPosition, openUrlInBa
 
 const TEMPLATE_PATTERN = /\${([A-Z_]\w+)}/i;
 
-export const clearReadEntries: Command<{}> = {
-    name: 'Clear read entries',
-    description: 'Clear read entries in the current selected stream.',
+export const clearReadPosition: Command<{}> = {
+    name: 'Clear read position',
+    description: 'Clear read position in the current selected stream.',
     defaultParams: {},
     action() {
-        return ({ dispatch }) => {
-            smoothScrollTo(window, 0, 0).then(() => {
-                dispatch(uiActions.resetReadEntry());
-            });
+        return ({ dispatch, getState }) => {
+            const state = getState();
+            const streamId = state.ui.selectedStreamId;
+
+            if (streamId) {
+                smoothScrollTo(window, 0, 0).then(() => {
+                    dispatch(uiActions.resetReadEntry(streamId));
+                });
+            }
         };
     }
 };

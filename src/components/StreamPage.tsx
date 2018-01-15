@@ -61,7 +61,6 @@ interface StreamPageProps {
     onUpdateHeightCache: typeof updateHeightCache;
     params: Params;
     readEntries: Entry[];
-    readEntryIndex: number;
     shouldFetchStream: boolean;
     stream: Stream | null;
     streamView: StreamViewKind;
@@ -139,10 +138,10 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
     }
 
     handleChangeActiveEnetry(nextActiveEntryIndex: number) {
-        const { activeEntryIndex, onChangeActiveEntry } = this.props;
+        const { stream, onChangeActiveEntry } = this.props;
 
-        if (activeEntryIndex !== nextActiveEntryIndex) {
-            onChangeActiveEntry(nextActiveEntryIndex);
+        if (stream) {
+            onChangeActiveEntry(stream.streamId, nextActiveEntryIndex);
         }
     }
 
@@ -173,9 +172,11 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
     }
 
     handleClearReadEntries() {
-        const { onResetReadEntry } = this.props;
+        const { onResetReadEntry, stream } = this.props;
 
-        smoothScrollTo(window, 0, 0).then(() => onResetReadEntry());
+        if (stream) {
+            smoothScrollTo(window, 0, 0).then(() => onResetReadEntry(stream.streamId));
+        }
     }
 
     handleCloseEntry() {
@@ -265,7 +266,6 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
             keepUnread,
             onChangeStreamView,
             onToggleSidebar,
-            readEntryIndex,
             stream,
             streamView
         } = this.props;
@@ -283,7 +283,7 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
                 onChangeEntryOrderKind={this.handleChangeEntryOrderKind}
                 onChangeNumberOfEntries={this.handleChangeNumberOfEntries}
                 onChangeStreamView={onChangeStreamView}
-                onClearReadEntries={this.handleClearReadEntries}
+                onClearReadPosition={this.handleClearReadEntries}
                 onCloseEntry={this.handleCloseEntry}
                 onMarkStreamAsRead={this.handleMarkStreamAsRead}
                 onReloadEntries={this.handleReloadEntries}
@@ -291,7 +291,7 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
                 onToggleOnlyUnread={this.handleToggleOnlyUnread}
                 onToggleSidebar={onToggleSidebar}
                 onToggleUnreadKeeping={this.handleToggleUnreadKeeping}
-                readEntryIndex={readEntryIndex}
+                readEntryIndex={stream ? stream.readEntryIndex : -1}
                 streamView={streamView}
                 title={stream ? stream.title : ''} />
         );
@@ -431,9 +431,8 @@ export default connect(() => {
     );
 
     const readEntriesSelector = createSelector(
-        entriesSelector,
-        (state: State) => state.ui.readEntryIndex,
-        (entries, readEntryIndex) => entries.slice(0, readEntryIndex + 1).filter((entry) => !entry.markedAsRead)
+        streamSelector,
+        (stream) => stream ? stream.entries.slice(0, stream.readEntryIndex + 1).filter((entry) => !entry.markedAsRead) : []
     );
 
     const subscriptionSelector: (state: State, props: StreamPageProps) => Subscription | null = createSelector(
@@ -487,7 +486,6 @@ export default connect(() => {
             isLoading: state.streams.isLoading,
             keepUnread: state.streams.keepUnread,
             readEntries: readEntriesSelector(state, props),
-            readEntryIndex: state.ui.readEntryIndex,
             shouldFetchStream: shouldFetchStreamSelector(state, props),
             stream: streamSelector(state, props),
             streamView: state.ui.streamView,
