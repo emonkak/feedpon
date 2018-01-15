@@ -1,9 +1,9 @@
 import React, { PureComponent, createElement } from 'react';
 
 export interface SwipeableProps {
-    onTouchEnd: (event: React.TouchEvent<any>) => void;
-    onTouchMove: (event: React.TouchEvent<any>) => void;
-    onTouchStart: (event: React.TouchEvent<any>) => void;
+    handleTouchEnd: (event: React.TouchEvent<any>) => void;
+    handleTouchMove: (event: React.TouchEvent<any>) => void;
+    handleTouchStart: (event: React.TouchEvent<any>) => void;
     isSwiping: boolean;
     initialX: number;
     initialY: number;
@@ -19,7 +19,7 @@ export interface SwipeableState {
     destY: number;
 }
 
-export default function toSwipeable<TProps>(Component: React.ComponentType<TProps & Partial<SwipeableProps>>): React.ComponentType<TProps> {
+export default function toSwipeable<TProps>(Component: React.ComponentType<TProps & SwipeableProps>): React.ComponentType<TProps> {
     return class Swipeable extends PureComponent<TProps, SwipeableState> {
         constructor(props: TProps, context: any) {
             super(props, context);
@@ -36,9 +36,9 @@ export default function toSwipeable<TProps>(Component: React.ComponentType<TProp
         render() {
             const props = Object.assign(
                 {
-                    onTouchStart: this._handleTouchStart,
-                    onTouchMove: this._handleTouchMove,
-                    onTouchEnd: this._handleTouchEnd,
+                    handleTouchStart: this._handleTouchStart,
+                    handleTouchMove: this._handleTouchMove,
+                    handleTouchEnd: this._handleTouchEnd,
                 },
                 this.state,
                 this.props

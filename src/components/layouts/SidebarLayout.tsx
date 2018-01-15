@@ -102,9 +102,9 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
             isSwiping,
             initialX,
             destX,
-            onTouchStart,
-            onTouchMove,
-            onTouchEnd
+            handleTouchStart,
+            handleTouchMove,
+            handleTouchEnd
         } = this.props;
 
         const sidebarWidth = this._sidebarWidth;
@@ -142,14 +142,14 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
                         className="l-overlay"
                         style={opacityStyle}
                         onClick={onCloseSidebar}
-                        onTouchStart={onTouchStart}
-                        onTouchMove={onTouchMove}
-                        onTouchEnd={onTouchEnd} />
+                        onTouchStart={handleTouchStart}
+                        onTouchMove={handleTouchMove}
+                        onTouchEnd={handleTouchEnd} />
                     <div
                         className="l-swipeable-edge"
-                        onTouchStart={onTouchStart}
-                        onTouchMove={onTouchMove}
-                        onTouchEnd={onTouchEnd} />
+                        onTouchStart={handleTouchStart}
+                        onTouchMove={handleTouchMove}
+                        onTouchEnd={handleTouchEnd} />
                 </div>
                 <div className="l-backdrop">
                     {isLoading ? <i className="icon icon-48 icon-spinner a-rotating" /> : null}
