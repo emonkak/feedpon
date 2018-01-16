@@ -18,6 +18,10 @@
   left: 0;
 }
 
+.l-sidebar:not(.is-opened) {
+  transition: left 0.2s ease-in-out;
+}
+
 .l-sidebar.is-opened ~ .l-main {
   padding-left: var(--sidebar-width);
 }

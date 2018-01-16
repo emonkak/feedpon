@@ -60,7 +60,7 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
     }
 
     componentWillUpdate(nextProps: SidebarLayoutProps, nextState: {}) {
-        const { isSwiping } = this.props;
+        const { isSwiping, sidebarIsOpened } = this.props;
 
         if (isSwiping !== nextProps.isSwiping) {
             if (nextProps.isSwiping) {
@@ -69,13 +69,9 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
                 this._notifySwipeEnd(nextProps.initialX, nextProps.destX);
             }
         }
-    }
 
-    componentDidUpdate(prevProps: SidebarLayoutProps, prevState: {}) {
-        const { sidebarIsOpened } = this.props;
-
-        if (sidebarIsOpened !== prevProps.sidebarIsOpened) {
-            this._updateSidebarStatus(sidebarIsOpened);
+        if (nextProps.sidebarIsOpened && sidebarIsOpened !== nextProps.sidebarIsOpened) {
+            this._updateSidebarStatus(true);
         }
     }
 
@@ -127,7 +123,8 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
                 <div
                     className={classnames('l-sidebar', { 'is-opened': sidebarIsOpened })}
                     style={leftStyle}
-                    ref={this._handleSidebarRef}>
+                    ref={this._handleSidebarRef}
+                    onTransitionEnd={this._handleTransitionEnd}>
                     <Sidebar router={router} location={location} />
                 </div>
                 <div className="l-main" style={paddingStyle}>
@@ -232,6 +229,12 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
     private _handleSidebarRef = (ref: HTMLElement | null) => {
         this._sidebarRef = ref;
     }
+
+    private _handleTransitionEnd = (): void => {
+        if (!this.props.sidebarIsOpened) {
+            this._updateSidebarStatus(false);
+        }
+    };
 }
 
 function getTranslateX(initialX: number, destX: number, width: number, isOpened: boolean): number {
