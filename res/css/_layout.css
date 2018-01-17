@@ -45,6 +45,7 @@
   box-sizing: border-box;
   z-index: 100;
   background-color: var(--transparent-color);
+  backface-visibility: hidden;
 }
 
 .l-content {
@@ -95,7 +96,7 @@
   opacity: 0;
   visibility: hidden;
   transition: visibility 0s linear 0.2s, opacity 0.2s linear;
-  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
 }
 
 .l-backdrop:not(:empty) {
@@ -115,7 +116,7 @@
   opacity: 0;
   background-color: var(--backdrop-background-color);
   transition: visibility 0s linear 0.2s, opacity 0.2s linear;
-  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
 }
 
 .l-swipeable-edge {
