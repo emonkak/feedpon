@@ -72,7 +72,7 @@ export default async function prepareStore(context: ThunkContext): Promise<Store
 }
 
 async function migrateFromLocalStorage(eventStore: EventStore<State, Event>): Promise<void> {
-    const isMigrated = !!localStorage.getItem('__isMigratedToAnotherStorage');
+    const isMigrated = !!localStorage.getItem('__isMigratedToEventStore');
 
     if (!isMigrated) {
         const keys = Object.keys(initialState) as (keyof State)[];
@@ -95,6 +95,6 @@ async function migrateFromLocalStorage(eventStore: EventStore<State, Event>): Pr
 
         await eventStore.saveSnapshot(snapshot);
 
-        localStorage.setItem('__isMigratedToAnotherStorage', '' + Date.now());
+        localStorage.setItem('__isMigratedToEventStore', '' + Date.now());
     }
 }
