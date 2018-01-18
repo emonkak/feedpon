@@ -77,7 +77,7 @@ class CategoriesPage extends PureComponent<CategoriesPageProps, CategoriesPageSt
         return subscriptions
             .filter((subscription) => {
                 const text = (subscription.title + ' ' + subscription.url).toLowerCase();
-                return splittedQueries.every(query => text.includes(query));
+                return splittedQueries.every((query) => text.includes(query));
             });
     }
 
@@ -171,7 +171,7 @@ class CategoriesPage extends PureComponent<CategoriesPageProps, CategoriesPageSt
 
         const description = subscriptions.length > 0
             ? <p><strong>{subscriptions.length}</strong> subscriptions are available in this category.</p>
-            : <p>There are no subscriptions in this category.</p>
+            : <p>There are no subscriptions in this category.</p>;
 
         return (
             <div className="container">
@@ -226,7 +226,7 @@ const ConnectedSubscriptionItem = connect(() => {
             onRemoveFromCategory: removeFromCategory,
             onUnsubscribe: unsubscribe
         })
-    }
+    };
 })(SubscriptionItem);
 
 function renderSubscriptionList(children: React.ReactNode, aboveSpace: number, belowSpace: number): React.ReactElement<any> {
@@ -277,5 +277,5 @@ export default connect(() => {
             onToggleSidebar: toggleSidebar,
             onUpdateCategory: updateCategory
         })
-    }
+    };
 })(CategoriesPage);

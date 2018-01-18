@@ -16,6 +16,6 @@ const CommentComponent: React.SFC<CommentProps> = ({
             <time className="comment-timestamp">{new Date(comment.timestamp).toLocaleDateString()}</time>
         </div>
     );
-}
+};
 
 export default CommentComponent;

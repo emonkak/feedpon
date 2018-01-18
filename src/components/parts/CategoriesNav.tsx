@@ -13,7 +13,7 @@ interface CategoriesNavProps {
 const CategoriesNav: React.SFC<CategoriesNavProps> = ({
     categories,
     label,
-    onSelectCategory 
+    onSelectCategory
 }) => {
     return (
         <Nav onSelect={onSelectCategory}>
@@ -32,6 +32,6 @@ const CategoriesNav: React.SFC<CategoriesNavProps> = ({
             )}
         </Nav>
     );
-}
+};
 
 export default CategoriesNav;

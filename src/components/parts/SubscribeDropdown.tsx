@@ -139,41 +139,43 @@ export default class SubscribeDropdown extends PureComponent<SubscribeDropdownPr
         const { categories, className, feed, subscription } = this.props;
         const { categoryLabel, unsubscribeModalIsOpened } = this.state;
 
-        return <>
-            <Dropdown
-                className={className}
-                toggleButton={<SubscribeButton isSubscribed={!!subscription} isLoading={feed.isLoading} />}>
-                <div className="menu-heading">Category</div>
-                {categories.map(this.renderCategoryMenuItem, this)}
-                <div className="menu-divider" />
-                <div className="menu-heading">New category</div>
-                <MenuForm onSubmit={this.handleCreateCategory}>
-                    <div className="input-group">
-                        <input
-                            type="text"
-                            className="form-control"
-                            style={{ width: '12rem' }}
-                            value={categoryLabel}
-                            onChange={this.handleChangeCategoryLabel} />
-                        <button type="submit" className="button button-positive">OK</button>
-                    </div>
-                </MenuForm>
-                <div className="menu-divider" />
-                <MenuItem
-                    isDisabled={!subscription}
-                    onSelect={this.handleOpenUnsubscribeModal}
-                    primaryText="Unsubscribe..." />
-            </Dropdown>
-            <Portal>
-                <ConfirmModal
-                    confirmButtonClassName="button button-negative"
-                    confirmButtonLabel="Unsubscribe"
-                    isOpened={unsubscribeModalIsOpened}
-                    message="Are you sure you want to unsubscribe this feed?"
-                    onClose={this.handleCloseUnsubscribeModal}
-                    onConfirm={this.handleUnsubscribe}
-                    title={`Unsubscribe "${feed.title}"`} />
-            </Portal>
-        </>
+        return (
+            <>
+                <Dropdown
+                    className={className}
+                    toggleButton={<SubscribeButton isSubscribed={!!subscription} isLoading={feed.isLoading} />}>
+                    <div className="menu-heading">Category</div>
+                    {categories.map(this.renderCategoryMenuItem, this)}
+                    <div className="menu-divider" />
+                    <div className="menu-heading">New category</div>
+                    <MenuForm onSubmit={this.handleCreateCategory}>
+                        <div className="input-group">
+                            <input
+                                type="text"
+                                className="form-control"
+                                style={{ width: '12rem' }}
+                                value={categoryLabel}
+                                onChange={this.handleChangeCategoryLabel} />
+                            <button type="submit" className="button button-positive">OK</button>
+                        </div>
+                    </MenuForm>
+                    <div className="menu-divider" />
+                    <MenuItem
+                        isDisabled={!subscription}
+                        onSelect={this.handleOpenUnsubscribeModal}
+                        primaryText="Unsubscribe..." />
+                </Dropdown>
+                <Portal>
+                    <ConfirmModal
+                        confirmButtonClassName="button button-negative"
+                        confirmButtonLabel="Unsubscribe"
+                        isOpened={unsubscribeModalIsOpened}
+                        message="Are you sure you want to unsubscribe this feed?"
+                        onClose={this.handleCloseUnsubscribeModal}
+                        onConfirm={this.handleUnsubscribe}
+                        title={`Unsubscribe "${feed.title}"`} />
+                </Portal>
+            </>
+        );
     }
 }

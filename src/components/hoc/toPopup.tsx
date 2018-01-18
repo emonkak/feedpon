@@ -36,7 +36,7 @@ export default function toPopup<TProps>(
             const props = Object.assign(
                 {
                     closePopup: this._closePopup,
-                    openPopup: this._openPopup,
+                    openPopup: this._openPopup
                 },
                 this.state,
                 this.props
@@ -64,14 +64,14 @@ export default function toPopup<TProps>(
                 popupStyle,
                 pullDirection
             });
-        };
+        }
 
         private _closePopup = (): void => {
             this.setState({
                 isOpened: false
             });
-        };
-    }
+        }
+    };
 }
 
 function getFittedPullDirection(containerRect: ClientRect, viewportWidth: number, viewportHeight: number, pullDirections: PullDirection[]): PullDirection | null {

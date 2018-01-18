@@ -7,7 +7,7 @@ interface MenuContext {
     menu: {
         onClose: () => void,
         onSelect: (value: any) => void
-    }
+    };
 }
 
 interface MenuProps {

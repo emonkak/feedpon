@@ -52,6 +52,6 @@ const EntryPlaceholder: React.SFC<EntryPlaceholderProps> = ({ isExpanded }) => {
             </div>
         </article>
     );
-}
+};
 
 export default EntryPlaceholder;

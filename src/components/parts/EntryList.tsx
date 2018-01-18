@@ -211,11 +211,11 @@ export default class EntryList extends PureComponent<EntryListProps, EntryListSt
 
         const activeIndex = getActiveIndex(positioning);
         this.props.onChangeActiveEntry(activeIndex);
-    };
+    }
 
     private _handleLazyListRenderer = (lazyListRenderer: LazyListRenderer | null) => {
         this._lazyListRenderer = lazyListRenderer;
-    };
+    }
 }
 
 function renderListWrapper(items: React.ReactElement<any>[], blankSpaceAbove: number, blankSpaceBelow: number) {

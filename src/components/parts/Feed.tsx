@@ -46,6 +46,6 @@ const FeedComponent: React.SFC<FeedProps> = ({
             </div>
         </li>
     );
-}
+};
 
 export default FeedComponent;

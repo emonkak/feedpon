@@ -14,9 +14,9 @@ interface StreamNavbarProps {
     isExpanded: boolean;
     isLoading: boolean;
     keepUnread: boolean;
-    onChangeEntryOrderKind: (order: EntryOrderKind) => void,
-    onChangeNumberOfEntries: (numEntries: number) => void,
-    onChangeStreamView: (streamView: StreamViewKind) => void,
+    onChangeEntryOrderKind: (order: EntryOrderKind) => void;
+    onChangeNumberOfEntries: (numEntries: number) => void;
+    onChangeStreamView: (streamView: StreamViewKind) => void;
     onClearReadPosition: () => void;
     onCloseEntry: () => void;
     onMarkStreamAsRead: () => void;
@@ -91,6 +91,6 @@ const StreamNavbar: React.SFC<StreamNavbarProps> = ({
                     streamView={streamView} />}
         </Navbar>
     );
-}
+};
 
 export default StreamNavbar;

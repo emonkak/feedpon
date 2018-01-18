@@ -127,7 +127,7 @@ export class TreeBranch extends PureComponent<TreeBranchProps, TreeBranchState> 
         this.setState((state) => ({
             isExpanded: !state.isExpanded
         }));
-    };
+    }
 
     private _handleSelect = (event: React.MouseEvent<any>) => {
         event.preventDefault();
@@ -137,7 +137,7 @@ export class TreeBranch extends PureComponent<TreeBranchProps, TreeBranchState> 
         if (!isSelected && onSelect) {
             onSelect(value);
         }
-    };
+    }
 }
 
 export class TreeLeaf extends PureComponent<TreeLeafProps, TreeLeafState> {
@@ -177,5 +177,5 @@ export class TreeLeaf extends PureComponent<TreeLeafProps, TreeLeafState> {
         if (!isSelected && onSelect) {
             onSelect(value);
         }
-    };
+    }
 }

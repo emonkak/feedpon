@@ -138,4 +138,4 @@ function labelsComparer(x: Subscription, y: Subscription): number {
         return 0;
     }
     return x.labels < y.labels ? -1 : 1;
-};
+}

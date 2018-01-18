@@ -30,7 +30,7 @@ const CommentPopover: React.SFC<CommentPopoverProps> = ({
     }
 
     const commentItems = comments.length > 0
-        ? comments.map(item => <CommentComponent key={item.user} comment={item} />)
+        ? comments.map((item) => <CommentComponent key={item.user} comment={item} />)
         : 'No comments yet in this entry.';
 
     return (
@@ -41,6 +41,6 @@ const CommentPopover: React.SFC<CommentPopoverProps> = ({
             </div>
         </div>
     );
-}
+};
 
 export default CommentPopover;

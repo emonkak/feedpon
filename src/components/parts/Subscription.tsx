@@ -55,6 +55,6 @@ const SubscriptionComponent: React.SFC<SubscriptionProps> = ({
             </div>
         </li>
     );
-}
+};
 
 export default SubscriptionComponent;

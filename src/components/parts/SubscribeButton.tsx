@@ -12,11 +12,11 @@ const SubscribeButton: React.SFC<SubscribeButtonProps> = ({
     isSubscribed,
     isLoading,
     onClick,
-    onKeyDown 
+    onKeyDown
 }) => {
     if (isSubscribed) {
         return (
-            <button 
+            <button
                 onClick={onClick}
                 onKeyDown={onKeyDown}
                 className="button button-outline-default dropdown-arrow"
@@ -41,6 +41,6 @@ const SubscribeButton: React.SFC<SubscribeButtonProps> = ({
             </button>
         );
     }
-}
+};
 
 export default SubscribeButton;

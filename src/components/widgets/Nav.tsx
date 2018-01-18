@@ -11,7 +11,7 @@ const navContext = {
 interface NavContext {
     nav: {
         onSelect: (value: any) => void
-    }
+    };
 }
 
 interface NavProps {

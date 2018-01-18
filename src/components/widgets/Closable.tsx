@@ -65,7 +65,7 @@ export default class Closable extends PureComponent<ClosableProps, {}> {
                 onClose();
             }
         }
-    };
+    }
 
     private _handleResize = (event: Event): void => {
         const { onClose } = this.props;
@@ -73,5 +73,5 @@ export default class Closable extends PureComponent<ClosableProps, {}> {
         if (onClose) {
             onClose();
         }
-    };
+    }
 }

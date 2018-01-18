@@ -25,7 +25,7 @@ class KitchenSinkPage extends PureComponent<KitchenSinkProps, KitchenSinkState> 
         super(props, context);
 
         this.state = {
-            modalIsOpened: false,
+            modalIsOpened: false
         };
     }
 

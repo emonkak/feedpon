@@ -7,7 +7,7 @@ import { THEMES } from 'messaging/ui/constants';
 interface RootLayoutProps {
     children: React.ReactElement<any>;
     customStyles: string;
-    theme: ThemeKind,
+    theme: ThemeKind;
 }
 
 class RootLayout extends PureComponent<RootLayoutProps, any> {

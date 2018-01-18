@@ -60,6 +60,6 @@ const FullContents: React.SFC<FullContentsProps> = ({
             {nextPageButton}
         </div>
     );
-}
+};
 
 export default FullContents;

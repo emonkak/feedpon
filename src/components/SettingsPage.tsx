@@ -9,7 +9,7 @@ import { Nav, NavItem } from 'components/widgets/Nav';
 import { toggleSidebar } from 'messaging/ui/actions';
 
 interface SettingsProps {
-    children: React.ReactElement<any>
+    children: React.ReactElement<any>;
     location: Location;
     onToggleSidebar: typeof toggleSidebar;
     router: History;

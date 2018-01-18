@@ -38,7 +38,7 @@ export default function toSwipeable<TProps>(Component: React.ComponentType<TProp
                 {
                     handleTouchStart: this._handleTouchStart,
                     handleTouchMove: this._handleTouchMove,
-                    handleTouchEnd: this._handleTouchEnd,
+                    handleTouchEnd: this._handleTouchEnd
                 },
                 this.state,
                 this.props
@@ -57,7 +57,7 @@ export default function toSwipeable<TProps>(Component: React.ComponentType<TProp
                 destX: clientX,
                 destY: clientY
             });
-        };
+        }
 
         private _handleTouchMove = (event: React.TouchEvent<any>): void => {
             event.preventDefault();
@@ -68,12 +68,12 @@ export default function toSwipeable<TProps>(Component: React.ComponentType<TProp
                 destX: clientX,
                 destY: clientY
             });
-        };
+        }
 
         private _handleTouchEnd = (event: React.TouchEvent<any>): void => {
             this.setState({
                 isSwiping: false
             });
-        };
-    }
+        }
+    };
 }

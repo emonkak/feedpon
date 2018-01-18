@@ -7,7 +7,7 @@ interface SubscriptionIconProps {
 
 const SubscriptionIcon: React.SFC<SubscriptionIconProps> = ({
     iconUrl,
-    title 
+    title
 }) => {
     if (iconUrl) {
         return (
@@ -23,6 +23,6 @@ const SubscriptionIcon: React.SFC<SubscriptionIconProps> = ({
             <i className="icon icon-16 icon-file " />
         );
     }
-}
+};
 
 export default SubscriptionIcon;

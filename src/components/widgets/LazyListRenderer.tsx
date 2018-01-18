@@ -385,7 +385,7 @@ export default class LazyListRenderer extends Component<LazyListRendererProps, L
 
     private _handleRef = (ref: LazyList | null) => {
         this._ref = ref;
-    };
+    }
 }
 
 class LazyList extends PureComponent<LazyListProps, LazyListState> {

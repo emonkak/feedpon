@@ -66,7 +66,7 @@ const FeedHeader: React.SFC<FeedHeaderProps> = ({
                 </div>
             </div>
         </header>
-    )
+    );
 };
 
 export default FeedHeader;

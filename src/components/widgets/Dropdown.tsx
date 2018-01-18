@@ -21,7 +21,7 @@ interface DropdownState {
 
 export default class Dropdown extends PureComponent<DropdownProps, DropdownState> {
     static defaultProps = {
-        component: 'div',
+        component: 'div'
     };
 
     private _menu: Menu | null;
@@ -132,13 +132,13 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
         }
 
         this.setState({
-            isOpened: false,
+            isOpened: false
         });
     }
 
     private _handleMenuRef = (menu: Menu | null): void => {
         this._menu = menu;
-    };
+    }
 
     private _handleClose = (): void => {
         const { onClose } = this.props;
@@ -148,7 +148,7 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
         }
 
         this._closeDropdown();
-    };
+    }
 
     private _handleKeyDown = (event: React.KeyboardEvent<any>): void => {
         if (!this._menu) {
@@ -177,7 +177,7 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
                 this._handleClose();
                 break;
         }
-    };
+    }
 
     private _handleSelect = (value?: any): void => {
         const { onSelect } = this.props;
@@ -187,7 +187,7 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
         }
 
         this._closeDropdown();
-    };
+    }
 
     private _handleToggle = (event: React.MouseEvent<any>): void => {
         event.preventDefault();
@@ -196,8 +196,8 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
 
         if (isOpened) {
             this._closeDropdown();
-        } else{
+        } else {
             this._openDropdown();
         }
-    };
+    }
 }

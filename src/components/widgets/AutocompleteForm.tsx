@@ -138,7 +138,7 @@ export default class AutocompleteForm extends PureComponent<AutoCompleteFormProp
             isOpened: true,
             query
         });
-    };
+    }
 
     private _handleKeyDown = (event: React.KeyboardEvent<any>) => {
         if (!this._menuRef) {
@@ -172,15 +172,15 @@ export default class AutocompleteForm extends PureComponent<AutoCompleteFormProp
                 });
                 break;
         }
-    };
+    }
 
     private _handleFocus = (event: React.FocusEvent<any>) => {
         this.setState({
             isOpened: true
         });
-    };
+    }
 
     private _handleInputRef = (ref: HTMLInputElement | null) => {
         this._inputRef = ref;
-    };
+    }
 }

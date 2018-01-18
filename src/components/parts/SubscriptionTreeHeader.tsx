@@ -80,6 +80,6 @@ const SubscriptionTreeHeader: React.SFC<SubscriptionTreeHeaderProps> = ({
             </Dropdown>
         </header>
     );
-}
+};
 
 export default SubscriptionTreeHeader;

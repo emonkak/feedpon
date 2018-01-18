@@ -38,7 +38,7 @@ const CategoryHeader: React.SFC<CategoryHeaderProps> = ({
                 </div>
             </div>
         </header>
-    )
+    );
 };
 
 export default CategoryHeader;

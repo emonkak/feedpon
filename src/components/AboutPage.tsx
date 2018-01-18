@@ -167,7 +167,7 @@ See the following for more details:
 https://github.com/papandreou/node-cldr/blob/master/LICENSE
 `.trim();
 
-const LODASH_LICENSE =`
+const LODASH_LICENSE = `
 Copyright JS Foundation and other contributors <https://js.foundation/>
 
 Based on Underscore.js, copyright Jeremy Ashkenas,
@@ -354,7 +354,7 @@ Apache License
 
 Version 2.0, January 2004
 
-http://www.apache.org/licenses/ 
+http://www.apache.org/licenses/
 
 TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
 

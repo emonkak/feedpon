@@ -54,7 +54,7 @@ export default class NotificationComponent extends PureComponent<NotificationPro
         const iconClassName = classnames('icon', 'icon-24', {
             'icon-info': notification.kind === 'default',
             'icon-checked': notification.kind === 'positive',
-            'icon-warning': notification.kind === 'negative',
+            'icon-warning': notification.kind === 'negative'
         });
 
         return (

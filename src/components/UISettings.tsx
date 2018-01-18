@@ -94,7 +94,7 @@ class UISettings extends PureComponent<UISettingsProps, UISettingsState> {
                         <textarea
                             className="form-control"
                             value={customStyles}
-                            rows={12} 
+                            rows={12}
                             onChange={this.handleChangeCustomStyle} />
                     </div>
                     <div className="form-group">

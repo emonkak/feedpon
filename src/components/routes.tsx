@@ -8,7 +8,7 @@ import CategoriesPage from 'components/CategoriesPage';
 import DashboardPage from 'components/DashboardPage';
 import KeyboardSettings from 'components/KeyboardSettings';
 import KitchenSinkPage from 'components/KitchenSinkPage';
-import NotAuthenticated from 'components/NotAuthenticated'
+import NotAuthenticated from 'components/NotAuthenticated';
 import RootLayout from 'components/layouts/RootLayout';
 import SearchPage from 'components/SearchPage';
 import SettingsPage from 'components/SettingsPage';

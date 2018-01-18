@@ -30,7 +30,7 @@ export default class EntriesDropdown extends PureComponent<EntriesDropdownProps,
     constructor(props: EntriesDropdownProps, context: any) {
         super(props, context);
 
-        this.state = { 
+        this.state = {
             isMarkingAllAsRead: false,
             behindExpanded: false,
             aheadExpanded: false
@@ -116,7 +116,7 @@ export default class EntriesDropdown extends PureComponent<EntriesDropdownProps,
         ) {
             const entry = entries[i]!;
 
-            const icon = i == activeEntryIndex
+            const icon = i === activeEntryIndex
                 ? <i className="icon icon-16 icon-dot u-text-negative" />
                 : entry.markedAsRead
                 ? <i className="icon icon-16 icon-dot u-text-muted" />
@@ -154,7 +154,7 @@ export default class EntriesDropdown extends PureComponent<EntriesDropdownProps,
             behindExpanded: false,
             aheadExpanded: false
         });
-    };
+    }
 
     private _handleExpandBehind = (event: React.MouseEvent<any>): void => {
         event.preventDefault();
@@ -192,12 +192,12 @@ function getSliceRange(start: number, end: number, position: number, size: numbe
     if (behindSpace < size) {
         return {
             start: position - behindSpace,
-            end: Math.min(position + size + (size - behindSpace) + 1, end),
+            end: Math.min(position + size + (size - behindSpace) + 1, end)
         };
     } else if (aheadSpace < size) {
         return {
             start: Math.max(position - size - (size - (aheadSpace)), start),
-            end: position + aheadSpace + 1,
+            end: position + aheadSpace + 1
         };
     } else {
         return {

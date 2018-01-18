@@ -224,7 +224,7 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
 
             store.dispatch(event as any);
         }
-    };
+    }
 
     private _handleSidebarRef = (ref: HTMLElement | null) => {
         this._sidebarRef = ref;
@@ -234,7 +234,7 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
         if (!this.props.sidebarIsOpened) {
             this._updateSidebarStatus(false);
         }
-    };
+    }
 }
 
 function getTranslateX(initialX: number, destX: number, width: number, isOpened: boolean): number {

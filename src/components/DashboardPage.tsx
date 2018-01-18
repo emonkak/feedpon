@@ -69,7 +69,7 @@ class DashboardPage extends PureComponent<DashboardProps, DashboardState> {
             return (
                 <p>{`Recently read streams does not exist yet. Let's subscribe to feeds and read the stream.`}</p>
             );
-        } 
+        }
 
         return (
             <ol className="list-group">

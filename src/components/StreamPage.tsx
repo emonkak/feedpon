@@ -35,7 +35,7 @@ interface StreamPageProps {
     onChangeActiveEntry: typeof changeActiveEntry;
     onChangeExpandedEntry: typeof changeExpandedEntry;
     onChangeStreamView: typeof changeStreamView;
-    onChangeUnreadKeeping: typeof changeUnreadKeeping,
+    onChangeUnreadKeeping: typeof changeUnreadKeeping;
     onCreateCategory: typeof createCategory;
     onFetchEntryComments: typeof fetchEntryComments;
     onFetchFullContent: typeof fetchFullContent;
@@ -65,7 +65,7 @@ interface StreamPageProps {
     stream: Stream | null;
     streamView: StreamViewKind;
     subscription: Subscription | null;
-};
+}
 
 class StreamPage extends PureComponent<StreamPageProps, {}> {
     private _entryList: EntryList | null = null;
@@ -112,7 +112,7 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
                 onMarkAsRead(readEntries);
             }
 
-            const { 
+            const {
                 onFetchStream,
                 onSelectStream,
                 params,

@@ -18,7 +18,7 @@ const EntryNav: React.SFC<EntryNavProps> = ({
     isPinning,
     onToggleFullContent,
     onTogglePin,
-    url 
+    url
 }) => {
     return (
         <nav className="entry-nav">

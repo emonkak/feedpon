@@ -15,6 +15,6 @@ const FeedPlaceholder: React.SFC<{}> = () => {
             </div>
         </li>
     );
-}
+};
 
 export default FeedPlaceholder;

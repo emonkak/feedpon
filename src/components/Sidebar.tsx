@@ -186,7 +186,7 @@ function completeSubscriptions(subscriptions: Subscription[], query: string) {
     const candidates = new Enumerable(subscriptions)
         .where((subscription) => {
             const text = (subscription.title + ' ' + subscription.url).toLowerCase();
-            return splittedQueries.every(query => text.includes(query));
+            return splittedQueries.every((query) => text.includes(query));
         })
         .take(10)
         .select((subscription) => (

@@ -88,7 +88,7 @@ export default class EntryComponent extends PureComponent<EntryProps, {}> {
 
             onExpand(index);
         }
-    };
+    }
 
     private _handleFetchNextFullContent = () => {
         const { entry, onFetchFullContent } = this.props;
@@ -100,7 +100,7 @@ export default class EntryComponent extends PureComponent<EntryProps, {}> {
                 onFetchFullContent(entry.entryId, lastFullContent.nextPageUrl);
             }
         }
-    };
+    }
 
     private _handleToggleComments = (event: React.MouseEvent<any>) => {
         const { entry, onFetchComments, onHideComments, onShowComments } = this.props;
@@ -114,7 +114,7 @@ export default class EntryComponent extends PureComponent<EntryProps, {}> {
         } else {
             onFetchComments(entry.entryId, entry.url);
         }
-    };
+    }
 
     private _handleToggleFullContent = (event: React.MouseEvent<any>) => {
         const { entry, onFetchFullContent, onHideFullContents, onShowFullContents } = this.props;
@@ -130,7 +130,7 @@ export default class EntryComponent extends PureComponent<EntryProps, {}> {
                 onShowFullContents(entry.entryId);
             }
         }
-    };
+    }
 
     private _handleTogglePin = (event: React.MouseEvent<any>) => {
         const { entry, onPin, onUnpin } = this.props;
@@ -142,7 +142,7 @@ export default class EntryComponent extends PureComponent<EntryProps, {}> {
                 onPin(entry.entryId);
             }
         }
-    };
+    }
 }
 
 const ExpandedEntryContent: React.SFC<ExpandedEntryContentProps> = ({
@@ -204,7 +204,7 @@ const ExpandedEntryContent: React.SFC<ExpandedEntryContentProps> = ({
             </footer>
         </div>
     );
-}
+};
 
 const CollapsedEntryContent: React.SFC<CollapsedEntryContentProps> = ({
     entry,
@@ -229,7 +229,7 @@ const CollapsedEntryContent: React.SFC<CollapsedEntryContentProps> = ({
             <div className="entry-summary">{entry.summary}</div>
         </div>
     );
-}
+};
 
 function renderBookmarks(entry: Entry) {
     return (

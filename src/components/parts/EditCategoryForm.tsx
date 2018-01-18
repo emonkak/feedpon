@@ -39,7 +39,7 @@ export default class EditCategoryForm extends PureComponent<EditCategoryFormProp
         if (this.props.category.label !== nextProps.category.label) {
             this.setState({
                 label: nextProps.category.label
-            })
+            });
         }
     }
 

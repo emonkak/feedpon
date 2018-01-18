@@ -77,7 +77,7 @@ export default class UserSiteinfoForm extends PureComponent<UserSiteinfoFormProp
     handleChange(event: React.ChangeEvent<any>) {
         const { name, value } = event.currentTarget;
 
-        this.setState(state => ({
+        this.setState((state) => ({
             ...state,
             [name]: value
         }));

@@ -74,7 +74,7 @@ class EntryShareButton extends PureComponent<EntryShareButtonProps & PopupProps,
                             className="list-actions-item link-soft"
                             target="_blank"
                             title="Save to Pocket"
-                            href={'https://getpocket.com/save?url=' + encodeURIComponent(url) + "&title=" + encodeURIComponent(title)}
+                            href={'https://getpocket.com/save?url=' + encodeURIComponent(url) + '&title=' + encodeURIComponent(title)}
                             onClick={closePopup}>
                             <i className="icon icon-24 icon-pocket" />
                         </a>
