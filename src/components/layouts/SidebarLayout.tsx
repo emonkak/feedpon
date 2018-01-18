@@ -47,7 +47,7 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
 
             window.scrollTo(0, 0);
 
-            if (window.matchMedia('(max-width: 768px)').matches) {
+            if (this._isMobileLayout()) {
                 onCloseSidebar();
             }
         });
@@ -70,8 +70,10 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
             }
         }
 
-        if (nextProps.sidebarIsOpened && sidebarIsOpened !== nextProps.sidebarIsOpened) {
-            this._updateSidebarStatus(true);
+        if (sidebarIsOpened !== nextProps.sidebarIsOpened) {
+            if (nextProps.sidebarIsOpened || !this._isMobileLayout()) {
+                this._updateSidebarStatus(nextProps.sidebarIsOpened);
+            }
         }
     }
 
@@ -163,6 +165,10 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
                     onInvokeKeyMapping={this._handleInvokeKeyMapping} />
             </div>
         );
+    }
+
+    private _isMobileLayout() {
+        return window.matchMedia('(max-width: 768px)').matches;
     }
 
     private _notifySwipeStart(): void {
