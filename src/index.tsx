@@ -1,15 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Router, hashHistory } from 'react-router';
+import { hashHistory } from 'react-router';
 
-import StoreProvider from 'utils/flux/react/StoreProvider';
-import createSelectors from 'messaging/createSelectors';
-import packageJson from '../package.json';
+import Bootstrap from 'components/Bootstrap';
+import prepareSelectors from 'messaging/prepareSelectors';
 import prepareStore from './prepareStore';
-import routes from 'components/routes';
 
 function main() {
-    const selectors = createSelectors();
+    const selectors = prepareSelectors();
     const context = {
         environment: {
             clientId: 'feedly',
@@ -20,27 +18,14 @@ function main() {
         router: hashHistory,
         selectors
     };
+    const preparingStore = prepareStore(context);
 
-    prepareStore(context)
-        .then((store) => {
-            store.dispatch({
-                type: 'APPLICATION_INITIALIZED',
-                version: packageJson.version
-            });
+    const element = document.getElementById('app');
 
-            const element = document.getElementById('app');
-
-            ReactDOM.render((
-                <StoreProvider store={store}>
-                    <Router history={hashHistory}>
-                        {routes}
-                    </Router>
-                </StoreProvider>
-            ), element);
-        })
-        .catch((error) => {
-            console.error(error);
-        });
+    return ReactDOM.render(
+        <Bootstrap preparingStore={preparingStore} router={hashHistory} />,
+        element
+    );
 }
 
 if (typeof cordova === 'object') {

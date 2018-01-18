@@ -2,7 +2,7 @@ import { createAllSubscriptionsSelector, createVisibleSubscriptionsSelector, cre
 import { createSortedCategoriesSelector } from 'messaging/categories/selectors';
 import { Selectors } from 'messaging/types';
 
-export default function createSelectors(): Selectors {
+export default function prepareSelectors(): Selectors {
     const sortedCategoriesSelector = createSortedCategoriesSelector();
     const allSubscriptionsSelector = createAllSubscriptionsSelector();
     const visibleSubscriptionsSelector = createVisibleSubscriptionsSelector(allSubscriptionsSelector);

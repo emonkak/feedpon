@@ -6,6 +6,7 @@ import createStore from 'utils/flux/createStore';
 import errorHandlingMiddleware from 'utils/flux/middlewares/errorHandlingMiddleware';
 import eventSourcingMiddleware from 'adapters/persistence/eventSourcingMiddleware';
 import initialState from 'messaging/initialState';
+import packageJson from '../package.json';
 import reducer from 'messaging/reducer';
 import reduxMiddleware from 'utils/flux/middlewares/reduxMiddleware';
 import restoreSnapshot from 'adapters/persistence/restoreSnapshot';
@@ -24,6 +25,8 @@ export default async function prepareStore(context: ThunkContext): Promise<Store
 
     const middlewares: Middleware<State, Event>[] = [
         errorHandlingMiddleware((error, { dispatch }) => {
+            console.error(error);
+
             const errorString = (error + '') || 'Unknown error occured';
 
             dispatch(sendNotification(
@@ -59,6 +62,11 @@ export default async function prepareStore(context: ThunkContext): Promise<Store
             }
         });
     }
+
+    store.dispatch({
+        type: 'APPLICATION_INITIALIZED',
+        version: packageJson.version
+    });
 
     return store;
 }
