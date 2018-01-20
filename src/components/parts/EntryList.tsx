@@ -3,14 +3,15 @@ import { createSelector } from 'reselect';
 import classnames from 'classnames';
 
 import EntryFrame from 'components/parts/Entry';
-import EntryPlaceholder from 'components/parts/EntryPlaceholder';
-import LazyListRenderer, { Positioning } from 'components/widgets/LazyListRenderer';
+import LazyListRenderer, { Positioning, Rectangle } from 'components/widgets/LazyListRenderer';
 import { Entry, StreamViewKind } from 'messaging/types';
+import { ExpandedEntryPlaceholder, CollapsedEntryPlaceholder } from 'components/parts/EntryPlaceholder';
 
 const SCROLL_OFFSET = 48;
 
 interface EntryListProps {
     activeEntryIndex: number;
+    readEntryIndex: number;
     entries: Entry[];
     expandedEntryIndex: number;
     heightCache: { [id: string]: number };
@@ -31,6 +32,10 @@ interface EntryListProps {
     streamView: StreamViewKind;
 }
 
+interface EntryListState {
+    isScrolling: boolean;
+}
+
 interface RenderingItem {
     entry: Entry;
     isActive: boolean;
@@ -38,113 +43,80 @@ interface RenderingItem {
     sameOrigin: boolean;
 }
 
-interface EntryListState {
-    scrollingIndex: number | null;
-}
-
 export default class EntryList extends PureComponent<EntryListProps, EntryListState> {
     private _lazyListRenderer: LazyListRenderer | null = null;
-
-    private _scheduledScrollId: number | null = null;
 
     constructor(props: EntryListProps, context: any) {
         super(props, context);
 
         this.state = {
-            scrollingIndex: null
+            isScrolling: false
         };
     }
 
-    componentDidUpdate(prevProps: EntryListProps) {
-        const { activeEntryIndex, expandedEntryIndex, streamView } = this.props;
-
-        if (streamView !== prevProps.streamView) {
-            if (activeEntryIndex > -1) {
-                this.scrollToIndex(activeEntryIndex);
-            }
-        } else if (expandedEntryIndex !== prevProps.expandedEntryIndex) {
-            if (expandedEntryIndex > -1) {
-                this.scrollToIndex(expandedEntryIndex);
-            } else if (activeEntryIndex > -1) {
-                this.scrollToIndex(activeEntryIndex);
-            }
-        }
-    }
-
     render() {
-        const { heightCache, isLoaded, isLoading, onHeightUpdated, streamView } = this.props;
+        const { isLoaded, isLoading, streamView } = this.props;
         const isExpanded = streamView === 'expanded';
 
         if (isLoading && !isLoaded) {
-            return (
-                <div className="entry-list">
-                    <EntryPlaceholder isExpanded={isExpanded} />
-                    <EntryPlaceholder isExpanded={isExpanded} />
-                    <EntryPlaceholder isExpanded={isExpanded} />
-                    <EntryPlaceholder isExpanded={isExpanded} />
-                    <EntryPlaceholder isExpanded={isExpanded} />
-                    <EntryPlaceholder isExpanded={isExpanded} />
-                    <EntryPlaceholder isExpanded={isExpanded} />
-                    <EntryPlaceholder isExpanded={isExpanded} />
-                    <EntryPlaceholder isExpanded={isExpanded} />
-                    <EntryPlaceholder isExpanded={isExpanded} />
-                </div>
-            );
+            if (isExpanded) {
+                return (
+                    <div className="entry-list">
+                        <ExpandedEntryPlaceholder />
+                        <ExpandedEntryPlaceholder />
+                        <ExpandedEntryPlaceholder />
+                        <ExpandedEntryPlaceholder />
+                        <ExpandedEntryPlaceholder />
+                    </div>
+                );
+            } else {
+                return (
+                    <div className="entry-list">
+                        <CollapsedEntryPlaceholder />
+                        <CollapsedEntryPlaceholder />
+                        <CollapsedEntryPlaceholder />
+                        <CollapsedEntryPlaceholder />
+                        <CollapsedEntryPlaceholder />
+                        <CollapsedEntryPlaceholder />
+                        <CollapsedEntryPlaceholder />
+                        <CollapsedEntryPlaceholder />
+                        <CollapsedEntryPlaceholder />
+                        <CollapsedEntryPlaceholder />
+                    </div>
+                );
+            }
         }
 
-        const { scrollingIndex } = this.state;
+        const { heightCache, onHeightUpdated, activeEntryIndex } = this.props;
+        const { isScrolling } = this.state;
 
         return (
             <div
-                className={classnames('entry-list', scrollingIndex !== null ? 'is-hidden' : null)}>
+                className={classnames('entry-list', isScrolling ? 'is-hidden' : null)}>
                 <LazyListRenderer
                     assumedItemHeight={isExpanded ? 800 : 100}
+                    getViewportRectangle={getViewportRectangle}
                     idAttribute="id"
                     initialHeights={heightCache}
+                    initialItemIndex={activeEntryIndex > -1 ? activeEntryIndex : 0}
                     items={this._getRenderingItems(this.props)}
                     onHeightUpdated={onHeightUpdated}
                     onPositioningUpdated={this._handlePositioningUpdated}
                     ref={this._handleLazyListRenderer}
                     renderItem={this._renderEntry}
-                    renderList={renderListWrapper}
-                    scrollAdjustment={true} />
+                    renderList={renderListWrapper} />
             </div>
         );
     }
 
     scrollToIndex(index: number): void {
-        this.setState({
-            scrollingIndex: index
-        });
+        if (this._lazyListRenderer) {
+            this._lazyListRenderer.scrollToIndex(index, this._handleScrollDone);
 
-        this._scheduleScrollToIndex(index);
-    }
-
-    private _scheduleScrollToIndex(index: number): void {
-        if (this._scheduledScrollId !== null) {
-            window.cancelAnimationFrame(this._scheduledScrollId);
+            this.setState({
+                isScrolling: true
+            });
         }
-
-        this._scheduledScrollId = window.requestAnimationFrame(() => {
-            if (this._lazyListRenderer) {
-                const scrollPosition = this._lazyListRenderer.getScrollPosition(index) - SCROLL_OFFSET;
-
-                if (window.scrollY === scrollPosition) {
-                    this.setState({
-                        scrollingIndex: null
-                    });
-
-                    const { activeEntryIndex, onChangeActiveEntry } = this.props;
-                    if (index !== activeEntryIndex) {
-                        onChangeActiveEntry(index);
-                    }
-                } else {
-                    window.scrollTo(0, scrollPosition);
-                }
-            }
-
-            this._scheduledScrollId = null;
-        });
     }
 
     private _renderEntry = (renderingItem: RenderingItem, index: number) => {
@@ -203,19 +175,35 @@ export default class EntryList extends PureComponent<EntryListProps, EntryListSt
     );
 
     private _handlePositioningUpdated = (positioning: Positioning) => {
-        const { scrollingIndex } = this.state;
-        if (scrollingIndex !== null) {
-            this._scheduleScrollToIndex(scrollingIndex);
-            return;
+        const { activeEntryIndex, onChangeActiveEntry } = this.props;
+        const nextActiveEntryIndex = getActiveIndex(positioning);
+
+        if (nextActiveEntryIndex !== activeEntryIndex) {
+            onChangeActiveEntry(nextActiveEntryIndex);
+        }
+    }
+
+    private _handleScrollDone = (index: number) => {
+        const { activeEntryIndex, onChangeActiveEntry } = this.props;
+        if (index !== activeEntryIndex) {
+            onChangeActiveEntry(index);
         }
 
-        const activeIndex = getActiveIndex(positioning);
-        this.props.onChangeActiveEntry(activeIndex);
+        this.setState({
+            isScrolling: false
+        });
     }
 
     private _handleLazyListRenderer = (lazyListRenderer: LazyListRenderer | null) => {
         this._lazyListRenderer = lazyListRenderer;
     }
+}
+
+function getViewportRectangle(): Rectangle {
+    return {
+        top: SCROLL_OFFSET,
+        bottom: window.innerHeight - SCROLL_OFFSET
+    };
 }
 
 function renderListWrapper(items: React.ReactElement<any>[], blankSpaceAbove: number, blankSpaceBelow: number) {
@@ -233,7 +221,7 @@ function getActiveIndex(positioning: Positioning): number {
     }
 
     const viewportRectangle = positioning.viewportRectangle;
-    const viewportTop = viewportRectangle.top + SCROLL_OFFSET;
+    const viewportTop = viewportRectangle.top;
     const viewportBottom = viewportRectangle.bottom;
     const latestRectangle = rectangles[rectangles.length - 1];
 

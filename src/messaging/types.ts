@@ -50,6 +50,7 @@ export type Event
     | { type: 'CATEGORY_UPDATING_FAILED', categoryId: string | number }
     | { type: 'CUSTOM_STYLE_CHANGED', customStyles: string }
     | { type: 'DEFAULT_STREAM_OPTIONS_CHANGED', fetchOptions: StreamFetchOptions }
+    | { type: 'DEFAULT_STREAM_VIEW_CHANGED', streamView: StreamViewKind }
     | { type: 'ENTRIES_MARKED_AS_READ', entryIds: (string | number)[], readCounts: { [streamId: string]: number } }
     | { type: 'ENTRIES_MARKING_AS_READ', entryIds: (string | number)[] }
     | { type: 'ENTRIES_MARKING_AS_READ_FAILED', entryIds: (string | number)[] }
@@ -62,7 +63,7 @@ export type Event
     | { type: 'ENTRY_PINNING', entryId: string | number }
     | { type: 'ENTRY_PINNING_FAILED', entryId: string | number }
     | { type: 'ENTRY_URLS_EXPANDED', urls: { [url: string]: string } }
-    | { type: 'EXPANDED_ENTRY_CHANGED', index: number }
+    | { type: 'EXPANDED_ENTRY_CHANGED', streamId: string, index: number }
     | { type: 'FEED_MARKED_AS_READ', feedId: string | number, streamId: string }
     | { type: 'FEED_MARKING_AS_READ', feedId: string | number, streamId: string }
     | { type: 'FEED_MARKING_AS_READ_FAILED', feedId: string | number, streamId: string }
@@ -103,13 +104,13 @@ export type Event
     | { type: 'STREAM_CACHE_CAPACITY_CHANGED', capacity: number }
     | { type: 'STREAM_CACHE_LIFETIME_CHANGED', lifetime: number }
     | { type: 'STREAM_FETCHED', stream: Stream  }
-    | { type: 'STREAM_FETCHING', streamId: string, fetchOptions: StreamFetchOptions, fetchedAt: number }
-    | { type: 'STREAM_FETCHING_FAILED', streamId: string, fetchOptions: StreamFetchOptions, fetchedAt: number }
+    | { type: 'STREAM_FETCHING', streamId: string, streamView: StreamViewKind, fetchOptions: StreamFetchOptions, fetchedAt: number }
+    | { type: 'STREAM_FETCHING_FAILED', streamId: string, streamView: StreamViewKind, fetchOptions: StreamFetchOptions, fetchedAt: number }
     | { type: 'STREAM_HEIGHT_CACHE_UPDATED', streamId: string, heights: { [id: string]: number } }
     | { type: 'STREAM_HISTORY_OPTIONS_CHANGED', numStreamHistories: number }
     | { type: 'STREAM_SELECTED', streamId: string  }
     | { type: 'STREAM_UNSELECTED'  }
-    | { type: 'STREAM_VIEW_CHANGED', streamView: StreamViewKind }
+    | { type: 'STREAM_VIEW_CHANGED', streamId: string, streamView: StreamViewKind }
     | { type: 'SUBSCRIPTIONS_FETCHED', subscriptions: Subscription[], categories: Category[], fetchedAt: number }
     | { type: 'SUBSCRIPTIONS_FETCHING' }
     | { type: 'SUBSCRIPTIONS_FETCHING_FAILED' }
@@ -203,6 +204,7 @@ export interface Category {
 
 export interface Streams {
     defaultFetchOptions: StreamFetchOptions;
+    defaultStreamView: StreamViewKind;
     isLoaded: boolean;
     isLoading: boolean;
     isMarking: boolean;
@@ -212,15 +214,18 @@ export interface Streams {
 }
 
 export interface Stream {
-    streamId: string;
-    title: string;
-    fetchedAt: number;
-    entries: Entry[];
+    activeEntryIndex: number;
     continuation: string | null;
+    entries: Entry[];
+    expandedEntryIndex: number;
     feed: Feed | null;
     fetchOptions: StreamFetchOptions;
+    fetchedAt: number;
     heightCache: { [id: string]: number };
     readEntryIndex: number;
+    streamId: string;
+    streamView: StreamViewKind;
+    title: string;
 }
 
 export interface StreamFetchOptions {
@@ -386,13 +391,10 @@ export interface User {
 }
 
 export interface UI {
-    activeEntryIndex: number;
     customStyles: string;
-    expandedEntryIndex: number;
     helpIsOpened: boolean;
     selectedStreamId: string;
     sidebarIsOpened: boolean;
-    streamView: StreamViewKind;
     theme: ThemeKind;
     version: number;
 }

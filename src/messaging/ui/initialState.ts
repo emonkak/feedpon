@@ -1,13 +1,10 @@
 import { UI } from 'messaging/types';
 
 const ui: UI = {
-    activeEntryIndex: -1,
     customStyles: '',
-    expandedEntryIndex: -1,
     helpIsOpened: false,
     selectedStreamId: '',
     sidebarIsOpened: true,
-    streamView: 'expanded',
     theme: 'theme-light',
     version: 1
 };

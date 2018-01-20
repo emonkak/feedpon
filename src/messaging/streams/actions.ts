@@ -7,19 +7,22 @@ import fetch from 'adapters/http/fetch';
 import stripTags from 'utils/stripTags';
 import tryMatch from 'utils/tryMatch';
 import { ALL_STREAM_ID, PINS_STREAM_ID } from 'messaging/streams/constants';
-import { AsyncThunk, Category, Entry, Event, Stream, StreamFetchOptions, Subscription, Thunk } from 'messaging/types';
+import { AsyncThunk, Category, Entry, Event, Stream, StreamFetchOptions, StreamViewKind, Subscription, Thunk } from 'messaging/types';
 import { expandUrl } from 'messaging/trackingUrls/actions';
 import { getFeedlyToken } from 'messaging/backend/actions';
 import { getSiteinfoItems } from 'messaging/sharedSiteinfo/actions';
 import { sendNotification } from 'messaging/notifications/actions';
 
-export function fetchStream(streamId: string, fetchOptions?: StreamFetchOptions): AsyncThunk {
+export function fetchStream(streamId: string, streamView?: StreamViewKind, fetchOptions?: StreamFetchOptions): AsyncThunk {
     return async ({ dispatch, getState }) => {
+        const { streams } = getState();
         const fetchedAt = Date.now();
 
-        if (!fetchOptions) {
-            const { streams } = getState();
+        if (!streamView) {
+            streamView = streams.defaultStreamView;
+        }
 
+        if (!fetchOptions) {
             fetchOptions = streams.defaultFetchOptions;
 
             if (streamId === PINS_STREAM_ID) {
@@ -33,6 +36,7 @@ export function fetchStream(streamId: string, fetchOptions?: StreamFetchOptions)
         dispatch({
             type: 'STREAM_FETCHING',
             streamId,
+            streamView,
             fetchOptions,
             fetchedAt
         });
@@ -41,18 +45,19 @@ export function fetchStream(streamId: string, fetchOptions?: StreamFetchOptions)
 
         try {
             if (streamId.startsWith('feed/')) {
-                stream = await dispatch(fetchFeedStream(streamId, fetchOptions, fetchedAt));
+                stream = await dispatch(fetchFeedStream(streamId, streamView, fetchOptions, fetchedAt));
             } else if (streamId.startsWith('user/')) {
-                stream = await dispatch(fetchCategoryStream(streamId, fetchOptions, fetchedAt));
+                stream = await dispatch(fetchCategoryStream(streamId, streamView, fetchOptions, fetchedAt));
             } else if (streamId === ALL_STREAM_ID) {
-                stream = await dispatch(fetchAllStream(fetchOptions, fetchedAt));
+                stream = await dispatch(fetchAllStream(streamView, fetchOptions, fetchedAt));
             } else if (streamId === PINS_STREAM_ID) {
-                stream = await dispatch(fetchPinsStream(fetchOptions, fetchedAt));
+                stream = await dispatch(fetchPinsStream(streamView, fetchOptions, fetchedAt));
             }
         } catch (error) {
             dispatch({
                 type: 'STREAM_FETCHING_FAILED',
                 streamId,
+                streamView,
                 fetchOptions,
                 fetchedAt
             });
@@ -85,8 +90,11 @@ export function fetchStream(streamId: string, fetchOptions?: StreamFetchOptions)
                     feed: null,
                     category: null,
                     fetchOptions,
+                    activeEntryIndex: -1,
+                    expandedEntryIndex: -1,
                     readEntryIndex: -1,
-                    heightCache: {}
+                    heightCache: {},
+                    streamView
                 }
             });
         }
@@ -237,47 +245,6 @@ export function fetchFullContent(entryId: string | number, url: string): AsyncTh
 
             throw error;
         }
-    };
-}
-
-function fetchFeedStream(streamId: string, fetchOptions: StreamFetchOptions, fetchedAt: number): AsyncThunk<Stream> {
-    return async ({ dispatch }) => {
-        const token = await dispatch(getFeedlyToken());
-
-        const [contents, feed] = await Promise.all([
-            feedlyApi.getStreamContents(token.access_token, {
-                streamId,
-                count: fetchOptions.numEntries,
-                ranked: fetchOptions.entryOrder,
-                unreadOnly: fetchOptions.onlyUnread
-            }),
-            feedlyApi.getFeed(token.access_token, streamId)
-        ]);
-
-        const stream = {
-            streamId,
-            category: null,
-            title: feed.title || feed.website || feed.id.replace(/^feed\//, ''),
-            fetchedAt,
-            entries: contents.items.map(convertEntry),
-            continuation: contents.continuation || null,
-            feed: {
-                feedId: feed.id,
-                streamId: feed.id,
-                title: feed.title,
-                description: feed.description || '',
-                url: feed.website || '',
-                feedUrl: feed.id.replace(/^feed\//, ''),
-                iconUrl: feed.iconUrl || '',
-                subscribers: feed.subscribers || 0,
-                isLoading: false
-            },
-            fetchOptions,
-            readEntryIndex: -1,
-            heightCache: {}
-        };
-
-        return stream;
     };
 }
 
@@ -546,6 +513,20 @@ export function changeDefaultStreamFetchOptions(fetchOptions: StreamFetchOptions
     };
 }
 
+export function changeDefaultStreamView(streamView: StreamViewKind): AsyncThunk {
+    return async ({ dispatch }) => {
+        dispatch({
+            type: 'DEFAULT_STREAM_VIEW_CHANGED',
+            streamView
+        });
+
+        dispatch(sendNotification(
+            'Default stream view changed',
+            'positive'
+        ));
+    };
+}
+
 export function changeStreamCacheCapacity(capacity: number): Thunk {
     return ({ dispatch }) => {
         dispatch({
@@ -616,7 +597,51 @@ export function changeStreamHistoryOptions(numStreamHistories: number): AsyncThu
     };
 }
 
-function fetchCategoryStream(streamId: string, fetchOptions: StreamFetchOptions, fetchedAt: number): AsyncThunk<Stream> {
+function fetchFeedStream(streamId: string, streamView: StreamViewKind, fetchOptions: StreamFetchOptions, fetchedAt: number): AsyncThunk<Stream> {
+    return async ({ dispatch }) => {
+        const token = await dispatch(getFeedlyToken());
+
+        const [contents, feed] = await Promise.all([
+            feedlyApi.getStreamContents(token.access_token, {
+                streamId,
+                count: fetchOptions.numEntries,
+                ranked: fetchOptions.entryOrder,
+                unreadOnly: fetchOptions.onlyUnread
+            }),
+            feedlyApi.getFeed(token.access_token, streamId)
+        ]);
+
+        const stream = {
+            streamId,
+            category: null,
+            title: feed.title || feed.website || feed.id.replace(/^feed\//, ''),
+            fetchedAt,
+            entries: contents.items.map(convertEntry),
+            continuation: contents.continuation || null,
+            feed: {
+                feedId: feed.id,
+                streamId: feed.id,
+                title: feed.title,
+                description: feed.description || '',
+                url: feed.website || '',
+                feedUrl: feed.id.replace(/^feed\//, ''),
+                iconUrl: feed.iconUrl || '',
+                subscribers: feed.subscribers || 0,
+                isLoading: false
+            },
+            fetchOptions,
+            activeEntryIndex: -1,
+            expandedEntryIndex: -1,
+            readEntryIndex: -1,
+            heightCache: {},
+            streamView
+        };
+
+        return stream;
+    };
+}
+
+function fetchCategoryStream(streamId: string, streamView: StreamViewKind, fetchOptions: StreamFetchOptions, fetchedAt: number): AsyncThunk<Stream> {
     return async ({ dispatch, getState }) => {
         const token = await dispatch(getFeedlyToken());
 
@@ -638,15 +663,18 @@ function fetchCategoryStream(streamId: string, fetchOptions: StreamFetchOptions,
             continuation: contents.continuation || null,
             feed: null,
             fetchOptions,
+            activeEntryIndex: -1,
+            expandedEntryIndex: -1,
             readEntryIndex: -1,
-            heightCache: {}
+            heightCache: {},
+            streamView
         };
 
         return stream;
     };
 }
 
-function fetchAllStream(fetchOptions: StreamFetchOptions, fetchedAt: number): AsyncThunk<Stream> {
+function fetchAllStream(streamView: StreamViewKind, fetchOptions: StreamFetchOptions, fetchedAt: number): AsyncThunk<Stream> {
     return async ({ dispatch }) => {
         const token = await dispatch(getFeedlyToken());
 
@@ -666,8 +694,11 @@ function fetchAllStream(fetchOptions: StreamFetchOptions, fetchedAt: number): As
             continuation: contents.continuation || null,
             feed: null,
             fetchOptions,
+            activeEntryIndex: -1,
+            expandedEntryIndex: -1,
             readEntryIndex: -1,
-            heightCache: {}
+            heightCache: {},
+            streamView
         };
 
         dispatch({
@@ -679,7 +710,7 @@ function fetchAllStream(fetchOptions: StreamFetchOptions, fetchedAt: number): As
     };
 }
 
-function fetchPinsStream(fetchOptions: StreamFetchOptions, fetchedAt: number): AsyncThunk<Stream> {
+function fetchPinsStream(streamView: StreamViewKind, fetchOptions: StreamFetchOptions, fetchedAt: number): AsyncThunk<Stream> {
     return async ({ dispatch }) => {
         const token = await dispatch(getFeedlyToken());
 
@@ -699,8 +730,11 @@ function fetchPinsStream(fetchOptions: StreamFetchOptions, fetchedAt: number): A
             continuation: contents.continuation || null,
             feed: null,
             fetchOptions,
+            activeEntryIndex: -1,
+            expandedEntryIndex: -1,
             readEntryIndex: -1,
-            heightCache: {}
+            heightCache: {},
+            streamView
         };
 
         dispatch({

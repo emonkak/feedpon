@@ -7,6 +7,7 @@ const streams: Streams = {
         numEntries: 20,
         onlyUnread: true
     },
+    defaultStreamView: 'expanded',
     isLoaded: false,
     isLoading: false,
     isMarking: false,

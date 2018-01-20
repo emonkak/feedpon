@@ -31,7 +31,14 @@ export const closeEntry: Command<{}> = {
     description: 'Close the active entry if expanded.',
     defaultParams: {},
     action() {
-        return uiActions.changeExpandedEntry(-1);
+        return ({ dispatch, getState }) => {
+            const state = getState();
+            const streamId = state.ui.selectedStreamId;
+
+            if (streamId) {
+                dispatch(uiActions.changeExpandedEntry(streamId, -1));
+            }
+        };
     }
 };
 
@@ -50,10 +57,10 @@ export const expandEntry: Command<{}> = {
     defaultParams: {},
     action() {
         return ({ getState, dispatch }) => {
-            const { ui } = getState();
+            const selectedStream = dispatch(getSelectedStream);
 
-            if (ui.streamView === 'collapsible') {
-                dispatch(uiActions.changeExpandedEntry(ui.activeEntryIndex));
+            if (selectedStream && selectedStream.streamView === 'collapsible') {
+                dispatch(uiActions.changeExpandedEntry(selectedStream.streamId, selectedStream.activeEntryIndex));
             }
         };
     }
@@ -207,11 +214,15 @@ export const reloadStream: Command<{}> = {
     defaultParams: {},
     action() {
         return ({ getState, dispatch }) => {
-            const { ui, streams } = getState();
+            const selectedStream = dispatch(getSelectedStream);
 
-            if (ui.selectedStreamId) {
+            if (selectedStream) {
                 smoothScrollTo(window, 0, 0).then(() => {
-                    dispatch(streamActions.fetchStream(ui.selectedStreamId, streams.defaultFetchOptions));
+                    dispatch(streamActions.fetchStream(
+                        selectedStream.streamId,
+                        selectedStream.streamView,
+                        selectedStream.fetchOptions
+                    ));
                 });
             }
         };
@@ -521,10 +532,13 @@ export const toggleStreamView: Command<{}> = {
     defaultParams: {},
     action() {
         return ({ getState, dispatch }) => {
-            const { ui } = getState();
-            const newStreamView = ui.streamView === 'collapsible' ? 'expanded' : 'collapsible';
+            const selectedStream = dispatch(getSelectedStream);
 
-            dispatch(uiActions.changeStreamView(newStreamView));
+            if (selectedStream) {
+                const newStreamView = selectedStream.streamView === 'collapsible' ? 'expanded' : 'collapsible';
+
+                dispatch(uiActions.changeStreamView(selectedStream.streamId, newStreamView));
+            }
         };
     }
 };
@@ -551,11 +565,10 @@ export const visitWebsite: Command<{ inBackground: boolean }> = {
 };
 
 const getActiveEntry: Thunk<Entry | null> = ({ getState, dispatch }) => {
-    const seletedStream = dispatch(getSelectedStream);
+    const selectedStream = dispatch(getSelectedStream);
 
-    if (seletedStream) {
-        const { ui } = getState();
-        const entry = seletedStream.entries[ui.activeEntryIndex];
+    if (selectedStream) {
+        const entry = selectedStream.entries[selectedStream.activeEntryIndex];
 
         if (entry) {
             return entry;

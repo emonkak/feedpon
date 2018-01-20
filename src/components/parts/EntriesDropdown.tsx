@@ -72,7 +72,7 @@ export default class EntriesDropdown extends PureComponent<EntriesDropdownProps,
                     isDisabled={readEntryIndex < 0}
                     onSelect={onScrollToEntry}
                     primaryText="Scroll to read position"
-                    value={readEntryIndex} />
+                    value={readEntryIndex + 1} />
                 <MenuItem
                     isDisabled={numCurrentReadEntries === 0}
                     onSelect={onClearReadPosition}

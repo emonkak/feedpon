@@ -82,8 +82,7 @@ class SharedSiteinfoSettings extends PureComponent<SharedSiteinfoProps, SharedSi
                     idAttribute="id"
                     items={matchedItems}
                     renderItem={renderSiteinfoItem}
-                    renderList={renderSiteinfoList}
-                    scrollAdjustment={true} />
+                    renderList={renderSiteinfoList} />
             </section>
         );
     }

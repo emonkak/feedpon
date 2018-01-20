@@ -66,6 +66,10 @@
   line-height: inherit;
 }
 
+.entry-metadata {
+  color: var(--dark-color);
+}
+
 .entry-summary {
   overflow: hidden;
   text-overflow: ellipsis;

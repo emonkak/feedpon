@@ -31,8 +31,12 @@ export default function reducer(streams: Streams, event: Event): Streams {
                             }
                         };
                     }),
-                    readEntryIndex: stream.readEntryIndex != null ? stream.readEntryIndex : -1
-                }))
+                    activeEntryIndex: stream.activeEntryIndex != null ? stream.activeEntryIndex : -1,
+                    expandedEntryIndex: stream.expandedEntryIndex != null ? stream.expandedEntryIndex : -1,
+                    readEntryIndex: stream.readEntryIndex != null ? stream.readEntryIndex : -1,
+                    streamView: stream.streamView != null ? stream.streamView : streams.defaultStreamView
+                })),
+                defaultStreamView: streams.defaultStreamView || 'expanded'
             };
 
         case 'ACTIVE_ENTRY_CAHNGED':
@@ -41,7 +45,31 @@ export default function reducer(streams: Streams, event: Event): Streams {
                 items: CacheMap.update(streams.items, event.streamId, (stream) => {
                     return {
                         ...stream,
+                        activeEntryIndex: event.index,
                         readEntryIndex: event.index > stream.readEntryIndex ? event.index - 1 : stream.readEntryIndex
+                    };
+                })
+            };
+
+        case 'EXPANDED_ENTRY_CHANGED':
+            return {
+                ...streams,
+                items: CacheMap.update(streams.items, event.streamId, (stream) => {
+                    return {
+                        ...stream,
+                        expandedEntryIndex: event.index
+                    };
+                })
+            };
+
+        case 'STREAM_VIEW_CHANGED':
+            return {
+                ...streams,
+                items: CacheMap.update(streams.items, event.streamId, (stream) => {
+                    return {
+                        ...stream,
+                        streamView: event.streamView,
+                        expandedEntryIndex: -1
                     };
                 })
             };
@@ -52,6 +80,8 @@ export default function reducer(streams: Streams, event: Event): Streams {
                 items: CacheMap.update(streams.items, event.streamId, (stream) => {
                     return {
                         ...stream,
+                        activeEntryIndex: -1,
+                        expandedEntryIndex: -1,
                         readEntryIndex: -1
                     };
                 })
@@ -70,8 +100,11 @@ export default function reducer(streams: Streams, event: Event): Streams {
                     continuation: null,
                     feed: null,
                     fetchOptions: event.fetchOptions,
+                    activeEntryIndex: -1,
+                    expandedEntryIndex: -1,
                     readEntryIndex: -1,
-                    heightCache: {}
+                    heightCache: {},
+                    streamView: event.streamView
                 })
             };
 
@@ -88,8 +121,11 @@ export default function reducer(streams: Streams, event: Event): Streams {
                     continuation: null,
                     feed: null,
                     fetchOptions: event.fetchOptions,
+                    activeEntryIndex: -1,
+                    expandedEntryIndex: -1,
                     readEntryIndex: -1,
-                    heightCache: {}
+                    heightCache: {},
+                    streamView: event.streamView
                 })
             };
 
@@ -630,6 +666,12 @@ export default function reducer(streams: Streams, event: Event): Streams {
             return {
                 ...streams,
                 defaultFetchOptions: event.fetchOptions
+            };
+
+        case 'DEFAULT_STREAM_VIEW_CHANGED':
+            return {
+                ...streams,
+                defaultStreamView: event.streamView
             };
 
         case 'STREAM_CACHE_CAPACITY_CHANGED':

@@ -1,15 +1,14 @@
 import React from 'react';
-import classnames from 'classnames';
 
-interface EntryPlaceholderProps {
-    isExpanded: boolean;
+interface ExpandedEntryPlaceholderProps {
 }
 
-const EntryPlaceholder: React.SFC<EntryPlaceholderProps> = ({ isExpanded }) => {
+interface CollapsedEntryPlaceholderProps {
+}
+
+export const ExpandedEntryPlaceholder: React.SFC<ExpandedEntryPlaceholderProps> = () => {
     return (
-        <article className={classnames('entry', {
-            'is-expanded': isExpanded
-        })}>
+        <article className="entry is-expanded">
             <div className="container">
                 <header className="entry-header">
                     <h2 className="entry-title">
@@ -19,9 +18,6 @@ const EntryPlaceholder: React.SFC<EntryPlaceholderProps> = ({ isExpanded }) => {
                         <span className="placeholder placeholder-60 a-shining" />
                     </div>
                 </header>
-                <div className="entry-summary">
-                    <span className="placeholder placeholder-100 a-shining" />
-                </div>
                 <div className="entry-content u-clearfix u-text-wrap">
                     <p>
                         <span className="placeholder placeholder-100 a-shining" />
@@ -54,4 +50,22 @@ const EntryPlaceholder: React.SFC<EntryPlaceholderProps> = ({ isExpanded }) => {
     );
 };
 
-export default EntryPlaceholder;
+export const CollapsedEntryPlaceholder: React.SFC<CollapsedEntryPlaceholderProps> = () => {
+    return (
+        <article className="entry">
+            <div className="container">
+                <header className="entry-header">
+                    <h2 className="entry-title">
+                        <span className="placeholder placeholder-80 a-shining" />
+                    </h2>
+                    <div className="entry-metadata">
+                        <span className="placeholder placeholder-60 a-shining" />
+                    </div>
+                </header>
+                <div className="entry-summary">
+                    <span className="placeholder placeholder-100 a-shining" />
+                </div>
+            </div>
+        </article>
+    );
+};

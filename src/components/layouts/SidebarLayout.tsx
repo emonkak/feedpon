@@ -33,25 +33,9 @@ interface SidebarLayoutProps extends SwipeableProps {
 }
 
 class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
-    private _unlistenRouter: (() => void) | null = null;
-
     private _sidebarRef: HTMLElement | null = null;
 
     private _sidebarWidth: number = 0;
-
-    componentWillMount() {
-        const { router } = this.props;
-
-        this._unlistenRouter = router.listen(() => {
-            const { onCloseSidebar } = this.props;
-
-            window.scrollTo(0, 0);
-
-            if (this._isMobileLayout()) {
-                onCloseSidebar();
-            }
-        });
-    }
 
     componentDidMount() {
         const { sidebarIsOpened } = this.props;
@@ -77,13 +61,22 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
         }
     }
 
+    componentDidUpdate(prevProps: SidebarLayoutProps, prevState: {}) {
+        const { location, onCloseSidebar, sidebarIsOpened } = this.props;
+
+        if (location !== prevProps.location) {
+            if (location.pathname.indexOf('/streams/') !== 0) {
+                window.scrollTo(0, 0);
+            }
+
+            if (sidebarIsOpened && this._isMobileLayout()) {
+                onCloseSidebar();
+            }
+        }
+    }
+
     componentWillUnmount() {
         this._updateSidebarStatus(false);
-
-        if (this._unlistenRouter) {
-            this._unlistenRouter();
-            this._unlistenRouter = null;
-        }
     }
 
     render() {

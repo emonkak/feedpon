@@ -8,9 +8,10 @@ export function changeActiveEntry(streamId: string, index: number): Event {
     };
 }
 
-export function changeExpandedEntry(index: number): Event {
+export function changeExpandedEntry(streamId: string, index: number): Event {
     return {
         type: 'EXPANDED_ENTRY_CHANGED',
+        streamId,
         index
     };
 }
@@ -72,9 +73,10 @@ export function changeTheme(theme: ThemeKind): Event {
     };
 }
 
-export function changeStreamView(streamView: StreamViewKind): Event {
+export function changeStreamView(streamId: string, streamView: StreamViewKind): Event {
     return {
         type: 'STREAM_VIEW_CHANGED',
+        streamId,
         streamView
     };
 }

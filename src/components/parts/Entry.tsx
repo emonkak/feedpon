@@ -176,10 +176,10 @@ const ExpandedEntryContent: React.SFC<ExpandedEntryContentProps> = ({
                     onTogglePin={onTogglePin}
                     url={entry.url} />
                 <h2 className="entry-title">
-                    <a className="link-soft" target="_blank" href={entry.url}>{entry.title}</a>
+                    <a className="link-soft" target="_blank" href={entry.url}>{entry.title || 'No Title'}</a>
                     {renderReadMarker(entry)}
                 </h2>
-                <div className="u-text-muted">
+                <div className="entry-metadata">
                     <ul className="list-inline list-inline-dotted">
                         {renderBookmarks(entry)}
                         {renderOrign(entry, sameOrigin)}
@@ -214,10 +214,10 @@ const CollapsedEntryContent: React.SFC<CollapsedEntryContentProps> = ({
         <div className="container">
             <header className="entry-header">
                 <h2 className="entry-title">
-                    <a className="link-soft" target="_blank" href={entry.url}>{entry.title}</a>
+                    <a className="link-soft" target="_blank" href={entry.url}>{entry.title || 'No Title'}</a>
                     {renderReadMarker(entry)}
                 </h2>
-                <div className="u-text-muted">
+                <div className="entry-metadata">
                     <ul className="list-inline list-inline-dotted">
                         {renderBookmarks(entry)}
                         {renderOrign(entry, sameOrigin)}

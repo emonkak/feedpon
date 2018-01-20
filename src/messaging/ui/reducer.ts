@@ -2,22 +2,10 @@ import { Event, UI } from 'messaging/types';
 
 export default function uiReducer(ui: UI, event: Event): UI {
     switch (event.type) {
-        case 'ACTIVE_ENTRY_CAHNGED':
-            return {
-                ...ui,
-                activeEntryIndex: event.index
-            };
-
         case 'CUSTOM_STYLE_CHANGED':
             return {
                 ...ui,
                 customStyles: event.customStyles
-            };
-
-        case 'EXPANDED_ENTRY_CHANGED':
-            return {
-                ...ui,
-                expandedEntryIndex: event.index
             };
 
         case 'HELP_OPENED':
@@ -44,33 +32,20 @@ export default function uiReducer(ui: UI, event: Event): UI {
                 sidebarIsOpened: false
             };
 
-        case 'STREAM_VIEW_CHANGED':
-            return {
-                ...ui,
-                streamView: event.streamView,
-                expandedEntryIndex: -1
-            };
-
         case 'STREAM_FETCHED':
             return {
-                ...ui,
-                activeEntryIndex: -1,
-                expandedEntryIndex: -1
+                ...ui
             };
 
         case 'STREAM_SELECTED':
             return {
                 ...ui,
-                activeEntryIndex: -1,
-                expandedEntryIndex: -1,
                 selectedStreamId: event.streamId
             };
 
         case 'STREAM_UNSELECTED':
             return {
                 ...ui,
-                activeEntryIndex: -1,
-                expandedEntryIndex: -1,
                 selectedStreamId: ''
             };
 
