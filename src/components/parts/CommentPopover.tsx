@@ -20,9 +20,9 @@ const CommentPopover: React.SFC<CommentPopoverProps> = ({
                 <div className="popover-arrow" style={{ left: `calc(50% + ${arrowOffset}px)` }} />
                 <div className="popover-content">
                     <div className="comment">
-                        <span className="comment-user"><span className="placeholder placeholder-10 a-shining" /></span>
-                        <span className="comment-comment"><span className="placeholder placeholder-60 a-shining" /></span>
-                        <span className="comment-timestamp"><span className="placeholder placeholder-20 a-shining" /></span>
+                        <span className="comment-user"><span className="placeholder placeholder-10 animation-shining" /></span>
+                        <span className="comment-comment"><span className="placeholder placeholder-60 animation-shining" /></span>
+                        <span className="comment-timestamp"><span className="placeholder placeholder-20 animation-shining" /></span>
                     </div>
                 </div>
             </div>

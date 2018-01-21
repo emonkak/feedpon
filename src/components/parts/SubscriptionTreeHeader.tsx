@@ -36,7 +36,7 @@ const SubscriptionTreeHeader: React.SFC<SubscriptionTreeHeaderProps> = ({
                 disabled={isLoading}
                 onClick={onReload}>
                 <i className={classnames('icon icon-16 icon-width-32 icon-refresh', {
-                    'a-rotating': isLoading
+                    'animation-rotating': isLoading
                 })} />
             </button>
             <strong className="u-flex-grow-1 u-text-small">{lastUpdate}</strong>

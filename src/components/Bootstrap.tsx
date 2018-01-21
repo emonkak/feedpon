@@ -56,7 +56,7 @@ export default class Bootstrap extends PureComponent<BootstrapProps, BootstrapSt
         } else {
             return (
                 <div className="l-boot">
-                    <img className="a-blink u-margin-bottom-1" src="./img/logo.svg" width="244" height="88" />
+                    <img className="animation-blinking u-margin-bottom-1" src="./img/logo.svg" width="244" height="88" />
                     {error &&
                         <div className="u-text-negative u-text-center">
                             <p className="u-text-x-large">{error}</p>

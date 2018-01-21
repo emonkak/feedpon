@@ -1,4 +1,4 @@
-@keyframes clockwise-rotation {
+@keyframes rotating {
   0% {
     transform: rotate(0deg);
   }
@@ -6,14 +6,6 @@
   100% {
     transform: rotate(360deg);
   }
-}
-
-.a-rotating {
-  animation-duration: 1s;
-  animation-fill-mode: forwards;
-  animation-iteration-count: infinite;
-  animation-name: clockwise-rotation;
-  animation-timing-function: linear;
 }
 
 @keyframes shining {
@@ -26,7 +18,21 @@
   }
 }
 
-.a-shining {
+@keyframes blinking {
+  75% {
+    opacity: 0.0;
+  }
+}
+
+.animation-rotating {
+  animation-duration: 1s;
+  animation-fill-mode: forwards;
+  animation-iteration-count: infinite;
+  animation-name: rotating;
+  animation-timing-function: linear;
+}
+
+.animation-shining {
   background: linear-gradient(to right, var(--medium-light-color) 0%, var(--medium-dark-color) 15%, var(--medium-light-color) 30%);
   background-size: 100vw 100%;
   animation-duration: 2s;
@@ -36,16 +42,10 @@
   animation-timing-function: linear;
 }
 
-@keyframes blink {
-  75% {
-    opacity: 0.0;
-  }
-}
-
-.a-blink {
+.animation-blinking {
   animation-duration: 3s;
   animation-fill-mode: forwards;
   animation-iteration-count: infinite;
-  animation-name: blink;
+  animation-name: blinking;
   animation-timing-function: linear;
 }

@@ -25,7 +25,7 @@ class SingleLayout extends PureComponent<SingleLayoutProps, {}> {
                     {children}
                 </div>
                 <div className="l-backdrop">
-                    {isLoading ? <i className="icon icon-48 icon-spinner a-rotating" /> : null}
+                    {isLoading ? <i className="icon icon-48 icon-spinner animation-rotating" /> : null}
                 </div>
             </>
         );

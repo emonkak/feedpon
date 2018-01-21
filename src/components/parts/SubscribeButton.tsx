@@ -23,7 +23,7 @@ const SubscribeButton: React.SFC<SubscribeButtonProps> = ({
                 disabled={isLoading}>
                 <i className={classnames(
                     'icon icon-20',
-                    isLoading ? 'icon-spinner a-rotating' : 'icon-settings'
+                    isLoading ? 'icon-spinner animation-rotating' : 'icon-settings'
                 )} />
             </button>
         );
@@ -36,7 +36,7 @@ const SubscribeButton: React.SFC<SubscribeButtonProps> = ({
                 disabled={isLoading}>
                 <i className={classnames(
                     'icon icon-20',
-                    isLoading ? 'icon-spinner a-rotating' : 'icon-plus-math'
+                    isLoading ? 'icon-spinner animation-rotating' : 'icon-plus-math'
                 )} />
             </button>
         );

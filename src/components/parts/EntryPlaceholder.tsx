@@ -12,30 +12,30 @@ export const ExpandedEntryPlaceholder: React.SFC<ExpandedEntryPlaceholderProps> 
             <div className="container">
                 <header className="entry-header">
                     <h2 className="entry-title">
-                        <span className="placeholder placeholder-80 a-shining" />
+                        <span className="placeholder placeholder-80 animation-shining" />
                     </h2>
                     <div className="entry-metadata">
-                        <span className="placeholder placeholder-60 a-shining" />
+                        <span className="placeholder placeholder-60 animation-shining" />
                     </div>
                 </header>
                 <div className="entry-content u-clearfix u-text-wrap">
                     <p>
-                        <span className="placeholder placeholder-100 a-shining" />
-                        <span className="placeholder placeholder-100 a-shining" />
-                        <span className="placeholder placeholder-100 a-shining" />
-                        <span className="placeholder placeholder-60 a-shining" />
+                        <span className="placeholder placeholder-100 animation-shining" />
+                        <span className="placeholder placeholder-100 animation-shining" />
+                        <span className="placeholder placeholder-100 animation-shining" />
+                        <span className="placeholder placeholder-60 animation-shining" />
                     </p>
                     <p>
-                        <span className="placeholder placeholder-100 a-shining" />
-                        <span className="placeholder placeholder-100 a-shining" />
-                        <span className="placeholder placeholder-100 a-shining" />
-                        <span className="placeholder placeholder-100 a-shining" />
-                        <span className="placeholder placeholder-80 a-shining" />
+                        <span className="placeholder placeholder-100 animation-shining" />
+                        <span className="placeholder placeholder-100 animation-shining" />
+                        <span className="placeholder placeholder-100 animation-shining" />
+                        <span className="placeholder placeholder-100 animation-shining" />
+                        <span className="placeholder placeholder-80 animation-shining" />
                     </p>
                     <p>
-                        <span className="placeholder placeholder-100 a-shining" />
-                        <span className="placeholder placeholder-100 a-shining" />
-                        <span className="placeholder placeholder-40 a-shining" />
+                        <span className="placeholder placeholder-100 animation-shining" />
+                        <span className="placeholder placeholder-100 animation-shining" />
+                        <span className="placeholder placeholder-40 animation-shining" />
                     </p>
                 </div>
                 <footer className="entry-footer">
@@ -56,14 +56,14 @@ export const CollapsedEntryPlaceholder: React.SFC<CollapsedEntryPlaceholderProps
             <div className="container">
                 <header className="entry-header">
                     <h2 className="entry-title">
-                        <span className="placeholder placeholder-80 a-shining" />
+                        <span className="placeholder placeholder-80 animation-shining" />
                     </h2>
                     <div className="entry-metadata">
-                        <span className="placeholder placeholder-60 a-shining" />
+                        <span className="placeholder placeholder-60 animation-shining" />
                     </div>
                 </header>
                 <div className="entry-summary">
-                    <span className="placeholder placeholder-100 a-shining" />
+                    <span className="placeholder placeholder-100 animation-shining" />
                 </div>
             </div>
         </article>

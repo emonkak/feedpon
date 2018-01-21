@@ -28,14 +28,14 @@ const EntryNav: React.SFC<EntryNavProps> = ({
                     title="Pin"
                     onClick={onTogglePin}
                     disabled={isPinning}>
-                    <i className={classnames('icon icon-20', isPinning ? 'icon-spinner a-rotating' : 'icon-pin-3')} />
+                    <i className={classnames('icon icon-20', isPinning ? 'icon-spinner animation-rotating' : 'icon-pin-3')} />
                 </button>
                 <button
                     className={classnames('button button-pill', fullContentsIsShown ? 'button-default' : 'button-outline-default')}
                     title="Fetch full content"
                     onClick={onToggleFullContent}
                     disabled={fullContentsIsLoading}>
-                    <i className={classnames('icon icon-20', fullContentsIsLoading ? 'icon-spinner a-rotating' : 'icon-page-overview')} />
+                    <i className={classnames('icon icon-20', fullContentsIsLoading ? 'icon-spinner animation-rotating' : 'icon-page-overview')} />
                 </button>
             </div>
         </nav>
