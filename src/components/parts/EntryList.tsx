@@ -1,6 +1,5 @@
 import React, { PureComponent } from 'react';
 import { createSelector } from 'reselect';
-import classnames from 'classnames';
 
 import EntryFrame from 'components/parts/Entry';
 import LazyListRenderer, { Positioning, Rectangle } from 'components/widgets/LazyListRenderer';
@@ -33,7 +32,6 @@ interface EntryListProps {
 }
 
 interface EntryListState {
-    isScrolling: boolean;
 }
 
 interface RenderingItem {
@@ -45,14 +43,6 @@ interface RenderingItem {
 
 export default class EntryList extends PureComponent<EntryListProps, EntryListState> {
     private _lazyListRenderer: LazyListRenderer | null = null;
-
-    constructor(props: EntryListProps, context: any) {
-        super(props, context);
-
-        this.state = {
-            isScrolling: false
-        };
-    }
 
     render() {
         const { isLoaded, isLoading, streamView } = this.props;
@@ -88,17 +78,15 @@ export default class EntryList extends PureComponent<EntryListProps, EntryListSt
         }
 
         const { heightCache, onHeightUpdated, activeEntryIndex } = this.props;
-        const { isScrolling } = this.state;
 
         return (
-            <div
-                className={classnames('entry-list', isScrolling ? 'is-hidden' : null)}>
+            <div className="entry-list">
                 <LazyListRenderer
                     assumedItemHeight={isExpanded ? 800 : 100}
                     getViewportRectangle={getViewportRectangle}
                     idAttribute="id"
                     initialHeights={heightCache}
-                    initialItemIndex={activeEntryIndex > -1 ? activeEntryIndex : 0}
+                    initialItemIndex={activeEntryIndex}
                     items={this._getRenderingItems(this.props)}
                     onHeightUpdated={onHeightUpdated}
                     onPositioningUpdated={this._handlePositioningUpdated}
@@ -111,11 +99,7 @@ export default class EntryList extends PureComponent<EntryListProps, EntryListSt
 
     scrollToIndex(index: number): void {
         if (this._lazyListRenderer) {
-            this._lazyListRenderer.scrollToIndex(index, this._handleScrollDone);
-
-            this.setState({
-                isScrolling: true
-            });
+            this._lazyListRenderer.scrollToIndex(index);
         }
     }
 
@@ -181,17 +165,6 @@ export default class EntryList extends PureComponent<EntryListProps, EntryListSt
         if (nextActiveEntryIndex !== activeEntryIndex) {
             onChangeActiveEntry(nextActiveEntryIndex);
         }
-    }
-
-    private _handleScrollDone = (index: number) => {
-        const { activeEntryIndex, onChangeActiveEntry } = this.props;
-        if (index !== activeEntryIndex) {
-            onChangeActiveEntry(index);
-        }
-
-        this.setState({
-            isScrolling: false
-        });
     }
 
     private _handleLazyListRenderer = (lazyListRenderer: LazyListRenderer | null) => {

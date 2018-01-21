@@ -127,20 +127,16 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
     }
 
     componentDidUpdate(prevProps: StreamPageProps, prevState: {}) {
-        const { stream, isLoading } = this.props;
-        const prevStream = prevProps.stream;
+        const { stream, isLoaded, isLoading } = this.props;
         const prevIsLoading = prevProps.isLoading;
+        const prevStream = prevProps.stream;
 
-        if (isLoading && isLoading !== prevIsLoading) {
+        if (!isLoaded && isLoading && isLoading !== prevIsLoading) {
             window.scrollTo(0, 0);
         }
 
         if (stream.streamId === prevStream.streamId) {
-            if (stream.streamView !== prevStream.streamView) {
-                if (stream.activeEntryIndex > -1) {
-                    this.handleScrollToEntry(stream.activeEntryIndex);
-                }
-            } else if (stream.expandedEntryIndex !== prevStream.expandedEntryIndex) {
+            if (stream.expandedEntryIndex !== prevStream.expandedEntryIndex) {
                 if (stream.expandedEntryIndex > -1) {
                     this.handleScrollToEntry(stream.expandedEntryIndex);
                 } else if (stream.activeEntryIndex > -1) {

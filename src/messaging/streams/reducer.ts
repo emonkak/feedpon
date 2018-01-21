@@ -149,7 +149,7 @@ export default function reducer(streams: Streams, event: Event): Streams {
                 items: CacheMap.update(streams.items, event.streamId, (stream) => {
                     return {
                         ...stream,
-                        heightCache: event.heights
+                        heightCache: Object.assign({}, stream.heightCache, event.heights)
                     };
                 })
             };
