@@ -5,7 +5,18 @@
 }
 
 .list-inline-item {
+  /**
+   * Fix iOS Safari inline-block bug
+   * https://qiita.com/sygnas/items/a0582a100f0ae3496cd9
+   */
   display: inline-block;
+  margin-right: -1px;
+}
+
+.list-inline-item::after {
+  content: '\00a0';
+  font-size: 0;
+  margin-right: 1px;
 }
 
 .list-inline-slashed > .list-inline-item + .list-inline-item::before {
