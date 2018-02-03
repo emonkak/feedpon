@@ -70,7 +70,7 @@ export default class LazyListRenderer extends Component<LazyListRendererProps, L
         getHeightForDomNode,
         getViewportRectangle,
         initialHeights: {},
-        initialItemIndex: 0,
+        initialItemIndex: -1,
         offscreenToViewportRatio: 1.8,
         scrollThrottleTime: 100
     };
@@ -122,23 +122,13 @@ export default class LazyListRenderer extends Component<LazyListRendererProps, L
             const { idAttribute: nextIdAttribute } = nextProps;
             const { sliceStart, sliceEnd } = this.state;
 
-            const nextItemIndexes = nextItems.reduce<{ [id: string]: number }>((acc, item, index) => {
-                const id = item[nextIdAttribute];
-                acc[id] = index;
-                return acc;
-            }, {});
-            const newSliceStartItem = findNearestIndexItem(items, sliceStart, (item) => {
-                const id = item[idAttribute];
-                return nextItemIndexes.hasOwnProperty(id);
-            });
+            const item = items[sliceStart];
+            const nextItem = nextItems[sliceStart];
 
-            if (newSliceStartItem !== null) {
-                const newSliceStartId = newSliceStartItem[idAttribute];
-                const newSliceStart = nextItemIndexes[newSliceStartId];
-
+            if (item && nextItem && item[idAttribute] === nextItem[nextIdAttribute]) {
                 this.setState({
-                    sliceStart: newSliceStart,
-                    sliceEnd: Math.min(nextItems.length, newSliceStart + sliceEnd - sliceStart)
+                    sliceStart,
+                    sliceEnd: Math.min(nextItems.length, sliceStart + sliceEnd)
                 });
             } else {
                 this._reserveScrollingItemIndex(nextProps, nextProps.initialItemIndex!);
@@ -256,11 +246,11 @@ export default class LazyListRenderer extends Component<LazyListRendererProps, L
         const viewportRectangle = this._getRelativeViewportRectangle();
         const scrollOffset = this._getScrollOffset(index, viewportRectangle);
 
-        if (scrollOffset === 0) {
-            this._scrollingItemIndex = -1;
-        } else {
+        if (scrollOffset !== 0) {
             window.scrollBy(0, scrollOffset);
         }
+
+        this._scrollingItemIndex = -1;
     }
 
     private _adjestScrollPosition(): void {
@@ -544,27 +534,4 @@ function getViewportRectangle(): Rectangle {
         top: 0,
         bottom: window.innerHeight
     };
-}
-
-function findNearestIndexItem<T>(items: T[], initialIndex: number, predicate: (item: T) => boolean): T | null {
-    if (0 <= initialIndex &&
-        initialIndex < items.length &&
-        predicate(items[initialIndex])) {
-        return items[initialIndex];
-    }
-
-    for (
-        let i = initialIndex - 1, j = initialIndex + 1, l = items.length;
-        i >= 0 || j < l;
-        i -= 1, j += 1
-    ) {
-        if (i >= 0 && predicate(items[i])) {
-            return items[i];
-        }
-        if (j < l && predicate(items[j])) {
-            return items[j];
-        }
-    }
-
-    return null;
 }
