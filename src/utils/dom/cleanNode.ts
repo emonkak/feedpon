@@ -95,20 +95,20 @@ function responsify(element: HTMLElement & { width: number, height: number }): v
         return;
     }
 
-    const inner = document.createElement('div');
-    inner.className = 'responsive-container-inner';
-    inner.style.paddingBottom = (element.height / element.width * 100) + '%';
+    const wrapper = document.createElement('div');
+    wrapper.className = 'responsive-wrapper';
+    wrapper.style.paddingBottom = (element.height / element.width * 100) + '%';
 
     const container = document.createElement('div');
     container.className = 'responsive-container';
     container.style.maxWidth = element.width + 'px';
     container.style.maxHeight = element.height + 'px';
-    container.appendChild(inner);
+    container.appendChild(wrapper);
 
     if (element.parentNode) {
         element.parentNode.replaceChild(container, element);
 
-        inner.appendChild(element);
+        wrapper.appendChild(element);
     }
 }
 

@@ -3,14 +3,14 @@
   margin: 0 auto var(--baseline-height);
 }
 
-.responsive-container-inner {
+.responsive-wrapper {
   position: relative;
   width: 100%;
 }
 
-.responsive-container-inner > img,
-.responsive-container-inner > video,
-.responsive-container-inner > iframe {
+.responsive-wrapper > img,
+.responsive-wrapper > video,
+.responsive-wrapper > iframe {
   position: absolute;
   top: 0;
   left: 0;
