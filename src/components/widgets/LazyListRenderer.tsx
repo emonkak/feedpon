@@ -10,6 +10,7 @@ interface LazyListRendererProps {
     idAttribute: string;
     initialHeights?: { [id: string]: number };
     initialItemIndex?: number;
+    isDisabled?: boolean;
     items: any[];
     offscreenToViewportRatio?: number;
     onHeightUpdated?: (heights: { [id: string]: number }) => void;
@@ -199,18 +200,20 @@ export default class LazyListRenderer extends Component<LazyListRendererProps, L
     }
 
     private _update(): void {
-        if (!this._isUnmounted) {
-            const viewportRectangle = this._getRelativeViewportRectangle();
-
-            const { onPositioningUpdated } = this.props;
-            if (onPositioningUpdated) {
-                onPositioningUpdated(this._getPositioning(viewportRectangle));
-            }
-
-            const slice = this._getCurrentSlice(viewportRectangle);
-
-            this.setState(slice);
+        if (this._isUnmounted || this.props.isDisabled) {
+            return;
         }
+
+        const viewportRectangle = this._getRelativeViewportRectangle();
+        const { onPositioningUpdated } = this.props;
+
+        if (onPositioningUpdated) {
+            onPositioningUpdated(this._getPositioning(viewportRectangle));
+        }
+
+        const slice = this._getCurrentSlice(viewportRectangle);
+
+        this.setState(slice);
     }
 
     private _recomputeHeights(): boolean {

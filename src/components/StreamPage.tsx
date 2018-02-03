@@ -18,7 +18,6 @@ import { changeActiveEntry, changeExpandedEntry, resetReadEntry, changeStreamVie
 import { changeUnreadKeeping, fetchEntryComments, fetchFullContent, fetchMoreEntries, fetchStream, hideEntryComments, hideFullContents, markAllAsRead, markAsRead, markCategoryAsRead, markFeedAsRead, pinEntry, showEntryComments, showFullContents, unpinEntry, updateHeightCache } from 'messaging/streams/actions';
 import { createCategory } from 'messaging/categories/actions';
 import { createSortedCategoriesSelector } from 'messaging/categories/selectors';
-import { smoothScrollTo } from 'utils/dom/smoothScroll';
 import { toggleSidebar } from 'messaging/ui/actions';
 
 interface StreamPageProps {
@@ -28,6 +27,7 @@ interface StreamPageProps {
     category: Category;
     isLoaded: boolean;
     isLoading: boolean;
+    isScrolling: boolean;
     keepUnread: boolean;
     onAddToCategory: typeof addToCategory;
     onChangeActiveEntry: typeof changeActiveEntry;
@@ -168,11 +168,11 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
         const { onFetchStream, stream } = this.props;
 
         if (stream) {
-            smoothScrollTo(window, 0, 0).then(() => {
-                onFetchStream(stream.streamId, stream.streamView, {
-                    ...stream.fetchOptions,
-                    entryOrder
-                });
+            window.scrollTo(0, 0);
+
+            onFetchStream(stream.streamId, stream.streamView, {
+                ...stream.fetchOptions,
+                entryOrder
             });
         }
     }
@@ -189,11 +189,11 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
         const { onFetchStream, stream } = this.props;
 
         if (stream) {
-            smoothScrollTo(window, 0, 0).then(() => {
-                onFetchStream(stream.streamId, stream.streamView, {
-                    ...stream.fetchOptions,
-                    numEntries
-                });
+            window.scrollTo(0, 0);
+
+            onFetchStream(stream.streamId, stream.streamView, {
+                ...stream.fetchOptions,
+                numEntries
             });
         }
     }
@@ -210,7 +210,9 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
         const { onResetReadEntry, stream } = this.props;
 
         if (stream) {
-            smoothScrollTo(window, 0, 0).then(() => onResetReadEntry(stream.streamId));
+            window.scrollTo(0, 0);
+
+            onResetReadEntry(stream.streamId);
         }
     }
 
@@ -263,9 +265,9 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
         const { onFetchStream, stream } = this.props;
 
         if (stream) {
-            smoothScrollTo(window, 0, 0).then(() => {
-                onFetchStream(stream.streamId, stream.streamView, stream.fetchOptions);
-            });
+            window.scrollTo(0, 0);
+
+            onFetchStream(stream.streamId, stream.streamView, stream.fetchOptions);
         }
     }
 
@@ -279,11 +281,11 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
         const { onFetchStream, stream } = this.props;
 
         if (stream) {
-            smoothScrollTo(window, 0, 0).then(() => {
-                onFetchStream(stream.streamId, stream.streamView, {
-                    ...stream.fetchOptions,
-                    onlyUnread: !stream.fetchOptions.onlyUnread
-                });
+            window.scrollTo(0, 0);
+
+            onFetchStream(stream.streamId, stream.streamView, {
+                ...stream.fetchOptions,
+                onlyUnread: !stream.fetchOptions.onlyUnread
             });
         }
     }
@@ -382,6 +384,7 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
         const {
             isLoaded,
             isLoading,
+            isScrolling,
             onFetchEntryComments,
             onFetchFullContent,
             onHideEntryComments,
@@ -402,6 +405,7 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
                 heightCache={stream.heightCache}
                 isLoaded={isLoaded}
                 isLoading={isLoading}
+                isScrolling={isScrolling}
                 onChangeActiveEntry={this.handleChangeActiveEnetry}
                 onExpand={this.handleChangeExpandedEntry}
                 onFetchComments={onFetchEntryComments}
@@ -522,6 +526,7 @@ export default connect(() => {
             category: categorySelector(state, props),
             isLoaded: state.streams.isLoaded,
             isLoading: state.streams.isLoading,
+            isScrolling: state.ui.isScrolling,
             keepUnread: state.streams.keepUnread,
             readEntries: readEntriesSelector(state, props),
             shouldFetchStream: shouldFetchStreamSelector(state, props),

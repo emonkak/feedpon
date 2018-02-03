@@ -2,30 +2,32 @@ const SCROLL_OFFSET = 48;
 
 export function getNextEntryScrollPosition(): number {
     const elements = document.getElementsByClassName('entry');
-    const scrollY = window.scrollY + SCROLL_OFFSET;
 
     for (let i = 0; i < elements.length; i++) {
         const element = elements[i] as HTMLElement;
-        if (element.offsetTop > scrollY) {
-            return element.offsetTop - SCROLL_OFFSET;
+        const top = element.getBoundingClientRect().top;
+        const delta = top - SCROLL_OFFSET;
+        if (delta >= 1) {
+            return Math.ceil(delta);
         }
     }
 
-    return document.documentElement.scrollHeight - window.innerHeight;
+    return document.documentElement.scrollHeight - window.innerHeight - window.scrollY;
 }
 
 export function getPreviousEntryScrollPosition(): number {
     const elements = document.getElementsByClassName('entry');
-    const scrollY = window.scrollY + SCROLL_OFFSET;
 
     for (let i = elements.length - 1; i >= 0; i--) {
         const element = elements[i] as HTMLElement;
-        if (element.offsetTop < scrollY) {
-            return element.offsetTop - SCROLL_OFFSET;
+        const top = element.getBoundingClientRect().top;
+        const delta = top - SCROLL_OFFSET;
+        if (delta <= -1) {
+            return Math.ceil(delta);
         }
     }
 
-    return 0;
+    return -window.scrollY;
 }
 
 export function openUrlInBackground(url: string): void {

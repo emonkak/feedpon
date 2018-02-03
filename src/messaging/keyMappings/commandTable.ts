@@ -3,7 +3,6 @@ import * as streamActions from 'messaging/streams/actions';
 import * as subscriptionActions from 'messaging/subscriptions/actions';
 import * as uiActions from 'messaging/ui/actions';
 import { Command, Entry, Stream, Thunk } from 'messaging/types';
-import { smoothScrollTo, smoothScrollBy } from 'utils/dom/smoothScroll';
 import { getNextEntryScrollPosition, getPreviousEntryScrollPosition, openUrlInBackground } from 'messaging/domActions';
 
 const TEMPLATE_PATTERN = /\${([A-Z_]\w+)}/i;
@@ -18,9 +17,9 @@ export const clearReadPosition: Command<{}> = {
             const streamId = state.ui.selectedStreamId;
 
             if (streamId) {
-                smoothScrollTo(window, 0, 0).then(() => {
-                    dispatch(uiActions.resetReadEntry(streamId));
-                });
+                window.scrollTo(0, 0);
+
+                dispatch(uiActions.resetReadEntry(streamId));
             }
         };
     }
@@ -132,10 +131,12 @@ export const gotoLastLine: Command<{}> = {
     description: 'Scroll to last line.',
     defaultParams: {},
     action() {
-        return () => window.scrollTo(
-            0,
-            document.documentElement.scrollHeight - document.documentElement.clientHeight
-        );
+        return () => {
+            window.scrollTo(
+                0,
+                document.documentElement.scrollHeight - document.documentElement.clientHeight
+            );
+        };
     }
 };
 
@@ -217,13 +218,13 @@ export const reloadStream: Command<{}> = {
             const selectedStream = dispatch(getSelectedStream);
 
             if (selectedStream) {
-                smoothScrollTo(window, 0, 0).then(() => {
-                    dispatch(streamActions.fetchStream(
-                        selectedStream.streamId,
-                        selectedStream.streamView,
-                        selectedStream.fetchOptions
-                    ));
-                });
+                window.scrollTo(0, 0);
+
+                dispatch(streamActions.fetchStream(
+                    selectedStream.streamId,
+                    selectedStream.streamView,
+                    selectedStream.fetchOptions
+                ));
             }
         };
     }
@@ -245,7 +246,9 @@ export const scrollDown: Command<{ scrollAmount: number }> = {
         scrollAmount: 200
     },
     action({ scrollAmount }) {
-        return () => smoothScrollBy(window, 0, scrollAmount);
+        return ({ dispatch }) => {
+            dispatch(uiActions.scrollBy(0, scrollAmount));
+        };
     }
 };
 
@@ -256,7 +259,9 @@ export const scrollPageDown: Command<{ numPages: number }> = {
         numPages: 1
     },
     action({ numPages }) {
-        return () => smoothScrollBy(window, 0, document.documentElement.clientHeight * numPages);
+        return ({ dispatch }) => {
+            dispatch(uiActions.scrollBy(0, document.documentElement.clientHeight * numPages));
+        };
     }
 };
 
@@ -267,7 +272,9 @@ export const scrollPageUp: Command<{ numPages: number }> = {
         numPages: 1
     },
     action({ numPages }) {
-        return () => smoothScrollBy(window, 0, -document.documentElement.clientHeight * numPages);
+        return ({ dispatch }) => {
+            dispatch(uiActions.scrollBy(0, -document.documentElement.clientHeight * numPages));
+        };
     }
 };
 
@@ -278,7 +285,9 @@ export const scrollUp: Command<{ scrollAmount: number }> = {
         scrollAmount: 200
     },
     action({ scrollAmount }) {
-        return () => smoothScrollBy(window, 0, scrollAmount);
+        return ({ dispatch }) => {
+            dispatch(uiActions.scrollBy(0, scrollAmount));
+        };
     }
 };
 
@@ -347,16 +356,16 @@ export const selectNextEntry: Command<{}> = {
                 return;
             }
 
-            const y = getNextEntryScrollPosition();
+            const dy = getNextEntryScrollPosition();
 
-            if (window.scrollY === y) {
+            if (dy !== 0) {
+                dispatch(uiActions.scrollBy(0, dy));
+            } else {
                 const stream = dispatch(getSelectedStream);
 
                 if (stream && stream.continuation) {
                     dispatch(streamActions.fetchMoreEntries(stream.streamId, stream.continuation, stream.fetchOptions));
                 }
-            } else {
-                smoothScrollTo(window, 0, y);
             }
         };
     }
@@ -447,10 +456,10 @@ export const selectPreviousEntry: Command<{}> = {
                 return;
             }
 
-            const y = getPreviousEntryScrollPosition();
+            const dy = getPreviousEntryScrollPosition();
 
-            if (window.scrollY !== y) {
-                smoothScrollTo(window, 0, y);
+            if (dy !== 0) {
+                dispatch(uiActions.scrollBy(0, dy));
             }
         };
     }

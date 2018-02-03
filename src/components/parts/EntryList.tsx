@@ -16,6 +16,7 @@ interface EntryListProps {
     heightCache: { [id: string]: number };
     isLoaded: boolean;
     isLoading: boolean;
+    isScrolling: boolean;
     onChangeActiveEntry: (index: number) => void;
     onExpand: (index: number) => void;
     onFetchComments: (entryId: string | number, url: string) => void;
@@ -77,7 +78,7 @@ export default class EntryList extends PureComponent<EntryListProps, EntryListSt
             }
         }
 
-        const { heightCache, onHeightUpdated, activeEntryIndex } = this.props;
+        const { activeEntryIndex, heightCache, isScrolling, onHeightUpdated } = this.props;
 
         return (
             <div className="entry-list">
@@ -87,6 +88,7 @@ export default class EntryList extends PureComponent<EntryListProps, EntryListSt
                     idAttribute="id"
                     initialHeights={heightCache}
                     initialItemIndex={activeEntryIndex}
+                    isDisabled={isScrolling}
                     items={this._getRenderingItems(this.props)}
                     onHeightUpdated={onHeightUpdated}
                     onPositioningUpdated={this._handlePositioningUpdated}

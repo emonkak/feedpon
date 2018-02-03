@@ -95,6 +95,8 @@ export type Event
     | { type: 'NOTIFICATION_DISMISSED', id: number }
     | { type: 'NOTIFICATION_SENT', notification: Notification }
     | { type: 'READ_ENTRY_RESET', streamId: string }
+    | { type: 'SCROLL_STARTED' }
+    | { type: 'SCROLL_ENDED' }
     | { type: 'SIDEBAR_CLOSED' }
     | { type: 'SIDEBAR_OPENED' }
     | { type: 'SITEINFO_UPDATED', items: SiteinfoItem[], updatedAt: number }
@@ -393,6 +395,7 @@ export interface User {
 export interface UI {
     customStyles: string;
     helpIsOpened: boolean;
+    isScrolling: boolean;
     selectedStreamId: string;
     sidebarIsOpened: boolean;
     theme: ThemeKind;

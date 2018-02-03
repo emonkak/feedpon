@@ -5,7 +5,8 @@ export default function uiReducer(ui: UI, event: Event): UI {
         case 'CUSTOM_STYLE_CHANGED':
             return {
                 ...ui,
-                customStyles: event.customStyles
+                customStyles: event.customStyles,
+                isScrolling: false
             };
 
         case 'HELP_OPENED':
@@ -53,6 +54,18 @@ export default function uiReducer(ui: UI, event: Event): UI {
             return {
                 ...ui,
                 theme: event.theme
+            };
+
+        case 'SCROLL_STARTED':
+            return {
+                ...ui,
+                isScrolling: true
+            };
+
+        case 'SCROLL_ENDED':
+            return {
+                ...ui,
+                isScrolling: false
             };
 
         default:
