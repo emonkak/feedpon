@@ -34,7 +34,7 @@ interface SearchPageProps {
 }
 
 class SearchPage extends PureComponent<SearchPageProps, {}> {
-    private searchInput: HTMLInputElement | null;
+    private searchInput: HTMLInputElement | null = null;
 
     constructor(props: SearchPageProps, context: {}) {
         super(props, context);

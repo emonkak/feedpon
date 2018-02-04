@@ -6,7 +6,7 @@ function thunkMiddlewareFactory<TState, TEvent, TContext>(
     return ({ getState, replaceState, subscribe }) => (event, next) => {
         const dispatch = (event: TEvent): any => {
             if (typeof event === 'function') {
-                return event({ dispatch, getState, replaceState, subscribe }, context);
+                return (event as any)({ dispatch, getState, replaceState, subscribe }, context);
             } else {
                 return next(event);
             }

@@ -126,7 +126,7 @@ export class MenuItem extends PureComponent<MenuItemProps, {}> {
 
     static contextTypes = menuContext;
 
-    context: MenuContext;
+    context!: MenuContext;
 
     render() {
         const { href, icon, isDisabled, primaryText, secondaryText, target } = this.props;
@@ -181,7 +181,7 @@ export class MenuLink extends PureComponent<MenuLinkProps, {}> {
 
     static contextTypes = menuContext;
 
-    context: MenuContext;
+    context!: MenuContext;
 
     render() {
         const { icon, isDisabled, primaryText, secondaryText, to } = this.props;
@@ -217,7 +217,7 @@ export class MenuLink extends PureComponent<MenuLinkProps, {}> {
 export class MenuForm extends PureComponent<MenuFormProps, {}> {
     static contextTypes = menuContext;
 
-    context: MenuContext;
+    context!: MenuContext;
 
     render() {
         const { children } = this.props;

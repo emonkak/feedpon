@@ -43,9 +43,9 @@ interface CategoriesPageState {
 }
 
 class CategoriesPage extends PureComponent<CategoriesPageProps, CategoriesPageState> {
-    private searchInput: HTMLInputElement | null;
+    private searchInput: HTMLInputElement | null = null;
 
-    private uploadInput: HTMLInputElement | null;
+    private uploadInput: HTMLInputElement | null = null;
 
     constructor(props: CategoriesPageProps, context: any) {
         super(props, context);

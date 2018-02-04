@@ -73,7 +73,7 @@ export class NavItem extends PureComponent<NavItemProps, {}> {
 
     static contextTypes = navContext;
 
-    context: NavContext;
+    context!: NavContext;
 
     constructor(props: NavItemProps, context: any) {
         super(props, context);

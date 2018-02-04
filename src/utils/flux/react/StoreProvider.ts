@@ -8,7 +8,7 @@ interface StoreContextProps {
 }
 
 export default class StoreProvider extends PureComponent<StoreContextProps, {}> {
-    context: { store: Store<any, any> };
+    context!: { store: Store<any, any> };
 
     static childContextTypes = {
         store: PropTypes.shape({

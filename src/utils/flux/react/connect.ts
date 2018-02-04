@@ -28,7 +28,7 @@ export default function connect<TStateProps, TDispatchProps, TOwnProps>(
 
             readonly mergeProps: (stateProps: TStateProps, dispatchProps: TDispatchProps, ownProps: Partial<TProps>) => TProps;
 
-            context: { store: Store<any, any> };
+            context!: { store: Store<any, any> };
 
             dispatchProps: TDispatchProps;
 

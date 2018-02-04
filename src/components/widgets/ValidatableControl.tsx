@@ -27,7 +27,7 @@ export default class ValidatableControl extends PureComponent<ValidatableControl
         validClassName: 'has-success'
     };
 
-    private controlElement: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | null;
+    private controlElement: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | null = null;
 
     constructor(props: ValidatableControlProps, context: any) {
         super(props, context);

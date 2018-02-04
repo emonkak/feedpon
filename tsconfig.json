@@ -17,6 +17,7 @@
         "noUnusedLocals": true,
         "strictFunctionTypes": true,
         "strictNullChecks": true,
+        "strictPropertyInitialization": true,
         "target": "es5"
     },
     "exclude": [

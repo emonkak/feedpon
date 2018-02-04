@@ -24,7 +24,7 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
         component: 'div'
     };
 
-    private _menu: Menu | null;
+    private _menu: Menu | null = null;
 
     constructor(props: DropdownProps, context: any) {
         super(props, context);
