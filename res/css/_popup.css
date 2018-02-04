@@ -39,7 +39,7 @@
 }
 
 .popup > .popover > .popover-content {
-  overflow: scroll;
+  overflow: auto;
   box-sizing: border-box;
 }
 
