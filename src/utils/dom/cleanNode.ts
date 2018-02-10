@@ -48,6 +48,10 @@ function cleanElement(element: Element, baseUrl: string): boolean {
             element.setAttribute('target',  '_blank');
             break;
 
+        case 'TABLE':
+            responsifyTable(element as HTMLTableElement);
+            break;
+
         case 'IMG':
             responsify(element as HTMLImageElement);
             break;
@@ -57,7 +61,7 @@ function cleanElement(element: Element, baseUrl: string): boolean {
             break;
 
         case 'IFRAME':
-            responsify(element as any);  // BUG: defnied 'width' as 'string'
+            responsify(element as any);  // BUG: Defined 'width' as 'string' at the type definition
             sandboxifyIframe(element as HTMLIFrameElement);
             break;
     }
@@ -108,6 +112,16 @@ function responsify(element: HTMLElement & { width: number, height: number }): v
     if (element.parentNode) {
         element.parentNode.replaceChild(container, element);
 
+        wrapper.appendChild(element);
+    }
+}
+
+function responsifyTable(element: HTMLTableElement): void {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'u-responsive';
+
+    if (element.parentNode) {
+        element.parentNode.replaceChild(wrapper, element);
         wrapper.appendChild(element);
     }
 }
