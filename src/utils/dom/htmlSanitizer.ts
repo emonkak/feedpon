@@ -10,7 +10,7 @@ export const OPTIONAL_END_TAG_ELEMENTS = keyMirror(['colgroup', 'dd', 'dt', 'li'
 export const BLOCK_ELEMENTS = keyMirror(['address', 'article', 'aside', 'blockquote', 'caption', 'center', 'del', 'details', 'dialog', 'dir', 'div', 'dl', 'figcaption', 'figure', 'footer', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'header', 'hgroup', 'hr', 'ins', 'main', 'map', 'menu', 'nav', 'ol', 'pre', 'section', 'summary', 'table', 'ul']);
 
 // Inline Elements - HTML5
-export const INLINE_ELEMENTS = keyMirror(['a', 'abbr', 'acronym', 'audio', 'b', 'bdi', 'bdo', 'big', 'br', 'cite', 'code', 'del', 'dfn', 'em', 'font', 'i', 'iframe', 'img', 'ins', 'kbd', 'label', 'map', 'mark', 'picture', 'q', 'rp', 'rt', 'ruby', 's', 'samp', 'small', 'span', 'strike', 'strong', 'sub', 'sup', 'time',  'track', 'tt', 'u', 'var', 'video']);
+export const INLINE_ELEMENTS = keyMirror(['a', 'abbr', 'acronym', 'audio', 'b', 'bdi', 'bdo', 'big', 'br', 'cite', 'code', 'del', 'dfn', 'em', 'font', 'i', 'iframe', 'img', 'ins', 'kbd', 'label', 'map', 'mark', 'picture', 'q', 'rb', 'rp', 'rt', 'ruby', 's', 'samp', 'small', 'span', 'strike', 'strong', 'sub', 'sup', 'time',  'track', 'tt', 'u', 'var', 'video']);
 
 export const ALLOWED_ELEMENTS = Object.assign({
     ...VOID_ELEMENTS,
