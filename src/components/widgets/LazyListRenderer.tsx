@@ -374,7 +374,7 @@ export default class LazyListRenderer extends Component<LazyListRendererProps, L
         const rectangle = this.props.getViewportRectangle!();
         const listElement = findDOMNode(this._ref) as HTMLElement;
 
-        const top = -Math.ceil(listElement.getBoundingClientRect().top) + rectangle.top;
+        const top = -listElement.getBoundingClientRect().top + rectangle.top;
         const height = rectangle.bottom - rectangle.top;
 
         return createRectangle(top, height);
@@ -387,11 +387,11 @@ export default class LazyListRenderer extends Component<LazyListRendererProps, L
             return 0;
         }
 
-        if (index >= rectangles.length) {
-            return Math.ceil(rectangles[rectangles.length - 1].bottom - viewportRectangle.top);
-        }
+        const offset = index >= rectangles.length
+            ? rectangles[rectangles.length - 1].bottom - viewportRectangle.top
+            : rectangles[index].top - viewportRectangle.top;
 
-        return Math.ceil(rectangles[index].top - viewportRectangle.top);
+        return Math.ceil(offset);
     }
 
     private _getRectangles = createSelector(
@@ -526,7 +526,7 @@ function getScrollAdjustmentDelta(prevPos: Positioning, nextPos: Positioning): n
 }
 
 function getHeightForDomNode(element: HTMLElement): number {
-    return Math.ceil(element.getBoundingClientRect().height);
+    return element.getBoundingClientRect().height;
 }
 
 function getViewportRectangle(): Rectangle {
