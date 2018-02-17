@@ -59,7 +59,7 @@
 }
 
 .button-default:focus {
-  box-shadow: 0 0 0 2px var(--default-focus-outline-color);
+  box-shadow: 0 0 0 2px var(--default-outline-color);
 }
 
 .button-default:disabled {
@@ -80,7 +80,7 @@
 }
 
 .button-positive:focus {
-  box-shadow: 0 0 0 2px var(--positive-focus-outline-color);
+  box-shadow: 0 0 0 2px var(--positive-outline-color);
 }
 
 .button-positive:disabled {
@@ -102,7 +102,7 @@
 }
 
 .button-negative:focus {
-  box-shadow: 0 0 0 2px var(--negative-focus-outline-color);
+  box-shadow: 0 0 0 2px var(--negative-outline-color);
 }
 
 .button-negative:disabled {
@@ -128,7 +128,7 @@
 }
 
 .button-outline-default:focus {
-  box-shadow: 0 0 0 2px var(--default-focus-outline-color);
+  box-shadow: 0 0 0 2px var(--default-outline-color);
 }
 
 .button-outline-default:disabled {
@@ -156,7 +156,7 @@
 }
 
 .button-outline-positive:focus {
-  box-shadow: 0 0 0 2px var(--positive-focus-outline-color);
+  box-shadow: 0 0 0 2px var(--positive-outline-color);
 }
 
 .button-outline-positive:disabled {
@@ -184,7 +184,7 @@
 }
 
 .button-outline-negative:focus {
-  box-shadow: 0 0 0 2px var(--negative-focus-outline-color);
+  box-shadow: 0 0 0 2px var(--negative-outline-color);
 }
 
 .button-outline-negative:disabled {

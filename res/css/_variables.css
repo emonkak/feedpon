@@ -35,21 +35,21 @@
   --default-border-color: $medium-dark-color;
   --default-hover-color: color($x-dark-color lightness(+5%));
   --default-active-color: color($x-dark-color lightness(+5%) alpha(90%));
-  --default-focus-outline-color: color($medium-dark-color alpha(50%));
+  --default-outline-color: color($medium-dark-color alpha(50%));
 
   --positive-color: $positive-color;
   --positive-background-color: $positive-background-color;
   --positive-border-color: $positive-color;
   --positive-hover-color: color($positive-color lightness(+5%));
   --positive-active-color: color($positive-color lightness(+5%) alpha(90%));
-  --positive-focus-outline-color: color($positive-color alpha(50%));
+  --positive-outline-color: color($positive-color alpha(50%));
 
   --negative-color: $negative-color;
   --negative-background-color: $negative-background-color;
   --negative-border-color: $negative-color;
   --negative-hover-color: color($negative-color lightness(+5%));
   --negative-active-color: color($negative-color lightness(+5%) alpha(90%));
-  --negative-focus-outline-color: color($negative-color alpha(50%));
+  --negative-outline-color: color($negative-color alpha(50%));
 
   --backdrop-color: $x-light-color;
   --backdrop-background-color: rgba(0, 0, 0, 0.75);
@@ -84,14 +84,14 @@
   --default-border-color: $medium-light-color;
   --default-hover-color: color($x-light-color lightness(-10%));
   --default-active-color: color($x-light-color lightness(-10%) alpha(90%));
-  --default-focus-outline-color: color($x-light-color alpha(50%));
+  --default-outline-color: color($x-light-color alpha(50%));
 
   --positive-color: $positive-color;
   --positive-background-color: $positive-background-color;
   --positive-border-color: $positive-color;
   --positive-hover-color: color($positive-color lightness(-10%));
   --positive-active-color: color($positive-color lightness(-10%) alpha(90%));
-  --positive-focus-outline-color: color($positive-color alpha(50%));
+  --positive-outline-color: color($positive-color alpha(50%));
 
   --negative-color: $negative-color;
   --negative-background-color: $negative-background-color;

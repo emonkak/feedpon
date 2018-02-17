@@ -40,7 +40,7 @@ input.form-control {
 }
 
 .form-control:focus {
-  box-shadow: 0 0 0 2px var(--default-focus-outline-color);
+  box-shadow: 0 0 0 2px var(--default-outline-color);
   z-index: 1;
 }
 
@@ -54,7 +54,7 @@ select.form-control:not([size]):not([multiple]) {
 }
 
 .form-control.has-success:focus {
-  box-shadow: 0 0 0 2px var(--positive-focus-outline-color);
+  box-shadow: 0 0 0 2px var(--positive-outline-color);
 }
 
 .form-control.has-error {
@@ -63,7 +63,7 @@ select.form-control:not([size]):not([multiple]) {
 }
 
 .form-control.has-error:focus {
-  box-shadow: 0 0 0 2px var(--negative-focus-outline-color);
+  box-shadow: 0 0 0 2px var(--negative-outline-color);
 }
 
 .form-control-addon {

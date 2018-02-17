@@ -1,39 +1,26 @@
-import React, { PureComponent } from 'react';
+import React from 'react';
 
 interface NavbarProps {
     children?: React.ReactNode;
+    progress?: number;
     onToggleSidebar?: () => void;
 }
 
-export default class Navbar extends PureComponent<NavbarProps, {}> {
-    constructor(props: NavbarProps, context: any) {
-        super(props, context);
+const Navbar: React.SFC<NavbarProps> = ({ children, onToggleSidebar, progress }) => {
+    return (
+        <nav className="navbar">
+            <div className="navbar-container">
+                <button className="navbar-action" onClick={onToggleSidebar}>
+                    <i className="icon icon-24 icon-menu" />
+                </button>
+                {children}
+            </div>
+            {progress != null &&
+                <div
+                    className="navbar-indicator"
+                    style={{ width: `${progress * 100}%` }} />}
+        </nav>
+    );
+};
 
-        this.handleToggleSidebar = this.handleToggleSidebar.bind(this);
-    }
-
-    handleToggleSidebar(event: React.MouseEvent<any>) {
-        event.preventDefault();
-
-        const { onToggleSidebar } = this.props;
-
-        if (onToggleSidebar) {
-            onToggleSidebar();
-        }
-    }
-
-    render() {
-        const { children } = this.props;
-
-        return (
-            <nav className="navbar">
-                <div className="navbar-container">
-                    <button className="navbar-action" onClick={this.handleToggleSidebar}>
-                        <i className="icon icon-24 icon-menu" />
-                    </button>
-                    {children}
-                </div>
-            </nav>
-        );
-    }
-}
+export default Navbar;

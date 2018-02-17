@@ -55,7 +55,7 @@ const StreamNavbar: React.SFC<StreamNavbarProps> = ({
     title
 }) => {
     return (
-        <Navbar onToggleSidebar={onToggleSidebar}>
+        <Navbar onToggleSidebar={onToggleSidebar} progress={activeEntryIndex / entries.length}>
             <h1 className="navbar-title">
                 <span className="stream-title u-text-truncate">{title}</span>
             </h1>

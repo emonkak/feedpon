@@ -1,4 +1,5 @@
 .navbar {
+  position: relative;
   box-sizing: border-box;
   border-bottom: 1px solid var(--medium-dark-color);
   height: var(--navbar-height);
@@ -11,6 +12,17 @@
   max-width: var(--container-width);
   height: 100%;
   padding: 0 1.5em;
+}
+
+.navbar-indicator {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  height: 1px;
+  width: 0;
+  background-color: var(--positive-color);
+  box-shadow: 0 0 2px var(--positive-outline-color);
+  transition: width 0.6s ease-in-out;
 }
 
 .navbar-title {
