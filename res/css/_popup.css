@@ -43,7 +43,10 @@
   box-sizing: border-box;
 }
 
-.popup > .popover,
-.popup > .popover > .popover-arrow {
+.popup > .popover {
   box-shadow: 0 1px 2px var(--shadow-color);
+}
+
+.popup > .popover > .popover-arrow {
+  box-shadow: -1px 1px 2px var(--shadow-color);
 }
