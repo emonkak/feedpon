@@ -88,8 +88,10 @@ function qualifySrcset(srcsetString: string, baseUrlString: string): string {
 }
 
 function resolveLazyLoading(element: HTMLImageElement): void {
-    if (!element.src && element.dataset.src) {
+    if (element.dataset.src) {
         element.src = element.dataset.src!;
+    } else if (element.dataset.lazySrc) {
+        element.src = element.dataset.lazySrc!;
     }
 }
 
