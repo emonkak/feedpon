@@ -222,6 +222,7 @@ class KitchenSinkPage extends PureComponent<KitchenSinkProps, KitchenSinkState> 
                 <h2>Dropdown</h2>
                 <div className="u-margin-bottom-2">
                     <Dropdown
+                        className="u-inline-block"
                         toggleButton={<button className="button button-outline-default dropdown-arrow">Dropdown</button>}>
                         <MenuItem primaryText="First Action" secondaryText="First"></MenuItem>
                         <MenuItem primaryText="Second Action" secondaryText="Second"></MenuItem>
