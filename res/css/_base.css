@@ -97,6 +97,11 @@ kbd kbd {
   box-shadow: none;
 }
 
+sub,
+sup {
+  line-height: 0;
+}
+
 hr {
   margin: calc(var(--baseline-height) + 6px) auto;
   width: 72px;
