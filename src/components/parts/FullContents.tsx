@@ -20,7 +20,7 @@ const FullContents: React.SFC<FullContentsProps> = ({
         return (
             <div className="entry-content u-clearfix u-text-wrap">
                 <div className="message message-positive">
-                    This entry cannot be extracted.
+                    This entry could not extract the full content.
                 </div>
             </div>
         );
