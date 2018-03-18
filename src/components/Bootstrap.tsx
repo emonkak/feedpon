@@ -1,4 +1,5 @@
 import React, { PureComponent } from 'react';
+import classnames from 'classnames';
 import { History } from 'history';
 import { Router } from 'react-router';
 
@@ -56,7 +57,9 @@ export default class Bootstrap extends PureComponent<BootstrapProps, BootstrapSt
         } else {
             return (
                 <div className="l-boot">
-                    <img className="animation-blinking u-margin-bottom-1" src="./img/logo.svg" width="244" height="88" />
+                    <img className={classnames('u-margin-bottom-1', {
+                        'animation-blinking': !error
+                    })} src="./img/logo.svg" width="244" height="88" />
                     {error &&
                         <div className="u-text-negative u-text-center">
                             <p className="u-text-x-large">{error}</p>
