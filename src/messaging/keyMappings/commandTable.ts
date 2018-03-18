@@ -320,13 +320,14 @@ export const selectNextCategory: Command<{}> = {
         return ({ dispatch, getState }, { router, selectors }) => {
             const state = getState();
             const streamId = state.ui.selectedStreamId;
-            const categories = selectors.sortedCategoriesSelector(state);
             const groupedSubscriptions = selectors.groupedSubscriptionsSelector(state);
+            const visibleCategories = selectors.sortedCategoriesSelector(state)
+                .filter((category) => groupedSubscriptions.hasOwnProperty(category.label));
 
             let targetIndex: number;
 
             if (streamId) {
-                const selectedIndex = categories.findIndex((category) =>
+                const selectedIndex = visibleCategories.findIndex((category) =>
                     category.streamId === streamId ||
                         (groupedSubscriptions[category.label] &&
                          groupedSubscriptions[category.label].items.findIndex((subscription) => subscription.streamId === streamId) !== -1)
@@ -336,8 +337,8 @@ export const selectNextCategory: Command<{}> = {
                 targetIndex = 0;
             }
 
-            if (categories[targetIndex]) {
-                const targetCategory = categories[targetIndex];
+            if (visibleCategories[targetIndex]) {
+                const targetCategory = visibleCategories[targetIndex];
                 router.push(`/streams/${encodeURIComponent(targetCategory.streamId)}`);
             }
         };
@@ -415,29 +416,30 @@ export const selectPreviousCategory: Command<{}> = {
         return ({ dispatch, getState }, { router, selectors }) => {
             const state = getState();
             const streamId = state.ui.selectedStreamId;
-            const categories = selectors.sortedCategoriesSelector(state);
             const groupedSubscriptions = selectors.groupedSubscriptionsSelector(state);
+            const visibleCategories = selectors.sortedCategoriesSelector(state)
+                .filter((category) => groupedSubscriptions.hasOwnProperty(category.label));
 
             let targetIndex: number;
 
             if (streamId) {
-                const selectedIndex = categories.findIndex((category) =>
+                const selectedIndex = visibleCategories.findIndex((category) =>
                     category.streamId === streamId ||
                         (groupedSubscriptions[category.label] &&
                          groupedSubscriptions[category.label].items.findIndex((subscription) => subscription.streamId === streamId) !== -1)
                 );
                 if (selectedIndex > -1) {
-                    const selectedCategory = categories[selectedIndex];
+                    const selectedCategory = visibleCategories[selectedIndex];
                     targetIndex = selectedCategory.streamId === streamId ? selectedIndex - 1 : selectedIndex;
                 } else {
-                    targetIndex = categories.length - 1;
+                    targetIndex = visibleCategories.length - 1;
                 }
             } else {
-                targetIndex = categories.length - 1;
+                targetIndex = visibleCategories.length - 1;
             }
 
-            if (categories[targetIndex]) {
-                const targetCategory = categories[targetIndex];
+            if (visibleCategories[targetIndex]) {
+                const targetCategory = visibleCategories[targetIndex];
                 router.push(`/streams/${encodeURIComponent(targetCategory.streamId)}`);
             }
         };
