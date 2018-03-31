@@ -351,7 +351,7 @@ export const selectNextEntry: Command<{}> = {
     defaultParams: {},
     action() {
         return ({ getState, dispatch }, { router }) => {
-            const { ui } = getState();
+            const { ui, streams } = getState();
 
             if (!ui.selectedStreamId) {
                 return;
@@ -361,7 +361,7 @@ export const selectNextEntry: Command<{}> = {
 
             if (dy !== 0) {
                 dispatch(uiActions.scrollBy(0, dy));
-            } else {
+            } else if (!streams.isLoading) {
                 const stream = dispatch(getSelectedStream);
 
                 if (stream && stream.continuation) {
