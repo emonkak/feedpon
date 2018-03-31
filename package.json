@@ -1,7 +1,7 @@
 {
   "name": "feedpon",
   "version": "1.0.8",
-  "description": "A feed reader which was developed for me",
+  "description": "A feed reader for me",
   "author": "Shota Nozaki",
   "license": "MIT",
   "private": true,

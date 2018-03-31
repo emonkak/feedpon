@@ -1,6 +1,6 @@
 <img src="./www/img/logo.svg" alt="Feedpon" width="320">
 
-Feedpon is a feed reader which was developed for me.
+Feedpon is a feed reader developed for me.
 
 This extension uses Feedly as a backend.
 Therefore you will need a Feedly account.
