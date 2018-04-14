@@ -11,7 +11,7 @@
   margin: 0 auto;
   max-width: var(--container-width);
   height: 100%;
-  padding: 0 1.5em;
+  padding: 0;
 }
 
 .navbar-indicator {
@@ -30,11 +30,11 @@
   display: flex;
   align-items: center;
   margin: 0;
-  padding: 0 1em;
+  padding: 0 1rem;
   min-width: 0;
   color: inherit;
   font-size: inherit;
-  font-weight: 600;
+  font-weight: bold;
   line-height: inherit;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -65,9 +65,8 @@
   height: 100%;
 }
 
-@media (--sm-viewport) {
+@media (--md-viewport) {
   .navbar-container {
-    padding-left: 0;
-    padding-right: 0;
+    padding: 0 1.5rem;
   }
 }

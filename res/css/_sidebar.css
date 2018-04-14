@@ -1,15 +1,15 @@
 .sidebar-group {
-  margin-bottom: calc(var(--baseline-height) / 2);
+  margin-bottom: calc(var(--vertical-rhythm) / 2);
 }
 
 .sidebar-group-header {
   display: flex;
   align-items: stretch;
-  padding: calc(var(--baseline-height) / 4) 0 calc(var(--baseline-height) / 4 - 1px);
+  padding: calc(var(--vertical-rhythm) / 4) 0 calc(var(--vertical-rhythm) / 4 - 1px);
   border-bottom: 1px solid var(--x-dark-color);
 }
 
-@media (--sm-viewport) {
+@media not all and (--md-viewport) {
   .sidebar-is-swiping,
   .sidebar-is-swiping > body,
   .sidebar-is-opened,

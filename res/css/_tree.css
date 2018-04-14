@@ -17,7 +17,7 @@
   display: flex;
   align-items: stretch;
   border-radius: 4px;
-  margin: calc(var(--baseline-height) / 4) 0;
+  margin: calc(var(--vertical-rhythm) / 4) 0;
 }
 
 .tree-node:hover {
@@ -25,7 +25,7 @@
 }
 
 .tree-node.is-important {
-  font-weight: 600;
+  font-weight: bold;
 }
 
 .tree-node.is-selected {
@@ -52,8 +52,8 @@ a.tree-node-label {
   display: flex;
   align-items: center;
   flex: 1;
-  padding: calc(var(--baseline-height) / 4) 0.5em;
-  min-height: var(--baseline-height);
+  padding: calc(var(--vertical-rhythm) / 4) 0.5rem;
+  min-height: var(--vertical-rhythm);
 }
 
 .tree-node-icon + .tree-node-label {
@@ -66,10 +66,10 @@ a.tree-node-label {
 }
 
 .tree-node-secondary-text {
-  font-size: 0.875em;
+  font-size: 0.875rem;
   white-space: nowrap;
 }
 
 .tree-node-primary-text + .tree-node-secondary-text {
-  margin-left: 1em;
+  margin-left: 1rem;
 }

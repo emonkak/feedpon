@@ -1,19 +1,19 @@
 .comment {
-  padding: calc(var(--baseline-height) / 4) 0;
+  padding: calc(var(--vertical-rhythm) / 4) 0;
 }
 
 .comment + .comment {
-  padding-top: calc(var(--baseline-height) / 4 - 1px);
+  padding-top: calc(var(--vertical-rhythm) / 4 - 1px);
   border-top: 1px solid var(--medium-dark-color);
 }
 
 .comment-user {
-  font-weight: 600;
-  margin-right: 0.5em;
+  font-weight: bold;
+  margin-right: 0.5rem;
 }
 
 .comment-comment {
-  margin-right: 0.5em;
+  margin-right: 0.5rem;
 }
 
 .comment-timestamp {

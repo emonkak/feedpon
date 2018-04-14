@@ -78,6 +78,7 @@
     "cash-mkdir": "^0.2.0",
     "cash-rm": "^0.2.0",
     "npm-run-all": "^4.1.2",
+    "postcss-calc": "^6.0.1",
     "postcss-cli": "^4.1.1",
     "postcss-color-function": "^4.0.1",
     "postcss-csso": "^3.0.0",

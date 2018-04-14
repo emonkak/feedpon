@@ -41,7 +41,7 @@ const SubscriptionComponent: React.SFC<SubscriptionProps> = ({
                     <div>{title}{labels}</div>
                     <div className="u-text-small u-text-wrap"><a target="_blank" href={subscription.feedUrl}>{subscription.feedUrl}</a></div>
                 </div>
-                <div className="u-margin-right-2 u-text-right u-sm-none">
+                <div className="u-margin-right-2 u-text-right u-md-none">
                     <RelativeTime className="u-text-small u-text-muted" time={subscription.updatedAt} />
                 </div>
                 <SubscriptionDropdown

@@ -1,12 +1,12 @@
 .popover {
   position: relative;
-  margin: var(--baseline-height) 0;
+  margin: var(--vertical-rhythm) 0;
   border: 1px solid transparent;
   border-radius: 4px;
 }
 
 .popover-content {
-  padding: calc(var(--baseline-height) / 2 - 1px) calc(1.5em - 1px);
+  padding: calc(var(--vertical-rhythm) / 2 - 1px) calc(1.5rem - 1px);
 }
 
 .popover-content > p:last-child {

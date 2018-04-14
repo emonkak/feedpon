@@ -1,12 +1,16 @@
-@custom-media --sm-viewport (max-width: 768px);
-@custom-media --md-viewport (min-width: 769px) and (max-width: 980px);
-@custom-media --lg-viewport (min-width: 981px);
+$sm-viewport-min-width: 576px;
+$md-viewport-min-width: 768px;
+$lg-viewport-min-width: 992px;
+
+@custom-media --sm-viewport (min-width: $sm-viewport-min-width);
+@custom-media --md-viewport (min-width: $md-viewport-min-width);
+@custom-media --lg-viewport (min-width: $lg-viewport-min-width);
 
 :root {
-  --baseline-height: 24px;
+  --vertical-rhythm: calc(1rem * (24 / 14));
+  --sidebar-width: calc(1rem * (272 / 14));
   --navbar-height: 48px;
-  --sidebar-width: 272px;
-  --container-width: 768px;
+  --container-width: $md-viewport-min-width;
 }
 
 .theme-light {

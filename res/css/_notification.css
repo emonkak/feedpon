@@ -38,7 +38,7 @@
   flex: 1;
   display: flex;
   align-items: center;
-  margin: calc(var(--baseline-height) / 2) 0 calc(var(--baseline-height) / 2 - 1px);
+  margin: calc(var(--vertical-rhythm) / 2) 0 calc(var(--vertical-rhythm) / 2 - 1px);
   min-width: 0;
 }
 
@@ -67,11 +67,11 @@
 
 .instant-notification {
   display: inline-block;
-  margin: var(--baseline-height) auto;
-  padding: calc(var(--baseline-height) / 2) 1.5em;
+  margin: var(--vertical-rhythm) auto;
+  padding: calc(var(--vertical-rhythm) / 2) 1.5rem;
   color: var(--backdrop-color);
   background-color: var(--backdrop-background-color);
-  border-radius: var(--baseline-height);
+  border-radius: var(--vertical-rhythm);
 }
 
 .instant-notification-enter.instant-notification-enter-active,

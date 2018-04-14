@@ -85,7 +85,7 @@ class UISettings extends PureComponent<UISettingsProps, UISettingsState> {
                         <details>
                             <summary className="u-text-muted">Available CSS variables</summary>
                             <ul>
-                                <li><code>--baseline-height</code>: Base line height</li>
+                                <li><code>--vertical-rhythm</code>: The line height value for adjusting vertical rhythm</li>
                                 <li><code>--navbar-height</code>: Global navigation bar height</li>
                                 <li><code>--sidebar-width</code>: Global sidebar width</li>
                                 <li><code>--container-width</code>: Main container width</li>

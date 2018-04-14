@@ -4,36 +4,36 @@
 .display-4,
 .display-5,
 .display-6 {
-  margin: 0 0 calc(var(--baseline-height) / 2);
+  margin: 0 0 calc(var(--vertical-rhythm) / 2);
   font-weight: 200;
 }
 
 .display-1 {
-  font-size: 2.5em;
-  line-height: calc(var(--baseline-height) * 2);
+  font-size: 2.5rem;
+  line-height: calc(var(--vertical-rhythm) * 2);
 }
 
 .display-2 {
-  font-size: 2.0em;
-  line-height: calc(var(--baseline-height) * 1.5);
+  font-size: 2.0rem;
+  line-height: calc(var(--vertical-rhythm) * 1.5);
 }
 
 .display-3 {
-  font-size: 1.5em;
-  line-height: var(--baseline-height);
+  font-size: 1.5rem;
+  line-height: var(--vertical-rhythm);
 }
 
 .display-4 {
-  font-size: 1.375em;
-  line-height: var(--baseline-height);
+  font-size: 1.375rem;
+  line-height: var(--vertical-rhythm);
 }
 
 .display-5 {
-  font-size: 1.25em;
-  line-height: var(--baseline-height);
+  font-size: 1.25rem;
+  line-height: var(--vertical-rhythm);
 }
 
 .display-6 {
-  font-size: 1.125em;
-  line-height: var(--baseline-height);
+  font-size: 1.125rem;
+  line-height: var(--vertical-rhythm);
 }

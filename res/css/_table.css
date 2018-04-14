@@ -3,13 +3,13 @@
 }
 
 .table thead th {
-  padding-bottom: calc(var(--baseline-height) / 4 - 2px);
+  padding-bottom: calc(var(--vertical-rhythm) / 4 - 2px);
   border-bottom: 2px solid var(--medium-dark-color);
 }
 
 .table td,
 .table th {
-  padding-bottom: calc(var(--baseline-height) / 4 - 1px);
+  padding-bottom: calc(var(--vertical-rhythm) / 4 - 1px);
   border-bottom: 1px solid var(--medium-dark-color);
 }
 

@@ -12,8 +12,8 @@ html, body {
   -webkit-text-size-adjust: 100%;
   font-family: -apple-system, BlinkMacSystemFont, '.SFNSText-Regular', 'San Francisco Text', 'Segoe UI', Helvetica, YuGothic, 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
   font-size: 14px;
-  font-weight: 400;
-  line-height: var(--baseline-height);
+  font-weight: normal;
+  line-height: var(--vertical-rhythm);
   touch-action: manipulation;
 }
 
@@ -24,33 +24,33 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  margin: 0 0 calc(var(--baseline-height) / 2);
-  font-weight: 600;
+  margin: 0 0 calc(var(--vertical-rhythm) / 2);
+  font-weight: bold;
 }
 
 h1 {
-  font-size: 2.0em;
-  line-height: calc(var(--baseline-height) * 2);
+  font-size: 2.0rem;
+  line-height: calc(var(--vertical-rhythm) * 2);
 }
 
 h2 {
-  font-size: 1.5em;
+  font-size: 1.5rem;
 }
 
 h3 {
-  font-size: 1.375em;
+  font-size: 1.375rem;
 }
 
 h4 {
-  font-size: 1.25em;
+  font-size: 1.25rem;
 }
 
 h5 {
-  font-size: 1.125em;
+  font-size: 1.125rem;
 }
 
 h6 {
-  font-size: 1em;
+  font-size: 1rem;
 }
 
 pre, code, var, samp, kbd {
@@ -103,7 +103,7 @@ sup {
 }
 
 hr {
-  margin: calc(var(--baseline-height) + 6px) auto;
+  margin: calc(var(--vertical-rhythm) + 6px) auto;
   width: 72px;
   height: 12px;
   border: 0;
@@ -113,16 +113,16 @@ hr {
 }
 
 blockquote, dl, figure, ol, p, pre, table, ul {
-  margin: 0 0 var(--baseline-height);
+  margin: 0 0 var(--vertical-rhythm);
 }
 
 dd {
-  margin: 0 0 0 1.5em;
+  margin: 0 0 0 1.5rem;
 }
 
 pre {
   background-color: var(--light-color);
-  padding: calc(var(--baseline-height) / 2 - 1px) calc(1.5em - 1px);
+  padding: calc(var(--vertical-rhythm) / 2 - 1px) calc(1.5rem - 1px);
   overflow: auto;
   border-radius: 4px;
   border: 1px solid var(--medium-dark-color);
@@ -138,7 +138,7 @@ pre * {
 blockquote {
   position: relative;
   border-left: 4px solid var(--medium-light-color);
-  padding: calc(var(--baseline-height) / 2) 1.5em calc(var(--baseline-height) / 2) calc(1.5em - 4px);
+  padding: calc(var(--vertical-rhythm) / 2) 1.5rem calc(var(--vertical-rhythm) / 2) calc(1.5rem - 4px);
 }
 
 blockquote > p:last-child {
@@ -146,7 +146,7 @@ blockquote > p:last-child {
 }
 
 ul, ol {
-  padding: 0 0 0 1.5em;
+  padding: 0 0 0 1.5rem;
 }
 
 ol ol, ol ul, ul ol, ul ul {
@@ -159,17 +159,17 @@ table {
 }
 
 td, th {
-  padding: calc(var(--baseline-height) / 4) 1em;
+  padding: calc(var(--vertical-rhythm) / 4) 1rem;
   text-align: left;
   vertical-align: middle;
 }
 
 caption {
-  font-weight: 600;
+  font-weight: bold;
   caption-side: bottom;
   color: var(--dark-color);
   text-align: center;
-  margin: calc(var(--baseline-height) / 2) 0;
+  margin: calc(var(--vertical-rhythm) / 2) 0;
 }
 
 a {
@@ -187,11 +187,11 @@ em {
 }
 
 small {
-  font-size: 0.875em;
+  font-size: 0.875rem;
 }
 
 strong {
-  font-weight: 600;
+  font-weight: bold;
   font-style: normal;
 }
 

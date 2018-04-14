@@ -1,6 +1,6 @@
 .responsive-container {
   overflow: hidden;
-  margin: 0 auto var(--baseline-height);
+  margin: 0 auto var(--vertical-rhythm);
 }
 
 .responsive-wrapper {

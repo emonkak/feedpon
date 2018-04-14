@@ -2,7 +2,7 @@
   display: inline-block;
   position: relative;
   box-sizing: border-box;
-  padding: calc(var(--baseline-height) / 4 - 1px) calc(1em - 1px);
+  padding: calc(var(--vertical-rhythm) / 4 - 1px) calc(1rem - 1px);
   border: 1px solid transparent;
   border-radius: 4px;
   text-align: center;
@@ -28,8 +28,8 @@
 }
 
 .button-large {
-  padding: calc(var(--baseline-height) / 2 - 1px) calc(1.25em - 1px);
-  font-size: 1.25em;
+  padding: calc(var(--vertical-rhythm) / 2 - 1px) calc(1.25rem - 1px);
+  font-size: 1.25rem;
 }
 
 .button-pill {
@@ -202,7 +202,7 @@
 .button-toolbar > .button + .button-group,
 .button-toolbar > .button-group + .button,
 .button-toolbar > .button-group + .button-group {
-  margin-left: 0.5em;
+  margin-left: 0.5rem;
 }
 
 .button-group {

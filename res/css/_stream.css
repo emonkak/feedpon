@@ -1,7 +1,7 @@
 .stream-title,
 a.stream-title {
   color: inherit;
-  font-weight: 600;
+  font-weight: bold;
 }
 
 a.stream-title:hover {
@@ -11,7 +11,7 @@ a.stream-title:hover {
 
 .stream-header {
   position: relative;
-  padding: calc(var(--baseline-height) / 2) 0 calc(var(--baseline-height) / 2 - 1px);
+  padding: calc(var(--vertical-rhythm) / 2) 0 calc(var(--vertical-rhythm) / 2 - 1px);
   border-bottom: 1px solid var(--medium-dark-color);
   background-color: var(--light-color);
   z-index: 20;
