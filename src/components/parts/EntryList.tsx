@@ -210,8 +210,8 @@ function getActiveIndex(positioning: Positioning): number {
     for (let i = 0, l = rectangles.length; i < l; i++) {
         const rectangle = rectangles[i];
 
-        if (Math.ceil(rectangle.top) >= viewportTop &&
-            Math.floor(rectangle.bottom) <= viewportBottom) {
+        if (Math.ceil(rectangle.top) >= Math.floor(viewportTop) &&
+            Math.floor(rectangle.bottom) <= Math.ceil(viewportBottom)) {
             return i;
         }
 
