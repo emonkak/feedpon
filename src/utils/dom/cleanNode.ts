@@ -101,18 +101,22 @@ function responsify(element: HTMLElement & { width: number, height: number }): v
         return;
     }
 
-    const wrapper = document.createElement('div');
-    wrapper.className = 'responsive-wrapper';
-    wrapper.style.paddingBottom = (element.height / element.width * 100) + '%';
-
-    const container = document.createElement('div');
-    container.className = 'responsive-container';
-    container.style.maxWidth = element.width + 'px';
-    container.style.maxHeight = element.height + 'px';
-    container.appendChild(wrapper);
-
     if (element.parentNode) {
-        element.parentNode.replaceChild(container, element);
+        const wrapper = document.createElement('div');
+        wrapper.className = 'responsive-wrapper';
+        wrapper.style.paddingBottom = (element.height / element.width * 100) + '%';
+
+        const container = document.createElement('div');
+        container.className = 'responsive-container';
+        container.style.maxWidth = element.width + 'px';
+        container.style.maxHeight = element.height + 'px';
+        container.appendChild(wrapper);
+
+        const upperContainer = document.createElement('div');
+        upperContainer.className = 'container-over';
+        upperContainer.appendChild(container);
+
+        element.parentNode.replaceChild(upperContainer, element);
 
         wrapper.appendChild(element);
     }

@@ -4,8 +4,16 @@
   max-width: var(--container-width);
 }
 
+.container-over {
+  margin: 0 -1rem;
+}
+
 @media (--md-viewport) {
   .container {
     padding: 0 1.5rem;
+  }
+
+  .container-over {
+    margin: 0 -1.5rem;
   }
 }
