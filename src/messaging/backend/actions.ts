@@ -1,3 +1,5 @@
+/// <reference path="../../../node_modules/cordova-plugin-inappbrowser/types/index.d.ts" />
+
 import * as feedly from 'adapters/feedly/types';
 import * as feedlyApi from 'adapters/feedly/api';
 import { AsyncThunk } from 'messaging/types';

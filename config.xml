@@ -77,6 +77,6 @@
     <plugin name="cordova-plugin-wkwebview-engine" spec="^1.1.4" />
     <plugin name="cordova-labs-local-webserver" spec="https://github.com/emonkak/cordova-labs-local-webserver" />
     <plugin name="cordova-plugin-fetch-api" spec="https://github.com/emonkak/cordova-plugin-fetch-api" />
-    <engine name="android" spec="^6.4.0" />
+    <engine name="android" spec="^6.3.0" />
     <engine name="ios" spec="^4.5.3" />
 </widget>

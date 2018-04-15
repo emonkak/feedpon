@@ -1,6 +1,7 @@
 const path = require('path');
 
 const config = {
+    mode: 'none',
     entry: {
         'background': './src/background.ts',
         'index': './src/index.tsx',
