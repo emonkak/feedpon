@@ -54,10 +54,9 @@ export default class SubscribeDropdown extends PureComponent<SubscribeDropdownPr
     handleChangeCategoryLabel(event: React.ChangeEvent<HTMLInputElement>) {
         const categoryLabel = event.currentTarget.value;
 
-        this.setState((state) => ({
-            ...state,
+        this.setState({
             categoryLabel
-        }));
+        });
     }
 
     handleCloseUnsubscribeModal() {
@@ -76,10 +75,9 @@ export default class SubscribeDropdown extends PureComponent<SubscribeDropdownPr
             onCreateCategory(categoryLabel, () => onSubscribe(feed, [categoryLabel]));
         }
 
-        this.setState((state) => ({
-            ...state,
+        this.setState({
             categoryLabel: ''
-        }));
+        });
     }
 
     handleOpenUnsubscribeModal() {

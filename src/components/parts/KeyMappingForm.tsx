@@ -58,45 +58,40 @@ export default class KeyMappingForm extends PureComponent<KeyMappingFormProps, K
         const selectedCommand = commandTable[commandId];
 
         if (selectedCommand) {
-            this.setState((state) => ({
-                keyStroke: state.keyStroke,
+            this.setState({
                 commandId,
                 paramsJson: prettyPrintJson(selectedCommand.defaultParams)
-            }));
+            });
         } else {
-            this.setState((state) => ({
-                keyStroke: state.keyStroke,
+            this.setState({
                 commandId: '',
                 paramsJson: prettyPrintJson({})
-            }));
+            });
         }
     }
 
     handleChangeKeyStroke(event: React.ChangeEvent<HTMLInputElement>) {
         const keyStroke = event.currentTarget.value;
 
-        this.setState((state) => ({
-            ...state,
+        this.setState({
             keyStroke
-        }));
+        });
     }
 
     handleChangeParamsJson(event: React.ChangeEvent<HTMLTextAreaElement>) {
         const paramsJson = event.currentTarget.value;
 
-        this.setState((state) => ({
-            ...state,
+        this.setState({
             paramsJson
-        }));
+        });
     }
 
     handleChangePreventNotification(event: React.ChangeEvent<HTMLInputElement>) {
         const preventNotification = event.currentTarget.checked;
 
-        this.setState((state) => ({
-            ...state,
+        this.setState({
             preventNotification
-        }));
+        });
     }
 
     handleSubmit(event: React.FormEvent<HTMLFormElement>) {

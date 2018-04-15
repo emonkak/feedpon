@@ -36,17 +36,15 @@ export default class KeyMappingItem extends PureComponent<KeyMappingItemProps, K
     }
 
     handleCancelDeleting() {
-        this.setState((state) => ({
-            ...state,
+        this.setState({
             isDeleting: false
-        }));
+        });
     }
 
     handleCancelEditing() {
-        this.setState((state) => ({
-            ...state,
+        this.setState({
             isEditing: false
-        }));
+        });
     }
 
     handleDelete() {
@@ -56,17 +54,15 @@ export default class KeyMappingItem extends PureComponent<KeyMappingItemProps, K
     }
 
     handleStartDeleting() {
-        this.setState((state) => ({
-            ...state,
+        this.setState({
             isDeleting: true
-        }));
+        });
     }
 
     handleStartEditing() {
-        this.setState((state) => ({
-            ...state,
+        this.setState({
             isEditing: true
-        }));
+        });
     }
 
     handleUpdate(keyStroke: string, keyMapping: KeyMapping) {
@@ -74,10 +70,9 @@ export default class KeyMappingItem extends PureComponent<KeyMappingItemProps, K
 
         onUpdate(keyStroke, keyMapping);
 
-        this.setState((state) => ({
-            ...state,
+        this.setState({
             isEditing: false
-        }));
+        });
     }
 
     render() {

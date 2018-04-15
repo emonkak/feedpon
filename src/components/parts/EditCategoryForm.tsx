@@ -44,17 +44,15 @@ export default class EditCategoryForm extends PureComponent<EditCategoryFormProp
     }
 
     handleCancelDeleting() {
-        this.setState((state) => ({
-            ...state,
+        this.setState({
             isDeleting: false
-        }));
+        });
     }
 
     handleCancelEditing() {
-        this.setState((state) => ({
-            ...state,
+        this.setState({
             isEditing: false
-        }));
+        });
     }
 
     handleDelete() {
@@ -64,17 +62,15 @@ export default class EditCategoryForm extends PureComponent<EditCategoryFormProp
     }
 
     handleStartDeleting() {
-        this.setState((state) => ({
-            ...state,
+        this.setState({
             isDeleting: true
-        }));
+        });
     }
 
     handleStartEditing() {
-        this.setState((state) => ({
-            ...state,
+        this.setState({
             isEditing: true
-        }));
+        });
     }
 
     handleUpdate() {
@@ -85,10 +81,9 @@ export default class EditCategoryForm extends PureComponent<EditCategoryFormProp
     }
 
     handleChangeLabel(event: React.ChangeEvent<HTMLInputElement>) {
-        this.setState((state) => ({
-            ...state,
+        this.setState({
             label: event.currentTarget.value
-        }));
+        });
     }
 
     render() {

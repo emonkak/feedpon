@@ -107,10 +107,9 @@ export default class AutocompleteForm extends PureComponent<AutoCompleteFormProp
             onSelect(value);
         }
 
-        this.setState((state) => ({
-            isOpened: false,
-            query: state.query
-        }));
+        this.setState({
+            isOpened: false
+        });
     }
 
     private _handleSubmit = (event: React.FormEvent<any>) => {

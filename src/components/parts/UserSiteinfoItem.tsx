@@ -35,17 +35,15 @@ export default class UserSiteinfoItem extends PureComponent<UserSiteinfoItemProp
     }
 
     handleCancelDeleting() {
-        this.setState((state) => ({
-            ...state,
+        this.setState({
             isDeleting: false
-        }));
+        });
     }
 
     handleCancelEditing() {
-        this.setState((state) => ({
-            ...state,
+        this.setState({
             isEditing: false
-        }));
+        });
     }
 
     handleDelete() {
@@ -55,17 +53,15 @@ export default class UserSiteinfoItem extends PureComponent<UserSiteinfoItemProp
     }
 
     handleStartDeleting() {
-        this.setState((state) => ({
-            ...state,
+        this.setState({
             isDeleting: true
-        }));
+        });
     }
 
     handleStartEditing() {
-        this.setState((state) => ({
-            ...state,
+        this.setState({
             isEditing: true
-        }));
+        });
     }
 
     handleSubmit(item: SiteinfoItem) {
