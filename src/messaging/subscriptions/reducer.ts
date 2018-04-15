@@ -165,7 +165,7 @@ export default function reducer(subscriptions: Subscriptions, event: Event): Sub
                 ...subscriptions,
                 items: mapObject(subscriptions.items, (subscription) => {
                     const labels = subscription.labels
-                        .filter((label) => label !== event.prevCategoryLabel);
+                        .filter((label) => label !== event.prevCategory.label);
 
                     if (subscription.labels.length === labels.length) {
                         return subscription;

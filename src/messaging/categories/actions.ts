@@ -77,14 +77,12 @@ export function updateCategory(category: Category, label: string): AsyncThunk {
 
             await feedly.changeCategoryLabel(token.access_token, category.streamId, label);
 
-            const categoryId = `user/${token.id}/category/${label}`;
-
             dispatch({
                 type: 'CATEGORY_UPDATED',
-                prevCategoryLabel: category.label,
+                prevCategory: category,
                 category: {
-                    categoryId,
-                    streamId: categoryId,
+                    categoryId: category.categoryId,
+                    streamId: category.streamId,
                     label,
                     isLoading: false
                 }

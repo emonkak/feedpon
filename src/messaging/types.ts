@@ -45,7 +45,7 @@ export type Event
     | { type: 'CATEGORY_MARKED_AS_READ', categoryId: string | number, streamId: string, label: string }
     | { type: 'CATEGORY_MARKING_AS_READ', categoryId: string | number, streamId: string, label: string }
     | { type: 'CATEGORY_MARKING_AS_READ_FAILED', categoryId: string | number, streamId: string, label: string }
-    | { type: 'CATEGORY_UPDATED', prevCategoryLabel: string, category: Category }
+    | { type: 'CATEGORY_UPDATED', prevCategory: Category, category: Category }
     | { type: 'CATEGORY_UPDATING', categoryId: string | number }
     | { type: 'CATEGORY_UPDATING_FAILED', categoryId: string | number }
     | { type: 'CUSTOM_STYLE_CHANGED', customStyles: string }

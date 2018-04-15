@@ -1,5 +1,6 @@
 import filterObject from 'fbjs/lib/filterObject';
 import mapObject from 'fbjs/lib/mapObject';
+
 import { Categories, Category, Event } from 'messaging/types';
 
 export default function reducer(categories: Categories, event: Event): Categories {
@@ -73,7 +74,10 @@ export default function reducer(categories: Categories, event: Event): Categorie
             return {
                 ...categories,
                 isLoading: false,
-                [event.category.categoryId]: event.category
+                items: {
+                    ...categories.items,
+                    [event.category.categoryId]: event.category
+                }
             };
 
         case 'CATEGORY_DELETING':
