@@ -112,11 +112,7 @@ function responsify(element: HTMLElement & { width: number, height: number }): v
         container.style.maxHeight = element.height + 'px';
         container.appendChild(wrapper);
 
-        const upperContainer = document.createElement('div');
-        upperContainer.className = 'container-over';
-        upperContainer.appendChild(container);
-
-        element.parentNode.replaceChild(upperContainer, element);
+        element.parentNode.replaceChild(container, element);
 
         wrapper.appendChild(element);
     }
