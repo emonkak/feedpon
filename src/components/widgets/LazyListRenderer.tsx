@@ -128,7 +128,7 @@ export default class LazyListRenderer extends Component<LazyListRendererProps, L
             if (item && nextItem && item[idAttribute] === nextItem[nextIdAttribute]) {
                 this.setState({
                     sliceStart,
-                    sliceEnd: Math.min(nextItems.length, sliceStart + sliceEnd)
+                    sliceEnd: Math.min(nextItems.length, sliceEnd)
                 });
             } else {
                 this._reserveScrollingItemIndex(nextProps, nextProps.initialItemIndex!);
