@@ -21,7 +21,6 @@
     "lint": "tslint 'src/**/*.ts' 'src/**/*.tsx'",
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch": "npm-run-all build:dir -p 'watch:*'",
-    "watch:cordova": "watch 'npm run --silent build:cordova' build",
     "watch:css": "postcss -w -o build/index.css res/css/index.css",
     "watch:js": "webpack --watch --devtool inline-source-map",
     "watch:webextension": "watch 'npm run --silent build:webextension' build"
