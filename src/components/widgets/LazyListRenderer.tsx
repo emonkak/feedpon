@@ -526,7 +526,7 @@ function getScrollAdjustmentDelta(prevPos: Positioning, nextPos: Positioning): n
             const prevTop = prevRectangle.top - prevPos.viewportRectangle.top;
             const nextTop = nextRectangle.top - nextPos.viewportRectangle.top;
 
-            return Math.ceil(nextTop - prevTop);
+            return Math.round(nextTop - prevTop);
         }
     }
 
