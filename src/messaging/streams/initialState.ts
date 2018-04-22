@@ -4,7 +4,7 @@ import * as CacheMap from 'utils/containers/CacheMap';
 const streams: Streams = {
     defaultFetchOptions: {
         entryOrder: 'newest',
-        numEntries: 20,
+        numEntries: 50,
         onlyUnread: true
     },
     defaultStreamView: 'expanded',
