@@ -1,4 +1,4 @@
-import React, { Component, PureComponent, cloneElement } from 'react';
+import React, { Component, PureComponent } from 'react';
 import throttle from 'lodash.throttle';
 import { findDOMNode } from 'react-dom';
 import { createSelector } from 'reselect';
@@ -15,7 +15,7 @@ interface LazyListRendererProps {
     offscreenToViewportRatio?: number;
     onHeightUpdated?: (heights: { [id: string]: number }) => void;
     onPositioningUpdated?: (positioning: Positioning) => void;
-    renderItem: (item: any, index: number) => React.ReactElement<any>;
+    renderItem: (item: any, index: number, ref: React.Ref<React.ReactInstance>) => React.ReactElement<any>;
     renderList: (items: React.ReactElement<any>[], blankSpaceAbove: number, blankSpaceBelow: number) => React.ReactElement<any>;
     scrollThrottleTime?: number;
 }
@@ -31,7 +31,7 @@ interface LazyListProps {
     getHeightForDomNode: (element: HTMLElement) => number;
     idAttribute: string;
     items: any[];
-    renderItem: (item: any, index: number) => React.ReactElement<any>;
+    renderItem: (item: any, index: number, ref: React.Ref<React.ReactInstance>) => React.ReactElement<any>;
     renderList: (items: React.ReactElement<any>[], blankSpaceAbove: number, blankSpaceBelow: number) => React.ReactElement<any>;
     sliceEnd: number;
     sliceStart: number;
@@ -428,6 +428,8 @@ export default class LazyListRenderer extends Component<LazyListRendererProps, L
 class LazyList extends PureComponent<LazyListProps, LazyListState> {
     private readonly _refs: { [id: string]: React.ReactInstance } = {};
 
+    private readonly _refFunctions: { [id: string]: React.Ref<React.ReactInstance> } = {};
+
     getItemHeights(): { [id: string]: number } {
         const { getHeightForDomNode } = this.props;
 
@@ -453,21 +455,27 @@ class LazyList extends PureComponent<LazyListProps, LazyListState> {
         for (let i = sliceStart; i < sliceEnd; i++) {
             const item = items[i];
             const id = item[idAttribute];
-            const element = renderItem(item, i);
 
-            const originalRef = (element as any).ref;
-            const ref = (instance: React.ReactInstance) => {
-                if (instance) {
-                    this._refs[id] = instance;
-                } else {
-                    delete this._refs[id];
-                }
-                if (originalRef) {
-                    originalRef(instance);
-                }
-            };
+            let ref: React.Ref<React.ReactInstance>;
 
-            elements.push(cloneElement(element, { ref }));
+            if (this._refFunctions[id] != null) {
+                ref = this._refFunctions[id]!;
+            } else {
+                ref = (instance: React.ReactInstance) => {
+                    if (instance) {
+                        this._refs[id] = instance;
+                    } else {
+                        delete this._refs[id];
+                        delete this._refFunctions[id];
+                    }
+                };
+
+                this._refFunctions[id] = ref;
+            }
+
+            const element = renderItem(item, i, ref);
+
+            elements.push(element);
         }
 
         return elements;

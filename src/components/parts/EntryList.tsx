@@ -105,7 +105,7 @@ export default class EntryList extends PureComponent<EntryListProps, EntryListSt
         }
     }
 
-    private _renderEntry = (renderingItem: RenderingItem, index: number) => {
+    private _renderEntry = (renderingItem: RenderingItem, index: number, ref: React.Ref<EntryFrame>) => {
         const {
             onExpand,
             onFetchComments,
@@ -121,6 +121,7 @@ export default class EntryList extends PureComponent<EntryListProps, EntryListSt
 
         return (
             <EntryFrame
+                ref={ref}
                 entry={entry}
                 index={index}
                 isActive={isActive}
