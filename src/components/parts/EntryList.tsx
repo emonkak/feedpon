@@ -13,7 +13,7 @@ interface EntryListProps {
     readEntryIndex: number;
     entries: Entry[];
     expandedEntryIndex: number;
-    heightCache: { [id: string]: number };
+    heights: { [id: string]: number };
     isLoaded: boolean;
     isLoading: boolean;
     isScrolling: boolean;
@@ -78,7 +78,7 @@ export default class EntryList extends PureComponent<EntryListProps, EntryListSt
             }
         }
 
-        const { activeEntryIndex, heightCache, isScrolling, onHeightUpdated } = this.props;
+        const { activeEntryIndex, heights, isScrolling, onHeightUpdated } = this.props;
 
         return (
             <div className="entry-list">
@@ -86,7 +86,7 @@ export default class EntryList extends PureComponent<EntryListProps, EntryListSt
                     assumedItemHeight={isExpanded ? 800 : 100}
                     getViewportRectangle={getViewportRectangle}
                     idAttribute="id"
-                    initialHeights={heightCache}
+                    initialHeights={heights}
                     initialItemIndex={activeEntryIndex}
                     isDisabled={isScrolling}
                     items={this._getRenderingItems(this.props)}

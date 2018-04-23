@@ -13,7 +13,7 @@ interface LazyListRendererProps {
     isDisabled?: boolean;
     items: any[];
     offscreenToViewportRatio?: number;
-    onHeightUpdated?: (heights: { [id: string]: number }) => void;
+    onHeightUpdated?: (updatedHeights: { [id: string]: number }) => void;
     onPositioningUpdated?: (positioning: Positioning) => void;
     renderItem: (item: any, index: number, ref: React.Ref<React.ReactInstance>) => React.ReactElement<any>;
     renderList: (items: React.ReactElement<any>[], blankSpaceAbove: number, blankSpaceBelow: number) => React.ReactElement<any>;
@@ -208,22 +208,31 @@ export default class LazyListRenderer extends Component<LazyListRendererProps, L
 
     private _recomputeHeights(): boolean {
         const { assumedItemHeight, initialHeights, onHeightUpdated } = this.props;
+
         const heights = this._heights;
-        const currentHeights = this._ref ? this._ref.getItemHeights() : {};
+        const computedHeights = this._ref ? this._ref.getItemHeights() : {};
+        const updatedHeights: { [id: string]: number } = {};
 
-        for (const id in currentHeights) {
+        let updateCount = 0;
+
+        for (const id in computedHeights) {
             const prevHeight = heights[id] || initialHeights![id] || assumedItemHeight!;
-            const currentHeight = currentHeights[id];
+            const computedHeight = computedHeights[id];
 
-            if (prevHeight !== currentHeight) {
-                this._heights = Object.assign({}, this._heights, currentHeights);
-
-                if (onHeightUpdated) {
-                    onHeightUpdated(currentHeights);
-                }
-
-                return true;
+            if (prevHeight !== computedHeight) {
+                updatedHeights[id] = computedHeight;
+                updateCount++;
             }
+        }
+
+        if (updateCount > 0) {
+            this._heights = Object.assign({}, this._heights, updatedHeights);
+
+            if (onHeightUpdated) {
+                onHeightUpdated(updatedHeights);
+            }
+
+            return true;
         }
 
         return false;

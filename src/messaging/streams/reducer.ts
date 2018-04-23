@@ -103,7 +103,7 @@ export default function reducer(streams: Streams, event: Event): Streams {
                     activeEntryIndex: -1,
                     expandedEntryIndex: -1,
                     readEntryIndex: -1,
-                    heightCache: {},
+                    heights: {},
                     streamView: event.streamView
                 })
             };
@@ -124,7 +124,7 @@ export default function reducer(streams: Streams, event: Event): Streams {
                     activeEntryIndex: -1,
                     expandedEntryIndex: -1,
                     readEntryIndex: -1,
-                    heightCache: {},
+                    heights: {},
                     streamView: event.streamView
                 })
             };
@@ -143,13 +143,13 @@ export default function reducer(streams: Streams, event: Event): Streams {
                 items: CacheMap.empty(streams.items.capacity)
             };
 
-        case 'STREAM_HEIGHT_CACHE_UPDATED':
+        case 'STREAM_ENTRY_HEIGHTS_UPDATED':
             return {
                 ...streams,
                 items: CacheMap.update(streams.items, event.streamId, (stream) => {
                     return {
                         ...stream,
-                        heightCache: Object.assign({}, stream.heightCache, event.heights)
+                        heights: Object.assign({}, stream.heights, event.heights)
                     };
                 })
             };

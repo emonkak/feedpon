@@ -93,7 +93,7 @@ export function fetchStream(streamId: string, streamView?: StreamViewKind, fetch
                     activeEntryIndex: -1,
                     expandedEntryIndex: -1,
                     readEntryIndex: -1,
-                    heightCache: {},
+                    heights: {},
                     streamView
                 }
             });
@@ -248,9 +248,9 @@ export function fetchFullContent(entryId: string | number, url: string): AsyncTh
     };
 }
 
-export function updateHeightCache(streamId: string, heights: { [ id: string ]: number }): Event {
+export function updateEntryHeights(streamId: string, heights: { [ id: string ]: number }): Event {
     return {
-        type: 'STREAM_HEIGHT_CACHE_UPDATED',
+        type: 'STREAM_ENTRY_HEIGHTS_UPDATED',
         streamId,
         heights
     };
@@ -633,7 +633,7 @@ function fetchFeedStream(streamId: string, streamView: StreamViewKind, fetchOpti
             activeEntryIndex: -1,
             expandedEntryIndex: -1,
             readEntryIndex: -1,
-            heightCache: {},
+            heights: {},
             streamView
         };
 
@@ -666,7 +666,7 @@ function fetchCategoryStream(streamId: string, streamView: StreamViewKind, fetch
             activeEntryIndex: -1,
             expandedEntryIndex: -1,
             readEntryIndex: -1,
-            heightCache: {},
+            heights: {},
             streamView
         };
 
@@ -697,7 +697,7 @@ function fetchAllStream(streamView: StreamViewKind, fetchOptions: StreamFetchOpt
             activeEntryIndex: -1,
             expandedEntryIndex: -1,
             readEntryIndex: -1,
-            heightCache: {},
+            heights: {},
             streamView
         };
 
@@ -733,7 +733,7 @@ function fetchPinsStream(streamView: StreamViewKind, fetchOptions: StreamFetchOp
             activeEntryIndex: -1,
             expandedEntryIndex: -1,
             readEntryIndex: -1,
-            heightCache: {},
+            heights: {},
             streamView
         };
 

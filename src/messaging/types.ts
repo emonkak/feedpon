@@ -95,8 +95,8 @@ export type Event
     | { type: 'NOTIFICATION_DISMISSED', id: number }
     | { type: 'NOTIFICATION_SENT', notification: Notification }
     | { type: 'READ_ENTRY_RESET', streamId: string }
-    | { type: 'SCROLL_STARTED' }
     | { type: 'SCROLL_ENDED' }
+    | { type: 'SCROLL_STARTED' }
     | { type: 'SIDEBAR_CLOSED' }
     | { type: 'SIDEBAR_OPENED' }
     | { type: 'SITEINFO_UPDATED', items: SiteinfoItem[], updatedAt: number }
@@ -105,10 +105,10 @@ export type Event
     | { type: 'STREAM_CACHES_CLEARED' }
     | { type: 'STREAM_CACHE_CAPACITY_CHANGED', capacity: number }
     | { type: 'STREAM_CACHE_LIFETIME_CHANGED', lifetime: number }
+    | { type: 'STREAM_ENTRY_HEIGHTS_UPDATED', streamId: string, heights: { [id: string]: number } }
     | { type: 'STREAM_FETCHED', stream: Stream  }
     | { type: 'STREAM_FETCHING', streamId: string, streamView: StreamViewKind, fetchOptions: StreamFetchOptions, fetchedAt: number }
     | { type: 'STREAM_FETCHING_FAILED', streamId: string, streamView: StreamViewKind, fetchOptions: StreamFetchOptions, fetchedAt: number }
-    | { type: 'STREAM_HEIGHT_CACHE_UPDATED', streamId: string, heights: { [id: string]: number } }
     | { type: 'STREAM_HISTORY_OPTIONS_CHANGED', numStreamHistories: number }
     | { type: 'STREAM_SELECTED', streamId: string  }
     | { type: 'STREAM_UNSELECTED'  }
@@ -223,7 +223,7 @@ export interface Stream {
     feed: Feed | null;
     fetchOptions: StreamFetchOptions;
     fetchedAt: number;
-    heightCache: { [id: string]: number };
+    heights: { [id: string]: number };
     readEntryIndex: number;
     streamId: string;
     streamView: StreamViewKind;

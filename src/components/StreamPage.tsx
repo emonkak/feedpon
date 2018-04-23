@@ -15,7 +15,7 @@ import { ALL_STREAM_ID } from 'messaging/streams/constants';
 import { Category, Entry, EntryOrderKind, State, Stream, StreamViewKind, Subscription } from 'messaging/types';
 import { addToCategory, removeFromCategory, subscribe, unsubscribe } from 'messaging/subscriptions/actions';
 import { changeActiveEntry, changeExpandedEntry, resetReadEntry, changeStreamView, selectStream, unselectStream } from 'messaging/ui/actions';
-import { changeUnreadKeeping, fetchEntryComments, fetchFullContent, fetchMoreEntries, fetchStream, hideEntryComments, hideFullContents, markAllAsRead, markAsRead, markCategoryAsRead, markFeedAsRead, pinEntry, showEntryComments, showFullContents, unpinEntry, updateHeightCache } from 'messaging/streams/actions';
+import { changeUnreadKeeping, fetchEntryComments, fetchFullContent, fetchMoreEntries, fetchStream, hideEntryComments, hideFullContents, markAllAsRead, markAsRead, markCategoryAsRead, markFeedAsRead, pinEntry, showEntryComments, showFullContents, unpinEntry, updateEntryHeights } from 'messaging/streams/actions';
 import { createCategory } from 'messaging/categories/actions';
 import { createSortedCategoriesSelector } from 'messaging/categories/selectors';
 import { toggleSidebar } from 'messaging/ui/actions';
@@ -56,7 +56,7 @@ interface StreamPageProps {
     onUnpinEntry: typeof unpinEntry;
     onUnselectStream: typeof unselectStream;
     onUnsubscribe: typeof unsubscribe;
-    onUpdateHeightCache: typeof updateHeightCache;
+    onUpdateEntryHeights: typeof updateEntryHeights;
     params: Params;
     readEntries: Entry[];
     shouldFetchStream: boolean;
@@ -226,10 +226,10 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
     }
 
     handleHeightUpdated(heights: { [id: string]: number }): void {
-        const { onUpdateHeightCache, stream } = this.props;
+        const { onUpdateEntryHeights, stream } = this.props;
 
         if (stream) {
-            onUpdateHeightCache(stream.streamId, heights);
+            onUpdateEntryHeights(stream.streamId, heights);
         }
     }
 
@@ -403,7 +403,7 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
                 readEntryIndex={stream.readEntryIndex}
                 entries={stream.entries}
                 expandedEntryIndex={stream.expandedEntryIndex}
-                heightCache={stream.heightCache}
+                heights={stream.heights}
                 isLoaded={isLoaded}
                 isLoading={isLoading}
                 isScrolling={isScrolling}
@@ -471,7 +471,7 @@ export default connect(() => {
             activeEntryIndex: -1,
             expandedEntryIndex: -1,
             readEntryIndex: -1,
-            heightCache: {}
+            heights: {}
         })
     );
 
@@ -562,7 +562,7 @@ export default connect(() => {
             onUnpinEntry: unpinEntry,
             onUnselectStream: unselectStream,
             onUnsubscribe: unsubscribe,
-            onUpdateHeightCache: updateHeightCache
+            onUpdateEntryHeights: updateEntryHeights
         })
     };
 })(StreamPage);
