@@ -81,8 +81,6 @@ export default class LazyListRenderer extends Component<LazyListRendererProps, L
 
     private _ref: LazyList | null = null;
 
-    private _isUnmounted: boolean = false;
-
     private _scrollingItemIndex: number;
 
     constructor(props: LazyListRendererProps, context: any) {
@@ -108,8 +106,6 @@ export default class LazyListRenderer extends Component<LazyListRendererProps, L
     }
 
     componentWillUnmount() {
-        this._isUnmounted = true;
-
         window.removeEventListener('scroll', this._handleScroll, { passive: true } as any);
     }
 
@@ -185,12 +181,12 @@ export default class LazyListRenderer extends Component<LazyListRendererProps, L
             this._setScrollPosition(this._scrollingItemIndex);
         } else if (wasHeightChanged || hasItemsChanged) {
             this._adjestScrollPosition();
-            this._scheduleUpdate();
+            this._update();
         }
     }
 
     private _update(): void {
-        if (this._isUnmounted || this.props.isDisabled) {
+        if (this.props.isDisabled) {
             return;
         }
 
@@ -420,11 +416,6 @@ export default class LazyListRenderer extends Component<LazyListRendererProps, L
                 return rectangle;
             });
         }
-    );
-
-    private _scheduleUpdate = createScheduledTask(
-        () => this._update(),
-        window.requestIdleCallback || window.requestAnimationFrame
     );
 
     private _handleRef = (ref: LazyList | null): void => {
