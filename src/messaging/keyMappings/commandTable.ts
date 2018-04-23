@@ -347,13 +347,13 @@ export const selectNextCategory: Command<{}> = {
 
 export const selectNextEntry: Command<{}> = {
     name: 'Select next entry',
-    description: 'Scroll to the previous entry.',
+    description: 'Scroll to the next entry.',
     defaultParams: {},
     action() {
         return ({ getState, dispatch }, { router }) => {
             const { ui, streams } = getState();
 
-            if (!ui.selectedStreamId) {
+            if (!ui.selectedStreamId || ui.isScrolling) {
                 return;
             }
 
@@ -454,7 +454,7 @@ export const selectPreviousEntry: Command<{}> = {
         return ({ dispatch, getState }, { router }) => {
             const { ui } = getState();
 
-            if (!ui.selectedStreamId) {
+            if (!ui.selectedStreamId || ui.isScrolling) {
                 return;
             }
 
