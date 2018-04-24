@@ -17,6 +17,7 @@ interface LazyListRendererProps {
     onPositioningUpdated?: (positioning: Positioning) => void;
     renderItem: (item: any, index: number, ref: React.Ref<React.ReactInstance>) => React.ReactElement<any>;
     renderList: (items: React.ReactElement<any>[], blankSpaceAbove: number, blankSpaceBelow: number) => React.ReactElement<any>;
+    scrollOffset?: number;
     scrollThrottleTime?: number;
 }
 
@@ -72,6 +73,7 @@ export default class LazyListRenderer extends Component<LazyListRendererProps, L
         initialHeights: {},
         initialItemIndex: -1,
         offscreenToViewportRatio: 1.8,
+        scrollOffset: 0,
         scrollThrottleTime: 100
     };
 
@@ -86,6 +88,7 @@ export default class LazyListRenderer extends Component<LazyListRendererProps, L
     constructor(props: LazyListRendererProps, context: any) {
         super(props, context);
 
+        this._heights = props.initialHeights!;
         this._scrollingItemIndex = props.initialItemIndex!;
 
         this.state = this._getInitialSlice(props, props.initialItemIndex!);
@@ -134,11 +137,14 @@ export default class LazyListRenderer extends Component<LazyListRendererProps, L
 
     componentWillUpdate(nextProps: LazyListRendererProps, nextState: LazyListRendererState) {
         const viewportRectangle = this._getRelativeViewportRectangle();
+
         this._prevPositioning = this._getPositioning(viewportRectangle);
     }
 
     componentDidUpdate(prevProps: LazyListRendererProps, prevState: LazyListRendererState) {
-        this._postRenderProcessing(prevProps.items !== this.props.items);
+        const hasItemsChanged = prevProps.items !== this.props.items;
+
+        this._postRenderProcessing(hasItemsChanged);
     }
 
     shouldComponentUpdate(nextProps: LazyListRendererProps, nextState: LazyListRendererState) {
@@ -181,7 +187,7 @@ export default class LazyListRenderer extends Component<LazyListRendererProps, L
             this._setScrollPosition(this._scrollingItemIndex);
         } else if (wasHeightChanged || hasItemsChanged) {
             this._adjestScrollPosition();
-            this._update();
+            this._scheduleUpdate();
         }
     }
 
@@ -203,16 +209,15 @@ export default class LazyListRenderer extends Component<LazyListRendererProps, L
     }
 
     private _recomputeHeights(): boolean {
-        const { assumedItemHeight, initialHeights, onHeightUpdated } = this.props;
+        const { assumedItemHeight, onHeightUpdated } = this.props;
 
-        const heights = this._heights;
         const computedHeights = this._ref ? this._ref.getItemHeights() : {};
         const updatedHeights: { [id: string]: number } = {};
 
         let updateCount = 0;
 
         for (const id in computedHeights) {
-            const prevHeight = heights[id] || initialHeights![id] || assumedItemHeight!;
+            const prevHeight = this._heights[id] || assumedItemHeight!;
             const computedHeight = computedHeights[id];
 
             if (prevHeight !== computedHeight) {
@@ -259,7 +264,7 @@ export default class LazyListRenderer extends Component<LazyListRendererProps, L
     }
 
     private _adjestScrollPosition(): void {
-        if (this._prevPositioning) {
+        if (!this.props.isDisabled && this._prevPositioning) {
             const viewportRectangle = this._getRelativeViewportRectangle();
             const adjustmentDelta = getScrollAdjustmentDelta(this._prevPositioning, this._getPositioning(viewportRectangle));
             if (adjustmentDelta !== 0) {
@@ -307,8 +312,7 @@ export default class LazyListRenderer extends Component<LazyListRendererProps, L
     }
 
     private _getInitialSlice(props: LazyListRendererProps, initialItemIndex: number): Slice {
-        const { assumedItemHeight, getViewportRectangle, idAttribute, initialHeights, items } = props;
-        const heights = this._heights;
+        const { assumedItemHeight, getViewportRectangle, idAttribute, items } = props;
         const viewportRectangle = getViewportRectangle!();
         const maximumHeight = viewportRectangle.bottom - viewportRectangle.top;
 
@@ -318,7 +322,7 @@ export default class LazyListRenderer extends Component<LazyListRendererProps, L
         for (let i = sliceEnd, l = items.length, h = 0; i < l; i++) {
             const item = items[i];
             const id = item[idAttribute];
-            const height = heights[id] || initialHeights![id] || assumedItemHeight!;
+            const height = this._heights[id] || assumedItemHeight!;
             sliceEnd = i + 1;
             h += height;
             if (h >= maximumHeight) {
@@ -376,7 +380,8 @@ export default class LazyListRenderer extends Component<LazyListRendererProps, L
             return createRectangle(0, 0);
         }
 
-        const rectangle = this.props.getViewportRectangle!();
+        const { getViewportRectangle } = this.props;
+        const rectangle = getViewportRectangle!();
         const listElement = findDOMNode(this._ref) as HTMLElement;
 
         const top = -listElement.getBoundingClientRect().top + rectangle.top;
@@ -392,9 +397,12 @@ export default class LazyListRenderer extends Component<LazyListRendererProps, L
             return 0;
         }
 
+        const { scrollOffset } = this.props;
+        const viewportTop = viewportRectangle.top + scrollOffset!;
+
         const offset = index >= rectangles.length
-            ? rectangles[rectangles.length - 1].bottom - viewportRectangle.top
-            : rectangles[index].top - viewportRectangle.top;
+            ? rectangles[rectangles.length - 1].bottom - viewportTop
+            : rectangles[index].top - viewportTop;
 
         return Math.ceil(offset);
     }
@@ -402,15 +410,14 @@ export default class LazyListRenderer extends Component<LazyListRendererProps, L
     private _getRectangles = createSelector(
         (props: LazyListRendererProps) => props.assumedItemHeight,
         (props: LazyListRendererProps) => props.idAttribute,
-        (props: LazyListRendererProps) => props.initialHeights,
         (props: LazyListRendererProps) => props.items,
         (props: LazyListRendererProps, heights: { [id: string]: number }) => heights,
-        (assumedItemHeight, idAttribute, initialHeights, items, heights) => {
+        (assumedItemHeight, idAttribute, items, heights) => {
             let top = 0;
 
             return items.map((item) => {
                 const id = item[idAttribute];
-                const height = heights[id] || initialHeights![id] || assumedItemHeight!;
+                const height = heights[id] || assumedItemHeight!;
                 const rectangle = createRectangle(top, height);
                 top = rectangle.bottom;
                 return rectangle;
@@ -423,6 +430,11 @@ export default class LazyListRenderer extends Component<LazyListRendererProps, L
     }
 
     private _handleScroll: () => void;
+
+    private _scheduleUpdate = createScheduledTask(
+        () => this._update(),
+        window.requestIdleCallback || window.requestAnimationFrame
+    );
 }
 
 class LazyList extends PureComponent<LazyListProps, LazyListState> {
@@ -461,7 +473,7 @@ class LazyList extends PureComponent<LazyListProps, LazyListState> {
             if (this._refFunctions[id] != null) {
                 ref = this._refFunctions[id]!;
             } else {
-                ref = (instance: React.ReactInstance) => {
+                ref = this._refFunctions[id] = (instance: React.ReactInstance) => {
                     if (instance) {
                         this._refs[id] = instance;
                     } else {
@@ -469,8 +481,6 @@ class LazyList extends PureComponent<LazyListProps, LazyListState> {
                         delete this._refFunctions[id];
                     }
                 };
-
-                this._refFunctions[id] = ref;
             }
 
             const element = renderItem(item, i, ref);
@@ -506,27 +516,29 @@ function createScheduledTask(task: () => void, scheduler: (task: () => void) => 
 }
 
 function getScrollAdjustmentDelta(prevPos: Positioning, nextPos: Positioning): number {
-    const nextRenderedIndexes: { [id: string]: number } = {};
-
-    for (let i = nextPos.sliceStart; i < nextPos.sliceEnd; i++) {
-        const item = nextPos.items[i];
-        const id = item[nextPos.idAttribute];
-
-        nextRenderedIndexes[id] = i;
-    }
+    let anchorIndex = -1;
 
     for (let i = prevPos.sliceStart; i < prevPos.sliceEnd; i++) {
-        const item = prevPos.items[i];
-        const id = item[prevPos.idAttribute];
+        if (intersects(prevPos.rectangles[i], prevPos.viewportRectangle)) {
+            anchorIndex = i;
+            break;
+        }
+    }
 
-        if (nextRenderedIndexes.hasOwnProperty(id) && nextRenderedIndexes[id] === i) {
-            const prevRectangle = prevPos.rectangles[i];
-            const nextRectangle = nextPos.rectangles[i];
+    if (nextPos.sliceStart <= anchorIndex && anchorIndex < nextPos.sliceEnd) {
+        const prevId = prevPos.items[anchorIndex][prevPos.idAttribute];
+        const nextId = nextPos.items[anchorIndex][nextPos.idAttribute];
 
-            const prevTop = prevRectangle.top - prevPos.viewportRectangle.top;
-            const nextTop = nextRectangle.top - nextPos.viewportRectangle.top;
+        if (prevId === nextId) {
+            const prevRectangle = prevPos.rectangles[anchorIndex];
+            const nextRectangle = nextPos.rectangles[anchorIndex];
 
-            return Math.round(nextTop - prevTop);
+            const prevOffset = prevRectangle.top;
+            const nextOffset = nextRectangle.top;
+
+            return nextOffset > prevOffset
+                ? Math.ceil(nextOffset - prevOffset)
+                : Math.floor(nextOffset - prevOffset);
         }
     }
 
@@ -542,4 +554,8 @@ function getViewportRectangle(): Rectangle {
         top: 0,
         bottom: window.innerHeight
     };
+}
+
+function intersects(first: Rectangle, second: Rectangle): boolean {
+    return first.top <= second.bottom && first.bottom >= second.top;
 }

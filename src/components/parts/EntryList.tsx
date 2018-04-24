@@ -2,11 +2,10 @@ import React, { PureComponent } from 'react';
 import { createSelector } from 'reselect';
 
 import EntryFrame from 'components/parts/Entry';
-import LazyListRenderer, { Positioning, Rectangle } from 'components/widgets/LazyListRenderer';
+import LazyListRenderer, { Positioning, ViewportRectangle } from 'components/widgets/LazyListRenderer';
 import { Entry, StreamViewKind } from 'messaging/types';
 import { ExpandedEntryPlaceholder, CollapsedEntryPlaceholder } from 'components/parts/EntryPlaceholder';
-
-const SCROLL_OFFSET = 48;
+import { getScrollOffset } from 'messaging/domActions';
 
 interface EntryListProps {
     activeEntryIndex: number;
@@ -81,21 +80,19 @@ export default class EntryList extends PureComponent<EntryListProps, EntryListSt
         const { activeEntryIndex, heights, isScrolling, onHeightUpdated } = this.props;
 
         return (
-            <div className="entry-list">
-                <LazyListRenderer
-                    assumedItemHeight={isExpanded ? 800 : 100}
-                    getViewportRectangle={getViewportRectangle}
-                    idAttribute="id"
-                    initialHeights={heights}
-                    initialItemIndex={activeEntryIndex}
-                    isDisabled={isScrolling}
-                    items={this._getRenderingItems(this.props)}
-                    onHeightUpdated={onHeightUpdated}
-                    onPositioningUpdated={this._handlePositioningUpdated}
-                    ref={this._handleLazyListRenderer}
-                    renderItem={this._renderEntry}
-                    renderList={renderListWrapper} />
-            </div>
+            <LazyListRenderer
+                assumedItemHeight={isExpanded ? 800 : 100}
+                getViewportRectangle={getViewportRectangle}
+                idAttribute="id"
+                initialHeights={heights}
+                initialItemIndex={activeEntryIndex}
+                isDisabled={isScrolling}
+                items={this._getRenderingItems(this.props)}
+                onHeightUpdated={onHeightUpdated}
+                onPositioningUpdated={this._handlePositioningUpdated}
+                ref={this._handleLazyListRenderer}
+                renderItem={this._renderEntry}
+                renderList={renderList} />
         );
     }
 
@@ -175,19 +172,22 @@ export default class EntryList extends PureComponent<EntryListProps, EntryListSt
     }
 }
 
-function getViewportRectangle(): Rectangle {
-    return {
-        top: SCROLL_OFFSET,
-        bottom: window.innerHeight - SCROLL_OFFSET
-    };
-}
-
-function renderListWrapper(items: React.ReactElement<any>[], blankSpaceAbove: number, blankSpaceBelow: number) {
+function renderList(items: React.ReactElement<any>[], blankSpaceAbove: number, blankSpaceBelow: number) {
     return (
-        <div style={{ paddingTop: blankSpaceAbove, paddingBottom: blankSpaceBelow }}>
+        <div className="entry-list">
+            <div style={{ paddingBottom: blankSpaceAbove }}></div>
             {items}
+            <div style={{ paddingBottom: blankSpaceBelow }}></div>
         </div>
     );
+}
+
+function getViewportRectangle(): ViewportRectangle {
+    return {
+        top: 0,
+        bottom: window.innerHeight,
+        offset: getScrollOffset()
+    };
 }
 
 function getActiveIndex(positioning: Positioning): number {
@@ -196,9 +196,10 @@ function getActiveIndex(positioning: Positioning): number {
         return -1;
     }
 
+    const scrollOffset = getScrollOffset();
     const viewportRectangle = positioning.viewportRectangle;
-    const viewportTop = viewportRectangle.top;
-    const viewportBottom = viewportRectangle.bottom;
+    const viewportTop = viewportRectangle.top + scrollOffset;
+    const viewportBottom = viewportRectangle.bottom - scrollOffset;
     const latestRectangle = rectangles[rectangles.length - 1];
 
     if (Math.abs(latestRectangle.bottom - viewportTop) < 1) {
