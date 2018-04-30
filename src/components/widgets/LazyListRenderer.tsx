@@ -6,7 +6,7 @@ import { createSelector } from 'reselect';
 interface LazyListRendererProps {
     assumedItemHeight?: number;
     getHeightForDomNode?: (element: HTMLElement) => number;
-    getViewportRectangle?: () => Rectangle;
+    getViewportRectangle?: () => ViewportRectangle;
     idAttribute: string;
     initialHeights?: { [id: string]: number };
     initialItemIndex?: number;
@@ -17,7 +17,6 @@ interface LazyListRendererProps {
     onPositioningUpdated?: (positioning: Positioning) => void;
     renderItem: (item: any, index: number, ref: React.Ref<React.ReactInstance>) => React.ReactElement<any>;
     renderList: (items: React.ReactElement<any>[], blankSpaceAbove: number, blankSpaceBelow: number) => React.ReactElement<any>;
-    scrollOffset?: number;
     scrollThrottleTime?: number;
 }
 
@@ -47,12 +46,16 @@ export interface Positioning {
     rectangles: Rectangle[];
     sliceEnd: number;
     sliceStart: number;
-    viewportRectangle: Rectangle;
+    viewportRectangle: ViewportRectangle;
 }
 
 export interface Rectangle {
     top: number;
     bottom: number;
+}
+
+export interface ViewportRectangle extends Rectangle {
+    scrollOffset: number;
 }
 
 interface Slice {
@@ -73,7 +76,6 @@ export default class LazyListRenderer extends Component<LazyListRendererProps, L
         initialHeights: {},
         initialItemIndex: -1,
         offscreenToViewportRatio: 1.8,
-        scrollOffset: 0,
         scrollThrottleTime: 100
     };
 
@@ -296,7 +298,7 @@ export default class LazyListRenderer extends Component<LazyListRendererProps, L
         };
     }
 
-    private _getPositioning(viewportRectangle: Rectangle): Positioning {
+    private _getPositioning(viewportRectangle: ViewportRectangle): Positioning {
         const { items, idAttribute } = this.props;
         const { sliceStart, sliceEnd } = this.state;
         const rectangles = this._getRectangles(this.props, this._heights);
@@ -336,7 +338,7 @@ export default class LazyListRenderer extends Component<LazyListRendererProps, L
         };
     }
 
-    private _getCurrentSlice(viewportRectangle: Rectangle): Slice {
+    private _getCurrentSlice(viewportRectangle: ViewportRectangle): Slice {
         const rectangles = this._getRectangles(this.props, this._heights);
 
         if (rectangles.length === 0) {
@@ -375,9 +377,9 @@ export default class LazyListRenderer extends Component<LazyListRendererProps, L
         };
     }
 
-    private _getRelativeViewportRectangle(): Rectangle {
+    private _getRelativeViewportRectangle(): ViewportRectangle {
         if (!this._ref) {
-            return createRectangle(0, 0);
+            return createViewportRectangle(0, 0, 0);
         }
 
         const { getViewportRectangle } = this.props;
@@ -387,18 +389,17 @@ export default class LazyListRenderer extends Component<LazyListRendererProps, L
         const top = -listElement.getBoundingClientRect().top + rectangle.top;
         const height = rectangle.bottom - rectangle.top;
 
-        return createRectangle(top, height);
+        return createViewportRectangle(top, height, rectangle.scrollOffset);
     }
 
-    private _getScrollOffset(index: number, viewportRectangle: Rectangle): number {
+    private _getScrollOffset(index: number, viewportRectangle: ViewportRectangle): number {
         const rectangles = this._getRectangles(this.props, this._heights);
 
         if (index < 0 || rectangles.length === 0) {
             return 0;
         }
 
-        const { scrollOffset } = this.props;
-        const viewportTop = viewportRectangle.top + scrollOffset!;
+        const viewportTop = viewportRectangle.top + viewportRectangle.scrollOffset;
 
         const offset = index >= rectangles.length
             ? rectangles[rectangles.length - 1].bottom - viewportTop
@@ -499,6 +500,14 @@ function createRectangle(top: number, height: number): Rectangle {
     };
 }
 
+function createViewportRectangle(top: number, height: number, scrollOffset: number): ViewportRectangle {
+    return {
+        top,
+        bottom: top + height,
+        scrollOffset
+    };
+}
+
 function createScheduledTask(task: () => void, scheduler: (task: () => void) => number): () => number {
     let token: number | null = null;
 
@@ -549,10 +558,11 @@ function getHeightForDomNode(element: HTMLElement): number {
     return element.getBoundingClientRect().height;
 }
 
-function getViewportRectangle(): Rectangle {
+function getViewportRectangle(): ViewportRectangle {
     return {
         top: 0,
-        bottom: window.innerHeight
+        bottom: window.innerHeight,
+        scrollOffset: 0
     };
 }
 

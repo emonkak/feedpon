@@ -9,7 +9,6 @@ $lg-viewport-min-width: 992px;
 :root {
   --vertical-rhythm: calc(1rem * (24 / 14));
   --sidebar-width: calc(1rem * (272 / 14));
-  --navbar-height: 48px;
   --container-width: $md-viewport-min-width;
 }
 

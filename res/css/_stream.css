@@ -27,7 +27,7 @@ a.stream-title:hover {
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: calc(100vh - var(--navbar-height));
+  height: calc(100vh - var(--vertical-rhythm) * 2);
   text-align: center;
 }
 

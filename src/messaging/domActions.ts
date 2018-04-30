@@ -1,12 +1,11 @@
-const SCROLL_OFFSET = 48;
-
 export function getNextEntryScrollPosition(): number {
     const elements = document.getElementsByClassName('entry');
+    const scrollOffset = getScrollOffset();
 
     for (let i = 0; i < elements.length; i++) {
         const element = elements[i] as HTMLElement;
         const top = element.getBoundingClientRect().top;
-        const delta = top - SCROLL_OFFSET;
+        const delta = top - scrollOffset;
         if (delta >= 1) {
             return Math.ceil(delta);
         }
@@ -17,11 +16,12 @@ export function getNextEntryScrollPosition(): number {
 
 export function getPreviousEntryScrollPosition(): number {
     const elements = document.getElementsByClassName('entry');
+    const scrollOffset = getScrollOffset();
 
     for (let i = elements.length - 1; i >= 0; i--) {
         const element = elements[i] as HTMLElement;
         const top = element.getBoundingClientRect().top;
-        const delta = top - SCROLL_OFFSET;
+        const delta = top - scrollOffset;
         if (delta <= -1) {
             return Math.ceil(delta);
         }
@@ -53,4 +53,9 @@ export function openUrlInBackground(url: string): void {
 
         a.dispatchEvent(event);
     }
+}
+
+export function getScrollOffset(): number {
+    const navbar = document.getElementsByClassName('navbar')[0];
+    return navbar ? (navbar as HTMLElement).offsetHeight : 0;
 }

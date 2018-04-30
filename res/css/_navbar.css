@@ -2,7 +2,7 @@
   position: relative;
   box-sizing: border-box;
   border-bottom: 1px solid var(--medium-dark-color);
-  height: var(--navbar-height);
+  height: calc(var(--vertical-rhythm) * 2);
   backface-visibility: hidden;
 }
 
@@ -46,8 +46,8 @@
   position: relative;
   color: inherit;
   text-decoration: none;
-  width: var(--navbar-height);
-  height: calc(var(--navbar-height) - 1px);
+  width: calc(var(--vertical-rhythm) * 2);
+  height: calc(var(--vertical-rhythm) * 2 - 1px);
 }
 
 .navbar-action:hover,

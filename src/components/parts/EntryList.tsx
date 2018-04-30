@@ -186,7 +186,7 @@ function getViewportRectangle(): ViewportRectangle {
     return {
         top: 0,
         bottom: window.innerHeight,
-        offset: getScrollOffset()
+        scrollOffset: getScrollOffset()
     };
 }
 
@@ -199,7 +199,7 @@ function getActiveIndex(positioning: Positioning): number {
     const scrollOffset = getScrollOffset();
     const viewportRectangle = positioning.viewportRectangle;
     const viewportTop = viewportRectangle.top + scrollOffset;
-    const viewportBottom = viewportRectangle.bottom - scrollOffset;
+    const viewportBottom = viewportRectangle.bottom;
     const latestRectangle = rectangles[rectangles.length - 1];
 
     if (Math.abs(latestRectangle.bottom - viewportTop) < 1) {

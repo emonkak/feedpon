@@ -45,7 +45,7 @@
 }
 
 .l-content {
-  padding-top: var(--navbar-height);
+  padding-top: calc(var(--vertical-rhythm) * 2);
   background-color: var(--x-light-color);
   box-shadow: 0 -1px var(--medium-dark-color) inset;
 }
