@@ -138,7 +138,7 @@ pre * {
 blockquote {
   position: relative;
   border-left: 4px solid var(--medium-light-color);
-  padding: calc(var(--vertical-rhythm) / 2) 1.5rem calc(var(--vertical-rhythm) / 2) calc(1.5rem - 4px);
+  padding: 0 1.5rem 0 calc(1.5rem - 4px);
 }
 
 blockquote > p:last-child {
