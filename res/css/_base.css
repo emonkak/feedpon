@@ -265,6 +265,10 @@ summary {
   cursor: pointer;
 }
 
+summary:focus {
+  outline: none;
+}
+
 iframe {
   border: 0;
 }
