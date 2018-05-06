@@ -15,7 +15,6 @@ interface EntryListProps {
     heights: { [id: string]: number };
     isLoaded: boolean;
     isLoading: boolean;
-    isScrolling: boolean;
     onChangeActiveEntry: (index: number) => void;
     onExpand: (index: number) => void;
     onFetchComments: (entryId: string | number, url: string) => void;
@@ -74,7 +73,7 @@ export default class EntryList extends PureComponent<EntryListProps> {
             }
         }
 
-        const { activeEntryIndex, heights, isScrolling, onHeightUpdated } = this.props;
+        const { activeEntryIndex, heights, onHeightUpdated } = this.props;
 
         return (
             <LazyListRenderer
@@ -83,7 +82,6 @@ export default class EntryList extends PureComponent<EntryListProps> {
                 idAttribute="id"
                 initialHeights={heights}
                 initialItemIndex={activeEntryIndex}
-                isDisabled={isScrolling}
                 items={this._getRenderingItems(this.props)}
                 onHeightUpdated={onHeightUpdated}
                 onPositioningUpdated={this._handlePositioningUpdated}

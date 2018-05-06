@@ -56,18 +56,6 @@ export default function uiReducer(ui: UI, event: Event): UI {
                 theme: event.theme
             };
 
-        case 'SCROLL_STARTED':
-            return {
-                ...ui,
-                isScrolling: true
-            };
-
-        case 'SCROLL_ENDED':
-            return {
-                ...ui,
-                isScrolling: false
-            };
-
         default:
             return ui;
     }

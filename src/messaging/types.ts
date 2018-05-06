@@ -95,8 +95,6 @@ export type Event
     | { type: 'NOTIFICATION_DISMISSED', id: number }
     | { type: 'NOTIFICATION_SENT', notification: Notification }
     | { type: 'READ_ENTRY_RESET', streamId: string }
-    | { type: 'SCROLL_ENDED' }
-    | { type: 'SCROLL_STARTED' }
     | { type: 'SIDEBAR_CLOSED' }
     | { type: 'SIDEBAR_OPENED' }
     | { type: 'SITEINFO_UPDATED', items: SiteinfoItem[], updatedAt: number }

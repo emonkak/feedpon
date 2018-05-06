@@ -10,7 +10,6 @@ interface LazyListRendererProps {
     idAttribute: string;
     initialHeights?: { [id: string]: number };
     initialItemIndex?: number;
-    isDisabled?: boolean;
     items: any[];
     offscreenToViewportRatio?: number;
     onHeightUpdated?: (updatedHeights: { [id: string]: number }) => void;
@@ -148,7 +147,8 @@ export default class LazyListRenderer extends Component<LazyListRendererProps, L
             props.renderItem !== nextProps.renderItem ||
             props.renderList !== nextProps.renderList ||
             state.sliceEnd !== nextState.sliceEnd ||
-            state.sliceStart !== nextState.sliceStart;
+            state.sliceStart !== nextState.sliceStart ||
+            state.scrollingItemIndex !== nextState.scrollingItemIndex;
     }
 
     componentDidMount() {
@@ -189,11 +189,16 @@ export default class LazyListRenderer extends Component<LazyListRendererProps, L
 
     scrollToIndex(index: number): void {
         const { sliceStart, sliceEnd } = this.state;
-        const slice = getInitialSlice(this.props, this._heights, index);
 
-        if (sliceStart <= slice.sliceStart && slice.sliceEnd <= sliceEnd) {
-            this._setScrollPosition(index);
+        if (sliceStart <= index && index < sliceEnd) {
+            const scrollOffset = this._getScrollOffset(index);
+
+            if (scrollOffset !== 0) {
+                window.scrollBy(0, scrollOffset);
+            }
         } else {
+            const slice = getInitialSlice(this.props, this._heights, index);
+
             this.setState({
                 ...slice,
                 scrollingItemIndex: index
@@ -207,7 +212,7 @@ export default class LazyListRenderer extends Component<LazyListRendererProps, L
         const wasHeightChanged = this._recomputeHeights();
 
         if (scrollingItemIndex > -1) {
-            this._setScrollPosition(scrollingItemIndex);
+            this._updateScrollIndex(scrollingItemIndex);
         } else if (wasHeightChanged || hasItemsChanged) {
             this._adjestScrollPosition();
             this._scheduleUpdate();
@@ -215,10 +220,6 @@ export default class LazyListRenderer extends Component<LazyListRendererProps, L
     }
 
     private _update(): void {
-        if (this.props.isDisabled) {
-            return;
-        }
-
         const viewportRectangle = this._getRelativeViewportRectangle();
         const { onPositioningUpdated } = this.props;
 
@@ -267,21 +268,20 @@ export default class LazyListRenderer extends Component<LazyListRendererProps, L
         return false;
     }
 
-    private _setScrollPosition(index: number): void {
-        const viewportRectangle = this._getRelativeViewportRectangle();
-        const scrollOffset = this._getScrollOffset(index, viewportRectangle);
+    private _updateScrollIndex(index: number): void {
+        const scrollOffset = this._getScrollOffset(index);
 
         if (scrollOffset !== 0) {
             window.scrollBy(0, scrollOffset);
+        } else {
+            this.setState({
+                scrollingItemIndex: -1
+            });
         }
-
-        this.setState({
-            scrollingItemIndex: -1
-        });
     }
 
     private _adjestScrollPosition(): void {
-        if (!this.props.isDisabled && this._prevPositioning) {
+        if (this._prevPositioning) {
             const viewportRectangle = this._getRelativeViewportRectangle();
             const positioning = this._getPositioning(viewportRectangle);
             const adjustmentDelta = getScrollAdjustmentDelta(this._prevPositioning, positioning);
@@ -383,7 +383,8 @@ export default class LazyListRenderer extends Component<LazyListRendererProps, L
         return createViewportRectangle(top, height, rectangle.scrollOffset);
     }
 
-    private _getScrollOffset(index: number, viewportRectangle: ViewportRectangle): number {
+    private _getScrollOffset(index: number): number {
+        const viewportRectangle = this._getRelativeViewportRectangle();
         const rectangles = this._getRectangles(this.props, this._heights);
 
         if (index < 0 || rectangles.length === 0) {

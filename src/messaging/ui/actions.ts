@@ -1,5 +1,4 @@
 import { Event, StreamViewKind, ThemeKind, Thunk } from 'messaging/types';
-import { smoothScrollTo, smoothScrollBy } from 'utils/dom/smoothScroll';
 
 export function changeActiveEntry(streamId: string, index: number): Event {
     return {
@@ -92,51 +91,5 @@ export function selectStream(streamId: string): Event {
 export function unselectStream(): Event {
     return {
         type: 'STREAM_UNSELECTED'
-    };
-}
-
-export function scrollBy(dx: number, dy: number, callback?: () => void): Thunk {
-    return ({ getState, dispatch }) => {
-        const { ui } = getState();
-
-        if (!ui.isScrolling) {
-            dispatch({
-                type: 'SCROLL_STARTED'
-            });
-        }
-
-        window.requestAnimationFrame(() => {
-            smoothScrollBy(window, dx, dy)
-                .then(() => {
-                    dispatch({
-                        type: 'SCROLL_ENDED'
-                    });
-                });
-        });
-    };
-}
-
-export function scrollTo(x: number, y: number, callback?: () => void): Thunk {
-    return ({ getState, dispatch }) => {
-        const { ui } = getState();
-
-        if (!ui.isScrolling) {
-            dispatch({
-                type: 'SCROLL_STARTED'
-            });
-        }
-
-        window.requestAnimationFrame(() => {
-            smoothScrollTo(window, x, y)
-                .then(() => {
-                    dispatch({
-                        type: 'SCROLL_ENDED'
-                    });
-
-                    if (callback) {
-                        callback();
-                    }
-                });
-        });
     };
 }
