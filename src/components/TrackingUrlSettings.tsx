@@ -23,8 +23,8 @@ interface TrackingUrlState {
 }
 
 class TrackingUrlSettings extends PureComponent<TrackingUrlProps, TrackingUrlState> {
-    constructor(props: TrackingUrlProps, context: any) {
-        super(props, context);
+    constructor(props: TrackingUrlProps) {
+        super(props);
 
         this.state = {
             cacheCapacity: props.cacheCapacity,

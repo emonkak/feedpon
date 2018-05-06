@@ -1,4 +1,4 @@
-import CSSTransitionGroup from 'react-addons-css-transition-group';
+import CSSTransition from 'react-transition-group/CSSTransition';
 import React, { PureComponent } from 'react';
 
 import InstantNotificationComponent from 'components/parts/InstantNotification';
@@ -12,7 +12,7 @@ interface InstantNotificationsProps {
     onDismissInstantNotification: typeof dismissInstantNotification;
 }
 
-class InstantNotifications extends PureComponent<InstantNotificationsProps, {}> {
+class InstantNotifications extends PureComponent<InstantNotificationsProps> {
     timer: number | null = null;
 
     componentDidMount() {
@@ -63,15 +63,15 @@ class InstantNotifications extends PureComponent<InstantNotificationsProps, {}> 
         const { instantNotification } = this.props;
 
         return (
-            <CSSTransitionGroup
-                component="div"
-                transitionName="instant-notification"
-                transitionEnterTimeout={200}
-                transitionLeaveTimeout={200}>
-                {instantNotification &&
-                    <InstantNotificationComponent
-                        instantNotification={instantNotification} />}
-            </CSSTransitionGroup>
+            <CSSTransition
+                classNames="instant-notification"
+                timeout={200}>
+                <div className="instant-notification-list">
+                    {instantNotification &&
+                        <InstantNotificationComponent
+                            instantNotification={instantNotification} />}
+                </div>
+            </CSSTransition>
         );
     }
 }

@@ -18,8 +18,8 @@ interface UserSiteinfoItemState {
 }
 
 export default class UserSiteinfoItem extends PureComponent<UserSiteinfoItemProps, UserSiteinfoItemState> {
-    constructor(props: UserSiteinfoItemProps, context: any) {
-        super(props, context);
+    constructor(props: UserSiteinfoItemProps) {
+        super(props);
 
         this.handleCancelDeleting = this.handleCancelDeleting.bind(this);
         this.handleCancelEditing = this.handleCancelEditing.bind(this);

@@ -1,11 +1,10 @@
-import React, { PureComponent, Children,  cloneElement } from 'react';
+import React, { PureComponent, cloneElement } from 'react';
 import classnames from 'classnames';
 
-import createChainedFunction from 'utils/createChainedFunction';
+type SupportedControl = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 
 interface ValidatableControlProps {
-    children: React.ReactElement<any>;
-    component?: 'input' | 'select' | 'textarea';
+    children: React.ReactElement<React.HTMLProps<SupportedControl>>;
     invalidClassName?: string | null;
     validClassName?: string | null;
     validations?: Validation[];
@@ -22,31 +21,43 @@ interface ValidatableControlState {
 
 export default class ValidatableControl extends PureComponent<ValidatableControlProps, ValidatableControlState> {
     static defaultProps = {
-        component: 'input',
         invalidClassName: 'has-error',
         validClassName: 'has-success'
     };
 
-    private controlElement: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | null = null;
+    private controlElement: SupportedControl | null = null;
 
-    constructor(props: ValidatableControlProps, context: any) {
-        super(props, context);
-
-        this.handleChange = this.handleChange.bind(this);
-        this.handleRef = this.handleRef.bind(this);
+    constructor(props: ValidatableControlProps) {
+        super(props);
 
         this.state = { status: 'empty' };
     }
 
     componentDidMount() {
-        this.update();
+        this._update();
     }
 
     componentDidUpdate(prevProps: ValidatableControlProps, prevState: ValidatableControlState) {
-        this.update();
+        this._update();
     }
 
-    update() {
+    render() {
+        const { children, invalidClassName, validClassName } = this.props;
+        const { status } = this.state;
+        const child = children;
+
+        return cloneElement(child, {
+            ref: this._handleRef,
+            className: classnames(
+                child.props.className,
+                status === 'invalid' ? invalidClassName : null,
+                status === 'valid' ? validClassName : null
+            ),
+            onChange: this._handleChange
+        });
+    }
+
+    private _update() {
         const control = this.controlElement;
 
         if (!control) {
@@ -78,31 +89,17 @@ export default class ValidatableControl extends PureComponent<ValidatableControl
         }
     }
 
-    handleChange(event: React.FormEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
-        this.update();
-    }
-
-    handleRef(ref: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | null) {
+    private _handleRef = (ref: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | null): void => {
         this.controlElement = ref;
     }
 
-    renderChild(child: React.ReactElement<any>) {
-        const { invalidClassName, validClassName } = this.props;
-        const { status } = this.state;
+    private _handleChange = (event: React.FormEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>): void => {
+        const child = this.props.children;
 
-        return cloneElement(child, {
-            ...child.props,
-            ref: createChainedFunction((child as any).ref, this.handleRef),
-            className: classnames(
-                child.props.className,
-                status === 'invalid' ? invalidClassName : null,
-                status === 'valid' ? validClassName : null
-            ),
-            onChange: createChainedFunction(child.props.onChange, this.handleChange)
-        });
-    }
+        if (child.props.onChange) {
+            child.props.onChange(event);
+        }
 
-    render() {
-        return this.renderChild(Children.only(this.props.children));
+        this._update();
     }
 }

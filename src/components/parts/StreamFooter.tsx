@@ -8,9 +8,9 @@ interface StreamFooterProps {
     onMarkAllEntiresAsRead: () => void;
 }
 
-export default class StreamFooter extends PureComponent<StreamFooterProps, {}> {
-    constructor(props: StreamFooterProps, context: any) {
-        super(props, context);
+export default class StreamFooter extends PureComponent<StreamFooterProps> {
+    constructor(props: StreamFooterProps) {
+        super(props);
 
         this.handleLoadMoreEntries = this.handleLoadMoreEntries.bind(this);
     }

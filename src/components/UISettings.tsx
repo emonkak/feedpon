@@ -18,8 +18,8 @@ interface UISettingsState {
 }
 
 class UISettings extends PureComponent<UISettingsProps, UISettingsState> {
-    constructor(props: UISettingsProps, context: any) {
-        super(props, context);
+    constructor(props: UISettingsProps) {
+        super(props);
 
         this.state = {
             customStyles: props.customStyles

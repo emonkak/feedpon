@@ -47,15 +47,8 @@ interface SidebarProps {
     userIsLoading: boolean;
 }
 
-class Sidebar extends PureComponent<SidebarProps, {}> {
-    constructor(props: SidebarProps, context: any) {
-        super(props, context);
-
-        this.handleSearch = this.handleSearch.bind(this);
-        this.handleSelect = this.handleSelect.bind(this);
-    }
-
-    componentWillMount() {
+class Sidebar extends PureComponent<SidebarProps> {
+    componentDidMount() {
         const { lastUpdatedAt, onFetchSubscriptions, onFetchUser, userIsLoaded } = this.props;
 
         if (lastUpdatedAt === 0) {
@@ -65,18 +58,6 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
         if (!userIsLoaded) {
             onFetchUser();
         }
-    }
-
-    handleSearch(query: string) {
-        const { router } = this.props;
-
-        router.push('/search/' + encodeURIComponent(query));
-    }
-
-    handleSelect(path: string) {
-        const { router } = this.props;
-
-        router.push(path);
     }
 
     render() {
@@ -104,8 +85,8 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
                 <div className="sidebar-group">
                     <AutocompleteForm
                         items={subscriptions}
-                        onSubmit={this.handleSearch}
-                        onSelect={this.handleSelect}
+                        onSubmit={this._handleSearch}
+                        onSelect={this._handleSelect}
                         renderInput={renderSearchFeedInput}
                         renderCandidates={completeSubscriptions} />
                 </div>
@@ -115,18 +96,18 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
                             value="/"
                             primaryText="Dashboard"
                             isSelected={location.pathname === '/'}
-                            onSelect={this.handleSelect} />
+                            onSelect={this._handleSelect} />
                         <TreeLeaf
                             value={`/streams/${ALL_STREAM_ID}`}
                             primaryText="All"
                             secondaryText={Number(totalUnreadCount).toLocaleString()}
                             isSelected={location.pathname.startsWith('/streams/' + ALL_STREAM_ID)}
-                            onSelect={this.handleSelect} />
+                            onSelect={this._handleSelect} />
                         <TreeLeaf
                             value={`/streams/${PINS_STREAM_ID}`}
                             primaryText="Pins"
                             isSelected={location.pathname.startsWith('/streams/' + PINS_STREAM_ID)}
-                            onSelect={this.handleSelect} />
+                            onSelect={this._handleSelect} />
                     </Tree>
                 </div>
                 <div className="sidebar-group">
@@ -135,6 +116,7 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
                         lastUpdatedAt={lastUpdatedAt}
                         onChangeSubscriptionOrder={onChangeSubscriptionOrder}
                         onChangeUnreadViewing={onChangeUnreadViewing}
+                        onOrganizeSubscriptions={this._handleOrganizeSubscriptions}
                         onReload={onFetchSubscriptions}
                         onlyUnread={onlyUnread}
                         subscriptionOrder={subscriptionOrder} />
@@ -142,7 +124,7 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
                         categories={categories}
                         groupedSubscriptions={groupedSubscriptions}
                         selectedPath={location.pathname}
-                        onSelect={this.handleSelect} />
+                        onSelect={this._handleSelect} />
                 </div>
                 <div className="sidebar-group">
                     <Tree>
@@ -150,12 +132,12 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
                             value="/settings/ui"
                             primaryText="Settings"
                             isSelected={location.pathname.startsWith('/settings/')}
-                            onSelect={this.handleSelect} />
+                            onSelect={this._handleSelect} />
                         <TreeLeaf
                             value="/about/"
                             primaryText="About"
                             isSelected={location.pathname.startsWith('/about/')}
-                            onSelect={this.handleSelect} />
+                            onSelect={this._handleSelect} />
                     </Tree>
                 </div>
                 <div className="sidebar-group">
@@ -175,6 +157,24 @@ class Sidebar extends PureComponent<SidebarProps, {}> {
             </nav>
         );
     }
+
+    private _handleSearch = (query: string) => {
+        const { router } = this.props;
+
+        router.push('/search/' + encodeURIComponent(query));
+    }
+
+    private _handleSelect = (path: string) => {
+        const { router } = this.props;
+
+        router.push(path);
+    }
+
+    private _handleOrganizeSubscriptions = () => {
+        const { router } = this.props;
+
+        router.push('/categories/');
+    };
 }
 
 function completeSubscriptions(subscriptions: Subscription[], query: string) {

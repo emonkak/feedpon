@@ -15,9 +15,9 @@ interface SettingsProps {
     router: History;
 }
 
-class SettingsPage extends PureComponent<SettingsProps, {}> {
-    constructor(props: SettingsProps, context: any) {
-        super(props, context);
+class SettingsPage extends PureComponent<SettingsProps> {
+    constructor(props: SettingsProps) {
+        super(props);
 
         this.handleSelectNavItem = this.handleSelectNavItem.bind(this);
     }

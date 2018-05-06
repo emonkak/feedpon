@@ -10,10 +10,11 @@ import KeyMappingsTable from 'components/parts/KeyMappingsTable';
 import Modal from 'components/widgets/Modal';
 import Notifications from 'components/Notifications';
 import Sidebar from 'components/Sidebar';
-import toSwipeable, { SwipeableProps } from 'components/hoc/toSwipeable';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
-import { Command, KeyMapping, State, Store } from 'messaging/types';
+import toSwipeable, { SwipeableProps } from 'components/hoc/toSwipeable';
+import { Command, Event, KeyMapping, State } from 'messaging/types';
+import { Dispatcher } from 'utils/flux/types';
 import { closeHelp, closeSidebar, openHelp, openSidebar } from 'messaging/ui/actions';
 import { sendInstantNotification } from 'messaging/instantNotifications/actions';
 
@@ -29,10 +30,10 @@ interface SidebarLayoutProps extends SwipeableProps {
     onOpenSidebar: typeof openSidebar;
     router: History;
     sidebarIsOpened: boolean;
-    store: Store;
+    dispatch: Dispatcher<Event>;
 }
 
-class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
+class SidebarLayout extends PureComponent<SidebarLayoutProps> {
     private _sidebarRef: HTMLElement | null = null;
 
     private _sidebarWidth: number = 0;
@@ -43,26 +44,8 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
         this._updateSidebarStatus(sidebarIsOpened);
     }
 
-    componentWillUpdate(nextProps: SidebarLayoutProps, nextState: {}) {
-        const { isSwiping, sidebarIsOpened } = this.props;
-
-        if (isSwiping !== nextProps.isSwiping) {
-            if (nextProps.isSwiping) {
-                this._notifySwipeStart();
-            } else {
-                this._notifySwipeEnd(nextProps.initialX, nextProps.destX);
-            }
-        }
-
-        if (sidebarIsOpened !== nextProps.sidebarIsOpened) {
-            if (nextProps.sidebarIsOpened || !this._isMobileLayout()) {
-                this._updateSidebarStatus(nextProps.sidebarIsOpened);
-            }
-        }
-    }
-
     componentDidUpdate(prevProps: SidebarLayoutProps, prevState: {}) {
-        const { location, onCloseSidebar, sidebarIsOpened } = this.props;
+        const { isSwiping, location, sidebarIsOpened } = this.props;
 
         if (location !== prevProps.location) {
             if (location.pathname.indexOf('/streams/') !== 0) {
@@ -70,7 +53,25 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
             }
 
             if (sidebarIsOpened && this._isMobileLayout()) {
+                const { onCloseSidebar } = this.props;
+
                 onCloseSidebar();
+            }
+        }
+
+        if (isSwiping !== prevProps.isSwiping) {
+            if (isSwiping) {
+                this._notifySwipeStart();
+            } else {
+                const { initialX, destX } = this.props;
+
+                this._notifySwipeEnd(initialX, destX);
+            }
+        }
+
+        if (sidebarIsOpened !== prevProps.sidebarIsOpened) {
+            if (sidebarIsOpened || !this._isMobileLayout()) {
+                this._updateSidebarStatus(sidebarIsOpened);
             }
         }
     }
@@ -110,7 +111,7 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
         } : {};
         const opacityStyle = isSwiping ? {
             opacity: sidebarIsOpened ? 1 - progress : progress,
-            visibility: 'visible'
+            visibility: 'visible' as 'visible'
         } : {};
 
         return (
@@ -212,16 +213,16 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps, {}> {
         const command = (commandTable as { [key: string]: Command<any> })[keyMapping.commandId];
 
         if (command) {
-            const { store } = this.props;
+            const { dispatch } = this.props;
 
             if (!keyMapping.preventNotification) {
-                store.dispatch(sendInstantNotification(command.name));
+                dispatch(sendInstantNotification(command.name));
             }
 
             const params = { ...command.defaultParams, ...keyMapping.params };
             const event = command.action(params);
 
-            store.dispatch(event as any);
+            dispatch(event as any);
         }
     }
 
@@ -244,18 +245,20 @@ function getTranslateX(initialX: number, destX: number, width: number, isOpened:
     }
 }
 
-export default connect((store) => ({
+export default connect(() => ({
     mapStateToProps: (state: State) => ({
         helpIsOpened: state.ui.helpIsOpened,
         isLoading: state.backend.isLoading || state.subscriptions.isImporting,
         keyMappings: state.keyMappings.items,
-        sidebarIsOpened: state.ui.sidebarIsOpened,
-        store
+        sidebarIsOpened: state.ui.sidebarIsOpened
     }),
-    mapDispatchToProps: bindActions({
-        onCloseHelp: closeHelp,
-        onCloseSidebar: closeSidebar,
-        onOpenHelp: openHelp,
-        onOpenSidebar: openSidebar
+    mapDispatchToProps: (dispatch) => ({
+        ...bindActions({
+            onCloseHelp: closeHelp,
+            onCloseSidebar: closeSidebar,
+            onOpenHelp: openHelp,
+            onOpenSidebar: openSidebar
+        })(dispatch),
+        dispatch
     })
 }))(toSwipeable(SidebarLayout));

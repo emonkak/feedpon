@@ -5,7 +5,8 @@ import MainLayout from 'components/layouts/MainLayout';
 import Navbar from 'components/widgets/Navbar';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
-import { MenuLink } from 'components/widgets/Menu';
+import { History } from 'history';
+import { MenuItem } from 'components/widgets/Menu';
 import { State } from 'messaging/types';
 import { toggleSidebar } from 'messaging/ui/actions';
 
@@ -409,10 +410,11 @@ END OF TERMS AND CONDITIONS
 
 interface AboutPageProps {
     onToggleSidebar: typeof toggleSidebar;
+    router: History;
     version: string;
 }
 
-class AboutPage extends PureComponent<AboutPageProps, {}> {
+class AboutPage extends PureComponent<AboutPageProps> {
     renderNavbar() {
         const { onToggleSidebar } = this.props;
 
@@ -425,8 +427,8 @@ class AboutPage extends PureComponent<AboutPageProps, {}> {
                             <i className="icon icon-24 icon-menu-2" />
                         </button>
                     }>
-                    <MenuLink
-                        to="/kitchensink/"
+                    <MenuItem
+                        onSelect={this._navigateToKitchensink}
                         primaryText="Go to kitchensink..." />
                 </Dropdown>
             </Navbar>
@@ -511,6 +513,12 @@ class AboutPage extends PureComponent<AboutPageProps, {}> {
                 {this.renderContent()}
             </MainLayout>
         );
+    }
+
+    private _navigateToKitchensink = () => {
+        const { router } = this.props;
+
+        router.push('/kitchensink/');
     }
 }
 

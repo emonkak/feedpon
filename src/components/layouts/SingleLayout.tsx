@@ -9,7 +9,7 @@ interface SingleLayoutProps {
     isLoading: boolean;
 }
 
-class SingleLayout extends PureComponent<SingleLayoutProps, {}> {
+class SingleLayout extends PureComponent<SingleLayoutProps> {
     render() {
         const { children, isLoading } = this.props;
 

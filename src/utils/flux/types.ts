@@ -7,9 +7,9 @@ export interface Store<TState, TEvent> {
 
 export type Middleware<TState, TEvent> = (store: Store<TState, TEvent>) => Handler<TEvent>;
 
-export type Handler<TEvent> = (event: TEvent, next: Delegate<TEvent>) => any;
+export type Handler<TEvent> = (event: TEvent, next: Dispatcher<TEvent>) => any;
 
-export type Delegate<TEvent> = (event: TEvent) => any;
+export type Dispatcher<TEvent> = (event: TEvent) => any;
 
 export type Reducer<TState, TEvent> = (state: TState, event: TEvent) => TState;
 

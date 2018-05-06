@@ -1,4 +1,4 @@
-import CSSTransitionGroup from 'react-addons-css-transition-group';
+import CSSTransition from 'react-transition-group/CSSTransition';
 import React, { PureComponent } from 'react';
 
 interface ModalProps {
@@ -7,12 +7,12 @@ interface ModalProps {
     onClose?: () => void;
 }
 
-export default class Modal extends PureComponent<ModalProps, {}> {
+export default class Modal extends PureComponent<ModalProps> {
     static defaultProps = {
         isOpened: false
     };
 
-    constructor(props: ModalProps, context: any) {
+    constructor(props: ModalProps) {
         super(props);
 
         this.handleClick = this.handleClick.bind(this);
@@ -25,7 +25,7 @@ export default class Modal extends PureComponent<ModalProps, {}> {
         document.addEventListener('keydown', this.handleDocumentKeyDown, true);
     }
 
-    componentDidUpdate(prevProps: any, prevState: any) {
+    componentDidUpdate(prevProps: ModalProps) {
         this.refreshBodyStyles(this.props.isOpened!);
     }
 
@@ -89,13 +89,13 @@ export default class Modal extends PureComponent<ModalProps, {}> {
         const { isOpened } = this.props;
 
         return (
-            <CSSTransitionGroup
-                component="div"
-                transitionEnterTimeout={200}
-                transitionLeaveTimeout={200}
-                transitionName="modal">
-                {isOpened ? this.renderModal() : null}
-            </CSSTransitionGroup>
+            <CSSTransition
+                classNames="modal"
+                timeout={200}>
+                <div>
+                    {isOpened ? this.renderModal() : null}
+                </div>
+            </CSSTransition>
         );
     }
 }

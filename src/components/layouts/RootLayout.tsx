@@ -10,7 +10,7 @@ interface RootLayoutProps {
     theme: ThemeKind;
 }
 
-class RootLayout extends PureComponent<RootLayoutProps, any> {
+class RootLayout extends PureComponent<RootLayoutProps> {
     componentDidMount() {
         const { theme } = this.props;
 

@@ -16,7 +16,7 @@ const patternValidation = {
 };
 
 export default class TrackingUrlPatternForm extends PureComponent<TrackingUrlPatternFormProps, TrackingUrlPatternFormState> {
-    constructor(props: TrackingUrlPatternFormProps, context: any) {
+    constructor(props: TrackingUrlPatternFormProps) {
         super(props);
 
         this.handleChange = this.handleChange.bind(this);

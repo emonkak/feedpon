@@ -17,8 +17,8 @@ interface EditCategoryFormState {
 }
 
 export default class EditCategoryForm extends PureComponent<EditCategoryFormProps, EditCategoryFormState> {
-    constructor(props: EditCategoryFormProps, context: any) {
-        super(props, context);
+    constructor(props: EditCategoryFormProps) {
+        super(props);
 
         this.handleCancelDeleting = this.handleCancelDeleting.bind(this);
         this.handleCancelEditing = this.handleCancelEditing.bind(this);

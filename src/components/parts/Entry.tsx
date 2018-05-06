@@ -40,7 +40,7 @@ interface CollapsedEntryContentProps {
     sameOrigin: boolean;
 }
 
-export default class EntryComponent extends PureComponent<EntryProps, {}> {
+export default class EntryComponent extends PureComponent<EntryProps> {
     render() {
         const { entry, isActive, isExpanded } = this.props;
 

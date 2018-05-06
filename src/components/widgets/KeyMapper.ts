@@ -24,8 +24,8 @@ export default class KeyMapper extends Component<KeyMapperProps, {}> {
 
     timer: number | null = null;
 
-    constructor(props: KeyMapperProps, context: any) {
-        super(props, context);
+    constructor(props: KeyMapperProps) {
+        super(props);
 
         this.handleKeyDown = this.handleKeyDown.bind(this);
     }

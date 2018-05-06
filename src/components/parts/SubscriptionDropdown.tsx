@@ -5,7 +5,7 @@ import ConfirmModal from 'components/widgets/ConfirmModal';
 import Dropdown from 'components/widgets/Dropdown';
 import Portal from 'components/widgets/Portal';
 import { Category, Subscription } from 'messaging/types';
-import { MenuItem, MenuForm } from 'components/widgets/Menu';
+import { MenuForm, MenuItem } from 'components/widgets/Menu';
 
 interface SubscriptionDropdownProps {
     categories: Category[];
@@ -23,8 +23,8 @@ interface SubscriptionDropdownState {
 }
 
 export default class SubscriptionDropdown extends PureComponent<SubscriptionDropdownProps, SubscriptionDropdownState> {
-    constructor(props: SubscriptionDropdownProps, context: any) {
-        super(props, context);
+    constructor(props: SubscriptionDropdownProps) {
+        super(props);
 
         this.state = {
             categoryLabel: '',

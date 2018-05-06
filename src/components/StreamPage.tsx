@@ -64,11 +64,11 @@ interface StreamPageProps {
     subscription: Subscription | null;
 }
 
-class StreamPage extends PureComponent<StreamPageProps, {}> {
+class StreamPage extends PureComponent<StreamPageProps> {
     private _entryList: EntryList | null = null;
 
-    constructor(props: StreamPageProps, context: any) {
-        super(props, context);
+    constructor(props: StreamPageProps) {
+        super(props);
 
         this.handleChangeActiveEnetry = this.handleChangeActiveEnetry.bind(this);
         this.handleChangeEntryOrderKind = this.handleChangeEntryOrderKind.bind(this);
@@ -87,7 +87,7 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
         this.handleToggleUnreadKeeping = this.handleToggleUnreadKeeping.bind(this);
     }
 
-    componentWillMount() {
+    componentDidMount() {
         const {
             onFetchStream,
             onSelectStream,
@@ -102,48 +102,45 @@ class StreamPage extends PureComponent<StreamPageProps, {}> {
         }
     }
 
-    componentWillUpdate(nextProps: StreamPageProps, nextState: {}) {
+    componentDidUpdate(prevProps: StreamPageProps, prevState: {}) {
+        const { params, stream } = this.props;
+
         // When transition to different stream
-        if (this.props.params['stream_id'] !== nextProps.params['stream_id']) {
-            const { keepUnread, onMarkAsRead, readEntries } = this.props;
+        if (params['stream_id'] !== prevProps.params['stream_id']) {
+            const {
+                keepUnread,
+                onFetchStream,
+                onMarkAsRead,
+                onSelectStream,
+                readEntries,
+                shouldFetchStream
+            } = this.props;
 
             if (!keepUnread && readEntries.length > 0) {
                 onMarkAsRead(readEntries);
             }
-
-            const {
-                onFetchStream,
-                onSelectStream,
-                params,
-                shouldFetchStream
-            } = nextProps;
 
             onSelectStream(params['stream_id']);
 
             if (shouldFetchStream) {
                 onFetchStream(params['stream_id']);
             }
-        }
-    }
-
-    componentDidUpdate(prevProps: StreamPageProps, prevState: {}) {
-        const { isLoaded, isLoading, params, stream } = this.props;
-        const prevIsLoading = prevProps.isLoading;
-        const prevStream = prevProps.stream;
-
-        if ((!isLoaded && isLoading && isLoading !== prevIsLoading) ||
-            (params['stream_id'] !== prevProps.params['stream_id'] && stream.activeEntryIndex < 0)) {
-            window.scrollTo(0, 0);
-        }
-
-        if (stream.streamId === prevStream.streamId) {
-            if (stream.expandedEntryIndex !== prevStream.expandedEntryIndex) {
+        } else {
+            if (stream.expandedEntryIndex !== prevProps.stream.expandedEntryIndex) {
                 if (stream.expandedEntryIndex > -1) {
                     this.handleScrollToEntry(stream.expandedEntryIndex);
                 } else if (stream.activeEntryIndex > -1) {
                     this.handleScrollToEntry(stream.activeEntryIndex);
                 }
             }
+        }
+
+        const { isLoaded, isLoading } = this.props;
+
+        if ((!isLoaded && isLoading && isLoading !== prevProps.isLoading) ||
+            (params['stream_id'] !== prevProps.params['stream_id'] &&
+             stream.activeEntryIndex < 0)) {
+            window.scrollTo(0, 0);
         }
     }
 

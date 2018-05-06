@@ -3,7 +3,7 @@ import classnames from 'classnames';
 
 import Dropdown from 'components/widgets/Dropdown';
 import RelativeTime from 'components/widgets/RelativeTime';
-import { MenuItem, MenuLink } from 'components/widgets/Menu';
+import { MenuItem } from 'components/widgets/Menu';
 import { SubscriptionOrderKind } from 'messaging/types';
 
 interface SubscriptionTreeHeaderProps {
@@ -11,6 +11,7 @@ interface SubscriptionTreeHeaderProps {
     lastUpdatedAt: number;
     onChangeSubscriptionOrder: (order: SubscriptionOrderKind) => void;
     onChangeUnreadViewing: (onlyUnread: boolean) => void;
+    onOrganizeSubscriptions: () => void;
     onReload: () => void;
     onlyUnread: boolean;
     subscriptionOrder: SubscriptionOrderKind;
@@ -21,6 +22,7 @@ const SubscriptionTreeHeader: React.SFC<SubscriptionTreeHeaderProps> = ({
     lastUpdatedAt,
     onChangeSubscriptionOrder,
     onChangeUnreadViewing,
+    onOrganizeSubscriptions,
     onReload,
     onlyUnread,
     subscriptionOrder
@@ -74,8 +76,8 @@ const SubscriptionTreeHeader: React.SFC<SubscriptionTreeHeaderProps> = ({
                     primaryText="Only unread"
                     value={!onlyUnread} />
                 <div className="menu-divider" />
-                <MenuLink
-                    to="/categories/"
+                <MenuItem
+                    onSelect={onOrganizeSubscriptions}
                     primaryText="Organize subscriptions..." />
             </Dropdown>
         </header>

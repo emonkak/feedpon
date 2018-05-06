@@ -27,8 +27,8 @@ const xPathValidation = {
 };
 
 export default class UserSiteinfoForm extends PureComponent<UserSiteinfoFormProps, UserSiteinfoFormState> {
-    constructor(props: UserSiteinfoFormProps, context: any) {
-        super(props, context);
+    constructor(props: UserSiteinfoFormProps) {
+        super(props);
 
         if (props.item) {
             this.state = {

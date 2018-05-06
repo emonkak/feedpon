@@ -5,7 +5,7 @@ import Dropdown from 'components/widgets/Dropdown';
 import Portal from 'components/widgets/Portal';
 import SubscribeButton from 'components/parts/SubscribeButton';
 import { Category, Feed, Subscription } from 'messaging/types';
-import { MenuItem, MenuForm } from 'components/widgets/Menu';
+import { MenuForm, MenuItem } from 'components/widgets/Menu';
 
 interface SubscribeDropdownProps {
     categories: Category[];
@@ -25,8 +25,8 @@ interface SubscribeDropdownState {
 }
 
 export default class SubscribeDropdown extends PureComponent<SubscribeDropdownProps, SubscribeDropdownState> {
-    constructor(props: SubscribeDropdownProps, context: any) {
-        super(props, context);
+    constructor(props: SubscribeDropdownProps) {
+        super(props);
 
         this.state = {
             categoryLabel: '',

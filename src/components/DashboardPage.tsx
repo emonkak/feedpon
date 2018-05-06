@@ -31,8 +31,8 @@ interface StreamHistory {
 }
 
 class DashboardPage extends PureComponent<DashboardProps, DashboardState> {
-    constructor(props: any, context: any) {
-        super(props, context);
+    constructor(props: any) {
+        super(props);
     }
 
     renderStreamHistory(streamHistory: StreamHistory) {

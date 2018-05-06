@@ -31,9 +31,6 @@ interface EntryListProps {
     streamView: StreamViewKind;
 }
 
-interface EntryListState {
-}
-
 interface RenderingItem {
     entry: Entry;
     isActive: boolean;
@@ -41,7 +38,7 @@ interface RenderingItem {
     sameOrigin: boolean;
 }
 
-export default class EntryList extends PureComponent<EntryListProps, EntryListState> {
+export default class EntryList extends PureComponent<EntryListProps> {
     private _lazyListRenderer: LazyListRenderer | null = null;
 
     render() {
@@ -175,9 +172,9 @@ export default class EntryList extends PureComponent<EntryListProps, EntryListSt
 function renderList(items: React.ReactElement<any>[], blankSpaceAbove: number, blankSpaceBelow: number) {
     return (
         <div className="entry-list">
-            <div style={{ paddingBottom: blankSpaceAbove }}></div>
+            <div style={{ height: blankSpaceAbove }}></div>
             {items}
-            <div style={{ paddingBottom: blankSpaceBelow }}></div>
+            <div style={{ height: blankSpaceBelow }}></div>
         </div>
     );
 }

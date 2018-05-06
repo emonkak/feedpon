@@ -1,4 +1,4 @@
-import CSSTransitionGroup from 'react-addons-css-transition-group';
+import CSSTransition from 'react-transition-group/CSSTransition';
 import React, { PureComponent } from 'react';
 import classnames from 'classnames';
 
@@ -10,10 +10,7 @@ interface EntryShareButtonProps {
     title: string;
 }
 
-interface EntryShareButtonState {
-}
-
-class EntryShareButton extends PureComponent<EntryShareButtonProps & PopupProps, EntryShareButtonState> {
+class EntryShareButton extends PureComponent<EntryShareButtonProps & PopupProps> {
     render() {
         const { closePopup, isOpened, openPopup, popupStyle, pullDirection } = this.props;
 
@@ -25,15 +22,15 @@ class EntryShareButton extends PureComponent<EntryShareButtonProps & PopupProps,
                     onClick={isOpened ? closePopup : openPopup}>
                     <i className="icon icon-20 icon-share" />
                 </button>
-                <CSSTransitionGroup
-                    component="div"
-                    className={classnames('popup', 'is-pull-' + pullDirection)}
-                    style={popupStyle}
-                    transitionEnterTimeout={200}
-                    transitionLeaveTimeout={200}
-                    transitionName="popover">
-                    {isOpened && <Closable onClose={closePopup}>{this._renderPopover()}</Closable>}
-                </CSSTransitionGroup>
+                <CSSTransition
+                    classNames="popover"
+                    timeout={200}>
+                    <div
+                        style={popupStyle}
+                        className={classnames('popup', 'is-pull-' + pullDirection)}>
+                        {isOpened && <Closable onClose={closePopup}>{this._renderPopover()}</Closable>}
+                    </div>
+                </CSSTransition>
             </div>
         );
     }

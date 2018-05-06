@@ -19,8 +19,8 @@ interface KeyMappingItemState {
 }
 
 export default class KeyMappingItem extends PureComponent<KeyMappingItemProps, KeyMappingItemState> {
-    constructor(props: KeyMappingItemProps, context: any) {
-        super(props, context);
+    constructor(props: KeyMappingItemProps) {
+        super(props);
 
         this.state = {
             isDeleting: false,

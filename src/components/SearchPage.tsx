@@ -33,16 +33,16 @@ interface SearchPageProps {
     subscriptions: { [key: string]: Subscription };
 }
 
-class SearchPage extends PureComponent<SearchPageProps, {}> {
+class SearchPage extends PureComponent<SearchPageProps> {
     private searchInput: HTMLInputElement | null = null;
 
-    constructor(props: SearchPageProps, context: {}) {
-        super(props, context);
+    constructor(props: SearchPageProps) {
+        super(props);
 
         this.handleSearch = this.handleSearch.bind(this);
     }
 
-    componentWillMount() {
+    componentDidMount() {
         const { onSearchFeeds, params, query } = this.props;
 
         if (params['query'] && params['query'] !== query) {

@@ -12,7 +12,7 @@ interface SubscriptionTreeProps {
     selectedPath: string;
 }
 
-export default class SubscriptionTree extends PureComponent<SubscriptionTreeProps, {}> {
+export default class SubscriptionTree extends PureComponent<SubscriptionTreeProps> {
     renderCategory(category: Category, subscriptions: Subscription[], unreadCount: number) {
         const { onSelect, selectedPath } = this.props;
         const path = `/streams/${encodeURIComponent(category.streamId)}`;

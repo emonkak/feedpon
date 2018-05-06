@@ -10,27 +10,27 @@ interface NotAuthenticatedProps {
     router: History;
 }
 
-class NotAuthenticated extends PureComponent<NotAuthenticatedProps, {}> {
-    componentWillMount() {
-        this.update(this.props);
+class NotAuthenticated extends PureComponent<NotAuthenticatedProps> {
+    componentDidMount() {
+        this._refresh();
     }
 
-    componentWillUpdate(nextProps: NotAuthenticatedProps, nextState: {}) {
-        this.update(nextProps);
-    }
-
-    update(props: NotAuthenticatedProps) {
-        const { isAuthenticated, router } = props;
-
-        if (isAuthenticated) {
-            router.replace('/');
-        }
+    componentDidUpdate(prevProps: NotAuthenticatedProps, prevState: {}) {
+        this._refresh();
     }
 
     render() {
         const { children, isAuthenticated } = this.props;
 
         return !isAuthenticated ? children : null;
+    }
+
+    private _refresh() {
+        const { isAuthenticated, router } = this.props;
+
+        if (isAuthenticated) {
+            router.replace('/');
+        }
     }
 }
 

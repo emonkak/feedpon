@@ -22,8 +22,8 @@ export default function toPopup<TProps>(
     pullDirections: PullDirection[] = ['down', 'up', 'right', 'left']
 ): React.ComponentType<TProps> {
     return class Popup extends PureComponent<TProps, PopupState> {
-        constructor(props: TProps, context: any) {
-            super(props, context);
+        constructor(props: TProps) {
+            super(props);
 
             this.state = {
                 isOpened: false,
@@ -46,7 +46,11 @@ export default function toPopup<TProps>(
         }
 
         private _openPopup = (): void => {
-            const container = findDOMNode(this);
+            const container = findDOMNode(this) as Element;
+            if (!container) {
+                return;
+            }
+
             const containerRect = container.getBoundingClientRect();
 
             const viewportWidth = window.innerWidth;

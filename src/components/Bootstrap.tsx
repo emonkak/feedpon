@@ -18,8 +18,8 @@ interface BootstrapState {
 }
 
 export default class Bootstrap extends PureComponent<BootstrapProps, BootstrapState> {
-    constructor(props: BootstrapProps, context: any) {
-        super(props, context);
+    constructor(props: BootstrapProps) {
+        super(props);
 
         this.state = {
             store: null,

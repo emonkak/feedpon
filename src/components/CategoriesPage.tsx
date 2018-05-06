@@ -47,8 +47,8 @@ class CategoriesPage extends PureComponent<CategoriesPageProps, CategoriesPageSt
 
     private uploadInput: HTMLInputElement | null = null;
 
-    constructor(props: CategoriesPageProps, context: any) {
-        super(props, context);
+    constructor(props: CategoriesPageProps) {
+        super(props);
 
         this.handleChangeSearchQuery = debounce(this.handleChangeSearchQuery.bind(this), 100);
         this.handleChangeUploadFile = this.handleChangeUploadFile.bind(this);

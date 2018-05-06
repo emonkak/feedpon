@@ -10,27 +10,27 @@ interface AuthenticationRequiredProps {
     router: History;
 }
 
-class AuthenticationRequired extends PureComponent<AuthenticationRequiredProps, {}> {
-    componentWillMount() {
-        this.update(this.props);
+class AuthenticationRequired extends PureComponent<AuthenticationRequiredProps> {
+    componentDidMount() {
+        this._refresh(this.props);
     }
 
-    componentWillUpdate(nextProps: AuthenticationRequiredProps, nextState: {}) {
-        this.update(nextProps);
-    }
-
-    update(props: AuthenticationRequiredProps) {
-        const { isAuthenticated, router } = props;
-
-        if (!isAuthenticated) {
-            router.replace('/authentication');
-        }
+    componentDidUpdate(prevProps: AuthenticationRequiredProps, prevState: {}) {
+        this._refresh(this.props);
     }
 
     render() {
         const { children, isAuthenticated } = this.props;
 
         return isAuthenticated ? children : null;
+    }
+
+    private _refresh(props: AuthenticationRequiredProps) {
+        const { isAuthenticated, router } = props;
+
+        if (!isAuthenticated) {
+            router.replace('/authentication');
+        }
     }
 }
 

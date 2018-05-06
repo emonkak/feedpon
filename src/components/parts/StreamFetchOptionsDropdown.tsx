@@ -22,8 +22,8 @@ interface StreamFetchOptionsDropdownState {
 }
 
 export default class StreamFetchOptionsDropdown extends PureComponent<StreamFetchOptionsDropdownProps, StreamFetchOptionsDropdownState> {
-    constructor(props: StreamFetchOptionsDropdownProps, context: any) {
-        super(props, context);
+    constructor(props: StreamFetchOptionsDropdownProps) {
+        super(props);
 
         this.state = {
             numEntries: props.fetchOptions.numEntries

@@ -96,7 +96,7 @@ export function fetchStream(streamId: string, streamView?: StreamViewKind, fetch
                     heights: {},
                     streamView
                 }
-            });
+            } as Event);  // XXX: Avoid the bug? on TypeScript 2.8
         }
     };
 }

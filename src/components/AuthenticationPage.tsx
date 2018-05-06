@@ -10,7 +10,7 @@ interface AuthenticationProps {
     onAuthenticate: typeof authenticate;
 }
 
-class AuthenticationPage extends PureComponent<AuthenticationProps, {}> {
+class AuthenticationPage extends PureComponent<AuthenticationProps> {
     handleAuthenticate() {
         const { onAuthenticate } = this.props;
 

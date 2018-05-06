@@ -18,8 +18,8 @@ interface ProfileDropdownState {
 }
 
 export default class ProfileDropdown extends PureComponent<ProfileDropdownProps, ProfileDropdownState> {
-    constructor(props: ProfileDropdownProps, context: any) {
-        super(props, context);
+    constructor(props: ProfileDropdownProps) {
+        super(props);
 
         this.state = {
             logoutModalIsOpened: false

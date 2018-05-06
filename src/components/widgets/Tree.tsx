@@ -67,8 +67,8 @@ export class TreeBranch extends PureComponent<TreeBranchProps, TreeBranchState> 
         isSelected: false
     };
 
-    constructor(props: TreeBranchProps, context: any) {
-        super(props, context);
+    constructor(props: TreeBranchProps) {
+        super(props);
 
         this.state = {
             isExpanded: Children.toArray(props.children).some(this._shouldExpand, this)

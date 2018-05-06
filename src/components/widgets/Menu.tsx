@@ -1,23 +1,18 @@
-import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
-import { Link } from 'react-router';
+import React, { Children, PureComponent, cloneElement, isValidElement } from 'react';
 import { findDOMNode } from 'react-dom';
-
-interface MenuContext {
-    menu: {
-        onClose: () => void,
-        onSelect: (value: any) => void
-    };
-}
 
 interface MenuProps {
     children?: React.ReactNode;
-    onClose?: () => void;
     onKeyDown?: (event: React.KeyboardEvent<any>) => void;
     onSelect?: (value?: any) => void;
 }
 
-interface MenuItemProps {
+interface MenuDelegateProps {
+    delegate?: (value?: any) => void;
+}
+
+interface MenuItemProps extends MenuDelegateProps {
+    delegate?: (value?: any) => void;
     href?: string;
     icon?: React.ReactNode;
     isDisabled?: boolean;
@@ -28,44 +23,14 @@ interface MenuItemProps {
     value?: any;
 }
 
-interface MenuLinkProps {
-    icon?: React.ReactNode;
-    isDisabled?: boolean;
-    primaryText: string;
-    secondaryText?: string;
-    to: string;
-}
-
-interface MenuFormProps {
+interface MenuFormProps extends MenuDelegateProps {
+    delegate?: (value?: any) => void;
     onSubmit?: React.FormEventHandler<HTMLFormElement>;
 }
 
-const menuContext = {
-    menu: PropTypes.shape({
-        onClose: PropTypes.func.isRequired,
-        onSelect: PropTypes.func.isRequired
-    }).isRequired
-};
+const KEY_EVENTS_TO_IGNORE = ['INPUT', 'SELECT', 'TEXTAREA'];
 
 export class Menu extends PureComponent<MenuProps, {}> {
-    static defaultProps = {
-        onClose: () => ({}),
-        onSelect: () => ({})
-    };
-
-    static childContextTypes = menuContext;
-
-    getChildContext(): MenuContext {
-        const { onClose, onSelect } = this.props;
-
-        return {
-            menu: {
-                onClose: onClose!,
-                onSelect: onSelect!
-            }
-        };
-    }
-
     focusPrevious(): void {
         const { activeIndex, elements } = this._getFocusableElements();
 
@@ -91,13 +56,17 @@ export class Menu extends PureComponent<MenuProps, {}> {
 
         return (
             <div tabIndex={0} className="menu" onKeyDown={this._handleKeyDown}>
-                {children}
+                {Children.map(children, this._renderChild)}
             </div>
         );
     }
 
     private _getFocusableElements(): { activeIndex: number, elements: HTMLElement[] } {
-        const container = findDOMNode(this);
+        const container = findDOMNode(this) as Element;
+        if (!container) {
+            return { activeIndex: -1, elements: [] };
+        }
+
         const elements = Array.from(container.querySelectorAll<HTMLElement>('.menu-item:not(.is-disabled)'));
 
         const { activeElement } = document;
@@ -106,13 +75,23 @@ export class Menu extends PureComponent<MenuProps, {}> {
         return { activeIndex, elements };
     }
 
+    private _renderChild = (child: React.ReactNode) => {
+        if (isValidElement(child) &&
+            (child.type === MenuItem as any ||
+             child.type === MenuForm as any)) {
+            return cloneElement<MenuDelegateProps>(child, {
+                delegate: this.props.onSelect
+            });
+        }
+
+        return child;
+    }
+
     private _handleKeyDown = (event: React.KeyboardEvent<any>): void => {
         const { onKeyDown } = this.props;
         const target = event.target as Element;
 
-        const DENY_TAG_NAMES = ['INPUT', 'SELECT', 'TEXTAREA'];
-
-        if (onKeyDown && !DENY_TAG_NAMES.includes(target.tagName)) {
+        if (onKeyDown && !KEY_EVENTS_TO_IGNORE.includes(target.tagName)) {
             onKeyDown(event);
         }
     }
@@ -123,10 +102,6 @@ export class MenuItem extends PureComponent<MenuItemProps, {}> {
         href: '#',
         isDisabled: false
     };
-
-    static contextTypes = menuContext;
-
-    context!: MenuContext;
 
     render() {
         const { href, icon, isDisabled, primaryText, secondaryText, target } = this.props;
@@ -160,7 +135,7 @@ export class MenuItem extends PureComponent<MenuItemProps, {}> {
     }
 
     private _handleSelect = (event: React.MouseEvent<any>): void => {
-        const { onSelect, value, href } = this.props;
+        const { delegate, href, onSelect, value } = this.props;
 
         if (href === '#') {
             event.preventDefault();
@@ -170,55 +145,13 @@ export class MenuItem extends PureComponent<MenuItemProps, {}> {
             onSelect(value);
         }
 
-        this.context.menu.onSelect(value);
-    }
-}
-
-export class MenuLink extends PureComponent<MenuLinkProps, {}> {
-    static defaultProps = {
-        isDisabled: false
-    };
-
-    static contextTypes = menuContext;
-
-    context!: MenuContext;
-
-    render() {
-        const { icon, isDisabled, primaryText, secondaryText, to } = this.props;
-
-        const iconElement = icon && <span className="menu-item-icon">{icon}</span>;
-        const primaryTextElement = <span className="menu-item-primary-text">{primaryText}</span>;
-        const secondaryTextElement = secondaryText && <span className="menu-item-secondary-text">{secondaryText}</span>;
-
-        if (isDisabled) {
-            return (
-                <div className="menu-item is-disabled" title={primaryText}>
-                    {iconElement}
-                    {primaryTextElement}
-                    {secondaryTextElement}
-                </div>
-            );
-        } else {
-            return (
-                <Link
-                    className="menu-item"
-                    title={primaryText}
-                    to={to}
-                    onClick={this.context.menu.onSelect}>
-                    {iconElement}
-                    {primaryTextElement}
-                    {secondaryTextElement}
-                </Link>
-            );
+        if (delegate) {
+            delegate(value);
         }
     }
 }
 
 export class MenuForm extends PureComponent<MenuFormProps, {}> {
-    static contextTypes = menuContext;
-
-    context!: MenuContext;
-
     render() {
         const { children } = this.props;
 
@@ -234,12 +167,14 @@ export class MenuForm extends PureComponent<MenuFormProps, {}> {
     private _handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
         event.preventDefault();
 
-        const { onSubmit } = this.props;
+        const { delegate, onSubmit } = this.props;
 
         if (onSubmit) {
             onSubmit(event);
         }
 
-        this.context.menu.onClose();
+        if (delegate) {
+            delegate();
+        }
     }
-}
+};

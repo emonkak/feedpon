@@ -21,8 +21,8 @@ export interface SwipeableState {
 
 export default function toSwipeable<TProps>(Component: React.ComponentType<TProps & SwipeableProps>): React.ComponentType<TProps> {
     return class Swipeable extends PureComponent<TProps, SwipeableState> {
-        constructor(props: TProps, context: any) {
-            super(props, context);
+        constructor(props: TProps) {
+            super(props);
 
             this.state = {
                 isSwiping: false,

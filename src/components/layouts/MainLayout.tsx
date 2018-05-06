@@ -5,7 +5,7 @@ interface MainLayoutProps {
     header: React.ReactNode;
 }
 
-export default class MainLayout extends PureComponent<MainLayoutProps, {}> {
+export default class MainLayout extends PureComponent<MainLayoutProps> {
     static defaultProps = {
         footer: (
             <footer className="u-margin-top-4 u-margin-bottom-4">

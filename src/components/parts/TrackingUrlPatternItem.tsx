@@ -12,8 +12,8 @@ interface TrackingUrlPatternItemState {
 }
 
 export default class TrackingUrlPatternItem extends PureComponent<TrackingUrlPatternItemProps, TrackingUrlPatternItemState> {
-    constructor(props: TrackingUrlPatternItemProps, context: any) {
-        super(props, context);
+    constructor(props: TrackingUrlPatternItemProps) {
+        super(props);
 
         this.state = {
             isDeleting: false

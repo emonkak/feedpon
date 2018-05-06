@@ -16,7 +16,7 @@ interface ConfirmModalProps {
     title: string;
 }
 
-export default class ConfirmModal extends PureComponent<ConfirmModalProps, {}> {
+export default class ConfirmModal extends PureComponent<ConfirmModalProps> {
     static defaultProps = {
         cancelButtonClassName: 'button button-outline-default',
         cancelButtonLabel: 'Cancel',
@@ -25,8 +25,8 @@ export default class ConfirmModal extends PureComponent<ConfirmModalProps, {}> {
         isOpened: false
     };
 
-    constructor(props: ConfirmModalProps, context: any) {
-        super(props, context);
+    constructor(props: ConfirmModalProps) {
+        super(props);
 
         this.handleCancel = this.handleCancel.bind(this);
         this.handleConfirm = this.handleConfirm.bind(this);

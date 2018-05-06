@@ -22,8 +22,8 @@ export default class RelativeTime extends PureComponent<RelativeTimeProps, Relat
 
     private formatter: IntlRelativeFormat;
 
-    constructor(props: RelativeTimeProps, context: any) {
-        super(props, context);
+    constructor(props: RelativeTimeProps) {
+        super(props);
 
         this.formatter = new IntlRelativeFormat(props.locales);
 
@@ -32,7 +32,7 @@ export default class RelativeTime extends PureComponent<RelativeTimeProps, Relat
         };
     }
 
-    componentWillMount() {
+    componentDidMount() {
         this.startTimer(this.props.refreshInterval!);
     }
 

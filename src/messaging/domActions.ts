@@ -4,11 +4,16 @@ export function getNextEntryScrollPosition(): number {
 
     for (let i = 0; i < elements.length; i++) {
         const element = elements[i] as HTMLElement;
-        const top = element.getBoundingClientRect().top;
-        const delta = top - scrollOffset;
+        const bottom = element.getBoundingClientRect().bottom;
+        const delta = bottom - scrollOffset;
         if (delta >= 1) {
             return Math.ceil(delta);
         }
+    }
+
+    const belowSpacer = document.querySelector<HTMLElement>('.entry-list > :last-child');
+    if (belowSpacer && belowSpacer.offsetHeight > 0) {
+        return 0;
     }
 
     return document.documentElement.scrollHeight - window.innerHeight - window.scrollY;
@@ -25,6 +30,11 @@ export function getPreviousEntryScrollPosition(): number {
         if (delta <= -1) {
             return Math.ceil(delta);
         }
+    }
+
+    const aboveSpacer = document.querySelector<HTMLElement>('.entry-list > :first-child');
+    if (aboveSpacer && aboveSpacer.offsetHeight > 0) {
+        return 0;
     }
 
     return -window.scrollY;

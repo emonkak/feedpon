@@ -8,7 +8,7 @@ interface KeyMappingsTableProps {
     keyMappings: Trie.Trie<KeyMapping>;
 }
 
-export default class KeyMappingsTable extends PureComponent<KeyMappingsTableProps, {}> {
+export default class KeyMappingsTable extends PureComponent<KeyMappingsTableProps> {
     renderRow(keys: string[], keyMapping: KeyMapping) {
         const { commandTable } = this.props;
         const command = commandTable[keyMapping.commandId];

@@ -21,8 +21,8 @@ interface KitchenSinkState {
 }
 
 class KitchenSinkPage extends PureComponent<KitchenSinkProps, KitchenSinkState> {
-    constructor(props: KitchenSinkProps, context: any) {
-        super(props, context);
+    constructor(props: KitchenSinkProps) {
+        super(props);
 
         this.state = {
             modalIsOpened: false

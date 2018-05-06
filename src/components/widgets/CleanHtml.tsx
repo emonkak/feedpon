@@ -10,7 +10,7 @@ interface CleanHtmlProps {
     html: string | null;
 }
 
-export default class CleanHtml extends PureComponent<CleanHtmlProps, {}> {
+export default class CleanHtml extends PureComponent<CleanHtmlProps> {
     componentDidMount() {
         this.updateContent();
     }
@@ -36,10 +36,12 @@ export default class CleanHtml extends PureComponent<CleanHtmlProps, {}> {
     replaceContent(element: HTMLElement) {
         const container = findDOMNode(this);
 
-        if (container.firstChild) {
-            container.replaceChild(element, container.firstChild);
-        } else {
-            container.appendChild(element);
+        if (container) {
+            if (container.firstChild) {
+                container.replaceChild(element, container.firstChild);
+            } else {
+                container.appendChild(element);
+            }
         }
     }
 

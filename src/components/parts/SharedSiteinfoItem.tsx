@@ -6,7 +6,7 @@ interface SharedSiteinfoItemProps {
     item: SiteinfoItem;
 }
 
-export default class SharedSiteinfoItem extends PureComponent<SharedSiteinfoItemProps, {}> {
+export default class SharedSiteinfoItem extends PureComponent<SharedSiteinfoItemProps> {
     render() {
         const { item } = this.props;
 

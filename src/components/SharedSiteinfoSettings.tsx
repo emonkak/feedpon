@@ -24,8 +24,8 @@ interface SharedSiteinfoState {
 class SharedSiteinfoSettings extends PureComponent<SharedSiteinfoProps, SharedSiteinfoState> {
     private inputControl: HTMLInputElement | null = null;
 
-    constructor(props: SharedSiteinfoProps, context: any) {
-        super(props, context);
+    constructor(props: SharedSiteinfoProps) {
+        super(props);
 
         this.state = {
             testUrl: ''

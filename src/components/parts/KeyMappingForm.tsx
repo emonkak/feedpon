@@ -24,8 +24,8 @@ const jsonValidation = {
 };
 
 export default class KeyMappingForm extends PureComponent<KeyMappingFormProps, KeyMappingFormState> {
-    constructor(props: KeyMappingFormProps, context: any) {
-        super(props, context);
+    constructor(props: KeyMappingFormProps) {
+        super(props);
 
         const { keyMapping, keyStroke } = props;
 
@@ -197,7 +197,6 @@ export default class KeyMappingForm extends PureComponent<KeyMappingFormProps, K
                     <label>
                         <div className="form-group-heading">Command parameters(JSON)</div>
                         <ValidatableControl
-                            component="textarea"
                             validations={[jsonValidation]}
                             validClassName={null}>
                             <textarea

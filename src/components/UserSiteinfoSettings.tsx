@@ -14,7 +14,7 @@ interface UserSiteinfoProps {
     onUpdateUserSiteinfoItem: typeof updateUserSiteinfoItem;
 }
 
-class UserSiteinfoSettings extends PureComponent<UserSiteinfoProps, {}> {
+class UserSiteinfoSettings extends PureComponent<UserSiteinfoProps> {
     renderUserItem(item: SiteinfoItem) {
         const { onDeleteUserSiteinfoItem, onUpdateUserSiteinfoItem } = this.props;
 

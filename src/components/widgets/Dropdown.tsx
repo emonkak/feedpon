@@ -1,9 +1,8 @@
-import CSSTransitionGroup from 'react-addons-css-transition-group';
+import CSSTransition from 'react-transition-group/CSSTransition';
 import React, { PureComponent, cloneElement } from 'react';
 import { findDOMNode } from 'react-dom';
 
 import Closable from 'components/widgets/Closable';
-import createChainedFunction from 'utils/createChainedFunction';
 import { Menu } from 'components/widgets/Menu';
 
 interface DropdownProps {
@@ -26,8 +25,8 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
 
     private _menu: Menu | null = null;
 
-    constructor(props: DropdownProps, context: any) {
-        super(props, context);
+    constructor(props: DropdownProps) {
+        super(props);
 
         this.state = {
             isOpened: false,
@@ -44,15 +43,15 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
         return (
             <Component className={className}>
                 {this._renderToggleButton()}
-                <CSSTransitionGroup
-                    component="div"
-                    className="dropdown"
-                    style={dropdownStyle}
-                    transitionEnterTimeout={200}
-                    transitionLeaveTimeout={200}
-                    transitionName="menu">
-                    {isOpened ? this._renderMenu() : null}
-                </CSSTransitionGroup>
+                <CSSTransition
+                    classNames="menu"
+                    timeout={200}>
+                    <div
+                        className="dropdown"
+                        style={dropdownStyle}>
+                        {isOpened ? this._renderMenu() : null}
+                    </div>
+                </CSSTransition>
             </Component>
         );
     }
@@ -61,15 +60,8 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
         const { toggleButton } = this.props;
 
         return cloneElement(toggleButton, {
-            ...toggleButton.props,
-            onClick: createChainedFunction(
-                toggleButton.props.onClick,
-                this._handleToggle
-            ),
-            onKeyDown: createChainedFunction(
-                toggleButton.props.onKeyDown,
-                this._handleKeyDown
-            )
+            onClick: this._handleToggle,
+            onKeyDown: this._handleKeyDown
         });
     }
 
@@ -81,8 +73,7 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
                 <Menu
                     ref={this._handleMenuRef}
                     onKeyDown={this._handleKeyDown}
-                    onSelect={this._handleSelect}
-                    onClose={this._handleClose}>
+                    onSelect={this._handleSelect}>
                     {children}
                 </Menu>
             </Closable>
@@ -90,7 +81,11 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
     }
 
     private _openDropdown() {
-        const container = findDOMNode(this);
+        const container = findDOMNode(this) as Element;
+        if (!container) {
+            return;
+        }
+
         const containerRect = container.getBoundingClientRect();
         const viewportHeight =  window.innerHeight;
         const viewportWidth = window.innerWidth;
@@ -151,31 +146,34 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
     }
 
     private _handleKeyDown = (event: React.KeyboardEvent<any>): void => {
-        if (!this._menu) {
-            return;
+        if (this._menu) {
+            switch (event.key) {
+                case 'ArrowUp':
+                    event.preventDefault();
+                    event.stopPropagation();
+                    event.nativeEvent.stopImmediatePropagation();
+                    this._menu.focusPrevious();
+                    break;
+
+                case 'ArrowDown':
+                    event.preventDefault();
+                    event.stopPropagation();
+                    event.nativeEvent.stopImmediatePropagation();
+                    this._menu.focusNext();
+                    break;
+
+                case 'Escape':
+                    event.preventDefault();
+                    event.stopPropagation();
+                    event.nativeEvent.stopImmediatePropagation();
+                    this._handleClose();
+                    break;
+            }
         }
 
-        switch (event.key) {
-            case 'ArrowUp':
-                event.preventDefault();
-                event.stopPropagation();
-                event.nativeEvent.stopImmediatePropagation();
-                this._menu.focusPrevious();
-                break;
-
-            case 'ArrowDown':
-                event.preventDefault();
-                event.stopPropagation();
-                event.nativeEvent.stopImmediatePropagation();
-                this._menu.focusNext();
-                break;
-
-            case 'Escape':
-                event.preventDefault();
-                event.stopPropagation();
-                event.nativeEvent.stopImmediatePropagation();
-                this._handleClose();
-                break;
+        const { toggleButton } = this.props;
+        if (toggleButton.props.onKeyDown) {
+            toggleButton.props.onKeyDown(event);
         }
     }
 
@@ -198,6 +196,11 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
             this._closeDropdown();
         } else {
             this._openDropdown();
+        }
+
+        const { toggleButton } = this.props;
+        if (toggleButton.props.onClick) {
+            toggleButton.props.onClick(event);
         }
     }
 }

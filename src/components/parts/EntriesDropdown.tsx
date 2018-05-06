@@ -26,9 +26,14 @@ interface EntriesDropdownState {
     aheadExpanded: boolean;
 }
 
+interface Slice {
+    start: number;
+    end: number;
+}
+
 export default class EntriesDropdown extends PureComponent<EntriesDropdownProps, EntriesDropdownState> {
-    constructor(props: EntriesDropdownProps, context: any) {
-        super(props, context);
+    constructor(props: EntriesDropdownProps) {
+        super(props);
 
         this.state = {
             isMarkingAllAsRead: false,
@@ -51,6 +56,7 @@ export default class EntriesDropdown extends PureComponent<EntriesDropdownProps,
         } = this.props;
         const { isMarkingAllAsRead } = this.state;
 
+        const slice = this._getCurrentSlice();
         const numCurrentReadEntries = entries.slice(0, readEntryIndex + 1)
             .reduce((total, entry) => total + (entry.markedAsRead ? 0 : 1), 0);
 
@@ -66,7 +72,15 @@ export default class EntriesDropdown extends PureComponent<EntriesDropdownProps,
                 }
                 onClose={this._handleClose}>
                 <div className="menu-heading">Entries</div>
-                {this._renderEntryMenuItems()}
+                {slice.start > 0 &&
+                    <a className="menu-item" href="#" onClick={this._handleExpandBehind}>
+                        <strong className="menu-item-primary-text u-text-muted">{slice.start} entries hidden</strong>
+                    </a>}
+                {this._renderEntryMenuItems(slice)}
+                {slice.end < entries.length - 1 &&
+                    <a className="menu-item" href="#" onClick={this._handleExpandAhead}>
+                        <strong className="menu-item-primary-text u-text-muted">{entries.length - slice.end} entries hidden</strong>
+                    </a>}
                 <div className="menu-divider" />
                 <MenuItem
                     isDisabled={readEntryIndex < 0}
@@ -101,19 +115,23 @@ export default class EntriesDropdown extends PureComponent<EntriesDropdownProps,
         </>;
     }
 
-    private _renderEntryMenuItems(): React.ReactNode {
-        const { activeEntryIndex, entries, onScrollToEntry, readEntryIndex } = this.props;
+    private _getCurrentSlice(): Slice {
+        const { activeEntryIndex, entries } = this.props;
         const { aheadExpanded, behindExpanded } = this.state;
-        const { start, end } = getSliceRange(0, entries.length, activeEntryIndex >= 0 ? activeEntryIndex : 0, 5);
+        const { start, end } = getSliceAtPosition(0, entries.length, activeEntryIndex >= 0 ? activeEntryIndex : 0, 5);
+
+        return {
+            start: behindExpanded ? 0 : start,
+            end: aheadExpanded ? entries.length : end
+        };
+    }
+
+    private _renderEntryMenuItems(slice: Slice): React.ReactNode {
+        const { activeEntryIndex, entries, onScrollToEntry, readEntryIndex } = this.props;
 
         const items = [];
 
-        for (
-            let i = behindExpanded ? 0 : start,
-                l = aheadExpanded ? entries.length : end;
-            i < l;
-            i++
-        ) {
+        for (let i = slice.start, l = slice.end; i < l; i++) {
             const entry = entries[i]!;
 
             const icon = i === activeEntryIndex
@@ -134,19 +152,7 @@ export default class EntriesDropdown extends PureComponent<EntriesDropdownProps,
             );
         }
 
-        return (
-            <>
-                {!behindExpanded && start !== 0 &&
-                    <a className="menu-item" href="#" onClick={this._handleExpandBehind}>
-                        <strong className="menu-item-primary-text u-text-muted">{start} entries hidden</strong>
-                    </a>}
-                {items}
-                {!aheadExpanded && end !== entries.length &&
-                    <a className="menu-item" href="#" onClick={this._handleExpandAhead}>
-                        <strong className="menu-item-primary-text u-text-muted">{entries.length - end} entries hidden</strong>
-                    </a>}
-            </>
-        );
+        return items;
     }
 
     private _handleClose = (): void => {
@@ -185,7 +191,7 @@ export default class EntriesDropdown extends PureComponent<EntriesDropdownProps,
     }
 }
 
-function getSliceRange(start: number, end: number, position: number, size: number): { start: number, end: number } {
+function getSliceAtPosition(start: number, end: number, position: number, size: number): Slice {
     const behindSpace = position - start;
     const aheadSpace = end - 1 - position;
 

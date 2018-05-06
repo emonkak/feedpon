@@ -5,7 +5,7 @@ interface PortalProps {
     getRootElement?: () => Element;
 }
 
-export default class Portal extends PureComponent<PortalProps, {}> {
+export default class Portal extends PureComponent<PortalProps> {
     static defaultProps = {
         getRootElement: () => document.body
     };
@@ -14,8 +14,8 @@ export default class Portal extends PureComponent<PortalProps, {}> {
 
     private _containerElement: Element;
 
-    constructor(props: PortalProps, context: any) {
-        super(props, context);
+    constructor(props: PortalProps) {
+        super(props);
 
         this._rootElement = props.getRootElement!();
         this._containerElement = document.createElement('div');

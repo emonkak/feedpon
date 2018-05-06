@@ -27,8 +27,8 @@ interface KeyboardSettingsState {
 }
 
 class KeyboardSettings extends PureComponent<KeyboardSettingsProps, KeyboardSettingsState> {
-    constructor(props: KeyboardSettingsProps, context: any) {
-        super(props, context);
+    constructor(props: KeyboardSettingsProps) {
+        super(props);
 
         this.state = {
             isResetting: false

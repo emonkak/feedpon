@@ -7,7 +7,7 @@ interface ClosableProps {
     onClose?: () => void;
 }
 
-export default class Closable extends PureComponent<ClosableProps, {}> {
+export default class Closable extends PureComponent<ClosableProps> {
     static defaultProps = {
         isDisabled: false
     };

@@ -27,7 +27,7 @@ interface StreamSettingsState {
 }
 
 class StreamSettings extends PureComponent<StreamSettingsProps, StreamSettingsState> {
-    constructor(props: StreamSettingsProps, context: any) {
+    constructor(props: StreamSettingsProps) {
         super(props);
 
         this.state = {

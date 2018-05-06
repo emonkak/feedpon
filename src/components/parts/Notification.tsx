@@ -8,11 +8,11 @@ interface NotificationProps {
     onDismiss: (id: number) => void;
 }
 
-export default class NotificationComponent extends PureComponent<NotificationProps, {}> {
+export default class NotificationComponent extends PureComponent<NotificationProps> {
     timer: number | null = null;
 
-    constructor(props: NotificationProps, context: any) {
-        super(props, context);
+    constructor(props: NotificationProps) {
+        super(props);
 
         this.handleClose = this.handleClose.bind(this);
     }

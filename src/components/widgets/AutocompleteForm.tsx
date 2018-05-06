@@ -36,8 +36,8 @@ export default class AutocompleteForm extends PureComponent<AutoCompleteFormProp
 
     private _inputRef: HTMLInputElement | null = null;
 
-    constructor(props: AutoCompleteFormProps, context: any) {
-        super(props, context);
+    constructor(props: AutoCompleteFormProps) {
+        super(props);
 
         this.state = {
             isOpened: props.isOpened!,
@@ -74,8 +74,7 @@ export default class AutocompleteForm extends PureComponent<AutoCompleteFormProp
                         <Menu
                             ref={this._handleMenuRef}
                             onKeyDown={this._handleKeyDown}
-                            onSelect={this._handleSelect}
-                            onClose={this._handleClose}>
+                            onSelect={this._handleSelect}>
                             {candidates}
                         </Menu>
                     </div>
