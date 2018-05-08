@@ -4,10 +4,14 @@ export function getNextEntryScrollPosition(): number {
 
     for (let i = 0; i < elements.length; i++) {
         const element = elements[i] as HTMLElement;
-        const bottom = element.getBoundingClientRect().bottom;
-        const delta = bottom - scrollOffset;
-        if (delta >= 1) {
-            return Math.ceil(delta);
+        const { top, bottom } = element.getBoundingClientRect();
+        const delta1 = top - scrollOffset;
+        if (delta1 >= 1) {
+            return Math.ceil(delta1);
+        }
+        const delta2 = bottom - scrollOffset;
+        if (delta2 >= 1) {
+            return Math.ceil(delta2);
         }
     }
 
