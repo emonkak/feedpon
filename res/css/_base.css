@@ -112,7 +112,14 @@ hr {
   mask-repeat: repeat;
 }
 
-blockquote, dl, figure, ol, p, pre, table, ul {
+blockquote,
+dl,
+figure,
+ol,
+p,
+pre,
+table,
+ul {
   margin: 0 0 var(--vertical-rhythm);
 }
 
@@ -156,6 +163,9 @@ ol ol, ol ul, ul ol, ul ul {
 table {
   border-collapse: collapse;
   border-spacing: 0;
+  font: inherit;
+  line-height: inherit;
+  white-space: inherit;
 }
 
 td, th {
