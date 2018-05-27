@@ -36,9 +36,6 @@
   font-size: inherit;
   font-weight: bold;
   line-height: inherit;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
 }
 
 .navbar-action {
