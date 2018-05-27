@@ -23,6 +23,7 @@ import { createSortedCategoriesSelector } from 'messaging/categories/selectors';
 import { toggleSidebar } from 'messaging/ui/actions';
 
 interface CategoriesPageProps {
+    activeCategory: Category | null;
     categories: Category[];
     exportUrl: string;
     onAddToCategory: typeof addToCategory;
@@ -50,19 +51,90 @@ class CategoriesPage extends PureComponent<CategoriesPageProps, CategoriesPageSt
     constructor(props: CategoriesPageProps) {
         super(props);
 
-        this.handleChangeSearchQuery = debounce(this.handleChangeSearchQuery.bind(this), 100);
-        this.handleChangeUploadFile = this.handleChangeUploadFile.bind(this);
-        this.handleImport = this.handleImport.bind(this);
-        this.handleSearchInputRef = this.handleSearchInputRef.bind(this);
-        this.handleSelectCategory = this.handleSelectCategory.bind(this);
-        this.handleUploadInputRef = this.handleUploadInputRef.bind(this);
-
         this.state = {
             query: ''
         };
     }
 
-    getFilteredSubscriptions() {
+    render() {
+        return (
+            <MainLayout header={this._renderNavbar()}>
+                {this._renderContent()}
+            </MainLayout>
+        );
+    }
+
+    private _renderNavbar() {
+        const { exportUrl, onToggleSidebar } = this.props;
+
+        return (
+            <Navbar onToggleSidebar={onToggleSidebar}>
+                <h1 className="navbar-title">Organize subscriptions</h1>
+                <Dropdown
+                    toggleButton={
+                        <button className="navbar-action">
+                            <i className="icon icon-24 icon-menu-2" />
+                        </button>
+                    }>
+                    <MenuItem
+                        primaryText="Import OPML..."
+                        onSelect={this._handleImport} />
+                    <MenuItem
+                        primaryText="Export OPML..."
+                        href={exportUrl}
+                        target="_blank" />
+                </Dropdown>
+                <input
+                    ref={this._handleUploadInputRef}
+                    className="u-none"
+                    type="file"
+                    onChange={this._handleChangeUploadFile} />
+            </Navbar>
+        );
+    }
+
+    private _renderContent() {
+        const { activeCategory, categories, onDeleteCategory, params } = this.props;
+        const label = params['label'];
+
+        const subscriptions = this._getFilteredSubscriptions();
+
+        const description = subscriptions.length > 0
+            ? <p><strong>{subscriptions.length}</strong> subscriptions are available in this category.</p>
+            : <p>There are no subscriptions in this category.</p>;
+
+        return (
+            <div className="container">
+                <CategoriesNav
+                    categories={categories}
+                    label={label || UNCATEGORIZED}
+                    onSelectCategory={this._handleSelectCategory} />
+                {activeCategory &&
+                    <EditCategoryForm
+                        category={activeCategory}
+                        onUpdate={this._handleUpdateCategory}
+                        onDelete={onDeleteCategory} />}
+                <h1 className="display-1">{label || 'Uncategorized'}</h1>
+                <p>
+                    <input
+                        ref={this._handleSearchInputRef}
+                        type="search"
+                        className="form-control"
+                        placeholder="Filter for subscriptions..."
+                        onChange={this._handleChangeSearchQuery} />
+                </p>
+                {description}
+                <LazyListRenderer
+                    assumedItemHeight={60}
+                    idAttribute="subscriptionId"
+                    items={subscriptions}
+                    renderItem={renderSubscriptionItem}
+                    renderList={renderSubscriptionList} />
+            </div>
+        );
+    }
+
+    private _getFilteredSubscriptions() {
         const { query } = this.state;
         const { subscriptions } = this.props;
 
@@ -81,7 +153,7 @@ class CategoriesPage extends PureComponent<CategoriesPageProps, CategoriesPageSt
             });
     }
 
-    handleChangeSearchQuery(event: React.ChangeEvent<HTMLInputElement>) {
+    private _handleChangeSearchQuery = debounce((event: React.ChangeEvent<HTMLInputElement>) => {
         if (!this.searchInput) {
             return;
         }
@@ -89,9 +161,9 @@ class CategoriesPage extends PureComponent<CategoriesPageProps, CategoriesPageSt
         this.setState({
             query: this.searchInput.value
         });
-    }
+    }, 100)
 
-    handleChangeUploadFile(event: React.ChangeEvent<HTMLInputElement>) {
+    private _handleChangeUploadFile = (event: React.ChangeEvent<HTMLInputElement>) => {
         const target = event.currentTarget;
         if (!target.files) {
             return;
@@ -112,104 +184,32 @@ class CategoriesPage extends PureComponent<CategoriesPageProps, CategoriesPageSt
         reader.readAsText(file);
     }
 
-    handleImport() {
+    private _handleUpdateCategory = (category: Category, newLabel: string) => {
+        const { router, onUpdateCategory } = this.props;
+
+        onUpdateCategory(category, newLabel);
+
+        router.replace('/categories/' + encodeURIComponent(newLabel));
+    }
+
+    private _handleImport = () => {
         if (this.uploadInput) {
             this.uploadInput.click();
         }
     }
 
-    handleSearchInputRef(searchInput: HTMLInputElement | null) {
+    private _handleSearchInputRef = (searchInput: HTMLInputElement | null) => {
         this.searchInput = searchInput;
     }
 
-    handleSelectCategory(label: string | symbol) {
+    private _handleSelectCategory = (label: string | symbol) => {
         const { router } = this.props;
 
         router.replace('/categories/' + (typeof label === 'string' ? encodeURIComponent(label) : ''));
     }
 
-    handleUploadInputRef(uploadInput: HTMLInputElement | null) {
+    private _handleUploadInputRef = (uploadInput: HTMLInputElement | null) => {
         this.uploadInput = uploadInput;
-    }
-
-    renderNavbar() {
-        const { exportUrl, onToggleSidebar } = this.props;
-
-        return (
-            <Navbar onToggleSidebar={onToggleSidebar}>
-                <h1 className="navbar-title">Organize subscriptions</h1>
-                <Dropdown
-                    toggleButton={
-                        <button className="navbar-action">
-                            <i className="icon icon-24 icon-menu-2" />
-                        </button>
-                    }>
-                    <MenuItem
-                        primaryText="Import OPML..."
-                        onSelect={this.handleImport} />
-                    <MenuItem
-                        primaryText="Export OPML..."
-                        href={exportUrl}
-                        target="_blank" />
-                </Dropdown>
-                <input
-                    ref={this.handleUploadInputRef}
-                    className="u-none"
-                    type="file"
-                    onChange={this.handleChangeUploadFile} />
-            </Navbar>
-        );
-    }
-
-    renderContent() {
-        const { categories, onUpdateCategory, onDeleteCategory, params } = this.props;
-
-        const label = params['label'];
-        const category = categories.find((category) => category.label === label);
-
-        const subscriptions = this.getFilteredSubscriptions();
-
-        const description = subscriptions.length > 0
-            ? <p><strong>{subscriptions.length}</strong> subscriptions are available in this category.</p>
-            : <p>There are no subscriptions in this category.</p>;
-
-        return (
-            <div className="container">
-                <CategoriesNav
-                    categories={categories}
-                    label={label || UNCATEGORIZED}
-                    onSelectCategory={this.handleSelectCategory} />
-                {category &&
-                    <EditCategoryForm
-                        category={category}
-                        onUpdate={onUpdateCategory}
-                        onDelete={onDeleteCategory} />}
-                <h1 className="display-1">{label || 'Uncategorized'}</h1>
-                <p>
-                    <input
-                        ref={(ref) => this.searchInput = ref}
-                        type="search"
-                        className="form-control"
-                        placeholder="Filter for subscriptions..."
-                        onChange={this.handleChangeSearchQuery} />
-                </p>
-                {description}
-                <LazyListRenderer
-                    assumedItemHeight={60}
-                    idAttribute="subscriptionId"
-                    items={subscriptions}
-                    renderItem={renderSubscriptionItem}
-                    renderList={renderSubscriptionList} />
-            </div>
-        );
-    }
-
-    render() {
-        return (
-            <MainLayout header={this.renderNavbar()}>
-                {this.renderContent()}
-            </MainLayout>
-        );
     }
 }
 
@@ -246,6 +246,12 @@ function renderSubscriptionItem(subscription: Subscription) {
 
 export default connect(() => {
     const categoriesSelector = createSortedCategoriesSelector();
+    const activeCategorySelector = createSelector(
+        categoriesSelector,
+        (state: State, props: CategoriesPageProps) => props.params['label'],
+        (categories, label) => categories.find((category) => category.label === label) || null
+    );
+
     const subscriptionIdComparer = createAscendingComparer<Subscription>('subscriptionId');
     const visibleSubscriptionsSelector = createSelector(
         (state: State) => state.subscriptions.items,
@@ -265,6 +271,7 @@ export default connect(() => {
 
     return {
         mapStateToProps: (state: State, props: CategoriesPageProps) => ({
+            activeCategory: activeCategorySelector(state, props),
             categories: categoriesSelector(state),
             exportUrl: state.backend.exportUrl,
             subscriptions: visibleSubscriptionsSelector(state, props)

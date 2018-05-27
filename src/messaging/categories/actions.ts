@@ -65,7 +65,7 @@ export function deleteCategory(categoryId: string | number, label: string): Asyn
     };
 }
 
-export function updateCategory(category: Category, label: string): AsyncThunk {
+export function updateCategory(category: Category, newLabel: string): AsyncThunk {
     return async ({ dispatch, getState }) => {
         dispatch({
             type: 'CATEGORY_UPDATING',
@@ -75,7 +75,7 @@ export function updateCategory(category: Category, label: string): AsyncThunk {
         try {
             const token = await dispatch(getFeedlyToken());
 
-            await feedly.changeCategoryLabel(token.access_token, category.streamId, label);
+            await feedly.changeCategoryLabel(token.access_token, category.streamId, newLabel);
 
             dispatch({
                 type: 'CATEGORY_UPDATED',
@@ -83,7 +83,7 @@ export function updateCategory(category: Category, label: string): AsyncThunk {
                 category: {
                     categoryId: category.categoryId,
                     streamId: category.streamId,
-                    label,
+                    label: newLabel,
                     isLoading: false
                 }
             });
