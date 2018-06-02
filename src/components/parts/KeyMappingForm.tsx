@@ -15,7 +15,6 @@ interface KeyMappingFormState {
     commandId: string;
     keyStroke: string;
     paramsJson: string;
-    preventNotification: boolean;
 }
 
 const jsonValidation = {
@@ -33,22 +32,19 @@ export default class KeyMappingForm extends PureComponent<KeyMappingFormProps, K
             this.state = {
                 commandId: keyMapping.commandId,
                 keyStroke: keyStroke || '',
-                paramsJson: prettyPrintJson(keyMapping.params || {}),
-                preventNotification: !!keyMapping.preventNotification
+                paramsJson: prettyPrintJson(keyMapping.params || {})
             };
         } else {
             this.state = {
                 commandId: '',
                 keyStroke: keyStroke || '',
-                paramsJson: prettyPrintJson({}),
-                preventNotification: false
+                paramsJson: prettyPrintJson({})
             };
         }
 
         this.handleChangeCommand = this.handleChangeCommand.bind(this);
         this.handleChangeKeyStroke = this.handleChangeKeyStroke.bind(this);
         this.handleChangeParamsJson = this.handleChangeParamsJson.bind(this);
-        this.handleChangePreventNotification = this.handleChangePreventNotification.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
@@ -86,24 +82,15 @@ export default class KeyMappingForm extends PureComponent<KeyMappingFormProps, K
         });
     }
 
-    handleChangePreventNotification(event: React.ChangeEvent<HTMLInputElement>) {
-        const preventNotification = event.currentTarget.checked;
-
-        this.setState({
-            preventNotification
-        });
-    }
-
     handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
 
         const { keyMapping, onSubmit } = this.props;
-        const { commandId, keyStroke, paramsJson, preventNotification } = this.state;
+        const { commandId, keyStroke, paramsJson } = this.state;
 
         onSubmit(keyStroke, {
             commandId,
-            params: JSON.parse(paramsJson),
-            preventNotification
+            params: JSON.parse(paramsJson)
         });
 
         if (!keyMapping) {
@@ -115,14 +102,13 @@ export default class KeyMappingForm extends PureComponent<KeyMappingFormProps, K
         this.setState({
             commandId: '',
             keyStroke: '',
-            paramsJson: prettyPrintJson({}),
-            preventNotification: false
+            paramsJson: prettyPrintJson({})
         });
     }
 
     render() {
         const { children, commandTable, legend } = this.props;
-        const { commandId, keyStroke, paramsJson, preventNotification } = this.state;
+        const { commandId, keyStroke, paramsJson } = this.state;
 
         const selectedCommand = commandTable[commandId];
 
@@ -207,15 +193,6 @@ export default class KeyMappingForm extends PureComponent<KeyMappingFormProps, K
                                 spellCheck={false}
                                 required />
                         </ValidatableControl>
-                    </label>
-                </div>
-                <div className="form-group">
-                    <label className="form-check-label">
-                        <input
-                            type="checkbox"
-                            className="form-check"
-                            checked={preventNotification}
-                            onChange={this.handleChangePreventNotification} />Prevent notification when invoking command
                     </label>
                 </div>
                 <div className="form-group">

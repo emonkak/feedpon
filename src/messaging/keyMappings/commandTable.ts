@@ -4,6 +4,7 @@ import * as subscriptionActions from 'messaging/subscriptions/actions';
 import * as uiActions from 'messaging/ui/actions';
 import { Command, Entry, Stream, Thunk } from 'messaging/types';
 import { getNextEntryScrollPosition, getPreviousEntryScrollPosition, openUrlInBackground } from 'messaging/domActions';
+import { sendInstantNotification } from 'messaging/instantNotifications/actions';
 import { smoothScrollBy } from 'utils/dom/smoothScroll';
 
 const TEMPLATE_PATTERN = /\${([A-Z_]\w+)}/i;
@@ -21,6 +22,8 @@ export const clearReadPosition: Command<{}> = {
                 window.scrollTo(0, 0);
 
                 dispatch(uiActions.resetReadEntry(streamId));
+
+                dispatch(sendInstantNotification(this.name));
             }
         };
     }
@@ -78,11 +81,17 @@ export const toggleComments: Command<{}> = {
                 if (entry.comments.isLoaded) {
                     if (entry.comments.isShown) {
                         dispatch(streamActions.hideEntryComments(entry.entryId));
+
+                        dispatch(sendInstantNotification('Hide comments'));
                     } else {
                         dispatch(streamActions.showEntryComments(entry.entryId));
+
+                        dispatch(sendInstantNotification('Show comments'));
                     }
                 } else {
                     dispatch(streamActions.fetchEntryComments(entry.entryId, entry.url));
+
+                    dispatch(sendInstantNotification('Fetch comments'));
                 }
             }
         };
@@ -103,15 +112,23 @@ export const fetchFullContent: Command<{}> = {
 
                     if (lastFullContent && lastFullContent.nextPageUrl) {
                         dispatch(streamActions.fetchFullContent(entry.entryId, lastFullContent.nextPageUrl));
+
+                        dispatch(sendInstantNotification('Fetch full content'));
                     } else {
                         if (entry.fullContents.isShown) {
                             dispatch(streamActions.hideFullContents(entry.entryId));
+
+                            dispatch(sendInstantNotification('Hide full contents'));
                         } else {
                             dispatch(streamActions.showFullContents(entry.entryId));
+
+                            dispatch(sendInstantNotification('Show full contents'));
                         }
                     }
                 } else {
                     dispatch(streamActions.fetchFullContent(entry.entryId, entry.url));
+
+                    dispatch(sendInstantNotification('Fetch full content'));
                 }
             }
         };
@@ -154,6 +171,8 @@ export const markAllEntriesAsRead: Command<{}> = {
 
                 if (unreadEntries.length > 0) {
                     dispatch(streamActions.markAsRead(unreadEntries));
+
+                    dispatch(sendInstantNotification(this.name));
                 }
             }
         };
@@ -186,6 +205,8 @@ export const openUrl: Command<{ template: string, inBackground: boolean }> = {
                 } else {
                     window.open(url);
                 }
+
+                dispatch(sendInstantNotification(this.name));
             }
         };
     }
@@ -202,8 +223,12 @@ export const pinOrUnpinEntry: Command<{}> = {
             if (entry) {
                 if (entry.isPinned) {
                     dispatch(streamActions.unpinEntry(entry.entryId));
+
+                    dispatch(sendInstantNotification('Unpin entry'));
                 } else {
                     dispatch(streamActions.pinEntry(entry.entryId));
+
+                    dispatch(sendInstantNotification('Pin entry'));
                 }
             }
         };
@@ -226,6 +251,8 @@ export const reloadStream: Command<{}> = {
                     selectedStream.streamView,
                     selectedStream.fetchOptions
                 ));
+
+                dispatch(sendInstantNotification(this.name));
             }
         };
     }
@@ -236,7 +263,11 @@ export const reloadSubscriptions: Command<{}> = {
     description: 'Reload subscriptions and categories.',
     defaultParams: {},
     action() {
-        return subscriptionActions.fetchSubscriptions();
+        return ({ dispatch }) => {
+            dispatch(subscriptionActions.fetchSubscriptions());
+
+            dispatch(sendInstantNotification(this.name));
+        };
     }
 };
 
@@ -571,6 +602,8 @@ export const visitWebsite: Command<{ inBackground: boolean }> = {
                 } else {
                     window.open(entry.url);
                 }
+
+                dispatch(sendInstantNotification(this.name));
             }
         };
     }

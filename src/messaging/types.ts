@@ -415,5 +415,4 @@ export interface KeyMappings {
 export interface KeyMapping {
     commandId: string;
     params: object;
-    preventNotification?: boolean;
 }

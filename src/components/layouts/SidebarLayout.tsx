@@ -16,7 +16,6 @@ import toSwipeable, { SwipeableProps } from 'components/hoc/toSwipeable';
 import { Command, Event, KeyMapping, State } from 'messaging/types';
 import { Dispatcher } from 'utils/flux/types';
 import { closeHelp, closeSidebar, openHelp, openSidebar } from 'messaging/ui/actions';
-import { sendInstantNotification } from 'messaging/instantNotifications/actions';
 
 interface SidebarLayoutProps extends SwipeableProps {
     children: React.ReactElement<any>;
@@ -214,11 +213,6 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps> {
 
         if (command) {
             const { dispatch } = this.props;
-
-            if (!keyMapping.preventNotification) {
-                dispatch(sendInstantNotification(command.name));
-            }
-
             const params = { ...command.defaultParams, ...keyMapping.params };
             const event = command.action(params);
 
