@@ -92,16 +92,16 @@ a.menu-item.is-disabled {
 }
 
 .menu-enter.menu-enter-active,
-.menu-leave.menu-leave-active {
+.menu-exit.menu-exit-active {
   transition: opacity 0.2s ease-in-out;
 }
 
 .menu-enter,
-.menu-leave.menu-leave-active {
+.menu-exit.menu-exit-active {
   opacity: 0;
 }
 
 .menu-enter.menu-enter-active,
-.menu-leave {
+.menu-exit {
   opacity: 1;
 }

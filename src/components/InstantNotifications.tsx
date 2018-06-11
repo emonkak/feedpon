@@ -66,7 +66,7 @@ class InstantNotifications extends PureComponent<InstantNotificationsProps> {
             <CSSTransition
                 classNames="instant-notification"
                 timeout={200}>
-                <div className="instant-notification-list">
+                <div>
                     {instantNotification &&
                         <InstantNotificationComponent
                             instantNotification={instantNotification} />}

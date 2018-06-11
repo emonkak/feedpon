@@ -23,12 +23,17 @@ class EntryShareButton extends PureComponent<EntryShareButtonProps & PopupProps>
                     <i className="icon icon-20 icon-share" />
                 </button>
                 <CSSTransition
+                    in={isOpened}
+                    mountOnEnter
+                    unmountOnExit
                     classNames="popover"
                     timeout={200}>
                     <div
                         style={popupStyle}
                         className={classnames('popup', 'is-pull-' + pullDirection)}>
-                        {isOpened && <Closable onClose={closePopup}>{this._renderPopover()}</Closable>}
+                        <Closable onClose={closePopup}>
+                            {this._renderPopover()}
+                        </Closable>
                     </div>
                 </CSSTransition>
             </div>

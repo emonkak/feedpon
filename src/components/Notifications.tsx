@@ -1,5 +1,6 @@
 import CSSTransition from 'react-transition-group/CSSTransition';
 import React, { PureComponent } from 'react';
+import TransitionGroup from 'react-transition-group/TransitionGroup';
 
 import NotificationComponent from 'components/parts/Notification';
 import bindActions from 'utils/flux/bindActions';
@@ -13,23 +14,30 @@ interface NotificationsProps {
 }
 
 class Notifications extends PureComponent<NotificationsProps> {
-    render() {
-        const { onDismissNotification, notifications } = this.props;
+    renderItem(notification: Notification) {
+        const { onDismissNotification } = this.props;
 
         return (
             <CSSTransition
+                key={notification.id}
                 classNames="notification"
                 timeout={200}>
-                <div
-                    className="notification-list">
-                    {notifications.map((notification) =>
-                        <NotificationComponent
-                            notification={notification}
-                            key={notification.id}
-                            onDismiss={onDismissNotification} />
-                    )}
+                <div>
+                    <NotificationComponent
+                        notification={notification}
+                        onDismiss={onDismissNotification} />
                 </div>
             </CSSTransition>
+        )
+    }
+
+    render() {
+        const { notifications } = this.props;
+
+        return (
+            <TransitionGroup className="notification-list">
+                {notifications.map(this.renderItem, this)}
+            </TransitionGroup>
         );
     }
 }

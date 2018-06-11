@@ -75,25 +75,18 @@ export default class Modal extends PureComponent<ModalProps> {
          }
     }
 
-    renderModal() {
-        const { children } = this.props;
-
-        return (
-            <div className="modal" onClick={this.handleClick}>
-                <div className="modal-dialog">{children}</div>
-            </div>
-        );
-    }
-
     render() {
-        const { isOpened } = this.props;
+        const { children, isOpened } = this.props;
 
         return (
             <CSSTransition
+                in={isOpened}
+                mountOnEnter
+                unmountOnExit
                 classNames="modal"
                 timeout={200}>
-                <div>
-                    {isOpened ? this.renderModal() : null}
+                <div className="modal" onClick={this.handleClick}>
+                    <div className="modal-dialog">{children}</div>
                 </div>
             </CSSTransition>
         );

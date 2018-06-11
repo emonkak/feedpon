@@ -2,9 +2,9 @@
   display: flex;
   position: fixed;
   top: 0;
-  right: 0;
-  bottom: 0;
   left: 0;
+  height: 100%;
+  width: 100%;
   z-index: 1000;
   padding: var(--vertical-rhythm) 1.5rem;
   overflow-y: auto;
@@ -14,19 +14,19 @@
 }
 
 .modal-enter.modal-enter-active,
-.modal-leave.modal-leave-active {
+.modal-exit.modal-exit-active {
   transition: opacity 0.2s cubic-bezier(0.465, 0.183, 0.153, 0.946),
               transform 0.2s cubic-bezier(0.465, 0.183, 0.153, 0.946);
 }
 
 .modal-enter,
-.modal-leave.modal-leave-active {
+.modal-exit.modal-exit-active {
   opacity: 0;
   transform: scale(1.15);
 }
 
 .modal-enter.modal-enter-active,
-.modal-leave {
+.modal-exit {
   opacity: 1;
   transform: scale(1);
 }

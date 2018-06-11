@@ -44,12 +44,13 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
             <Component className={className}>
                 {this._renderToggleButton()}
                 <CSSTransition
+                    in={isOpened}
+                    mountOnEnter
+                    unmountOnExit
                     classNames="menu"
                     timeout={200}>
-                    <div
-                        className="dropdown"
-                        style={dropdownStyle}>
-                        {isOpened ? this._renderMenu() : null}
+                    <div className="dropdown" style={dropdownStyle}>
+                        {this._renderMenu()}
                     </div>
                 </CSSTransition>
             </Component>

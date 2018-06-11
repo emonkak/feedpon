@@ -43,24 +43,24 @@
 }
 
 .notification-enter,
-.notification-leave {
+.notification-exit {
   position: relative;
   z-index: -1;
 }
 
 .notification-enter.notification-enter-active,
-.notification-leave.notification-leave-active {
+.notification-exit.notification-exit-active {
   transition: transform 0.2s ease-in-out, opacity 0.2s ease-in-out;
 }
 
 .notification-enter,
-.notification-leave.notification-leave-active {
+.notification-exit.notification-exit-active {
   transform: translateY(-100%);
   opacity: 0;
 }
 
 .notification-enter.notification-enter-active,
-.notification-leave {
+.notification-exit {
   transform: translateY(0);
   opacity: 1;
 }
@@ -75,19 +75,19 @@
 }
 
 .instant-notification-enter.instant-notification-enter-active,
-.instant-notification-leave.instant-notification-leave-active {
+.instant-notification-exit.instant-notification-exit-active {
   transition: opacity 0.2s cubic-bezier(0.465, 0.183, 0.153, 0.946),
               transform 0.2s cubic-bezier(0.465, 0.183, 0.153, 0.946);
 }
 
 .instant-notification-enter,
-.instant-notification-leave.instant-notification-leave-active {
+.instant-notification-exit.instant-notification-exit-active {
   opacity: 0;
   transform: scale(0.85);
 }
 
 .instant-notification-enter.instant-notification-enter-active,
-.instant-notification-leave {
+.instant-notification-exit {
   opacity: 1;
   transform: scale(1);
 }
