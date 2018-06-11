@@ -1,13 +1,13 @@
 import React, { Children, PureComponent } from 'react';
 
-import { StoreContext, StoreContextValue } from './StoreContext';
+import { StoreContext } from './StoreContext';
 import { Store } from '../types';
 
 export interface StoreProviderProps {
     store: Store<any, any>;
 }
 
-type StoreProviderState = StoreContextValue;
+type StoreProviderState = StoreContext;
 
 export default class StoreProvider extends PureComponent<StoreProviderProps, StoreProviderState> {
     private _unsubscribe: (() => void) | null = null;

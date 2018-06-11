@@ -1,7 +1,7 @@
 import React, { PureComponent, createElement } from 'react';
 import { createSelector } from 'reselect';
 
-import { StoreContext, StoreContextValue } from './StoreContext';
+import { StoreContext } from './StoreContext';
 
 interface Connection<TStateProps, TDispatchProps, TOwnProps> {
     mapDispatchToProps?: (dispatch: (event: any) => void) => TDispatchProps;
@@ -14,7 +14,7 @@ export default function connect<TStateProps, TDispatchProps, TOwnProps>(
 ) {
     return <TProps extends TStateProps & TDispatchProps & TOwnProps & { children?: React.ReactNode }>(WrappedComponent: React.ComponentType<TProps>): React.ComponentType<Partial<TProps>> => {
         return class StoreSubscriber extends PureComponent<Partial<TProps>, TStateProps> {
-            private readonly _renderer: (context: StoreContextValue, ownProps: Partial<TProps>) => React.ReactNode;
+            private readonly _renderer: (context: StoreContext, ownProps: Partial<TProps>) => React.ReactNode;
 
             constructor(props: Partial<TProps>) {
                 super(props);
@@ -25,20 +25,20 @@ export default function connect<TStateProps, TDispatchProps, TOwnProps>(
                     mergeProps = defaultMergeProps as any
                 } = typeof connection === 'function' ? connection() : connection;
 
-                const ownPropsSelector = (context: StoreContextValue, ownProps: Partial<TProps>) => ownProps;
+                const ownPropsSelector = (context: StoreContext, ownProps: Partial<TProps>) => ownProps;
 
                 const dispatchPropsSelector = createSelector(
-                    ({ dispatch }: StoreContextValue) => dispatch,
+                    ({ dispatch }: StoreContext) => dispatch,
                     (dispatch) => mapDispatchToProps(dispatch)
                 );
 
                 const statePropsSelector = createSelector(
-                    ({ storeState }: StoreContextValue) => storeState,
+                    ({ storeState }: StoreContext) => storeState,
                     ownPropsSelector,
                     (storeState, ownProps) => mapStateToProps(storeState, ownProps)
                 );
 
-                const propsSelector: (context: StoreContextValue, ownProps: Partial<TProps>) => TProps = createSelector(
+                const propsSelector: (context: StoreContext, ownProps: Partial<TProps>) => TProps = createSelector(
                     statePropsSelector,
                     dispatchPropsSelector,
                     ownPropsSelector,
@@ -59,7 +59,7 @@ export default function connect<TStateProps, TDispatchProps, TOwnProps>(
                 );
             }
 
-            private _renderChild = (context: StoreContextValue) => {
+            private _renderChild = (context: StoreContext) => {
                 return this._renderer(context, this.props);
             };
         };
