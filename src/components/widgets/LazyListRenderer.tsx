@@ -116,6 +116,8 @@ export default class LazyListRenderer extends Component<LazyListRendererProps, L
 
     private _ref: LazyList | null = null;
 
+    private _isUnmounted: boolean = false;
+
     constructor(props: LazyListRendererProps) {
         super(props);
 
@@ -159,6 +161,8 @@ export default class LazyListRenderer extends Component<LazyListRendererProps, L
 
     componentWillUnmount() {
         window.removeEventListener('scroll', this._handleScroll, { passive: true } as any);
+
+        this._isUnmounted = true;
     }
 
     componentDidUpdate(prevProps: LazyListRendererProps, prevState: LazyListRendererState, snapshot: Positioning) {
@@ -220,6 +224,10 @@ export default class LazyListRenderer extends Component<LazyListRendererProps, L
     }
 
     private _update(): void {
+        if (this._isUnmounted) {
+            return;
+        }
+
         const viewportRectangle = this._getRelativeViewportRectangle();
         const { onPositioningUpdated } = this.props;
 
