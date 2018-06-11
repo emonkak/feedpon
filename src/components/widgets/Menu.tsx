@@ -1,4 +1,4 @@
-import React, { Children, PureComponent, cloneElement, isValidElement } from 'react';
+import React, { Children, Fragment, PureComponent, cloneElement, isValidElement } from 'react';
 import { findDOMNode } from 'react-dom';
 
 interface MenuProps {
@@ -75,13 +75,20 @@ export class Menu extends PureComponent<MenuProps, {}> {
         return { activeIndex, elements };
     }
 
-    private _renderChild = (child: React.ReactNode) => {
-        if (isValidElement(child) &&
-            (child.type === MenuItem as any ||
-             child.type === MenuForm as any)) {
-            return cloneElement<MenuDelegateProps>(child, {
-                delegate: this.props.onSelect
-            });
+    private _renderChild = (child: React.ReactNode): React.ReactNode => {
+        if (isValidElement(child)) {
+            if (child.type === Fragment) {
+                return cloneElement(child as any, {
+                    children: Children.map((child.props as any).children, this._renderChild)
+                });
+            }
+
+            if (child.type === MenuItem as any ||
+                child.type === MenuForm as any) {
+                return cloneElement<MenuDelegateProps>(child, {
+                    delegate: this.props.onSelect
+                });
+            }
         }
 
         return child;

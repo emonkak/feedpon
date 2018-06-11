@@ -88,7 +88,7 @@ class Sidebar extends PureComponent<SidebarProps> {
                         onSubmit={this._handleSearch}
                         onSelect={this._handleSelect}
                         renderInput={renderSearchFeedInput}
-                        renderCandidates={completeSubscriptions} />
+                        renderCandidates={renderSubscriptionCandidates} />
                 </div>
                 <div className="sidebar-group">
                     <Tree>
@@ -177,9 +177,9 @@ class Sidebar extends PureComponent<SidebarProps> {
     };
 }
 
-function completeSubscriptions(subscriptions: Subscription[], query: string) {
+function renderSubscriptionCandidates(subscriptions: Subscription[], query: string) {
     if (query.trim() === '') {
-        return [];
+        return null;
     }
 
     const splittedQueries = query.trim().toLowerCase().split(/\s+/);
