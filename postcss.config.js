@@ -6,7 +6,12 @@ const config = {
         require('postcss-custom-media')(),
         require('postcss-color-function')(),
         require('autoprefixer')({
-            browsers: 'last 1 version'
+            browsers: [
+                'last 1 chrome version',
+                'last 1 firefox version',
+                'last 1 ios version',
+                'last 1 android version'
+            ]
         })
     ]
 }
