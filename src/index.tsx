@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { hashHistory } from 'react-router';
 
-import Bootstrap from 'components/Bootstrap';
+import Bootstrap from 'view/Bootstrap';
 import prepareSelectors from 'messaging/prepareSelectors';
 import prepareStore from './prepareStore';
 
