@@ -67,20 +67,22 @@ export class TreeBranch extends PureComponent<TreeBranchProps, TreeBranchState> 
         isSelected: false
     };
 
+    static getDerivedStateFromProps(props: TreeBranchProps, state: TreeLeafState) {
+        if (Children.toArray(props.children).some(shouldExpand)) {
+            return {
+                isExpanded: true
+            };
+        }
+
+        return null;
+    }
+
     constructor(props: TreeBranchProps) {
         super(props);
 
         this.state = {
-            isExpanded: Children.toArray(props.children).some(this._shouldExpand, this)
+            isExpanded: Children.toArray(props.children).some(shouldExpand)
         };
-    }
-
-    componentWillReceiveProps(nextProps: TreeBranchProps) {
-        if (Children.toArray(nextProps.children).some(this._shouldExpand, this)) {
-            this.setState({
-                isExpanded: true
-            });
-        }
     }
 
     render() {
@@ -106,19 +108,6 @@ export class TreeBranch extends PureComponent<TreeBranchProps, TreeBranchState> 
                 </Tree>
             </li>
         );
-    }
-
-    private _shouldExpand(child: React.ReactChild): boolean {
-        if (isValidElement(child)) {
-            const type = child.type as any;
-            if (type === TreeLeaf) {
-                return (child.props as TreeLeafProps).isSelected!;
-            }
-            if (type === TreeBranch) {
-                return Children.toArray((child.props as TreeBranchProps).children).some(this._shouldExpand, this);
-            }
-        }
-        return false;
     }
 
     private _handleExpand = (event: React.MouseEvent<any>) => {
@@ -178,4 +167,17 @@ export class TreeLeaf extends PureComponent<TreeLeafProps, TreeLeafState> {
             onSelect(value);
         }
     }
+}
+
+function shouldExpand(child: React.ReactChild): boolean {
+    if (isValidElement(child)) {
+        const type = child.type as any;
+        if (type === TreeLeaf) {
+            return (child.props as TreeLeafProps).isSelected!;
+        }
+        if (type === TreeBranch) {
+            return Children.toArray((child.props as TreeBranchProps).children).some(shouldExpand);
+        }
+    }
+    return false;
 }

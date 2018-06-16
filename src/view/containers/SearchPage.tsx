@@ -10,12 +10,13 @@ import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
 import { Category, Feed, State, Subscription } from 'messaging/types';
 import { addToCategory, removeFromCategory, subscribe, unsubscribe } from 'messaging/subscriptions/actions';
-import { createSortedCategoriesSelector } from 'messaging/categories/selectors';
 import { createCategory } from 'messaging/categories/actions';
-import { toggleSidebar } from 'messaging/ui/actions';
+import { createSortedCategoriesSelector } from 'messaging/categories/selectors';
 import { searchFeeds } from 'messaging/search/actions';
+import { toggleSidebar } from 'messaging/ui/actions';
 
 interface SearchPageProps {
+    activeQuery: string;
     categories: Category[];
     feeds: Feed[];
     isLoaded: boolean;
@@ -28,64 +29,67 @@ interface SearchPageProps {
     onToggleSidebar: typeof toggleSidebar;
     onUnsubscribe: typeof unsubscribe;
     params: Params;
-    query: string;
     router: History;
     subscriptions: { [key: string]: Subscription };
 }
 
-class SearchPage extends PureComponent<SearchPageProps> {
-    private searchInput: HTMLInputElement | null = null;
+interface SearchPageState {
+    query: string;
+    prevActiveQuery: string;
+}
+
+class SearchPage extends PureComponent<SearchPageProps, SearchPageState> {
+    static getDerivedStateFromProps(props: SearchPageProps, state: SearchPageState) {
+        if (props.activeQuery !== state.prevActiveQuery) {
+            return {
+                query: props.activeQuery,
+                prevActiveQuery: props.activeQuery
+            };
+        }
+
+        return null;
+    }
 
     constructor(props: SearchPageProps) {
         super(props);
 
-        this.handleSearch = this.handleSearch.bind(this);
+        this.state = {
+            query: props.params['query'] || '',
+            prevActiveQuery: props.activeQuery
+        };
     }
 
     componentDidMount() {
-        const { onSearchFeeds, params, query } = this.props;
+        const { activeQuery } = this.props;
+        const { query } = this.state;
 
-        if (params['query'] && params['query'] !== query) {
+        if (query !== '' && query !== activeQuery) {
+            const { onSearchFeeds } = this.props;
+
+            onSearchFeeds(query);
+        }
+    }
+
+    componentDidUpdate(prevProps: SearchPageProps) {
+        const { params } = this.props;
+        const { params: prevParams } = prevProps;
+
+        if (params['query'] && params['query'] !== prevParams['query']) {
+            const { onSearchFeeds } = this.props;
+
             onSearchFeeds(params['query']);
         }
     }
 
-    componentWillReceiveProps(nextProps: SearchPageProps) {
-        if (!this.searchInput) {
-            return;
-        }
+    render() {
+        return (
+            <MainLayout header={this.renderNavbar()}>
+                {this.renderContent()}
+            </MainLayout>
+        );
+   }
 
-        const { onSearchFeeds, query } = nextProps;
-
-        if (nextProps.params['query'] !== query) {
-            const query = nextProps.params['query'] || '';
-
-            this.searchInput.value = query;
-
-            if (query) {
-                onSearchFeeds(query);
-            }
-        }
-    }
-
-    handleSearch(event: React.FormEvent<any>) {
-        if (!this.searchInput) {
-            return;
-        }
-
-        event.preventDefault();
-
-        if (this.searchInput.value) {
-            const { onSearchFeeds, router } = this.props;
-            const query = this.searchInput.value;
-
-            onSearchFeeds(query);
-
-            router.replace('/search/' + encodeURIComponent(query));
-        }
-    }
-
-    renderNavbar() {
+    private renderNavbar() {
         const { onToggleSidebar } = this.props;
 
         return (
@@ -95,15 +99,13 @@ class SearchPage extends PureComponent<SearchPageProps> {
         );
     }
 
-    renderFeeds() {
-        const { params, query } = this.props;
-
-        if (params['query'] !== query) {
+    private renderFeeds() {
+        const { params, activeQuery } = this.props;
+        if (params['query'] !== activeQuery) {
             return null;
         }
 
         const { isLoading } = this.props;
-
         if (isLoading) {
             return (
                 <ol className="list-group">
@@ -122,15 +124,13 @@ class SearchPage extends PureComponent<SearchPageProps> {
         }
 
         const { feeds, isLoaded } = this.props;
-
         if (isLoaded && feeds.length === 0) {
             return (
-                <p>Your search "<strong>{query}</strong>" did not match any feeds.</p>
+                <p>Your search "<strong>{activeQuery}</strong>" did not match any feeds.</p>
             );
         }
 
         const { categories, onAddToCategory, onCreateCategory, onRemoveFromCategory, onSubscribe, onUnsubscribe, subscriptions } = this.props;
-
         const feedElements = feeds.map((feed) =>
             <FeedComponent
                 categories={categories}
@@ -145,14 +145,12 @@ class SearchPage extends PureComponent<SearchPageProps> {
         );
 
         return (
-            <ol className="list-group">
-                {feedElements}
-            </ol>
+            <ol className="list-group">{feedElements}</ol>
         );
     }
 
-    renderContent() {
-        const { params } = this.props;
+    private renderContent() {
+        const { query } = this.state;
 
         return (
             <div className="container u-margin-top-2 u-margin-bottom-4">
@@ -160,11 +158,11 @@ class SearchPage extends PureComponent<SearchPageProps> {
                 <form className="form" onSubmit={this.handleSearch}>
                     <div className="input-group">
                         <input autoFocus
-                               ref={(element) => this.searchInput = element}
                                className="form-control"
+                               onChange={this.handleChange}
+                               placeholder="Search by title, URL, or topic"
                                type="search"
-                               defaultValue={params['query'] || ''}
-                               placeholder="Search by title, URL, or topic" />
+                               value={query} />
                         <button className="button button-positive" type="submit">Search</button>
                     </div>
                 </form>
@@ -173,13 +171,25 @@ class SearchPage extends PureComponent<SearchPageProps> {
         );
     }
 
-    render() {
-        return (
-            <MainLayout header={this.renderNavbar()}>
-                {this.renderContent()}
-            </MainLayout>
-        );
-   }
+    private handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const query = event.currentTarget.value;
+
+        this.setState({ query });
+    }
+
+    private handleSearch = (event: React.FormEvent<any>) => {
+        event.preventDefault();
+
+        const { query } = this.state;
+
+        if (query !== '') {
+            const { onSearchFeeds, router } = this.props;
+
+            onSearchFeeds(query);
+
+            router.replace('/search/' + encodeURIComponent(query));
+        }
+    }
 }
 
 export default connect(() => {
@@ -187,11 +197,11 @@ export default connect(() => {
 
     return {
         mapStateToProps: (state: State) => ({
+            activeQuery: state.search.query,
             categories: sortedCategoriesSelector(state),
             feeds: state.search.feeds,
             isLoaded: state.search.isLoaded,
             isLoading: state.search.isLoading,
-            query: state.search.query,
             subscriptions: state.subscriptions.items
         }),
         mapDispatchToProps: bindActions({

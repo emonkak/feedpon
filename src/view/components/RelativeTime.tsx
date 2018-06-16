@@ -4,80 +4,71 @@ import React, { PureComponent } from 'react';
 interface RelativeTimeProps {
     className?: string;
     locales?: string | string[];
-    refreshInterval?: number;
+    updateInterval?: number;
     time: Date | number;
 }
 
 interface RelativeTimeState {
+    formatter: IntlRelativeFormat;
+    prevLocales?: string | string[];
+    prevTime: Date | number;
     relativeTime: string;
 }
 
 export default class RelativeTime extends PureComponent<RelativeTimeProps, RelativeTimeState> {
     static defaultProps = {
         locales: 'en',
-        refreshInterval: 1000 * 60
+        updateInterval: 1000 * 60
     };
 
     private timer: number | null = null;
 
-    private formatter: IntlRelativeFormat;
+    static getDerivedStateFromProps(props: RelativeTimeProps, state: RelativeTimeState) {
+        const updates: Partial<RelativeTimeState> = {};
+        let hasUpdated = false;
+
+        if (props.locales !== state.prevLocales) {
+            updates.formatter = new IntlRelativeFormat(props.locales);
+            updates.prevLocales = props.locales;
+            hasUpdated = true;
+        }
+
+        if (props.time !== state.prevTime) {
+            updates.relativeTime = (updates.formatter || state.formatter).format(props.time);
+            updates.prevTime = props.time;
+            hasUpdated = true;
+        }
+
+        return hasUpdated ? updates : null;
+    }
 
     constructor(props: RelativeTimeProps) {
         super(props);
 
-        this.formatter = new IntlRelativeFormat(props.locales);
+        const formatter = new IntlRelativeFormat(props.locales);
 
         this.state = {
-            relativeTime: this.formatter.format(props.time)
+            formatter,
+            prevLocales: props.locales,
+            prevTime: props.time,
+            relativeTime: formatter.format(props.time)
         };
     }
 
     componentDidMount() {
-        this.startTimer(this.props.refreshInterval!);
+        this.startTimer(this.props.updateInterval!);
     }
 
-    componentWillReceiveProps(nextProps: any) {
-        if (this.props.locales !== nextProps.locales) {
-            this.formatter = new IntlRelativeFormat(nextProps.locales);
-        }
+    componentDidUpdate(prevProps: RelativeTimeProps, prevState: RelativeTimeState) {
+        const { updateInterval } = this.props;
 
-        if (this.props.time !== nextProps.time) {
-            this.setState({
-                relativeTime: this.formatter.format(nextProps.time)
-            });
-        }
-
-        if (this.props.refreshInterval !== nextProps.refreshInterval) {
-            this.stopTimer();
-
-            this.startTimer(nextProps.refreshInterval!);
-
-            this.setState({
-                relativeTime: this.formatter.format(nextProps.time)
-            });
+        if (updateInterval !== prevProps.updateInterval) {
+            this.restartTimer(updateInterval!);
         }
     }
 
     componentWillUnmount() {
         this.stopTimer();
-    }
-
-    startTimer(refreshInterval: number) {
-        this.timer = setInterval(this.refresh.bind(this), refreshInterval);
-    }
-
-    stopTimer() {
-        if (this.timer != null) {
-            clearInterval(this.timer);
-        }
-    }
-
-    refresh() {
-        const { time } = this.props;
-
-        this.setState({
-            relativeTime: this.formatter.format(time)
-        });
     }
 
     render() {
@@ -91,5 +82,30 @@ export default class RelativeTime extends PureComponent<RelativeTimeProps, Relat
                 {relativeTime}
             </time>
         );
+    }
+
+    private startTimer(updateInterval: number) {
+        this.timer = setInterval(this.update.bind(this), updateInterval);
+    }
+
+    private stopTimer() {
+        if (this.timer != null) {
+            clearInterval(this.timer);
+        }
+    }
+
+    private restartTimer(updateInterval: number) {
+        this.stopTimer();
+        this.startTimer(updateInterval);
+        this.update();
+    }
+
+    private update() {
+        const { time } = this.props;
+        const { formatter } = this.state;
+
+        this.setState({
+            relativeTime: formatter.format(time)
+        });
     }
 }

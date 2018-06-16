@@ -16,6 +16,16 @@ interface EditCategoryFormState {
 }
 
 export default class EditCategoryForm extends PureComponent<EditCategoryFormProps, EditCategoryFormState> {
+    static getDerivedStateFromProps(props: EditCategoryFormProps, state: EditCategoryFormState) {
+        if (props.category.label !== state.label) {
+            return {
+                label: props.category.label
+            };
+        }
+
+        return null;
+    }
+
     constructor(props: EditCategoryFormProps) {
         super(props);
 
@@ -24,17 +34,6 @@ export default class EditCategoryForm extends PureComponent<EditCategoryFormProp
             isEditing: false,
             label: props.category.label
         };
-    }
-
-    componentWillReceiveProps(nextProps: EditCategoryFormProps) {
-        const label = this.props.category.label;
-        const nextLabel = nextProps.category.label;
-
-        if (label !== nextLabel) {
-            this.setState({
-                label: nextLabel
-            });
-        }
     }
 
     render() {
