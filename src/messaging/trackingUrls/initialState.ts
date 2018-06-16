@@ -6,7 +6,8 @@ const trackingUrls: TrackingUrls = {
     patterns: [
         '^http://feedproxy\\.google\\.com/',
         '^http://rss\\.rssad\\.jp/',
-        '^https://rdsig\\.yahoo\\.co\\.jp/rss/'
+        '^https://rdsig\\.yahoo\\.co\\.jp/rss/',
+        '^http://cgi\\.itmedia\\.co\\.jp/rss/'
     ],
     version: 1
 };
