@@ -22,7 +22,7 @@ export default class SubscriptionTree extends PureComponent<SubscriptionTreeProp
                 key={category.categoryId}
                 value={path}
                 isImportant={unreadCount > 0}
-                isSelected={selectedPath.startsWith(path)}
+                isSelected={selectedPath === path}
                 primaryText={category.label}
                 secondaryText={unreadCount > 0 ? Number(unreadCount).toLocaleString() : ''}
                 onSelect={onSelect}>
@@ -46,7 +46,7 @@ export default class SubscriptionTree extends PureComponent<SubscriptionTreeProp
                 icon={<SubscriptionIcon title={subscription.title} iconUrl={subscription.iconUrl} />}
                 value={path}
                 isImportant={unreadCount > 0}
-                isSelected={selectedPath.startsWith(path)}
+                isSelected={selectedPath === path}
                 onSelect={onSelect} />
         );
     }
