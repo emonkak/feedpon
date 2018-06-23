@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import debounce from 'lodash.debounce';
 
-import LazyListRenderer from 'view/components/LazyListRenderer';
+import LazyList from 'view/components/LazyList';
 import RelativeTime from 'view/components/RelativeTime';
 import SharedSiteinfoItem from 'view/modules/SharedSiteinfoItem';
 import bindActions from 'utils/flux/bindActions';
@@ -77,7 +77,7 @@ class SharedSiteinfoSettings extends PureComponent<SharedSiteinfoProps, SharedSi
                         Update
                     </button>
                 </p>
-                <LazyListRenderer
+                <LazyList
                     assumedItemHeight={24 * 7}
                     idAttribute="id"
                     items={matchedItems}

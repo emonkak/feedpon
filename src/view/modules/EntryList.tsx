@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import { createSelector } from 'reselect';
 
 import EntryFrame from 'view/modules/Entry';
-import LazyListRenderer, { Positioning, ViewportRectangle } from 'view/components/LazyListRenderer';
+import LazyList, { Positioning, ViewportRectangle } from 'view/components/LazyList';
 import { Entry, StreamViewKind } from 'messaging/types';
 import { ExpandedEntryPlaceholder, CollapsedEntryPlaceholder } from 'view/modules/EntryPlaceholder';
 import { getScrollOffset } from 'messaging/domActions';
@@ -38,7 +38,7 @@ interface RenderingItem {
 }
 
 export default class EntryList extends PureComponent<EntryListProps> {
-    private _lazyListRenderer: LazyListRenderer | null = null;
+    private _lazyList: LazyList | null = null;
 
     render() {
         const { isLoaded, isLoading, streamView } = this.props;
@@ -76,7 +76,7 @@ export default class EntryList extends PureComponent<EntryListProps> {
         const { activeEntryIndex, heights, onHeightUpdated } = this.props;
 
         return (
-            <LazyListRenderer
+            <LazyList
                 assumedItemHeight={isExpanded ? 800 : 100}
                 getViewportRectangle={getViewportRectangle}
                 idAttribute="id"
@@ -85,15 +85,15 @@ export default class EntryList extends PureComponent<EntryListProps> {
                 items={this._getRenderingItems(this.props)}
                 onHeightUpdated={onHeightUpdated}
                 onPositioningUpdated={this._handlePositioningUpdated}
-                ref={this._handleLazyListRenderer}
+                ref={this._handleLazyList}
                 renderItem={this._renderEntry}
                 renderList={renderList} />
         );
     }
 
     scrollToIndex(index: number): void {
-        if (this._lazyListRenderer) {
-            this._lazyListRenderer.scrollToIndex(index);
+        if (this._lazyList) {
+            this._lazyList.scrollToIndex(index);
         }
     }
 
@@ -162,8 +162,8 @@ export default class EntryList extends PureComponent<EntryListProps> {
         }
     }
 
-    private _handleLazyListRenderer = (lazyListRenderer: LazyListRenderer | null) => {
-        this._lazyListRenderer = lazyListRenderer;
+    private _handleLazyList = (lazyList: LazyList | null) => {
+        this._lazyList = lazyList;
     }
 }
 

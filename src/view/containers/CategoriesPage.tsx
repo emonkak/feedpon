@@ -6,7 +6,7 @@ import { createSelector } from 'reselect';
 import CategoriesNav from 'view/modules/CategoriesNav';
 import Dropdown from 'view/components/Dropdown';
 import EditCategoryForm from 'view/modules/EditCategoryForm';
-import LazyListRenderer from 'view/components/LazyListRenderer';
+import LazyList from 'view/components/LazyList';
 import MainLayout from 'view/layouts/MainLayout';
 import Navbar from 'view/components/Navbar';
 import SubscriptionItem from 'view/modules/Subscription';
@@ -124,7 +124,7 @@ class CategoriesPage extends PureComponent<CategoriesPageProps, CategoriesPageSt
                         onChange={this._handleChangeSearchQuery} />
                 </p>
                 {description}
-                <LazyListRenderer
+                <LazyList
                     assumedItemHeight={60}
                     idAttribute="subscriptionId"
                     items={subscriptions}
