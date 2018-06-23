@@ -77,16 +77,16 @@
 }
 
 .popover-enter.popover-enter-active,
-.popover-leave.popover-leave-active {
+.popover-exit.popover-exit-active {
   transition: opacity 0.2s ease-in-out;
 }
 
 .popover-enter,
-.popover-leave.popover-leave-active {
+.popover-exit.popover-exit-active {
   opacity: 0;
 }
 
 .popover-enter.popover-enter-active,
-.popover-leave {
+.popover-exit {
   opacity: 1;
 }
