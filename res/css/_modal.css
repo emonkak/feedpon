@@ -9,6 +9,7 @@
   padding: var(--vertical-rhythm) 1.5rem;
   overflow-y: auto;
   overflow-x: hidden;
+  box-sizing: border-box;
   background-color: var(--backdrop-background-color);
   will-change: opacity, transform;
 }
