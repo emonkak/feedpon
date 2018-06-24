@@ -1,5 +1,6 @@
 import CSSTransition from 'react-transition-group/CSSTransition';
 import React, { PureComponent } from 'react';
+import TransitionGroup from 'react-transition-group/TransitionGroup';
 
 import InstantNotificationComponent from 'view/modules/InstantNotification';
 import bindActions from 'utils/flux/bindActions';
@@ -13,13 +14,13 @@ interface InstantNotificationContainerProps {
 }
 
 class InstantNotificationContainer extends PureComponent<InstantNotificationContainerProps> {
-    timer: number | null = null;
+    private _timer: number | null = null;
 
     componentDidMount() {
         const { instantNotification } = this.props;
 
         if (instantNotification) {
-            this.startTimer(instantNotification);
+            this._startTimer(instantNotification);
         }
     }
 
@@ -28,51 +29,53 @@ class InstantNotificationContainer extends PureComponent<InstantNotificationCont
 
         if (instantNotification
             && instantNotification !== prevProps.instantNotification) {
-            this.restartTimer(instantNotification);
+            this._restartTimer(instantNotification);
         }
     }
 
     componentWillUnmount() {
-        this.stopTimer();
-    }
-
-    startTimer(instantNotification: InstantNotification) {
-        if (instantNotification.dismissAfter > 0) {
-            const { onDismissInstantNotification } = this.props;
-
-            this.timer = setTimeout(() => {
-                onDismissInstantNotification();
-                this.timer = null;
-            }, instantNotification.dismissAfter);
-        }
-    }
-
-    restartTimer(instantNotification: InstantNotification) {
-        this.stopTimer();
-        this.startTimer(instantNotification);
-    }
-
-    stopTimer() {
-        if (this.timer !== null) {
-            clearTimeout(this.timer);
-            this.timer = null;
-        }
+        this._stopTimer();
     }
 
     render() {
         const { instantNotification } = this.props;
 
         return (
-            <CSSTransition
-                classNames="instant-notification"
-                timeout={200}>
-                <div>
-                    {instantNotification &&
-                        <InstantNotificationComponent
-                            instantNotification={instantNotification} />}
-                </div>
-            </CSSTransition>
+            <TransitionGroup>
+                {instantNotification &&
+                    <CSSTransition
+                        classNames="instant-notification"
+                        timeout={200}>
+                        <div>
+                            <InstantNotificationComponent
+                                instantNotification={instantNotification} />
+                        </div>
+                    </CSSTransition>}
+            </TransitionGroup>
         );
+    }
+
+    private _startTimer(instantNotification: InstantNotification) {
+        if (instantNotification.dismissAfter > 0) {
+            const { onDismissInstantNotification } = this.props;
+
+            this._timer = setTimeout(() => {
+                onDismissInstantNotification();
+                this._timer = null;
+            }, instantNotification.dismissAfter);
+        }
+    }
+
+    private _restartTimer(instantNotification: InstantNotification) {
+        this._stopTimer();
+        this._startTimer(instantNotification);
+    }
+
+    private _stopTimer() {
+        if (this._timer !== null) {
+            clearTimeout(this._timer);
+            this._timer = null;
+        }
     }
 }
 
