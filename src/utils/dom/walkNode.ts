@@ -1,7 +1,6 @@
-export default function walkNode(node: Node, callback: (node: Node) => boolean): void {
+export default function walkNode(rootNode: Node, callback: (node: Node) => boolean): void {
     let walk = true;
-    let depth = 0;
-    let currentNode: Node | null = node;
+    let currentNode: Node | null = rootNode;
 
     do {
         // Save the parent-child relationship in advance because it may be deleted
@@ -11,20 +10,18 @@ export default function walkNode(node: Node, callback: (node: Node) => boolean):
             parentNode: Node | null
         } = currentNode;
 
-        if (walk && depth > 0) {
+        if (walk) {
             walk = callback(currentNode);
         }
 
         if (walk && firstChild) {
             currentNode = firstChild;
-            depth++;
         } else if (nextSibling) {
             currentNode = nextSibling;
             walk = true;
         } else {
             currentNode = parentNode;
             walk = false;
-            depth--;
         }
-    } while (depth > 0 && currentNode);
+    } while (currentNode && currentNode !== rootNode);
 }
