@@ -76,8 +76,8 @@
 
 .instant-notification-enter.instant-notification-enter-active,
 .instant-notification-exit.instant-notification-exit-active {
-  transition: opacity 0.2s cubic-bezier(0.465, 0.183, 0.153, 0.946),
-              transform 0.2s cubic-bezier(0.465, 0.183, 0.153, 0.946);
+  transition: opacity 0.2s ease-in-out,
+              transform 0.2s ease-in-out;
 }
 
 .instant-notification-enter,

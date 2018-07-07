@@ -16,8 +16,8 @@
 
 .modal-enter.modal-enter-active,
 .modal-exit.modal-exit-active {
-  transition: opacity 0.2s cubic-bezier(0.465, 0.183, 0.153, 0.946),
-              transform 0.2s cubic-bezier(0.465, 0.183, 0.153, 0.946);
+  transition: opacity 0.2s ease-in-out,
+              transform 0.2s ease-in-out;
 }
 
 .modal-enter,
