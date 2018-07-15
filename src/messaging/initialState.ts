@@ -10,6 +10,7 @@ import streams from 'messaging/streams/initialState';
 import subscriptions from 'messaging/subscriptions/initialState';
 import trackingUrls from 'messaging/trackingUrls/initialState';
 import ui from 'messaging/ui/initialState';
+import urlReplacements from 'messaging/urlReplacements/initialState';
 import user from 'messaging/user/initialState';
 import userSiteinfo from 'messaging/userSiteinfo/initialState';
 import { State } from 'messaging/types';
@@ -27,6 +28,7 @@ const initialState: State = {
     subscriptions,
     trackingUrls,
     ui,
+    urlReplacements,
     user,
     userSiteinfo,
     version: '0.0.0'

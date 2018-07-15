@@ -48,31 +48,37 @@ class SettingsPage extends PureComponent<SettingsProps> {
                         value="/settings/ui"
                         title="UI"
                         isSelected={location.pathname === '/settings/ui'}>
-                        <i className="u-inline-block u-md-none icon icon-20 icon-browser-window" /><span className="u-md-none u-md-inline">UI</span>
+                        <i className="u-inline-block u-md-none icon icon-20 icon-browser-window" /><span className="u-none u-md-inline">UI</span>
                     </NavItem>
                     <NavItem
                         value="/settings/stream"
                         title="Stream"
                         isSelected={location.pathname === '/settings/stream'}>
-                        <i className="u-inline-block u-md-none icon icon-20 icon-news-feed" /><span className="u-md-none u-md-inline">Stream</span>
+                        <i className="u-inline-block u-md-none icon icon-20 icon-news-feed" /><span className="u-none u-md-inline">Stream</span>
                     </NavItem>
                     <NavItem
                         value="/settings/tracking_url"
                         title="Tracking URL"
                         isSelected={location.pathname === '/settings/tracking_url'}>
-                        <i className="u-inline-block u-md-none icon icon-20 icon-link" /><span className="u-md-none u-md-inline">Tracking URL</span>
+                        <i className="u-inline-block u-md-none icon icon-20 icon-link" /><span className="u-none u-md-inline">Tracking URL</span>
+                    </NavItem>
+                    <NavItem
+                        value="/settings/url_replacement"
+                        title="URL Replacement"
+                        isSelected={location.pathname === '/settings/url_replacement'}>
+                        <i className="u-inline-block u-md-none icon icon-20 icon-replace" /><span className="u-none u-md-inline">URL Replacement</span>
                     </NavItem>
                     <NavItem
                         value="/settings/siteinfo"
                         title="Siteinfo"
                         isSelected={location.pathname === '/settings/siteinfo'}>
-                        <i className="u-inline-block u-md-none icon icon-20 icon-database" /><span className="u-md-none u-md-inline">Siteinfo</span>
+                        <i className="u-inline-block u-md-none icon icon-20 icon-database" /><span className="u-none u-md-inline">Siteinfo</span>
                     </NavItem>
                     <NavItem
                         value="/settings/keyboard"
                         title="Keyboard"
                         isSelected={location.pathname === '/settings/keyboard'}>
-                        <i className="u-inline-block u-md-none icon icon-20 icon-keyboard" /><span className="u-md-none u-md-inline">Keyboard</span>
+                        <i className="u-inline-block u-md-none icon icon-20 icon-keyboard" /><span className="u-none u-md-inline">Keyboard</span>
                     </NavItem>
                 </Nav>
                 {children}

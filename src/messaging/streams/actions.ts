@@ -74,7 +74,6 @@ export function fetchStream(streamId: string, streamView?: StreamViewKind, fetch
             const urls = stream.entries
                 .filter((entry) => !!entry.url)
                 .map((entry) => entry.url);
-
             const expandedUrls = await dispatch(expandUrls(urls));
 
             await dispatch(fetchBookmarkCounts(expandedUrls));
@@ -122,7 +121,8 @@ export function fetchMoreEntries(streamId: string, continuation: string, fetchOp
                 unreadOnly: fetchOptions.onlyUnread
             });
 
-            entries = contents.items.map(convertEntry);
+            const entryConverter = dispatch(getEntryConverter());
+            entries = contents.items.map(entryConverter);
 
             dispatch({
                 type: 'MORE_ENTRIES_FETCHED',
@@ -142,7 +142,6 @@ export function fetchMoreEntries(streamId: string, continuation: string, fetchOp
         const urls = entries
             .filter((entry) => !!entry.url)
             .map((entry) => entry.url);
-
         const expandedUrls = await dispatch(expandUrls(urls));
 
         await dispatch(fetchBookmarkCounts(expandedUrls));
@@ -611,12 +610,14 @@ function fetchFeedStream(streamId: string, streamView: StreamViewKind, fetchOpti
             feedlyApi.getFeed(token.access_token, streamId)
         ]);
 
+        const entryConverter = dispatch(getEntryConverter());
+
         const stream = {
             streamId,
             category: null,
             title: feed.title || feed.website || feed.id.replace(/^feed\//, ''),
             fetchedAt,
-            entries: contents.items.map(convertEntry),
+            entries: contents.items.map(entryConverter),
             continuation: contents.continuation || null,
             feed: {
                 feedId: feed.id,
@@ -655,11 +656,13 @@ function fetchCategoryStream(streamId: string, streamView: StreamViewKind, fetch
         const { categories } = getState();
         const category = categories.items[streamId] || null;
 
+        const entryConverter = dispatch(getEntryConverter());
+
         const stream: Stream = {
             streamId,
             title: category ? category.label : '',
             fetchedAt,
-            entries: contents.items.map(convertEntry),
+            entries: contents.items.map(entryConverter),
             continuation: contents.continuation || null,
             feed: null,
             fetchOptions,
@@ -686,10 +689,12 @@ function fetchAllStream(streamView: StreamViewKind, fetchOptions: StreamFetchOpt
             unreadOnly: fetchOptions.onlyUnread
         });
 
+        const entryConverter = dispatch(getEntryConverter());
+
         const stream: Stream = {
             streamId: ALL_STREAM_ID,
             title: 'All',
-            entries: contents.items.map(convertEntry),
+            entries: contents.items.map(entryConverter),
             fetchedAt,
             continuation: contents.continuation || null,
             feed: null,
@@ -722,10 +727,12 @@ function fetchPinsStream(streamView: StreamViewKind, fetchOptions: StreamFetchOp
             unreadOnly: fetchOptions.onlyUnread
         });
 
+        const entryConverter = dispatch(getEntryConverter());
+
         const stream: Stream = {
             streamId: PINS_STREAM_ID,
             title: 'Pins',
-            entries: contents.items.map(convertEntry),
+            entries: contents.items.map(entryConverter),
             fetchedAt,
             continuation: contents.continuation || null,
             feed: null,
@@ -755,42 +762,6 @@ function fetchBookmarkCounts(urls: string[]): AsyncThunk {
                 type: 'BOOKMARK_COUNTS_FETCHED',
                 bookmarkCounts
             });
-        }
-    };
-}
-
-function convertEntry(entry: feedly.Entry): Entry {
-    const url = (entry.alternate && entry.alternate[0] && entry.alternate[0].href) || '';
-
-    return {
-        entryId: entry.id,
-        title: entry.title,
-        author: entry.author || '',
-        url,
-        summary: stripTags((entry.summary ? entry.summary.content : '') || (entry.content ? entry.content.content : '')),
-        content: (entry.content ? entry.content.content : '') || (entry.summary ? entry.summary.content : ''),
-        publishedAt: entry.published,
-        bookmarkCount: 0,
-        isPinned: entry.tags ? entry.tags.some((tag) => tag.id.endsWith('tag/global.saved')) : false,
-        isPinning: false,
-        markedAsRead: !entry.unread,
-        origin: entry.origin ? {
-            streamId: entry.origin.streamId,
-            title: entry.origin.title,
-            url: entry.origin.htmlUrl
-        } : null,
-        fullContents: {
-            isLoaded: false,
-            isLoading: false,
-            isNotFound: false,
-            isShown: false,
-            items: []
-        },
-        comments: {
-            isLoaded: false,
-            isLoading: false,
-            isShown: false,
-            items: []
         }
     };
 }
@@ -879,6 +850,56 @@ function expandUrls(urls: string[]): AsyncThunk<string[]> {
         });
 
         return urls.map((url) => expandedUrls[url] || url);
+    };
+}
+
+function getEntryConverter(): Thunk<(entry: feedly.Entry) => Entry> {
+    return ({ getState }) => {
+        const { urlReplacements } = getState();
+
+        const urlReplacer = urlReplacements.items
+            .reduce<(url: string) => string>((func, item) => {
+                try {
+                    const pattern = new RegExp(item.pattern, item.flags);
+                    const replacement = item.replacement;
+                    return (url) => func(url).replace(pattern, replacement);
+                } catch (e) {
+                    console.error(e);
+                    return func;
+                }
+            }, (url) => url);
+
+        return (entry) => ({
+            entryId: entry.id,
+            title: entry.title,
+            author: entry.author || '',
+            url: urlReplacer((entry.alternate && entry.alternate[0] && entry.alternate[0].href) || ''),
+            summary: stripTags((entry.summary ? entry.summary.content : '') || (entry.content ? entry.content.content : '')),
+            content: (entry.content ? entry.content.content : '') || (entry.summary ? entry.summary.content : ''),
+            publishedAt: entry.published,
+            bookmarkCount: 0,
+            isPinned: entry.tags ? entry.tags.some((tag) => tag.id.endsWith('tag/global.saved')) : false,
+            isPinning: false,
+            markedAsRead: !entry.unread,
+            origin: entry.origin ? {
+                streamId: entry.origin.streamId,
+                title: entry.origin.title,
+                url: entry.origin.htmlUrl
+            } : null,
+            fullContents: {
+                isLoaded: false,
+                isLoading: false,
+                isNotFound: false,
+                isShown: false,
+                items: []
+            },
+            comments: {
+                isLoaded: false,
+                isLoading: false,
+                isShown: false,
+                items: []
+            }
+        });
     };
 }
 

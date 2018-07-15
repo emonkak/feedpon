@@ -6,7 +6,15 @@ export default async function restoreSnapshot<TState, TEvent>(
     initialState: TState
 ): Promise<Snapshot<TState>> {
     const latestSnapshot = await eventStore.restoreLatestSnapshot();
-    const currentSnapshot = latestSnapshot || { state: initialState, version: 0 };
+    const currentSnapshot = latestSnapshot ?
+        {
+            state: Object.assign({}, initialState, latestSnapshot.state),
+            version: latestSnapshot.version
+        } :
+        {
+            state: initialState,
+            version: 0
+        };
 
     const unappliedEvents = await eventStore.restoreUnappliedEvents(currentSnapshot.version);
 

@@ -19,6 +19,7 @@ import StreamPage from 'view/containers/StreamPage';
 import StreamSettings from 'view/containers/StreamSettings';
 import TrackingUrlSettings from 'view/containers/TrackingUrlSettings';
 import UISettings from 'view/containers/UISettings';
+import UrlReplacementSettings from 'view/containers/UrlReplacementSettings';
 
 const routes = (
     <Route component={RootLayout} path="/">
@@ -34,6 +35,7 @@ const routes = (
                     <Route path="siteinfo" component={SiteinfoSettings} />
                     <Route path="stream" component={StreamSettings} />
                     <Route path="tracking_url" component={TrackingUrlSettings} />
+                    <Route path="url_replacement" component={UrlReplacementSettings} />
                     <Route path="ui" component={UISettings} />
                 </Route>
                 <Route path="streams/:stream_id" component={StreamPage} />

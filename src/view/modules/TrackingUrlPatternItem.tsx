@@ -18,28 +18,6 @@ export default class TrackingUrlPatternItem extends PureComponent<TrackingUrlPat
         this.state = {
             isDeleting: false
         };
-
-        this.handleCancelDeleting = this.handleCancelDeleting.bind(this);
-        this.handleDelete = this.handleDelete.bind(this);
-        this.handleStartDeleting = this.handleStartDeleting.bind(this);
-    }
-
-    handleCancelDeleting() {
-        this.setState({
-            isDeleting: false
-        });
-    }
-
-    handleDelete() {
-        const { onDelete, pattern } = this.props;
-
-        onDelete(pattern);
-    }
-
-    handleStartDeleting() {
-        this.setState({
-            isDeleting: true
-        });
     }
 
     render() {
@@ -50,22 +28,41 @@ export default class TrackingUrlPatternItem extends PureComponent<TrackingUrlPat
             <tr>
                 <td>
                     <code>{pattern}</code>
+                </td>
+                <td className="u-text-nowrap">
+                    <button
+                        className="button button-small button-outline-negative"
+                        onClick={this._handleStartDeleting}>
+                        <i className="icon icon-16 icon-trash" />
+                    </button>
                     <ConfirmModal
                         confirmButtonClassName="button button-outline-negative"
                         confirmButtonLabel="Delete"
                         isOpened={isDeleting}
                         message="Are you sure you want to delete this pattern?"
-                        onClose={this.handleCancelDeleting}
-                        onConfirm={this.handleDelete}
+                        onClose={this._handleCancelDeleting}
+                        onConfirm={this._handleDelete}
                         title={`Delete "${pattern}"`} />
-                </td>
-                <td className="u-text-right">
-                    <button
-                        className="close"
-                        onClick={this.handleStartDeleting} />
                 </td>
             </tr>
         );
     }
-}
 
+    private _handleCancelDeleting = () => {
+        this.setState({
+            isDeleting: false
+        });
+    }
+
+    private _handleDelete = () => {
+        const { onDelete, pattern } = this.props;
+
+        onDelete(pattern);
+    }
+
+    private _handleStartDeleting = () => {
+        this.setState({
+            isDeleting: true
+        });
+    }
+}

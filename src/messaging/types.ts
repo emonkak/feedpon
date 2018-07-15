@@ -21,6 +21,7 @@ export interface State {
     subscriptions: Subscriptions;
     trackingUrls: TrackingUrls;
     ui: UI;
+    urlReplacements: UrlReplacements;
     user: User;
     userSiteinfo: UserSiteinfo;
     version: string;
@@ -127,6 +128,10 @@ export type Event
     | { type: 'TRACKING_URL_PATTERN_ADDED', pattern: string }
     | { type: 'TRACKING_URL_PATTERN_DELETED', pattern: string }
     | { type: 'UNREAD_KEEPING_CHANGED', keepUnread: boolean }
+    | { type: 'URL_REPLACEMENTS_RESERT' }
+    | { type: 'URL_REPLACEMENT_ADDED', item: UrlReplacement }
+    | { type: 'URL_REPLACEMENT_DELETED', index: number }
+    | { type: 'URL_REPLACEMENT_UPDATED', index: number, item: UrlReplacement }
     | { type: 'USER_FETCHED', profile: Profile }
     | { type: 'USER_FETCHING' }
     | { type: 'USER_FETCHING_FAILED' }
@@ -398,6 +403,17 @@ export interface UI {
     sidebarIsOpened: boolean;
     theme: ThemeKind;
     version: number;
+}
+
+export interface UrlReplacements {
+    items: UrlReplacement[];
+    version: number;
+}
+
+export interface UrlReplacement {
+    pattern: string;
+    replacement: string;
+    flags: string;
 }
 
 export interface Histories {
