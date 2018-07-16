@@ -88,11 +88,13 @@ class SharedSiteinfoSettings extends PureComponent<SharedSiteinfoProps, SharedSi
     }
 }
 
-function renderSiteinfoList(children: React.ReactNode, aboveSpace: number, belowSpace: number) {
+function renderSiteinfoList(children: React.ReactNode, blankSpaceAbove: number, blankSpaceBelow: number) {
     return (
         <div className="u-responsive">
-            <ul className="list-group" style={{ paddingTop: aboveSpace, paddingBottom: belowSpace }}>
+            <ul className="list-group">
+                <div style={{ height: blankSpaceAbove }}></div>
                 {children}
+                <div style={{ height: blankSpaceBelow }}></div>
             </ul>
         </div>
     );

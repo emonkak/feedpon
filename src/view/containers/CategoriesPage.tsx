@@ -228,10 +228,12 @@ const ConnectedSubscriptionItem = connect(() => {
     };
 })(SubscriptionItem);
 
-function renderSubscriptionList(children: React.ReactNode, aboveSpace: number, belowSpace: number): React.ReactElement<any> {
+function renderSubscriptionList(children: React.ReactNode, blankSpaceAbove: number, blankSpaceBelow: number): React.ReactElement<any> {
     return (
-        <ul className="list-group" style={{ paddingTop: aboveSpace, paddingBottom: belowSpace }}>
+        <ul className="list-group">
+            <div style={{ height: blankSpaceAbove }}></div>
             {children}
+            <div style={{ height: blankSpaceBelow }}></div>
         </ul>
     );
 }
