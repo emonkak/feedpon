@@ -240,7 +240,7 @@ function renderBookmarks(entry: Entry) {
     return (
         <li className="list-inline-item">
             <a
-                className={classnames('link-soft badge', {
+                className={classnames('link-soft badge badge-medium', {
                     'u-text-negative': entry.bookmarkCount > 0,
                     'badge-negative': entry.bookmarkCount >= 10
                 })}

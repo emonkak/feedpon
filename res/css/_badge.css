@@ -2,10 +2,7 @@
   display: inline-block;
   box-sizing: border-box;
   margin: 0 2px;
-  padding: 0 3px;
   border-radius: 4px;
-  min-width: 20px;
-  line-height: 20px;
   font-weight: bold;
   font-size: 0.875rem;
   text-align: center;
@@ -18,6 +15,13 @@
   min-width: 16px;
   line-height: 16px;
   font-size: 0.75rem;
+}
+
+.badge-medium {
+  padding-left: 3px;
+  padding-right: 3px;
+  min-width: 20px;
+  line-height: 20px;
 }
 
 .badge-large {

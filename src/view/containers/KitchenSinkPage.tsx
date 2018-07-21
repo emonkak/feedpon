@@ -146,9 +146,9 @@ class KitchenSinkPage extends PureComponent<KitchenSinkProps, KitchenSinkState> 
                     <span className="badge badge-small badge-default">Default</span>
                     <span className="badge badge-small badge-positive">Positive</span>
                     <span className="badge badge-small badge-negative">Negative</span>
-                    <span className="badge badge-default">Default</span>
-                    <span className="badge badge-positive">Positive</span>
-                    <span className="badge badge-negative">Negative</span>
+                    <span className="badge badge-medium badge-default">Default</span>
+                    <span className="badge badge-medium badge-positive">Positive</span>
+                    <span className="badge badge-medium badge-negative">Negative</span>
                     <span className="badge badge-large badge-default">Default</span>
                     <span className="badge badge-large badge-positive">Positive</span>
                     <span className="badge badge-large badge-negative">Negative</span>
@@ -159,9 +159,9 @@ class KitchenSinkPage extends PureComponent<KitchenSinkProps, KitchenSinkState> 
                     <span className="badge badge-small badge-pill badge-default">12</span>
                     <span className="badge badge-small badge-pill badge-positive">34</span>
                     <span className="badge badge-small badge-pill badge-negative">56</span>
-                    <span className="badge badge-pill badge-default">12</span>
-                    <span className="badge badge-pill badge-positive">34</span>
-                    <span className="badge badge-pill badge-negative">56</span>
+                    <span className="badge badge-medium badge-pill badge-default">12</span>
+                    <span className="badge badge-medium badge-pill badge-positive">34</span>
+                    <span className="badge badge-medium badge-pill badge-negative">56</span>
                     <span className="badge badge-large badge-pill badge-default">12</span>
                     <span className="badge badge-large badge-pill badge-positive">34</span>
                     <span className="badge badge-large badge-pill badge-negative">56</span>
