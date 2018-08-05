@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import debounce from 'lodash.debounce';
+import throttle from 'lodash.throttle';
 import { findDOMNode } from 'react-dom';
 import { createSelector } from 'reselect';
 
@@ -18,7 +18,7 @@ interface LazyListProps {
     onPositioningUpdated?: (positioning: Positioning) => void;
     renderItem: (item: any, index: number, ref: React.Ref<any>) => React.ReactElement<any>;
     renderList: (items: React.ReactElement<any>[], blankSpaceAbove: number, blankSpaceBelow: number) => React.ReactElement<any>;
-    scrollDebounceTime?: number;
+    scrollThrottleTime?: number;
 }
 
 interface LazyListState {
@@ -65,7 +65,7 @@ export default class LazyList extends Component<LazyListProps, LazyListState, Po
         initialHeights: {},
         initialItemIndex: -1,
         offscreenToViewportRatio: 1.8,
-        scrollDebounceTime: 100
+        scrollThrottleTime: 100
     };
 
     static getDerivedStateFromProps(nextProps: LazyListProps, prevState: LazyListState) {
@@ -115,9 +115,9 @@ export default class LazyList extends Component<LazyListProps, LazyListState, Po
             scrollingItemIndex: props.initialItemIndex!
         };
 
-        this._handleScroll = debounce(
+        this._handleScroll = throttle(
             createScheduledTask(() => this._update(), window.requestAnimationFrame),
-            props.scrollDebounceTime!,
+            props.scrollThrottleTime!,
             {
                 trailing: true
             }
