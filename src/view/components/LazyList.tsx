@@ -509,7 +509,7 @@ function getInitialSlice(props: LazyListProps, heights: { [id: string]: number }
     const sliceStart = Math.max(0, initialItemIndex);
     let sliceEnd = sliceStart;
 
-    for (let i = sliceEnd + 1,
+    for (let i = sliceEnd,
              l = items.length,
              space = viewportHeight;
         i < l && space > 0;
