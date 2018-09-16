@@ -268,11 +268,11 @@ export default class LazyList extends Component<LazyListProps, LazyListState, Po
 
         if (scrollOffset !== 0) {
             window.scrollBy(0, scrollOffset);
-        } else {
-            this.setState({
-                scrollingItemIndex: -1
-            });
         }
+
+        this.setState({
+            scrollingItemIndex: -1
+        });
     }
 
     private _adjestScrollPosition(): void {
