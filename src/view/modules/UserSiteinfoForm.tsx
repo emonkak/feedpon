@@ -79,7 +79,7 @@ export default class UserSiteinfoForm extends PureComponent<UserSiteinfoFormProp
 
         this.setState({
             [name]: value
-        });
+        } as any);
     }
 
     render() {

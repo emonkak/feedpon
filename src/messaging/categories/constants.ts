@@ -1,1 +1,1 @@
-export const UNCATEGORIZED = Symbol();
+export const UNCATEGORIZED = '@@UNCATEGORIZED';
