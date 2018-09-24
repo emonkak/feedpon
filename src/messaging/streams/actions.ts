@@ -839,8 +839,9 @@ function expandUrls(urls: string[]): AsyncThunk<string[]> {
         }
 
         const { results } = await queue.getResults();
+        const urlReplacer = dispatch(getUrlReplacer());
         const expandedUrls = results.reduce<{ [key: string]: string }>((acc, { originalUrl, expandedUrl }) => {
-            acc[originalUrl] = expandedUrl;
+            acc[originalUrl] = urlReplacer(expandedUrl);
             return acc;
         }, {});
 
@@ -854,20 +855,8 @@ function expandUrls(urls: string[]): AsyncThunk<string[]> {
 }
 
 function getEntryConverter(): Thunk<(entry: feedly.Entry) => Entry> {
-    return ({ getState }) => {
-        const { urlReplacements } = getState();
-
-        const urlReplacer = urlReplacements.items
-            .reduce<(url: string) => string>((func, item) => {
-                try {
-                    const pattern = new RegExp(item.pattern, item.flags);
-                    const replacement = item.replacement;
-                    return (url) => func(url).replace(pattern, replacement);
-                } catch (e) {
-                    console.error(e);
-                    return func;
-                }
-            }, (url) => url);
+    return ({ getState, dispatch }) => {
+        const urlReplacer = dispatch(getUrlReplacer());
 
         return (entry) => ({
             entryId: entry.id,
@@ -902,6 +891,25 @@ function getEntryConverter(): Thunk<(entry: feedly.Entry) => Entry> {
         });
     };
 }
+
+function getUrlReplacer(): Thunk<(url: string) => string> {
+    return ({ getState }) => {
+        const { urlReplacements } = getState();
+
+        return urlReplacements.items
+            .reduce<(url: string) => string>((func, item) => {
+                try {
+                    const pattern = new RegExp(item.pattern, item.flags);
+                    const replacement = item.replacement;
+                    return (url) => func(url).replace(pattern, replacement);
+                } catch (e) {
+                    console.error(e);
+                    return func;
+                }
+            }, (url) => url);
+    };
+}
+
 
 function toFeedlyStreamId(streamId: string, uid: string): string {
     switch (streamId) {
