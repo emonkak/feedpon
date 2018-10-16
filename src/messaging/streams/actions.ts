@@ -615,7 +615,7 @@ function fetchFeedStream(streamId: string, streamView: StreamViewKind, fetchOpti
         const stream = {
             streamId,
             category: null,
-            title: feed.title || feed.website || feed.id.replace(/^feed\//, ''),
+            title: feed.title || feed.website || (feed.id || '').replace(/^feed\//, ''),
             fetchedAt,
             entries: contents.items.map(entryConverter),
             continuation: contents.continuation || null,
@@ -625,7 +625,7 @@ function fetchFeedStream(streamId: string, streamView: StreamViewKind, fetchOpti
                 title: feed.title,
                 description: feed.description || '',
                 url: feed.website || '',
-                feedUrl: feed.id.replace(/^feed\//, ''),
+                feedUrl: (feed.id || '').replace(/^feed\//, ''),
                 iconUrl: feed.iconUrl || '',
                 subscribers: feed.subscribers || 0,
                 isLoading: false
