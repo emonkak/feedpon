@@ -85,7 +85,7 @@ export default class LazyList extends Component<LazyListProps, LazyListState, Po
         if (item && lastItem && item[idAttribute] === lastItem[idAttribute]) {
             return {
                 sliceStart,
-                sliceEnd: Math.min(lastItems.length, sliceEnd),
+                sliceEnd: Math.min(items.length, sliceEnd),
                 lastItems: items
             };
         } else {
