@@ -3,6 +3,7 @@
 /// <reference path="./intl-relativeformat.d.ts" />
 /// <reference path="./intl.d.ts" />
 /// <reference path="./object.values.d.ts" />
+/// <reference path="./readability.d.ts" />
 /// <reference path="./requestIdleCallback.d.ts" />
 
 declare var process: {

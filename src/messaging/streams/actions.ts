@@ -1,3 +1,5 @@
+import Readability from 'readability';
+
 import * as bookmarkApi from 'adapters/hatena/bookmarkApi';
 import * as feedly from 'adapters/feedly/types';
 import * as feedlyApi from 'adapters/feedly/api';
@@ -216,6 +218,14 @@ export function fetchFullContent(entryId: string | number, url: string): AsyncTh
                         if (content && nextPageUrl) {
                             break;
                         }
+                    }
+                }
+
+                if (!content) {
+                    const readabilityArticle = new Readability(parsedDocument).parse();
+
+                    if (readabilityArticle) {
+                        content = readabilityArticle.content;
                     }
                 }
             }
