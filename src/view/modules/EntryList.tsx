@@ -6,6 +6,7 @@ import LazyList, { Positioning, ViewportRectangle } from 'view/components/LazyLi
 import { Entry, StreamViewKind } from 'messaging/types';
 import { ExpandedEntryPlaceholder, CollapsedEntryPlaceholder } from 'view/modules/EntryPlaceholder';
 import { getScrollOffset } from 'messaging/domActions';
+import { isScrolling } from 'utils/dom/smoothScroll';
 
 interface EntryListProps {
     activeEntryIndex: number;
@@ -87,7 +88,8 @@ export default class EntryList extends PureComponent<EntryListProps> {
                 onPositioningUpdated={this._handlePositioningUpdated}
                 ref={this._handleLazyList}
                 renderItem={this._renderEntry}
-                renderList={renderList} />
+                renderList={renderList}
+                shouldUpdate={shouldUpdateLazyList} />
         );
     }
 
@@ -229,4 +231,8 @@ function getActiveIndex(positioning: Positioning): number {
     }
 
     return activeIndex;
+}
+
+function shouldUpdateLazyList() {
+    return !isScrolling(window);
 }

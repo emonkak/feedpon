@@ -19,6 +19,7 @@ interface LazyListProps {
     renderItem: (item: any, index: number, ref: React.Ref<any>) => React.ReactElement<any>;
     renderList: (items: React.ReactElement<any>[], blankSpaceAbove: number, blankSpaceBelow: number) => React.ReactElement<any>;
     scrollThrottleTime?: number;
+    shouldUpdate?: () => boolean;
 }
 
 interface LazyListState {
@@ -65,7 +66,8 @@ export default class LazyList extends Component<LazyListProps, LazyListState, Po
         initialHeights: {},
         initialItemIndex: -1,
         offscreenToViewportRatio: 1.8,
-        scrollThrottleTime: 100
+        scrollThrottleTime: 100,
+        shouldUpdate: () => true
     };
 
     static getDerivedStateFromProps(nextProps: LazyListProps, prevState: LazyListState) {
@@ -212,6 +214,11 @@ export default class LazyList extends Component<LazyListProps, LazyListState, Po
 
     private _update(): void {
         if (this._isUnmounted) {
+            return;
+        }
+
+        const { shouldUpdate } = this.props;
+        if (!shouldUpdate!()) {
             return;
         }
 

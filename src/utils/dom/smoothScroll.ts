@@ -26,6 +26,10 @@ export function smoothScrollBy(el: HTMLElement | Window, dx: number, dy: number,
     }
 }
 
+export function isScrolling(scrollable: object): boolean {
+    return runningAnimations.has(scrollable);
+}
+
 function smoothScroll<TScrollable extends object>(
     scrollable: TScrollable,
     scroll: (scrollable: TScrollable, x: number, y: number) => void,
@@ -39,7 +43,6 @@ function smoothScroll<TScrollable extends object>(
 
     if (runningAnimation) {
         cancelAnimationFrame(runningAnimation.requestId);
-        runningAnimations.delete(scrollable);
     }
 
     if (startX === x && startY === y) {
