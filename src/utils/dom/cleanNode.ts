@@ -27,10 +27,6 @@ function cleanElement(element: Element, baseUrl: string): boolean {
             break;
     }
 
-    if (!sanitizeElement(element)) {
-        return false;
-    }
-
     for (const attrName in URI_ATTRS) {
         if (element.hasAttribute(attrName)) {
             element.setAttribute(attrName, qualifyUrl(element.getAttribute(attrName)!, baseUrl));
@@ -41,6 +37,10 @@ function cleanElement(element: Element, baseUrl: string): boolean {
         if (element.hasAttribute(attrName)) {
             element.setAttribute(attrName, qualifySrcset(element.getAttribute(attrName)!, baseUrl));
         }
+    }
+
+    if (!sanitizeElement(element)) {
+        return false;
     }
 
     switch (element.tagName) {
