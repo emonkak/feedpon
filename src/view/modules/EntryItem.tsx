@@ -9,7 +9,7 @@ import FullContents from 'view/modules/FullContents';
 import RelativeTime from 'view/components/RelativeTime';
 import { Entry } from 'messaging/types';
 
-interface EntryProps {
+interface EntryItemProps {
     entry: Entry;
     index: number;
     isActive: boolean;
@@ -40,7 +40,7 @@ interface CollapsedEntryContentProps {
     sameOrigin: boolean;
 }
 
-export default class EntryComponent extends PureComponent<EntryProps> {
+export default class EntryItem extends PureComponent<EntryItemProps> {
     render() {
         const { entry, isActive, isExpanded } = this.props;
 

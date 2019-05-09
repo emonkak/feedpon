@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import { createSelector } from 'reselect';
 
-import EntryFrame from 'view/modules/Entry';
+import EntryItem from 'view/modules/EntryItem';
 import LazyList, { Positioning, ViewportRectangle } from 'view/components/LazyList';
 import { Entry, StreamViewKind } from 'messaging/types';
 import { ExpandedEntryPlaceholder, CollapsedEntryPlaceholder } from 'view/modules/EntryPlaceholder';
@@ -99,7 +99,7 @@ export default class EntryList extends PureComponent<EntryListProps> {
         }
     }
 
-    private _renderEntry = (renderingItem: RenderingItem, index: number, ref: React.Ref<EntryFrame>) => {
+    private _renderEntry = (renderingItem: RenderingItem, index: number, ref: React.Ref<EntryItem>) => {
         const {
             onExpand,
             onFetchComments,
@@ -114,7 +114,7 @@ export default class EntryList extends PureComponent<EntryListProps> {
         const { entry, isActive, isExpanded, sameOrigin } = renderingItem;
 
         return (
-            <EntryFrame
+            <EntryItem
                 ref={ref}
                 entry={entry}
                 index={index}
