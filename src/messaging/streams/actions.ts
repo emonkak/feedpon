@@ -205,6 +205,11 @@ export function fetchFullContent(entryId: string | number, url: string): AsyncTh
                 const parsedDocument = new DOMParser().parseFromString(responseText, 'text/html');
                 const siteinfoItems = await dispatch(getSiteinfoItems());
 
+                const baseElement = parsedDocument.createElement('base');
+                baseElement.setAttribute('href', response.url);
+
+                parsedDocument.head.appendChild(baseElement);
+
                 for (const item of siteinfoItems) {
                     if (tryMatch(item.urlPattern, response.url)) {
                         if (!content) {
