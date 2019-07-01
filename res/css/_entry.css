@@ -71,6 +71,9 @@
 
 .entry-content {
   margin: 0 0 var(--vertical-rhythm);
+}
+
+.entry-content p {
   hyphens: auto;
   text-align: justify;
 }
