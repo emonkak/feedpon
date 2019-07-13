@@ -19,9 +19,9 @@ export const ALLOWED_ELEMENTS = Object.assign({
     ...INLINE_ELEMENTS
 });
 
-export const URI_ATTRS = keyMirror(['background', 'cite', 'href', 'longdesc', 'src', 'usemap', 'xlink:href']);
+export const URI_ATTRS = keyMirror(['background', 'cite', 'href', 'longdesc', 'src', 'usemap', 'xlink:href', 'data-src']);
 
-export const SRCSET_ATTRS = keyMirror(['srcset']);
+export const SRCSET_ATTRS = keyMirror(['srcset', 'data-srcset']);
 
 export const HTML_ATTRS = keyMirror(['abbr', 'accesskey', 'align', 'alt', 'autoplay', 'axis', 'bgcolor', 'border', 'cellpadding', 'cellspacing', 'clear', 'color', 'cols', 'colspan',  'compact', 'controls', 'coords', 'datetime', 'default', 'dir', 'download', 'face', 'headers', 'height', 'hidden', 'hreflang', 'hspace',  'ismap', 'itemprop', 'itemscope', 'kind', 'label', 'lang', 'language', 'loop', 'media', 'muted', 'nohref', 'nowrap', 'open', 'preload', 'rel', 'rev', 'role', 'rows', 'rowspan', 'rules',  'scope', 'scrolling', 'shape', 'size', 'sizes', 'span', 'srclang', 'start', 'summary', 'tabindex', 'target', 'title', 'translate', 'type', 'usemap',  'valign', 'value', 'vspace', 'width']);
 
