@@ -262,9 +262,9 @@ export interface Origin {
 
 export interface Visual {
     url: string;
-    width: number;
-    height: number;
-    contentType: string;
+    width?: number;
+    height?: number;
+    contentType?: string;
 }
 
 // Subscriptions API:

@@ -217,21 +217,29 @@ const CollapsedEntryContent: React.SFC<CollapsedEntryContentProps> = ({
 }) => {
     return (
         <div className="container">
-            <header className="entry-header">
-                <h2 className="entry-title">
-                    <a className="link-soft" target="_blank" href={entry.url}>{entry.title || 'No Title'}</a>
-                    {renderReadMarker(entry)}
-                </h2>
-                <div className="entry-metadata">
-                    <ul className="list-inline list-inline-dotted">
-                        {renderBookmarks(entry)}
-                        {renderOrign(entry, sameOrigin)}
-                        {renderAuthor(entry)}
-                        {renderPublishedAt(entry)}
-                    </ul>
+            <div className="u-flex">
+                <div className="u-flex-grow-1 u-flex-truncate">
+                    <header className="entry-header">
+                        <h2 className="entry-title">
+                            <a className="link-soft" target="_blank" href={entry.url}>{entry.title || 'No Title'}</a>
+                            {renderReadMarker(entry)}
+                        </h2>
+                        <div className="entry-metadata">
+                            <ul className="list-inline list-inline-dotted">
+                                {renderBookmarks(entry)}
+                                {renderOrign(entry, sameOrigin)}
+                                {renderAuthor(entry)}
+                                {renderPublishedAt(entry)}
+                            </ul>
+                        </div>
+                    </header>
+                    <div className="entry-summary">{entry.summary}</div>
                 </div>
-            </header>
-            <div className="entry-summary">{entry.summary}</div>
+                <div className="entry-visual">
+                    {entry.visual &&
+                        <img src={entry.visual.url} width={entry.visual.width} height={entry.visual.height} />}
+                </div>
+            </div>
         </div>
     );
 };

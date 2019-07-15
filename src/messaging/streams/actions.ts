@@ -890,6 +890,11 @@ function getEntryConverter(): Thunk<(entry: feedly.Entry) => Entry> {
                 title: entry.origin.title,
                 url: entry.origin.htmlUrl
             } : null,
+            visual: entry.visual && entry.visual.contentType && entry.visual.contentType.startsWith('image/') ? {
+                url: entry.visual.url,
+                width: entry.visual.width,
+                height: entry.visual.height
+            } : null,
             fullContents: {
                 isLoaded: false,
                 isLoading: false,
@@ -924,7 +929,6 @@ function getUrlReplacer(): Thunk<(url: string) => string> {
             }, (url) => url);
     };
 }
-
 
 function toFeedlyStreamId(streamId: string, uid: string): string {
     switch (streamId) {

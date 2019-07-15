@@ -121,3 +121,17 @@
 .entry-page-title::after {
   left: 100%;
 }
+
+.entry-visual {
+  flex: 0 0 calc(var(--vertical-rhythm) * 4);
+  height: calc(var(--vertical-rhythm) * 3);
+  line-height: 0;
+  margin-left: 1em;
+}
+
+.entry-visual > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 4px;
+}

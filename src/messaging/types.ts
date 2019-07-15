@@ -268,6 +268,7 @@ export interface Entry {
     isPinning: boolean;
     markedAsRead: boolean;
     origin: Origin | null;
+    visual: Visual | null;
     fullContents: FullContents;
     comments: Comments;
 }
@@ -276,6 +277,12 @@ export interface Origin {
     streamId: string;
     title: string;
     url: string;
+}
+
+export interface Visual {
+    url: string;
+    width?: number;
+    height?: number;
 }
 
 export interface FullContents {
