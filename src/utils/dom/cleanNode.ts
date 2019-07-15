@@ -1,4 +1,5 @@
 import { SRCSET_ATTRS, URI_ATTRS, sanitizeElement } from './htmlSanitizer';
+import parseSrcset from './parseSrcset';
 
 const MINIUM_RESPONSIVE_ELEMENT_WIDTH = 128;
 const MINIUM_RESPONSIVE_ELEMENT_HEIGHT = 128;
@@ -78,12 +79,10 @@ function qualifyUrl(urlString: string, baseUrlString: string): string {
 }
 
 function qualifySrcset(srcsetString: string, baseUrlString: string): string {
-    return srcsetString
-        .split(',')
-        .map((url) => {
-            const [first, second] = url.trim().split(' ', 2);
-            return qualifyUrl(first, baseUrlString) + ' ' + (second || '');
-        })
+    return parseSrcset(srcsetString)
+        .map(({ url, descriptor }) => 
+            qualifyUrl(url, baseUrlString) + (descriptor ? ' ' + descriptor : '')
+        )
         .join(',');
 }
 

@@ -1,3 +1,5 @@
+import parseSrcset from './parseSrcset';
+
 // Safe Void Elements - HTML5
 // http://dev.w3.org/html5/spec/Overview.html#void-elements
 export const VOID_ELEMENTS = keyMirror(['area', 'br', 'col', 'hr', 'img', 'wbr']);
@@ -72,12 +74,10 @@ function sanitizeUrl(urlString: string): string {
 }
 
 function sanitizeSrcset(srcsetString: string): string {
-    return srcsetString
-        .split(',')
-        .map((url) => {
-            const [first, second] = url.trim().split(' ', 2);
-            return sanitizeUrl(first.trim()) + ' ' + (second || '');
-        })
+    return parseSrcset(srcsetString)
+        .map(({ url, descriptor }) => 
+            sanitizeUrl(url) + (descriptor ? ' ' + descriptor : '')
+        )
         .join(',');
 }
 
