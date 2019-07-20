@@ -93,6 +93,12 @@ function resolveLazyLoading(element: HTMLImageElement): void {
     if (element.dataset.srcset) {
         element.srcset = element.dataset.srcset;
     }
+    if (element.dataset.lazySrc) {
+        element.src = element.dataset.lazySrc;
+    }
+    if (element.dataset.lazySrcset) {
+        element.srcset = element.dataset.lazySrcset;
+    }
 }
 
 function responsify(element: HTMLElement & { width: number, height: number }): void {
