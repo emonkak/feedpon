@@ -1,4 +1,4 @@
-const SPLIT_PATTERN = /(?<=\S+\s+(?:[+-]?\d+(?:\.\d+)?[wx])?)\s*,\s*|(?<=\S+),\s+/g;
+const SPLIT_PATTERN = /,\s+/g;
 const SPACES_PATTERN = /\s+/;
 
 export default function parseSrcset(input: string): { url: string, descriptor?: string }[] {
