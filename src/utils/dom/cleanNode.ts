@@ -83,7 +83,7 @@ function qualifySrcset(srcsetString: string, baseUrlString: string): string {
         .map(({ url, descriptor }) => 
             qualifyUrl(url, baseUrlString) + (descriptor ? ' ' + descriptor : '')
         )
-        .join(',');
+        .join(', ');
 }
 
 function resolveLazyLoading(element: HTMLImageElement): void {

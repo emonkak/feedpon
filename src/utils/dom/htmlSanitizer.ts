@@ -78,7 +78,7 @@ function sanitizeSrcset(srcsetString: string): string {
         .map(({ url, descriptor }) => 
             sanitizeUrl(url) + (descriptor ? ' ' + descriptor : '')
         )
-        .join(',');
+        .join(', ');
 }
 
 function isAllowedElement(tagName: string): boolean {
