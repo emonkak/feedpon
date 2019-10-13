@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <widget id="io.github.emonkak.feedpon" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Feedpon</name>
-    <description>A feed reader which was developed for me</description>
+    <description>A LDR inspired feed reader</description>
     <author email="emonkak@gmail.com" href="http://github.com/emonkak">Shota Nozaki</author>
     <content src="http://localhost:49000" />
     <access origin="*" />

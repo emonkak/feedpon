@@ -1,6 +1,6 @@
 <img src="./www/img/logo.svg" alt="Feedpon" width="320">
 
-Feedpon is a feed reader developed for me.
+Feedpon is a [LDR](http://reader.livedoor.com/) inspired feed reader.
 
 This extension uses Feedly as a backend.
 Therefore you will need a Feedly account.

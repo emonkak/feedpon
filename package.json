@@ -1,7 +1,7 @@
 {
   "name": "feedpon",
-  "version": "2.0.3",
-  "description": "A feed reader for me",
+  "version": "2.0.4",
+  "description": "A LDR inspired feed reader",
   "author": "Shota Nozaki",
   "license": "MIT",
   "private": true,
