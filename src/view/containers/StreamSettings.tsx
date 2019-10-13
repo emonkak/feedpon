@@ -107,6 +107,7 @@ class StreamSettings extends PureComponent<StreamSettingsProps, StreamSettingsSt
                             <input
                                 type="radio"
                                 className="form-check"
+                                name="defaultStreamView"
                                 value="expanded"
                                 checked={streamView === 'expanded'}
                                 onChange={this._handleChangeStreamView}
@@ -116,6 +117,7 @@ class StreamSettings extends PureComponent<StreamSettingsProps, StreamSettingsSt
                             <input
                                 type="radio"
                                 className="form-check"
+                                name="defaultStreamView"
                                 value="collapsible"
                                 checked={streamView === 'collapsible'}
                                 onChange={this._handleChangeStreamView}
