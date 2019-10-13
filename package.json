@@ -10,7 +10,7 @@
     "url": "https://github.com/emonkak/feedpon.git"
   },
   "scripts": {
-    "build": "npm-run-all build:dir -p build:css build:js -p build:cordova build:webextension -s build:zip",
+    "build": "npm-run-all build:dir -p build:css build:js -p build:webextension -s build:zip",
     "build:cordova": "cp build/{index,runtime}.js www/js && cp build/index.css www/css && cordova prepare",
     "build:css": "postcss -o build/index.css res/css/index.css",
     "build:dir": "mkdir -p build dist www/{css,js} webextension/{css,js}",
