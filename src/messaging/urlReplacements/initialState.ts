@@ -13,6 +13,11 @@ const urlReplacements: UrlReplacements = {
             flags: ''
         },
         {
+            pattern: '^http://jbpress\\.ismedia\\.jp',
+            replacement: 'https://jbpress.ismedia.jp',
+            flags: ''
+        },
+        {
             pattern: '[?&]utm_(?:source|medium|term|content|campaign)=[^&]*',
             replacement: '',
             flags: 'g'
