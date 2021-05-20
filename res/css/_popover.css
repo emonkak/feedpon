@@ -76,7 +76,6 @@
   clip: rect(-1px 15px 15px -1px);
 }
 
-.popover-enter.popover-enter-active,
 .popover-exit.popover-exit-active {
   transition: opacity 0.2s ease-in-out;
 }
