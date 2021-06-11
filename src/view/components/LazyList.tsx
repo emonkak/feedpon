@@ -101,8 +101,6 @@ export default class LazyList extends Component<LazyListProps, LazyListState, Po
 
     private _heights: { [id: string]: number } = {};
 
-    private _prevPositioning: Positioning | null = null;
-
     private _ref: LazyListRenderer | null = null;
 
     private _isUnmounted: boolean = false;
@@ -155,8 +153,6 @@ export default class LazyList extends Component<LazyListProps, LazyListState, Po
     }
 
     componentDidUpdate(prevProps: LazyListProps, prevState: LazyListState, snapshot: Positioning) {
-        this._prevPositioning = snapshot;
-
         this._postRenderProcessing(prevProps.items !== this.props.items);
     }
 
@@ -207,7 +203,6 @@ export default class LazyList extends Component<LazyListProps, LazyListState, Po
         if (scrollingItemIndex > -1) {
             this._updateScrollIndex(scrollingItemIndex);
         } else if (wasHeightChanged || hasItemsChanged) {
-            this._adjestScrollPosition();
             this._scheduleUpdate();
         }
     }
@@ -280,17 +275,6 @@ export default class LazyList extends Component<LazyListProps, LazyListState, Po
         this.setState({
             scrollingItemIndex: -1
         });
-    }
-
-    private _adjestScrollPosition(): void {
-        if (this._prevPositioning) {
-            const viewportRectangle = this._getRelativeViewportRectangle();
-            const positioning = this._getPositioning(this.props, this.state, viewportRectangle);
-            const adjustmentDelta = getScrollAdjustmentDelta(this._prevPositioning, positioning);
-            if (adjustmentDelta !== 0) {
-                window.scrollBy(0, adjustmentDelta);
-            }
-        }
     }
 
     private _computeBlankSpace(sliceStart: number, sliceEnd: number): BlankSpace {
@@ -463,39 +447,6 @@ function createScheduledTask(task: () => void, scheduler: (task: () => void) => 
     };
 }
 
-function getScrollAdjustmentDelta(prevPos: Positioning, nextPos: Positioning): number {
-    const anchorIndex = getAnchorIndex(prevPos);
-
-    if (nextPos.sliceStart <= anchorIndex && anchorIndex < nextPos.sliceEnd) {
-        const prevId = prevPos.items[anchorIndex][prevPos.idAttribute];
-        const nextId = nextPos.items[anchorIndex][nextPos.idAttribute];
-
-        if (prevId === nextId) {
-            const prevRectangle = prevPos.rectangles[anchorIndex];
-            const nextRectangle = nextPos.rectangles[anchorIndex];
-
-            const prevOffset = prevRectangle.top - prevPos.viewportRectangle.top;
-            const nextOffset = nextRectangle.top - nextPos.viewportRectangle.top;
-
-            return nextOffset > prevOffset
-                ? Math.ceil(nextOffset - prevOffset)
-                : Math.floor(nextOffset - prevOffset);
-        }
-    }
-
-    return 0;
-}
-
-function getAnchorIndex(pos: Positioning): number {
-    for (let i = pos.sliceStart; i < pos.sliceEnd; i++) {
-        if (intersects(pos.rectangles[i], pos.viewportRectangle)) {
-            return i;
-        }
-    }
-
-    return -1;
-}
-
 function getHeightForDomNode(element: HTMLElement): number {
     return element.getBoundingClientRect().height;
 }
@@ -533,8 +484,4 @@ function getInitialSlice(props: LazyListProps, heights: { [id: string]: number }
         sliceStart,
         sliceEnd
     };
-}
-
-function intersects(first: Rectangle, second: Rectangle): boolean {
-    return first.top <= second.bottom && first.bottom >= second.top;
 }

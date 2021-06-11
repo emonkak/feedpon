@@ -1,7 +1,3 @@
-.entry-list > * {
-  overflow-anchor: none;
-}
-
 .entry {
   padding: calc(var(--vertical-rhythm) / 2) 0 calc(var(--vertical-rhythm) / 2 - 1px);
   border-bottom: 1px solid var(--medium-dark-color);
