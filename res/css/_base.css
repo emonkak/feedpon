@@ -10,7 +10,7 @@
 
 html, body {
   -webkit-text-size-adjust: 100%;
-  font-family: -apple-system, BlinkMacSystemFont, '.SFNSText-Regular', 'San Francisco Text', 'Segoe UI', Helvetica, YuGothic, 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, '.SFNSText-Regular', 'San Francisco Text', 'Segoe UI', Helvetica, 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
   font-size: 14px;
   font-weight: normal;
   line-height: var(--vertical-rhythm);
