@@ -28,7 +28,7 @@ class NotificationList extends PureComponent<NotificationListProps> {
                         onDismiss={onDismissNotification} />
                 </div>
             </CSSTransition>
-        )
+        );
     }
 
     render() {

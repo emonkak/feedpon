@@ -169,7 +169,7 @@ export class TreeLeaf extends PureComponent<TreeLeafProps, TreeLeafState> {
     }
 }
 
-function shouldExpand(child: React.ReactChild): boolean {
+function shouldExpand(child: React.ReactNode): boolean {
     if (isValidElement(child)) {
         const type = child.type as any;
         if (type === TreeLeaf) {

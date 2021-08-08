@@ -36,29 +36,29 @@ $lg-viewport-min-width: 992px;
   --default-color: $x-dark-color;
   --default-background-color: $x-light-color;
   --default-border-color: $medium-dark-color;
-  --default-hover-color: color($x-dark-color lightness(+5%));
-  --default-active-color: color($x-dark-color lightness(+5%) alpha(90%));
-  --default-outline-color: color($medium-dark-color alpha(50%));
+  --default-hover-color: color-mod($x-dark-color lightness(+5%));
+  --default-active-color: color-mod($x-dark-color lightness(+5%) alpha(90%));
+  --default-outline-color: color-mod($medium-dark-color alpha(50%));
 
   --positive-color: $positive-color;
   --positive-background-color: $positive-background-color;
   --positive-border-color: $positive-color;
-  --positive-hover-color: color($positive-color lightness(+5%));
-  --positive-active-color: color($positive-color lightness(+5%) alpha(90%));
-  --positive-outline-color: color($positive-color alpha(50%));
+  --positive-hover-color: color-mod($positive-color lightness(+5%));
+  --positive-active-color: color-mod($positive-color lightness(+5%) alpha(90%));
+  --positive-outline-color: color-mod($positive-color alpha(50%));
 
   --negative-color: $negative-color;
   --negative-background-color: $negative-background-color;
   --negative-border-color: $negative-color;
-  --negative-hover-color: color($negative-color lightness(+5%));
-  --negative-active-color: color($negative-color lightness(+5%) alpha(90%));
-  --negative-outline-color: color($negative-color alpha(50%));
+  --negative-hover-color: color-mod($negative-color lightness(+5%));
+  --negative-active-color: color-mod($negative-color lightness(+5%) alpha(90%));
+  --negative-outline-color: color-mod($negative-color alpha(50%));
 
   --backdrop-color: $x-light-color;
   --backdrop-background-color: rgba(0, 0, 0, 0.75);
 
-  --shadow-color: color($x-dark-color alpha(15%));
-  --transparent-color: color($x-light-color alpha(90%));
+  --shadow-color: color-mod($x-dark-color alpha(15%));
+  --transparent-color: color-mod($x-light-color alpha(90%));
 }
 
 .theme-dark {
@@ -85,26 +85,26 @@ $lg-viewport-min-width: 992px;
   --default-color: $x-light-color;
   --default-background-color: $x-dark-color;
   --default-border-color: $medium-light-color;
-  --default-hover-color: color($x-light-color lightness(-10%));
-  --default-active-color: color($x-light-color lightness(-10%) alpha(90%));
-  --default-outline-color: color($x-light-color alpha(50%));
+  --default-hover-color: color-mod($x-light-color lightness(-10%));
+  --default-active-color: color-mod($x-light-color lightness(-10%) alpha(90%));
+  --default-outline-color: color-mod($x-light-color alpha(50%));
 
   --positive-color: $positive-color;
   --positive-background-color: $positive-background-color;
   --positive-border-color: $positive-color;
-  --positive-hover-color: color($positive-color lightness(-10%));
-  --positive-active-color: color($positive-color lightness(-10%) alpha(90%));
-  --positive-outline-color: color($positive-color alpha(50%));
+  --positive-hover-color: color-mod($positive-color lightness(-10%));
+  --positive-active-color: color-mod($positive-color lightness(-10%) alpha(90%));
+  --positive-outline-color: color-mod($positive-color alpha(50%));
 
   --negative-color: $negative-color;
   --negative-background-color: $negative-background-color;
   --negative-border-color: $negative-color;
-  --negative-hover-color: color($negative-color lightness(-10%));
-  --negative-active-color: color($negative-color lightness(-10%) alpha(90%));
+  --negative-hover-color: color-mod($negative-color lightness(-10%));
+  --negative-active-color: color-mod($negative-color lightness(-10%) alpha(90%));
 
   --backdrop-color: $x-light-color;
   --backdrop-background-color: rgba(0, 0, 0, 0.75);
 
   --shadow-color: rgba(0, 0, 0, 0.50);
-  --transparent-color: color($x-dark-color alpha(90%));
+  --transparent-color: color-mod($x-dark-color alpha(90%));
 }

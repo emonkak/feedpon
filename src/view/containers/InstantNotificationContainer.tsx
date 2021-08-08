@@ -59,7 +59,7 @@ class InstantNotificationContainer extends PureComponent<InstantNotificationCont
         if (instantNotification.dismissAfter > 0) {
             const { onDismissInstantNotification } = this.props;
 
-            this._timer = setTimeout(() => {
+            this._timer = window.setTimeout(() => {
                 onDismissInstantNotification();
                 this._timer = null;
             }, instantNotification.dismissAfter);
@@ -73,7 +73,7 @@ class InstantNotificationContainer extends PureComponent<InstantNotificationCont
 
     private _stopTimer() {
         if (this._timer !== null) {
-            clearTimeout(this._timer);
+            window.clearTimeout(this._timer);
             this._timer = null;
         }
     }

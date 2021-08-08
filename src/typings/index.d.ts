@@ -1,8 +1,4 @@
 /// <reference path="./cordova-plugins.d.ts" />
-/// <reference path="./fbjs.d.ts" />
-/// <reference path="./intl-relativeformat.d.ts" />
-/// <reference path="./intl.d.ts" />
-/// <reference path="./object.values.d.ts" />
 /// <reference path="./readability.d.ts" />
 /// <reference path="./requestIdleCallback.d.ts" />
 

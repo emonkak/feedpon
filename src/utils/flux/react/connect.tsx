@@ -61,7 +61,7 @@ export default function connect<TStateProps, TDispatchProps, TOwnProps>(
 
             private _renderChild = (context: StoreContext) => {
                 return this._renderer(context, this.props);
-            };
+            }
         };
     };
 }

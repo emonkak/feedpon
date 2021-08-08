@@ -174,7 +174,7 @@ class Sidebar extends PureComponent<SidebarProps> {
         const { router } = this.props;
 
         router.push('/categories/');
-    };
+    }
 }
 
 function renderSubscriptionCandidates(subscriptions: Subscription[], query: string) {

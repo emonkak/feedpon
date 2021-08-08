@@ -21,7 +21,7 @@ export default class NotificationComponent extends PureComponent<NotificationPro
         const { notification, onDismiss } = this.props;
 
         if (notification.dismissAfter > 0) {
-            this.timer = setTimeout(() => {
+            this.timer = window.setTimeout(() => {
                 onDismiss(notification.id);
                 this.timer = null;
             }, notification.dismissAfter);
@@ -30,7 +30,7 @@ export default class NotificationComponent extends PureComponent<NotificationPro
 
     componentWillUnmount() {
         if (this.timer !== null) {
-            clearTimeout(this.timer);
+            window.clearTimeout(this.timer);
             this.timer = null;
         }
     }

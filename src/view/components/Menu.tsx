@@ -184,4 +184,4 @@ export class MenuForm extends PureComponent<MenuFormProps, {}> {
             delegate();
         }
     }
-};
+}

@@ -75,7 +75,7 @@ function sanitizeUrl(urlString: string): string {
 
 function sanitizeSrcset(srcsetString: string): string {
     return parseSrcset(srcsetString)
-        .map(({ url, descriptor }) => 
+        .map(({ url, descriptor }) =>
             sanitizeUrl(url) + (descriptor ? ' ' + descriptor : '')
         )
         .join(', ');

@@ -1,5 +1,5 @@
-import filterObject from 'fbjs/lib/filterObject';
-import mapObject from 'fbjs/lib/mapObject';
+import filterObject from 'utils/filterObject';
+import mapObject from 'utils/mapObject';
 
 import { Event, Subscription, Subscriptions } from 'messaging/types';
 

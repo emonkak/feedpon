@@ -80,7 +80,7 @@ function qualifyUrl(urlString: string, baseUrlString: string): string {
 
 function qualifySrcset(srcsetString: string, baseUrlString: string): string {
     return parseSrcset(srcsetString)
-        .map(({ url, descriptor }) => 
+        .map(({ url, descriptor }) =>
             qualifyUrl(url, baseUrlString) + (descriptor ? ' ' + descriptor : '')
         )
         .join(', ');

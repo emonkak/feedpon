@@ -1,9 +1,9 @@
 import { createSelector } from 'reselect';
-import shallowEqual from 'fbjs/lib/shallowEqual';
 
 import composeComparers from 'utils/composeComparers';
 import createAscendingComparer from 'utils/createAscendingComparer';
 import createDescendingComparer from 'utils/createDescendingComparer';
+import shallowEqual from 'utils/shallowEqual';
 import { GroupedSubscription, State, Subscription, SubscriptionOrderKind } from 'messaging/types';
 import { UNCATEGORIZED } from 'messaging/categories/constants';
 

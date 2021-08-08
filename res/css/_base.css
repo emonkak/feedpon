@@ -193,7 +193,7 @@ caption {
 a {
   color: var(--positive-color);
   text-decoration: none;
-  text-decoration-skip: ink;
+  text-decoration-skip-ink: auto;
 }
 
 a:hover {

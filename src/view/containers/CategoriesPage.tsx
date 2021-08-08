@@ -159,9 +159,9 @@ class CategoriesPage extends PureComponent<CategoriesPageProps, CategoriesPageSt
         }
 
         this.setState({
-            query: this.searchInput.value
+            query: this.searchInput.value as string
         });
-    }, 100)
+    }, 100);
 
     private _handleChangeUploadFile = (event: React.ChangeEvent<HTMLInputElement>) => {
         const target = event.currentTarget;
@@ -178,7 +178,7 @@ class CategoriesPage extends PureComponent<CategoriesPageProps, CategoriesPageSt
         const reader = new FileReader();
 
         reader.onload = (event) => {
-            onImportOpml(reader.result);
+            onImportOpml(reader.result as string);
         };
 
         reader.readAsText(file);

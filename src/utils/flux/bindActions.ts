@@ -1,6 +1,6 @@
 export default function bindActions<T extends { [key: string]: Function }>(actions: T): (dispatch: (event: any) => void) => T {
     return (dispatch) => {
-        const bindedActions: Partial<T> = {};
+        const bindedActions: { [key: string]: Function } = {};
 
         for (const key of Object.keys(actions)) {
             const action = actions[key];

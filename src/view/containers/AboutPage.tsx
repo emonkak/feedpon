@@ -334,22 +334,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 `.trim();
 
-const TEXT_ENCODING_LICENSE = `
-The encoding indexes, algorithms, and many comments in the code derive from the Encoding Standard https://encoding.spec.whatwg.org/
-
-Otherwise...
-
-This is free and unencumbered software released into the public domain.
-
-Anyone is free to copy, modify, publish, use, compile, sell, or distribute this software, either in source code form or as a compiled binary, for any purpose, commercial or non-commercial, and by any means.
-
-In jurisdictions that recognize copyright laws, the author or authors of this software dedicate any and all copyright interest in the software to the public domain. We make this dedication for the benefit of the public at large and to the detriment of our heirs and successors. We intend this dedication to be an overt act of relinquishment in perpetuity of all present and future rights to this software under copyright law.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-For more information, please refer to http://unlicense.org/
-`.trim();
-
 const TSLIB_LICENSE = `
 Apache License
 
@@ -491,10 +475,6 @@ class AboutPage extends PureComponent<AboutPageProps> {
                             <li>
                                 <h2><a href="https://github.com/reactjs/reselect/blob/master/LICENSE" target="_blank">reselect</a></h2>
                                 <pre className="u-text-prewrap">{RESELECT_LICENSE}</pre>
-                            </li>
-                            <li>
-                                <h2><a href="https://github.com/inexorabletash/text-encoding/blob/master/LICENSE.md" target="_blank">text-encoding</a></h2>
-                                <pre className="u-text-prewrap">{TEXT_ENCODING_LICENSE}</pre>
                             </li>
                             <li>
                                 <h2><a href="https://github.com/Microsoft/tslib/blob/master/LICENSE.txt" target="_blank">tslib</a></h2>

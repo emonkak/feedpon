@@ -48,7 +48,7 @@ export default class KeyMapper extends Component<KeyMapperProps, {}> {
         }
 
         if (this.timer != null) {
-            clearTimeout(this.timer);
+            window.clearTimeout(this.timer);
             this.timer = null;
         }
 
@@ -69,7 +69,7 @@ export default class KeyMapper extends Component<KeyMapperProps, {}> {
             event.preventDefault();
 
             if (hasNextMapping) {
-                this.timer = setTimeout(() => {
+                this.timer = window.setTimeout(() => {
                     onInvokeKeyMapping(mapping);
                     this.timer = null;
                     this.pendingKeys = [];

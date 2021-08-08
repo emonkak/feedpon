@@ -1,17 +1,17 @@
-import IntlRelativeFormat from 'intl-relativeformat';
 import React, { PureComponent } from 'react';
+import relativeTime from 'utils/relativeTime';
 
 interface RelativeTimeProps {
     className?: string;
     locales?: string | string[];
     updateInterval?: number;
-    time: Date | number;
+    time: number;
 }
 
 interface RelativeTimeState {
-    formatter: IntlRelativeFormat;
+    formatter: Intl.RelativeTimeFormat;
     prevLocales?: string | string[];
-    prevTime: Date | number;
+    prevTime: number;
     relativeTime: string;
 }
 
@@ -28,13 +28,13 @@ export default class RelativeTime extends PureComponent<RelativeTimeProps, Relat
         let hasUpdated = false;
 
         if (props.locales !== state.prevLocales) {
-            updates.formatter = new IntlRelativeFormat(props.locales);
+            updates.formatter = new Intl.RelativeTimeFormat(props.locales);
             updates.prevLocales = props.locales;
             hasUpdated = true;
         }
 
         if (props.time !== state.prevTime) {
-            updates.relativeTime = (updates.formatter || state.formatter).format(props.time);
+            updates.relativeTime = formatTime((updates.formatter || state.formatter), props.time);
             updates.prevTime = props.time;
             hasUpdated = true;
         }
@@ -45,13 +45,13 @@ export default class RelativeTime extends PureComponent<RelativeTimeProps, Relat
     constructor(props: RelativeTimeProps) {
         super(props);
 
-        const formatter = new IntlRelativeFormat(props.locales);
+        const formatter = new Intl.RelativeTimeFormat(props.locales);
 
         this.state = {
             formatter,
             prevLocales: props.locales,
             prevTime: props.time,
-            relativeTime: formatter.format(props.time)
+            relativeTime: formatTime(formatter, props.time)
         };
     }
 
@@ -85,12 +85,12 @@ export default class RelativeTime extends PureComponent<RelativeTimeProps, Relat
     }
 
     private startTimer(updateInterval: number) {
-        this.timer = setInterval(this.update.bind(this), updateInterval);
+        this.timer = window.setInterval(this.update.bind(this), updateInterval);
     }
 
     private stopTimer() {
         if (this.timer != null) {
-            clearInterval(this.timer);
+            window.clearInterval(this.timer);
         }
     }
 
@@ -105,7 +105,12 @@ export default class RelativeTime extends PureComponent<RelativeTimeProps, Relat
         const { formatter } = this.state;
 
         this.setState({
-            relativeTime: formatter.format(time)
+            relativeTime: formatTime(formatter, time)
         });
     }
+}
+
+function formatTime(formatter: Intl.RelativeTimeFormat, time: number): string {
+    const [amount, type] = relativeTime(new Date(time));
+    return formatter.format(amount, type);
 }

@@ -20,9 +20,9 @@ export function authCallback(urlString: string): types.AuthenticateResponse {
     const params = querystring.parse(paramsString);
 
     return {
-        code: params['code'],
-        state: params['state'],
-        error: params['error']
+        code: params['code'] as string,
+        state: params['state']?.toString(),
+        error: params['error']?.toString()
     };
 }
 
