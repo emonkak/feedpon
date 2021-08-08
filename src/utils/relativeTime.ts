@@ -8,17 +8,17 @@ export default function relativeTime(date: Date, now?: Date): [number, Intl.Rela
         now = new Date();
     }
 
-    const delta = now.getTime() - date.getTime();
+    const delta = date.getTime() - now.getTime();
 
-    if (delta < MILIS_PER_MINITE) {
+    if (Math.abs(delta) < MILIS_PER_MINITE) {
         return [(delta / MILIS_PER_SECOND) << 0, 'second'];
     }
 
-    if (delta < MILIS_PER_HOUR) {
+    if (Math.abs(delta) < MILIS_PER_HOUR) {
         return [(delta / MILIS_PER_MINITE) << 0, 'minute'];
     }
 
-    if (delta < MILIS_PER_DAY) {
+    if (Math.abs(delta) < MILIS_PER_DAY) {
         return [(delta / MILIS_PER_HOUR) << 0, 'hour'];
     }
 
