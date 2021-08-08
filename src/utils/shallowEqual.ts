@@ -7,8 +7,8 @@ export default function shallowEqual<T extends Object>(first: T, second: T): boo
         return false;
     }
 
-    const firstKeys = Object.keys(first) as [keyof T];
-    const secondKeys = Object.keys(second) as [keyof T];
+    const firstKeys = Object.keys(first) as (keyof T)[];
+    const secondKeys = Object.keys(second) as (keyof T)[];
 
     if (firstKeys.length !== secondKeys.length) {
         return false;
