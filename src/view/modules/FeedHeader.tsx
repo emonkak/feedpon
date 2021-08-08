@@ -10,7 +10,6 @@ interface FeedHeaderProps {
     feed: Feed;
     hasMoreEntries: boolean;
     numEntries: number;
-    numUnreads: number;
     onAddToCategory: typeof addToCategory;
     onCreateCategory: typeof createCategory;
     onRemoveFromCategory: typeof removeFromCategory;
@@ -24,7 +23,6 @@ const FeedHeader: React.SFC<FeedHeaderProps> = ({
     feed,
     hasMoreEntries,
     numEntries,
-    numUnreads,
     onAddToCategory,
     onCreateCategory,
     onRemoveFromCategory,
@@ -46,7 +44,7 @@ const FeedHeader: React.SFC<FeedHeaderProps> = ({
                         <div><a className="u-text-wrap" target="_blank" href={feed.feedUrl}>{feed.feedUrl}</a></div>
                         <div className="list-inline list-inline-dotted">
                             <div className="list-inline-item u-text-muted">
-                                <span className="u-text-x-large">{numUnreads}</span>/<span className="u-text-x-large">{numEntries}{hasMoreEntries && '+'}</span> unreads
+                                <span className="u-text-x-large">{numEntries}{hasMoreEntries && '+'}</span> entries
                             </div>
                             <div className="list-inline-item u-text-muted">
                                 <span className="u-text-x-large">{feed.subscribers}</span> subscribers

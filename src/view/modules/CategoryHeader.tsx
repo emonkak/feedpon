@@ -7,14 +7,12 @@ interface CategoryHeaderProps {
     category: Category;
     hasMoreEntries: boolean;
     numEntries: number;
-    numUnreads: number;
 }
 
 const CategoryHeader: React.SFC<CategoryHeaderProps> = ({
     category,
     hasMoreEntries,
-    numEntries,
-    numUnreads
+    numEntries
 }: CategoryHeaderProps) => {
     return (
         <header className="stream-header">
@@ -23,9 +21,10 @@ const CategoryHeader: React.SFC<CategoryHeaderProps> = ({
                     <div className="u-margin-right-2 u-flex-grow-1">
                         <div className="list-inline list-inline-dotted">
                             <div className="list-inline-item u-text-muted">
-                                <span className="u-text-x-large">{numUnreads}</span>/<span className="u-text-x-large">{numEntries}{hasMoreEntries && '+'}</span> unreads
+                                <span className="u-text-x-large">{numEntries}{hasMoreEntries && '+'}</span> entries
                             </div>
                         </div>
+
                     </div>
                     <div className="u-flex-shrink-0">
                         <Link

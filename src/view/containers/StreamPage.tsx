@@ -343,9 +343,6 @@ class StreamPage extends PureComponent<StreamPageProps> {
         } = this.props;
 
         if (stream) {
-            const numUnreads = stream.entries
-                .reduce((acc, entry) => acc + (entry.markedAsRead ? 0 : 1), 0);
-
             if (stream.feed) {
                 return (
                     <FeedHeader
@@ -353,13 +350,13 @@ class StreamPage extends PureComponent<StreamPageProps> {
                         feed={stream.feed}
                         hasMoreEntries={!!stream.continuation}
                         numEntries={stream.entries.length}
-                        numUnreads={numUnreads}
                         onAddToCategory={onAddToCategory}
                         onCreateCategory={onCreateCategory}
                         onRemoveFromCategory={onRemoveFromCategory}
                         onSubscribe={onSubscribe}
                         onUnsubscribe={onUnsubscribe}
-                        subscription={subscription} />
+                        subscription={subscription}
+                    />
                 );
             }
 
@@ -369,7 +366,7 @@ class StreamPage extends PureComponent<StreamPageProps> {
                         category={category}
                         hasMoreEntries={!!stream.continuation}
                         numEntries={stream.entries.length}
-                        numUnreads={numUnreads} />
+                    />
                 );
             }
         }
