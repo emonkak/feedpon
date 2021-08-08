@@ -24,6 +24,7 @@ interface TreeBranchProps {
 
 interface TreeBranchState {
     isExpanded: boolean;
+    expandGuard: boolean;
 }
 
 interface TreeLeafProps {
@@ -67,8 +68,14 @@ export class TreeBranch extends PureComponent<TreeBranchProps, TreeBranchState> 
         isSelected: false
     };
 
-    static getDerivedStateFromProps(props: TreeBranchProps, state: TreeLeafState) {
-        if (Children.toArray(props.children).some(shouldExpand)) {
+    static getDerivedStateFromProps(props: TreeBranchProps, state: TreeBranchState) {
+        if (state.expandGuard) {
+            return {
+                expandGuard: false
+            };
+        }
+
+        if (!state.isExpanded && Children.toArray(props.children).some(shouldExpand)) {
             return {
                 isExpanded: true
             };
@@ -81,7 +88,8 @@ export class TreeBranch extends PureComponent<TreeBranchProps, TreeBranchState> 
         super(props);
 
         this.state = {
-            isExpanded: Children.toArray(props.children).some(shouldExpand)
+            isExpanded: false,
+            expandGuard: false
         };
     }
 
@@ -114,7 +122,8 @@ export class TreeBranch extends PureComponent<TreeBranchProps, TreeBranchState> 
         event.preventDefault();
 
         this.setState((state) => ({
-            isExpanded: !state.isExpanded
+            isExpanded: !state.isExpanded,
+            expandGuard: true
         }));
     }
 
