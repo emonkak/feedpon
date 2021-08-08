@@ -23,7 +23,7 @@ import { changeSubscriptionOrder, changeUnreadViewing, fetchSubscriptions } from
 import { createAllSubscriptionsSelector, createGroupedSubscriptionsSelector, createTotalUnreadCountSelector, createVisibleSubscriptionsSelector } from 'messaging/subscriptions/selectors';
 import { createSortedCategoriesSelector } from 'messaging/categories/selectors';
 import { fetchUser } from 'messaging/user/actions';
-import { revokeToken } from 'messaging/backend/actions';
+import { logout } from 'messaging/backend/actions';
 
 interface SidebarProps {
     categories: Category[];
@@ -35,7 +35,7 @@ interface SidebarProps {
     onChangeUnreadViewing: typeof changeUnreadViewing;
     onFetchSubscriptions: typeof fetchSubscriptions;
     onFetchUser: typeof fetchUser;
-    onRevokeToken: typeof revokeToken;
+    onLogout: typeof logout;
     onlyUnread: boolean;
     profile: Profile;
     subscriptionOrder: SubscriptionOrderKind;
@@ -70,12 +70,12 @@ class Sidebar extends PureComponent<SidebarProps> {
             onChangeUnreadViewing,
             onFetchSubscriptions,
             onFetchUser,
-            onRevokeToken,
+            onLogout,
             onlyUnread,
             profile,
+            subscriptionOrder,
             subscriptions,
             subscriptionsIsLoading,
-            subscriptionOrder,
             totalUnreadCount,
             userIsLoading
         } = this.props;
@@ -152,7 +152,7 @@ class Sidebar extends PureComponent<SidebarProps> {
                         isLoading={userIsLoading}
                         profile={profile}
                         onRefresh={onFetchUser}
-                        onLogout={onRevokeToken} />
+                        onLogout={onLogout} />
                 </div>
             </nav>
         );
@@ -252,7 +252,7 @@ export default connect(() => {
             onChangeUnreadViewing: changeUnreadViewing,
             onFetchSubscriptions: fetchSubscriptions,
             onFetchUser: fetchUser,
-            onRevokeToken: revokeToken
+            onLogout: logout
         })
     };
 })(Sidebar);

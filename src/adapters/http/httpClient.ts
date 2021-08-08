@@ -30,55 +30,53 @@ export default {
 
         return fetch(url, options);
     },
-    postJson(endpoint: string, path: string, data: string | object | null, headers?: { [key: string]: string }): Promise<Response> {
-        const url = endpoint + path;
-
-        const options = {
+    post(endpoint: string, path: string, body?: BodyInit | null, headers?: { [key: string]: string }): Promise<Response> {
+        return fetch(endpoint + path, {
             method: 'POST',
-            headers: new Headers({ 'Content-Type': 'application/json', ...headers }),
-            body: serializeAsJson(data)
-        };
-
-        return fetch(url, options);
-    },
-    postXml(endpoint: string, path: string, body: string, headers?: { [key: string]: string }): Promise<Response> {
-        const url = endpoint + path;
-
-        const options = {
-            method: 'POST',
-            headers: new Headers({ 'Content-Type': 'application/xml', ...headers }),
+            headers: new Headers(headers),
             body
-        };
-
-        return fetch(url, options);
+        });
     },
-    putJson(endpoint: string, path: string, data: string | object | null, headers?: { [key: string]: string }): Promise<Response> {
-        const url = endpoint + path;
-
-        const options = {
+    postJson(endpoint: string, path: string, data: any, headers?: { [key: string]: string }): Promise<Response> {
+        return this.post(endpoint, path, serializeAsJson(data), {
+            'Content-Type': 'application/json',
+            ...headers
+        });
+    },
+    postXml(endpoint: string, path: string, data: string, headers?: { [key: string]: string }): Promise<Response> {
+        return this.post(endpoint, path, data, {
+            'Content-Type': 'application/xml',
+            ...headers
+        });
+    },
+    put(endpoint: string, path: string, body?: BodyInit | null, headers?: { [key: string]: string }): Promise<Response> {
+        return fetch(endpoint + path, {
             method: 'PUT',
-            headers: new Headers({ 'Content-Type': 'application/json', ...headers }),
-            body: serializeAsJson(data)
-        };
-
-        return fetch(url, options);
+            headers: new Headers(headers),
+            body
+        });
     },
-    deleteJson(endpoint: string, path: string, data: string | object | null, headers?: Record<string, string>): Promise<Response> {
-        const url = endpoint + path;
-
-        const options = {
+    putJson(endpoint: string, path: string, data: any, headers?: { [key: string]: string }): Promise<Response> {
+        return this.put(endpoint, path, serializeAsJson(data), {
+            'Content-Type': 'application/json',
+            ...headers
+        });
+    },
+    delete(endpoint: string, path: string, body?: BodyInit | null, headers?: { [key: string]: string }): Promise<Response> {
+        return fetch(endpoint + path, {
             method: 'DELETE',
-            headers: new Headers({ 'Content-Type': 'application/json', ...headers }),
-            body: serializeAsJson(data)
-        };
-
-        return fetch(url, options);
+            headers: new Headers(headers),
+            body
+        });
     },
-}
+    deleteJson(endpoint: string, path: string, data: any, headers?: Record<string, string>): Promise<Response> {
+        return this.delete(endpoint, path, serializeAsJson(data), {
+            'Content-Type': 'application/json',
+            ...headers
+        });
+    }
+};
 
 function serializeAsJson(data: string | object | null | undefined): string | null {
-    if (data == null) {
-        return null;
-    }
-    return typeof data === 'object' ? JSON.stringify(data) : data;
+    return data != null ? JSON.stringify(data) : null;
 }

@@ -34,9 +34,13 @@ export function refreshToken(input: types.RefreshTokenInput): Promise<types.Refr
         .then<types.RefreshTokenResponse>(handleJsonResponse);
 }
 
-export function revokeToken(input: types.RevokeTokenInput): Promise<types.RevokeTokenResponse> {
-    return httpClient.postJson(ENDPOINT, '/v3/auth/token', input)
-        .then<types.RevokeTokenResponse>(handleJsonResponse);
+export function logout(accessToken: string): Promise<Response> {
+    return httpClient.post(
+        ENDPOINT,
+        '/v3/auth/logout',
+        null,
+        createAuthHeader(accessToken)
+    ).then(handleResponse);
 }
 
 // Categories API:
@@ -60,7 +64,7 @@ export function deleteCategory(accessToken: string, categoryId: string): Promise
         '/v3/categories/' + encodeURIComponent(categoryId),
         null,
         createAuthHeader(accessToken)
-    ).then(handleResponse);;
+    ).then(handleResponse);
 }
 
 // Feeds API:
@@ -173,7 +177,7 @@ export function importOpml(accessToken: string, xmlString: string): Promise<Resp
         ENDPOINT,
         '/v3/opml',
         xmlString,
-        createAuthHeader(accessToken),
+        createAuthHeader(accessToken)
     ).then(handleResponse);
 }
 

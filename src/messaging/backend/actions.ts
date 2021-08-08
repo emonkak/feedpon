@@ -49,7 +49,7 @@ export function authenticate(): AsyncThunk {
     };
 }
 
-export function revokeToken(): AsyncThunk {
+export function logout(): AsyncThunk {
     return async ({ dispatch, getState }, { environment }) => {
         dispatch({
             type: 'TOKEN_REVOKING'
@@ -58,18 +58,15 @@ export function revokeToken(): AsyncThunk {
         let { backend } = getState();
         let token = backend.token as feedly.ExchangeTokenResponse;
 
-        if (token) {
-            await feedlyApi.revokeToken({
-                refresh_token: token.refresh_token,
-                client_id: environment.clientId,
-                client_secret: environment.clientSecret,
-                grant_type: 'revoke_token'
+        try {
+            if (token) {
+                await feedlyApi.logout(token.access_token);
+            }
+        } finally {
+            dispatch({
+                type: 'TOKEN_REVOKED'
             });
         }
-
-        dispatch({
-            type: 'TOKEN_REVOKED'
-        });
     };
 }
 

@@ -53,18 +53,6 @@ export interface RefreshTokenResponse {
     token_type: string;
 }
 
-export interface RevokeTokenInput {
-    refresh_token: string;
-    client_id: string;
-    client_secret: string;
-    grant_type: 'revoke_token';
-}
-
-export interface RevokeTokenResponse {
-    id: string;
-    expires_in: number;
-}
-
 // Categories API:
 export interface Category {
     id: string;
