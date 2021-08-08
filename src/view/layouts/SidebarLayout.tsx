@@ -19,7 +19,9 @@ import { closeHelp, closeSidebar, openHelp, openSidebar } from 'messaging/ui/act
 
 interface SidebarLayoutProps extends SwipeableProps {
     children: React.ReactElement<any>;
+    dispatch: Dispatcher<Event>;
     helpIsOpened: boolean;
+    history: History;
     isLoading: boolean;
     keyMappings: Trie.Trie<KeyMapping>;
     location: Location;
@@ -27,9 +29,7 @@ interface SidebarLayoutProps extends SwipeableProps {
     onCloseSidebar: typeof closeSidebar;
     onOpenHelp: typeof openHelp;
     onOpenSidebar: typeof openSidebar;
-    router: History;
     sidebarIsOpened: boolean;
-    dispatch: Dispatcher<Event>;
 }
 
 class SidebarLayout extends PureComponent<SidebarLayoutProps> {
@@ -82,20 +82,20 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps> {
     render() {
         const {
             children,
+            destX,
+            handleTouchEnd,
+            handleTouchMove,
+            handleTouchStart,
             helpIsOpened,
+            initialX,
             isLoading,
+            isSwiping,
             keyMappings,
             location,
             onCloseHelp,
             onCloseSidebar,
-            router,
-            sidebarIsOpened,
-            isSwiping,
-            initialX,
-            destX,
-            handleTouchStart,
-            handleTouchMove,
-            handleTouchEnd
+            history,
+            sidebarIsOpened
         } = this.props;
 
         const sidebarWidth = this._sidebarWidth;
@@ -120,7 +120,7 @@ class SidebarLayout extends PureComponent<SidebarLayoutProps> {
                     style={leftStyle}
                     ref={this._handleSidebarRef}
                     onTransitionEnd={this._handleTransitionEnd}>
-                    <Sidebar router={router} location={location} />
+                    <Sidebar history={history} location={location} />
                 </div>
                 <div className="l-main" style={paddingStyle}>
                     <div className="l-notifications">

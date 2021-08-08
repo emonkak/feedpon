@@ -5,7 +5,7 @@ import { State, ThemeKind } from 'messaging/types';
 import { THEMES } from 'messaging/ui/constants';
 
 interface RootLayoutProps {
-    children: React.ReactElement<any>;
+    children: React.ReactNode;
     customStyles: string;
     theme: ThemeKind;
 }

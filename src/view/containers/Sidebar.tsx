@@ -1,7 +1,7 @@
 import Enumerable from '@emonkak/enumerable';
 import React, { PureComponent } from 'react';
 import { History, Location } from 'history';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 
 import '@emonkak/enumerable/extensions/take';
 import '@emonkak/enumerable/extensions/select';
@@ -28,6 +28,7 @@ import { revokeToken } from 'messaging/backend/actions';
 interface SidebarProps {
     categories: Category[];
     groupedSubscriptions: { [key: string]: GroupedSubscription };
+    history: History;
     lastUpdatedAt: number;
     location: Location;
     onChangeSubscriptionOrder: typeof changeSubscriptionOrder;
@@ -37,7 +38,6 @@ interface SidebarProps {
     onRevokeToken: typeof revokeToken;
     onlyUnread: boolean;
     profile: Profile;
-    router: History;
     subscriptionOrder: SubscriptionOrderKind;
     subscriptions: Subscription[];
     subscriptionsIsLoading: boolean;
@@ -159,21 +159,21 @@ class Sidebar extends PureComponent<SidebarProps> {
     }
 
     private _handleSearch = (query: string) => {
-        const { router } = this.props;
+        const { history } = this.props;
 
-        router.push('/search/' + encodeURIComponent(query));
+        history.push('/search/' + encodeURIComponent(query));
     }
 
     private _handleSelect = (path: string) => {
-        const { router } = this.props;
+        const { history } = this.props;
 
-        router.push(path);
+        history.push(path);
     }
 
     private _handleOrganizeSubscriptions = () => {
-        const { router } = this.props;
+        const { history } = this.props;
 
-        router.push('/categories/');
+        history.push('/categories/');
     }
 }
 
@@ -192,7 +192,7 @@ function renderSubscriptionCandidates(subscriptions: Subscription[], query: stri
         .select((subscription) => (
             <MenuItem
                 key={subscription.subscriptionId}
-                value={'streams/' + encodeURIComponent(subscription.streamId)}
+                value={'/streams/' + encodeURIComponent(subscription.streamId)}
                 primaryText={subscription.title}
                 secondaryText={subscription.unreadCount > 0 ? Number(subscription.unreadCount).toLocaleString() : ''}
                 icon={<SubscriptionIcon title={subscription.title} iconUrl={subscription.iconUrl} />} />
@@ -203,7 +203,7 @@ function renderSubscriptionCandidates(subscriptions: Subscription[], query: stri
         {candidates}
         {candidates.length > 0 && <div className="menu-divider" />}
         <MenuItem
-            value={'search/' + encodeURIComponent(query)}
+            value={'/search/' + encodeURIComponent(query)}
             primaryText={`Search for "${query}"`} />
     </>;
 }

@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
+import { RouteComponentProps } from 'react-router';
 import { createSelector } from 'reselect';
 
 import * as CacheMap from 'utils/containers/CacheMap';
@@ -12,7 +13,7 @@ import connect from 'utils/flux/react/connect';
 import { State } from 'messaging/types';
 import { toggleSidebar } from 'messaging/ui/actions';
 
-interface DashboardProps {
+interface DashboardProps extends RouteComponentProps {
     onToggleSidebar: typeof toggleSidebar;
     streamHistories: StreamHistory[];
 }

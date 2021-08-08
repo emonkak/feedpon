@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 
 import SubscribeDropdown from 'view/modules/SubscribeDropdown';
 import { Category, Feed, Subscription } from 'messaging/types';

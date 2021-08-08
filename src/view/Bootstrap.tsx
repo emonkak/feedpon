@@ -3,13 +3,13 @@ import classnames from 'classnames';
 import { History } from 'history';
 import { Router } from 'react-router';
 
+import Routes from 'view/Routes';
 import StoreProvider from 'utils/flux/react/StoreProvider';
-import routes from 'view/routes';
 import { Store } from 'utils/flux/types';
 
 interface BootstrapProps {
     preparingStore: Promise<Store<any, any>>;
-    router: History;
+    history: History;
 }
 
 interface BootstrapState {
@@ -43,14 +43,14 @@ export default class Bootstrap extends PureComponent<BootstrapProps, BootstrapSt
     }
 
     render() {
-        const { router } = this.props;
+        const { history } = this.props;
         const { store, error } = this.state;
 
         if (store) {
             return (
                 <StoreProvider store={store}>
-                    <Router history={router}>
-                        {routes}
+                    <Router history={history}>
+                        <Routes history={history} />
                     </Router>
                 </StoreProvider>
             );

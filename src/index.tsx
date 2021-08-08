@@ -1,12 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { hashHistory } from 'react-router';
+import { createHashHistory } from 'history';
 
 import Bootstrap from 'view/Bootstrap';
 import prepareSelectors from 'messaging/prepareSelectors';
 import prepareStore from './prepareStore';
 
 function main() {
+    const hashHistory = createHashHistory();
+
     const selectors = prepareSelectors();
     const context = {
         environment: {
@@ -23,7 +25,7 @@ function main() {
     const element = document.getElementById('app');
 
     return ReactDOM.render(
-        <Bootstrap preparingStore={preparingStore} router={hashHistory} />,
+        <Bootstrap preparingStore={preparingStore} history={hashHistory} />,
         element
     );
 }

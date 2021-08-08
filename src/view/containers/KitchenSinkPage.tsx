@@ -1,4 +1,5 @@
 import React, { PureComponent } from 'react';
+import { RouteComponentProps } from 'react-router';
 
 import Dropdown from 'view/components/Dropdown';
 import MainLayout from 'view/layouts/MainLayout';
@@ -11,7 +12,7 @@ import { NotificationKind } from 'messaging/types';
 import { sendNotification } from 'messaging/notifications/actions';
 import { toggleSidebar } from 'messaging/ui/actions';
 
-interface KitchenSinkProps {
+interface KitchenSinkProps extends RouteComponentProps {
     onSendNotification: typeof sendNotification;
     onToggleSidebar: typeof toggleSidebar;
 }

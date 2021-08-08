@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Params } from 'react-router/lib/Router';
+import { RouteComponentProps } from 'react-router';
 import { createSelector } from 'reselect';
 
 import * as CacheMap from 'utils/containers/CacheMap';
@@ -20,7 +20,7 @@ import { createCategory } from 'messaging/categories/actions';
 import { createSortedCategoriesSelector } from 'messaging/categories/selectors';
 import { toggleSidebar } from 'messaging/ui/actions';
 
-interface StreamPageProps {
+interface StreamPageProps extends RouteComponentProps<{'stream_id': string}> {
     canMarkAllEntriesAsRead: boolean;
     canMarkStreamAsRead: boolean;
     categories: Category[];
@@ -56,7 +56,6 @@ interface StreamPageProps {
     onUnselectStream: typeof unselectStream;
     onUnsubscribe: typeof unsubscribe;
     onUpdateEntryHeights: typeof updateEntryHeights;
-    params: Params;
     readEntries: Entry[];
     shouldFetchStream: boolean;
     stream: Stream;
@@ -88,24 +87,24 @@ class StreamPage extends PureComponent<StreamPageProps> {
 
     componentDidMount() {
         const {
+            match,
             onFetchStream,
             onSelectStream,
-            params,
             shouldFetchStream
         } = this.props;
 
-        onSelectStream(params['stream_id']);
+        onSelectStream(decodeURIComponent(match.params['stream_id']));
 
         if (shouldFetchStream) {
-            onFetchStream(params['stream_id']);
+            onFetchStream(decodeURIComponent(match.params['stream_id']));
         }
     }
 
     componentDidUpdate(prevProps: StreamPageProps, prevState: {}) {
-        const { params, stream } = this.props;
+        const { match, stream } = this.props;
 
         // When transition to different stream
-        if (params['stream_id'] !== prevProps.params['stream_id']) {
+        if (match.params['stream_id'] !== prevProps.match.params['stream_id']) {
             const {
                 keepUnread,
                 onFetchStream,
@@ -119,10 +118,10 @@ class StreamPage extends PureComponent<StreamPageProps> {
                 onMarkAsRead(readEntries);
             }
 
-            onSelectStream(params['stream_id']);
+            onSelectStream(decodeURIComponent(match.params['stream_id']));
 
             if (shouldFetchStream) {
-                onFetchStream(params['stream_id']);
+                onFetchStream(decodeURIComponent(match.params['stream_id']));
             }
         } else {
             if (stream.expandedEntryIndex !== prevProps.stream.expandedEntryIndex) {
@@ -137,7 +136,7 @@ class StreamPage extends PureComponent<StreamPageProps> {
         const { isLoaded, isLoading } = this.props;
 
         if ((!isLoaded && isLoading && isLoading !== prevProps.isLoading) ||
-            (params['stream_id'] !== prevProps.params['stream_id'] &&
+            (match.params['stream_id'] !== prevProps.match.params['stream_id'] &&
              stream.activeEntryIndex < 0)) {
             window.scrollTo(0, 0);
         }
@@ -449,7 +448,7 @@ export default connect(() => {
         (state: State) => state.streams.items,
         (state: State) => state.streams.defaultStreamView,
         (state: State) => state.streams.defaultFetchOptions,
-        (state: State, props: StreamPageProps) => props.params['stream_id'],
+        (state: State, props: StreamPageProps) => decodeURIComponent(props.match.params['stream_id']),
         (streams, defaultStreamView, defaultFetchOptions, streamId) => CacheMap.get(streams, streamId) || ({
             streamId,
             title: '',
@@ -473,13 +472,13 @@ export default connect(() => {
 
     const subscriptionSelector: (state: State, props: StreamPageProps) => Subscription | null = createSelector(
         (state: State) => state.subscriptions.items,
-        (state: State, props: StreamPageProps) => props.params['stream_id'],
+        (state: State, props: StreamPageProps) => decodeURIComponent(props.match.params['stream_id']),
         (subscriptions, streamId) => subscriptions[streamId] || null
     );
 
     const categorySelector: (state: State, props: StreamPageProps) => Category | null = createSelector(
         (state: State) => state.categories.items,
-        (state: State, props: StreamPageProps) => props.params['stream_id'],
+        (state: State, props: StreamPageProps) => decodeURIComponent(props.match.params['stream_id']),
         (categories, streamId) => categories[streamId] || null
     );
 

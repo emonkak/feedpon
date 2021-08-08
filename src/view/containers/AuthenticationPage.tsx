@@ -1,12 +1,11 @@
 import React, { PureComponent } from 'react';
-import { Location } from 'history';
+import { RouteComponentProps } from 'react-router';
 
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
 import { authenticate } from 'messaging/backend/actions';
 
-interface AuthenticationProps {
-    location: Location;
+interface AuthenticationProps extends RouteComponentProps {
     onAuthenticate: typeof authenticate;
 }
 

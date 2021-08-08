@@ -7,30 +7,14 @@ import { State } from 'messaging/types';
 interface NotAuthenticatedProps {
     children: React.ReactElement<any>;
     isAuthenticated: boolean;
-    router: History;
+    history: History;
 }
 
 class NotAuthenticated extends PureComponent<NotAuthenticatedProps> {
-    componentDidMount() {
-        this._refresh();
-    }
-
-    componentDidUpdate(prevProps: NotAuthenticatedProps, prevState: {}) {
-        this._refresh();
-    }
-
     render() {
         const { children, isAuthenticated } = this.props;
 
         return !isAuthenticated ? children : null;
-    }
-
-    private _refresh() {
-        const { isAuthenticated, router } = this.props;
-
-        if (isAuthenticated) {
-            router.replace('/');
-        }
     }
 }
 

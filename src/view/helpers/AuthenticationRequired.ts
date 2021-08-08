@@ -7,7 +7,7 @@ import { State } from 'messaging/types';
 interface AuthenticationRequiredProps {
     children: React.ReactElement<any>;
     isAuthenticated: boolean;
-    router: History;
+    history: History;
 }
 
 class AuthenticationRequired extends PureComponent<AuthenticationRequiredProps> {
@@ -26,10 +26,10 @@ class AuthenticationRequired extends PureComponent<AuthenticationRequiredProps> 
     }
 
     private _refresh(props: AuthenticationRequiredProps) {
-        const { isAuthenticated, router } = props;
+        const { isAuthenticated, history } = props;
 
         if (!isAuthenticated) {
-            router.replace('/authentication');
+            history.replace('/authentication');
         }
     }
 }

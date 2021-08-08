@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import debounce from 'lodash.debounce';
-import { History } from 'history';
+import { RouteComponentProps } from 'react-router';
 import { createSelector } from 'reselect';
 
 import CategoriesNav from 'view/modules/CategoriesNav';
@@ -15,14 +15,13 @@ import connect from 'utils/flux/react/connect';
 import createAscendingComparer from 'utils/createAscendingComparer';
 import { Category, State, Subscription } from 'messaging/types';
 import { MenuItem } from 'view/components/Menu';
-import { Params } from 'react-router/lib/Router';
 import { UNCATEGORIZED } from 'messaging/categories/constants';
 import { addToCategory, importOpml, removeFromCategory, unsubscribe } from 'messaging/subscriptions/actions';
 import { createCategory, deleteCategory, updateCategory } from 'messaging/categories/actions';
 import { createSortedCategoriesSelector } from 'messaging/categories/selectors';
 import { toggleSidebar } from 'messaging/ui/actions';
 
-interface CategoriesPageProps {
+interface CategoriesPageProps extends RouteComponentProps<{'label': string}> {
     activeCategory: Category | null;
     categories: Category[];
     exportUrl: string;
@@ -34,8 +33,6 @@ interface CategoriesPageProps {
     onToggleSidebar: typeof toggleSidebar;
     onUnsubscribe: typeof unsubscribe;
     onUpdateCategory: typeof updateCategory;
-    params: Params;
-    router: History;
     subscriptions: Subscription[];
 }
 
@@ -94,8 +91,8 @@ class CategoriesPage extends PureComponent<CategoriesPageProps, CategoriesPageSt
     }
 
     private _renderContent() {
-        const { activeCategory, categories, onDeleteCategory, params } = this.props;
-        const label = params['label'];
+        const { activeCategory, categories, onDeleteCategory, match } = this.props;
+        const label = match.params['label'];
 
         const subscriptions = this._getFilteredSubscriptions();
 
@@ -185,11 +182,11 @@ class CategoriesPage extends PureComponent<CategoriesPageProps, CategoriesPageSt
     }
 
     private _handleUpdateCategory = (category: Category, newLabel: string) => {
-        const { router, onUpdateCategory } = this.props;
+        const { history, onUpdateCategory } = this.props;
 
         onUpdateCategory(category, newLabel);
 
-        router.replace('/categories/' + encodeURIComponent(newLabel));
+        history.replace('/categories/' + encodeURIComponent(newLabel));
     }
 
     private _handleImport = () => {
@@ -203,9 +200,9 @@ class CategoriesPage extends PureComponent<CategoriesPageProps, CategoriesPageSt
     }
 
     private _handleSelectCategory = (label: string | symbol) => {
-        const { router } = this.props;
+        const { history } = this.props;
 
-        router.replace('/categories/' + (typeof label === 'string' ? encodeURIComponent(label) : ''));
+        history.replace('/categories/' + (typeof label === 'string' ? encodeURIComponent(label) : ''));
     }
 
     private _handleUploadInputRef = (uploadInput: HTMLInputElement | null) => {
@@ -250,14 +247,14 @@ export default connect(() => {
     const categoriesSelector = createSortedCategoriesSelector();
     const activeCategorySelector = createSelector(
         categoriesSelector,
-        (state: State, props: CategoriesPageProps) => props.params['label'],
+        (state: State, props: CategoriesPageProps) => props.match.params['label'],
         (categories, label) => categories.find((category) => category.label === label) || null
     );
 
     const subscriptionIdComparer = createAscendingComparer<Subscription>('subscriptionId');
     const visibleSubscriptionsSelector = createSelector(
         (state: State) => state.subscriptions.items,
-        (state: State, props: CategoriesPageProps) => props.params['label'],
+        (state: State, props: CategoriesPageProps) => props.match.params['label'],
         (subscriptions, label) => {
             if (label) {
                 return Object.values(subscriptions)

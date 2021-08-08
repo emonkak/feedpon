@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 
 import { Category } from 'messaging/types';
 
@@ -19,6 +19,7 @@ const CategoryHeader: React.SFC<CategoryHeaderProps> = ({
             <div className="container">
                 <div className="u-flex u-flex-align-items-center u-flex-justify-content-between">
                     <div className="u-margin-right-2 u-flex-grow-1">
+                        <div><strong>{category.label}</strong></div>
                         <div className="list-inline list-inline-dotted">
                             <div className="list-inline-item u-text-muted">
                                 <span className="u-text-x-large">{numEntries}{hasMoreEntries && '+'}</span> entries

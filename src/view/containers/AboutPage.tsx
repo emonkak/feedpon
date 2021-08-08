@@ -1,11 +1,11 @@
 import React, { PureComponent } from 'react';
+import { RouteComponentProps } from 'react-router';
 
 import Dropdown from 'view/components/Dropdown';
 import MainLayout from 'view/layouts/MainLayout';
 import Navbar from 'view/components/Navbar';
 import bindActions from 'utils/flux/bindActions';
 import connect from 'utils/flux/react/connect';
-import { History } from 'history';
 import { MenuItem } from 'view/components/Menu';
 import { State } from 'messaging/types';
 import { toggleSidebar } from 'messaging/ui/actions';
@@ -392,9 +392,8 @@ If the Work includes a "NOTICE" text file as part of its distribution, then any 
 END OF TERMS AND CONDITIONS
 `.trim();
 
-interface AboutPageProps {
+interface AboutPageProps extends RouteComponentProps {
     onToggleSidebar: typeof toggleSidebar;
-    router: History;
     version: string;
 }
 
@@ -496,9 +495,9 @@ class AboutPage extends PureComponent<AboutPageProps> {
     }
 
     private _navigateToKitchensink = () => {
-        const { router } = this.props;
+        const { history } = this.props;
 
-        router.push('/kitchensink/');
+        history.push('/kitchensink/');
     }
 }
 

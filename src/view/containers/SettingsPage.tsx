@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Location, History } from 'history';
+import { RouteComponentProps } from 'react-router';
 
 import MainLayout from 'view/layouts/MainLayout';
 import Navbar from 'view/components/Navbar';
@@ -8,11 +8,9 @@ import connect from 'utils/flux/react/connect';
 import { Nav, NavItem } from 'view/components/Nav';
 import { toggleSidebar } from 'messaging/ui/actions';
 
-interface SettingsProps {
+interface SettingsProps extends RouteComponentProps {
     children: React.ReactElement<any>;
-    location: Location;
     onToggleSidebar: typeof toggleSidebar;
-    router: History;
 }
 
 class SettingsPage extends PureComponent<SettingsProps> {
@@ -23,9 +21,9 @@ class SettingsPage extends PureComponent<SettingsProps> {
     }
 
     handleSelectNavItem(path: string) {
-        const { router } = this.props;
+        const { history } = this.props;
 
-        router.replace(path);
+        history.replace(path);
     }
 
     renderNavbar() {

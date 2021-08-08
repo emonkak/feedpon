@@ -1,6 +1,5 @@
 import React, { PureComponent } from 'react';
-import { History } from 'history';
-import { Params } from 'react-router/lib/Router';
+import { RouteComponentProps } from 'react-router';
 
 import FeedComponent from 'view/modules/Feed';
 import FeedPlaceholder from 'view/modules/FeedPlaceholder';
@@ -15,7 +14,7 @@ import { createSortedCategoriesSelector } from 'messaging/categories/selectors';
 import { searchFeeds } from 'messaging/search/actions';
 import { toggleSidebar } from 'messaging/ui/actions';
 
-interface SearchPageProps {
+interface SearchPageProps extends RouteComponentProps<{'query': string}> {
     activeQuery: string;
     categories: Category[];
     feeds: Feed[];
@@ -28,8 +27,6 @@ interface SearchPageProps {
     onSubscribe: typeof subscribe;
     onToggleSidebar: typeof toggleSidebar;
     onUnsubscribe: typeof unsubscribe;
-    params: Params;
-    router: History;
     subscriptions: { [key: string]: Subscription };
 }
 
@@ -54,7 +51,7 @@ class SearchPage extends PureComponent<SearchPageProps, SearchPageState> {
         super(props);
 
         this.state = {
-            query: props.params['query'] || '',
+            query: props.match.params['query'] || '',
             prevActiveQuery: props.activeQuery
         };
     }
@@ -71,13 +68,13 @@ class SearchPage extends PureComponent<SearchPageProps, SearchPageState> {
     }
 
     componentDidUpdate(prevProps: SearchPageProps) {
-        const { params } = this.props;
-        const { params: prevParams } = prevProps;
+        const { match } = this.props;
+        const { match: prevMatch } = prevProps;
 
-        if (params['query'] && params['query'] !== prevParams['query']) {
+        if (match.params['query'] && match.params['query'] !== prevMatch.params['query']) {
             const { onSearchFeeds } = this.props;
 
-            onSearchFeeds(params['query']);
+            onSearchFeeds(match.params['query']);
         }
     }
 
@@ -100,8 +97,8 @@ class SearchPage extends PureComponent<SearchPageProps, SearchPageState> {
     }
 
     private renderFeeds() {
-        const { params, activeQuery } = this.props;
-        if (params['query'] !== activeQuery) {
+        const { activeQuery, match } = this.props;
+        if (match.params['query'] !== activeQuery) {
             return null;
         }
 
@@ -183,11 +180,11 @@ class SearchPage extends PureComponent<SearchPageProps, SearchPageState> {
         const { query } = this.state;
 
         if (query !== '') {
-            const { onSearchFeeds, router } = this.props;
+            const { onSearchFeeds, history } = this.props;
 
             onSearchFeeds(query);
 
-            router.replace('/search/' + encodeURIComponent(query));
+            history.replace('/search/' + encodeURIComponent(query));
         }
     }
 }
