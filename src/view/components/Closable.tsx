@@ -13,31 +13,11 @@ export default class Closable extends PureComponent<ClosableProps> {
     };
 
     componentDidMount() {
-        const { isDisabled } = this.props;
-
-        if (!isDisabled) {
-            this._registerEventListeners();
-        }
-    }
-
-    componentDidUpdate(prevProps: any, prevState: any) {
-        const { isDisabled } = this.props;
-
-        if (prevProps.isDisabled !== isDisabled) {
-            if (isDisabled) {
-                this._unregisterEventListeners();
-            } else {
-                this._registerEventListeners();
-            }
-        }
+        this._registerEventListeners();
     }
 
     componentWillUnmount() {
-        const { isDisabled } = this.props;
-
-        if (!isDisabled) {
-            this._unregisterEventListeners();
-        }
+        this._unregisterEventListeners();
     }
 
     render() {
@@ -55,9 +35,9 @@ export default class Closable extends PureComponent<ClosableProps> {
     }
 
     private _handleMouseCapture = (event: MouseEvent): void => {
-        const { onClose } = this.props;
+        const { isDisabled, onClose } = this.props;
 
-        if (onClose) {
+        if (!isDisabled && onClose) {
             const target = event.target as HTMLElement;
             const container = findDOMNode(this) as HTMLElement;
 
@@ -68,9 +48,9 @@ export default class Closable extends PureComponent<ClosableProps> {
     }
 
     private _handleResize = (event: Event): void => {
-        const { onClose } = this.props;
+        const { isDisabled, onClose } = this.props;
 
-        if (onClose) {
+        if (!isDisabled && onClose) {
             onClose();
         }
     }

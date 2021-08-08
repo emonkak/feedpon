@@ -10,9 +10,22 @@ interface EntryShareButtonProps {
     title: string;
 }
 
-class EntryShareButton extends PureComponent<EntryShareButtonProps & PopupProps> {
+interface EntryShareButtonState {
+    isEntered: boolean;
+}
+
+class EntryShareButton extends PureComponent<EntryShareButtonProps & PopupProps, EntryShareButtonState> {
+    constructor(props: EntryShareButtonProps & PopupProps) {
+        super(props);
+
+        this.state = {
+            isEntered: false
+        };
+    }
+
     render() {
         const { closePopup, isOpened, openPopup, popupStyle, pullDirection } = this.props;
+        const { isEntered } = this.state;
 
         return (
             <div className="button-group">
@@ -27,11 +40,14 @@ class EntryShareButton extends PureComponent<EntryShareButtonProps & PopupProps>
                     mountOnEnter
                     unmountOnExit
                     classNames="popover"
-                    timeout={200}>
+                    timeout={200}
+                    onEntered={this._handleTransitionEntered}
+                    onExited={this._handleTransitionExited}
+                >
                     <div
                         style={popupStyle}
                         className={classnames('popup', 'is-pull-' + pullDirection)}>
-                        <Closable onClose={closePopup}>
+                        <Closable isDisabled={!isEntered} onClose={closePopup}>
                             {this._renderPopover()}
                         </Closable>
                     </div>
@@ -91,6 +107,18 @@ class EntryShareButton extends PureComponent<EntryShareButtonProps & PopupProps>
                 </div>
             </div>
         );
+    }
+
+    private _handleTransitionEntered = () => {
+        this.setState({
+            isEntered: true
+        });
+    }
+
+    private _handleTransitionExited = () => {
+        this.setState({
+            isEntered: false
+        });
     }
 }
 

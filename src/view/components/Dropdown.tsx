@@ -15,6 +15,7 @@ interface DropdownProps {
 
 interface DropdownState {
     isOpened: boolean;
+    isEntered: boolean;
     dropdownStyle: React.CSSProperties;
 }
 
@@ -30,6 +31,7 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
 
         this.state = {
             isOpened: false,
+            isEntered: false,
             dropdownStyle: {}
         };
     }
@@ -48,7 +50,10 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
                     mountOnEnter
                     unmountOnExit
                     classNames="menu"
-                    timeout={200}>
+                    timeout={200}
+                    onEntered={this._handleTransitionEntered}
+                    onExited={this._handleTransitionExited}
+                >
                     <div className="dropdown" style={dropdownStyle}>
                         {this._renderMenu()}
                     </div>
@@ -68,9 +73,10 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
 
     private _renderMenu() {
         const { children } = this.props;
+        const { isEntered } = this.state;
 
         return (
-            <Closable onClose={this._handleClose}>
+            <Closable isDisabled={!isEntered} onClose={this._handleClose}>
                 <Menu
                     ref={this._handleMenuRef}
                     onKeyDown={this._handleKeyDown}
@@ -203,5 +209,17 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
         if (toggleButton.props.onClick) {
             toggleButton.props.onClick(event);
         }
+    }
+
+    private _handleTransitionEntered = () => {
+        this.setState({
+            isEntered: true
+        });
+    }
+
+    private _handleTransitionExited = () => {
+        this.setState({
+            isEntered: false
+        });
     }
 }
