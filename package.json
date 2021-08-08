@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "@emonkak/enumerable": "^4.0.0",
+    "@mozilla/readability": "^0.4.1",
     "classnames": "^2.3.1",
     "cordova-android": "^10.0.1",
     "cordova-ios": "^6.2.0",
@@ -44,7 +45,6 @@
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
     "react-transition-group": "^4.4.2",
-    "readability": "git+https://github.com/mozilla/readability.git",
     "redux-logger": "^3.0.6",
     "reselect": "^4.0.0",
     "tslib": "^2.3.0"

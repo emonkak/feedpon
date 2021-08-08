@@ -1,5 +1,4 @@
 /// <reference path="./cordova-plugins.d.ts" />
-/// <reference path="./readability.d.ts" />
 /// <reference path="./requestIdleCallback.d.ts" />
 
 declare var process: {

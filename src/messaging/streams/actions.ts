@@ -1,4 +1,4 @@
-import Readability from 'readability';
+import { Readability } from '@mozilla/readability';
 
 import * as bookmarkApi from 'adapters/hatena/bookmarkApi';
 import * as feedly from 'adapters/feedly/types';
