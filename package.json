@@ -45,8 +45,7 @@
     "react-router-dom": "^5.2.0",
     "react-transition-group": "^4.4.2",
     "redux-logger": "^3.0.6",
-    "reselect": "^4.0.0",
-    "tslib": "^2.3.0"
+    "reselect": "^4.0.0"
   },
   "devDependencies": {
     "@types/assert": "^1.5.5",
