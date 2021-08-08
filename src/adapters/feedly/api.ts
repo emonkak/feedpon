@@ -1,355 +1,331 @@
-import querystring from 'query-string';
-
 import * as types from './types';
-import fetch from 'adapters/http/fetch';
+import httpClient from 'adapters/http/httpClient';
 
-const ENDPOINT = 'https://cloud.feedly.com/';
+const ENDPOINT = 'https://cloud.feedly.com';
 
 // Authentication API:
 export function createAuthUrl(input: types.AuthenticateInput): string {
-    return ENDPOINT + 'v3/auth/auth?' + querystring.stringify({
+    return ENDPOINT + '/v3/auth/auth?' + new URLSearchParams({
         client_id: input.client_id,
         redirect_uri: input.redirect_uri,
         response_type: input.response_type,
         scope: input.scope
-    });
+    }).toString();
 }
 
 export function authCallback(urlString: string): types.AuthenticateResponse {
     const paramsString = urlString.slice(urlString.indexOf('?') + 1);
-    const params = querystring.parse(paramsString);
+    const params = new URLSearchParams(paramsString);
 
     return {
-        code: params['code'] as string,
-        state: params['state']?.toString(),
-        error: params['error']?.toString()
+        code: params.get('code')!,
+        state: params.get('state') ?? undefined,
+        error: params.get('error') ?? undefined
     };
 }
 
 export function exchangeToken(input: types.ExchangeTokenInput): Promise<types.ExchangeTokenResponse> {
-    return doPost('v3/auth/token', input)
-        .then<types.ExchangeTokenResponse>(decodeAsJson);
+    return httpClient.postJson(ENDPOINT, '/v3/auth/token', input)
+        .then<types.ExchangeTokenResponse>(handleJsonResponse);
 }
 
 export function refreshToken(input: types.RefreshTokenInput): Promise<types.RefreshTokenResponse> {
-    return doPost('v3/auth/token', input)
-        .then<types.RefreshTokenResponse>(decodeAsJson);
+    return httpClient.postJson(ENDPOINT, '/v3/auth/token', input)
+        .then<types.RefreshTokenResponse>(handleJsonResponse);
 }
 
 export function revokeToken(input: types.RevokeTokenInput): Promise<types.RevokeTokenResponse> {
-    return doPost('v3/auth/token', input)
-        .then<types.RevokeTokenResponse>(decodeAsJson);
+    return httpClient.postJson(ENDPOINT, '/v3/auth/token', input)
+        .then<types.RevokeTokenResponse>(handleJsonResponse);
 }
 
 // Categories API:
 export function getCategories(accessToken: string): Promise<types.Category[]> {
-    return doGet('v3/categories', null, createAuthHeader(accessToken))
-        .then<types.Category[]>(decodeAsJson);
+    return httpClient.get(ENDPOINT, '/v3/categories', null, createAuthHeader(accessToken))
+        .then<types.Category[]>(handleJsonResponse);
 }
 
 export function changeCategoryLabel(accessToken: string, categoryId: string, label: string): Promise<Response> {
-    return doPost(
-        'v3/categories/' + encodeURIComponent(categoryId),
+    return httpClient.postJson(
+        ENDPOINT,
+        '/v3/categories/' + encodeURIComponent(categoryId),
         { label },
         createAuthHeader(accessToken)
-    );
+    ).then(handleResponse);
 }
 
 export function deleteCategory(accessToken: string, categoryId: string): Promise<Response> {
-    return doDelete(
-        'v3/categories/' + encodeURIComponent(categoryId),
+    return httpClient.deleteJson(
+        ENDPOINT,
+        '/v3/categories/' + encodeURIComponent(categoryId),
         null,
         createAuthHeader(accessToken)
-    );
+    ).then(handleResponse);;
 }
 
 // Feeds API:
 export function getFeed(accessToken: string, feedId: string): Promise<types.Feed> {
-    return doGet(
-        'v3/feeds/' + encodeURIComponent(feedId),
+    return httpClient.get(
+        ENDPOINT,
+        '/v3/feeds/' + encodeURIComponent(feedId),
         null,
         createAuthHeader(accessToken)
-    ).then<types.Feed>(decodeAsJson);
+    ).then<types.Feed>(handleJsonResponse);
 }
 
 // Markers API:
 export function getUnreadCounts(accessToken: string, input: types.GetUnreadCountsInput = {}): Promise<types.GetUnreadCountsResponce> {
-    return doGet(
-        'v3/markers/counts',
+    return httpClient.get(
+        ENDPOINT,
+        '/v3/markers/counts',
         input,
         createAuthHeader(accessToken)
-    ).then<types.GetUnreadCountsResponce>(decodeAsJson);
+    ).then<types.GetUnreadCountsResponce>(handleJsonResponse);
 }
 
 export function markAsReadForEntries(accessToken: string, entryIds: string | string[]): Promise<Response> {
-    return doPost(
-        'v3/markers',
+    return httpClient.postJson(
+        ENDPOINT,
+        '/v3/markers',
         {
             action: 'markAsRead',
             type: 'entries',
             entryIds: Array.isArray(entryIds) ? entryIds : [entryIds]
         },
         createAuthHeader(accessToken)
-    );
+    ).then(handleResponse);
 }
 
 export function markAsReadForFeeds(accessToken: string, feedIds: string | string[]): Promise<Response> {
-    return doPost(
-        'v3/markers',
+    return httpClient.postJson(
+        ENDPOINT,
+        '/v3/markers',
         {
             action: 'markAsRead',
             type: 'feeds',
             feedIds: Array.isArray(feedIds) ? feedIds : [feedIds]
         },
         createAuthHeader(accessToken)
-    );
+    ).then(handleResponse);
 }
 
 export function markAsReadForCategories(accessToken: string, categoryIds: string | string[]): Promise<Response> {
-    return doPost(
-        'v3/markers',
+    return httpClient.postJson(
+        ENDPOINT,
+        '/v3/markers',
         {
             action: 'markAsRead',
             type: 'categories',
             categoryIds: Array.isArray(categoryIds) ? categoryIds : [categoryIds]
         },
         createAuthHeader(accessToken)
-    );
+    ).then(handleResponse);
 }
 
 export function keepUnreadForEntries(accessToken: string, entryIds: string | string[]): Promise<Response> {
-    return doPost(
-        'v3/markers',
+    return httpClient.postJson(
+        ENDPOINT,
+        '/v3/markers',
         {
             action: 'keepUnread',
             type: 'entries',
             entryIds: Array.isArray(entryIds) ? entryIds : [entryIds]
         },
         createAuthHeader(accessToken)
-    );
+    ).then(handleResponse);
 }
 
 export function keepUnreadForFeeds(accessToken: string, feedIds: string | string[]): Promise<Response> {
-    return doPost(
-        'v3/markers',
+    return httpClient.postJson(
+        ENDPOINT,
+        '/v3/markers',
         {
             action: 'keepUnread',
             type: 'feeds',
             feedIds: Array.isArray(feedIds) ? feedIds : [feedIds]
         },
         createAuthHeader(accessToken)
-    );
+    ).then(handleResponse);
 }
 
 export function keepUnreadForCategories(accessToken: string, categoryIds: string | string[]): Promise<Response> {
-    return doPost(
-        'v3/markers',
+    return httpClient.postJson(
+        ENDPOINT,
+        '/v3/markers',
         {
             action: 'keepUnread',
             type: 'categories',
             categoryIds: Array.isArray(categoryIds) ? categoryIds : [categoryIds]
         },
         createAuthHeader(accessToken)
-    );
+    ).then(handleResponse);
 }
 
 // OPML API
 export function createExportOpmlUrl(accessToken: string): string {
-    return ENDPOINT + 'v3/opml?' + querystring.stringify({
+    return ENDPOINT + 'v3/opml?' + new URLSearchParams({
         feedlyToken: accessToken
-    });
+    }).toString();
 }
 
 export function importOpml(accessToken: string, xmlString: string): Promise<Response> {
-    return doPost(
-        'v3/opml',
+    return httpClient.postXml(
+        ENDPOINT,
+        '/v3/opml',
         xmlString,
         createAuthHeader(accessToken),
-        'text/xml'
-    );
+    ).then(handleResponse);
 }
 
 // Profile API:
 export function getProfile(accessToken: string): Promise<types.Profile> {
-    return doGet(
-        'v3/profile',
+    return httpClient.get(
+        ENDPOINT,
+        '/v3/profile',
         null,
         createAuthHeader(accessToken)
-    ).then<types.Profile>(decodeAsJson);
+    ).then<types.Profile>(handleJsonResponse);
 }
 
 export function updateProfile(accessToken: string, input: types.UpdateProfileInput): Promise<Response> {
-    return doPut(
-        'v3/profile',
+    return httpClient.putJson(
+        ENDPOINT,
+        '/v3/profile',
         null,
         createAuthHeader(accessToken)
-    );
+    ).then(handleResponse);
 }
 
 // Search API:
 export function searchFeeds(accessToken: string, input: types.SearchInput): Promise<types.SearchResponse> {
-    return doGet(
-        'v3/search/feeds',
+    return httpClient.get(
+        ENDPOINT,
+        '/v3/search/feeds',
         input,
         createAuthHeader(accessToken)
-    ).then<types.SearchResponse>(decodeAsJson);
+    ).then<types.SearchResponse>(handleJsonResponse);
 }
 
 // Streams API:
 export function getStreamIds(accessToken: string, input: types.GetStreamInput): Promise<types.GetEntryIdsResponse> {
-    return doGet(
-        'v3/streams/ids',
+    return httpClient.get(
+        ENDPOINT,
+        '/v3/streams/ids',
         input,
         createAuthHeader(accessToken)
-    ).then<types.GetEntryIdsResponse>(decodeAsJson);
+    ).then<types.GetEntryIdsResponse>(handleJsonResponse);
 }
 
 export function getStreamContents(accessToken: string, input: types.GetStreamInput): Promise<types.Contents> {
-    return doGet(
-        'v3/streams/contents',
+    return httpClient.get(
+        ENDPOINT,
+        '/v3/streams/contents',
         input,
         createAuthHeader(accessToken)
-    ).then<types.Contents>(decodeAsJson);
+    ).then<types.Contents>(handleJsonResponse);
 }
 
 // Subscriptions API:
 export function getSubscriptions(accessToken: string): Promise<types.Subscription[]> {
-    return doGet(
-        'v3/subscriptions',
+    return httpClient.get(
+        ENDPOINT,
+        '/v3/subscriptions',
         null,
         createAuthHeader(accessToken)
-    ).then<types.Subscription[]>(decodeAsJson);
+    ).then<types.Subscription[]>(handleJsonResponse);
 }
 
 export function subscribeFeed(accessToken: string, input: types.SubscribeFeedInput): Promise<Response> {
-    return doPost(
-        'v3/subscriptions',
+    return httpClient.postJson(
+        ENDPOINT,
+        '/v3/subscriptions',
         input,
         createAuthHeader(accessToken)
-    );
+    ).then(handleResponse);
 }
 
 export function unsubscribeFeed(accessToken: string, feedId: string): Promise<Response> {
-    return doDelete(
-        'v3/subscriptions/' + encodeURIComponent(feedId),
+    return httpClient.deleteJson(
+        ENDPOINT,
+        '/v3/subscriptions/' + encodeURIComponent(feedId),
         null,
         createAuthHeader(accessToken)
-    );
+    ).then(handleResponse);
 }
 
 // Tags API:
 export function getTags(accessToken: string): Promise<types.Tag[]> {
-    return doGet(
-        'v3/tags',
+    return httpClient.get(
+        ENDPOINT,
+        '/v3/tags',
         null,
         createAuthHeader(accessToken)
-    ).then<types.Tag[]>(decodeAsJson);
+    ).then<types.Tag[]>(handleJsonResponse);
 }
 
 export function changeTagLabel(accessToken: string, tagId: string, label: string): Promise<Response> {
-    return doPost(
-        'v3/tags/' + encodeURIComponent(tagId),
+    return httpClient.postJson(
+        ENDPOINT,
+        '/v3/tags/' + encodeURIComponent(tagId),
         { label },
         createAuthHeader(accessToken)
-    );
+    ).then(handleResponse);
 }
 
 export function setTag(accessToken: string, entryIds: string[], tagIds: string[]): Promise<Response> {
-    return doPut(
-        'v3/tags/' + encodeURIComponent(tagIds.join(',')),
+    return httpClient.putJson(
+        ENDPOINT,
+        '/v3/tags/' + encodeURIComponent(tagIds.join(',')),
         { entryIds },
         createAuthHeader(accessToken)
-    );
+    ).then(handleResponse);
 }
 
 export function unsetTag(accessToken: string, entryIds: string[], tagIds: string[]): Promise<Response> {
-    return doDelete(
-        'v3/tags/' + encodeURIComponent(tagIds.join(',')) + '/' + encodeURIComponent(entryIds.join(',')),
+    return httpClient.deleteJson(
+        ENDPOINT,
+        '/v3/tags/' + encodeURIComponent(tagIds.join(',')) + '/' + encodeURIComponent(entryIds.join(',')),
         null,
         createAuthHeader(accessToken)
-    );
+    ).then(handleResponse);
 }
 
 export function deleteTag(accessToken: string, tagIds: string[]): Promise<Response> {
-    return doDelete(
-        'v3/tags/' + encodeURIComponent(tagIds.join(',')),
+    return httpClient.deleteJson(
+        ENDPOINT,
+        '/v3/tags/' + encodeURIComponent(tagIds.join(',')),
         null,
         createAuthHeader(accessToken)
-    );
+    ).then(handleResponse);
 }
 
 // Utils:
-function doGet(path: string, data?: object | null, headers?: { [key: string]: string }): Promise<Response> {
-    const url = ENDPOINT + path + (data ? '?' + querystring.stringify(data) : '');
-
-    const params = {
-        method: 'GET',
-        headers: new Headers(headers)
-    };
-
-    return fetch(url, params).then(handleError);
-}
-
-function doPost(path: string, data?: string | object | null, headers?: { [key: string]: string }, contentType: string = 'application/json'): Promise<Response> {
-    const url = ENDPOINT + path;
-
-    const params = {
-        method: 'POST',
-        headers: new Headers({ 'Content-Type': contentType, ...headers }),
-        body: serializeData(data)
-    };
-
-    return fetch(url, params).then(handleError);
-}
-
-function doPut(path: string, data?: string | object | null, headers?: { [key: string]: string }, contentType: string = 'application/json'): Promise<Response> {
-    const url = ENDPOINT + path;
-
-    const params = {
-        method: 'PUT',
-        headers: new Headers({ 'Content-Type': contentType, ...headers }),
-        body: serializeData(data)
-    };
-
-    return fetch(url, params).then(handleError);
-}
-
-function doDelete(path: string, data?: string | object | null, headers?: { [key: string]: string }, contentType: string = 'application/json'): Promise<Response> {
-    const url = ENDPOINT + path;
-
-    const params = {
-        method: 'DELETE',
-        headers: new Headers({ 'Content-Type': contentType, ...headers }),
-        body: serializeData(data)
-    };
-
-    return fetch(url, params).then(handleError);
-}
-
 function createAuthHeader(accessToken: string): { [key: string]: string } {
     return {
         'Authorization': 'OAuth ' + accessToken
     };
 }
 
-function serializeData(data: string | object | null | undefined): string | null {
-    if (data == null) {
-        return null;
+function handleResponse(response: Response): Promise<Response> {
+    if (response.ok) {
+        return Promise.resolve(response);
+    } else {
+        return handleError(response);
     }
-    return typeof data === 'object' ? JSON.stringify(data) : data;
 }
 
-function handleError(response: Response): Promise<Response> {
-    if (!response.ok) {
-        return response.json()
-            .then(
-                (error) => Promise.reject(new Error(`${error.errorMessage} (errorCode: ${error.errorCode}) (errorId: ${error.errorId})`)),
-                () => Promise.reject(new Error(`(status: ${response.status}) (statusText: ${response.statusText}) (url: ${response.url})`))
-            );
+function handleJsonResponse<T>(response: Response): Promise<T> {
+    if (response.ok) {
+        return response.json();
+    } else {
+        return handleError(response);
     }
-    return Promise.resolve(response);
 }
 
-function decodeAsJson<T>(response: Response): Promise<T> {
-    return response.json();
+function handleError<T>(response: Response): Promise<T> {
+    return response.json()
+        .then(
+            (error) => Promise.reject(new Error(`${error.errorMessage} (errorCode: ${error.errorCode}) (errorId: ${error.errorId})`)),
+            () => Promise.reject(new Error(`(status: ${response.status}) (statusText: ${response.statusText}) (url: ${response.url})`))
+        );
 }

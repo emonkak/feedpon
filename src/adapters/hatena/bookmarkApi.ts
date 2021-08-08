@@ -1,6 +1,5 @@
 import * as types from './types';
-import buildQueryString from 'utils/buildQueryString';
-import fetch from 'adapters/http/fetch';
+import httpClient from 'adapters/http/httpClient';
 
 const URL_CHUNK_LIMIT = 50;
 const URL_LRNGTH_LIMIT = 4096;
@@ -9,13 +8,13 @@ export function getBookmarkCounts(urls: string[]): Promise<types.BookmarkCounts>
     const promises = [];
 
     for (const chunkedUrls of chunkUrls(urls)) {
-        const requestUrl =  'http://api.b.st-hatena.com/entry.counts?'
-            + buildQueryString({ url: chunkedUrls });
-
-        const promise = fetch(requestUrl)
-            .then<Response>((response) => response.ok ? response : Promise.reject(response.url + ': ' + response.statusText))
-            .then<types.BookmarkCounts>((response) => response.json());
-
+        const promise = httpClient.get('http://api.b.st-hatena.com', '/entry.counts', {
+                url: chunkedUrls
+            })
+            .then<types.BookmarkCounts>((response) => response.ok ?
+                response.json() :
+                Promise.reject(new Error(response.url + ': ' + response.statusText))
+            );
         promises.push(promise);
     }
 
@@ -24,12 +23,13 @@ export function getBookmarkCounts(urls: string[]): Promise<types.BookmarkCounts>
 }
 
 export function getBookmarkEntry(url: string): Promise<types.GetEntryResponse | null> {
-    const requestUrl = 'http://b.hatena.ne.jp/entry/jsonlite/?'
-        + buildQueryString({ url });
-
-    return fetch(requestUrl)
-        .then<Response>((response) => response.ok ? response : Promise.reject(response.url + ': ' + response.statusText))
-        .then<types.GetEntryResponse>((response) => response.json());
+    return httpClient.get('http://b.hatena.ne.jp',  '/entry/jsonlite/', {
+            url
+        })
+        .then<types.GetEntryResponse>((response) => response.ok ?
+            response.json() :
+            Promise.reject(new Error(response.url + ': ' + response.statusText))
+        );
 }
 
 function chunkUrls(urls: string[]): string[][] {
