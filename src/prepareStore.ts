@@ -40,7 +40,10 @@ export default async function prepareStore(context: ThunkContext): Promise<Store
     ];
 
     if (process.env.NODE_ENV !== 'production') {
-        middlewares.push(reduxMiddleware(createLogger({ duration: true })));
+        middlewares.push(reduxMiddleware(createLogger({
+            collapsed: true,
+            duration: true
+        })));
     }
 
     const store = applyMiddlewares(createStore(reducer, snapshot.state), middlewares);
