@@ -8,7 +8,7 @@ export function getBookmarkCounts(urls: string[]): Promise<types.BookmarkCounts>
     const promises = [];
 
     for (const chunkedUrls of chunkUrls(urls)) {
-        const promise = httpClient.get('http://api.b.st-hatena.com', '/entry.counts', {
+        const promise = httpClient.get('https://bookmark.hatenaapis.com', '/count/entries', {
                 url: chunkedUrls
             })
             .then<types.BookmarkCounts>((response) => response.ok ?
@@ -23,7 +23,7 @@ export function getBookmarkCounts(urls: string[]): Promise<types.BookmarkCounts>
 }
 
 export function getBookmarkEntry(url: string): Promise<types.GetEntryResponse | null> {
-    return httpClient.get('http://b.hatena.ne.jp',  '/entry/jsonlite/', {
+    return httpClient.get('https://b.hatena.ne.jp',  '/entry/jsonlite/', {
             url
         })
         .then<types.GetEntryResponse>((response) => response.ok ?
