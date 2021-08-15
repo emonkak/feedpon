@@ -148,6 +148,7 @@ export default class EntriesDropdown extends PureComponent<EntriesDropdownProps,
                     key={entry.entryId}
                     onSelect={onScrollToEntry}
                     primaryText={entry.title}
+                    secondaryText={`${i + 1}`}
                     value={i} />
             );
         }
