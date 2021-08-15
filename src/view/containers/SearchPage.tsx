@@ -51,7 +51,7 @@ class SearchPage extends PureComponent<SearchPageProps, SearchPageState> {
         super(props);
 
         this.state = {
-            query: props.match.params['query'] || '',
+            query: decodeURIComponent(props.match.params.query ?? ''),
             prevActiveQuery: props.activeQuery
         };
     }
@@ -71,10 +71,10 @@ class SearchPage extends PureComponent<SearchPageProps, SearchPageState> {
         const { match } = this.props;
         const { match: prevMatch } = prevProps;
 
-        if (match.params['query'] && match.params['query'] !== prevMatch.params['query']) {
+        if (match.params.query && match.params.query !== prevMatch.params.query) {
             const { onSearchFeeds } = this.props;
 
-            onSearchFeeds(match.params['query']);
+            onSearchFeeds(decodeURIComponent(match.params['query']));
         }
     }
 
@@ -98,7 +98,7 @@ class SearchPage extends PureComponent<SearchPageProps, SearchPageState> {
 
     private renderFeeds() {
         const { activeQuery, match } = this.props;
-        if (match.params['query'] !== activeQuery) {
+        if (decodeURIComponent(match.params.query) !== activeQuery) {
             return null;
         }
 
