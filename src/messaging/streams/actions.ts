@@ -891,7 +891,7 @@ function getEntryConverter(): Thunk<(entry: feedly.Entry) => Entry> {
                 url: entry.origin.htmlUrl
             } : null,
             visual: entry.visual && entry.visual.contentType && entry.visual.contentType.startsWith('image/') ? {
-                url: entry.visual.url,
+                url: entry.visual.edgeCacheUrl ?? entry.visual.url,
                 width: entry.visual.width,
                 height: entry.visual.height
             } : null,

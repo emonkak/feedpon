@@ -237,7 +237,7 @@ const CollapsedEntryContent: React.SFC<CollapsedEntryContentProps> = ({
                 </div>
                 <div className="entry-visual">
                     {entry.visual &&
-                        <img src={entry.visual.url} width={entry.visual.width} height={entry.visual.height} />}
+                        <img src={entry.visual.url} />}
                 </div>
             </div>
         </div>

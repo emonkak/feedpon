@@ -253,6 +253,9 @@ export interface Visual {
     width?: number;
     height?: number;
     contentType?: string;
+    edgeCacheUrl?: string;
+    expirationDate?: string;
+    processor?: string;
 }
 
 // Subscriptions API:
