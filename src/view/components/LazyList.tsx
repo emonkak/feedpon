@@ -274,8 +274,6 @@ export default class LazyList extends Component<LazyListProps, LazyListState> {
     private _updateScrollIndex(index: number): void {
         const scrollOffset = this._getScrollOffset(index);
 
-        console.log(index, scrollOffset);
-
         if (scrollOffset !== 0) {
             window.scrollBy(0, scrollOffset);
         }
