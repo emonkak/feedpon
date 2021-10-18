@@ -112,5 +112,5 @@ export default class RelativeTime extends PureComponent<RelativeTimeProps, Relat
 
 function formatTime(formatter: Intl.RelativeTimeFormat, time: number): string {
     const [amount, type] = relativeTime(new Date(time));
-    return formatter.format(amount, type);
+    return type === 'second' && amount <= 0 ? 'now' : formatter.format(amount, type);
 }
