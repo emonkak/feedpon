@@ -1,5 +1,5 @@
 {
-    "manifest_version": 2,
+    "manifest_version": 3,
     "name": "Feedpon",
     "version": "2.1.1",
     "description": "A LDR inspired feed reader",
@@ -11,15 +11,20 @@
         "128": "./img/icon-128.png"
     },
     "background": {
-        "scripts": ["js/background.js"],
-        "persistent": false
+        "service_worker": "js/background.js"
     },
-    "browser_action": {
-        "default_icon": "./img/icon-32.png"
+    "action": {
+        "default_icon": {
+            "16": "./img/icon-16.png",
+            "24": "./img/icon-24.png",
+            "32": "./img/icon-32.png"
+        }
     },
     "permissions": [
         "tabs",
-        "unlimitedStorage",
+        "unlimitedStorage"
+    ],
+    "host_permissions": [
         "<all_urls>"
     ]
 }

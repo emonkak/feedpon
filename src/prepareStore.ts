@@ -57,7 +57,7 @@ export default async function prepareStore(context: ThunkContext): Promise<Store
             const totalUnreadCount = totalUnreadCountSelector(state);
 
             if (totalUnreadCount !== prevTotalUnreadCount) {
-                chrome.browserAction.setBadgeText({
+                chrome.action.setBadgeText({
                     text: totalUnreadCount > 0 ? totalUnreadCount + '' : ''
                 });
 
