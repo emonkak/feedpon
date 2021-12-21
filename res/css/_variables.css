@@ -7,9 +7,9 @@ $lg-viewport-min-width: 992px;
 @custom-media --lg-viewport (min-width: $lg-viewport-min-width);
 
 :root {
-  --vertical-rhythm: calc(1rem * (24 / 14));
-  --sidebar-width: calc(1rem * (272 / 14));
-  --container-width: $md-viewport-min-width;
+  --vertical-rhythm: calc(1rem * (26 / 16));
+  --sidebar-width: calc(1rem * (304 / 16));
+  --container-width: 704px;
 }
 
 .theme-light {
