@@ -1,33 +1,22 @@
-export default function walkNode(rootNode: Node, callback: (node: Node) => boolean): void {
-    let walk = true;
-    let currentNode = rootNode;
-    let nextNode: Node | null = null;
+export default function walkNode(rootNode: Node, callback: (node: Node) => Node | null): void {
+    let nextNode: Node | null = rootNode;
 
-    while (true) {
-        // Save the parent-child relationship in advance because it may be deleted
-        const { firstChild, nextSibling, parentNode }: {
-            firstChild: Node | null,
-            nextSibling: Node | null,
-            parentNode: Node | null
-        } = currentNode;
+    do {
+        const currentNode = nextNode! as Node;
 
-        if (walk) {
-            walk = callback(currentNode);
-        }
+        // Save the parent node because it may be deleted
+        let { parentNode } = currentNode;
 
-        if (walk && firstChild) {
-            nextNode = firstChild;
-        } else if (nextSibling) {
-            nextNode = nextSibling;
-            walk = true;
-        } else {
-            nextNode = parentNode;
-            walk = false;
+        nextNode = callback(currentNode);
+
+        if (!nextNode) {
+            while (parentNode && parentNode !== rootNode) {
+                if (parentNode.nextSibling) {
+                    nextNode = parentNode.nextSibling;
+                    break;
+                }
+                parentNode = parentNode.parentNode;
+            }
         }
-        if (nextNode && nextNode !== rootNode) {
-            currentNode = nextNode;
-        } else {
-            break;
-        }
-    }
+    } while (nextNode);
 }

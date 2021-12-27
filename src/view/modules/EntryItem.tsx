@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import classnames from 'classnames';
 
-import CleanHtml from 'view/components/CleanHtml';
+import EmbeddedHtml from 'view/components/EmbeddedHtml';
 import CommentPopover from 'view/modules/CommentPopover';
 import EntryActionList from 'view/modules/EntryActionList';
 import EntryNav from 'view/modules/EntryNav';
@@ -15,6 +15,7 @@ interface EntryItemProps {
     isActive: boolean;
     isExpanded: boolean;
     onExpand: (index: number) => void;
+    onFetchAmpContent: (entryId: string | number, url: string) => void;
     onFetchComments: (entryId: string | number, url: string) => void;
     onFetchFullContent: (entryId: string | number, url: string) => void;
     onHideComments: (entryId: string | number) => void;
@@ -122,11 +123,15 @@ export default class EntryItem extends PureComponent<EntryItemProps> {
     }
 
     private _handleToggleFullContent = (event: React.MouseEvent<any>) => {
-        const { entry, onFetchFullContent, onHideFullContents, onShowFullContents } = this.props;
+        const { entry, onFetchAmpContent, onFetchFullContent, onHideFullContents, onShowFullContents } = this.props;
 
         if (!entry.fullContents.isLoading) {
             if (!entry.fullContents.isLoaded) {
-                onFetchFullContent(entry.entryId, entry.url);
+                if (entry.ampUrl) {
+                    onFetchAmpContent(entry.entryId, entry.ampUrl);
+                } else {
+                    onFetchFullContent(entry.entryId, entry.url);
+                }
             }
 
             if (entry.fullContents.isShown) {
@@ -164,7 +169,7 @@ const ExpandedEntryContent: React.SFC<ExpandedEntryContentProps> = ({
             isNotFound={entry.fullContents.isNotFound}
             items={entry.fullContents.items}
             onFetchNext={onFetchNextFullContent} />
-        : <CleanHtml
+        : <EmbeddedHtml
             baseUrl={entry.url}
             className="entry-content u-clearfix u-text-wrap"
             html={entry.content} />;

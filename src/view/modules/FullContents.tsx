@@ -1,6 +1,6 @@
 import React from 'react';
 
-import CleanHtml from 'view/components/CleanHtml';
+import EmbeddedHtml from 'view/components/EmbeddedHtml';
 import { FullContent } from 'messaging/types';
 
 interface FullContentsProps {
@@ -34,7 +34,7 @@ const FullContents: React.SFC<FullContentsProps> = ({
                         <a className="link-soft" href={fullContent.url} target="_blank">{'Page ' + (index + 1)}</a>
                     </h2>
                 </header>}
-            <CleanHtml
+            <EmbeddedHtml
                 baseUrl={fullContent.url}
                 className="entry-page-content"
                 html={fullContent.content} />

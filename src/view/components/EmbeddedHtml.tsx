@@ -4,13 +4,13 @@ import { findDOMNode } from 'react-dom';
 import cleanNode from 'utils/dom/cleanNode';
 import walkNode from 'utils/dom/walkNode';
 
-interface CleanHtmlProps {
+interface EmbeddedHtmlProps {
     className?: string;
     baseUrl: string;
     html: string | null;
 }
 
-export default class CleanHtml extends PureComponent<CleanHtmlProps> {
+export default class EmbeddedHtml extends PureComponent<EmbeddedHtmlProps> {
     componentDidMount() {
         this.updateContent();
     }

@@ -225,11 +225,17 @@ export interface Entry {
     tags?: Tag[];
     categories?: Category[];
     engagement?: number;
+    engagementRate?: number;
     actionTimestamp?: number;
     enclosure?: Link[];
     fingerprint: string;
     originId: string;
     sid?: string;
+    memes?: Meme[];
+    // Undocumented properities:
+    canonicalUrl?: string;
+    ampUrl?: string;
+    cdnAmpUrl?: string;
 }
 
 export interface Content {
@@ -256,6 +262,12 @@ export interface Visual {
     edgeCacheUrl?: string;
     expirationDate?: string;
     processor?: string;
+}
+
+export interface Meme {
+    id: string;
+    label: string;
+    score: string;
 }
 
 // Subscriptions API:

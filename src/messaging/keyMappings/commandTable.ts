@@ -126,7 +126,11 @@ export const fetchFullContent: Command<{}> = {
                         }
                     }
                 } else {
-                    dispatch(streamActions.fetchFullContent(entry.entryId, entry.url));
+                    if (entry.ampUrl) {
+                        dispatch(streamActions.fetchFullContent(entry.entryId, entry.ampUrl));
+                    } else {
+                        dispatch(streamActions.fetchFullContent(entry.entryId, entry.url));
+                    }
 
                     dispatch(sendInstantNotification('Fetch full content'));
                 }

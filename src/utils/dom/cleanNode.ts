@@ -4,10 +4,10 @@ import parseSrcset from './parseSrcset';
 const MINIUM_RESPONSIVE_ELEMENT_WIDTH = 128;
 const MINIUM_RESPONSIVE_ELEMENT_HEIGHT = 128;
 
-export default function cleanNode(node: Node, baseUrl: string): boolean {
+export default function cleanNode(node: Node, baseUrl: string): Node | null {
     switch (node.nodeType) {
         case node.TEXT_NODE:
-            return true;
+            return node.firstChild ?? node.nextSibling ?? null;
 
         case node.ELEMENT_NODE:
             return cleanElement(node as Element, baseUrl);
@@ -16,15 +16,39 @@ export default function cleanNode(node: Node, baseUrl: string): boolean {
             if (node.parentNode) {
                 node.parentNode.removeChild(node);
             }
-
-            return false;
+            return null;
     }
 }
 
-function cleanElement(element: Element, baseUrl: string): boolean {
+function cleanElement(element: Element, baseUrl: string): Node | null {
     switch (element.tagName) {
         case 'IMG':
             resolveLazyLoading(element as HTMLImageElement);
+            break;
+        case 'AMP-IMG':
+            const parentNode = element.parentNode;
+            if (parentNode) {
+                const img = createImageElementFromAmpImage(element);
+                parentNode.replaceChild(img, element);
+                element = img;
+            }
+            break;
+        default:
+            // Replace custom elements to wrapper element.
+            if (element.tagName.indexOf('-') >= 0) {
+                const parentNode = element.parentNode;
+
+                if (parentNode) {
+                    const container = document.createElement('div');
+                    container.style.display = 'contents';
+                    let child;
+                    while (child = element.firstChild) {
+                        container.appendChild(child);
+                    }
+                    parentNode.replaceChild(container, element);
+                    return container;
+                }
+            }
             break;
     }
 
@@ -41,7 +65,7 @@ function cleanElement(element: Element, baseUrl: string): boolean {
     }
 
     if (!sanitizeElement(element)) {
-        return false;
+        return null;
     }
 
     switch (element.tagName) {
@@ -67,7 +91,7 @@ function cleanElement(element: Element, baseUrl: string): boolean {
             break;
     }
 
-    return true;
+    return element.firstChild ?? element.nextSibling ?? null;
 }
 
 function qualifyUrl(urlString: string, baseUrlString: string): string {
@@ -136,4 +160,14 @@ function responsifyTable(element: HTMLTableElement): void {
 
 function sandboxifyIframe(element: HTMLElement): void {
     element.setAttribute('sandbox', 'allow-popups allow-same-origin allow-scripts');
+}
+
+function createImageElementFromAmpImage(element: Element): HTMLImageElement {
+    const img = document.createElement('img');
+    for (const attrName of ['src', 'srcset', 'sizes', 'alt', 'height', 'width']) {
+        if (element.hasAttribute(attrName)) {
+            img.setAttribute(attrName, element.getAttribute(attrName)!);
+        }
+    }
+    return img;
 }
