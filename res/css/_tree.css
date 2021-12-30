@@ -66,7 +66,8 @@ a.tree-node-label {
 }
 
 .tree-node-secondary-text {
-  font-size: 0.875rem;
+  font-size: calc(1rem * $type-scale-7);
+  line-height: calc(var(--vertical-rhythm) * $type-height-7);
   white-space: nowrap;
 }
 

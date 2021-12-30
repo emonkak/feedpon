@@ -52,9 +52,9 @@
 
 .modal-title {
   margin: 0;
-  font-size: 2.0rem;
-  font-weight: 300;
-  line-height: calc(var(--vertical-rhythm) * 2);
+  font-size: calc(1rem * $type-scale-2);
+  font-weight: bold;
+  line-height: calc(var(--vertical-rhythm) * $type-height-2);
 }
 
 .modal-is-opened {

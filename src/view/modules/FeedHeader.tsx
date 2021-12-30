@@ -44,10 +44,10 @@ const FeedHeader: React.SFC<FeedHeaderProps> = ({
                         <div><a className="u-text-wrap" target="_blank" href={feed.feedUrl}>{feed.feedUrl}</a></div>
                         <div className="list-inline list-inline-dotted">
                             <div className="list-inline-item u-text-muted">
-                                <span className="u-text-x-large">{numEntries}{hasMoreEntries && '+'}</span> entries
+                                <span className="u-text-4">{numEntries}{hasMoreEntries && '+'}</span> entries
                             </div>
                             <div className="list-inline-item u-text-muted">
-                                <span className="u-text-x-large">{feed.subscribers}</span> subscribers
+                                <span className="u-text-4">{feed.subscribers}</span> subscribers
                             </div>
                         </div>
                     </div>

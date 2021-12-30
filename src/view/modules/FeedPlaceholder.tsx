@@ -6,7 +6,7 @@ const FeedPlaceholder: React.SFC<{}> = () => {
             <div className="link-strong">
                 <span className="placeholder placeholder-40 animation-shining" />
             </div>
-            <div className="u-text-small">
+            <div className="u-text-7">
                 <span className="placeholder placeholder-10 animation-shining" />
             </div>
             <div className="u-text-muted">

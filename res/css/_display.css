@@ -5,35 +5,35 @@
 .display-5,
 .display-6 {
   margin: 0 0 calc(var(--vertical-rhythm) / 2);
-  font-weight: 200;
+  font-weight: 300;
 }
 
 .display-1 {
-  font-size: 2.5rem;
-  line-height: calc(var(--vertical-rhythm) * 2);
+  font-size: calc(1rem * $type-scale-1);
+  line-height: calc(var(--vertical-rhythm) * $type-height-1);
 }
 
 .display-2 {
-  font-size: 2.0rem;
-  line-height: calc(var(--vertical-rhythm) * 1.5);
+  font-size: calc(1rem * $type-scale-2);
+  line-height: calc(var(--vertical-rhythm) * $type-height-2);
 }
 
 .display-3 {
-  font-size: 1.5rem;
-  line-height: var(--vertical-rhythm);
+  font-size: calc(1rem * $type-scale-3);
+  line-height: calc(var(--vertical-rhythm) * $type-height-3);
 }
 
 .display-4 {
-  font-size: 1.375rem;
-  line-height: var(--vertical-rhythm);
+  font-size: calc(1rem * $type-scale-4);
+  line-height: calc(var(--vertical-rhythm) * $type-height-4);
 }
 
 .display-5 {
-  font-size: 1.25rem;
-  line-height: var(--vertical-rhythm);
+  font-size: calc(1rem * $type-scale-5);
+  line-height: calc(var(--vertical-rhythm) * $type-height-5);
 }
 
 .display-6 {
-  font-size: 1.125rem;
-  line-height: var(--vertical-rhythm);
+  font-size: calc(1rem * $type-scale-6);
+  line-height: calc(var(--vertical-rhythm) * $type-height-6);
 }

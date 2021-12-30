@@ -52,7 +52,7 @@ class DashboardPage extends PureComponent<DashboardProps, DashboardState> {
                         <div>
                             {streamHistory.title}
                         </div>
-                        <div className="u-text-small u-text-muted">
+                        <div className="u-text-7 u-text-muted">
                             <RelativeTime time={streamHistory.fetchedAt} />
                         </div>
                     </div>

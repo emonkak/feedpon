@@ -30,7 +30,7 @@ const FeedComponent: React.SFC<FeedProps> = ({
             <div className="u-flex u-flex-justify-content-between u-flex-align-items-center">
                 <div className="u-flex-grow-1 u-margin-right-2">
                     <Link className="link-strong" to={`/streams/${encodeURIComponent(feed.streamId)}`}>{feed.title}</Link>
-                    <div className="u-text-small"><strong>{feed.subscribers}</strong> subscribers</div>
+                    <div className="u-text-7"><strong>{feed.subscribers}</strong> subscribers</div>
                     <div className="u-text-muted">{feed.description}</div>
                 </div>
                 <SubscribeDropdown

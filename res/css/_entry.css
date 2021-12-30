@@ -38,7 +38,8 @@
 }
 
 .entry.is-expanded .entry-title {
-  font-size: 1.25rem;
+  font-size: calc(1rem * $type-scale-5);
+  line-height: calc(var(--vertical-rhythm) * $type-height-5);
 }
 
 .entry-nav {

@@ -58,8 +58,8 @@ export default class ProfileDropdown extends PureComponent<ProfileDropdownProps,
                         <div className="u-flex u-flex-align-items-center dropdown-arrow">
                             {icon}
                             <span className="u-flex-grow-1 u-margin-left-1 u-text-left">
-                                <div className="u-text-wrap u-text-small"><strong>{profile.userName}</strong></div>
-                                <div className="u-text-wrap u-text-small">via <strong>{profile.source}</strong></div>
+                                <div className="u-text-wrap u-text-7"><strong>{profile.userName}</strong></div>
+                                <div className="u-text-wrap u-text-7">via <strong>{profile.source}</strong></div>
                             </span>
                         </div>
                     </button>

@@ -26,14 +26,14 @@ class AuthenticationPage extends PureComponent<AuthenticationProps> {
                         </a>
                     </div>
                     <div className="u-text-muted u-text-center u-margin-bottom-2">
-                        <p className="u-text-x-large">Please choose the backend service and sign in</p>
+                        <p className="u-text-4">Please choose the backend service and sign in</p>
                     </div>
                     <div className="list-group u-margin-bottom-2">
                         <label className="list-group-item">
                             <div className="u-flex u-flex-align-items-center">
                                 <input className="form-check" type="radio" name="backend" value="feedly" defaultChecked />
                                 <i className="icon icon-48 icon-feedly u-margin-right-1" />
-                                <span className="u-flex-grow-1 u-text-large">Feedly</span>
+                                <span className="u-flex-grow-1 u-text-5">Feedly</span>
                             </div>
                         </label>
                     </div>

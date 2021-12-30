@@ -22,7 +22,7 @@ const CategoryHeader: React.SFC<CategoryHeaderProps> = ({
                         <div><strong>{category.label}</strong></div>
                         <div className="list-inline list-inline-dotted">
                             <div className="list-inline-item u-text-muted">
-                                <span className="u-text-x-large">{numEntries}{hasMoreEntries && '+'}</span> entries
+                                <span className="u-text-4">{numEntries}{hasMoreEntries && '+'}</span> entries
                             </div>
                         </div>
 

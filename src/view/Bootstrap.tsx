@@ -62,7 +62,7 @@ export default class Bootstrap extends PureComponent<BootstrapProps, BootstrapSt
                     })} src="./img/logo.svg" width="244" height="88" />
                     {error &&
                         <div className="u-text-negative u-text-center">
-                            <p className="u-text-x-large">{error}</p>
+                            <p className="u-text-4">{error}</p>
                         </div>}
                 </div>
             );

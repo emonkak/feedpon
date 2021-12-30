@@ -110,48 +110,49 @@
   text-align: right;
 }
 
-.u-text-h1 {
-  font-size: 2rem;
+.u-text-1 {
+  font-size: calc(1rem * $type-scale-1);
+  line-height: calc(var(--vertical-rhythm) * $type-height-1);
 }
 
-.u-text-h2 {
-  font-size: 1.5rem;
+.u-text-2 {
+  font-size: calc(1rem * $type-scale-2);
+  line-height: calc(var(--vertical-rhythm) * $type-height-2);
 }
 
-.u-text-h3 {
-  font-size: 1.375rem;
+.u-text-3 {
+  font-size: calc(1rem * $type-scale-3);
+  line-height: calc(var(--vertical-rhythm) * $type-height-3);
 }
 
-.u-text-h4 {
-  font-size: 1.25rem;
+.u-text-4 {
+  font-size: calc(1rem * $type-scale-4);
+  line-height: calc(var(--vertical-rhythm) * $type-height-4);
 }
 
-.u-text-h5 {
-  font-size: 1.125rem;
+.u-text-5 {
+  font-size: calc(1rem * $type-scale-5);
+  line-height: calc(var(--vertical-rhythm) * $type-height-5);
 }
 
-.u-text-h6 {
-  font-size: 1rem;
+.u-text-6 {
+  font-size: calc(1rem * $type-scale-6);
+  line-height: calc(var(--vertical-rhythm) * $type-height-6);
 }
 
-.u-text-x-small {
-  font-size: 0.75rem;
+.u-text-7 {
+  font-size: calc(1rem * $type-scale-7);
+  line-height: calc(var(--vertical-rhythm) * $type-height-7);
 }
 
-.u-text-small {
-  font-size: 0.875rem;
+.u-text-8 {
+  font-size: calc(1rem * $type-scale-8);
+  line-height: calc(var(--vertical-rhythm) * $type-height-8);
 }
 
-.u-text-normal {
-  font-size: 1rem;
-}
-
-.u-text-large {
-  font-size: 1.125rem;
-}
-
-.u-text-x-large {
-  font-size: 1.25rem;
+.u-text-9 {
+  font-size: calc(1rem * $type-scale-9);
+  line-height: calc(var(--vertical-rhythm) * $type-height-9);
 }
 
 .u-text-muted {

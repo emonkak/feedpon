@@ -41,7 +41,7 @@ const SubscriptionTreeHeader: React.SFC<SubscriptionTreeHeaderProps> = ({
                     'animation-rotating': isLoading
                 })} />
             </button>
-            <strong className="u-flex-grow-1 u-text-small">{lastUpdate}</strong>
+            <strong className="u-flex-grow-1 u-text-7">{lastUpdate}</strong>
             <Dropdown
                 toggleButton={
                     <button className="link-soft u-flex-shrink-0">

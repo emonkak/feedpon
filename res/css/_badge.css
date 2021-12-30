@@ -4,7 +4,7 @@
   margin: 0 2px;
   border-radius: 4px;
   font-weight: bold;
-  font-size: 0.875rem;
+  font-size: calc(1rem * $type-scale-7);
   text-align: center;
   vertical-align: middle;
 }
@@ -14,7 +14,7 @@
   padding-right: 2px;
   min-width: 16px;
   line-height: 16px;
-  font-size: 0.75rem;
+  font-size: calc(1rem * $type-scale-8);
 }
 
 .badge-medium {
@@ -29,7 +29,7 @@
   padding-right: 4px;
   min-width: 24px;
   line-height: 24px;
-  font-size: 1rem;
+  font-size: calc(1rem * $type-scale-6);
 }
 
 .badge-overlap {
