@@ -7,16 +7,17 @@ const MINIUM_RESPONSIVE_ELEMENT_HEIGHT = 128;
 export default function cleanNode(node: Node, baseUrl: string): Node | null {
     switch (node.nodeType) {
         case node.TEXT_NODE:
-            return node.firstChild ?? node.nextSibling ?? null;
+            return node.nextSibling ?? null;
 
         case node.ELEMENT_NODE:
             return cleanElement(node as Element, baseUrl);
 
         default:
+            const nextNode = node.nextSibling ?? null;
             if (node.parentNode) {
                 node.parentNode.removeChild(node);
             }
-            return null;
+            return nextNode;
     }
 }
 
@@ -46,7 +47,7 @@ function cleanElement(element: Element, baseUrl: string): Node | null {
                         container.appendChild(child);
                     }
                     parentNode.replaceChild(container, element);
-                    return container;
+                    return container.firstChild ?? container.nextSibling ?? null;
                 }
             }
             break;
@@ -65,8 +66,12 @@ function cleanElement(element: Element, baseUrl: string): Node | null {
     }
 
     if (!sanitizeElement(element)) {
-        return null;
+        const nextNode = element.nextSibling ?? null;
+        element.remove();
+        return nextNode;
     }
+
+    const nextNode = element.firstChild ?? element.nextSibling ?? null;
 
     switch (element.tagName) {
         case 'A':
@@ -91,7 +96,7 @@ function cleanElement(element: Element, baseUrl: string): Node | null {
             break;
     }
 
-    return element.firstChild ?? element.nextSibling ?? null;
+    return nextNode;
 }
 
 function qualifyUrl(urlString: string, baseUrlString: string): string {

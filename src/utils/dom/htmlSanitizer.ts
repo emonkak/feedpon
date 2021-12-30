@@ -48,8 +48,6 @@ export function sanitizeElement(element: Element): boolean {
 
         return true;
     } else {
-        element.remove();
-
         return false;
     }
 }
