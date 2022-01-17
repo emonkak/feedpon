@@ -17,7 +17,6 @@ interface EntryListProps {
     isLoading: boolean;
     onChangeActiveEntry: (index: number) => void;
     onExpand: (index: number) => void;
-    onFetchAmpContent: (entryId: string | number, url: string) => void;
     onFetchComments: (entryId: string | number, url: string) => void;
     onFetchFullContent: (entryId: string | number, url: string) => void;
     onHeightUpdated: (heights: { [id: string]: number }) => void;
@@ -103,7 +102,6 @@ export default class EntryList extends PureComponent<EntryListProps> {
     private _renderEntry = (renderingItem: RenderingItem, index: number, ref: React.Ref<EntryItem>) => {
         const {
             onExpand,
-            onFetchAmpContent,
             onFetchComments,
             onFetchFullContent,
             onHideComments,
@@ -124,7 +122,6 @@ export default class EntryList extends PureComponent<EntryListProps> {
                 isExpanded={isExpanded}
                 key={entry.entryId}
                 onExpand={onExpand}
-                onFetchAmpContent={onFetchAmpContent}
                 onFetchComments={onFetchComments}
                 onFetchFullContent={onFetchFullContent}
                 onHideComments={onHideComments}

@@ -262,55 +262,6 @@ export function fetchFullContent(entryId: string | number, url: string): AsyncTh
     };
 }
 
-export function fetchAmpContent(entryId: string | number, url: string): AsyncThunk {
-    return async ({ dispatch }) => {
-        dispatch({
-            type: 'FULL_CONTENT_FETCHING',
-            entryId
-        });
-
-        try {
-            const response = await fetch(url, {
-                mode: 'cors',
-            });
-
-            if (!response.ok) {
-                dispatch({
-                    type: 'FULL_CONTENT_WAS_NOT_FOUND',
-                    entryId
-                });
-            }
-
-            const responseText = await response.text();
-            const parsedDocument = new DOMParser().parseFromString(responseText, 'text/html');
-
-            const baseElement = parsedDocument.createElement('base');
-            baseElement.setAttribute('href', response.url);
-            parsedDocument.head.appendChild(baseElement);
-
-            const readabilityArticle = new Readability(parsedDocument).parse();
-            const content = readabilityArticle ? readabilityArticle.content : parsedDocument.body.innerHTML;
-
-            dispatch({
-                type: 'FULL_CONTENT_FETCHED',
-                entryId,
-                fullContent: {
-                    url: response.url,
-                    content,
-                    nextPageUrl: '',
-                }
-            });
-        } catch (error) {
-            dispatch({
-                type: 'FULL_CONTENT_FETCHING_FAILED',
-                entryId
-            });
-
-            throw error;
-        }
-    };
-}
-
 export function updateEntryHeights(streamId: string, heights: { [ id: string ]: number }): Event {
     return {
         type: 'STREAM_ENTRY_HEIGHTS_UPDATED',
@@ -927,7 +878,6 @@ function getEntryConverter(): Thunk<(entry: feedly.Entry) => Entry> {
             title: entry.title,
             author: entry.author || '',
             url: urlReplacer((entry.alternate && entry.alternate[0] && entry.alternate[0].href) || ''),
-            ampUrl: entry.cdnAmpUrl || entry.ampUrl || '',
             summary: stripTags((entry.summary ? entry.summary.content : '') || (entry.content ? entry.content.content : '')),
             content: (entry.content ? entry.content.content : '') || (entry.summary ? entry.summary.content : ''),
             publishedAt: entry.published,

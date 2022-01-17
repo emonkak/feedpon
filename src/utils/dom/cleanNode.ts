@@ -26,14 +26,6 @@ function cleanElement(element: Element, baseUrl: string): Node | null {
         case 'IMG':
             resolveLazyLoading(element as HTMLImageElement);
             break;
-        case 'AMP-IMG':
-            const parentNode = element.parentNode;
-            if (parentNode) {
-                const img = createImageElementFromAmpImage(element);
-                parentNode.replaceChild(img, element);
-                element = img;
-            }
-            break;
         default:
             // Replace custom elements to wrapper element.
             if (element.tagName.indexOf('-') >= 0) {
@@ -165,14 +157,4 @@ function responsifyTable(element: HTMLTableElement): void {
 
 function sandboxifyIframe(element: HTMLElement): void {
     element.setAttribute('sandbox', 'allow-popups allow-same-origin allow-scripts');
-}
-
-function createImageElementFromAmpImage(element: Element): HTMLImageElement {
-    const img = document.createElement('img');
-    for (const attrName of ['src', 'srcset', 'sizes', 'alt', 'height', 'width']) {
-        if (element.hasAttribute(attrName)) {
-            img.setAttribute(attrName, element.getAttribute(attrName)!);
-        }
-    }
-    return img;
 }

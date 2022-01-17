@@ -15,7 +15,7 @@ import { ALL_STREAM_ID } from 'messaging/streams/constants';
 import { Category, Entry, EntryOrderKind, State, Stream, StreamViewKind, Subscription } from 'messaging/types';
 import { addToCategory, removeFromCategory, subscribe, unsubscribe } from 'messaging/subscriptions/actions';
 import { changeActiveEntry, changeExpandedEntry, resetReadEntry, changeStreamView, selectStream, unselectStream } from 'messaging/ui/actions';
-import { changeUnreadKeeping, fetchAmpContent, fetchEntryComments, fetchFullContent, fetchMoreEntries, fetchStream, hideEntryComments, hideFullContents, markAllAsRead, markAsRead, markCategoryAsRead, markFeedAsRead, pinEntry, showEntryComments, showFullContents, unpinEntry, updateEntryHeights } from 'messaging/streams/actions';
+import { changeUnreadKeeping, fetchEntryComments, fetchFullContent, fetchMoreEntries, fetchStream, hideEntryComments, hideFullContents, markAllAsRead, markAsRead, markCategoryAsRead, markFeedAsRead, pinEntry, showEntryComments, showFullContents, unpinEntry, updateEntryHeights } from 'messaging/streams/actions';
 import { createCategory } from 'messaging/categories/actions';
 import { createSortedCategoriesSelector } from 'messaging/categories/selectors';
 import { toggleSidebar } from 'messaging/ui/actions';
@@ -34,7 +34,6 @@ interface StreamPageProps extends RouteComponentProps<{'stream_id': string}> {
     onChangeStreamView: typeof changeStreamView;
     onChangeUnreadKeeping: typeof changeUnreadKeeping;
     onCreateCategory: typeof createCategory;
-    onFetchAmpContent: typeof fetchAmpContent;
     onFetchEntryComments: typeof fetchEntryComments;
     onFetchFullContent: typeof fetchFullContent;
     onFetchMoreEntries: typeof fetchMoreEntries;
@@ -378,7 +377,6 @@ class StreamPage extends PureComponent<StreamPageProps> {
         const {
             isLoaded,
             isLoading,
-            onFetchAmpContent,
             onFetchEntryComments,
             onFetchFullContent,
             onHideEntryComments,
@@ -400,7 +398,6 @@ class StreamPage extends PureComponent<StreamPageProps> {
                 isLoading={isLoading}
                 onChangeActiveEntry={this.handleChangeActiveEnetry}
                 onExpand={this.handleChangeExpandedEntry}
-                onFetchAmpContent={onFetchAmpContent}
                 onFetchComments={onFetchEntryComments}
                 onFetchFullContent={onFetchFullContent}
                 onHeightUpdated={this.handleHeightUpdated}
@@ -533,7 +530,6 @@ export default connect(() => {
             onChangeStreamView: changeStreamView,
             onChangeUnreadKeeping: changeUnreadKeeping,
             onCreateCategory: createCategory,
-            onFetchAmpContent: fetchAmpContent,
             onFetchEntryComments: fetchEntryComments,
             onFetchFullContent: fetchFullContent,
             onFetchMoreEntries: fetchMoreEntries,
