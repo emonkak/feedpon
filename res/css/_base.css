@@ -176,9 +176,14 @@ ol ol, ol ul, ul ol, ul ul {
 table {
   border-collapse: collapse;
   border-spacing: 0;
+  border-color: var(--medium-dark-color);
   font: inherit;
   line-height: inherit;
   white-space: inherit;
+}
+
+tbody, thead, tr, td, th {
+  border: inherit;
 }
 
 td, th {
