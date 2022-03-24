@@ -18,7 +18,6 @@
         "default_icon": "./img/icon-32.png"
     },
     "permissions": [
-        "storage",
         "tabs",
         "unlimitedStorage",
         "<all_urls>"
