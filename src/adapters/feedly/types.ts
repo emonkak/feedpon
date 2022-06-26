@@ -233,6 +233,7 @@ export interface Entry {
     sid?: string;
     memes?: Meme[];
     // Undocumented properities:
+    language?: string;
     canonicalUrl?: string;
     ampUrl?: string;
     cdnAmpUrl?: string;

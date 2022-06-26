@@ -878,6 +878,7 @@ function getEntryConverter(): Thunk<(entry: feedly.Entry) => Entry> {
             title: entry.title,
             author: entry.author || '',
             url: urlReplacer((entry.alternate && entry.alternate[0] && entry.alternate[0].href) || ''),
+            language: entry.language || null,
             summary: stripTags((entry.summary ? entry.summary.content : '') || (entry.content ? entry.content.content : '')),
             content: (entry.content ? entry.content.content : '') || (entry.summary ? entry.summary.content : ''),
             publishedAt: entry.published,

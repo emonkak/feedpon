@@ -46,6 +46,7 @@ export default class EntryItem extends PureComponent<EntryItemProps> {
 
         return (
             <article
+                lang={entry.language || undefined}
                 className={classnames('entry', {
                     'is-active': isActive,
                     'is-expanded': isExpanded,

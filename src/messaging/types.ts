@@ -260,6 +260,7 @@ export interface Entry {
     title: string;
     author: string;
     url: string;
+    language: string | null;
     summary: string;
     content: string;
     publishedAt: number;
