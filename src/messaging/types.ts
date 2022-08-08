@@ -406,7 +406,6 @@ export interface User {
 export interface UI {
     customStyles: string;
     helpIsOpened: boolean;
-    isScrolling: boolean;
     selectedStreamId: string;
     sidebarIsOpened: boolean;
     theme: ThemeKind;

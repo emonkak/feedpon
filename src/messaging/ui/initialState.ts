@@ -3,7 +3,6 @@ import { UI } from 'messaging/types';
 const ui: UI = {
     customStyles: '',
     helpIsOpened: false,
-    isScrolling: false,
     selectedStreamId: '',
     sidebarIsOpened: true,
     theme: 'theme-light',

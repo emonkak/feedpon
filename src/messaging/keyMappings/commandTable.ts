@@ -385,7 +385,7 @@ export const selectNextEntry: Command<{}> = {
         return ({ getState, dispatch }, { router }) => {
             const { ui, streams } = getState();
 
-            if (!ui.selectedStreamId || ui.isScrolling) {
+            if (!ui.selectedStreamId) {
                 return;
             }
 
@@ -486,7 +486,7 @@ export const selectPreviousEntry: Command<{}> = {
         return ({ dispatch, getState }, { router }) => {
             const { ui } = getState();
 
-            if (!ui.selectedStreamId || ui.isScrolling) {
+            if (!ui.selectedStreamId) {
                 return;
             }
 

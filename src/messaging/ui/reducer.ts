@@ -6,7 +6,6 @@ export default function uiReducer(ui: UI, event: Event): UI {
             return {
                 ...ui,
                 customStyles: event.customStyles,
-                isScrolling: false
             };
 
         case 'HELP_OPENED':
