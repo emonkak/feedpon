@@ -1,4 +1,4 @@
-const runningAnimations = new WeakMap<object, { requestId: number, progress: number }>();
+const runningAnimations = new WeakMap<object, { requestId: number, time: number }>();
 
 const DEFAULT_DURATION = 1000 / 60 * 10;
 
@@ -50,30 +50,34 @@ function smoothScroll<TScrollable extends object>(
     }
 
     return new Promise((resolve) => {
-        const initialProgress = runningAnimation ? Math.min(0.5, runningAnimation.progress) : 0;
-        const startTime = performance.now();
+        let startTime = runningAnimation ?
+            Math.min(runningAnimation.time - duration / 2, runningAnimation.time) :
+            null;
 
-        const step = () => {
-            const currentTime = performance.now();
-            const deltaTime = currentTime - startTime;
-            const progress = initialProgress + deltaTime / duration;
+        const step = (time: number) => {
+            if (startTime) {
+                const delta = time - startTime;
+                const progress = delta / duration;
 
-            if (progress > 1) {
-                scroll(scrollable, x, y);
-                runningAnimations.delete(scrollable);
-                resolve();
-                return;
+                if (progress >= 1.0) {
+                    scroll(scrollable, x, y);
+                    runningAnimations.delete(scrollable);
+                    resolve();
+                    return;
+                }
+
+                const factor = ease(progress);
+                const nextX = startX + (x - startX) * factor;
+                const nextY = startY + (y - startY) * factor;
+
+                scroll(scrollable, nextX, nextY);
+            } else {
+                startTime = time;
             }
-
-            const deltaFactor = ease(progress);
-            const currentX = startX + (x - startX) * deltaFactor;
-            const currentY = startY + (y - startY) * deltaFactor;
-
-            scroll(scrollable, currentX, currentY);
 
             const requestId = requestAnimationFrame(step);
 
-            runningAnimations.set(scrollable, { progress, requestId });
+            runningAnimations.set(scrollable, { requestId, time });
         };
 
         requestAnimationFrame(step);
