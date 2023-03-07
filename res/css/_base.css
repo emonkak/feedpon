@@ -60,6 +60,7 @@ h6 {
 
 pre, code, var, samp, kbd {
   font-family: Consolas, Menlo, Monaco, monospace;
+  font-size: calc(1rem * $type-scale-7);
   font-style: normal;
 }
 
