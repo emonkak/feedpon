@@ -6,221 +6,225 @@ import Closable from './Closable';
 import { Menu } from './Menu';
 
 interface DropdownProps {
-    children: React.ReactNode;
-    className?: string;
-    component?: React.ElementType;
-    onClose?: () => void;
-    onSelect?: (value?: any) => void;
-    toggleButton: React.ReactElement<any>;
+  children: React.ReactNode;
+  className?: string;
+  component?: React.ElementType;
+  onClose?: () => void;
+  onSelect?: (value?: any) => void;
+  toggleButton: React.ReactElement<any>;
 }
 
 interface DropdownState {
-    isOpened: boolean;
-    isEntered: boolean;
-    dropdownStyle: React.CSSProperties;
+  isOpened: boolean;
+  isEntered: boolean;
+  dropdownStyle: React.CSSProperties;
 }
 
-export default class Dropdown extends PureComponent<DropdownProps, DropdownState> {
-    static defaultProps = {
-        component: 'div'
+export default class Dropdown extends PureComponent<
+  DropdownProps,
+  DropdownState
+> {
+  static defaultProps = {
+    component: 'div',
+  };
+
+  private _menu: Menu | null = null;
+
+  constructor(props: DropdownProps) {
+    super(props);
+
+    this.state = {
+      isOpened: false,
+      isEntered: false,
+      dropdownStyle: {},
     };
+  }
 
-    private _menu: Menu | null = null;
+  override render() {
+    const { className, component } = this.props;
+    const { isOpened, dropdownStyle } = this.state;
 
-    constructor(props: DropdownProps) {
-        super(props);
+    const Component = component!;
 
-        this.state = {
-            isOpened: false,
-            isEntered: false,
-            dropdownStyle: {}
-        };
+    return (
+      <Component className={className}>
+        {this._renderToggleButton()}
+        <CSSTransition
+          in={isOpened}
+          mountOnEnter
+          unmountOnExit
+          classNames="menu"
+          timeout={200}
+          onEntered={this._handleTransitionEntered}
+          onExited={this._handleTransitionExited}
+        >
+          <div className="dropdown" style={dropdownStyle}>
+            {this._renderMenu()}
+          </div>
+        </CSSTransition>
+      </Component>
+    );
+  }
+
+  private _renderToggleButton() {
+    const { toggleButton } = this.props;
+
+    return cloneElement(toggleButton, {
+      onClick: this._handleToggle,
+      onKeyDown: this._handleKeyDown,
+    });
+  }
+
+  private _renderMenu() {
+    const { children } = this.props;
+    const { isEntered } = this.state;
+
+    return (
+      <Closable isDisabled={!isEntered} onClose={this._handleClose}>
+        <Menu
+          ref={this._handleMenuRef}
+          onKeyDown={this._handleKeyDown}
+          onSelect={this._handleSelect}
+        >
+          {children}
+        </Menu>
+      </Closable>
+    );
+  }
+
+  private _openDropdown() {
+    const container = findDOMNode(this) as Element;
+    if (!container) {
+      return;
     }
 
-    override render() {
-        const { className, component } = this.props;
-        const { isOpened, dropdownStyle } = this.state;
+    const containerRect = container.getBoundingClientRect();
+    const viewportHeight = window.innerHeight;
+    const viewportWidth = window.innerWidth;
 
-        const Component = component!;
+    const topSpace = containerRect.top;
+    const bottomSpace = viewportHeight - containerRect.bottom;
+    const leftSpace = containerRect.left;
+    const rightSpace = viewportWidth - containerRect.right;
 
-        return (
-            <Component className={className}>
-                {this._renderToggleButton()}
-                <CSSTransition
-                    in={isOpened}
-                    mountOnEnter
-                    unmountOnExit
-                    classNames="menu"
-                    timeout={200}
-                    onEntered={this._handleTransitionEntered}
-                    onExited={this._handleTransitionExited}
-                >
-                    <div className="dropdown" style={dropdownStyle}>
-                        {this._renderMenu()}
-                    </div>
-                </CSSTransition>
-            </Component>
-        );
+    let dropdownStyle: React.CSSProperties = {};
+
+    if (leftSpace <= rightSpace) {
+      dropdownStyle.left = containerRect.left;
+      dropdownStyle.maxWidth = `calc(100% - ${containerRect.left}px)`;
+    } else {
+      dropdownStyle.right = `calc(100% - ${containerRect.right}px)`;
+      dropdownStyle.maxWidth = `calc(100% - (100% - ${containerRect.right}px))`;
     }
 
-    private _renderToggleButton() {
-        const { toggleButton } = this.props;
-
-        return cloneElement(toggleButton, {
-            onClick: this._handleToggle,
-            onKeyDown: this._handleKeyDown
-        });
+    if (topSpace <= bottomSpace) {
+      dropdownStyle.top = containerRect.bottom;
+      dropdownStyle.maxHeight = `calc(100% - ${containerRect.bottom}px)`;
+    } else {
+      dropdownStyle.bottom = `calc(100% - ${containerRect.top}px)`;
+      dropdownStyle.maxHeight = `calc(100% - (100% - ${containerRect.top}px))`;
     }
 
-    private _renderMenu() {
-        const { children } = this.props;
-        const { isEntered } = this.state;
+    this.setState({
+      isOpened: true,
+      dropdownStyle,
+    });
+  }
 
-        return (
-            <Closable isDisabled={!isEntered} onClose={this._handleClose}>
-                <Menu
-                    ref={this._handleMenuRef}
-                    onKeyDown={this._handleKeyDown}
-                    onSelect={this._handleSelect}>
-                    {children}
-                </Menu>
-            </Closable>
-        );
+  private _closeDropdown() {
+    const { onClose } = this.props;
+
+    if (onClose) {
+      onClose();
     }
 
-    private _openDropdown() {
-        const container = findDOMNode(this) as Element;
-        if (!container) {
-            return;
-        }
+    this.setState({
+      isOpened: false,
+    });
+  }
 
-        const containerRect = container.getBoundingClientRect();
-        const viewportHeight = window.innerHeight;
-        const viewportWidth = window.innerWidth;
+  private _handleMenuRef = (menu: Menu | null): void => {
+    this._menu = menu;
+  };
 
-        const topSpace = containerRect.top;
-        const bottomSpace = viewportHeight - containerRect.bottom;
-        const leftSpace = containerRect.left;
-        const rightSpace = viewportWidth - containerRect.right;
+  private _handleClose = (): void => {
+    const { onClose } = this.props;
 
-        let dropdownStyle: React.CSSProperties = {};
-
-        if (leftSpace <= rightSpace) {
-            dropdownStyle.left = containerRect.left;
-            dropdownStyle.maxWidth = `calc(100% - ${containerRect.left}px)`;
-        } else {
-            dropdownStyle.right = `calc(100% - ${containerRect.right}px)`;
-            dropdownStyle.maxWidth = `calc(100% - (100% - ${containerRect.right}px))`;
-        }
-
-        if (topSpace <= bottomSpace) {
-            dropdownStyle.top = containerRect.bottom;
-            dropdownStyle.maxHeight = `calc(100% - ${containerRect.bottom}px)`;
-        } else {
-            dropdownStyle.bottom = `calc(100% - ${containerRect.top}px)`;
-            dropdownStyle.maxHeight = `calc(100% - (100% - ${containerRect.top}px))`;
-        }
-
-        this.setState({
-            isOpened: true,
-            dropdownStyle
-        });
+    if (onClose) {
+      onClose();
     }
 
-    private _closeDropdown() {
-        const { onClose } = this.props;
+    this._closeDropdown();
+  };
 
-        if (onClose) {
-            onClose();
-        }
+  private _handleKeyDown = (event: React.KeyboardEvent<any>): void => {
+    if (this._menu) {
+      switch (event.key) {
+        case 'ArrowUp':
+          event.preventDefault();
+          event.stopPropagation();
+          event.nativeEvent.stopImmediatePropagation();
+          this._menu.focusPrevious();
+          break;
 
-        this.setState({
-            isOpened: false
-        });
+        case 'ArrowDown':
+          event.preventDefault();
+          event.stopPropagation();
+          event.nativeEvent.stopImmediatePropagation();
+          this._menu.focusNext();
+          break;
+
+        case 'Escape':
+          event.preventDefault();
+          event.stopPropagation();
+          event.nativeEvent.stopImmediatePropagation();
+          this._handleClose();
+          break;
+      }
     }
 
-    private _handleMenuRef = (menu: Menu | null): void => {
-        this._menu = menu;
+    const { toggleButton } = this.props;
+    if (toggleButton.props.onKeyDown) {
+      toggleButton.props.onKeyDown(event);
+    }
+  };
+
+  private _handleSelect = (value?: any): void => {
+    const { onSelect } = this.props;
+
+    if (onSelect) {
+      onSelect(value);
     }
 
-    private _handleClose = (): void => {
-        const { onClose } = this.props;
+    this._closeDropdown();
+  };
 
-        if (onClose) {
-            onClose();
-        }
+  private _handleToggle = (event: React.MouseEvent<any>): void => {
+    event.preventDefault();
 
-        this._closeDropdown();
+    const { isOpened } = this.state;
+
+    if (isOpened) {
+      this._closeDropdown();
+    } else {
+      this._openDropdown();
     }
 
-    private _handleKeyDown = (event: React.KeyboardEvent<any>): void => {
-        if (this._menu) {
-            switch (event.key) {
-                case 'ArrowUp':
-                    event.preventDefault();
-                    event.stopPropagation();
-                    event.nativeEvent.stopImmediatePropagation();
-                    this._menu.focusPrevious();
-                    break;
-
-                case 'ArrowDown':
-                    event.preventDefault();
-                    event.stopPropagation();
-                    event.nativeEvent.stopImmediatePropagation();
-                    this._menu.focusNext();
-                    break;
-
-                case 'Escape':
-                    event.preventDefault();
-                    event.stopPropagation();
-                    event.nativeEvent.stopImmediatePropagation();
-                    this._handleClose();
-                    break;
-            }
-        }
-
-        const { toggleButton } = this.props;
-        if (toggleButton.props.onKeyDown) {
-            toggleButton.props.onKeyDown(event);
-        }
+    const { toggleButton } = this.props;
+    if (toggleButton.props.onClick) {
+      toggleButton.props.onClick(event);
     }
+  };
 
-    private _handleSelect = (value?: any): void => {
-        const { onSelect } = this.props;
+  private _handleTransitionEntered = () => {
+    this.setState({
+      isEntered: true,
+    });
+  };
 
-        if (onSelect) {
-            onSelect(value);
-        }
-
-        this._closeDropdown();
-    }
-
-    private _handleToggle = (event: React.MouseEvent<any>): void => {
-        event.preventDefault();
-
-        const { isOpened } = this.state;
-
-        if (isOpened) {
-            this._closeDropdown();
-        } else {
-            this._openDropdown();
-        }
-
-        const { toggleButton } = this.props;
-        if (toggleButton.props.onClick) {
-            toggleButton.props.onClick(event);
-        }
-    }
-
-    private _handleTransitionEntered = () => {
-        this.setState({
-            isEntered: true
-        });
-    }
-
-    private _handleTransitionExited = () => {
-        this.setState({
-            isEntered: false
-        });
-    }
+  private _handleTransitionExited = () => {
+    this.setState({
+      isEntered: false,
+    });
+  };
 }

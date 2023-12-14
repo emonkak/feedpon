@@ -6,179 +6,184 @@ import Closable from './Closable';
 import { Menu } from './Menu';
 
 interface AutoCompleteFormProps {
-    completeDebounceTime?: number;
-    items: any[];
-    renderInput: (props: {
-        onChange: React.FormEventHandler<any>,
-        onKeyDown: React.KeyboardEventHandler<any>,
-        onFocus: React.FocusEventHandler<any>,
-        ref: (element: HTMLInputElement | null) => void
-    }) => React.ReactElement<any>;
-    isOpened?: boolean;
-    onClose?: () => void;
-    onSelect?: (value?: any) => void;
-    onSubmit?: (query: string) => void;
-    renderCandidates: (items: any[], query: string) => React.ReactNode;
+  completeDebounceTime?: number;
+  items: any[];
+  renderInput: (props: {
+    onChange: React.FormEventHandler<any>;
+    onKeyDown: React.KeyboardEventHandler<any>;
+    onFocus: React.FocusEventHandler<any>;
+    ref: (element: HTMLInputElement | null) => void;
+  }) => React.ReactElement<any>;
+  isOpened?: boolean;
+  onClose?: () => void;
+  onSelect?: (value?: any) => void;
+  onSubmit?: (query: string) => void;
+  renderCandidates: (items: any[], query: string) => React.ReactNode;
 }
 
 interface AutocompleteFormState {
-    isOpened: boolean;
-    query: string;
+  isOpened: boolean;
+  query: string;
 }
 
-export default class AutocompleteForm extends PureComponent<AutoCompleteFormProps, AutocompleteFormState> {
-    static defaultProps = {
-        completeDebounceTime: 100,
-        isOpened: false
+export default class AutocompleteForm extends PureComponent<
+  AutoCompleteFormProps,
+  AutocompleteFormState
+> {
+  static defaultProps = {
+    completeDebounceTime: 100,
+    isOpened: false,
+  };
+
+  private _menuRef: Menu | null = null;
+
+  private _inputRef: HTMLInputElement | null = null;
+
+  constructor(props: AutoCompleteFormProps) {
+    super(props);
+
+    this.state = {
+      isOpened: props.isOpened!,
+      query: '',
     };
 
-    private _menuRef: Menu | null = null;
+    this._handleChange = debounce(
+      this._handleChange,
+      props.completeDebounceTime!,
+    );
+  }
 
-    private _inputRef: HTMLInputElement | null = null;
+  override render() {
+    const { items, renderCandidates, renderInput } = this.props;
+    const { isOpened, query } = this.state;
 
-    constructor(props: AutoCompleteFormProps) {
-        super(props);
+    const candidates = renderCandidates(items, query);
 
-        this.state = {
-            isOpened: props.isOpened!,
-            query: ''
-        };
+    return (
+      <Closable onClose={this._handleClose} isDisabled={!isOpened}>
+        <div
+          className={classnames('autocomplete', {
+            'is-opened': isOpened,
+          })}
+        >
+          <form className="autocomplete-form" onSubmit={this._handleSubmit}>
+            {renderInput({
+              onChange: this._handleChange,
+              onKeyDown: this._handleKeyDown,
+              onFocus: this._handleFocus,
+              ref: this._handleInputRef,
+            })}
+          </form>
+          <div className="autocomplete-menu">
+            <Menu
+              ref={this._handleMenuRef}
+              onKeyDown={this._handleKeyDown}
+              onSelect={this._handleSelect}
+            >
+              {candidates}
+            </Menu>
+          </div>
+        </div>
+      </Closable>
+    );
+  }
 
-        this._handleChange = debounce(this._handleChange, props.completeDebounceTime!);
+  private _handleClose = () => {
+    const { onClose } = this.props;
+
+    if (onClose) {
+      onClose();
     }
 
-    override render() {
-        const { items, renderCandidates, renderInput } = this.props;
-        const { isOpened, query } = this.state;
+    this.setState({
+      isOpened: false,
+    });
+  };
 
-        const candidates = renderCandidates(items, query);
+  private _handleMenuRef = (ref: Menu | null) => {
+    this._menuRef = ref;
+  };
 
-        return (
-            <Closable
-                onClose={this._handleClose}
-                isDisabled={!isOpened}>
-                <div className={classnames('autocomplete', {
-                    'is-opened': isOpened
-                })}>
-                    <form
-                        className="autocomplete-form"
-                        onSubmit={this._handleSubmit}>
-                        {renderInput({
-                            onChange: this._handleChange,
-                            onKeyDown: this._handleKeyDown,
-                            onFocus: this._handleFocus,
-                            ref: this._handleInputRef
-                        })}
-                    </form>
-                    <div className="autocomplete-menu">
-                        <Menu
-                            ref={this._handleMenuRef}
-                            onKeyDown={this._handleKeyDown}
-                            onSelect={this._handleSelect}>
-                            {candidates}
-                        </Menu>
-                    </div>
-                </div>
-            </Closable>
-        );
+  private _handleSelect = (value: any) => {
+    const { onSelect } = this.props;
+
+    if (onSelect) {
+      onSelect(value);
     }
 
-    private _handleClose = () => {
-        const { onClose } = this.props;
+    this.setState({
+      isOpened: false,
+    });
+  };
 
-        if (onClose) {
-            onClose();
-        }
+  private _handleSubmit = (event: React.FormEvent<any>) => {
+    event.preventDefault();
 
-        this.setState({
-            isOpened: false
-        });
+    if (!this._inputRef) {
+      return;
     }
 
-    private _handleMenuRef = (ref: Menu | null) => {
-        this._menuRef = ref;
+    const { onSubmit } = this.props;
+
+    if (onSubmit) {
+      onSubmit(this._inputRef.value);
+    }
+  };
+
+  private _handleChange = (_event: React.FormEvent<any>) => {
+    if (!this._inputRef) {
+      return;
     }
 
-    private _handleSelect = (value: any) => {
-        const { onSelect } = this.props;
+    const query = this._inputRef.value;
 
-        if (onSelect) {
-            onSelect(value);
-        }
+    this.setState({
+      isOpened: true,
+      query,
+    });
+  };
 
-        this.setState({
-            isOpened: false
-        });
+  private _handleKeyDown = (event: React.KeyboardEvent<any>) => {
+    if (!this._menuRef) {
+      return;
     }
 
-    private _handleSubmit = (event: React.FormEvent<any>) => {
+    switch (event.key) {
+      case 'ArrowUp':
         event.preventDefault();
+        event.stopPropagation();
+        event.nativeEvent.stopImmediatePropagation();
+        this._menuRef.focusPrevious();
+        break;
 
-        if (!this._inputRef) {
-            return;
+      case 'ArrowDown':
+        event.preventDefault();
+        event.stopPropagation();
+        event.nativeEvent.stopImmediatePropagation();
+        this._menuRef.focusNext();
+        break;
+
+      case 'Escape':
+        event.preventDefault();
+        event.stopPropagation();
+        event.nativeEvent.stopImmediatePropagation();
+        if (this._inputRef) {
+          this._inputRef.blur();
         }
-
-        const { onSubmit } = this.props;
-
-        if (onSubmit) {
-            onSubmit(this._inputRef.value);
-        }
-    }
-
-    private _handleChange = (_event: React.FormEvent<any>) => {
-        if (!this._inputRef) {
-            return;
-        }
-
-        const query = this._inputRef.value;
-
         this.setState({
-            isOpened: true,
-            query
+          isOpened: false,
         });
+        break;
     }
+  };
 
-    private _handleKeyDown = (event: React.KeyboardEvent<any>) => {
-        if (!this._menuRef) {
-            return;
-        }
+  private _handleFocus = (_event: React.FocusEvent<any>) => {
+    this.setState({
+      isOpened: true,
+    });
+  };
 
-        switch (event.key) {
-            case 'ArrowUp':
-                event.preventDefault();
-                event.stopPropagation();
-                event.nativeEvent.stopImmediatePropagation();
-                this._menuRef.focusPrevious();
-                break;
-
-            case 'ArrowDown':
-                event.preventDefault();
-                event.stopPropagation();
-                event.nativeEvent.stopImmediatePropagation();
-                this._menuRef.focusNext();
-                break;
-
-            case 'Escape':
-                event.preventDefault();
-                event.stopPropagation();
-                event.nativeEvent.stopImmediatePropagation();
-                if (this._inputRef) {
-                    this._inputRef.blur();
-                }
-                this.setState({
-                    isOpened: false
-                });
-                break;
-        }
-    }
-
-    private _handleFocus = (_event: React.FocusEvent<any>) => {
-        this.setState({
-            isOpened: true
-        });
-    }
-
-    private _handleInputRef = (ref: HTMLInputElement | null) => {
-        this._inputRef = ref;
-    }
+  private _handleInputRef = (ref: HTMLInputElement | null) => {
+    this._inputRef = ref;
+  };
 }

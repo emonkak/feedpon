@@ -56,8 +56,7 @@ NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
 HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-OTHER DEALINGS IN THE SOFTWARE.`
-    .trim();
+OTHER DEALINGS IN THE SOFTWARE.`.trim();
 
 const INTLJS_LICENSE = `
 The MIT License (MIT)
@@ -393,119 +392,202 @@ END OF TERMS AND CONDITIONS
 `.trim();
 
 interface AboutPageProps extends RouteComponentProps {
-    onToggleSidebar: typeof toggleSidebar;
-    version: string;
+  onToggleSidebar: typeof toggleSidebar;
+  version: string;
 }
 
 class AboutPage extends PureComponent<AboutPageProps> {
-    renderNavbar() {
-        const { onToggleSidebar } = this.props;
+  renderNavbar() {
+    const { onToggleSidebar } = this.props;
 
-        return (
-            <Navbar onToggleSidebar={onToggleSidebar}>
-                <h1 className="navbar-title">About</h1>
-                <Dropdown
-                    toggleButton={
-                        <button className="navbar-action">
-                            <i className="icon icon-24 icon-menu-2" />
-                        </button>
-                    }>
-                    <MenuItem
-                        onSelect={this._navigateToKitchensink}
-                        primaryText="Go to kitchensink..." />
-                </Dropdown>
-            </Navbar>
-        );
-    }
+    return (
+      <Navbar onToggleSidebar={onToggleSidebar}>
+        <h1 className="navbar-title">About</h1>
+        <Dropdown
+          toggleButton={
+            <button className="navbar-action">
+              <i className="icon icon-24 icon-menu-2" />
+            </button>
+          }
+        >
+          <MenuItem
+            onSelect={this._navigateToKitchensink}
+            primaryText="Go to kitchensink..."
+          />
+        </Dropdown>
+      </Navbar>
+    );
+  }
 
-    renderContent() {
-        const { version } = this.props;
+  renderContent() {
+    const { version } = this.props;
 
-        return (
+    return (
+      <div>
+        <section className="section u-text-center">
+          <div className="container">
+            <a href="https://github.com/emonkak/feedpon" target="_blank">
+              <img src="./img/logo.svg" width="244" height="88" />
+            </a>
             <div>
-                <section className="section u-text-center">
-                    <div className="container">
-                        <a href="https://github.com/emonkak/feedpon" target="_blank">
-                            <img src="./img/logo.svg" width="244" height="88" />
-                        </a>
-                        <div>Version <strong>{version}</strong></div>
-                    </div>
-                </section>
-                <section className="section">
-                    <div className="container">
-                        <h1 className="display-1">Licenses</h1>
-                        <ul>
-                            <li>
-                                <h2><a href="https://github.com/JedWatson/classnames/blob/master/LICENSE" target="_blank">classnames</a></h2>
-                                <pre className="u-text-prewrap">{CLASSNAMES_LICENSE}</pre>
-                            </li>
-                            <li>
-                                <h2><a href="https://github.com/ftlabs/fastclick/blob/master/LICENSE" target="_blank">fastclick</a></h2>
-                                <pre className="u-text-prewrap">{FASTCLICK_LICENSE}</pre>
-                            </li>
-                            <li>
-                                <h2><a href="https://github.com/andyearnshaw/Intl.js/blob/master/LICENSE.txt" target="_blank">intl</a></h2>
-                                <pre className="u-text-prewrap">{INTLJS_LICENSE}</pre>
-                            </li>
-                            <li>
-                                <h2><a href="https://github.com/yahoo/intl-relativeformat/blob/master/LICENSE" target="_blank">intl-relativeFormat</a></h2>
-                                <pre className="u-text-prewrap">{INTL_RELATIVEFORMAT_LICENSE}</pre>
-                            </li>
-                            <li>
-                                <h2><a href="https://github.com/lodash/lodash/blob/master/LICENSE" target="_blank">lodash</a></h2>
-                                <pre className="u-text-prewrap">{LODASH_LICENSE}</pre>
-                            </li>
-                            <li>
-                                <h2><a href="https://github.com/es-shims/Object.values/blob/master/LICENSE" target="_blank">object.values</a></h2>
-                                <pre className="u-text-prewrap">{OBJECT_VALUES_LICENSE}</pre>
-                            </li>
-                            <li>
-                                <h2><a href="https://github.com/facebook/react/blob/master/LICENSE" target="_blank">react</a></h2>
-                                <pre className="u-text-prewrap">{REACT_LISENSE}</pre>
-                            </li>
-                            <li>
-                                <h2><a href="https://github.com/ReactTraining/react-router/blob/master/LICENSE.md" target="_blank">react-router</a></h2>
-                                <pre className="u-text-prewrap">{REACT_ROUTER_LICENSE}</pre>
-                            </li>
-                            <li>
-                                <h2><a href="https://github.com/evgenyrodionov/redux-logger/blob/master/LICENSE" target="_blank">redux-logger</a></h2>
-                                <pre className="u-text-prewrap">{REDUX_LOGGER_LICENSE}</pre>
-                            </li>
-                            <li>
-                                <h2><a href="https://github.com/reactjs/reselect/blob/master/LICENSE" target="_blank">reselect</a></h2>
-                                <pre className="u-text-prewrap">{RESELECT_LICENSE}</pre>
-                            </li>
-                            <li>
-                                <h2><a href="https://github.com/Microsoft/tslib/blob/master/LICENSE.txt" target="_blank">tslib</a></h2>
-                                <pre className="u-text-prewrap">{TSLIB_LICENSE}</pre>
-                            </li>
-                        </ul>
-                    </div>
-                </section>
+              Version <strong>{version}</strong>
             </div>
-        );
-    }
+          </div>
+        </section>
+        <section className="section">
+          <div className="container">
+            <h1 className="display-1">Licenses</h1>
+            <ul>
+              <li>
+                <h2>
+                  <a
+                    href="https://github.com/JedWatson/classnames/blob/master/LICENSE"
+                    target="_blank"
+                  >
+                    classnames
+                  </a>
+                </h2>
+                <pre className="u-text-prewrap">{CLASSNAMES_LICENSE}</pre>
+              </li>
+              <li>
+                <h2>
+                  <a
+                    href="https://github.com/ftlabs/fastclick/blob/master/LICENSE"
+                    target="_blank"
+                  >
+                    fastclick
+                  </a>
+                </h2>
+                <pre className="u-text-prewrap">{FASTCLICK_LICENSE}</pre>
+              </li>
+              <li>
+                <h2>
+                  <a
+                    href="https://github.com/andyearnshaw/Intl.js/blob/master/LICENSE.txt"
+                    target="_blank"
+                  >
+                    intl
+                  </a>
+                </h2>
+                <pre className="u-text-prewrap">{INTLJS_LICENSE}</pre>
+              </li>
+              <li>
+                <h2>
+                  <a
+                    href="https://github.com/yahoo/intl-relativeformat/blob/master/LICENSE"
+                    target="_blank"
+                  >
+                    intl-relativeFormat
+                  </a>
+                </h2>
+                <pre className="u-text-prewrap">
+                  {INTL_RELATIVEFORMAT_LICENSE}
+                </pre>
+              </li>
+              <li>
+                <h2>
+                  <a
+                    href="https://github.com/lodash/lodash/blob/master/LICENSE"
+                    target="_blank"
+                  >
+                    lodash
+                  </a>
+                </h2>
+                <pre className="u-text-prewrap">{LODASH_LICENSE}</pre>
+              </li>
+              <li>
+                <h2>
+                  <a
+                    href="https://github.com/es-shims/Object.values/blob/master/LICENSE"
+                    target="_blank"
+                  >
+                    object.values
+                  </a>
+                </h2>
+                <pre className="u-text-prewrap">{OBJECT_VALUES_LICENSE}</pre>
+              </li>
+              <li>
+                <h2>
+                  <a
+                    href="https://github.com/facebook/react/blob/master/LICENSE"
+                    target="_blank"
+                  >
+                    react
+                  </a>
+                </h2>
+                <pre className="u-text-prewrap">{REACT_LISENSE}</pre>
+              </li>
+              <li>
+                <h2>
+                  <a
+                    href="https://github.com/ReactTraining/react-router/blob/master/LICENSE.md"
+                    target="_blank"
+                  >
+                    react-router
+                  </a>
+                </h2>
+                <pre className="u-text-prewrap">{REACT_ROUTER_LICENSE}</pre>
+              </li>
+              <li>
+                <h2>
+                  <a
+                    href="https://github.com/evgenyrodionov/redux-logger/blob/master/LICENSE"
+                    target="_blank"
+                  >
+                    redux-logger
+                  </a>
+                </h2>
+                <pre className="u-text-prewrap">{REDUX_LOGGER_LICENSE}</pre>
+              </li>
+              <li>
+                <h2>
+                  <a
+                    href="https://github.com/reactjs/reselect/blob/master/LICENSE"
+                    target="_blank"
+                  >
+                    reselect
+                  </a>
+                </h2>
+                <pre className="u-text-prewrap">{RESELECT_LICENSE}</pre>
+              </li>
+              <li>
+                <h2>
+                  <a
+                    href="https://github.com/Microsoft/tslib/blob/master/LICENSE.txt"
+                    target="_blank"
+                  >
+                    tslib
+                  </a>
+                </h2>
+                <pre className="u-text-prewrap">{TSLIB_LICENSE}</pre>
+              </li>
+            </ul>
+          </div>
+        </section>
+      </div>
+    );
+  }
 
-    override render() {
-        return (
-            <MainLayout header={this.renderNavbar()}>
-                {this.renderContent()}
-            </MainLayout>
-        );
-    }
+  override render() {
+    return (
+      <MainLayout header={this.renderNavbar()}>
+        {this.renderContent()}
+      </MainLayout>
+    );
+  }
 
-    private _navigateToKitchensink = () => {
-        const { history } = this.props;
+  private _navigateToKitchensink = () => {
+    const { history } = this.props;
 
-        history.push('/kitchensink/');
-    }
+    history.push('/kitchensink/');
+  };
 }
 
 export default connect({
-    mapStateToProps: (state: State) => ({
-        version: state.version
-    }),
-    mapDispatchToProps: bindActions({
-        onToggleSidebar: toggleSidebar
-    })
+  mapStateToProps: (state: State) => ({
+    version: state.version,
+  }),
+  mapDispatchToProps: bindActions({
+    onToggleSidebar: toggleSidebar,
+  }),
 })(AboutPage);

@@ -1,105 +1,120 @@
 import React, { PureComponent, cloneElement } from 'react';
 import classnames from 'classnames';
 
-type SupportedControl = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
+type SupportedControl =
+  | HTMLInputElement
+  | HTMLSelectElement
+  | HTMLTextAreaElement;
 
 interface ValidatableControlProps {
-    children: React.ReactElement<React.HTMLProps<SupportedControl>>;
-    invalidClassName?: string | null;
-    validClassName?: string | null;
-    validations?: Validation[];
+  children: React.ReactElement<React.HTMLProps<SupportedControl>>;
+  invalidClassName?: string | null;
+  validClassName?: string | null;
+  validations?: Validation[];
 }
 
 interface Validation {
-    rule: (value: string) => boolean;
-    message: string;
+  rule: (value: string) => boolean;
+  message: string;
 }
 
 interface ValidatableControlState {
-    status: 'empty' | 'valid' | 'invalid';
+  status: 'empty' | 'valid' | 'invalid';
 }
 
-export default class ValidatableControl extends PureComponent<ValidatableControlProps, ValidatableControlState> {
-    static defaultProps = {
-        invalidClassName: 'has-error',
-        validClassName: 'has-success'
-    };
+export default class ValidatableControl extends PureComponent<
+  ValidatableControlProps,
+  ValidatableControlState
+> {
+  static defaultProps = {
+    invalidClassName: 'has-error',
+    validClassName: 'has-success',
+  };
 
-    private controlElement: SupportedControl | null = null;
+  private controlElement: SupportedControl | null = null;
 
-    constructor(props: ValidatableControlProps) {
-        super(props);
+  constructor(props: ValidatableControlProps) {
+    super(props);
 
-        this.state = { status: 'empty' };
+    this.state = { status: 'empty' };
+  }
+
+  override componentDidMount() {
+    this._update();
+  }
+
+  override componentDidUpdate(
+    _prevProps: ValidatableControlProps,
+    _prevState: ValidatableControlState,
+  ) {
+    this._update();
+  }
+
+  override render() {
+    const { children, invalidClassName, validClassName } = this.props;
+    const { status } = this.state;
+    const child = children;
+
+    return cloneElement(child, {
+      ref: this._handleRef,
+      className: classnames(
+        child.props.className,
+        status === 'invalid' ? invalidClassName : null,
+        status === 'valid' ? validClassName : null,
+      ),
+      onChange: this._handleChange,
+    });
+  }
+
+  private _update() {
+    const control = this.controlElement;
+
+    if (!control) {
+      return;
     }
 
-    override componentDidMount() {
-        this._update();
-    }
+    if (control.value) {
+      const { validations } = this.props;
+      let error = '';
 
-    override componentDidUpdate(_prevProps: ValidatableControlProps, _prevState: ValidatableControlState) {
-        this._update();
-    }
-
-    override render() {
-        const { children, invalidClassName, validClassName } = this.props;
-        const { status } = this.state;
-        const child = children;
-
-        return cloneElement(child, {
-            ref: this._handleRef,
-            className: classnames(
-                child.props.className,
-                status === 'invalid' ? invalidClassName : null,
-                status === 'valid' ? validClassName : null
-            ),
-            onChange: this._handleChange
-        });
-    }
-
-    private _update() {
-        const control = this.controlElement;
-
-        if (!control) {
-            return;
+      if (validations) {
+        for (const validation of validations) {
+          if (!validation.rule(control.value)) {
+            error = validation.message;
+            break;
+          }
         }
+      }
 
-        if (control.value) {
-            const { validations } = this.props;
-            let error = '';
+      control.setCustomValidity(error);
 
-            if (validations) {
-                for (const validation of validations) {
-                    if (!validation.rule(control.value)) {
-                        error = validation.message;
-                        break;
-                    }
-                }
-            }
+      this.setState({
+        status: control.validity.valid ? 'valid' : 'invalid',
+      });
+    } else {
+      control.setCustomValidity('');
 
-            control.setCustomValidity(error);
+      this.setState({ status: 'empty' });
+    }
+  }
 
-            this.setState({
-                status: control.validity.valid ? 'valid' : 'invalid'
-            });
-        } else {
-            control.setCustomValidity('');
+  private _handleRef = (
+    ref: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | null,
+  ): void => {
+    this.controlElement = ref;
+  };
 
-            this.setState({ status: 'empty' });
-        }
+  private _handleChange = (
+    event: React.FormEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >,
+  ): void => {
+    const child = this.props.children;
+
+    if (child.props.onChange) {
+      child.props.onChange(event);
     }
 
-    private _handleRef = (ref: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | null): void => {
-        this.controlElement = ref;
-    }
-
-    private _handleChange = (event: React.FormEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>): void => {
-        const child = this.props.children;
-
-        if (child.props.onChange) {
-            child.props.onChange(event);
-        }
-
-        this._update();
-    }
+    this._update();
+  };
 }

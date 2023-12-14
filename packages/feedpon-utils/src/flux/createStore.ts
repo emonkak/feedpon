@@ -1,47 +1,47 @@
 import { Reducer, Store, Subscriber } from './types';
 
 export default function createStore<TState, TEvent>(
-    reducer: Reducer<TState, TEvent>,
-    state: TState
+  reducer: Reducer<TState, TEvent>,
+  state: TState,
 ): Store<TState, TEvent> {
-    const subscribers = new Set<Subscriber<TState>>();
+  const subscribers = new Set<Subscriber<TState>>();
 
-    function getState(): TState {
-        return state;
+  function getState(): TState {
+    return state;
+  }
+
+  function replaceState(nextState: TState): void {
+    if (state !== nextState) {
+      state = nextState;
+      subscribers.forEach((subscriber) => {
+        subscriber(nextState);
+      });
     }
+  }
 
-    function replaceState(nextState: TState): void {
-        if (state !== nextState) {
-            state = nextState;
-            subscribers.forEach((subscriber) => {
-                subscriber(nextState);
-            });
-        }
-    }
+  function dispatch(event: TEvent): TEvent {
+    const nextState = reducer(state, event);
+    replaceState(nextState);
+    return event;
+  }
 
-    function dispatch(event: TEvent): TEvent {
-        const nextState = reducer(state, event);
-        replaceState(nextState);
-        return event;
-    }
+  function subscribe(subscriber: (state: TState) => void): () => void {
+    subscribers.add(subscriber);
 
-    function subscribe(subscriber: (state: TState) => void): () => void {
-        subscribers.add(subscriber);
+    let closed = false;
 
-        let closed = false;
-
-        return function unsubscribe() {
-            if (!closed) {
-                closed = true;
-                subscribers.delete(subscriber);
-            }
-        };
-    }
-
-    return {
-        getState,
-        replaceState,
-        dispatch,
-        subscribe
+    return function unsubscribe() {
+      if (!closed) {
+        closed = true;
+        subscribers.delete(subscriber);
+      }
     };
+  }
+
+  return {
+    getState,
+    replaceState,
+    dispatch,
+    subscribe,
+  };
 }

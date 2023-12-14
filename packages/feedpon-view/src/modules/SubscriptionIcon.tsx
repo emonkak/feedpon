@@ -1,28 +1,27 @@
 import React from 'react';
 
 interface SubscriptionIconProps {
-    iconUrl: string;
-    title: string;
+  iconUrl: string;
+  title: string;
 }
 
 const SubscriptionIcon: React.FC<SubscriptionIconProps> = ({
-    iconUrl,
-    title
+  iconUrl,
+  title,
 }) => {
-    if (iconUrl) {
-        return (
-            <img
-                className="u-vertical-middle u-object-fit-cover"
-                alt={title}
-                src={iconUrl}
-                width={16}
-                height={16} />
-        );
-    } else {
-        return (
-            <i className="icon icon-16 icon-file " />
-        );
-    }
+  if (iconUrl) {
+    return (
+      <img
+        className="u-vertical-middle u-object-fit-cover"
+        alt={title}
+        src={iconUrl}
+        width={16}
+        height={16}
+      />
+    );
+  } else {
+    return <i className="icon icon-16 icon-file " />;
+  }
 };
 
 export default SubscriptionIcon;

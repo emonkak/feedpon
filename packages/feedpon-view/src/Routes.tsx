@@ -23,51 +23,54 @@ import UISettings from './containers/UISettings';
 import UrlReplacementSettings from './containers/UrlReplacementSettings';
 
 function MainWrapper(props: RouteComponentProps) {
-    return (
-        <SidebarLayout {...props}>
-            <Switch>
-                <Route exact path="/" component={DashboardPage} />
-                <Route path="/about/" component={AboutPage} />
-                <Route path="/categories/:label?" component={CategoriesPage} />
-                <Route path="/kitchensink/" component={KitchenSinkPage} />
-                <Route path="/search/:query?" component={SearchPage} />
-                <Route path="/settings" component={SettingsWrapper} />
-                <Route path="/streams/:stream_id" component={StreamPage} />
-            </Switch>
-        </SidebarLayout>
-    );
+  return (
+    <SidebarLayout {...props}>
+      <Switch>
+        <Route exact path="/" component={DashboardPage} />
+        <Route path="/about/" component={AboutPage} />
+        <Route path="/categories/:label?" component={CategoriesPage} />
+        <Route path="/kitchensink/" component={KitchenSinkPage} />
+        <Route path="/search/:query?" component={SearchPage} />
+        <Route path="/settings" component={SettingsWrapper} />
+        <Route path="/streams/:stream_id" component={StreamPage} />
+      </Switch>
+    </SidebarLayout>
+  );
 }
 
 function SettingsWrapper(props: RouteComponentProps) {
-    return (
-        <SettingsPage {...props}>
-            <Switch>
-                <Route path="/settings/keyboard" component={KeyboardSettings} />
-                <Route path="/settings/siteinfo" component={SiteinfoSettings} />
-                <Route path="/settings/stream" component={StreamSettings} />
-                <Route path="/settings/tracking_url" component={TrackingUrlSettings} />
-                <Route path="/settings/url_replacement" component={UrlReplacementSettings} />
-                <Route path="/settings/ui" component={UISettings} />
-            </Switch>
-        </SettingsPage>
-    );
+  return (
+    <SettingsPage {...props}>
+      <Switch>
+        <Route path="/settings/keyboard" component={KeyboardSettings} />
+        <Route path="/settings/siteinfo" component={SiteinfoSettings} />
+        <Route path="/settings/stream" component={StreamSettings} />
+        <Route path="/settings/tracking_url" component={TrackingUrlSettings} />
+        <Route
+          path="/settings/url_replacement"
+          component={UrlReplacementSettings}
+        />
+        <Route path="/settings/ui" component={UISettings} />
+      </Switch>
+    </SettingsPage>
+  );
 }
 
 interface RoutesProps {
-    history: History;
+  history: History;
 }
 
 export default function Routes(props: RoutesProps) {
-    return (
-        <RootLayout>
-            <AuthenticationRequired history={props.history}>
-                <Route component={MainWrapper} path="/" />
-            </AuthenticationRequired>
-            <NotAuthenticated history={props.history}>
-                <SingleLayout>
-                    <Route path="*" component={AuthenticationPage} />
-                </SingleLayout>
-            </NotAuthenticated>
-        </RootLayout>
-    );
+  return (
+    <RootLayout>
+      <AuthenticationRequired history={props.history}>
+        <Route component={MainWrapper} path="/" />
+      </AuthenticationRequired>
+      <NotAuthenticated history={props.history}>
+        <SingleLayout>
+          <Route path="*" component={AuthenticationPage} />
+        </SingleLayout>
+      </NotAuthenticated>
+    </RootLayout>
+  );
 }

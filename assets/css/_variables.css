@@ -93,18 +93,22 @@ $lg-viewport-min-width: 992px;
   --positive-background-color: $positive-background-color;
   --positive-border-color: $positive-color;
   --positive-hover-color: color-mod($positive-color lightness(-10%));
-  --positive-active-color: color-mod($positive-color lightness(-10%) alpha(90%));
+  --positive-active-color: color-mod(
+    $positive-color lightness(-10%) alpha(90%)
+  );
   --positive-outline-color: color-mod($positive-color alpha(50%));
 
   --negative-color: $negative-color;
   --negative-background-color: $negative-background-color;
   --negative-border-color: $negative-color;
   --negative-hover-color: color-mod($negative-color lightness(-10%));
-  --negative-active-color: color-mod($negative-color lightness(-10%) alpha(90%));
+  --negative-active-color: color-mod(
+    $negative-color lightness(-10%) alpha(90%)
+  );
 
   --backdrop-color: $x-light-color;
   --backdrop-background-color: rgba(0, 0, 0, 0.75);
 
-  --shadow-color: rgba(0, 0, 0, 0.50);
+  --shadow-color: rgba(0, 0, 0, 0.5);
   --transparent-color: color-mod($x-dark-color alpha(90%));
 }

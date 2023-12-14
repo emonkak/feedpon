@@ -7,11 +7,11 @@
 }
 
 .placeholder::before {
-  content: '\200b';
+  content: "\200b";
 }
 
 .placeholder-100 {
-  width: 100%
+  width: 100%;
 }
 
 .placeholder-90 {

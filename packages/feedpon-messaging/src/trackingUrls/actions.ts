@@ -2,61 +2,62 @@ import * as CacheMap from 'feedpon-utils/containers/CacheMap';
 import type { AsyncThunk, Event, Thunk } from '../index';
 import { sendNotification } from '../notifications/actions';
 
-export function expandUrl(url: string): AsyncThunk<{ originalUrl: string, expandedUrl: string }> {
-    return async ({ getState, dispatch }) => {
-        const { trackingUrls } = getState();
+export function expandUrl(
+  url: string,
+): AsyncThunk<{ originalUrl: string; expandedUrl: string }> {
+  return async ({ getState, dispatch }) => {
+    const { trackingUrls } = getState();
 
-        const cachedUrl = CacheMap.get(trackingUrls.items, url);
-        if (cachedUrl) {
-            return { originalUrl: url, expandedUrl: cachedUrl };
-        }
+    const cachedUrl = CacheMap.get(trackingUrls.items, url);
+    if (cachedUrl) {
+      return { originalUrl: url, expandedUrl: cachedUrl };
+    }
 
-        const response = await fetch(url, {
-            method: 'HEAD'
-        });
+    const response = await fetch(url, {
+      method: 'HEAD',
+    });
 
-        const expandedUrl = response.url;
+    const expandedUrl = response.url;
 
-        dispatch({
-            type: 'TRACKING_URL_EXPANDED',
-            originalUrl: url,
-            expandedUrl
-        });
+    dispatch({
+      type: 'TRACKING_URL_EXPANDED',
+      originalUrl: url,
+      expandedUrl,
+    });
 
-        return { originalUrl: url, expandedUrl };
-    };
+    return { originalUrl: url, expandedUrl };
+  };
 }
 
 export function changeTrakingUrlCacheCapacity(capacity: number): Thunk {
-    return ({ dispatch }) => {
-        dispatch({
-            type: 'TRACKING_URL_CACHE_CAPACITY_CHANGED',
-            capacity
-        });
+  return ({ dispatch }) => {
+    dispatch({
+      type: 'TRACKING_URL_CACHE_CAPACITY_CHANGED',
+      capacity,
+    });
 
-        dispatch(sendNotification(
-            'Tracking URL cache capacity changed',
-            'positive'
-        ));
-    };
+    dispatch(
+      sendNotification('Tracking URL cache capacity changed', 'positive'),
+    );
+  };
 }
 
 export function addTrackingUrlPattern(pattern: string): Event {
-    return {
-        type: 'TRACKING_URL_PATTERN_ADDED',
-        pattern
-    };
+  return {
+    type: 'TRACKING_URL_PATTERN_ADDED',
+    pattern,
+  };
 }
 
 export function deleteTrackingUrlPattern(pattern: string): Event {
-    return {
-        type: 'TRACKING_URL_PATTERN_DELETED',
-        pattern
-    };
+  return {
+    type: 'TRACKING_URL_PATTERN_DELETED',
+    pattern,
+  };
 }
 
 export function resetTrackingUrlPatterns(): Event {
-    return {
-        type: 'TRACKING_URL_PATTERNS_RESET'
-    };
+  return {
+    type: 'TRACKING_URL_PATTERNS_RESET',
+  };
 }

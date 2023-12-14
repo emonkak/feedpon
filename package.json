@@ -6,9 +6,13 @@
   },
   "scripts": {
     "build": "wireit",
-    "clean": "rm --recursive dist"
+    "ci": "wireit",
+    "clean": "rm --recursive dist",
+    "format": "wireit",
+    "lint": "wireit"
   },
   "devDependencies": {
+    "@biomejs/biome": "^1.4.1",
     "esbuild": "^0.19.8",
     "typescript": "^5.3.2",
     "wireit": "^0.14.1"
@@ -27,7 +31,7 @@
     "build:css": {
       "command": "esbuild --bundle assets/css/index.css --bundle --outfile=dist/index.css",
       "files": [
-        "assets/css/*.css"
+        "assets/css/*"
       ],
       "output": [
         "dist/index.css"
@@ -38,6 +42,11 @@
     },
     "build:js": {
       "command": "esbuild --bundle packages/feedpon/src/index.tsx --outfile=dist/index.js",
+      "files": [
+        "packages/**/*.ts",
+        "packages/**/*.tsx",
+        "packages/*/tsconfig.json"
+      ],
       "output": [
         "dist/index.js"
       ],
@@ -48,8 +57,12 @@
     },
     "build:others": {
       "command": "cp --recursive --target-directory dist assets/{background.js,img,index.html,manifest.json}",
+      "clean": "if-file-deleted",
       "files": [
-        "assets/*"
+        "assets/background.js",
+        "assets/img/*",
+        "assets/index.html",
+        "assets/manifest.json"
       ],
       "output": [
         "dist/background.js",
@@ -61,8 +74,27 @@
         "prebuild"
       ]
     },
+    "check": {
+      "command": "biome check .",
+      "files": [
+        "packages/**/*.ts",
+        "packages/**/*.tsx"
+      ],
+      "output": []
+    },
+    "ci": {
+      "dependencies": [
+        "build",
+        "check"
+      ]
+    },
+    "format": {
+      "command": "biome format --write ."
+    },
     "prebuild": {
+      "clean": false,
       "command": "mkdir --parents dist",
+      "files": [],
       "output": [
         "dist"
       ]
@@ -73,7 +105,8 @@
         "packages/**/*.ts",
         "packages/**/*.tsx",
         "packages/*/tsconfig.json"
-      ]
+      ],
+      "output": []
     }
   }
 }

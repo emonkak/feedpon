@@ -20,7 +20,7 @@
 
 @keyframes blinking {
   75% {
-    opacity: 0.0;
+    opacity: 0;
   }
 }
 
@@ -33,7 +33,12 @@
 }
 
 .animation-shining {
-  background: linear-gradient(to right, var(--medium-light-color) 0%, var(--medium-dark-color) 15%, var(--medium-light-color) 30%);
+  background: linear-gradient(
+    to right,
+    var(--medium-light-color) 0%,
+    var(--medium-dark-color) 15%,
+    var(--medium-light-color) 30%
+  );
   background-size: 100vw 100%;
   animation-duration: 2s;
   animation-fill-mode: forwards;

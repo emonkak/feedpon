@@ -1,0 +1,13 @@
+{
+  "files": {
+    "ignore": [".wireit", "dist", "node_modules"]
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "single"
+    }
+  },
+  "formatter": {
+    "indentStyle": "space"
+  }
+}

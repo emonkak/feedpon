@@ -9,44 +9,46 @@ import { Notification, State } from 'feedpon-messaging';
 import { dismissNotification } from 'feedpon-messaging/notifications';
 
 interface NotificationListProps {
-    notifications: Notification[];
-    onDismissNotification: typeof dismissNotification;
+  notifications: Notification[];
+  onDismissNotification: typeof dismissNotification;
 }
 
 class NotificationList extends PureComponent<NotificationListProps> {
-    renderItem(notification: Notification) {
-        const { onDismissNotification } = this.props;
+  renderItem(notification: Notification) {
+    const { onDismissNotification } = this.props;
 
-        return (
-            <CSSTransition
-                key={notification.id}
-                classNames="notification"
-                timeout={200}>
-                <div>
-                    <NotificationComponent
-                        notification={notification}
-                        onDismiss={onDismissNotification} />
-                </div>
-            </CSSTransition>
-        );
-    }
+    return (
+      <CSSTransition
+        key={notification.id}
+        classNames="notification"
+        timeout={200}
+      >
+        <div>
+          <NotificationComponent
+            notification={notification}
+            onDismiss={onDismissNotification}
+          />
+        </div>
+      </CSSTransition>
+    );
+  }
 
-    override render() {
-        const { notifications } = this.props;
+  override render() {
+    const { notifications } = this.props;
 
-        return (
-            <TransitionGroup className="notification-list">
-                {notifications.map(this.renderItem, this)}
-            </TransitionGroup>
-        );
-    }
+    return (
+      <TransitionGroup className="notification-list">
+        {notifications.map(this.renderItem, this)}
+      </TransitionGroup>
+    );
+  }
 }
 
 export default connect({
-    mapStateToProps: (state: State) => ({
-        notifications: state.notifications.items
-    }),
-    mapDispatchToProps: bindActions({
-        onDismissNotification: dismissNotification
-    })
+  mapStateToProps: (state: State) => ({
+    notifications: state.notifications.items,
+  }),
+  mapDispatchToProps: bindActions({
+    onDismissNotification: dismissNotification,
+  }),
 })(NotificationList);

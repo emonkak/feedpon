@@ -16,22 +16,22 @@ import userSiteinfo from './userSiteinfo/initialState';
 import { State } from './index';
 
 const initialState: State = {
-    backend,
-    categories,
-    histories,
-    instantNotifications,
-    keyMappings,
-    notifications,
-    search,
-    sharedSiteinfo,
-    streams,
-    subscriptions,
-    trackingUrls,
-    ui,
-    urlReplacements,
-    user,
-    userSiteinfo,
-    version: '0.0.0'
+  backend,
+  categories,
+  histories,
+  instantNotifications,
+  keyMappings,
+  notifications,
+  search,
+  sharedSiteinfo,
+  streams,
+  subscriptions,
+  trackingUrls,
+  ui,
+  urlReplacements,
+  user,
+  userSiteinfo,
+  version: '0.0.0',
 };
 
 export default initialState;

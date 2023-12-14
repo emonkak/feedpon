@@ -14,18 +14,18 @@
 }
 
 .list-inline-item::after {
-  content: '\00a0';
+  content: "\00a0";
   font-size: 0;
   margin-right: 1px;
 }
 
 .list-inline-slashed > .list-inline-item + .list-inline-item::before {
-  content: '\00a0/\00a0';
+  content: "\00a0/\00a0";
   color: var(--dark-color);
 }
 
 .list-inline-dotted > .list-inline-item + .list-inline-item::before {
-  content: '\00a0\00b7\00a0';
+  content: "\00a0\00b7\00a0";
   color: var(--dark-color);
 }
 

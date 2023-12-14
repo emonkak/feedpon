@@ -1,95 +1,98 @@
 import type { Event, StreamViewKind, ThemeKind, Thunk } from '../index';
 
 export function changeActiveEntry(streamId: string, index: number): Event {
-    return {
-        type: 'ACTIVE_ENTRY_CAHNGED',
-        streamId,
-        index
-    };
+  return {
+    type: 'ACTIVE_ENTRY_CAHNGED',
+    streamId,
+    index,
+  };
 }
 
 export function changeExpandedEntry(streamId: string, index: number): Event {
-    return {
-        type: 'EXPANDED_ENTRY_CHANGED',
-        streamId,
-        index
-    };
+  return {
+    type: 'EXPANDED_ENTRY_CHANGED',
+    streamId,
+    index,
+  };
 }
 
 export function resetReadEntry(streamId: string): Event {
-    return {
-        type: 'READ_ENTRY_RESET',
-        streamId
-    };
+  return {
+    type: 'READ_ENTRY_RESET',
+    streamId,
+  };
 }
 
 export function changeCustomStyles(customStyles: string): Event {
-    return {
-        type: 'CUSTOM_STYLE_CHANGED',
-        customStyles
-    };
+  return {
+    type: 'CUSTOM_STYLE_CHANGED',
+    customStyles,
+  };
 }
 
 export function toggleSidebar(): Thunk {
-    return ({ getState, dispatch }) => {
-        const { ui } = getState();
+  return ({ getState, dispatch }) => {
+    const { ui } = getState();
 
-        if (ui.sidebarIsOpened) {
-            dispatch(closeSidebar());
-        } else {
-            dispatch(openSidebar());
-        }
-    };
+    if (ui.sidebarIsOpened) {
+      dispatch(closeSidebar());
+    } else {
+      dispatch(openSidebar());
+    }
+  };
 }
 
 export function openSidebar(): Event {
-    return {
-        type: 'SIDEBAR_OPENED'
-    };
+  return {
+    type: 'SIDEBAR_OPENED',
+  };
 }
 
 export function closeSidebar(): Event {
-    return {
-        type: 'SIDEBAR_CLOSED'
-    };
+  return {
+    type: 'SIDEBAR_CLOSED',
+  };
 }
 
 export function openHelp(): Event {
-    return {
-        type: 'HELP_OPENED'
-    };
+  return {
+    type: 'HELP_OPENED',
+  };
 }
 
 export function closeHelp(): Event {
-    return {
-        type: 'HELP_CLOSED'
-    };
+  return {
+    type: 'HELP_CLOSED',
+  };
 }
 
 export function changeTheme(theme: ThemeKind): Event {
-    return {
-        type: 'THEME_CHANGED',
-        theme
-    };
+  return {
+    type: 'THEME_CHANGED',
+    theme,
+  };
 }
 
-export function changeStreamView(streamId: string, streamView: StreamViewKind): Event {
-    return {
-        type: 'STREAM_VIEW_CHANGED',
-        streamId,
-        streamView
-    };
+export function changeStreamView(
+  streamId: string,
+  streamView: StreamViewKind,
+): Event {
+  return {
+    type: 'STREAM_VIEW_CHANGED',
+    streamId,
+    streamView,
+  };
 }
 
 export function selectStream(streamId: string): Event {
-    return {
-        type: 'STREAM_SELECTED',
-        streamId
-    };
+  return {
+    type: 'STREAM_SELECTED',
+    streamId,
+  };
 }
 
 export function unselectStream(): Event {
-    return {
-        type: 'STREAM_UNSELECTED'
-    };
+  return {
+    type: 'STREAM_UNSELECTED',
+  };
 }

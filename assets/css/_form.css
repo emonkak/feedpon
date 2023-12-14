@@ -19,7 +19,7 @@
 }
 
 .form-required::after {
-  content: '\00a0*';
+  content: "\00a0*";
   color: var(--negative-color);
 }
 
@@ -36,7 +36,9 @@ input.form-control {
   background-color: var(--x-light-color);
   border: 1px solid var(--medium-dark-color);
   border-radius: 4px;
-  transition: border-color ease-in-out 0.2s, box-shadow ease-in-out 0.2s;
+  transition:
+    border-color ease-in-out 0.2s,
+    box-shadow ease-in-out 0.2s;
 }
 
 .form-control:focus {
@@ -79,9 +81,9 @@ select.form-control:not([size]):not([multiple]) {
 }
 
 .form-control-addon:not(:last-child) {
-    border-bottom-right-radius: 0;
-    border-top-right-radius: 0;
-  }
+  border-bottom-right-radius: 0;
+  border-top-right-radius: 0;
+}
 
 .form-control-addon:not(:first-child) {
   border-bottom-left-radius: 0;
@@ -148,7 +150,8 @@ input.input-search-box {
   display: block;
   box-sizing: border-box;
   width: 100%;
-  padding: calc(var(--vertical-rhythm) / 4) 0.5rem calc(var(--vertical-rhythm) / 4 - 2px);
+  padding: calc(var(--vertical-rhythm) / 4) 0.5rem
+    calc(var(--vertical-rhythm) / 4 - 2px);
   background-color: transparent;
   border: 0;
   border-bottom: 2px solid var(--x-dark-color);

@@ -2,36 +2,36 @@ import { PureComponent } from 'react';
 import { createPortal } from 'react-dom';
 
 interface PortalProps {
-    children?: React.ReactNode;
-    getRootElement?: () => Element;
+  children?: React.ReactNode;
+  getRootElement?: () => Element;
 }
 
 export default class Portal extends PureComponent<PortalProps> {
-    static defaultProps = {
-        getRootElement: () => document.body
-    };
+  static defaultProps = {
+    getRootElement: () => document.body,
+  };
 
-    private _rootElement: Element;
+  private _rootElement: Element;
 
-    private _containerElement: Element;
+  private _containerElement: Element;
 
-    constructor(props: PortalProps) {
-        super(props);
+  constructor(props: PortalProps) {
+    super(props);
 
-        this._rootElement = props.getRootElement!();
-        this._containerElement = document.createElement('div');
-    }
+    this._rootElement = props.getRootElement!();
+    this._containerElement = document.createElement('div');
+  }
 
-    override componentDidMount() {
-        this._rootElement.appendChild(this._containerElement);
-    }
+  override componentDidMount() {
+    this._rootElement.appendChild(this._containerElement);
+  }
 
-    override componentWillUnmount() {
-        this._rootElement.removeChild(this._containerElement);
-    }
+  override componentWillUnmount() {
+    this._rootElement.removeChild(this._containerElement);
+  }
 
-    override render() {
-        const { children } = this.props;
-        return createPortal(children, this._containerElement);
-    }
+  override render() {
+    const { children } = this.props;
+    return createPortal(children, this._containerElement);
+  }
 }

@@ -1,5 +1,6 @@
 .entry {
-  padding: calc(var(--vertical-rhythm) / 2) 0 calc(var(--vertical-rhythm) / 2 - 1px);
+  padding: calc(var(--vertical-rhythm) / 2) 0
+    calc(var(--vertical-rhythm) / 2 - 1px);
   border-bottom: 1px solid var(--medium-dark-color);
   transition: box-shadow 0.2s ease-in-out;
 }
@@ -11,8 +12,9 @@
 
 .entry.is-active {
   overflow-anchor: auto;
-  box-shadow: 0 2px 18px var(--shadow-color),
-              0 0 6px var(--shadow-color);
+  box-shadow:
+    0 2px 18px var(--shadow-color),
+    0 0 6px var(--shadow-color);
 }
 
 .entry.is-pinned {
@@ -20,9 +22,10 @@
 }
 
 .entry.is-pinned.is-active {
-  box-shadow: 6px 0 0 var(--positive-background-color) inset,
-              0 2px 18px var(--shadow-color),
-              0 0 6px var(--shadow-color);
+  box-shadow:
+    6px 0 0 var(--positive-background-color) inset,
+    0 2px 18px var(--shadow-color),
+    0 0 6px var(--shadow-color);
 }
 
 .entry:not(.is-expanded) {
@@ -102,7 +105,7 @@
 
 .entry-page-title::before,
 .entry-page-title::after {
-  content: '';
+  content: "";
   display: block;
   position: absolute;
   top: 50%;

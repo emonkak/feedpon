@@ -5,7 +5,8 @@
 .sidebar-group-header {
   display: flex;
   align-items: stretch;
-  padding: calc(var(--vertical-rhythm) / 4) 0 calc(var(--vertical-rhythm) / 4 - 1px);
+  padding: calc(var(--vertical-rhythm) / 4) 0
+    calc(var(--vertical-rhythm) / 4 - 1px);
   border-bottom: 1px solid var(--x-dark-color);
 }
 

@@ -16,8 +16,9 @@
 
 .modal-enter.modal-enter-active,
 .modal-exit.modal-exit-active {
-  transition: opacity 0.2s ease-in-out,
-              transform 0.2s ease-in-out;
+  transition:
+    opacity 0.2s ease-in-out,
+    transform 0.2s ease-in-out;
 }
 
 .modal-enter,
