@@ -10,7 +10,7 @@
   border-bottom: 1px solid var(--x-dark-color);
 }
 
-@media not all and (--md-viewport) {
+@media not all and (min-width: 768px) {
   .sidebar-is-swiping,
   .sidebar-is-swiping > body,
   .sidebar-is-opened,

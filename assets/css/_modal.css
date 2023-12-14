@@ -52,10 +52,8 @@
 }
 
 .modal-title {
+  --type-scale: var(--type-scale-2);
   margin: 0;
-  font-size: calc(1rem * $type-scale-2);
-  font-weight: bold;
-  line-height: calc(var(--vertical-rhythm) * $type-height-2);
 }
 
 .modal-is-opened {

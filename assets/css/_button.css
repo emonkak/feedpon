@@ -30,7 +30,7 @@
 
 .button-large {
   padding: calc(var(--vertical-rhythm) / 2 - 1px) calc(1.25rem - 1px);
-  font-size: calc(1rem * $type-scale-4);
+  font-size: calc(1rem * var(--type-scale-4));
 }
 
 .button-pill {

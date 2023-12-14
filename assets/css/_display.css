@@ -4,36 +4,33 @@
 .display-4,
 .display-5,
 .display-6 {
+  --floor: calc((var(--type-scale, 1) - 0.25) / 0.25 - 0.5);
   margin: 0 0 calc(var(--vertical-rhythm) / 2);
+  font-size: calc(1rem * var(--type-scale, 1));
   font-weight: 300;
+  line-height: calc(var(--vertical-rhythm) * max(var(--floor) * 0.25, 1));
 }
 
 .display-1 {
-  font-size: calc(1rem * $type-scale-1);
-  line-height: calc(var(--vertical-rhythm) * $type-height-1);
+  --type-scale: var(--type-scale-1);
 }
 
 .display-2 {
-  font-size: calc(1rem * $type-scale-2);
-  line-height: calc(var(--vertical-rhythm) * $type-height-2);
+  --type-scale: var(--type-scale-2);
 }
 
 .display-3 {
-  font-size: calc(1rem * $type-scale-3);
-  line-height: calc(var(--vertical-rhythm) * $type-height-3);
+  --type-scale: var(--type-scale-3);
 }
 
 .display-4 {
-  font-size: calc(1rem * $type-scale-4);
-  line-height: calc(var(--vertical-rhythm) * $type-height-4);
+  --type-scale: var(--type-scale-4);
 }
 
 .display-5 {
-  font-size: calc(1rem * $type-scale-5);
-  line-height: calc(var(--vertical-rhythm) * $type-height-5);
+  --type-scale: var(--type-scale-5);
 }
 
 .display-6 {
-  font-size: calc(1rem * $type-scale-6);
-  line-height: calc(var(--vertical-rhythm) * $type-height-6);
+  --type-scale: var(--type-scale-6);
 }

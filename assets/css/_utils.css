@@ -110,49 +110,54 @@
   text-align: right;
 }
 
+.u-text-1,
+.u-text-2,
+.u-text-3,
+.u-text-4,
+.u-text-5,
+.u-text-6,
+.u-text-7,
+.u-text-8,
+.u-text-9 {
+  --floor: calc((var(--type-scale, 1) - 0.25) / 0.25 - 0.5);
+  font-size: calc(1rem * var(--type-scale, 1));
+  line-height: calc(var(--vertical-rhythm) * max(var(--floor) * 0.25, 1));
+}
+
 .u-text-1 {
-  font-size: calc(1rem * $type-scale-1);
-  line-height: calc(var(--vertical-rhythm) * $type-height-1);
+  --type-scale: var(--type-scale-1);
 }
 
 .u-text-2 {
-  font-size: calc(1rem * $type-scale-2);
-  line-height: calc(var(--vertical-rhythm) * $type-height-2);
+  --type-scale: var(--type-scale-2);
 }
 
 .u-text-3 {
-  font-size: calc(1rem * $type-scale-3);
-  line-height: calc(var(--vertical-rhythm) * $type-height-3);
+  --type-scale: var(--type-scale-3);
 }
 
 .u-text-4 {
-  font-size: calc(1rem * $type-scale-4);
-  line-height: calc(var(--vertical-rhythm) * $type-height-4);
+  --type-scale: var(--type-scale-4);
 }
 
 .u-text-5 {
-  font-size: calc(1rem * $type-scale-5);
-  line-height: calc(var(--vertical-rhythm) * $type-height-5);
+  --type-scale: var(--type-scale-5);
 }
 
 .u-text-6 {
-  font-size: calc(1rem * $type-scale-6);
-  line-height: calc(var(--vertical-rhythm) * $type-height-6);
+  --type-scale: var(--type-scale-6);
 }
 
 .u-text-7 {
-  font-size: calc(1rem * $type-scale-7);
-  line-height: calc(var(--vertical-rhythm) * $type-height-7);
+  --type-scale: var(--type-scale-7);
 }
 
 .u-text-8 {
-  font-size: calc(1rem * $type-scale-8);
-  line-height: calc(var(--vertical-rhythm) * $type-height-8);
+  --type-scale: var(--type-scale-8);
 }
 
 .u-text-9 {
-  font-size: calc(1rem * $type-scale-9);
-  line-height: calc(var(--vertical-rhythm) * $type-height-9);
+  --type-scale: var(--type-scale-9);
 }
 
 .u-text-muted {
@@ -263,7 +268,7 @@
   overflow-x: auto;
 }
 
-@media (--md-viewport) {
+@media (min-width: 768px) {
   .u-sm-none {
     display: none !important;
   }
@@ -281,7 +286,7 @@
   }
 }
 
-@media (--md-viewport) {
+@media (min-width: 768px) {
   .u-md-none {
     display: none !important;
   }
@@ -299,7 +304,7 @@
   }
 }
 
-@media (--lg-viewport) {
+@media (min-width: 992px) {
   .u-lg-none {
     display: none !important;
   }

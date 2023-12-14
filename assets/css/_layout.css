@@ -143,7 +143,7 @@
   transition: none;
 }
 
-@media (--md-viewport) {
+@media (min-width: 768px) {
   .l-sidebar,
   .l-main {
     transition: none;
@@ -157,7 +157,7 @@
   }
 }
 
-@media not all and (--md-viewport) {
+@media not all and (min-width: 768px) {
   .l-sidebar.is-opened ~ .l-main > .l-overlay {
     visibility: visible;
     opacity: 1;

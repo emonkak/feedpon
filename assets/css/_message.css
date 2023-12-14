@@ -26,7 +26,6 @@
 
 .message-title {
   margin: 0;
-  font-size: calc(1rem * $type-scale-5);
+  font-size: calc(1rem * var(--type-scale-5));
   font-weight: bold;
-  line-height: calc(var(--vertical-rhythm) * $type-height-5);
 }

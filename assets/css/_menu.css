@@ -64,16 +64,14 @@ a.menu-item.is-disabled {
 
 .menu-item-secondary-text {
   color: var(--dark-color);
-  font-size: calc(1rem * $type-scale-7);
-  line-height: calc(var(--vertical-rhythm) * $type-height-7);
+  font-size: calc(1rem * var(--type-scale-7));
 }
 
 .menu-heading {
   padding: 0 24px 0 32px;
   color: var(--dark-color);
   font-weight: bold;
-  font-size: calc(1rem * $type-scale-7);
-  line-height: calc(var(--vertical-rhythm) * $type-height-7);
+  font-size: calc(1rem * var(--type-scale-7));
 }
 
 .menu-form {

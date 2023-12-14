@@ -1,114 +1,105 @@
-$sm-viewport-min-width: 576px;
-$md-viewport-min-width: 768px;
-$lg-viewport-min-width: 992px;
-
-@custom-media --sm-viewport (min-width: $sm-viewport-min-width);
-@custom-media --md-viewport (min-width: $md-viewport-min-width);
-@custom-media --lg-viewport (min-width: $lg-viewport-min-width);
+@property --floor {
+  syntax: "<integer>";
+  initial-value: 0;
+  inherits: false;
+}
 
 :root {
   --vertical-rhythm: calc(1rem * (26 / 16));
   --sidebar-width: calc(1rem * (304 / 16));
   --container-width: 704px;
+
+  --type-scale-base: 1.125;
+  --type-scale-1: calc(var(--type-scale-base) * var(--type-scale-2));
+  --type-scale-2: calc(var(--type-scale-base) * var(--type-scale-3));
+  --type-scale-3: calc(var(--type-scale-base) * var(--type-scale-4));
+  --type-scale-4: calc(var(--type-scale-base) * var(--type-scale-5));
+  --type-scale-5: calc(var(--type-scale-base) * var(--type-scale-6));
+  --type-scale-6: var(--type-scale-base);
+  --type-scale-7: calc(1 / var(--type-scale-6));
+  --type-scale-8: calc(1 / var(--type-scale-5));
+  --type-scale-9: calc(1 / var(--type-scale-4));
 }
 
 .theme-light {
-  $x-light-color: #ffffff;
-  $light-color: #f7f9fc;
-  $medium-light-color: #e8edf2;
-  $medium-dark-color: #d3dbe3;
-  $dark-color: #7e8998;
-  $x-dark-color: #203442;
+  --x-light-color: #ffffff;
+  --light-color: #f7f9fc;
+  --medium-light-color: #e8edf2;
+  --medium-dark-color: #d3dbe3;
+  --dark-color: #7e8998;
+  --x-dark-color: #203442;
 
-  $positive-color: #2eabff;
-  $positive-background-color: #e0f3ff;
+  --default-color: var(--x-dark-color);
+  --default-background-color: var(--x-light-color);
+  --default-border-color: var(--medium-dark-color);
+  --default-hover-color: hsl(from var(--x-dark-color) h s calc(l + 0.05));
+  --default-active-color: hsl(
+    from var(--x-dark-color) h s calc(l + 0.05) / 90%
+  );
+  --default-outline-color: hsl(from var(--medium-dark-color) h s l / 50%);
 
-  $negative-color: #ee6969;
-  $negative-background-color: #fbdbdb;
+  --positive-color: #2eabff;
+  --positive-background-color: #e0f3ff;
+  --positive-border-color: var(--positive-color);
+  --positive-hover-color: hsl(from var(--positive-color) h s calc(l + 0.05));
+  --positive-active-color: hsl(
+    from var(--positive-color) h s calc(l + 0.05) / 90%
+  );
+  --positive-outline-color: hsl(from var(--positive-color) h s l / 90%);
 
-  --x-light-color: $x-light-color;
-  --light-color: $light-color;
-  --medium-light-color: $medium-light-color;
-  --medium-dark-color: $medium-dark-color;
-  --dark-color: $dark-color;
-  --x-dark-color: $x-dark-color;
+  --negative-color: #ee6969;
+  --negative-background-color: #fbdbdb;
+  --negative-border-color: var(--negative-color);
+  --negative-hover-color: hsl(from var(--negative-color) h s calc(l + 0.05));
+  --negative-active-color: hsl(
+    from var(--negative-color) h s calc(l + 0.05) / 90%
+  );
+  --negative-outline-color: hsl(from var(--negative-color) h s l / 50%);
 
-  --default-color: $x-dark-color;
-  --default-background-color: $x-light-color;
-  --default-border-color: $medium-dark-color;
-  --default-hover-color: color-mod($x-dark-color lightness(+5%));
-  --default-active-color: color-mod($x-dark-color lightness(+5%) alpha(90%));
-  --default-outline-color: color-mod($medium-dark-color alpha(50%));
-
-  --positive-color: $positive-color;
-  --positive-background-color: $positive-background-color;
-  --positive-border-color: $positive-color;
-  --positive-hover-color: color-mod($positive-color lightness(+5%));
-  --positive-active-color: color-mod($positive-color lightness(+5%) alpha(90%));
-  --positive-outline-color: color-mod($positive-color alpha(50%));
-
-  --negative-color: $negative-color;
-  --negative-background-color: $negative-background-color;
-  --negative-border-color: $negative-color;
-  --negative-hover-color: color-mod($negative-color lightness(+5%));
-  --negative-active-color: color-mod($negative-color lightness(+5%) alpha(90%));
-  --negative-outline-color: color-mod($negative-color alpha(50%));
-
-  --backdrop-color: $x-light-color;
+  --backdrop-color: var(--x-light-color);
   --backdrop-background-color: rgba(0, 0, 0, 0.75);
 
-  --shadow-color: color-mod($x-dark-color alpha(15%));
-  --transparent-color: color-mod($x-light-color alpha(90%));
+  --shadow-color: hsl(from var(--x-dark-color) h s l / 15%);
+  --transparent-color: hsl(from var(--x-light-color) h s l / 90%);
 }
 
 .theme-dark {
-  $x-light-color: #ddd;
-  $light-color: #888;
-  $medium-light-color: #3a3a3a;
-  $medium-dark-color: #2a2a2a;
-  $dark-color: #202020;
-  $x-dark-color: #1a1a1a;
+  --x-light-color: #ddd;
+  --light-color: #888;
+  --medium-light-color: #3a3a3a;
+  --medium-dark-color: #2a2a2a;
+  --dark-color: #202020;
+  --x-dark-color: #1a1a1a;
 
-  $positive-color: #2eabff;
-  $positive-background-color: #003a61;
-
-  $negative-color: #ee6969;
-  $negative-background-color: #580e0e;
-
-  --x-light-color: $x-dark-color;
-  --light-color: $dark-color;
-  --medium-light-color: $medium-dark-color;
-  --medium-dark-color: $medium-light-color;
-  --dark-color: $light-color;
-  --x-dark-color: $x-light-color;
-
-  --default-color: $x-light-color;
-  --default-background-color: $x-dark-color;
-  --default-border-color: $medium-light-color;
-  --default-hover-color: color-mod($x-light-color lightness(-10%));
-  --default-active-color: color-mod($x-light-color lightness(-10%) alpha(90%));
-  --default-outline-color: color-mod($x-light-color alpha(50%));
-
-  --positive-color: $positive-color;
-  --positive-background-color: $positive-background-color;
-  --positive-border-color: $positive-color;
-  --positive-hover-color: color-mod($positive-color lightness(-10%));
-  --positive-active-color: color-mod(
-    $positive-color lightness(-10%) alpha(90%)
+  --default-color: var(--x-light-color);
+  --default-background-color: var(--x-dark-color);
+  --default-border-color: var(--medium-light-color);
+  --default-hover-color: hsl(from var(--x-light-color) h s calc(l - 0.1));
+  --default-active-color: hsl(
+    from var(--x-light-color) h s calc(l - 0.1) / 90%
   );
-  --positive-outline-color: color-mod($positive-color alpha(50%));
+  --default-outline-color: hsl(from var(--x-light-color) h s l / 50%);
 
-  --negative-color: $negative-color;
-  --negative-background-color: $negative-background-color;
-  --negative-border-color: $negative-color;
-  --negative-hover-color: color-mod($negative-color lightness(-10%));
-  --negative-active-color: color-mod(
-    $negative-color lightness(-10%) alpha(90%)
+  --positive-color: #2eabff;
+  --positive-background-color: #003a61;
+  --positive-border-color: var(--positive-color);
+  --positive-hover-color: hsl(from var(--positive-color) h s calc(l - 0.1));
+  --positive-active-color: hsl(
+    from var(--positive-color) h s calc(l - 0.1) / 90%
+  );
+  --positive-outline-color: hsl(from var(--positive-color) h s l / 50%);
+
+  --negative-color: #ee6969;
+  --negative-background-color: #580e0e;
+  --negative-border-color: var(--negative-color);
+  --negative-hover-color: hsl(from var(--negative-color) h s calc(l - 0.1));
+  --negative-active-color: hsl(
+    from var(--negative-color) h s calc(l - 0.1) / 90%
   );
 
-  --backdrop-color: $x-light-color;
+  --backdrop-color: var(--x-light-color);
   --backdrop-background-color: rgba(0, 0, 0, 0.75);
 
   --shadow-color: rgba(0, 0, 0, 0.5);
-  --transparent-color: color-mod($x-dark-color alpha(90%));
+  --transparent-color: hsl(from var(--x-dark-color) h s l / 90%);
 }

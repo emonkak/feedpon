@@ -8,7 +8,7 @@
   margin: 0 -1rem;
 }
 
-@media (--md-viewport) {
+@media (min-width: 768px) {
   .container {
     padding: 0 1.5rem;
   }

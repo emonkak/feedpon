@@ -41,8 +41,7 @@
 }
 
 .entry.is-expanded .entry-title {
-  font-size: calc(1rem * $type-scale-5);
-  line-height: calc(var(--vertical-rhythm) * $type-height-5);
+  --type-scale: var(--type-scale-5);
 }
 
 .entry-nav {
@@ -53,10 +52,8 @@
 }
 
 .entry-title {
+  --type-scale: 1;
   margin: 0;
-  font-size: inherit;
-  font-weight: bold;
-  line-height: inherit;
 }
 
 .entry-metadata {

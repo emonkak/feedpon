@@ -62,7 +62,7 @@
   height: 100%;
 }
 
-@media (--md-viewport) {
+@media (min-width: 768px) {
   .navbar-container {
     padding: 0 1.5rem;
   }
