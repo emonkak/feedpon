@@ -1,0 +1,12 @@
+{
+  "name": "feedpon-adapters",
+  "private": true,
+  "main": "./dist/index.js",
+  "exports": {
+    "./feedly": "./src/feedly/index.ts",
+    "./hatena": "./src/hatena/index.ts",
+    "./wedata": "./src/wedata/index.ts"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}

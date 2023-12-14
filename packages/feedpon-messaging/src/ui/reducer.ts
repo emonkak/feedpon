@@ -1,0 +1,61 @@
+import type { Event, UI } from '../index';
+
+export default function uiReducer(ui: UI, event: Event): UI {
+    switch (event.type) {
+        case 'CUSTOM_STYLE_CHANGED':
+            return {
+                ...ui,
+                customStyles: event.customStyles,
+            };
+
+        case 'HELP_OPENED':
+            return {
+                ...ui,
+                helpIsOpened: true
+            };
+
+        case 'HELP_CLOSED':
+            return {
+                ...ui,
+                helpIsOpened: false
+            };
+
+        case 'SIDEBAR_OPENED':
+            return {
+                ...ui,
+                sidebarIsOpened: true
+            };
+
+        case 'SIDEBAR_CLOSED':
+            return {
+                ...ui,
+                sidebarIsOpened: false
+            };
+
+        case 'STREAM_FETCHED':
+            return {
+                ...ui
+            };
+
+        case 'STREAM_SELECTED':
+            return {
+                ...ui,
+                selectedStreamId: event.streamId
+            };
+
+        case 'STREAM_UNSELECTED':
+            return {
+                ...ui,
+                selectedStreamId: ''
+            };
+
+        case 'THEME_CHANGED':
+            return {
+                ...ui,
+                theme: event.theme
+            };
+
+        default:
+            return ui;
+    }
+}

@@ -1,0 +1,39 @@
+{
+  "name": "feedpon-messaging",
+  "private": true,
+  "main": "./dist/index.js",
+  "exports": {
+    ".": "./src/index.ts",
+    "./backend": "./src/backend/index.ts",
+    "./categories": "./src/categories/index.ts",
+    "./domActions": "./src/domActions.ts",
+    "./histories": "./src/histories/index.ts",
+    "./initialState": "./src/initialState.ts",
+    "./instantNotifications": "./src/instantNotifications/index.ts",
+    "./keyMappings": "./src/keyMappings/index.ts",
+    "./notifications": "./src/notifications/index.ts",
+    "./prepareSelectors": "./src/prepareSelectors.ts",
+    "./reducer": "./src/reducer.ts",
+    "./search": "./src/search/index.ts",
+    "./sharedSiteinfo": "./src/sharedSiteinfo/index.ts",
+    "./streams": "./src/streams/index.ts",
+    "./subscriptions": "./src/subscriptions/index.ts",
+    "./trackingUrls": "./src/trackingUrls/index.ts",
+    "./ui": "./src/ui/index.ts",
+    "./urlReplacements": "./src/urlReplacements/index.ts",
+    "./user": "./src/user/index.ts",
+    "./userSiteinfo": "./src/userSiteinfo/index.ts"
+  },
+  "dependencies": {
+    "@emonkak/enumerable": "^4.0.0",
+    "@mozilla/readability": "^0.4.4",
+    "feedpon-adapters": "*",
+    "feedpon-utils": "*",
+    "history": "^4.10.1",
+    "reselect": "^4.1.8"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.253",
+    "@types/history": "^4.7.11"
+  }
+}

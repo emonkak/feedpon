@@ -1,29 +1,20 @@
 {
-    "compilerOptions": {
-        "allowSyntheticDefaultImports": true,
-        "alwaysStrict": true,
-        "baseUrl": "./src/",
-        "esModuleInterop": true,
-        "jsx": "react",
-        "lib": ["es2015", "es2016", "es2017", "es2018", "es2019", "es2020", "dom"],
-        "module": "es2015",
-        "moduleResolution": "node",
-        "noFallthroughCasesInSwitch": true,
-        "noImplicitAny": true,
-        "noImplicitReturns": true,
-        "noImplicitThis": true,
-        "noUnusedLocals": true,
-        "strictBindCallApply": true,
-        "strictFunctionTypes": true,
-        "strictNullChecks": true,
-        "strictPropertyInitialization": true,
-        "target": "ES2017"
+  "files": [],
+  "references": [
+    {
+      "path": "packages/feedpon"
     },
-    "exclude": [
-        "node_modules",
-        "public"
-    ],
-    "files": [
-      "./src/typings/index.d.ts"
-    ]
+    {
+      "path": "packages/feedpon-adapters"
+    },
+    {
+      "path": "packages/feedpon-messaging"
+    },
+    {
+      "path": "packages/feedpon-utils"
+    },
+    {
+      "path": "packages/feedpon-view"
+    }
+  ]
 }

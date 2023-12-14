@@ -1,4 +1,4 @@
-<img src="./www/img/logo.svg" alt="Feedpon" width="320">
+<img src="./assets/img/logo.svg" alt="Feedpon" width="320">
 
 Feedpon is a [LDR](http://reader.livedoor.com/) inspired feed reader.
 

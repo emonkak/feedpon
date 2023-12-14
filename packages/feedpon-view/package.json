@@ -1,0 +1,37 @@
+{
+  "name": "feedpon-view",
+  "private": true,
+  "main": "./dist/index.js",
+  "exports": {
+    ".": "./src/index.ts",
+    "./Bootstrap": "./src/Bootstrap.tsx",
+    "./Routes": "./src/Routes.tsx"
+  },
+  "dependencies": {
+    "@emonkak/enumerable": "^4.0.0",
+    "classnames": "^2.3.2",
+    "feedpon-adapters": "*",
+    "feedpon-messaging": "*",
+    "feedpon-utils": "*",
+    "history": "^4.10.1",
+    "lodash.debounce": "^4.0.8",
+    "lodash.throttle": "^4.1.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router": "^5.2.0",
+    "react-router-dom": "^5.2.0",
+    "react-transition-group": "^4.4.5",
+    "reselect": "^4.1.8"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.253",
+    "@types/history": "^4.7.11",
+    "@types/lodash.debounce": "^4.0.9",
+    "@types/lodash.throttle": "^4.1.9",
+    "@types/react": "^18.2.39",
+    "@types/react-dom": "^18.2.17",
+    "@types/react-router": "^5.1.20",
+    "@types/react-router-dom": "^5.3.3",
+    "@types/react-transition-group": "^4.4.9"
+  }
+}

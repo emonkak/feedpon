@@ -1,103 +1,79 @@
 {
-  "name": "feedpon",
-  "version": "2.1.1",
-  "description": "A LDR inspired feed reader",
-  "author": "Shota Nozaki",
-  "license": "MIT",
   "private": true,
   "repository": {
     "type": "git",
     "url": "https://github.com/emonkak/feedpon.git"
   },
   "scripts": {
-    "build": "npm-run-all build:dir -p build:css build:js -p build:webextension -s build:zip",
-    "build:cordova": "cp build/{index,runtime}.js www/js && cp build/index.css www/css && cordova prepare",
-    "build:css": "postcss -o build/index.css res/css/index.css",
-    "build:dir": "mkdir -p build dist www/{css,js} webextension/{css,js}",
-    "build:js": "webpack",
-    "build:webextension": "cp -v build/{index,background}.js webextension/js && cp -v build/index.css webextension/css",
-    "build:zip": "cd webextension && zip -FSr ../dist/feedpon.zip .",
-    "clean": "rm -f -r build dist webextension/{css,js} www/{css,js}",
-    "lint": "tslint 'src/**/*.ts' 'src/**/*.tsx'",
-    "test": "TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\"}' mocha --recursive --require ts-node/register --require tsconfig-paths/register './tests/**/*.ts'",
-    "watch": "npm-run-all build:dir -p 'watch:*'",
-    "watch:css": "postcss -w -o build/index.css res/css/index.css",
-    "watch:js": "webpack --watch --devtool inline-source-map",
-    "watch:webextension": "watch 'npm run --silent build:webextension' build"
-  },
-  "dependencies": {
-    "@emonkak/enumerable": "^4.0.0",
-    "@mozilla/readability": "^0.4.1",
-    "classnames": "^2.3.1",
-    "cordova-android": "^10.0.1",
-    "cordova-ios": "^6.2.0",
-    "cordova-labs-local-webserver": "git+https://github.com/emonkak/cordova-labs-local-webserver.git",
-    "cordova-plugin-fetch-api": "git+https://github.com/emonkak/cordova-plugin-fetch-api.git",
-    "cordova-plugin-inappbrowser": "^5.0.0",
-    "cordova-plugin-statusbar": "^2.4.3",
-    "cordova-plugin-whitelist": "^1.3.5",
-    "cordova-plugin-wkwebview-engine": "^1.1.4",
-    "lodash.debounce": "^4.0.8",
-    "lodash.throttle": "^4.1.1",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "react-router": "^5.2.0",
-    "react-router-dom": "^5.2.0",
-    "react-transition-group": "^4.4.2",
-    "redux-logger": "^3.0.6",
-    "reselect": "^4.0.0"
+    "build": "wireit",
+    "clean": "rm --recursive dist"
   },
   "devDependencies": {
-    "@types/assert": "^1.5.5",
-    "@types/chrome": "0.0.154",
-    "@types/classnames": "2.3.0",
-    "@types/cordova": "0.0.34",
-    "@types/lodash.debounce": "^4.0.6",
-    "@types/lodash.throttle": "^4.1.6",
-    "@types/mocha": "^9.0.0",
-    "@types/react": "^17.0.16",
-    "@types/react-dom": "^17.0.9",
-    "@types/react-router": "^5.1.16",
-    "@types/react-router-dom": "^5.1.8",
-    "@types/react-transition-group": "^4.4.2",
-    "@types/redux-logger": "^3.0.9",
-    "autoprefixer": "^10.3.1",
-    "mocha": "^9.0.3",
-    "npm-run-all": "^4.1.5",
-    "postcss-calc": "^8.0.0",
-    "postcss-cli": "^8.3.1",
-    "postcss-color-mod-function": "^3.0.3",
-    "postcss-custom-media": "^8.0.0",
-    "postcss-import": "^14.0.2",
-    "postcss-progress": "^1.1.1",
-    "postcss-simple-vars": "^5.0.2",
-    "ts-loader": "^9.2.5",
-    "ts-node": "^10.1.0",
-    "tsconfig-paths": "^3.10.1",
-    "tslint": "^5.20.1",
-    "typescript": "^4.3.5",
-    "watch": "^1.0.2",
-    "webpack": "^5.49.0",
-    "webpack-cli": "^4.7.2"
+    "esbuild": "^0.19.8",
+    "typescript": "^5.3.2",
+    "wireit": "^0.14.1"
   },
-  "cordova": {
-    "plugins": {
-      "cordova-plugin-whitelist": {},
-      "cordova-plugin-inappbrowser": {},
-      "cordova-plugin-statusbar": {},
-      "cordova-plugin-wkwebview-engine": {},
-      "cordova-labs-local-webserver": {},
-      "cordova-plugin-fetch-api": {}
+  "workspaces": [
+    "packages/*"
+  ],
+  "wireit": {
+    "build": {
+      "dependencies": [
+        "build:css",
+        "build:js",
+        "build:others"
+      ]
     },
-    "platforms": [
-      "android",
-      "ios"
-    ]
-  },
-  "browserslist": [
-    "last 1 chrome version",
-    "last 1 firefox version",
-    "last 1 ios version",
-    "last 1 android version"
-  ]
+    "build:css": {
+      "command": "esbuild --bundle assets/css/index.css --bundle --outfile=dist/index.css",
+      "files": [
+        "assets/css/*.css"
+      ],
+      "output": [
+        "dist/index.css"
+      ],
+      "dependencies": [
+        "prebuild"
+      ]
+    },
+    "build:js": {
+      "command": "esbuild --bundle packages/feedpon/src/index.tsx --outfile=dist/index.js",
+      "output": [
+        "dist/index.js"
+      ],
+      "dependencies": [
+        "prebuild",
+        "tsc"
+      ]
+    },
+    "build:others": {
+      "command": "cp --recursive --target-directory dist assets/{background.js,img,index.html,manifest.json}",
+      "files": [
+        "assets/*"
+      ],
+      "output": [
+        "dist/background.js",
+        "dist/img/*",
+        "dist/index.html",
+        "dist/manifest.json"
+      ],
+      "dependencies": [
+        "prebuild"
+      ]
+    },
+    "prebuild": {
+      "command": "mkdir --parents dist",
+      "output": [
+        "dist"
+      ]
+    },
+    "tsc": {
+      "command": "tsc --build",
+      "files": [
+        "packages/**/*.ts",
+        "packages/**/*.tsx",
+        "packages/*/tsconfig.json"
+      ]
+    }
+  }
 }
