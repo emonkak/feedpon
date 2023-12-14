@@ -15,7 +15,7 @@ function main() {
       clientId: 'feedly',
       clientSecret: '0XP4XQ07VVMDWBKUHTJM4WUQ',
       scope: 'https://cloud.feedly.com/subscriptions',
-      redirectUri: 'https://www.feedly.com/feedly.html',
+      redirectUri: 'https://feedly.com/feedly.html',
     },
     router: hashHistory,
     selectors,
