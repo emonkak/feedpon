@@ -42,7 +42,7 @@ export function deleteCategory(
   categoryId: string | number,
   label: string,
 ): AsyncThunk {
-  return async ({ dispatch }) => {
+  return async ({ dispatch }, { environment }) => {
     dispatch({
       type: 'CATEGORY_DELETING',
       categoryId,
@@ -52,7 +52,11 @@ export function deleteCategory(
     try {
       const token = await dispatch(getFeedlyToken());
 
-      await feedly.deleteCategory(token.access_token, categoryId as string);
+      await feedly.deleteCategory(
+        environment.endPoint,
+        token.access_token,
+        categoryId as string,
+      );
 
       dispatch({
         type: 'CATEGORY_DELETED',
@@ -75,7 +79,7 @@ export function updateCategory(
   category: Category,
   newLabel: string,
 ): AsyncThunk {
-  return async ({ dispatch }) => {
+  return async ({ dispatch }, { environment }) => {
     dispatch({
       type: 'CATEGORY_UPDATING',
       categoryId: category.categoryId,
@@ -85,6 +89,7 @@ export function updateCategory(
       const token = await dispatch(getFeedlyToken());
 
       await feedly.changeCategoryLabel(
+        environment.endPoint,
         token.access_token,
         category.streamId,
         newLabel,

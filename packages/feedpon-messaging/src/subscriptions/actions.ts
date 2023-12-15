@@ -18,7 +18,7 @@ import type {
 import { getFeedlyToken } from '../backend/actions';
 
 export function fetchSubscriptions(): AsyncThunk {
-  return async ({ dispatch }) => {
+  return async ({ dispatch }, { environment }) => {
     dispatch({
       type: 'SUBSCRIPTIONS_FETCHING',
     });
@@ -27,8 +27,8 @@ export function fetchSubscriptions(): AsyncThunk {
       const token = await dispatch(getFeedlyToken());
 
       const [feedlySubscriptions, feedlyUnreadCounts] = await Promise.all([
-        feedly.getSubscriptions(token.access_token),
-        feedly.getUnreadCounts(token.access_token),
+        feedly.getSubscriptions(environment.endPoint, token.access_token),
+        feedly.getUnreadCounts(environment.endPoint, token.access_token),
       ]);
 
       const subscriptions = new Enumerable(feedlySubscriptions)
@@ -91,7 +91,7 @@ export function addToCategory(
   subscription: Subscription,
   labelToAdd: string,
 ): AsyncThunk {
-  return async ({ dispatch }) => {
+  return async ({ dispatch }, { environment }) => {
     dispatch({
       type: 'FEED_SUBSCRIBING',
       feedId: subscription.feedId,
@@ -106,7 +106,7 @@ export function addToCategory(
         label,
       }));
 
-      await feedly.subscribeFeed(token.access_token, {
+      await feedly.subscribeFeed(environment.endPoint, token.access_token, {
         id: subscription.feedId as string,
         categories,
       });
@@ -133,7 +133,7 @@ export function removeFromCategory(
   subscription: Subscription,
   labelToRemove: string,
 ): AsyncThunk {
-  return async ({ dispatch }) => {
+  return async ({ dispatch }, { environment }) => {
     dispatch({
       type: 'FEED_SUBSCRIBING',
       feedId: subscription.feedId,
@@ -150,7 +150,7 @@ export function removeFromCategory(
         label,
       }));
 
-      await feedly.subscribeFeed(token.access_token, {
+      await feedly.subscribeFeed(environment.endPoint, token.access_token, {
         id: subscription.feedId as string,
         categories,
       });
@@ -174,7 +174,7 @@ export function removeFromCategory(
 }
 
 export function subscribe(feed: Feed, labels: string[]): AsyncThunk {
-  return async ({ dispatch }) => {
+  return async ({ dispatch }, { environment }) => {
     dispatch({
       type: 'FEED_SUBSCRIBING',
       feedId: feed.feedId,
@@ -188,14 +188,18 @@ export function subscribe(feed: Feed, labels: string[]): AsyncThunk {
         label,
       }));
 
-      await feedly.subscribeFeed(token.access_token, {
+      await feedly.subscribeFeed(environment.endPoint, token.access_token, {
         id: feed.feedId as string,
         categories,
       });
 
-      const unreadCounts = await feedly.getUnreadCounts(token.access_token, {
-        streamId: feed.streamId,
-      });
+      const unreadCounts = await feedly.getUnreadCounts(
+        environment.endPoint,
+        token.access_token,
+        {
+          streamId: feed.streamId,
+        },
+      );
       const unreadCount = unreadCounts.unreadcounts.find(
         (unreadCount) => unreadCount.id === feed.streamId,
       );
@@ -229,7 +233,7 @@ export function subscribe(feed: Feed, labels: string[]): AsyncThunk {
 }
 
 export function unsubscribe(subscription: Subscription): AsyncThunk {
-  return async ({ dispatch }) => {
+  return async ({ dispatch }, { environment }) => {
     dispatch({
       type: 'FEED_UNSUBSCRIBING',
       feedId: subscription.feedId,
@@ -239,6 +243,7 @@ export function unsubscribe(subscription: Subscription): AsyncThunk {
       const token = await dispatch(getFeedlyToken());
 
       await feedly.unsubscribeFeed(
+        environment.endPoint,
         token.access_token,
         subscription.feedId as string,
       );
@@ -273,7 +278,7 @@ export function changeUnreadViewing(onlyUnread: boolean): Event {
 }
 
 export function importOpml(xmlString: string): AsyncThunk {
-  return async ({ dispatch }) => {
+  return async ({ dispatch }, { environment }) => {
     await dispatch({
       type: 'SUBSCRIPTIONS_IMPORTING',
     });
@@ -281,7 +286,11 @@ export function importOpml(xmlString: string): AsyncThunk {
     try {
       const token = await dispatch(getFeedlyToken());
 
-      await feedly.importOpml(token.access_token, xmlString);
+      await feedly.importOpml(
+        environment.endPoint,
+        token.access_token,
+        xmlString,
+      );
 
       await dispatch(fetchSubscriptions());
     } finally {

@@ -12,6 +12,7 @@ function main() {
   const selectors = prepareSelectors();
   const context = {
     environment: {
+      endPoint: 'https://cloud.feedly.com',
       clientId: 'feedly',
       clientSecret: '0XP4XQ07VVMDWBKUHTJM4WUQ',
       scope: 'https://cloud.feedly.com/subscriptions',

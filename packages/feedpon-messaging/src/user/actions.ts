@@ -3,7 +3,7 @@ import type { AsyncThunk } from '../index';
 import { getFeedlyToken } from '../backend/actions';
 
 export function fetchUser(): AsyncThunk {
-  return async ({ dispatch }) => {
+  return async ({ dispatch }, { environment }) => {
     dispatch({
       type: 'USER_FETCHING',
     });
@@ -11,7 +11,10 @@ export function fetchUser(): AsyncThunk {
     try {
       const token = await dispatch(getFeedlyToken());
 
-      const profile = await feedly.getProfile(token.access_token);
+      const profile = await feedly.getProfile(
+        environment.endPoint,
+        token.access_token,
+      );
 
       const userName =
         (profile.twitter ? '@' + profile.twitter : '') ||

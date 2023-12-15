@@ -250,6 +250,7 @@ export interface Selectors {
 }
 
 export interface Environment {
+  endPoint: string;
   clientId: string;
   clientSecret: string;
   scope: string;

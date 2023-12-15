@@ -3,7 +3,7 @@ import type { AsyncThunk } from '../index';
 
 export function authenticate(): AsyncThunk {
   return async ({ dispatch }, { environment }) => {
-    const url = feedly.createAuthUrl({
+    const url = feedly.createAuthUrl(environment.endPoint, {
       client_id: environment.clientId,
       redirect_uri: environment.redirectUri,
       response_type: 'code',
@@ -24,7 +24,7 @@ export function authenticate(): AsyncThunk {
         throw new Error(response.error);
       }
 
-      const token = await feedly.exchangeToken({
+      const token = await feedly.exchangeToken(environment.endPoint, {
         code: response.code,
         client_id: environment.clientId,
         client_secret: environment.clientSecret,
@@ -34,7 +34,10 @@ export function authenticate(): AsyncThunk {
 
       dispatch({
         type: 'BACKEND_AUTHENTICATED',
-        exportUrl: feedly.createExportOpmlUrl(token.access_token),
+        exportUrl: feedly.createExportOpmlUrl(
+          environment.endPoint,
+          token.access_token,
+        ),
         authenticatedAt: Date.now(),
         token,
       });
@@ -49,7 +52,7 @@ export function authenticate(): AsyncThunk {
 }
 
 export function logout(): AsyncThunk {
-  return async ({ dispatch, getState }) => {
+  return async ({ dispatch, getState }, { environment }) => {
     dispatch({
       type: 'TOKEN_REVOKING',
     });
@@ -59,7 +62,7 @@ export function logout(): AsyncThunk {
 
     try {
       if (token) {
-        await feedly.logout(token.access_token);
+        await feedly.logout(environment.endPoint, token.access_token);
       }
     } finally {
       dispatch({
@@ -87,7 +90,7 @@ export function getFeedlyToken(): AsyncThunk<feedly.ExchangeTokenResponse> {
     }
 
     try {
-      const refreshToken = await feedly.refreshToken({
+      const refreshToken = await feedly.refreshToken(environment.endPoint, {
         refresh_token: originalToken.refresh_token,
         client_id: environment.clientId,
         client_secret: environment.clientSecret,
@@ -101,7 +104,10 @@ export function getFeedlyToken(): AsyncThunk<feedly.ExchangeTokenResponse> {
 
       dispatch({
         type: 'BACKEND_AUTHENTICATED',
-        exportUrl: feedly.createExportOpmlUrl(token.access_token),
+        exportUrl: feedly.createExportOpmlUrl(
+          environment.endPoint,
+          token.access_token,
+        ),
         authenticatedAt: now,
         token,
       });

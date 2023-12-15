@@ -127,7 +127,7 @@ export function fetchMoreEntries(
   continuation: string,
   fetchOptions: StreamFetchOptions,
 ): AsyncThunk {
-  return async ({ dispatch }) => {
+  return async ({ dispatch }, { environment }) => {
     dispatch({
       type: 'MORE_ENTRIES_FETCHING',
       streamId,
@@ -139,13 +139,17 @@ export function fetchMoreEntries(
       const token = await dispatch(getFeedlyToken());
       const feedlyStreamId = toFeedlyStreamId(streamId, token.id);
 
-      const contents = await feedly.getStreamContents(token.access_token, {
-        streamId: feedlyStreamId,
-        continuation,
-        count: fetchOptions.numEntries,
-        ranked: fetchOptions.entryOrder,
-        unreadOnly: fetchOptions.onlyUnread,
-      });
+      const contents = await feedly.getStreamContents(
+        environment.endPoint,
+        token.access_token,
+        {
+          streamId: feedlyStreamId,
+          continuation,
+          count: fetchOptions.numEntries,
+          ranked: fetchOptions.entryOrder,
+          unreadOnly: fetchOptions.onlyUnread,
+        },
+      );
 
       const entryConverter = dispatch(getEntryConverter());
       entries = contents.items.map(entryConverter);
@@ -323,7 +327,7 @@ export function clearStreamCaches(): Event {
 }
 
 export function markAsRead(entries: Entry[]): AsyncThunk {
-  return async ({ dispatch }) => {
+  return async ({ dispatch }, { environment }) => {
     const entryIds = entries.map((entry) => entry.entryId as string);
 
     dispatch({
@@ -334,7 +338,11 @@ export function markAsRead(entries: Entry[]): AsyncThunk {
     try {
       const token = await dispatch(getFeedlyToken());
 
-      await feedly.markAsReadForEntries(token.access_token, entryIds);
+      await feedly.markAsReadForEntries(
+        environment.endPoint,
+        token.access_token,
+        entryIds,
+      );
 
       const readCounts = entries.reduce<{ [streamId: string]: number }>(
         (acc, entry) => {
@@ -371,7 +379,7 @@ export function markAsRead(entries: Entry[]): AsyncThunk {
 }
 
 export function markAllAsRead(): AsyncThunk {
-  return async ({ dispatch, getState }) => {
+  return async ({ dispatch, getState }, { environment }) => {
     dispatch({
       type: 'ALL_ENTRIES_MARKING_AS_READ',
     });
@@ -380,7 +388,11 @@ export function markAllAsRead(): AsyncThunk {
       const token = await dispatch(getFeedlyToken());
       const categoryId = allStreamIdOf(token.id);
 
-      await feedly.markAsReadForCategories(token.access_token, categoryId);
+      await feedly.markAsReadForCategories(
+        environment.endPoint,
+        token.access_token,
+        categoryId,
+      );
 
       dispatch({
         type: 'ALL_ENTRIES_MARKED_AS_READ',
@@ -408,7 +420,7 @@ export function markAllAsRead(): AsyncThunk {
 }
 
 export function markFeedAsRead(subscription: Subscription): AsyncThunk {
-  return async ({ dispatch }) => {
+  return async ({ dispatch }, { environment }) => {
     dispatch({
       type: 'FEED_MARKING_AS_READ',
       feedId: subscription.feedId,
@@ -419,6 +431,7 @@ export function markFeedAsRead(subscription: Subscription): AsyncThunk {
       const token = await dispatch(getFeedlyToken());
 
       await feedly.markAsReadForFeeds(
+        environment.endPoint,
         token.access_token,
         subscription.feedId as string,
       );
@@ -452,7 +465,7 @@ export function markFeedAsRead(subscription: Subscription): AsyncThunk {
 }
 
 export function markCategoryAsRead(category: Category): AsyncThunk {
-  return async ({ dispatch, getState }) => {
+  return async ({ dispatch, getState }, { environment }) => {
     dispatch({
       type: 'CATEGORY_MARKING_AS_READ',
       categoryId: category.categoryId,
@@ -464,6 +477,7 @@ export function markCategoryAsRead(category: Category): AsyncThunk {
       const token = await dispatch(getFeedlyToken());
 
       await feedly.markAsReadForCategories(
+        environment.endPoint,
         token.access_token,
         category.categoryId as string,
       );
@@ -504,7 +518,7 @@ export function markCategoryAsRead(category: Category): AsyncThunk {
 }
 
 export function pinEntry(entryId: string | number): AsyncThunk {
-  return async ({ dispatch }) => {
+  return async ({ dispatch }, { environment }) => {
     dispatch({
       type: 'ENTRY_PINNING',
       entryId,
@@ -514,7 +528,12 @@ export function pinEntry(entryId: string | number): AsyncThunk {
       const token = await dispatch(getFeedlyToken());
       const tagId = pinsStreamIdOf(token.id);
 
-      await feedly.setTag(token.access_token, [entryId as string], [tagId]);
+      await feedly.setTag(
+        environment.endPoint,
+        token.access_token,
+        [entryId as string],
+        [tagId],
+      );
 
       dispatch({
         type: 'ENTRY_PINNED',
@@ -533,7 +552,7 @@ export function pinEntry(entryId: string | number): AsyncThunk {
 }
 
 export function unpinEntry(entryId: string | number): AsyncThunk {
-  return async ({ dispatch }) => {
+  return async ({ dispatch }, { environment }) => {
     dispatch({
       type: 'ENTRY_PINNING',
       entryId,
@@ -543,7 +562,12 @@ export function unpinEntry(entryId: string | number): AsyncThunk {
       const token = await dispatch(getFeedlyToken());
       const tagId = pinsStreamIdOf(token.id);
 
-      await feedly.unsetTag(token.access_token, [entryId as string], [tagId]);
+      await feedly.unsetTag(
+        environment.endPoint,
+        token.access_token,
+        [entryId as string],
+        [tagId],
+      );
 
       dispatch({
         type: 'ENTRY_PINNED',
@@ -665,17 +689,17 @@ function fetchFeedStream(
   fetchOptions: StreamFetchOptions,
   fetchedAt: number,
 ): AsyncThunk<Stream> {
-  return async ({ dispatch }) => {
+  return async ({ dispatch }, { environment }) => {
     const token = await dispatch(getFeedlyToken());
 
     const [contents, feed] = await Promise.all([
-      feedly.getStreamContents(token.access_token, {
+      feedly.getStreamContents(environment.endPoint, token.access_token, {
         streamId,
         count: fetchOptions.numEntries,
         ranked: fetchOptions.entryOrder,
         unreadOnly: fetchOptions.onlyUnread,
       }),
-      feedly.getFeed(token.access_token, streamId),
+      feedly.getFeed(environment.endPoint, token.access_token, streamId),
     ]);
 
     const entryConverter = dispatch(getEntryConverter());
@@ -717,15 +741,19 @@ function fetchCategoryStream(
   fetchOptions: StreamFetchOptions,
   fetchedAt: number,
 ): AsyncThunk<Stream> {
-  return async ({ dispatch, getState }) => {
+  return async ({ dispatch, getState }, { environment }) => {
     const token = await dispatch(getFeedlyToken());
 
-    const contents = await feedly.getStreamContents(token.access_token, {
-      streamId,
-      count: fetchOptions.numEntries,
-      ranked: fetchOptions.entryOrder,
-      unreadOnly: fetchOptions.onlyUnread,
-    });
+    const contents = await feedly.getStreamContents(
+      environment.endPoint,
+      token.access_token,
+      {
+        streamId,
+        count: fetchOptions.numEntries,
+        ranked: fetchOptions.entryOrder,
+        unreadOnly: fetchOptions.onlyUnread,
+      },
+    );
 
     const { categories } = getState();
     const category = categories.items[streamId] || null;
@@ -756,16 +784,20 @@ function fetchAllStream(
   fetchOptions: StreamFetchOptions,
   fetchedAt: number,
 ): AsyncThunk<Stream> {
-  return async ({ dispatch }) => {
+  return async ({ dispatch }, { environment }) => {
     const token = await dispatch(getFeedlyToken());
 
     const streamId = allStreamIdOf(token.id);
-    const contents = await feedly.getStreamContents(token.access_token, {
-      streamId,
-      count: fetchOptions.numEntries,
-      ranked: fetchOptions.entryOrder,
-      unreadOnly: fetchOptions.onlyUnread,
-    });
+    const contents = await feedly.getStreamContents(
+      environment.endPoint,
+      token.access_token,
+      {
+        streamId,
+        count: fetchOptions.numEntries,
+        ranked: fetchOptions.entryOrder,
+        unreadOnly: fetchOptions.onlyUnread,
+      },
+    );
 
     const entryConverter = dispatch(getEntryConverter());
 
@@ -798,16 +830,20 @@ function fetchPinsStream(
   fetchOptions: StreamFetchOptions,
   fetchedAt: number,
 ): AsyncThunk<Stream> {
-  return async ({ dispatch }) => {
+  return async ({ dispatch }, { environment }) => {
     const token = await dispatch(getFeedlyToken());
 
     const streamId = pinsStreamIdOf(token.id);
-    const contents = await feedly.getStreamContents(token.access_token, {
-      streamId,
-      count: fetchOptions.numEntries,
-      ranked: fetchOptions.entryOrder,
-      unreadOnly: fetchOptions.onlyUnread,
-    });
+    const contents = await feedly.getStreamContents(
+      environment.endPoint,
+      token.access_token,
+      {
+        streamId,
+        count: fetchOptions.numEntries,
+        ranked: fetchOptions.entryOrder,
+        unreadOnly: fetchOptions.onlyUnread,
+      },
+    );
 
     const entryConverter = dispatch(getEntryConverter());
 

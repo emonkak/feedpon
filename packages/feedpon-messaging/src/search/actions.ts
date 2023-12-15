@@ -3,7 +3,7 @@ import { getFeedlyToken } from '../backend/actions';
 import { searchFeeds as feedlySearchFeeds } from 'feedpon-adapters/feedly';
 
 export function searchFeeds(query: string): AsyncThunk {
-  return async ({ dispatch }) => {
+  return async ({ dispatch }, { environment }) => {
     dispatch({
       type: 'FEED_SEARCHING',
       query,
@@ -11,10 +11,14 @@ export function searchFeeds(query: string): AsyncThunk {
 
     try {
       const token = await dispatch(getFeedlyToken());
-      const searchResult = await feedlySearchFeeds(token.id, {
-        query,
-        count: 20,
-      });
+      const searchResult = await feedlySearchFeeds(
+        environment.endPoint,
+        token.id,
+        {
+          query,
+          count: 20,
+        },
+      );
 
       const feeds = searchResult.results.map((feed) => ({
         feedId: feed.feedId,
