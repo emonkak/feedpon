@@ -9,8 +9,8 @@ import FeedHeader from '../modules/FeedHeader';
 import MainLayout from '../layouts/MainLayout';
 import StreamFooter from '../modules/StreamFooter';
 import StreamNavbar from '../modules/StreamNavbar';
-import bindActions from 'feedpon-utils/flux/bindActions';
-import connect from 'feedpon-utils/flux/react/connect';
+import { bindActions } from 'feedpon-flux';
+import connect from 'feedpon-flux/react/connect';
 import { ALL_STREAM_ID } from 'feedpon-messaging/streams';
 import type {
   Category,

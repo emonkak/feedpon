@@ -3,8 +3,8 @@ import { RouteComponentProps } from 'react-router';
 
 import MainLayout from '../layouts/MainLayout';
 import Navbar from '../components/Navbar';
-import bindActions from 'feedpon-utils/flux/bindActions';
-import connect from 'feedpon-utils/flux/react/connect';
+import { bindActions } from 'feedpon-flux';
+import connect from 'feedpon-flux/react/connect';
 import { Nav, NavItem } from '../components/Nav';
 import { toggleSidebar } from 'feedpon-messaging/ui';
 

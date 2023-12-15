@@ -13,8 +13,8 @@ import ProfileDropdown from '../modules/ProfileDropdown';
 import SubscriptionIcon from '../modules/SubscriptionIcon';
 import SubscriptionTree from '../modules/SubscriptionTree';
 import SubscriptionTreeHeader from '../modules/SubscriptionTreeHeader';
-import bindActions from 'feedpon-utils/flux/bindActions';
-import connect from 'feedpon-utils/flux/react/connect';
+import { bindActions } from 'feedpon-flux';
+import connect from 'feedpon-flux/react/connect';
 import { ALL_STREAM_ID, PINS_STREAM_ID } from 'feedpon-messaging/streams';
 import type {
   Category,

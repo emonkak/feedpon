@@ -3,8 +3,8 @@ import React, { PureComponent } from 'react';
 import TransitionGroup from 'react-transition-group/TransitionGroup';
 
 import InstantNotificationComponent from '../modules/InstantNotification';
-import bindActions from 'feedpon-utils/flux/bindActions';
-import connect from 'feedpon-utils/flux/react/connect';
+import { bindActions } from 'feedpon-flux';
+import connect from 'feedpon-flux/react/connect';
 import type { InstantNotification, State } from 'feedpon-messaging';
 import { dismissInstantNotification } from 'feedpon-messaging/instantNotifications';
 

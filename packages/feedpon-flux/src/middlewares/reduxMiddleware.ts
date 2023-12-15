@@ -1,4 +1,4 @@
-import { Middleware } from '../types';
+import { Middleware } from '../index';
 
 export interface ReduxAction {
   type: any;

@@ -1,4 +1,4 @@
-import { Middleware, Store } from '../types';
+import { Middleware, Store } from '../index';
 
 function errorHandlingMiddlewareFactory<TState, TEvent>(
   handler: (error: any, store: Store<TState, TEvent>) => void,

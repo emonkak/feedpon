@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 
-import connect from 'feedpon-utils/flux/react/connect';
+import connect from 'feedpon-flux/react/connect';
 import type { State, ThemeKind } from 'feedpon-messaging';
 import { THEMES } from 'feedpon-messaging/ui';
 

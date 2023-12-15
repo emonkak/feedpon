@@ -3,8 +3,8 @@ import React, { PureComponent } from 'react';
 import TransitionGroup from 'react-transition-group/TransitionGroup';
 
 import NotificationComponent from '../modules/Notification';
-import bindActions from 'feedpon-utils/flux/bindActions';
-import connect from 'feedpon-utils/flux/react/connect';
+import { bindActions } from 'feedpon-flux';
+import connect from 'feedpon-flux/react/connect';
 import { Notification, State } from 'feedpon-messaging';
 import { dismissNotification } from 'feedpon-messaging/notifications';
 

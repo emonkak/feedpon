@@ -4,8 +4,8 @@ import { History } from 'history';
 import { Router } from 'react-router';
 
 import Routes from './Routes';
-import StoreProvider from 'feedpon-utils/flux/react/StoreProvider';
-import { Store } from 'feedpon-utils/flux/types';
+import StoreProvider from 'feedpon-flux/react/StoreProvider';
+import { Store } from 'feedpon-flux';
 
 interface BootstrapProps {
   preparingStore: Promise<Store<any, any>>;

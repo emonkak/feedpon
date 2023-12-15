@@ -26,6 +26,9 @@ importers:
       feedpon-adapters:
         specifier: '*'
         version: link:../feedpon-adapters
+      feedpon-flux:
+        specifier: '*'
+        version: link:../feedpon-flux
       feedpon-messaging:
         specifier: '*'
         version: link:../feedpon-messaging
@@ -69,6 +72,19 @@ importers:
 
   packages/feedpon-adapters: {}
 
+  packages/feedpon-flux:
+    dependencies:
+      react:
+        specifier: ^18.2.0
+        version: 18.2.0
+      reselect:
+        specifier: ^4.1.8
+        version: 4.1.8
+    devDependencies:
+      '@types/react':
+        specifier: ^18.2.39
+        version: 18.2.40
+
   packages/feedpon-messaging:
     dependencies:
       '@emonkak/enumerable':
@@ -80,6 +96,9 @@ importers:
       feedpon-adapters:
         specifier: '*'
         version: link:../feedpon-adapters
+      feedpon-flux:
+        specifier: '*'
+        version: link:../feedpon-flux
       feedpon-utils:
         specifier: '*'
         version: link:../feedpon-utils
@@ -97,18 +116,7 @@ importers:
         specifier: ^4.7.11
         version: 4.7.11
 
-  packages/feedpon-utils:
-    dependencies:
-      react:
-        specifier: ^18.2.0
-        version: 18.2.0
-      reselect:
-        specifier: ^4.1.8
-        version: 4.1.8
-    devDependencies:
-      '@types/react':
-        specifier: ^18.2.39
-        version: 18.2.40
+  packages/feedpon-utils: {}
 
   packages/feedpon-view:
     dependencies:
@@ -121,6 +129,9 @@ importers:
       feedpon-adapters:
         specifier: '*'
         version: link:../feedpon-adapters
+      feedpon-flux:
+        specifier: '*'
+        version: link:../feedpon-flux
       feedpon-messaging:
         specifier: '*'
         version: link:../feedpon-messaging

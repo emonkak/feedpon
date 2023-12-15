@@ -1,4 +1,4 @@
-import { Middleware } from '../types';
+import { Middleware } from '../index';
 
 function thunkMiddlewareFactory<TState, TEvent, TContext>(
   context: TContext,

@@ -1,5 +1,5 @@
-import { Middleware } from 'feedpon-utils/flux/types';
-import { EventStore, Snapshot, IdentifiedEvent } from './types';
+import { Middleware } from '../index';
+import { EventStore, IdentifiedEvent, Snapshot } from '../persistence';
 
 export default function eventSourcingMiddlewareFactory<TState, TEvent>(
   eventStore: EventStore<TState, TEvent>,
@@ -64,4 +64,32 @@ export default function eventSourcingMiddlewareFactory<TState, TEvent>(
 
       return result;
     };
+}
+
+export async function restoreSnapshot<TState, TEvent>(
+  eventStore: EventStore<TState, TEvent>,
+  reducer: (state: TState, event: TEvent) => TState,
+  initialState: TState,
+): Promise<Snapshot<TState>> {
+  const latestSnapshot = await eventStore.restoreLatestSnapshot();
+  const currentSnapshot = latestSnapshot
+    ? {
+        state: Object.assign({}, initialState, latestSnapshot.state),
+        version: latestSnapshot.version,
+      }
+    : {
+        state: initialState,
+        version: 0,
+      };
+
+  const unappliedEvents = await eventStore.restoreUnappliedEvents(
+    currentSnapshot.version,
+  );
+
+  return unappliedEvents.reduce((snapshot, event) => {
+    return {
+      version: event.id,
+      state: reducer(snapshot.state, event.payload),
+    };
+  }, currentSnapshot);
 }

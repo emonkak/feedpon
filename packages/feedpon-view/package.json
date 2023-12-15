@@ -11,6 +11,7 @@
     "@emonkak/enumerable": "^4.0.0",
     "classnames": "^2.3.2",
     "feedpon-adapters": "*",
+    "feedpon-flux": "*",
     "feedpon-messaging": "*",
     "feedpon-utils": "*",
     "history": "^4.10.1",

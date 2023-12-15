@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "feedpon-adapters": "*",
+    "feedpon-flux": "*",
     "feedpon-messaging": "*",
     "feedpon-utils": "*",
     "feedpon-view": "*",

@@ -1,6 +1,6 @@
 import { createContext } from 'react';
 
-import { Dispatcher } from '../types';
+import { Dispatcher } from '../index';
 
 export interface StoreContext {
   storeState: any;

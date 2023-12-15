@@ -7,17 +7,8 @@
     "./*": "./src/*.ts",
     "./containers/*": "./src/containers/*.ts",
     "./dom/*": "./src/dom/*.ts",
-    "./flux/*": "./src/flux/*.ts",
-    "./flux/middlewares/*": "./src/flux/middlewares/*.ts",
-    "./flux/persistence/*": "./src/flux/persistence/*.ts",
-    "./flux/react/*": "./src/flux/react/*.tsx",
     "./http/*": "./src/http/*.ts"
   },
-  "dependencies": {
-    "react": "^18.2.0",
-    "reselect": "^4.1.8"
-  },
-  "devDependencies": {
-    "@types/react": "^18.2.39"
-  }
+  "dependencies": {},
+  "devDependencies": {}
 }

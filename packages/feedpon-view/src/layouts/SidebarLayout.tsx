@@ -10,11 +10,11 @@ import KeyMappingsTable from '../modules/KeyMappingsTable';
 import Modal from '../components/Modal';
 import NotificationList from '../containers/NotificationList';
 import Sidebar from '../containers/Sidebar';
-import bindActions from 'feedpon-utils/flux/bindActions';
-import connect from 'feedpon-utils/flux/react/connect';
+import { bindActions } from 'feedpon-flux';
+import connect from 'feedpon-flux/react/connect';
 import toSwipeable, { SwipeableProps } from '../helpers/toSwipeable';
 import type { Command, Event, KeyMapping, State } from 'feedpon-messaging';
-import { Dispatcher } from 'feedpon-utils/flux/types';
+import { Dispatcher } from 'feedpon-flux';
 import {
   closeHelp,
   closeSidebar,

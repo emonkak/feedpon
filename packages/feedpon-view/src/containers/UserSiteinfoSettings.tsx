@@ -2,8 +2,8 @@ import React, { PureComponent } from 'react';
 
 import UserSiteinfoForm from '../modules/UserSiteinfoForm';
 import UserSiteinfoItem from '../modules/UserSiteinfoItem';
-import bindActions from 'feedpon-utils/flux/bindActions';
-import connect from 'feedpon-utils/flux/react/connect';
+import { bindActions } from 'feedpon-flux';
+import connect from 'feedpon-flux/react/connect';
 import type { State, SiteinfoItem } from 'feedpon-messaging';
 import {
   addUserSiteinfoItem,

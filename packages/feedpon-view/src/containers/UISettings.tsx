@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 
-import bindActions from 'feedpon-utils/flux/bindActions';
-import connect from 'feedpon-utils/flux/react/connect';
+import { bindActions } from 'feedpon-flux';
+import connect from 'feedpon-flux/react/connect';
 import type { State, ThemeKind } from 'feedpon-messaging';
 import { THEMES, changeCustomStyles, changeTheme } from 'feedpon-messaging/ui';
 

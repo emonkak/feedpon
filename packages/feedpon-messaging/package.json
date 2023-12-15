@@ -28,6 +28,7 @@
     "@emonkak/enumerable": "^4.0.0",
     "@mozilla/readability": "^0.4.4",
     "feedpon-adapters": "*",
+    "feedpon-flux": "*",
     "feedpon-utils": "*",
     "history": "^4.10.1",
     "reselect": "^4.1.8"

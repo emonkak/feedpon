@@ -1,7 +1,7 @@
 import React, { Children, PureComponent } from 'react';
 
 import { StoreContext } from './StoreContext';
-import { Store } from '../types';
+import { Store } from '../index';
 
 export interface StoreProviderProps {
   store: Store<any, any>;

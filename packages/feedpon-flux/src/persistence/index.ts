@@ -1,6 +1,21 @@
-import { EventStore, Snapshot } from './types';
+export interface EventStore<TState, TEvent> {
+  saveEvents(events: IdentifiedEvent<TEvent>[]): Promise<void>;
+  saveSnapshot(snapshot: Snapshot<TState>): Promise<void>;
+  restoreUnappliedEvents(version: number): Promise<IdentifiedEvent<TEvent>[]>;
+  restoreLatestSnapshot(): Promise<Snapshot<TState> | null>;
+}
 
-export default async function restoreSnapshot<TState, TEvent>(
+export interface Snapshot<TState> {
+  state: TState;
+  version: number;
+}
+
+export interface IdentifiedEvent<TEvent> {
+  id: number;
+  payload: TEvent;
+}
+
+export async function restoreSnapshot<TState, TEvent>(
   eventStore: EventStore<TState, TEvent>,
   reducer: (state: TState, event: TEvent) => TState,
   initialState: TState,
