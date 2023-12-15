@@ -1,18 +1,18 @@
 import React, { PureComponent } from 'react';
 import { createSelector } from 'reselect';
 
-import EntryItem from './EntryItem';
+import type { Entry, StreamViewKind } from 'feedpon-messaging';
+import { getScrollOffset } from 'feedpon-messaging/domActions';
+import { isScrolling } from 'feedpon-utils/smoothScroll';
 import LazyList, {
   Positioning,
   ViewportRectangle,
 } from '../components/LazyList';
-import type { Entry, StreamViewKind } from 'feedpon-messaging';
+import EntryItem from './EntryItem';
 import {
-  ExpandedEntryPlaceholder,
   CollapsedEntryPlaceholder,
+  ExpandedEntryPlaceholder,
 } from './EntryPlaceholder';
-import { getScrollOffset } from 'feedpon-messaging/domActions';
-import { isScrolling } from 'feedpon-utils/dom/smoothScroll';
 
 interface EntryListProps {
   activeEntryIndex: number;

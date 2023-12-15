@@ -1,5 +1,5 @@
 import * as CacheMap from 'feedpon-utils/CacheMap';
-import { smoothScrollBy } from 'feedpon-utils/dom/smoothScroll';
+import { smoothScrollBy } from 'feedpon-utils/smoothScroll';
 import {
   getNextEntryScrollPosition,
   getPreviousEntryScrollPosition,

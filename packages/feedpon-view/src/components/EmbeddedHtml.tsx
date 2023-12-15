@@ -1,8 +1,8 @@
 import React, { PureComponent } from 'react';
 import { findDOMNode } from 'react-dom';
 
-import cleanNode from 'feedpon-utils/dom/cleanNode';
-import walkNode from 'feedpon-utils/dom/walkNode';
+import cleanNode from 'feedpon-utils/cleanNode';
+import walkNode from 'feedpon-utils/walkNode';
 
 interface EmbeddedHtmlProps {
   className?: string;
