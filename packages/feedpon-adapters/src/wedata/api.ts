@@ -1,18 +1,19 @@
 import * as types from './types';
-import httpClient from 'feedpon-utils/http/httpClient';
+import { getRequest } from '../httpClient';
 
 const ENDPOINT = 'http://wedata.net/';
 
-export function getItems<T>(
+export async function getItems<T>(
   databaseName: string,
 ): Promise<types.WedataItem<T>[]> {
-  return httpClient
-    .get(ENDPOINT, '/databases/' + databaseName + '/items_all.json')
-    .then<types.WedataItem<T>[]>((response) =>
-      response.ok
-        ? response.json()
-        : Promise.reject(response.url + ': ' + response.statusText),
-    );
+  const response = await getRequest(
+    ENDPOINT,
+    '/databases/' + databaseName + '/items_all.json',
+  );
+  if (!response.ok) {
+    return Promise.reject(response.url + ': ' + response.statusText);
+  }
+  return response.json();
 }
 
 export function getAutoPagerizeItems(): Promise<

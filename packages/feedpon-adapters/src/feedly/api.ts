@@ -1,5 +1,12 @@
 import * as types from './types';
-import httpClient from 'feedpon-utils/http/httpClient';
+import {
+  putJson,
+  getRequest,
+  postJson,
+  postXml,
+  postRequest,
+  deleteJson,
+} from '../httpClient';
 
 const ENDPOINT = 'https://cloud.feedly.com';
 
@@ -28,195 +35,198 @@ export function authCallback(urlString: string): types.AuthenticateResponse {
   };
 }
 
-export function exchangeToken(
+export async function exchangeToken(
   input: types.ExchangeTokenInput,
 ): Promise<types.ExchangeTokenResponse> {
-  return httpClient
-    .postJson(ENDPOINT, '/v3/auth/token', input)
-    .then<types.ExchangeTokenResponse>(handleJsonResponse);
+  const response = await postJson(ENDPOINT, '/v3/auth/token', input);
+  return handleJsonResponse(response);
 }
 
-export function refreshToken(
+export async function refreshToken(
   input: types.RefreshTokenInput,
 ): Promise<types.RefreshTokenResponse> {
-  return httpClient
-    .postJson(ENDPOINT, '/v3/auth/token', input)
-    .then<types.RefreshTokenResponse>(handleJsonResponse);
+  const response = await postJson(ENDPOINT, '/v3/auth/token', input);
+  return handleJsonResponse(response);
 }
 
-export function logout(accessToken: string): Promise<Response> {
-  return httpClient
-    .post(ENDPOINT, '/v3/auth/logout', null, createAuthHeader(accessToken))
-    .then(handleResponse);
+export async function logout(accessToken: string): Promise<Response> {
+  const response = await postRequest(
+    ENDPOINT,
+    '/v3/auth/logout',
+    null,
+    createAuthHeader(accessToken),
+  );
+  return handleResponse(response);
 }
 
 // Categories API:
-export function getCategories(accessToken: string): Promise<types.Category[]> {
-  return httpClient
-    .get(ENDPOINT, '/v3/categories', null, createAuthHeader(accessToken))
-    .then<types.Category[]>(handleJsonResponse);
+export async function getCategories(
+  accessToken: string,
+): Promise<types.Category[]> {
+  const response = await getRequest(
+    ENDPOINT,
+    '/v3/categories',
+    null,
+    createAuthHeader(accessToken),
+  );
+  return handleJsonResponse(response);
 }
 
-export function changeCategoryLabel(
+export async function changeCategoryLabel(
   accessToken: string,
   categoryId: string,
   label: string,
 ): Promise<Response> {
-  return httpClient
-    .postJson(
-      ENDPOINT,
-      '/v3/categories/' + encodeURIComponent(categoryId),
-      { label },
-      createAuthHeader(accessToken),
-    )
-    .then(handleResponse);
+  const response = await postJson(
+    ENDPOINT,
+    '/v3/categories/' + encodeURIComponent(categoryId),
+    { label },
+    createAuthHeader(accessToken),
+  );
+  return handleResponse(response);
 }
 
-export function deleteCategory(
+export async function deleteCategory(
   accessToken: string,
   categoryId: string,
 ): Promise<Response> {
-  return httpClient
-    .deleteJson(
-      ENDPOINT,
-      '/v3/categories/' + encodeURIComponent(categoryId),
-      null,
-      createAuthHeader(accessToken),
-    )
-    .then(handleResponse);
+  const response = await deleteJson(
+    ENDPOINT,
+    '/v3/categories/' + encodeURIComponent(categoryId),
+    null,
+    createAuthHeader(accessToken),
+  );
+  return handleResponse(response);
 }
 
 // Feeds API:
-export function getFeed(
+export async function getFeed(
   accessToken: string,
   feedId: string,
 ): Promise<types.Feed> {
-  return httpClient
-    .get(
-      ENDPOINT,
-      '/v3/feeds/' + encodeURIComponent(feedId),
-      null,
-      createAuthHeader(accessToken),
-    )
-    .then<types.Feed>(handleJsonResponse);
+  const response = await getRequest(
+    ENDPOINT,
+    '/v3/feeds/' + encodeURIComponent(feedId),
+    null,
+    createAuthHeader(accessToken),
+  );
+  return handleJsonResponse(response);
 }
 
 // Markers API:
-export function getUnreadCounts(
+export async function getUnreadCounts(
   accessToken: string,
   input: types.GetUnreadCountsInput = {},
 ): Promise<types.GetUnreadCountsResponce> {
-  return httpClient
-    .get(ENDPOINT, '/v3/markers/counts', input, createAuthHeader(accessToken))
-    .then<types.GetUnreadCountsResponce>(handleJsonResponse);
+  const response = await getRequest(
+    ENDPOINT,
+    '/v3/markers/counts',
+    input,
+    createAuthHeader(accessToken),
+  );
+  return handleJsonResponse(response);
 }
 
-export function markAsReadForEntries(
+export async function markAsReadForEntries(
   accessToken: string,
   entryIds: string | string[],
 ): Promise<Response> {
-  return httpClient
-    .postJson(
-      ENDPOINT,
-      '/v3/markers',
-      {
-        action: 'markAsRead',
-        type: 'entries',
-        entryIds: Array.isArray(entryIds) ? entryIds : [entryIds],
-      },
-      createAuthHeader(accessToken),
-    )
-    .then(handleResponse);
+  const response = await postJson(
+    ENDPOINT,
+    '/v3/markers',
+    {
+      action: 'markAsRead',
+      type: 'entries',
+      entryIds: Array.isArray(entryIds) ? entryIds : [entryIds],
+    },
+    createAuthHeader(accessToken),
+  );
+  return handleResponse(response);
 }
 
-export function markAsReadForFeeds(
+export async function markAsReadForFeeds(
   accessToken: string,
   feedIds: string | string[],
 ): Promise<Response> {
-  return httpClient
-    .postJson(
-      ENDPOINT,
-      '/v3/markers',
-      {
-        action: 'markAsRead',
-        type: 'feeds',
-        feedIds: Array.isArray(feedIds) ? feedIds : [feedIds],
-      },
-      createAuthHeader(accessToken),
-    )
-    .then(handleResponse);
+  const response = await postJson(
+    ENDPOINT,
+    '/v3/markers',
+    {
+      action: 'markAsRead',
+      type: 'feeds',
+      feedIds: Array.isArray(feedIds) ? feedIds : [feedIds],
+    },
+    createAuthHeader(accessToken),
+  );
+  return handleResponse(response);
 }
 
-export function markAsReadForCategories(
+export async function markAsReadForCategories(
   accessToken: string,
   categoryIds: string | string[],
 ): Promise<Response> {
-  return httpClient
-    .postJson(
-      ENDPOINT,
-      '/v3/markers',
-      {
-        action: 'markAsRead',
-        type: 'categories',
-        categoryIds: Array.isArray(categoryIds) ? categoryIds : [categoryIds],
-      },
-      createAuthHeader(accessToken),
-    )
-    .then(handleResponse);
+  const response = await postJson(
+    ENDPOINT,
+    '/v3/markers',
+    {
+      action: 'markAsRead',
+      type: 'categories',
+      categoryIds: Array.isArray(categoryIds) ? categoryIds : [categoryIds],
+    },
+    createAuthHeader(accessToken),
+  );
+  return handleResponse(response);
 }
 
-export function keepUnreadForEntries(
+export async function keepUnreadForEntries(
   accessToken: string,
   entryIds: string | string[],
 ): Promise<Response> {
-  return httpClient
-    .postJson(
-      ENDPOINT,
-      '/v3/markers',
-      {
-        action: 'keepUnread',
-        type: 'entries',
-        entryIds: Array.isArray(entryIds) ? entryIds : [entryIds],
-      },
-      createAuthHeader(accessToken),
-    )
-    .then(handleResponse);
+  const response = await postJson(
+    ENDPOINT,
+    '/v3/markers',
+    {
+      action: 'keepUnread',
+      type: 'entries',
+      entryIds: Array.isArray(entryIds) ? entryIds : [entryIds],
+    },
+    createAuthHeader(accessToken),
+  );
+  return handleResponse(response);
 }
 
-export function keepUnreadForFeeds(
+export async function keepUnreadForFeeds(
   accessToken: string,
   feedIds: string | string[],
 ): Promise<Response> {
-  return httpClient
-    .postJson(
-      ENDPOINT,
-      '/v3/markers',
-      {
-        action: 'keepUnread',
-        type: 'feeds',
-        feedIds: Array.isArray(feedIds) ? feedIds : [feedIds],
-      },
-      createAuthHeader(accessToken),
-    )
-    .then(handleResponse);
+  const response = await postJson(
+    ENDPOINT,
+    '/v3/markers',
+    {
+      action: 'keepUnread',
+      type: 'feeds',
+      feedIds: Array.isArray(feedIds) ? feedIds : [feedIds],
+    },
+    createAuthHeader(accessToken),
+  );
+  return handleResponse(response);
 }
 
-export function keepUnreadForCategories(
+export async function keepUnreadForCategories(
   accessToken: string,
   categoryIds: string | string[],
 ): Promise<Response> {
-  return httpClient
-    .postJson(
-      ENDPOINT,
-      '/v3/markers',
-      {
-        action: 'keepUnread',
-        type: 'categories',
-        categoryIds: Array.isArray(categoryIds) ? categoryIds : [categoryIds],
-      },
-      createAuthHeader(accessToken),
-    )
-    .then(handleResponse);
+  const response = await postJson(
+    ENDPOINT,
+    '/v3/markers',
+    {
+      action: 'keepUnread',
+      type: 'categories',
+      categoryIds: Array.isArray(categoryIds) ? categoryIds : [categoryIds],
+    },
+    createAuthHeader(accessToken),
+  );
+  return handleResponse(response);
 }
 
 // OPML API
@@ -230,164 +240,190 @@ export function createExportOpmlUrl(accessToken: string): string {
   );
 }
 
-export function importOpml(
+export async function importOpml(
   accessToken: string,
   xmlString: string,
 ): Promise<Response> {
-  return httpClient
-    .postXml(ENDPOINT, '/v3/opml', xmlString, createAuthHeader(accessToken))
-    .then(handleResponse);
+  const response = await postXml(
+    ENDPOINT,
+    '/v3/opml',
+    xmlString,
+    createAuthHeader(accessToken),
+  );
+  return handleResponse(response);
 }
 
 // Profile API:
-export function getProfile(accessToken: string): Promise<types.Profile> {
-  return httpClient
-    .get(ENDPOINT, '/v3/profile', null, createAuthHeader(accessToken))
-    .then<types.Profile>(handleJsonResponse);
+export async function getProfile(accessToken: string): Promise<types.Profile> {
+  const response = await getRequest(
+    ENDPOINT,
+    '/v3/profile',
+    null,
+    createAuthHeader(accessToken),
+  );
+  return handleJsonResponse(response);
 }
 
-export function updateProfile(
+export async function updateProfile(
   accessToken: string,
   _input: types.UpdateProfileInput,
 ): Promise<Response> {
-  return httpClient
-    .putJson(ENDPOINT, '/v3/profile', null, createAuthHeader(accessToken))
-    .then(handleResponse);
+  const response = await putJson(
+    ENDPOINT,
+    '/v3/profile',
+    null,
+    createAuthHeader(accessToken),
+  );
+  return handleResponse(response);
 }
 
 // Search API:
-export function searchFeeds(
+export async function searchFeeds(
   accessToken: string,
   input: types.SearchInput,
 ): Promise<types.SearchResponse> {
-  return httpClient
-    .get(ENDPOINT, '/v3/search/feeds', input, createAuthHeader(accessToken))
-    .then<types.SearchResponse>(handleJsonResponse);
+  const response = await getRequest(
+    ENDPOINT,
+    '/v3/search/feeds',
+    input,
+    createAuthHeader(accessToken),
+  );
+  return handleJsonResponse(response);
 }
 
 // Streams API:
-export function getStreamIds(
+export async function getStreamIds(
   accessToken: string,
   input: types.GetStreamInput,
 ): Promise<types.GetEntryIdsResponse> {
-  return httpClient
-    .get(ENDPOINT, '/v3/streams/ids', input, createAuthHeader(accessToken))
-    .then<types.GetEntryIdsResponse>(handleJsonResponse);
+  const response = await getRequest(
+    ENDPOINT,
+    '/v3/streams/ids',
+    input,
+    createAuthHeader(accessToken),
+  );
+  return handleJsonResponse(response);
 }
 
-export function getStreamContents(
+export async function getStreamContents(
   accessToken: string,
   input: types.GetStreamInput,
 ): Promise<types.Contents> {
-  return httpClient
-    .get(ENDPOINT, '/v3/streams/contents', input, createAuthHeader(accessToken))
-    .then<types.Contents>(handleJsonResponse);
+  const response = await getRequest(
+    ENDPOINT,
+    '/v3/streams/contents',
+    input,
+    createAuthHeader(accessToken),
+  );
+  return handleJsonResponse(response);
 }
 
 // Subscriptions API:
-export function getSubscriptions(
+export async function getSubscriptions(
   accessToken: string,
 ): Promise<types.Subscription[]> {
-  return httpClient
-    .get(ENDPOINT, '/v3/subscriptions', null, createAuthHeader(accessToken))
-    .then<types.Subscription[]>(handleJsonResponse);
+  const response = await getRequest(
+    ENDPOINT,
+    '/v3/subscriptions',
+    null,
+    createAuthHeader(accessToken),
+  );
+  return handleJsonResponse(response);
 }
 
-export function subscribeFeed(
+export async function subscribeFeed(
   accessToken: string,
   input: types.SubscribeFeedInput,
 ): Promise<Response> {
-  return httpClient
-    .postJson(
-      ENDPOINT,
-      '/v3/subscriptions',
-      input,
-      createAuthHeader(accessToken),
-    )
-    .then(handleResponse);
+  const response = await postJson(
+    ENDPOINT,
+    '/v3/subscriptions',
+    input,
+    createAuthHeader(accessToken),
+  );
+  return handleResponse(response);
 }
 
-export function unsubscribeFeed(
+export async function unsubscribeFeed(
   accessToken: string,
   feedId: string,
 ): Promise<Response> {
-  return httpClient
-    .deleteJson(
-      ENDPOINT,
-      '/v3/subscriptions/' + encodeURIComponent(feedId),
-      null,
-      createAuthHeader(accessToken),
-    )
-    .then(handleResponse);
+  const response = await deleteJson(
+    ENDPOINT,
+    '/v3/subscriptions/' + encodeURIComponent(feedId),
+    null,
+    createAuthHeader(accessToken),
+  );
+  return handleResponse(response);
 }
 
 // Tags API:
-export function getTags(accessToken: string): Promise<types.Tag[]> {
-  return httpClient
-    .get(ENDPOINT, '/v3/tags', null, createAuthHeader(accessToken))
-    .then<types.Tag[]>(handleJsonResponse);
+export async function getTags(accessToken: string): Promise<types.Tag[]> {
+  const response = await getRequest(
+    ENDPOINT,
+    '/v3/tags',
+    null,
+    createAuthHeader(accessToken),
+  );
+  return handleJsonResponse(response);
 }
 
-export function changeTagLabel(
+export async function changeTagLabel(
   accessToken: string,
   tagId: string,
   label: string,
 ): Promise<Response> {
-  return httpClient
-    .postJson(
-      ENDPOINT,
-      '/v3/tags/' + encodeURIComponent(tagId),
-      { label },
-      createAuthHeader(accessToken),
-    )
-    .then(handleResponse);
+  const response = await postJson(
+    ENDPOINT,
+    '/v3/tags/' + encodeURIComponent(tagId),
+    { label },
+    createAuthHeader(accessToken),
+  );
+  return handleResponse(response);
 }
 
-export function setTag(
+export async function setTag(
   accessToken: string,
   entryIds: string[],
   tagIds: string[],
 ): Promise<Response> {
-  return httpClient
-    .putJson(
-      ENDPOINT,
-      '/v3/tags/' + encodeURIComponent(tagIds.join(',')),
-      { entryIds },
-      createAuthHeader(accessToken),
-    )
-    .then(handleResponse);
+  const response = await putJson(
+    ENDPOINT,
+    '/v3/tags/' + encodeURIComponent(tagIds.join(',')),
+    { entryIds },
+    createAuthHeader(accessToken),
+  );
+  return handleResponse(response);
 }
 
-export function unsetTag(
+export async function unsetTag(
   accessToken: string,
   entryIds: string[],
   tagIds: string[],
 ): Promise<Response> {
-  return httpClient
-    .deleteJson(
-      ENDPOINT,
-      '/v3/tags/' +
-        encodeURIComponent(tagIds.join(',')) +
-        '/' +
-        encodeURIComponent(entryIds.join(',')),
-      null,
-      createAuthHeader(accessToken),
-    )
-    .then(handleResponse);
+  const response = await deleteJson(
+    ENDPOINT,
+    '/v3/tags/' +
+      encodeURIComponent(tagIds.join(',')) +
+      '/' +
+      encodeURIComponent(entryIds.join(',')),
+    null,
+    createAuthHeader(accessToken),
+  );
+  return handleResponse(response);
 }
 
-export function deleteTag(
+export async function deleteTag(
   accessToken: string,
   tagIds: string[],
 ): Promise<Response> {
-  return httpClient
-    .deleteJson(
-      ENDPOINT,
-      '/v3/tags/' + encodeURIComponent(tagIds.join(',')),
-      null,
-      createAuthHeader(accessToken),
-    )
-    .then(handleResponse);
+  const response = await deleteJson(
+    ENDPOINT,
+    '/v3/tags/' + encodeURIComponent(tagIds.join(',')),
+    null,
+    createAuthHeader(accessToken),
+  );
+  return handleResponse(response);
 }
 
 // Utils:

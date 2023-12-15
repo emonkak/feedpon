@@ -1,44 +1,47 @@
 import * as types from './types';
-import httpClient from 'feedpon-utils/http/httpClient';
+import { getRequest } from '../httpClient';
 
 const URL_CHUNK_LIMIT = 50;
 const URL_LRNGTH_LIMIT = 4096;
 
-export function getBookmarkCounts(
+export async function getBookmarkCounts(
   urls: string[],
 ): Promise<types.BookmarkCounts> {
   const promises = [];
 
   for (const chunkedUrls of chunkUrls(urls)) {
-    const promise = httpClient
-      .get('https://bookmark.hatenaapis.com', '/count/entries', {
+    const promise = getRequest(
+      'https://bookmark.hatenaapis.com',
+      '/count/entries',
+      {
         url: chunkedUrls,
-      })
-      .then<types.BookmarkCounts>((response) =>
-        response.ok
-          ? response.json()
-          : Promise.reject(
-              new Error(response.url + ': ' + response.statusText),
-            ),
-      );
-    promises.push(promise);
-  }
-
-  return Promise.all(promises).then((results) => Object.assign({}, ...results));
-}
-
-export function getBookmarkEntry(
-  url: string,
-): Promise<types.GetEntryResponse | null> {
-  return httpClient
-    .get('https://b.hatena.ne.jp', '/entry/jsonlite/', {
-      url,
-    })
-    .then<types.GetEntryResponse>((response) =>
+      },
+    ).then<types.BookmarkCounts>((response) =>
       response.ok
         ? response.json()
         : Promise.reject(new Error(response.url + ': ' + response.statusText)),
     );
+    promises.push(promise);
+  }
+
+  const results = await Promise.all(promises);
+  return Object.assign({}, ...results);
+}
+
+export async function getBookmarkEntry(
+  url: string,
+): Promise<types.GetEntryResponse | null> {
+  const response = await getRequest(
+    'https://b.hatena.ne.jp',
+    '/entry/jsonlite/',
+    {
+      url,
+    },
+  );
+  if (!response.ok) {
+    return Promise.reject(new Error(response.url + ': ' + response.statusText));
+  }
+  return response.json();
 }
 
 function chunkUrls(urls: string[]): string[][] {

@@ -3,11 +3,9 @@
   "private": true,
   "main": "./dist/index.js",
   "exports": {
-    ".": "./src/index.ts",
     "./*": "./src/*.ts",
     "./containers/*": "./src/containers/*.ts",
-    "./dom/*": "./src/dom/*.ts",
-    "./http/*": "./src/http/*.ts"
+    "./dom/*": "./src/dom/*.ts"
   },
   "dependencies": {},
   "devDependencies": {}
