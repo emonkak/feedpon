@@ -1,17 +1,17 @@
 import React, { PureComponent } from 'react';
-import { Link } from 'react-router-dom';
 import { RouteComponentProps } from 'react-router';
+import { Link } from 'react-router-dom';
 import { createSelector } from 'reselect';
 
-import * as CacheMap from 'feedpon-utils/containers/CacheMap';
-import MainLayout from '../layouts/MainLayout';
-import Navbar from '../components/Navbar';
-import RelativeTime from '../components/RelativeTime';
-import SubscriptionIcon from '../modules/SubscriptionIcon';
 import { bindActions } from 'feedpon-flux';
 import connect from 'feedpon-flux/react/connect';
 import type { State } from 'feedpon-messaging';
 import { toggleSidebar } from 'feedpon-messaging/ui';
+import * as CacheMap from 'feedpon-utils/CacheMap';
+import Navbar from '../components/Navbar';
+import RelativeTime from '../components/RelativeTime';
+import MainLayout from '../layouts/MainLayout';
+import SubscriptionIcon from '../modules/SubscriptionIcon';
 
 interface DashboardProps extends RouteComponentProps {
   onToggleSidebar: typeof toggleSidebar;

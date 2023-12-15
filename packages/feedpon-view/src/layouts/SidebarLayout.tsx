@@ -1,26 +1,25 @@
-import React, { PureComponent } from 'react';
 import classnames from 'classnames';
 import { History, Location } from 'history';
+import React, { PureComponent } from 'react';
 
-import * as Trie from 'feedpon-utils/containers/Trie';
-import { commandTable } from 'feedpon-messaging/keyMappings';
-import InstantNotificationContainer from '../containers/InstantNotificationContainer';
-import KeyMapper from '../components/KeyMapper';
-import KeyMappingsTable from '../modules/KeyMappingsTable';
-import Modal from '../components/Modal';
-import NotificationList from '../containers/NotificationList';
-import Sidebar from '../containers/Sidebar';
-import { bindActions } from 'feedpon-flux';
+import { Dispatcher, bindActions } from 'feedpon-flux';
 import connect from 'feedpon-flux/react/connect';
-import toSwipeable, { SwipeableProps } from '../helpers/toSwipeable';
 import type { Command, Event, KeyMapping, State } from 'feedpon-messaging';
-import { Dispatcher } from 'feedpon-flux';
+import { commandTable } from 'feedpon-messaging/keyMappings';
 import {
   closeHelp,
   closeSidebar,
   openHelp,
   openSidebar,
 } from 'feedpon-messaging/ui';
+import * as Trie from 'feedpon-utils/Trie';
+import KeyMapper from '../components/KeyMapper';
+import Modal from '../components/Modal';
+import InstantNotificationContainer from '../containers/InstantNotificationContainer';
+import NotificationList from '../containers/NotificationList';
+import Sidebar from '../containers/Sidebar';
+import toSwipeable, { SwipeableProps } from '../helpers/toSwipeable';
+import KeyMappingsTable from '../modules/KeyMappingsTable';
 
 interface SidebarLayoutProps extends SwipeableProps {
   children: React.ReactNode;

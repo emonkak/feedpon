@@ -1,4 +1,4 @@
-import * as CacheMap from 'feedpon-utils/containers/CacheMap';
+import * as CacheMap from 'feedpon-utils/CacheMap';
 import type { Event, Streams } from '../index';
 
 export default function reducer(streams: Streams, event: Event): Streams {

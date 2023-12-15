@@ -1,4 +1,4 @@
-import * as CacheMap from 'feedpon-utils/containers/CacheMap';
+import * as CacheMap from 'feedpon-utils/CacheMap';
 import type { AsyncThunk, Event, Thunk } from '../index';
 import { sendNotification } from '../notifications/actions';
 

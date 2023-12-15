@@ -1,15 +1,15 @@
-import * as CacheMap from 'feedpon-utils/containers/CacheMap';
-import * as streamActions from '../streams/actions';
-import * as subscriptionActions from '../subscriptions/actions';
-import * as uiActions from '../ui/actions';
-import type { Command, Entry, Stream, Thunk } from '../index';
+import * as CacheMap from 'feedpon-utils/CacheMap';
+import { smoothScrollBy } from 'feedpon-utils/dom/smoothScroll';
 import {
   getNextEntryScrollPosition,
   getPreviousEntryScrollPosition,
   openUrlInBackground,
 } from '../domActions';
+import type { Command, Entry, Stream, Thunk } from '../index';
 import { sendInstantNotification } from '../instantNotifications/actions';
-import { smoothScrollBy } from 'feedpon-utils/dom/smoothScroll';
+import * as streamActions from '../streams/actions';
+import * as subscriptionActions from '../subscriptions/actions';
+import * as uiActions from '../ui/actions';
 
 const TEMPLATE_PATTERN = /\${([A-Z_]\w+)}/i;
 

@@ -1,14 +1,10 @@
 import Enumerable from '@emonkak/enumerable';
 import React, { PureComponent } from 'react';
 
+import '@emonkak/enumerable/extensions/orderBy';
 import '@emonkak/enumerable/extensions/select';
 import '@emonkak/enumerable/extensions/toArray';
-import '@emonkak/enumerable/extensions/orderBy';
 
-import * as Trie from 'feedpon-utils/containers/Trie';
-import ConfirmModal from '../components/ConfirmModal';
-import KeyMappingForm from '../modules/KeyMappingForm';
-import KeyMappingItem from '../modules/KeyMappingItem';
 import { bindActions } from 'feedpon-flux';
 import connect from 'feedpon-flux/react/connect';
 import type { KeyMapping, State } from 'feedpon-messaging';
@@ -18,6 +14,10 @@ import {
   resetKeyMappings,
   updateKeyMapping,
 } from 'feedpon-messaging/keyMappings';
+import * as Trie from 'feedpon-utils/Trie';
+import ConfirmModal from '../components/ConfirmModal';
+import KeyMappingForm from '../modules/KeyMappingForm';
+import KeyMappingItem from '../modules/KeyMappingItem';
 
 interface KeyboardSettingsProps {
   keyMappings: Trie.Trie<KeyMapping>;

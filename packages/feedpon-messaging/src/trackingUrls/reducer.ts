@@ -1,6 +1,6 @@
-import * as CacheMap from 'feedpon-utils/containers/CacheMap';
-import initialState from './initialState';
+import * as CacheMap from 'feedpon-utils/CacheMap';
 import type { Event, TrackingUrls } from '../index';
+import initialState from './initialState';
 
 export default function reduceTrackingUrlPatterns(
   trackingUrls: TrackingUrls,

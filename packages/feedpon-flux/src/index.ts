@@ -51,9 +51,11 @@ export function bindActions<T extends { [key: string]: Function }>(
   };
 }
 
-export function combineReducers<TState, TEvent>(reducers: {
-  [P in keyof TState]: (state: TState[P], event: TEvent) => TState[P];
-}): (state: TState, event: TEvent) => TState {
+export function combineReducers<TState, TEvent>(
+  reducers: {
+    [P in keyof TState]: (state: TState[P], event: TEvent) => TState[P];
+  },
+): (state: TState, event: TEvent) => TState {
   return (state, event) => {
     const nextState: Partial<TState> = {};
     let hasChanged = false;

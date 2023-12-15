@@ -1,4 +1,4 @@
-import * as Trie from 'feedpon-utils/containers/Trie';
+import * as Trie from 'feedpon-utils/Trie';
 import type { KeyMapping, KeyMappings } from '../index';
 
 const initialState: KeyMappings = {

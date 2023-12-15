@@ -1,6 +1,6 @@
 import { Component } from 'react';
 
-import * as Trie from 'feedpon-utils/containers/Trie';
+import * as Trie from 'feedpon-utils/Trie';
 
 const SPECIAL_KEYS_TABLE: { [key: string]: string } = {
   ' ': 'Space',

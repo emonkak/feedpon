@@ -1,5 +1,5 @@
+import * as CacheMap from 'feedpon-utils/CacheMap';
 import type { Stream, Streams } from '../index';
-import * as CacheMap from 'feedpon-utils/containers/CacheMap';
 
 const streams: Streams = {
   defaultFetchOptions: {

@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 
-import * as Trie from 'feedpon-utils/containers/Trie';
 import type { Command, KeyMapping } from 'feedpon-messaging';
+import * as Trie from 'feedpon-utils/Trie';
 
 interface KeyMappingsTableProps {
   commandTable: { [key: string]: Command<any> };

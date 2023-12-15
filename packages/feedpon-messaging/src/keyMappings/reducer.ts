@@ -1,6 +1,6 @@
-import * as Trie from 'feedpon-utils/containers/Trie';
-import initialState from './initialState';
+import * as Trie from 'feedpon-utils/Trie';
 import type { Event, KeyMapping, KeyMappings } from '../index';
+import initialState from './initialState';
 
 export default function reducer(keyMappings: KeyMappings, event: Event) {
   switch (event.type) {

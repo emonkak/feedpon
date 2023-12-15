@@ -2,16 +2,8 @@ import React, { PureComponent } from 'react';
 import { RouteComponentProps } from 'react-router';
 import { createSelector } from 'reselect';
 
-import * as CacheMap from 'feedpon-utils/containers/CacheMap';
-import CategoryHeader from '../modules/CategoryHeader';
-import EntryList from '../modules/EntryList';
-import FeedHeader from '../modules/FeedHeader';
-import MainLayout from '../layouts/MainLayout';
-import StreamFooter from '../modules/StreamFooter';
-import StreamNavbar from '../modules/StreamNavbar';
 import { bindActions } from 'feedpon-flux';
 import connect from 'feedpon-flux/react/connect';
-import { ALL_STREAM_ID } from 'feedpon-messaging/streams';
 import type {
   Category,
   Entry,
@@ -22,20 +14,11 @@ import type {
   Subscription,
 } from 'feedpon-messaging';
 import {
-  addToCategory,
-  removeFromCategory,
-  subscribe,
-  unsubscribe,
-} from 'feedpon-messaging/subscriptions';
+  createCategory,
+  createSortedCategoriesSelector,
+} from 'feedpon-messaging/categories';
 import {
-  changeActiveEntry,
-  changeExpandedEntry,
-  resetReadEntry,
-  changeStreamView,
-  selectStream,
-  unselectStream,
-} from 'feedpon-messaging/ui';
-import {
+  ALL_STREAM_ID,
   changeUnreadKeeping,
   fetchEntryComments,
   fetchFullContent,
@@ -54,10 +37,27 @@ import {
   updateEntryHeights,
 } from 'feedpon-messaging/streams';
 import {
-  createCategory,
-  createSortedCategoriesSelector,
-} from 'feedpon-messaging/categories';
-import { toggleSidebar } from 'feedpon-messaging/ui';
+  addToCategory,
+  removeFromCategory,
+  subscribe,
+  unsubscribe,
+} from 'feedpon-messaging/subscriptions';
+import {
+  changeActiveEntry,
+  changeExpandedEntry,
+  changeStreamView,
+  resetReadEntry,
+  selectStream,
+  toggleSidebar,
+  unselectStream,
+} from 'feedpon-messaging/ui';
+import * as CacheMap from 'feedpon-utils/CacheMap';
+import MainLayout from '../layouts/MainLayout';
+import CategoryHeader from '../modules/CategoryHeader';
+import EntryList from '../modules/EntryList';
+import FeedHeader from '../modules/FeedHeader';
+import StreamFooter from '../modules/StreamFooter';
+import StreamNavbar from '../modules/StreamNavbar';
 
 interface StreamPageProps extends RouteComponentProps<{ stream_id: string }> {
   canMarkAllEntriesAsRead: boolean;

@@ -1,4 +1,4 @@
-import * as CacheMap from 'feedpon-utils/containers/CacheMap';
+import * as CacheMap from 'feedpon-utils/CacheMap';
 import type { TrackingUrls } from '../index';
 
 const trackingUrls: TrackingUrls = {

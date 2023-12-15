@@ -1,8 +1,8 @@
 import type { History } from 'history';
 
-import type { CacheMap } from 'feedpon-utils/containers/CacheMap';
 import type { Store as FluxStore } from 'feedpon-flux';
-import type { Trie } from 'feedpon-utils/containers/Trie';
+import type { CacheMap } from 'feedpon-utils/CacheMap';
+import type { Trie } from 'feedpon-utils/Trie';
 
 export type Store = FluxStore<State, Event> & {
   dispatch<TResult>(event: Thunk<TResult>): TResult;

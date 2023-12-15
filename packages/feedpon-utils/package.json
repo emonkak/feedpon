@@ -4,7 +4,6 @@
   "main": "./dist/index.js",
   "exports": {
     "./*": "./src/*.ts",
-    "./containers/*": "./src/containers/*.ts",
     "./dom/*": "./src/dom/*.ts"
   },
   "dependencies": {},
