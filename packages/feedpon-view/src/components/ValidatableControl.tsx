@@ -1,13 +1,15 @@
-import React, { PureComponent, cloneElement } from 'react';
 import classnames from 'classnames';
+import React, { cloneElement, useEffect, useRef, useState } from 'react';
 
-type SupportedControl =
+import useEvent from '../hooks/useEvent';
+
+type ControlElement =
   | HTMLInputElement
   | HTMLSelectElement
   | HTMLTextAreaElement;
 
 interface ValidatableControlProps {
-  children: React.ReactElement<React.HTMLProps<SupportedControl>>;
+  children: React.ReactElement<React.HTMLProps<ControlElement>>;
   invalidClassName?: string | null;
   validClassName?: string | null;
   validations?: Validation[];
@@ -18,103 +20,60 @@ interface Validation {
   message: string;
 }
 
-interface ValidatableControlState {
-  status: 'empty' | 'valid' | 'invalid';
-}
+type ControlStatus = 'empty' | 'valid' | 'invalid';
 
-export default class ValidatableControl extends PureComponent<
-  ValidatableControlProps,
-  ValidatableControlState
-> {
-  static defaultProps = {
-    invalidClassName: 'has-error',
-    validClassName: 'has-success',
-  };
+export default function ValidatableControl({
+  children,
+  invalidClassName = 'has-error',
+  validClassName = 'has-success',
+  validations = [],
+}: ValidatableControlProps) {
+  const controlRef = useRef<ControlElement | null>(null);
+  const [status, setStatus] = useState<ControlStatus>('empty');
 
-  private controlElement: SupportedControl | null = null;
-
-  constructor(props: ValidatableControlProps) {
-    super(props);
-
-    this.state = { status: 'empty' };
-  }
-
-  override componentDidMount() {
-    this._update();
-  }
-
-  override componentDidUpdate(
-    _prevProps: ValidatableControlProps,
-    _prevState: ValidatableControlState,
-  ) {
-    this._update();
-  }
-
-  override render() {
-    const { children, invalidClassName, validClassName } = this.props;
-    const { status } = this.state;
-    const child = children;
-
-    return cloneElement(child, {
-      ref: this._handleRef,
-      className: classnames(
-        child.props.className,
-        status === 'invalid' ? invalidClassName : null,
-        status === 'valid' ? validClassName : null,
-      ),
-      onChange: this._handleChange,
-    });
-  }
-
-  private _update() {
-    const control = this.controlElement;
-
-    if (!control) {
-      return;
-    }
+  const runValidations = () => {
+    const control = controlRef.current!;
 
     if (control.value) {
-      const { validations } = this.props;
       let error = '';
 
-      if (validations) {
-        for (const validation of validations) {
-          if (!validation.rule(control.value)) {
-            error = validation.message;
-            break;
-          }
+      for (const validation of validations) {
+        if (!validation.rule(control.value)) {
+          error = validation.message;
+          break;
         }
       }
 
       control.setCustomValidity(error);
 
-      this.setState({
-        status: control.validity.valid ? 'valid' : 'invalid',
-      });
+      setStatus(control.validity.valid ? 'valid' : 'invalid');
     } else {
       control.setCustomValidity('');
 
-      this.setState({ status: 'empty' });
+      setStatus('empty');
     }
-  }
-
-  private _handleRef = (
-    ref: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | null,
-  ): void => {
-    this.controlElement = ref;
   };
 
-  private _handleChange = (
-    event: React.FormEvent<
-      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >,
-  ): void => {
-    const child = this.props.children;
+  useEffect(runValidations);
 
-    if (child.props.onChange) {
-      child.props.onChange(event);
-    }
+  const handleChange = useEvent(
+        (
+            event: React.FormEvent<
+                HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+            >,
+        ) => {
+            runValidations();
+            children.props.onChange?.(event);
+        },
+    );
 
-    this._update();
-  };
+  return cloneElement(children, {
+    ref: controlRef,
+    className: classnames(
+      children.props.className,
+      invalidClassName && { [invalidClassName]: status === 'invalid' },
+      validClassName && { [validClassName]: status === 'valid' },
+    ),
+    onChange: handleChange,
+  });
 }

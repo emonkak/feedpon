@@ -1,13 +1,10 @@
-import React, { PureComponent } from 'react';
+import React, { useState } from 'react';
 
 import ValidatableControl from '../components/ValidatableControl';
+import useEvent from '../hooks/useEvent';
 
 interface TrackingUrlPatternFormProps {
   onAdd: (pattern: string) => void;
-}
-
-interface TrackingUrlPatternFormState {
-  pattern: string;
 }
 
 const patternValidation = {
@@ -15,67 +12,48 @@ const patternValidation = {
   rule: isValidPattern,
 };
 
-export default class TrackingUrlPatternForm extends PureComponent<
-  TrackingUrlPatternFormProps,
-  TrackingUrlPatternFormState
-> {
-  constructor(props: TrackingUrlPatternFormProps) {
-    super(props);
+export default function TrackingUrlPatternForm({
+  onAdd,
+}: TrackingUrlPatternFormProps) {
+  const [pattern, setPattern] = useState('');
 
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
+  const handleChange = useEvent((event: React.FormEvent<HTMLInputElement>) => {
+    const pattern = event.currentTarget.value;
 
-    this.state = {
-      pattern: '',
-    };
-  }
+    setPattern(pattern);
+  });
 
-  handleChange(event: React.FormEvent<HTMLInputElement>) {
-    this.setState({
-      pattern: event.currentTarget.value,
-    });
-  }
-
-  handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  const handleSubmit = useEvent((event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
-    const { onAdd } = this.props;
-    const { pattern } = this.state;
 
     onAdd(pattern);
 
-    this.setState({
-      pattern: '',
-    });
-  }
+    setPattern('');
+  });
 
-  override render() {
-    const { pattern } = this.state;
-
-    return (
-      <form className="form" onSubmit={this.handleSubmit}>
-        <div className="form-legend">New tracking URL pattern</div>
-        <div className="input-group">
-          <ValidatableControl validations={[patternValidation]}>
-            <input
-              type="text"
-              className="form-control"
-              placeholder="^https://..."
-              value={pattern}
-              onChange={this.handleChange}
-              required
-            />
-          </ValidatableControl>
-          <button type="submit" className="button button-outline-positive">
-            Add
-          </button>
-        </div>
-        <span className="u-text-muted">
-          The regular expression for the tracking url.
-        </span>
-      </form>
-    );
-  }
+  return (
+    <form className="form" onSubmit={handleSubmit}>
+      <div className="form-legend">New tracking URL pattern</div>
+      <div className="input-group">
+        <ValidatableControl validations={[patternValidation]}>
+          <input
+            type="text"
+            className="form-control"
+            placeholder="^https://..."
+            value={pattern}
+            onChange={handleChange}
+            required
+          />
+        </ValidatableControl>
+        <button type="submit" className="button button-outline-positive">
+          Add
+        </button>
+      </div>
+      <span className="u-text-muted">
+        The regular expression for the tracking url.
+      </span>
+    </form>
+  );
 }
 
 function isValidPattern(pattern: string): boolean {

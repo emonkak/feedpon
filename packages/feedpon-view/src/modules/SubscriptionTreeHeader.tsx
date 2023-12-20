@@ -1,32 +1,55 @@
-import React from 'react';
 import classnames from 'classnames';
+import React from 'react';
 
-import Dropdown from '../components/Dropdown';
-import RelativeTime from '../components/RelativeTime';
-import { MenuItem } from '../components/Menu';
 import type { SubscriptionOrderKind } from 'feedpon-messaging';
+import Dropdown from '../components/Dropdown';
+import { MenuItem } from '../components/Menu';
+import RelativeTime from '../components/RelativeTime';
+import useEvent from '../hooks/useEvent';
 
 interface SubscriptionTreeHeaderProps {
   isLoading: boolean;
   lastUpdatedAt: number;
+  onChangeOnlyUnread: (onlyUnread: boolean) => void;
   onChangeSubscriptionOrder: (order: SubscriptionOrderKind) => void;
-  onChangeUnreadViewing: (onlyUnread: boolean) => void;
-  onOrganizeSubscriptions: () => void;
+  onManageSubscriptions: () => void;
   onReload: () => void;
   onlyUnread: boolean;
   subscriptionOrder: SubscriptionOrderKind;
 }
 
-const SubscriptionTreeHeader: React.FC<SubscriptionTreeHeaderProps> = ({
+type Action =
+  | {
+      type: 'CHANGE_SUBSCRIPTION_ORDER';
+      subscriptionOrder: SubscriptionOrderKind;
+    }
+  | { type: 'CHANGE_ONLY_UNREAD'; enabled: boolean }
+  | { type: 'MANAGE_SUBSCRIPTIONS' };
+
+export default function SubscriptionTreeHeader({
   isLoading,
   lastUpdatedAt,
   onChangeSubscriptionOrder,
-  onChangeUnreadViewing,
-  onOrganizeSubscriptions,
+  onChangeOnlyUnread,
+  onManageSubscriptions,
   onReload,
   onlyUnread,
   subscriptionOrder,
-}) => {
+}: SubscriptionTreeHeaderProps) {
+  const handleSelectAction = useEvent((action: Action) => {
+    switch (action.type) {
+      case 'CHANGE_SUBSCRIPTION_ORDER':
+        onChangeSubscriptionOrder(action.subscriptionOrder);
+        break;
+      case 'CHANGE_ONLY_UNREAD':
+        onChangeOnlyUnread(action.enabled);
+        break;
+      case 'MANAGE_SUBSCRIPTIONS':
+        onManageSubscriptions();
+        break;
+    }
+  });
+
   const lastUpdate =
     lastUpdatedAt > 0 ? (
       <span>
@@ -51,6 +74,7 @@ const SubscriptionTreeHeader: React.FC<SubscriptionTreeHeaderProps> = ({
       </button>
       <strong className="u-flex-grow-1 u-text-7">{lastUpdate}</strong>
       <Dropdown
+        onSelect={handleSelectAction}
         toggleButton={
           <button className="link-soft u-flex-shrink-0">
             <i className="icon icon-16 icon-width-32 icon-menu-2" />
@@ -58,63 +82,71 @@ const SubscriptionTreeHeader: React.FC<SubscriptionTreeHeaderProps> = ({
         }
       >
         <div className="menu-heading">Order</div>
-        <MenuItem
+        <MenuItem<Action>
+          value={{
+            type: 'CHANGE_SUBSCRIPTION_ORDER',
+            subscriptionOrder: 'id',
+          }}
           icon={
             subscriptionOrder === 'id' ? (
               <i className="icon icon-16 icon-checkmark" />
             ) : null
           }
-          onSelect={onChangeSubscriptionOrder}
           primaryText="ID"
-          value="id"
         />
-        <MenuItem
+        <MenuItem<Action>
+          value={{
+            type: 'CHANGE_SUBSCRIPTION_ORDER',
+            subscriptionOrder: 'title',
+          }}
           icon={
             subscriptionOrder === 'title' ? (
               <i className="icon icon-16 icon-checkmark" />
             ) : null
           }
-          onSelect={onChangeSubscriptionOrder}
           primaryText="Title"
-          value="title"
         />
-        <MenuItem
+        <MenuItem<Action>
+          value={{
+            type: 'CHANGE_SUBSCRIPTION_ORDER',
+            subscriptionOrder: 'newest',
+          }}
           icon={
             subscriptionOrder === 'newest' ? (
               <i className="icon icon-16 icon-checkmark" />
             ) : null
           }
-          onSelect={onChangeSubscriptionOrder}
           primaryText="Newest first"
-          value="newest"
         />
-        <MenuItem
+        <MenuItem<Action>
+          value={{
+            type: 'CHANGE_SUBSCRIPTION_ORDER',
+            subscriptionOrder: 'oldest',
+          }}
           icon={
             subscriptionOrder === 'oldest' ? (
               <i className="icon icon-16 icon-checkmark" />
             ) : null
           }
-          onSelect={onChangeSubscriptionOrder}
           primaryText="Oldest first"
-          value="oldest"
         />
         <div className="menu-divider" />
-        <MenuItem
+        <MenuItem<Action>
+          value={{
+            type: 'CHANGE_ONLY_UNREAD',
+            enabled: !onlyUnread,
+          }}
           icon={
             onlyUnread ? <i className="icon icon-16 icon-checkmark" /> : null
           }
-          onSelect={onChangeUnreadViewing}
           primaryText="Only unread"
-          value={!onlyUnread}
         />
         <div className="menu-divider" />
-        <MenuItem
-          onSelect={onOrganizeSubscriptions}
-          primaryText="Organize subscriptions..."
+        <MenuItem<Action>
+          value={{ type: 'MANAGE_SUBSCRIPTIONS' }}
+          primaryText="Manage subscriptions..."
         />
       </Dropdown>
     </header>
   );
-};
-
-export default SubscriptionTreeHeader;
+}

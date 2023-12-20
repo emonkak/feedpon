@@ -10,11 +10,11 @@ interface CategoriesNavProps {
   onSelectCategory: (label: string) => void;
 }
 
-const CategoriesNav: React.FC<CategoriesNavProps> = ({
+export default function CategoriesNav({
   categories,
   label,
   onSelectCategory,
-}) => {
+}: CategoriesNavProps) {
   return (
     <Nav onSelect={onSelectCategory}>
       <NavItem value={UNCATEGORIZED} isSelected={label === UNCATEGORIZED}>
@@ -31,6 +31,4 @@ const CategoriesNav: React.FC<CategoriesNavProps> = ({
       ))}
     </Nav>
   );
-};
-
-export default CategoriesNav;
+}

@@ -1,7 +1,8 @@
-import React, { PureComponent } from 'react';
+import React, { useState } from 'react';
 
 import type { SiteinfoItem } from 'feedpon-messaging';
 import ValidatableControl from '../components/ValidatableControl';
+import useEvent from '../hooks/useEvent';
 
 interface UserSiteinfoFormProps {
   children?: React.ReactNode;
@@ -10,168 +11,141 @@ interface UserSiteinfoFormProps {
   onSubmit: (item: SiteinfoItem) => void;
 }
 
-interface UserSiteinfoFormState {
-  name: string;
-  urlPattern: string;
-  contentExpression: string;
-  nextLinkExpression: string;
-}
+const PATTERN_VALIDATIONS = [
+  {
+    message: 'Invalid regular expression.',
+    rule: isValidPattern,
+  },
+];
 
-const patternValidation = {
-  message: 'Invalid regular expression.',
-  rule: isValidPattern,
-};
+const XPATH_VALIDATIONS = [
+  {
+    message: 'Invalid XPath expression.',
+    rule: isValidXPath,
+  },
+];
 
-const xPathValidation = {
-  message: 'Invalid XPath expression.',
-  rule: isValidXPath,
-};
+export default function UserSiteinfoForm({
+  children,
+  item,
+  legend,
+  onSubmit,
+}: UserSiteinfoFormProps) {
+  const [formData, setFormData] = useState({
+    name: item?.name ?? '',
+    urlPattern: item?.urlPattern ?? '',
+    contentExpression: item?.contentExpression ?? '',
+    nextLinkExpression: item?.nextLinkExpression ?? '',
+  });
 
-export default class UserSiteinfoForm extends PureComponent<
-  UserSiteinfoFormProps,
-  UserSiteinfoFormState
-> {
-  constructor(props: UserSiteinfoFormProps) {
-    super(props);
-
-    if (props.item) {
-      this.state = {
-        name: props.item.name,
-        urlPattern: props.item.urlPattern,
-        contentExpression: props.item.contentExpression,
-        nextLinkExpression: props.item.nextLinkExpression,
-      };
-    } else {
-      this.state = {
-        name: '',
-        urlPattern: '',
-        contentExpression: '',
-        nextLinkExpression: '',
-      };
-    }
-
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
-
-  handleSubmit(event: React.FormEvent<any>) {
+  const handleSubmit = useEvent((event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const { item, onSubmit } = this.props;
-    const { name, urlPattern, contentExpression, nextLinkExpression } =
-      this.state;
-
     onSubmit({
-      id: item ? item.id : Date.now(),
-      name,
-      urlPattern,
-      contentExpression,
-      nextLinkExpression,
+      id: item?.id ?? Date.now(),
+      name: formData.name,
+      urlPattern: formData.urlPattern,
+      contentExpression: formData.contentExpression,
+      nextLinkExpression: formData.nextLinkExpression,
     });
 
     if (!item) {
-      this.setState({
+      setFormData({
         name: '',
         urlPattern: '',
         contentExpression: '',
         nextLinkExpression: '',
       });
     }
-  }
+  });
 
-  handleChange(event: React.ChangeEvent<any>) {
-    const { name, value } = event.currentTarget;
+  const handleChange = useEvent(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const { name, value } = event.currentTarget;
 
-    this.setState({
-      [name]: value,
-    } as any);
-  }
+      setFormData((formData) => ({
+        ...formData,
+        [name]: value,
+      }));
+    },
+  );
 
-  override render() {
-    const { children, legend } = this.props;
-    const { contentExpression, name, nextLinkExpression, urlPattern } =
-      this.state;
-
-    return (
-      <form className="form" onSubmit={this.handleSubmit}>
-        <div className="form-legend">{legend}</div>
-        <div className="form-group">
-          <label>
-            <span className="form-group-heading form-required">Name</span>
-            <ValidatableControl>
-              <input
-                className="form-control"
-                type="text"
-                name="name"
-                value={name}
-                onChange={this.handleChange}
-                required
-              />
-            </ValidatableControl>
-          </label>
-        </div>
-        <div className="form-group">
-          <label>
-            <span className="form-group-heading form-required">
-              URL pattern
-            </span>
-            <ValidatableControl validations={[patternValidation]}>
-              <input
-                className="form-control"
-                name="urlPattern"
-                onChange={this.handleChange}
-                required
-                type="text"
-                value={urlPattern}
-              />
-            </ValidatableControl>
-          </label>
-          <span className="u-text-muted">
-            The regular expression for the url.
+  return (
+    <form className="form" onSubmit={handleSubmit}>
+      <div className="form-legend">{legend}</div>
+      <div className="form-group">
+        <label>
+          <span className="form-group-heading form-required">Name</span>
+          <ValidatableControl>
+            <input
+              className="form-control"
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              required
+            />
+          </ValidatableControl>
+        </label>
+      </div>
+      <div className="form-group">
+        <label>
+          <span className="form-group-heading form-required">URL pattern</span>
+          <ValidatableControl validations={PATTERN_VALIDATIONS}>
+            <input
+              className="form-control"
+              name="urlPattern"
+              onChange={handleChange}
+              required
+              type="text"
+              value={formData.urlPattern}
+            />
+          </ValidatableControl>
+        </label>
+        <span className="u-text-muted">
+          The regular expression for the url.
+        </span>
+      </div>
+      <div className="form-group">
+        <label>
+          <span className="form-group-heading form-required">
+            Content expression
           </span>
-        </div>
-        <div className="form-group">
-          <label>
-            <span className="form-group-heading form-required">
-              Content expression
-            </span>
-            <ValidatableControl validations={[xPathValidation]}>
-              <input
-                className="form-control"
-                name="contentExpression"
-                onChange={this.handleChange}
-                required
-                type="text"
-                value={contentExpression}
-              />
-            </ValidatableControl>
-          </label>
-          <span className="u-text-muted">
-            The XPath expression to the element representing the content.
-          </span>
-        </div>
-        <div className="form-group">
-          <label>
-            <span className="form-group-heading">Next link expression</span>
-            <ValidatableControl validations={[xPathValidation]}>
-              <input
-                className="form-control"
-                name="nextLinkExpression"
-                onChange={this.handleChange}
-                type="text"
-                value={nextLinkExpression}
-              />
-            </ValidatableControl>
-          </label>
-          <span className="u-text-muted">
-            The XPath expression to the anchor element representing the next
-            link.
-          </span>
-        </div>
-        <div className="form-group">{children}</div>
-      </form>
-    );
-  }
+          <ValidatableControl validations={XPATH_VALIDATIONS}>
+            <input
+              className="form-control"
+              name="contentExpression"
+              onChange={handleChange}
+              required
+              type="text"
+              value={formData.contentExpression}
+            />
+          </ValidatableControl>
+        </label>
+        <span className="u-text-muted">
+          The XPath expression to the element representing the content.
+        </span>
+      </div>
+      <div className="form-group">
+        <label>
+          <span className="form-group-heading">Next link expression</span>
+          <ValidatableControl validations={XPATH_VALIDATIONS}>
+            <input
+              className="form-control"
+              name="nextLinkExpression"
+              onChange={handleChange}
+              type="text"
+              value={formData.nextLinkExpression}
+            />
+          </ValidatableControl>
+        </label>
+        <span className="u-text-muted">
+          The XPath expression to the anchor element representing the next link.
+        </span>
+      </div>
+      <div className="form-group">{children}</div>
+    </form>
+  );
 }
 
 function isValidXPath(expression: string): boolean {

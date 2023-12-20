@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React, { useState } from 'react';
 
 import ConfirmModal from '../components/ConfirmModal';
 import Modal from '../components/Modal';
@@ -8,6 +8,7 @@ import {
   deleteUserSiteinfoItem,
   updateUserSiteinfoItem,
 } from 'feedpon-messaging/userSiteinfo';
+import useEvent from '../hooks/useEvent';
 
 interface UserSiteinfoItemProps {
   item: SiteinfoItem;
@@ -15,127 +16,90 @@ interface UserSiteinfoItemProps {
   onUpdate: typeof updateUserSiteinfoItem;
 }
 
-interface UserSiteinfoItemState {
-  isEditing: boolean;
-  isDeleting: boolean;
-}
+export default function UserSiteinfoItem({
+  item,
+  onDelete,
+  onUpdate,
+}: UserSiteinfoItemProps) {
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
 
-export default class UserSiteinfoItem extends PureComponent<
-  UserSiteinfoItemProps,
-  UserSiteinfoItemState
-> {
-  constructor(props: UserSiteinfoItemProps) {
-    super(props);
+  const handleCancelDeleting = useEvent(() => {
+    setIsDeleting(false);
+  });
 
-    this.handleCancelDeleting = this.handleCancelDeleting.bind(this);
-    this.handleCancelEditing = this.handleCancelEditing.bind(this);
-    this.handleDelete = this.handleDelete.bind(this);
-    this.handleStartDeleting = this.handleStartDeleting.bind(this);
-    this.handleStartEditing = this.handleStartEditing.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
+  const handleCancelEditing = useEvent(() => {
+    setIsEditing(false);
+  });
 
-    this.state = {
-      isDeleting: false,
-      isEditing: false,
-    };
-  }
-
-  handleCancelDeleting() {
-    this.setState({
-      isDeleting: false,
-    });
-  }
-
-  handleCancelEditing() {
-    this.setState({
-      isEditing: false,
-    });
-  }
-
-  handleDelete() {
-    const { item, onDelete } = this.props;
-
+  const handleDelete = useEvent(() => {
     onDelete(item.id);
-  }
+  });
 
-  handleStartDeleting() {
-    this.setState({
-      isDeleting: true,
-    });
-  }
+  const handleStartDeleting = useEvent(() => {
+    setIsDeleting(true);
+  });
 
-  handleStartEditing() {
-    this.setState({
-      isEditing: true,
-    });
-  }
+  const handleStartEditing = useEvent(() => {
+    setIsEditing(true);
+  });
 
-  handleSubmit(item: SiteinfoItem) {
-    const { onUpdate } = this.props;
-
+  const handleSubmit = useEvent((item: SiteinfoItem) => {
     onUpdate(item);
 
-    this.setState({ isEditing: false });
-  }
+    setIsEditing(false);
+  });
 
-  override render() {
-    const { item } = this.props;
-    const { isDeleting, isEditing } = this.state;
-
-    return (
-      <tr>
-        <td>{item.name}</td>
-        <td>
-          <code>{item.urlPattern}</code>
-        </td>
-        <td>
-          <div className="button-toolbar u-text-nowrap">
-            <button
-              className="button button-outline-default"
-              onClick={this.handleStartEditing}
-            >
-              <i className="icon icon-16 icon-edit" />
-            </button>
-            <button
-              className="button button-outline-negative"
-              onClick={this.handleStartDeleting}
-            >
-              <i className="icon icon-16 icon-trash" />
-            </button>
-          </div>
-          <Modal isOpened={isEditing} onClose={this.handleCancelEditing}>
-            <UserSiteinfoForm
-              legend="Edit existing item"
-              item={item}
-              onSubmit={this.handleSubmit}
-            >
-              <div className="button-toolbar">
-                <button
-                  className="button button-outline-positive"
-                  type="submit"
-                >
-                  Save
-                </button>
-                <button
-                  className="button button-outline-default"
-                  onClick={this.handleCancelEditing}
-                >
-                  Cancel
-                </button>
-              </div>
-            </UserSiteinfoForm>
-          </Modal>
-          <ConfirmModal
-            confirmButtonClassName="button button-outline-negative"
-            confirmButtonLabel="Delete"
-            isOpened={isDeleting}
-            message="Are you sure you want to delete this item?"
-            onClose={this.handleCancelDeleting}
-            onConfirm={this.handleDelete}
-            title={`Delete "${item.name}"`}
-          />
-        </td>
-      </tr>
-    );
-  }
+  return (
+    <tr>
+      <td>{item.name}</td>
+      <td>
+        <code>{item.urlPattern}</code>
+      </td>
+      <td>
+        <div className="button-toolbar u-text-nowrap">
+          <button
+            className="button button-outline-default"
+            onClick={handleStartEditing}
+          >
+            <i className="icon icon-16 icon-edit" />
+          </button>
+          <button
+            className="button button-outline-negative"
+            onClick={handleStartDeleting}
+          >
+            <i className="icon icon-16 icon-trash" />
+          </button>
+        </div>
+        <Modal isOpened={isEditing} onClose={handleCancelEditing}>
+          <UserSiteinfoForm
+            legend="Edit existing item"
+            item={item}
+            onSubmit={handleSubmit}
+          >
+            <div className="button-toolbar">
+              <button className="button button-outline-positive" type="submit">
+                Save
+              </button>
+              <button
+                className="button button-outline-default"
+                onClick={handleCancelEditing}
+              >
+                Cancel
+              </button>
+            </div>
+          </UserSiteinfoForm>
+        </Modal>
+        <ConfirmModal
+          confirmButtonClassName="button button-outline-negative"
+          confirmButtonLabel="Delete"
+          isOpened={isDeleting}
+          message="Are you sure you want to delete this item?"
+          onClose={handleCancelDeleting}
+          onConfirm={handleDelete}
+          title={`Delete "${item.name}"`}
+        />
+      </td>
+    </tr>
+  );
 }

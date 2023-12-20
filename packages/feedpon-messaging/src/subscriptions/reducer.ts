@@ -55,7 +55,7 @@ export default function reducer(
         order: event.order,
       };
 
-    case 'SUBSCRIPTIONS_UNREAD_VIEWING_CHANGED':
+    case 'SUBSCRIPTIONS_ONLY_UNREAD':
       return {
         ...subscriptions,
         onlyUnread: event.onlyUnread,

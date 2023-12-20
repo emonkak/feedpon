@@ -23,7 +23,7 @@ interface FeedHeaderProps {
   subscription: Subscription | null;
 }
 
-const FeedHeader: React.FC<FeedHeaderProps> = ({
+export default function FeedHeader({
   categories,
   feed,
   hasMoreEntries,
@@ -34,7 +34,7 @@ const FeedHeader: React.FC<FeedHeaderProps> = ({
   onSubscribe,
   onUnsubscribe,
   subscription,
-}: FeedHeaderProps) => {
+}: FeedHeaderProps) {
   return (
     <header className="stream-header">
       <div className="container">
@@ -83,6 +83,4 @@ const FeedHeader: React.FC<FeedHeaderProps> = ({
       </div>
     </header>
   );
-};
-
-export default FeedHeader;
+}

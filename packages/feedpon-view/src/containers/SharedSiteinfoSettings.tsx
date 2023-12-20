@@ -6,8 +6,8 @@ import type { SiteinfoItem, State } from 'feedpon-messaging';
 import { updateSiteinfo } from 'feedpon-messaging/sharedSiteinfo';
 import debounce from 'feedpon-utils/debounce';
 import tryMatch from 'feedpon-utils/tryMatch';
-import LazyList from '../components/LazyList';
 import RelativeTime from '../components/RelativeTime';
+import VirtualList, { BlankSpaces } from '../components/VirtualList';
 import SharedSiteinfoItem from '../modules/SharedSiteinfoItem';
 
 interface SharedSiteinfoProps {
@@ -119,7 +119,7 @@ class SharedSiteinfoSettings extends PureComponent<
             Update
           </button>
         </p>
-        <LazyList
+        <VirtualList
           assumedItemHeight={24 * 7}
           idAttribute="id"
           items={matchedItems}
@@ -133,15 +133,14 @@ class SharedSiteinfoSettings extends PureComponent<
 
 function renderSiteinfoList(
   children: React.ReactNode,
-  blankSpaceAbove: number,
-  blankSpaceBelow: number,
+  blankSpaces: BlankSpaces,
 ) {
   return (
     <div className="u-responsive">
       <ul className="list-group">
-        <div style={{ height: blankSpaceAbove }}></div>
+        <div style={{ height: blankSpaces.above }}></div>
         {children}
-        <div style={{ height: blankSpaceBelow }}></div>
+        <div style={{ height: blankSpaces.below }}></div>
       </ul>
     </div>
   );

@@ -6,12 +6,10 @@ interface InstantNotificationProps {
   instantNotification: InstantNotification;
 }
 
-const InstantNotificationComponent: React.FC<InstantNotificationProps> = ({
+export default function InstantNotificationComponent({
   instantNotification,
-}) => {
+}: InstantNotificationProps) {
   return (
     <div className="instant-notification">{instantNotification.message}</div>
   );
-};
-
-export default InstantNotificationComponent;
+}

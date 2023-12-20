@@ -20,14 +20,14 @@ interface SubscriptionProps {
   subscription: Subscription;
 }
 
-const SubscriptionComponent: React.FC<SubscriptionProps> = ({
+export default function SubscriptionComponent({
   categories,
   onAddToCategory,
   onCreateCategory,
   onRemoveFromCategory,
   onUnsubscribe,
   subscription,
-}) => {
+}: SubscriptionProps) {
   const title = subscription.url ? (
     <a className="link-soft" target="_blank" href={subscription.url}>
       {subscription.title}
@@ -80,6 +80,4 @@ const SubscriptionComponent: React.FC<SubscriptionProps> = ({
       </div>
     </li>
   );
-};
-
-export default SubscriptionComponent;
+}

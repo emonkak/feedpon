@@ -1,229 +1,164 @@
 import React, {
   Children,
-  Component,
-  PureComponent,
+  createContext,
   isValidElement,
+  useContext,
+  useMemo,
+  useRef,
+  useState,
 } from 'react';
 import classnames from 'classnames';
 
-interface TreeProps {
-  children: React.ReactNode;
-  isExpanded?: boolean;
-}
+import useEvent from '../hooks/useEvent';
 
-interface TreeState {}
-
-interface TreeBranchProps {
+interface TreeProps<T> {
   children?: React.ReactNode;
-  isExpanded?: boolean;
+  selectedValue: T;
+  onSelect: (value: T) => void;
+}
+
+interface TreeBranchProps<T> extends TreeNodeProps<T> {
+  children?: React.ReactNode;
+  defaultExpanded?: boolean;
+}
+
+interface TreeLeafProps<T> extends TreeNodeProps<T> {
+  icon?: React.ReactNode;
+}
+
+interface TreeNodeProps<T> {
   isImportant?: boolean;
-  isSelected?: boolean;
-  onClose?: () => void;
-  onExpand?: () => void;
-  onSelect?: (value: any) => void;
   primaryText: string;
   secondaryText?: string;
-  title?: string;
-  value: any;
+  value: T;
 }
 
-interface TreeBranchState {
-  isExpanded: boolean;
-  expandGuard: boolean;
+interface TreeContext {
+  selectedValue: any;
+  delegate: (value: any) => void;
 }
 
-interface TreeLeafProps {
-  icon?: React.ReactElement<any>;
-  isImportant?: boolean;
-  isSelected?: boolean;
-  onSelect?: (value: any) => void;
-  primaryText: string;
-  secondaryText?: string;
-  title?: string;
-  value: any;
+const TreeContext = createContext<TreeContext | null>(null);
+
+export function Tree<T>({ children, selectedValue, onSelect }: TreeProps<T>) {
+  return (
+    <TreeContext.Provider value={{ selectedValue, delegate: onSelect }}>
+      <ol className="tree is-expanded">{children}</ol>
+    </TreeContext.Provider>
+  );
 }
 
-interface TreeLeafState {}
+export function TreeBranch<T>({
+  children,
+  defaultExpanded = false,
+  isImportant = false,
+  primaryText,
+  secondaryText,
+  value,
+}: TreeBranchProps<T>) {
+  const isUserInteraction = useRef(false);
+  const [isExpanded, setIsExpanded] = useState(defaultExpanded);
+  const { selectedValue, delegate } = useContext(TreeContext)!;
 
-export class Tree extends Component<TreeProps, TreeState> {
-  static defaultProps = {
-    isExpanded: true,
-  };
+  const handleExpand = useEvent((event: React.MouseEvent<any>) => {
+    event.preventDefault();
+    setIsExpanded((isExpanded) => !isExpanded);
+    isUserInteraction.current = true;
+  });
 
-  override shouldComponentUpdate(
-    nextProps: TreeProps,
-    _nextState: TreeState,
-  ): boolean {
-    return (
-      this.props.isExpanded !== nextProps.isExpanded || nextProps.isExpanded!
+  const handleSelect = useEvent((event: React.MouseEvent<any>) => {
+    event.preventDefault();
+    delegate(value);
+  });
+
+  const shouldExpand = useMemo(() => {
+    return Children.toArray(children).some((child) =>
+      containsSelectedNode(child, selectedValue),
     );
+  }, [children, selectedValue]);
+
+  if (isUserInteraction.current) {
+    isUserInteraction.current = false;
+  } else {
+    if (!isExpanded && shouldExpand) {
+      setIsExpanded(true);
+    }
   }
 
-  override render() {
-    const { children, isExpanded } = this.props;
-
-    return (
-      <ol className={classnames('tree', { 'is-expanded': isExpanded! })}>
+  return (
+    <li>
+      <div
+        className={classnames('tree-node', {
+          'is-important': isImportant,
+          'is-selected': value === selectedValue,
+        })}
+      >
+        <a className="tree-node-icon" href="#" onClick={handleExpand}>
+          {isExpanded ? (
+            <i className="icon icon-16 icon-angle-down" />
+          ) : (
+            <i className="icon icon-16 icon-angle-right" />
+          )}
+        </a>
+        <a className="tree-node-label" href="#" onClick={handleSelect}>
+          <span className="tree-node-primary-text">{primaryText}</span>
+          <span className="tree-node-secondary-text">{secondaryText}</span>
+        </a>
+      </div>
+      <ol className={classnames('tree', { 'is-expanded': isExpanded })}>
         {children}
       </ol>
-    );
-  }
+    </li>
+  );
 }
 
-export class TreeBranch extends PureComponent<
-  TreeBranchProps,
-  TreeBranchState
-> {
-  static defaultProps = {
-    isExpanded: false,
-    isImportant: false,
-    isSelected: false,
-  };
+export function TreeLeaf<T>({
+  isImportant = false,
+  icon,
+  primaryText,
+  secondaryText,
+  value,
+}: TreeLeafProps<T>) {
+  const { selectedValue, delegate } = useContext(TreeContext)!;
 
-  static getDerivedStateFromProps(
-    props: TreeBranchProps,
-    state: TreeBranchState,
-  ) {
-    if (state.expandGuard) {
-      return {
-        expandGuard: false,
-      };
-    }
-
-    if (
-      !state.isExpanded &&
-      Children.toArray(props.children).some(shouldExpand)
-    ) {
-      return {
-        isExpanded: true,
-      };
-    }
-
-    return null;
-  }
-
-  constructor(props: TreeBranchProps) {
-    super(props);
-
-    this.state = {
-      isExpanded: false,
-      expandGuard: false,
-    };
-  }
-
-  override render() {
-    const {
-      children,
-      isImportant,
-      isSelected,
-      primaryText,
-      secondaryText,
-      title,
-    } = this.props;
-    const { isExpanded } = this.state;
-
-    return (
-      <li>
-        <div
-          className={classnames('tree-node', {
-            'is-important': isImportant,
-            'is-selected': isSelected,
-          })}
-        >
-          <a className="tree-node-icon" href="#" onClick={this._handleExpand}>
-            {isExpanded ? (
-              <i className="icon icon-16 icon-angle-down" />
-            ) : (
-              <i className="icon icon-16 icon-angle-right" />
-            )}
-          </a>
-          <a
-            className="tree-node-label"
-            href="#"
-            title={title}
-            onClick={this._handleSelect}
-          >
-            <span className="tree-node-primary-text">{primaryText}</span>
-            <span className="tree-node-secondary-text">{secondaryText}</span>
-          </a>
-        </div>
-        <Tree isExpanded={isExpanded}>{children}</Tree>
-      </li>
-    );
-  }
-
-  private _handleExpand = (event: React.MouseEvent<any>) => {
+  const handleSelect = useEvent((event: React.MouseEvent<any>) => {
     event.preventDefault();
+    delegate(value);
+  });
 
-    this.setState((state) => ({
-      isExpanded: !state.isExpanded,
-      expandGuard: true,
-    }));
-  };
-
-  private _handleSelect = (event: React.MouseEvent<any>) => {
-    event.preventDefault();
-
-    const { isSelected, onSelect, value } = this.props;
-
-    if (!isSelected && onSelect) {
-      onSelect(value);
-    }
-  };
+  return (
+    <li>
+      <a
+        className={classnames('tree-node', {
+          'is-important': isImportant,
+          'is-selected': value === selectedValue,
+        })}
+        href="#"
+        onClick={handleSelect}
+      >
+        {icon ? <span className="tree-node-icon">{icon}</span> : null}
+        <span className="tree-node-label">
+          <span className="tree-node-primary-text">{primaryText}</span>
+          <span className="tree-node-secondary-text">{secondaryText}</span>
+        </span>
+      </a>
+    </li>
+  );
 }
 
-export class TreeLeaf extends PureComponent<TreeLeafProps, TreeLeafState> {
-  static defaultProps = {
-    isImportant: false,
-    isSelected: false,
-  };
-
-  override render() {
-    const { icon, isSelected, isImportant, primaryText, secondaryText, title } =
-      this.props;
-
-    return (
-      <li>
-        <a
-          className={classnames('tree-node', {
-            'is-important': isImportant,
-            'is-selected': isSelected,
-          })}
-          href="#"
-          title={title}
-          onClick={this._handleSelect}
-        >
-          {icon ? <span className="tree-node-icon">{icon}</span> : null}
-          <span className="tree-node-label">
-            <span className="tree-node-primary-text">{primaryText}</span>
-            <span className="tree-node-secondary-text">{secondaryText}</span>
-          </span>
-        </a>
-      </li>
-    );
-  }
-
-  private _handleSelect = (event: React.MouseEvent<any>) => {
-    event.preventDefault();
-
-    const { isSelected, value, onSelect } = this.props;
-
-    if (!isSelected && onSelect) {
-      onSelect(value);
-    }
-  };
-}
-
-function shouldExpand(child: React.ReactNode): boolean {
+function containsSelectedNode(
+  child: React.ReactNode,
+  selectedValue: any,
+): boolean {
   if (isValidElement(child)) {
     const type = child.type as any;
     if (type === TreeLeaf) {
-      return (child.props as TreeLeafProps).isSelected!;
+      return (child.props as TreeLeafProps<unknown>).value === selectedValue;
     }
     if (type === TreeBranch) {
-      return Children.toArray((child.props as TreeBranchProps).children).some(
-        shouldExpand,
-      );
+      return Children.toArray(
+        (child.props as TreeBranchProps<unknown>).children,
+      ).some(containsSelectedNode);
     }
   }
   return false;

@@ -1,209 +1,166 @@
 import React, {
-  Children,
-  Fragment,
-  PureComponent,
-  cloneElement,
-  isValidElement,
+  createContext,
+  forwardRef,
+  useContext,
+  useImperativeHandle,
+  useRef,
 } from 'react';
-import { findDOMNode } from 'react-dom';
 
-interface MenuProps {
+import useEvent from '../hooks/useEvent';
+
+interface MenuProps<TValue> {
   children?: React.ReactNode;
   onKeyDown?: (event: React.KeyboardEvent<any>) => void;
-  onSelect?: (value?: any) => void;
+  onSelect: (value: TValue) => void;
 }
 
-interface MenuDelegateProps {
-  delegate?: (value?: any) => void;
-}
-
-interface MenuItemProps extends MenuDelegateProps {
-  delegate?: (value?: any) => void;
-  href?: string;
+interface MenuItemProps<TValue> {
   icon?: React.ReactNode;
   isDisabled?: boolean;
-  onSelect?: (value?: any) => void;
   primaryText: string;
   secondaryText?: string;
-  target?: string;
-  value?: any;
+  value: TValue;
 }
 
-interface MenuFormProps extends MenuDelegateProps {
+interface MenuFormProps<TValue> {
   children?: React.ReactNode;
-  delegate?: (value?: any) => void;
-  onSubmit?: React.FormEventHandler<HTMLFormElement>;
+  value: TValue;
+}
+
+interface MenuContext {
+  delegate: (value: any) => void;
+}
+
+export interface MenuRef {
+  focusNext(): void;
+  focusPrevious(): void;
 }
 
 const KEY_EVENTS_TO_IGNORE = ['INPUT', 'SELECT', 'TEXTAREA'];
 
-export class Menu extends PureComponent<MenuProps, {}> {
-  focusPrevious(): void {
-    const { activeIndex, elements } = this._getFocusableElements();
+const MenuContext = createContext<MenuContext | null>(null);
 
-    if (elements.length > 0) {
-      const previousIndex =
-        activeIndex > 0 ? activeIndex - 1 : elements.length - 1;
-      const previousElement = elements[previousIndex]!;
-      previousElement.focus();
-    }
-  }
+export const Menu = forwardRef(MenuRoot) as <TValue>(
+  props: MenuProps<TValue> & { ref?: React.ForwardedRef<MenuRef> },
+) => ReturnType<typeof MenuRoot>;
 
-  focusNext(): void {
-    const { activeIndex, elements } = this._getFocusableElements();
+function MenuRoot<TValue>(
+  { children, onKeyDown, onSelect }: MenuProps<TValue>,
+  ref: React.ForwardedRef<MenuRef>,
+) {
+  const containerRef = useRef<HTMLDivElement>(null);
 
-    if (elements.length > 0) {
-      const nextIndex = activeIndex < elements.length - 1 ? activeIndex + 1 : 0;
-      const nextElement = elements[nextIndex]!;
-      nextElement.focus();
-    }
-  }
+  useImperativeHandle(ref, () => {
+    return {
+      focusNext() {
+        containerRef.current && focusNext(containerRef.current);
+      },
+      focusPrevious() {
+        containerRef.current && focusPrevious(containerRef.current);
+      },
+    };
+  });
 
-  override render() {
-    const { children } = this.props;
-
-    return (
-      <div tabIndex={0} className="menu" onKeyDown={this._handleKeyDown}>
-        {Children.map(children, this._renderChild)}
-      </div>
-    );
-  }
-
-  private _getFocusableElements(): {
-    activeIndex: number;
-    elements: HTMLElement[];
-  } {
-    const container = findDOMNode(this) as Element;
-    if (!container) {
-      return { activeIndex: -1, elements: [] };
-    }
-
-    const elements = Array.from(
-      container.querySelectorAll<HTMLElement>('.menu-item:not(.is-disabled)'),
-    );
-
-    const { activeElement } = document;
-    const activeIndex = elements.findIndex((el) => el.contains(activeElement));
-
-    return { activeIndex, elements };
-  }
-
-  private _renderChild = (child: React.ReactNode): React.ReactNode => {
-    if (isValidElement(child)) {
-      if (child.type === Fragment) {
-        return cloneElement(child as any, {
-          children: Children.map(
-            (child.props as any).children,
-            this._renderChild,
-          ),
-        });
-      }
-
-      if (
-        child.type === (MenuItem as any) ||
-        child.type === (MenuForm as any)
-      ) {
-        return cloneElement<MenuDelegateProps>(child as React.ReactElement, {
-          delegate: this.props.onSelect,
-        });
-      }
-    }
-
-    return child;
-  };
-
-  private _handleKeyDown = (event: React.KeyboardEvent<any>): void => {
-    const { onKeyDown } = this.props;
+  const handleKeyDown = useEvent((event: React.KeyboardEvent<any>): void => {
     const target = event.target as Element;
 
     if (onKeyDown && !KEY_EVENTS_TO_IGNORE.includes(target.tagName)) {
       onKeyDown(event);
     }
-  };
-}
+  });
 
-export class MenuItem extends PureComponent<MenuItemProps, {}> {
-  static defaultProps = {
-    href: '#',
-    isDisabled: false,
-  };
-
-  override render() {
-    const { href, icon, isDisabled, primaryText, secondaryText, target } =
-      this.props;
-
-    const iconElement = icon && <span className="menu-item-icon">{icon}</span>;
-    const primaryTextElement = (
-      <span className="menu-item-primary-text">{primaryText}</span>
-    );
-    const secondaryTextElement = secondaryText && (
-      <span className="menu-item-secondary-text">{secondaryText}</span>
-    );
-
-    if (isDisabled) {
-      return (
-        <div className="menu-item is-disabled" title={primaryText}>
-          {iconElement}
-          {primaryTextElement}
-          {secondaryTextElement}
-        </div>
-      );
-    } else {
-      return (
-        <a
-          className="menu-item"
-          title={primaryText}
-          target={target}
-          href={href}
-          onClick={this._handleSelect}
-        >
-          {iconElement}
-          {primaryTextElement}
-          {secondaryTextElement}
-        </a>
-      );
-    }
-  }
-
-  private _handleSelect = (event: React.MouseEvent<any>): void => {
-    const { delegate, href, onSelect, value } = this.props;
-
-    if (href === '#') {
-      event.preventDefault();
-    }
-
-    if (onSelect) {
-      onSelect(value);
-    }
-
-    if (delegate) {
-      delegate(value);
-    }
-  };
-}
-
-export class MenuForm extends PureComponent<MenuFormProps, {}> {
-  override render() {
-    const { children } = this.props;
-
-    return (
-      <form className="menu-form" onSubmit={this._handleSubmit}>
+  return (
+    <MenuContext.Provider value={{ delegate: onSelect }}>
+      <div
+        className="menu"
+        onKeyDown={handleKeyDown}
+        ref={containerRef}
+        tabIndex={0}
+      >
         {children}
-      </form>
-    );
-  }
+      </div>
+    </MenuContext.Provider>
+  );
+}
 
-  private _handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
+export function MenuItem<TValue>({
+  icon,
+  isDisabled = false,
+  primaryText,
+  secondaryText,
+  value: value,
+}: MenuItemProps<TValue>) {
+  const { delegate } = useContext(MenuContext)!;
+
+  const handleClick = useEvent(
+    (event: React.MouseEvent<HTMLButtonElement>): void => {
+      event.preventDefault();
+      delegate(value);
+    },
+  );
+
+  const iconElement = icon && <span className="menu-item-icon">{icon}</span>;
+
+  const primaryTextElement = (
+    <span className="menu-item-primary-text">{primaryText}</span>
+  );
+  const secondaryTextElement = secondaryText && (
+    <span className="menu-item-secondary-text">{secondaryText}</span>
+  );
+
+  return (
+    <button className="menu-item" disabled={isDisabled} onClick={handleClick}>
+      {iconElement}
+      {primaryTextElement}
+      {secondaryTextElement}
+    </button>
+  );
+}
+
+export function MenuForm<TValue>({ children, value }: MenuFormProps<TValue>) {
+  const { delegate } = useContext(MenuContext)!;
+
+  const handleSubmit = useEvent((event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    delegate(value);
+  });
 
-    const { delegate, onSubmit } = this.props;
+  return (
+    <form className="menu-form" onSubmit={handleSubmit}>
+      {children}
+    </form>
+  );
+}
 
-    if (onSubmit) {
-      onSubmit(event);
-    }
+function getFocusableElements(container: Element): {
+  activeIndex: number;
+  elements: HTMLElement[];
+} {
+  const elements = Array.from(
+    container.querySelectorAll<HTMLElement>('.menu-item:not(.is-disabled)'),
+  );
+  const { activeElement } = document;
+  const activeIndex = elements.findIndex((el) => el.contains(activeElement));
+  return { activeIndex, elements };
+}
 
-    if (delegate) {
-      delegate();
-    }
-  };
+function focusPrevious(container: Element): void {
+  const { activeIndex, elements } = getFocusableElements(container);
+
+  if (elements.length > 0) {
+    const previousIndex =
+      activeIndex > 0 ? activeIndex - 1 : elements.length - 1;
+    const previousElement = elements[previousIndex]!;
+    previousElement.focus();
+  }
+}
+
+function focusNext(container: Element): void {
+  const { activeIndex, elements } = getFocusableElements(container);
+
+  if (elements.length > 0) {
+    const nextIndex = activeIndex < elements.length - 1 ? activeIndex + 1 : 0;
+    const nextElement = elements[nextIndex]!;
+    nextElement.focus();
+  }
 }

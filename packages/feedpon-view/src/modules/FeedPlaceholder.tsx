@@ -1,6 +1,6 @@
 import React from 'react';
 
-const FeedPlaceholder: React.FC<{}> = () => {
+export default function FeedPlaceholder(_props: {}) {
   return (
     <li className="list-group-item">
       <div className="link-strong">
@@ -15,6 +15,4 @@ const FeedPlaceholder: React.FC<{}> = () => {
       </div>
     </li>
   );
-};
-
-export default FeedPlaceholder;
+}

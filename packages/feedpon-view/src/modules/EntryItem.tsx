@@ -1,13 +1,14 @@
-import React, { PureComponent } from 'react';
 import classnames from 'classnames';
+import React, { forwardRef } from 'react';
 
-import EmbeddedHtml from '../components/EmbeddedHtml';
+import type { Entry } from 'feedpon-messaging';
+import RelativeTime from '../components/RelativeTime';
+import Sandbox from '../components/Sandbox';
+import useEvent from '../hooks/useEvent';
 import CommentPopover from '../modules/CommentPopover';
 import EntryActionList from '../modules/EntryActionList';
 import EntryNav from '../modules/EntryNav';
 import FullContents from '../modules/FullContents';
-import RelativeTime from '../components/RelativeTime';
-import type { Entry } from 'feedpon-messaging';
 
 interface EntryItemProps {
   entry: Entry;
@@ -40,79 +41,58 @@ interface CollapsedEntryContentProps {
   sameOrigin: boolean;
 }
 
-export default class EntryItem extends PureComponent<EntryItemProps> {
-  override render() {
-    const { entry, isActive, isExpanded } = this.props;
+export default forwardRef(EntryItem);
 
-    return (
-      <article
-        lang={entry.language || undefined}
-        className={classnames('entry', {
-          'is-active': isActive,
-          'is-expanded': isExpanded,
-          'is-marked-as-read': entry.markedAsRead,
-          'is-pinned': entry.isPinned,
-        })}
-        onClick={this._handleExpand}
-      >
-        {this._renderContent()}
-      </article>
-    );
-  }
-
-  private _renderContent() {
-    const { entry, isExpanded, sameOrigin } = this.props;
-
+function EntryItem(
+  {
+    entry,
+    index,
+    isActive,
+    isExpanded,
+    onExpand,
+    onFetchComments,
+    onFetchFullContent,
+    onHideComments,
+    onHideFullContents,
+    onPin,
+    onShowComments,
+    onShowFullContents,
+    onUnpin,
+    sameOrigin,
+  }: EntryItemProps,
+  ref: React.ForwardedRef<HTMLElement>,
+) {
+  const handleExpand = useEvent((event: React.MouseEvent<any>) => {
     if (isExpanded) {
-      return (
-        <ExpandedEntryContent
-          entry={entry}
-          onFetchNextFullContent={this._handleFetchNextFullContent}
-          onToggleComments={this._handleToggleComments}
-          onToggleFullContent={this._handleToggleFullContent}
-          onTogglePin={this._handleTogglePin}
-          sameOrigin={sameOrigin}
-        />
-      );
-    } else {
-      return <CollapsedEntryContent entry={entry} sameOrigin={sameOrigin} />;
+      return;
     }
-  }
 
-  private _handleExpand = (event: React.MouseEvent<any>) => {
-    const { index, isExpanded, onExpand } = this.props;
+    const target = event.target as HTMLElement;
 
-    if (!isExpanded) {
-      const target = event.target as HTMLElement;
+    if (
+      target === event.currentTarget ||
+      (!target.closest('a') && !target.closest('button'))
+    ) {
+      event.preventDefault();
 
-      if (
-        target === event.currentTarget ||
-        (!target.closest('a') && !target.closest('button'))
-      ) {
-        event.preventDefault();
-
-        onExpand(index);
-      }
+      onExpand(index);
     }
-  };
+  });
 
-  private _handleFetchNextFullContent = () => {
-    const { entry, onFetchFullContent } = this.props;
-
-    if (entry.fullContents.isLoaded) {
-      const lastFullContent =
-        entry.fullContents.items[entry.fullContents.items.length - 1];
-
-      if (lastFullContent && lastFullContent.nextPageUrl) {
-        onFetchFullContent(entry.entryId, lastFullContent.nextPageUrl);
-      }
+  const handleFetchNextFullContent = useEvent(() => {
+    if (!entry.fullContents.isLoaded) {
+      return;
     }
-  };
 
-  private _handleToggleComments = (_event: React.MouseEvent<any>) => {
-    const { entry, onFetchComments, onHideComments, onShowComments } =
-      this.props;
+    const lastFullContent =
+      entry.fullContents.items[entry.fullContents.items.length - 1];
 
+    if (lastFullContent && lastFullContent.nextPageUrl) {
+      onFetchFullContent(entry.entryId, lastFullContent.nextPageUrl);
+    }
+  });
+
+  const handleToggleComments = useEvent((_event: React.MouseEvent<any>) => {
     if (entry.comments.isLoaded) {
       if (entry.comments.isShown) {
         onHideComments(entry.entryId);
@@ -122,32 +102,25 @@ export default class EntryItem extends PureComponent<EntryItemProps> {
     } else {
       onFetchComments(entry.entryId, entry.url);
     }
-  };
+  });
 
-  private _handleToggleFullContent = (_event: React.MouseEvent<any>) => {
-    const {
-      entry,
-      onFetchFullContent,
-      onHideFullContents,
-      onShowFullContents,
-    } = this.props;
-
-    if (!entry.fullContents.isLoading) {
-      if (!entry.fullContents.isLoaded) {
-        onFetchFullContent(entry.entryId, entry.url);
-      }
-
-      if (entry.fullContents.isShown) {
-        onHideFullContents(entry.entryId);
-      } else {
-        onShowFullContents(entry.entryId);
-      }
+  const handleToggleFullContent = useEvent((_event: React.MouseEvent<any>) => {
+    if (entry.fullContents.isLoading) {
+      return;
     }
-  };
 
-  private _handleTogglePin = (_event: React.MouseEvent<any>) => {
-    const { entry, onPin, onUnpin } = this.props;
+    if (!entry.fullContents.isLoaded) {
+      onFetchFullContent(entry.entryId, entry.url);
+    }
 
+    if (entry.fullContents.isShown) {
+      onHideFullContents(entry.entryId);
+    } else {
+      onShowFullContents(entry.entryId);
+    }
+  });
+
+  const handleTogglePin = useEvent((_event: React.MouseEvent<any>) => {
     if (!entry.isPinning) {
       if (entry.isPinned) {
         onUnpin(entry.entryId);
@@ -155,17 +128,44 @@ export default class EntryItem extends PureComponent<EntryItemProps> {
         onPin(entry.entryId);
       }
     }
-  };
+  });
+
+  return (
+    <article
+      lang={entry.language || undefined}
+      className={classnames('entry', {
+        'is-active': isActive,
+        'is-expanded': isExpanded,
+        'is-marked-as-read': entry.markedAsRead,
+        'is-pinned': entry.isPinned,
+      })}
+      onClick={handleExpand}
+      ref={ref}
+    >
+      {isExpanded ? (
+        <ExpandedEntryContent
+          entry={entry}
+          onFetchNextFullContent={handleFetchNextFullContent}
+          onToggleComments={handleToggleComments}
+          onToggleFullContent={handleToggleFullContent}
+          onTogglePin={handleTogglePin}
+          sameOrigin={sameOrigin}
+        />
+      ) : (
+        <CollapsedEntryContent entry={entry} sameOrigin={sameOrigin} />
+      )}
+    </article>
+  );
 }
 
-const ExpandedEntryContent: React.FC<ExpandedEntryContentProps> = ({
+function ExpandedEntryContent({
   entry,
   onFetchNextFullContent,
   onToggleComments,
   onToggleFullContent,
   onTogglePin,
   sameOrigin,
-}) => {
+}: ExpandedEntryContentProps) {
   const content =
     entry.fullContents.isShown && entry.fullContents.isLoaded ? (
       <FullContents
@@ -175,7 +175,7 @@ const ExpandedEntryContent: React.FC<ExpandedEntryContentProps> = ({
         onFetchNext={onFetchNextFullContent}
       />
     ) : (
-      <EmbeddedHtml
+      <Sandbox
         baseUrl={entry.url}
         className="entry-content u-clearfix u-text-wrap"
         html={entry.content}
@@ -228,12 +228,12 @@ const ExpandedEntryContent: React.FC<ExpandedEntryContentProps> = ({
       </footer>
     </div>
   );
-};
+}
 
-const CollapsedEntryContent: React.FC<CollapsedEntryContentProps> = ({
+function CollapsedEntryContent({
   entry,
   sameOrigin,
-}) => {
+}: CollapsedEntryContentProps) {
   return (
     <div className="container">
       <div className="u-flex">
@@ -262,7 +262,19 @@ const CollapsedEntryContent: React.FC<CollapsedEntryContentProps> = ({
       </div>
     </div>
   );
-};
+}
+
+function renderAuthor(entry: Entry) {
+  if (!entry.author) {
+    return null;
+  }
+
+  return (
+    <li className="list-inline-item">
+      <span>by {entry.author}</span>
+    </li>
+  );
+}
 
 function renderBookmarks(entry: Entry) {
   return (
@@ -292,18 +304,6 @@ function renderOrign(entry: Entry, sameOrigin: boolean) {
       <a className="link-strong" href={entry.origin.url} target="_blank">
         {entry.origin.title}
       </a>
-    </li>
-  );
-}
-
-function renderAuthor(entry: Entry) {
-  if (!entry.author) {
-    return null;
-  }
-
-  return (
-    <li className="list-inline-item">
-      <span>by {entry.author}</span>
     </li>
   );
 }

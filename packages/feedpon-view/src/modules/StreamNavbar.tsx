@@ -20,7 +20,7 @@ interface StreamNavbarProps {
   isExpanded: boolean;
   isLoading: boolean;
   keepUnread: boolean;
-  onChangeEntryOrderKind: (order: EntryOrderKind) => void;
+  onChangeEntryOrder: (order: EntryOrderKind) => void;
   onChangeNumberOfEntries: (numEntries: number) => void;
   onChangeStreamView: (streamView: StreamViewKind) => void;
   onClearReadPosition: () => void;
@@ -36,7 +36,7 @@ interface StreamNavbarProps {
   title: string;
 }
 
-const StreamNavbar: React.FC<StreamNavbarProps> = ({
+export default function StreamNavbar({
   activeEntryIndex,
   canMarkStreamAsRead,
   entries,
@@ -44,7 +44,7 @@ const StreamNavbar: React.FC<StreamNavbarProps> = ({
   isExpanded,
   isLoading,
   keepUnread,
-  onChangeEntryOrderKind,
+  onChangeEntryOrder,
   onChangeNumberOfEntries,
   onChangeStreamView,
   onClearReadPosition,
@@ -58,7 +58,7 @@ const StreamNavbar: React.FC<StreamNavbarProps> = ({
   readEntryIndex,
   streamView,
   title,
-}) => {
+}: StreamNavbarProps) {
   return (
     <Navbar
       onToggleSidebar={onToggleSidebar}
@@ -95,7 +95,7 @@ const StreamNavbar: React.FC<StreamNavbarProps> = ({
         <StreamFetchOptionsDropdown
           fetchOptions={fetchOptions}
           isLoading={isLoading}
-          onChangeEntryOrderKind={onChangeEntryOrderKind}
+          onChangeEntryOrder={onChangeEntryOrder}
           onChangeNumberOfEntries={onChangeNumberOfEntries}
           onChangeStreamView={onChangeStreamView}
           onToggleOnlyUnread={onToggleOnlyUnread}
@@ -104,6 +104,4 @@ const StreamNavbar: React.FC<StreamNavbarProps> = ({
       )}
     </Navbar>
   );
-};
-
-export default StreamNavbar;
+}

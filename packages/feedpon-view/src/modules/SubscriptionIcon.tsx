@@ -5,10 +5,10 @@ interface SubscriptionIconProps {
   title: string;
 }
 
-const SubscriptionIcon: React.FC<SubscriptionIconProps> = ({
+export default function SubscriptionIcon({
   iconUrl,
   title,
-}) => {
+}: SubscriptionIconProps) {
   if (iconUrl) {
     return (
       <img
@@ -22,6 +22,4 @@ const SubscriptionIcon: React.FC<SubscriptionIconProps> = ({
   } else {
     return <i className="icon icon-16 icon-file " />;
   }
-};
-
-export default SubscriptionIcon;
+}

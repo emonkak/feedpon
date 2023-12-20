@@ -33,6 +33,10 @@ class KitchenSinkPage extends PureComponent<
     };
   }
 
+  handleSelectAction(action: string) {
+    alert(action);
+  }
+
   handleOpenModal() {
     this.setState({ modalIsOpened: true });
   }
@@ -330,6 +334,7 @@ class KitchenSinkPage extends PureComponent<
         <h2>Dropdown</h2>
         <div className="u-margin-bottom-2">
           <Dropdown
+            onSelect={this.handleSelectAction.bind(this)}
             className="u-inline-block"
             toggleButton={
               <button className="button button-outline-default dropdown-arrow">
@@ -338,19 +343,26 @@ class KitchenSinkPage extends PureComponent<
             }
           >
             <MenuItem
+              value="FIRST"
               primaryText="First Action"
               secondaryText="First"
             ></MenuItem>
             <MenuItem
+              value="SECOND"
               primaryText="Second Action"
               secondaryText="Second"
             ></MenuItem>
             <MenuItem
+              value="THIRD"
               primaryText="Third Action"
               secondaryText="Third"
             ></MenuItem>
             <div className="menu-divider"></div>
-            <MenuItem isDisabled={true} primaryText="Forth Action"></MenuItem>
+            <MenuItem
+              value="FORTH"
+              isDisabled={true}
+              primaryText="Forth Action"
+            ></MenuItem>
           </Dropdown>
         </div>
 

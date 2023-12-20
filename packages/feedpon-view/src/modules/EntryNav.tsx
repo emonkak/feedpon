@@ -11,14 +11,14 @@ interface EntryNavProps {
   url: string;
 }
 
-const EntryNav: React.FC<EntryNavProps> = ({
+export default function EntryNav({
   fullContentsIsLoading,
   fullContentsIsShown,
   isPinned,
   isPinning,
   onToggleFullContent,
   onTogglePin,
-}) => {
+}: EntryNavProps) {
   return (
     <nav className="entry-nav">
       <div className="button-toolbar">
@@ -59,6 +59,4 @@ const EntryNav: React.FC<EntryNavProps> = ({
       </div>
     </nav>
   );
-};
-
-export default EntryNav;
+}

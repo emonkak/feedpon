@@ -6,11 +6,11 @@ interface NavbarProps {
   onToggleSidebar?: () => void;
 }
 
-const Navbar: React.FC<NavbarProps> = ({
+export default function Navbar({
   children,
   onToggleSidebar,
   progress,
-}) => {
+}: NavbarProps) {
   return (
     <nav className="navbar">
       <div className="navbar-container">
@@ -27,6 +27,4 @@ const Navbar: React.FC<NavbarProps> = ({
       )}
     </nav>
   );
-};
-
-export default Navbar;
+}

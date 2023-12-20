@@ -9,11 +9,11 @@ interface CommentPopoverProps {
   isLoading: boolean;
 }
 
-const CommentPopover: React.FC<CommentPopoverProps> = ({
+export default function CommentPopover({
   arrowOffset,
   comments,
   isLoading,
-}) => {
+}: CommentPopoverProps) {
   if (isLoading) {
     return (
       <div className="popover popover-default is-pull-down">
@@ -51,6 +51,4 @@ const CommentPopover: React.FC<CommentPopoverProps> = ({
       <div className="popover-content">{commentItems}</div>
     </div>
   );
-};
-
-export default CommentPopover;
+}

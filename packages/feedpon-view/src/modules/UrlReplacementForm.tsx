@@ -1,7 +1,8 @@
-import React, { PureComponent } from 'react';
+import React, { useState } from 'react';
 
 import ValidatableControl from '../components/ValidatableControl';
 import type { UrlReplacement } from 'feedpon-messaging';
+import useEvent from '../hooks/useEvent';
 
 interface UrlReplacementFormProps {
   children?: React.ReactNode;
@@ -10,136 +11,47 @@ interface UrlReplacementFormProps {
   onSubmit: (item: UrlReplacement) => void;
 }
 
-interface UrlReplacementFormState {
-  flags: string;
-  pattern: string;
-  replacement: string;
-}
-
 const patternValidation = {
   message: 'Invalid regular expression.',
   rule: isValidPattern,
 };
 
-export default class UrlReplacementForm extends PureComponent<
-  UrlReplacementFormProps,
-  UrlReplacementFormState
-> {
-  constructor(props: UrlReplacementFormProps) {
-    super(props);
+export default function UrlReplacementForm({
+  children,
+  item,
+  onSubmit,
+  legend,
+}: UrlReplacementFormProps) {
+  const [pattern, setPattern] = useState(item?.pattern ?? '');
+  const [replacement, setReplacement] = useState(item?.replacement ?? '');
+  const [flags, setFlags] = useState(item?.flags ?? '');
 
-    const { item } = props;
-
-    if (item) {
-      this.state = {
-        pattern: item.pattern,
-        replacement: item.replacement,
-        flags: item.flags,
-      };
-    } else {
-      this.state = {
-        pattern: '',
-        replacement: '',
-        flags: '',
-      };
-    }
-  }
-
-  override render() {
-    const { children, legend } = this.props;
-    const { flags, replacement, pattern } = this.state;
-
-    return (
-      <form className="form" onSubmit={this._handleSubmit}>
-        <div className="form-legend">{legend}</div>
-        <div className="form-group">
-          <label>
-            <span className="form-group-heading form-required">Pattern</span>
-            <ValidatableControl validations={[patternValidation]}>
-              <input
-                type="text"
-                className="form-control"
-                placeholder="^https://..."
-                value={pattern}
-                onChange={this._handleChangePattern}
-                required
-              />
-            </ValidatableControl>
-          </label>
-        </div>
-        <div className="form-group">
-          <label>
-            <span className="form-group-heading">Replacement</span>
-            <ValidatableControl>
-              <input
-                type="text"
-                className="form-control"
-                value={replacement}
-                onChange={this._handleChangeReplacement}
-              />
-            </ValidatableControl>
-          </label>
-        </div>
-        <div className="form-group">
-          <label>
-            <span className="form-group-heading">Flags</span>
-            <ValidatableControl>
-              <input
-                type="text"
-                className="form-control"
-                value={flags}
-                onChange={this._handleChangeFlags}
-                pattern="^[gimuy]+$"
-              />
-            </ValidatableControl>
-          </label>
-        </div>
-        <div className="form-group">{children}</div>
-      </form>
-    );
-  }
-
-  private _resetToDefaultState() {
-    this.setState({
-      pattern: '',
-      replacement: '',
-      flags: '',
-    });
-  }
-
-  private _handleChangePattern = (
+  const handleChangePattern = useEvent((
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const pattern = event.currentTarget.value;
 
-    this.setState({
-      pattern,
-    });
-  };
+    setPattern(pattern);
+  });
 
-  private _handleChangeReplacement = (
+  const handleChangeReplacement = useEvent((
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const replacement = event.currentTarget.value;
 
-    this.setState({
-      replacement,
-    });
-  };
+    setReplacement(replacement);
+  });
 
-  private _handleChangeFlags = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const flags = event.currentTarget.value;
+  const handleChangeFlags = useEvent(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const flags = event.currentTarget.value;
 
-    this.setState({
-      flags,
-    });
-  };
+      setFlags(flags);
+    },
+  );
 
-  private _handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = useEvent((event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
-    const { item, onSubmit } = this.props;
-    const { flags, pattern, replacement } = this.state;
 
     onSubmit({
       pattern,
@@ -148,9 +60,60 @@ export default class UrlReplacementForm extends PureComponent<
     });
 
     if (!item) {
-      this._resetToDefaultState();
+      setPattern('');
+      setReplacement('');
+      setFlags('');
     }
-  };
+  });
+
+  return (
+    <form className="form" onSubmit={handleSubmit}>
+      <div className="form-legend">{legend}</div>
+      <div className="form-group">
+        <label>
+          <span className="form-group-heading form-required">Pattern</span>
+          <ValidatableControl validations={[patternValidation]}>
+            <input
+              type="text"
+              className="form-control"
+              placeholder="^https://..."
+              value={pattern}
+              onChange={handleChangePattern}
+              required
+            />
+          </ValidatableControl>
+        </label>
+      </div>
+      <div className="form-group">
+        <label>
+          <span className="form-group-heading">Replacement</span>
+          <ValidatableControl>
+            <input
+              type="text"
+              className="form-control"
+              value={replacement}
+              onChange={handleChangeReplacement}
+            />
+          </ValidatableControl>
+        </label>
+      </div>
+      <div className="form-group">
+        <label>
+          <span className="form-group-heading">Flags</span>
+          <ValidatableControl>
+            <input
+              type="text"
+              className="form-control"
+              value={flags}
+              onChange={handleChangeFlags}
+              pattern="^[gimuy]+$"
+            />
+          </ValidatableControl>
+        </label>
+      </div>
+      <div className="form-group">{children}</div>
+    </form>
+  );
 }
 
 function isValidPattern(pattern: string): boolean {

@@ -9,11 +9,11 @@ interface CategoryHeaderProps {
   numEntries: number;
 }
 
-const CategoryHeader: React.FC<CategoryHeaderProps> = ({
+export default function CategoryHeader({
   category,
   hasMoreEntries,
   numEntries,
-}: CategoryHeaderProps) => {
+}: CategoryHeaderProps) {
   return (
     <header className="stream-header">
       <div className="container">
@@ -45,6 +45,4 @@ const CategoryHeader: React.FC<CategoryHeaderProps> = ({
       </div>
     </header>
   );
-};
-
-export default CategoryHeader;
+}

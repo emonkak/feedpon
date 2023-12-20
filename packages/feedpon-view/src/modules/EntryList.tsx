@@ -1,13 +1,19 @@
-import React, { PureComponent } from 'react';
-import { createSelector } from 'reselect';
+import React, {
+  forwardRef,
+  useCallback,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+} from 'react';
 
 import type { Entry, StreamViewKind } from 'feedpon-messaging';
-import { getScrollOffset } from 'feedpon-messaging/domActions';
-import { isScrolling } from 'feedpon-utils/SmoothScroll';
-import LazyList, {
-  Positioning,
-  ViewportRectangle,
-} from '../components/LazyList';
+import * as SmoothScroll from 'feedpon-utils/SmoothScroll';
+import VirtualList, {
+  BlankSpaces,
+  Dimensions,
+  VirtualListRef,
+} from '../components/VirtualList';
+import useEvent from '../hooks/useEvent';
 import EntryItem from './EntryItem';
 import {
   CollapsedEntryPlaceholder,
@@ -25,108 +31,92 @@ interface EntryListProps {
   onExpand: (index: number) => void;
   onFetchComments: (entryId: string | number, url: string) => void;
   onFetchFullContent: (entryId: string | number, url: string) => void;
-  onHeightUpdated: (heights: { [id: string]: number }) => void;
   onHideComments: (entryId: string | number) => void;
   onHideFullContents: (entryId: string | number) => void;
   onPin: (entryId: string | number) => void;
   onShowComments: (entryId: string | number) => void;
   onShowFullContents: (entryId: string | number) => void;
   onUnpin: (entryId: string | number) => void;
+  onUpdateHeights: (heights: { [id: string]: number }) => void;
   readEntryIndex: number;
   sameOrigin: boolean;
   streamView: StreamViewKind;
 }
 
 interface RenderingItem {
+  id: string;
   entry: Entry;
   isActive: boolean;
   isExpanded: boolean;
   sameOrigin: boolean;
 }
 
-export default class EntryList extends PureComponent<EntryListProps> {
-  private _lazyList: LazyList | null = null;
+export default forwardRef(EntryList);
 
-  override render() {
-    const { isLoaded, isLoading, streamView } = this.props;
-    const isExpanded = streamView === 'expanded';
+function EntryList(
+  {
+    activeEntryIndex,
+    entries,
+    expandedEntryIndex,
+    heights,
+    isLoaded,
+    isLoading,
+    onChangeActiveEntry,
+    onExpand,
+    onFetchComments,
+    onFetchFullContent,
+    onUpdateHeights,
+    onHideComments,
+    onHideFullContents,
+    onPin,
+    onShowComments,
+    onShowFullContents,
+    onUnpin,
+    sameOrigin,
+    streamView,
+  }: EntryListProps,
+  ref: React.ForwardedRef<VirtualListRef>,
+) {
+  const getHeaderHeight = useHeaderHeight();
 
-    if (isLoading && !isLoaded) {
-      if (isExpanded) {
-        return (
-          <div className="entry-list">
-            <ExpandedEntryPlaceholder />
-            <ExpandedEntryPlaceholder />
-            <ExpandedEntryPlaceholder />
-            <ExpandedEntryPlaceholder />
-            <ExpandedEntryPlaceholder />
-          </div>
-        );
-      } else {
-        return (
-          <div className="entry-list">
-            <CollapsedEntryPlaceholder />
-            <CollapsedEntryPlaceholder />
-            <CollapsedEntryPlaceholder />
-            <CollapsedEntryPlaceholder />
-            <CollapsedEntryPlaceholder />
-            <CollapsedEntryPlaceholder />
-            <CollapsedEntryPlaceholder />
-            <CollapsedEntryPlaceholder />
-            <CollapsedEntryPlaceholder />
-            <CollapsedEntryPlaceholder />
-          </div>
-        );
-      }
+  const handleUpdateDimensions = useEvent((dimensions) => {
+    const newActiveEntryIndex = getActiveIndex(dimensions, getHeaderHeight());
+
+    if (newActiveEntryIndex !== activeEntryIndex) {
+      onChangeActiveEntry(newActiveEntryIndex);
     }
+  });
 
-    const { activeEntryIndex, heights, onHeightUpdated } = this.props;
+  const items = useMemo(
+    () =>
+      entries.map((entry, index) => {
+        const isActive = activeEntryIndex === index;
+        const isExpanded =
+          streamView === 'expanded' || expandedEntryIndex === index;
+        const id = (isExpanded ? 'e' : 'c') + '__' + entry.entryId;
 
-    return (
-      <LazyList
-        assumedItemHeight={isExpanded ? 800 : 100}
-        getViewportRectangle={getViewportRectangle}
-        idAttribute="id"
-        initialHeights={heights}
-        initialItemIndex={activeEntryIndex}
-        items={this._getRenderingItems(this.props)}
-        onHeightUpdated={onHeightUpdated}
-        onPositioningUpdated={this._handlePositioningUpdated}
-        ref={this._handleLazyList}
-        renderItem={this._renderEntry}
-        renderList={renderList}
-        shouldUpdate={shouldUpdateLazyList}
-      />
-    );
-  }
+        return {
+          id,
+          entry,
+          isActive,
+          isExpanded,
+          sameOrigin,
+        };
+      }),
+    [entries, activeEntryIndex, expandedEntryIndex, sameOrigin, streamView],
+  );
 
-  scrollToIndex(index: number): void {
-    if (this._lazyList) {
-      this._lazyList.scrollToIndex(index);
-    }
-  }
+  const scrollBy = useCallback((x: number, y: number) => {
+    window.scrollBy(x, y - getHeaderHeight());
+  }, []);
 
-  private _renderEntry = (
-    renderingItem: RenderingItem,
+  const renderItem = useEvent((
+    { entry, isActive, isExpanded, sameOrigin }: RenderingItem,
     index: number,
-    ref: React.Ref<EntryItem>,
+    ref: React.RefCallback<Element>,
   ) => {
-    const {
-      onExpand,
-      onFetchComments,
-      onFetchFullContent,
-      onHideComments,
-      onHideFullContents,
-      onPin,
-      onShowComments,
-      onShowFullContents,
-      onUnpin,
-    } = this.props;
-    const { entry, isActive, isExpanded, sameOrigin } = renderingItem;
-
     return (
       <EntryItem
-        ref={ref}
         entry={entry}
         index={index}
         isActive={isActive}
@@ -141,111 +131,105 @@ export default class EntryList extends PureComponent<EntryListProps> {
         onShowComments={onShowComments}
         onShowFullContents={onShowFullContents}
         onUnpin={onUnpin}
+        ref={ref}
         sameOrigin={sameOrigin}
       />
     );
-  };
+  });
 
-  private _getRenderingItems: (props: EntryListProps) => RenderingItem[] =
-    createSelector(
-      (props: EntryListProps) => props.entries,
-      (props: EntryListProps) => props.activeEntryIndex,
-      (props: EntryListProps) => props.expandedEntryIndex,
-      (props: EntryListProps) => props.sameOrigin,
-      (props: EntryListProps) => props.streamView,
-      (entries, activeEntryIndex, expandedEntryIndex, sameOrigin, streamView) =>
-        entries.map((entry, index) => {
-          const isActive = activeEntryIndex === index;
-          const isExpanded =
-            streamView === 'expanded' || expandedEntryIndex === index;
-          const id = (isExpanded ? 'e' : 'c') + '__' + entry.entryId;
-
-          return {
-            id,
-            entry,
-            isActive,
-            isExpanded,
-            sameOrigin,
-          };
-        }),
-    );
-
-  private _handlePositioningUpdated = (positioning: Positioning) => {
-    const { activeEntryIndex, onChangeActiveEntry } = this.props;
-    const nextActiveEntryIndex = getActiveIndex(positioning);
-
-    if (nextActiveEntryIndex !== activeEntryIndex) {
-      onChangeActiveEntry(nextActiveEntryIndex);
+  if (isLoading && !isLoaded) {
+    if (streamView === 'expanded') {
+      return (
+        <div className="entry-list">
+          <ExpandedEntryPlaceholder />
+          <ExpandedEntryPlaceholder />
+          <ExpandedEntryPlaceholder />
+          <ExpandedEntryPlaceholder />
+          <ExpandedEntryPlaceholder />
+        </div>
+      );
+    } else {
+      return (
+        <div className="entry-list">
+          <CollapsedEntryPlaceholder />
+          <CollapsedEntryPlaceholder />
+          <CollapsedEntryPlaceholder />
+          <CollapsedEntryPlaceholder />
+          <CollapsedEntryPlaceholder />
+          <CollapsedEntryPlaceholder />
+          <CollapsedEntryPlaceholder />
+          <CollapsedEntryPlaceholder />
+          <CollapsedEntryPlaceholder />
+          <CollapsedEntryPlaceholder />
+        </div>
+      );
     }
-  };
+  }
 
-  private _handleLazyList = (lazyList: LazyList | null) => {
-    this._lazyList = lazyList;
-  };
-}
-
-function renderList(
-  items: React.ReactElement<any>[],
-  blankSpaceAbove: number,
-  blankSpaceBelow: number,
-) {
   return (
-    <div className="entry-list">
-      <div style={{ height: blankSpaceAbove }}></div>
-      {items}
-      <div style={{ height: blankSpaceBelow }}></div>
-    </div>
+    <VirtualList<RenderingItem, 'id', string>
+      assumedItemHeight={streamView === 'expanded' ? 800 : 100}
+      idAttribute="id"
+      initialHeights={heights}
+      initialItemIndex={
+        expandedEntryIndex >= 0 ? expandedEntryIndex : activeEntryIndex
+      }
+      items={items}
+      onUpdateHeights={onUpdateHeights}
+      onUpdateDimensions={handleUpdateDimensions}
+      ref={ref}
+      renderItem={renderItem}
+      renderList={renderList}
+      scheduleUpdate={scheduleUpdate}
+      scrollBy={scrollBy}
+    />
   );
 }
 
-function getViewportRectangle(): ViewportRectangle {
-  return {
-    top: 0,
-    bottom: window.innerHeight,
-    scrollOffset: getScrollOffset(),
-  };
-}
+function getActiveIndex(
+  dimensions: Dimensions<string>,
+  scrollPadding: number,
+): number {
+  const { blockInsets } = dimensions;
 
-function getActiveIndex(positioning: Positioning): number {
-  const rectangles = positioning.rectangles;
-  if (rectangles.length === 0) {
+  if (blockInsets.length === 0) {
     return -1;
   }
 
-  const scrollOffset = getScrollOffset();
-  const viewportRectangle = positioning.viewportRectangle;
-  const viewportTop = viewportRectangle.top + scrollOffset;
-  const viewportBottom = viewportRectangle.bottom;
-  const latestRectangle = rectangles[rectangles.length - 1]!;
+  const { viewportInset } = dimensions;
+  const bottomInsets = blockInsets[blockInsets.length - 1]!;
 
-  if (Math.abs(latestRectangle.bottom - viewportTop) < 1) {
-    return rectangles.length;
+  const viewportTop = viewportInset.top + scrollPadding;
+  const viewportBottom = viewportInset.bottom;
+
+  if (Math.abs(bottomInsets.bottom - viewportTop) < 1) {
+    return blockInsets.length;
   }
 
   let activeIndex = -1;
   let maxVisibleHeight = 0;
 
-  for (let i = 0, l = rectangles.length; i < l; i++) {
-    const rectangle = rectangles[i]!;
+  for (let i = 0, l = blockInsets.length; i < l; i++) {
+    const blockInset = blockInsets[i]!;
 
     if (
-      Math.ceil(rectangle.top) >= Math.floor(viewportTop) &&
-      Math.floor(rectangle.bottom) <= Math.ceil(viewportBottom)
+      Math.ceil(blockInset.top) >= Math.floor(viewportTop) &&
+      Math.floor(blockInset.bottom) <= Math.ceil(viewportBottom)
     ) {
       return i;
     }
 
-    if (rectangle.top < viewportBottom && rectangle.bottom > viewportTop) {
+    if (blockInset.top < viewportBottom && blockInset.bottom > viewportTop) {
       const visibleHeight =
-        Math.min(rectangle.bottom, viewportBottom) -
-        Math.max(rectangle.top, viewportTop);
+        Math.min(blockInset.bottom, viewportBottom) -
+        Math.max(blockInset.top, viewportTop);
       if (visibleHeight > maxVisibleHeight) {
         maxVisibleHeight = visibleHeight;
         activeIndex = i;
       }
     } else {
       if (activeIndex > -1) {
-        return activeIndex;
+        break;
       }
     }
   }
@@ -253,6 +237,33 @@ function getActiveIndex(positioning: Positioning): number {
   return activeIndex;
 }
 
-function shouldUpdateLazyList() {
-  return !isScrolling(window);
+function renderList(
+  items: React.ReactElement<unknown>[],
+  blankSpaces: BlankSpaces,
+  ref: React.RefObject<Element>,
+) {
+  return (
+    <div className="entry-list" ref={ref as React.RefObject<HTMLDivElement>}>
+      <div style={{ height: blankSpaces.above, overflowAnchor: 'none' }}></div>
+      {items}
+      <div style={{ height: blankSpaces.below, overflowAnchor: 'none' }}></div>
+    </div>
+  );
+}
+
+function scheduleUpdate(callback: VoidFunction) {
+  SmoothScroll.scrollLock(window).then(callback);
+}
+
+function useHeaderHeight() {
+  const headerHeightRef = useRef(0);
+
+  useLayoutEffect(() => {
+    const header = document.querySelector('.l-header');
+    if (header) {
+      headerHeightRef.current = header.getBoundingClientRect().height;
+    }
+  }, []);
+
+  return () => headerHeightRef.current;
 }

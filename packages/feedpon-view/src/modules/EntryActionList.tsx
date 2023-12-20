@@ -1,7 +1,7 @@
 import React from 'react';
 import classnames from 'classnames';
 
-import EntryShareButton from '../modules/EntryShareButton';
+import EntryShareButton from './EntryShareButton';
 
 interface EntryActionListProps {
   commentsIsLoading: boolean;
@@ -11,13 +11,13 @@ interface EntryActionListProps {
   url: string;
 }
 
-const EntryActionList: React.FC<EntryActionListProps> = ({
+export default function EntryActionList({
   commentsIsLoading,
   commentsIsShown,
   onToggleComments,
   title,
   url,
-}) => {
+}: EntryActionListProps) {
   return (
     <div className="button-toolbar u-flex u-flex-align-items-center u-flex-justify-content-center">
       <button
@@ -48,6 +48,4 @@ const EntryActionList: React.FC<EntryActionListProps> = ({
       </a>
     </div>
   );
-};
-
-export default EntryActionList;
+}

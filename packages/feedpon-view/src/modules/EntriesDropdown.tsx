@@ -1,10 +1,11 @@
-import React, { PureComponent } from 'react';
+import React, { useState, useMemo } from 'react';
 import classnames from 'classnames';
 
 import ConfirmModal from '../components/ConfirmModal';
 import Dropdown from '../components/Dropdown';
 import Portal from '../components/Portal';
 import type { Entry } from 'feedpon-messaging';
+import useEvent from '../hooks/useEvent';
 import { MenuItem } from '../components/Menu';
 
 interface EntriesDropdownProps {
@@ -20,133 +21,34 @@ interface EntriesDropdownProps {
   title: string;
 }
 
-interface EntriesDropdownState {
-  isMarkingAllAsRead: boolean;
-  behindExpanded: boolean;
-  aheadExpanded: boolean;
-}
-
 interface Slice {
   start: number;
   end: number;
 }
 
-export default class EntriesDropdown extends PureComponent<
-  EntriesDropdownProps,
-  EntriesDropdownState
-> {
-  constructor(props: EntriesDropdownProps) {
-    super(props);
+type Action =
+  | { type: 'CHANGE_KEEP_UNREAD'; enabled: boolean }
+  | { type: 'CLEAR_READ_POSITION' }
+  | { type: 'MARK_ALL_AS_READ' }
+  | { type: 'SCROLL_TO_ENTRY'; index: number };
 
-    this.state = {
-      isMarkingAllAsRead: false,
-      behindExpanded: false,
-      aheadExpanded: false,
-    };
-  }
+export default function EntriesDropdown({
+  activeEntryIndex,
+  canMarkStreamAsRead,
+  onClearReadPosition,
+  onScrollToEntry,
+  onToggleUnreadKeeping,
+  entries,
+  keepUnread,
+  onMarkStreamAsRead,
+  readEntryIndex,
+  title,
+}: EntriesDropdownProps) {
+  const [isMarkingAllAsRead, setIsMarkingAllAsRead] = useState(false);
+  const [behindExpanded, setBehindExpanded] = useState(false);
+  const [aheadExpanded, setAheadExpanded] = useState(false);
 
-  override render() {
-    const {
-      canMarkStreamAsRead,
-      entries,
-      keepUnread,
-      onClearReadPosition,
-      onMarkStreamAsRead,
-      onScrollToEntry,
-      onToggleUnreadKeeping,
-      readEntryIndex,
-      title,
-    } = this.props;
-    const { isMarkingAllAsRead } = this.state;
-
-    const slice = this._getCurrentSlice();
-    const numCurrentReadEntries = entries
-      .slice(0, readEntryIndex + 1)
-      .reduce((total, entry) => total + (entry.markedAsRead ? 0 : 1), 0);
-
-    return (
-      <>
-        <Dropdown
-          toggleButton={
-            <button className="navbar-action">
-              <i className="icon icon-24 icon-checkmark" />
-              <span
-                className={classnames(
-                  'badge badge-small badge-pill badge-overlap',
-                  keepUnread ? 'badge-default' : 'badge-negative',
-                )}
-              >
-                {numCurrentReadEntries || ''}
-              </span>
-            </button>
-          }
-          onClose={this._handleClose}
-        >
-          <div className="menu-heading">Entries</div>
-          {slice.start > 0 && (
-            <a
-              className="menu-item"
-              href="#"
-              onClick={this._handleExpandBehind}
-            >
-              <strong className="menu-item-primary-text u-text-muted">
-                {slice.start} entries hidden
-              </strong>
-            </a>
-          )}
-          {this._renderEntryMenuItems(slice)}
-          {slice.end < entries.length - 1 && (
-            <a className="menu-item" href="#" onClick={this._handleExpandAhead}>
-              <strong className="menu-item-primary-text u-text-muted">
-                {entries.length - slice.end} entries hidden
-              </strong>
-            </a>
-          )}
-          <div className="menu-divider" />
-          <MenuItem
-            isDisabled={readEntryIndex < 0}
-            onSelect={onScrollToEntry}
-            primaryText="Scroll to read position"
-            value={readEntryIndex + 1}
-          />
-          <MenuItem
-            isDisabled={numCurrentReadEntries === 0}
-            onSelect={onClearReadPosition}
-            primaryText="Clear read position"
-          />
-          <div className="menu-divider" />
-          <MenuItem
-            isDisabled={!canMarkStreamAsRead}
-            onSelect={this._handleOpenMarkAllAsReadModal}
-            primaryText="Mark all as read in stream..."
-          />
-          <div className="menu-divider" />
-          <MenuItem
-            icon={
-              keepUnread ? <i className="icon icon-16 icon-checkmark" /> : null
-            }
-            onSelect={onToggleUnreadKeeping}
-            primaryText="Keep unread"
-          />
-        </Dropdown>
-        <Portal>
-          <ConfirmModal
-            isOpened={isMarkingAllAsRead}
-            onClose={this._handleCloseMarkAllAsReadModal}
-            message="Are you sure you want to mark as read in this stream?"
-            confirmButtonClassName="button button-positive"
-            confirmButtonLabel="Mark all as read"
-            onConfirm={onMarkStreamAsRead}
-            title={`Mark all as read in "${title}"`}
-          />
-        </Portal>
-      </>
-    );
-  }
-
-  private _getCurrentSlice(): Slice {
-    const { activeEntryIndex, entries } = this.props;
-    const { aheadExpanded, behindExpanded } = this.state;
+  const slice = useMemo(() => {
     const { start, end } = getSliceAtPosition(
       0,
       entries.length,
@@ -158,75 +60,154 @@ export default class EntriesDropdown extends PureComponent<
       start: behindExpanded ? 0 : start,
       end: aheadExpanded ? entries.length : end,
     };
-  }
+  }, [activeEntryIndex, entries, aheadExpanded, behindExpanded]);
 
-  private _renderEntryMenuItems(slice: Slice): React.ReactNode {
-    const { activeEntryIndex, entries, onScrollToEntry, readEntryIndex } =
-      this.props;
+  const numCurrentReadEntries = entries
+    .slice(0, readEntryIndex + 1)
+    .reduce((total, entry) => total + (entry.markedAsRead ? 0 : 1), 0);
 
-    const items = [];
+  const handleClose = useEvent(() => {
+    setAheadExpanded(false);
+    setBehindExpanded(false);
+  });
 
-    for (let i = slice.start, l = slice.end; i < l; i++) {
-      const entry = entries[i]!;
+  const handleExpandBehind = useEvent((event: React.MouseEvent<any>) => {
+    event.preventDefault();
 
-      const icon =
-        i === activeEntryIndex ? (
-          <i className="icon icon-16 icon-dot u-text-negative" />
-        ) : entry.markedAsRead ? (
-          <i className="icon icon-16 icon-dot u-text-muted" />
-        ) : i <= readEntryIndex ? (
-          <i className="icon icon-16 icon-dot u-text-positive" />
-        ) : null;
+    setBehindExpanded(true);
+  });
 
-      items.push(
-        <MenuItem
-          icon={icon}
-          key={entry.entryId}
-          onSelect={onScrollToEntry}
-          primaryText={entry.title}
-          secondaryText={`${i + 1}`}
-          value={i}
-        />,
-      );
+  const handleExpandAhead = useEvent((event: React.MouseEvent<any>) => {
+    event.preventDefault();
+
+    setAheadExpanded(true);
+  });
+
+  const handleCloseMarkAllAsReadModal = useEvent(() => {
+    setIsMarkingAllAsRead(false);
+  });
+
+  const handleSelectAction = useEvent((action: Action) => {
+    switch (action.type) {
+      case 'CLEAR_READ_POSITION':
+        onClearReadPosition();
+        break;
+      case 'CHANGE_KEEP_UNREAD':
+        onToggleUnreadKeeping();
+        break;
+      case 'MARK_ALL_AS_READ':
+        setIsMarkingAllAsRead(true);
+        break;
+      case 'SCROLL_TO_ENTRY': {
+        onScrollToEntry(action.index);
+        break;
+      }
     }
+  });
 
-    return items;
-  }
+  const menuItems = entries.slice(slice.start, slice.end).map((entry, i) => {
+    const icon =
+      i === activeEntryIndex ? (
+        <i className="icon icon-16 icon-dot u-text-negative" />
+      ) : entry.markedAsRead ? (
+        <i className="icon icon-16 icon-dot u-text-muted" />
+      ) : i <= readEntryIndex ? (
+        <i className="icon icon-16 icon-dot u-text-positive" />
+      ) : null;
 
-  private _handleClose = (): void => {
-    this.setState({
-      behindExpanded: false,
-      aheadExpanded: false,
-    });
-  };
+    const index = i + slice.start;
 
-  private _handleExpandBehind = (event: React.MouseEvent<any>): void => {
-    event.preventDefault();
+    return (
+      <MenuItem<Action>
+        value={{ type: 'SCROLL_TO_ENTRY', index }}
+        icon={icon}
+        key={entry.entryId}
+        primaryText={entry.title}
+        secondaryText={`${index + 1}`}
+      />
+    );
+  });
 
-    this.setState({
-      behindExpanded: true,
-    });
-  };
-
-  private _handleExpandAhead = (event: React.MouseEvent<any>): void => {
-    event.preventDefault();
-
-    this.setState({
-      aheadExpanded: true,
-    });
-  };
-
-  private _handleOpenMarkAllAsReadModal = (): void => {
-    this.setState({
-      isMarkingAllAsRead: true,
-    });
-  };
-
-  private _handleCloseMarkAllAsReadModal = (): void => {
-    this.setState({
-      isMarkingAllAsRead: false,
-    });
-  };
+  return (
+    <>
+      <Dropdown
+        onSelect={handleSelectAction}
+        toggleButton={
+          <button className="navbar-action">
+            <i className="icon icon-24 icon-checkmark" />
+            <span
+              className={classnames(
+                'badge badge-small badge-pill badge-overlap',
+                keepUnread ? 'badge-default' : 'badge-negative',
+              )}
+            >
+              {numCurrentReadEntries || ''}
+            </span>
+          </button>
+        }
+        onClose={handleClose}
+      >
+        <div className="menu-heading">Entries</div>
+        {slice.start > 0 && (
+          <a className="menu-item" href="#" onClick={handleExpandBehind}>
+            <strong className="menu-item-primary-text u-text-muted">
+              {slice.start} entries hidden
+            </strong>
+          </a>
+        )}
+        {menuItems}
+        {slice.end < entries.length - 1 && (
+          <a className="menu-item" href="#" onClick={handleExpandAhead}>
+            <strong className="menu-item-primary-text u-text-muted">
+              {entries.length - slice.end} entries hidden
+            </strong>
+          </a>
+        )}
+        <div className="menu-divider" />
+        <MenuItem<Action>
+          value={{
+            type: 'SCROLL_TO_ENTRY',
+            index: readEntryIndex + 1,
+          }}
+          isDisabled={readEntryIndex < 0}
+          primaryText="Scroll to read position"
+        />
+        <MenuItem<Action>
+          value={{ type: 'CLEAR_READ_POSITION' }}
+          isDisabled={numCurrentReadEntries === 0}
+          primaryText="Clear read position"
+        />
+        <div className="menu-divider" />
+        <MenuItem<Action>
+          value={{ type: 'MARK_ALL_AS_READ' }}
+          isDisabled={!canMarkStreamAsRead}
+          primaryText="Mark all as read in stream..."
+        />
+        <div className="menu-divider" />
+        <MenuItem<Action>
+          value={{
+            type: 'CHANGE_KEEP_UNREAD',
+            enabled: !keepUnread,
+          }}
+          icon={
+            keepUnread ? <i className="icon icon-16 icon-checkmark" /> : null
+          }
+          primaryText="Keep unread"
+        />
+      </Dropdown>
+      <Portal>
+        <ConfirmModal
+          confirmButtonClassName="button button-positive"
+          confirmButtonLabel="Mark all as read"
+          isOpened={isMarkingAllAsRead}
+          message="Are you sure you want to mark as read in this stream?"
+          onClose={handleCloseMarkAllAsReadModal}
+          onConfirm={onMarkStreamAsRead}
+          title={`Mark all as read in "${title}"`}
+        />
+      </Portal>
+    </>
+  );
 }
 
 function getSliceAtPosition(

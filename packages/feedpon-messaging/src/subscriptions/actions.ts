@@ -270,9 +270,9 @@ export function changeSubscriptionOrder(order: SubscriptionOrderKind): Event {
   };
 }
 
-export function changeUnreadViewing(onlyUnread: boolean): Event {
+export function changeOnlyUnread(onlyUnread: boolean): Event {
   return {
-    type: 'SUBSCRIPTIONS_UNREAD_VIEWING_CHANGED',
+    type: 'SUBSCRIPTIONS_ONLY_UNREAD',
     onlyUnread,
   };
 }

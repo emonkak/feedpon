@@ -16,6 +16,7 @@ a.stream-title:hover {
   border-bottom: 1px solid var(--medium-dark-color);
   background-color: var(--light-color);
   z-index: 20;
+  overflow-anchor: none;
 }
 
 .stream-metadata {
@@ -30,6 +31,7 @@ a.stream-title:hover {
   width: 100%;
   height: calc(100vh - var(--vertical-rhythm) * 2);
   text-align: center;
+  overflow-anchor: none;
 }
 
 .stream-footer > a {

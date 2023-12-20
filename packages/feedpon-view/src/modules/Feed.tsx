@@ -18,7 +18,7 @@ interface FeedProps {
   subscription: Subscription;
 }
 
-const FeedComponent: React.FC<FeedProps> = ({
+export default function FeedComponent({
   categories,
   feed,
   onAddToCategory,
@@ -27,7 +27,7 @@ const FeedComponent: React.FC<FeedProps> = ({
   onSubscribe,
   onUnsubscribe,
   subscription,
-}) => {
+}: FeedProps) {
   return (
     <li className="list-group-item">
       <div className="u-flex u-flex-justify-content-between u-flex-align-items-center">
@@ -57,6 +57,4 @@ const FeedComponent: React.FC<FeedProps> = ({
       </div>
     </li>
   );
-};
-
-export default FeedComponent;
+}

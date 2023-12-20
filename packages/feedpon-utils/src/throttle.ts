@@ -2,11 +2,11 @@ export default function throttle<TFunc extends (...args: any[]) => void>(
   func: TFunc,
   timeFrame: number,
 ): (this: ThisType<TFunc>, ...args: Parameters<TFunc>) => void {
-  let tailTimer: ReturnType<typeof setTimeout> = 0;
+  let tailTimer: ReturnType<typeof setTimeout> | null = null;
   let lastInvoked = 0;
 
   return function (...args) {
-    if (tailTimer > 0) {
+    if (tailTimer !== null) {
       return;
     }
 
@@ -19,7 +19,7 @@ export default function throttle<TFunc extends (...args: any[]) => void>(
       tailTimer = setTimeout(() => {
         func.call(this, args);
         lastInvoked = Date.now();
-        tailTimer = 0;
+        tailTimer = null;
       }, timeFrame);
     }
   };

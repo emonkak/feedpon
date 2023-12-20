@@ -1,21 +1,14 @@
-import Enumerable from '@emonkak/enumerable';
-import React, { PureComponent } from 'react';
 import { History, Location } from 'history';
+import React, { PureComponent } from 'react';
 import { Link } from 'react-router-dom';
 
-import '@emonkak/enumerable/extensions/take';
 import '@emonkak/enumerable/extensions/select';
+import '@emonkak/enumerable/extensions/take';
 import '@emonkak/enumerable/extensions/toArray';
 import '@emonkak/enumerable/extensions/where';
 
-import AutocompleteForm from '../components/AutocompleteForm';
-import ProfileDropdown from '../modules/ProfileDropdown';
-import SubscriptionIcon from '../modules/SubscriptionIcon';
-import SubscriptionTree from '../modules/SubscriptionTree';
-import SubscriptionTreeHeader from '../modules/SubscriptionTreeHeader';
 import { bindActions } from 'feedpon-flux';
 import connect from 'feedpon-flux/react/connect';
-import { ALL_STREAM_ID, PINS_STREAM_ID } from 'feedpon-messaging/streams';
 import type {
   Category,
   GroupedSubscription,
@@ -24,20 +17,26 @@ import type {
   Subscription,
   SubscriptionOrderKind,
 } from 'feedpon-messaging';
-import { MenuItem } from '../components/Menu';
-import { Tree, TreeLeaf } from '../components/Tree';
+import { logout } from 'feedpon-messaging/backend';
+import { createSortedCategoriesSelector } from 'feedpon-messaging/categories';
+import { ALL_STREAM_ID, PINS_STREAM_ID } from 'feedpon-messaging/streams';
 import {
+  changeOnlyUnread,
   changeSubscriptionOrder,
-  changeUnreadViewing,
   createAllSubscriptionsSelector,
   createGroupedSubscriptionsSelector,
   createTotalUnreadCountSelector,
   createVisibleSubscriptionsSelector,
   fetchSubscriptions,
 } from 'feedpon-messaging/subscriptions';
-import { createSortedCategoriesSelector } from 'feedpon-messaging/categories';
 import { fetchUser } from 'feedpon-messaging/user';
-import { logout } from 'feedpon-messaging/backend';
+import AutoComplete from '../components/AutoComplete';
+import { MenuItem } from '../components/Menu';
+import { Tree, TreeLeaf } from '../components/Tree';
+import ProfileDropdown from '../modules/ProfileDropdown';
+import SubscriptionIcon from '../modules/SubscriptionIcon';
+import SubscriptionTree from '../modules/SubscriptionTree';
+import SubscriptionTreeHeader from '../modules/SubscriptionTreeHeader';
 
 interface SidebarProps {
   categories: Category[];
@@ -46,7 +45,7 @@ interface SidebarProps {
   lastUpdatedAt: number;
   location: Location;
   onChangeSubscriptionOrder: typeof changeSubscriptionOrder;
-  onChangeUnreadViewing: typeof changeUnreadViewing;
+  onChangeOnlyUnread: typeof changeOnlyUnread;
   onFetchSubscriptions: typeof fetchSubscriptions;
   onFetchUser: typeof fetchUser;
   onLogout: typeof logout;
@@ -82,7 +81,7 @@ class Sidebar extends PureComponent<SidebarProps> {
       lastUpdatedAt,
       location,
       onChangeSubscriptionOrder,
-      onChangeUnreadViewing,
+      onChangeOnlyUnread: onChangeUnreadViewing,
       onFetchSubscriptions,
       onFetchUser,
       onLogout,
@@ -98,39 +97,23 @@ class Sidebar extends PureComponent<SidebarProps> {
     return (
       <nav className="sidebar">
         <div className="sidebar-group">
-          <AutocompleteForm
+          <AutoComplete<Subscription, string>
             items={subscriptions}
-            onSubmit={this._handleSearch}
             onSelect={this._handleSelect}
-            renderInput={renderSearchFeedInput}
-            renderCandidates={renderSubscriptionCandidates}
-          />
+            onSubmit={this._handleSearch}
+            placeholder="Search for feeds ..."
+            renderItems={renderItems}
+          ></AutoComplete>
         </div>
         <div className="sidebar-group">
-          <Tree>
-            <TreeLeaf
-              value="/"
-              primaryText="Dashboard"
-              isSelected={location.pathname === '/'}
-              onSelect={this._handleSelect}
-            />
+          <Tree selectedValue={location.pathname} onSelect={this._handleSelect}>
+            <TreeLeaf value="/" primaryText="Dashboard" />
             <TreeLeaf
               value={`/streams/${ALL_STREAM_ID}`}
               primaryText="All"
               secondaryText={Number(totalUnreadCount).toLocaleString()}
-              isSelected={location.pathname.startsWith(
-                '/streams/' + ALL_STREAM_ID,
-              )}
-              onSelect={this._handleSelect}
             />
-            <TreeLeaf
-              value={`/streams/${PINS_STREAM_ID}`}
-              primaryText="Pins"
-              isSelected={location.pathname.startsWith(
-                '/streams/' + PINS_STREAM_ID,
-              )}
-              onSelect={this._handleSelect}
-            />
+            <TreeLeaf value={`/streams/${PINS_STREAM_ID}`} primaryText="Pins" />
           </Tree>
         </div>
         <div className="sidebar-group">
@@ -138,8 +121,8 @@ class Sidebar extends PureComponent<SidebarProps> {
             isLoading={subscriptionsIsLoading}
             lastUpdatedAt={lastUpdatedAt}
             onChangeSubscriptionOrder={onChangeSubscriptionOrder}
-            onChangeUnreadViewing={onChangeUnreadViewing}
-            onOrganizeSubscriptions={this._handleOrganizeSubscriptions}
+            onChangeOnlyUnread={onChangeUnreadViewing}
+            onManageSubscriptions={this._handleManageSubscriptions}
             onReload={onFetchSubscriptions}
             onlyUnread={onlyUnread}
             subscriptionOrder={subscriptionOrder}
@@ -152,19 +135,9 @@ class Sidebar extends PureComponent<SidebarProps> {
           />
         </div>
         <div className="sidebar-group">
-          <Tree>
-            <TreeLeaf
-              value="/settings/ui"
-              primaryText="Settings"
-              isSelected={location.pathname.startsWith('/settings/')}
-              onSelect={this._handleSelect}
-            />
-            <TreeLeaf
-              value="/about/"
-              primaryText="About"
-              isSelected={location.pathname.startsWith('/about/')}
-              onSelect={this._handleSelect}
-            />
+          <Tree selectedValue={location.pathname} onSelect={this._handleSelect}>
+            <TreeLeaf value="/settings/ui" primaryText="Settings" />
+            <TreeLeaf value="/about/" primaryText="About" />
           </Tree>
         </div>
         <div className="sidebar-group">
@@ -199,52 +172,36 @@ class Sidebar extends PureComponent<SidebarProps> {
     history.push(path);
   };
 
-  private _handleOrganizeSubscriptions = () => {
+  private _handleManageSubscriptions = () => {
     const { history } = this.props;
 
     history.push('/categories/');
   };
 }
 
-function renderSubscriptionCandidates(
-  subscriptions: Subscription[],
-  query: string,
-) {
+function renderItems(subscriptions: Subscription[], query: string) {
   if (query.trim() === '') {
-    return null;
+    return [];
   }
 
-  const splittedQueries = query.trim().toLowerCase().split(/\s+/);
-  const candidates = new Enumerable(subscriptions)
-    .where((subscription) => {
-      const text = (subscription.title + ' ' + subscription.url).toLowerCase();
-      return splittedQueries.every((query) => text.includes(query));
-    })
-    .take(10)
-    .select((subscription) => (
-      <MenuItem
-        key={subscription.subscriptionId}
-        value={'/streams/' + encodeURIComponent(subscription.streamId)}
-        primaryText={subscription.title}
-        secondaryText={
-          subscription.unreadCount > 0
-            ? Number(subscription.unreadCount).toLocaleString()
-            : ''
-        }
-        icon={
-          <SubscriptionIcon
-            title={subscription.title}
-            iconUrl={subscription.iconUrl}
-          />
-        }
-      />
-    ))
-    .toArray();
+  const queryWords = query.trim().toLowerCase().split(/\s+/);
+  const matchedItems = [];
+
+  for (let i = 0, l = subscriptions.length; i < l; i++) {
+    const subscription = subscriptions[i]!;
+    const source = (subscription.title + ' ' + subscription.url).toLowerCase();
+    if (queryWords.every((query) => source.includes(query))) {
+      const item = renderItem(subscription);
+      if (matchedItems.push(item) >= 10) {
+        break;
+      }
+    }
+  }
 
   return (
     <>
-      {candidates}
-      {candidates.length > 0 && <div className="menu-divider" />}
+      {matchedItems}
+      {matchedItems.length > 0 && <div className="menu-divider" />}
       <MenuItem
         value={'/search/' + encodeURIComponent(query)}
         primaryText={`Search for "${query}"`}
@@ -253,21 +210,23 @@ function renderSubscriptionCandidates(
   );
 }
 
-function renderSearchFeedInput(props: {
-  onChange: React.FormEventHandler<any>;
-  onKeyDown: React.KeyboardEventHandler<any>;
-  onFocus: React.FocusEventHandler<any>;
-  ref: (element: HTMLInputElement | null) => void;
-}) {
+function renderItem(subscription: Subscription) {
   return (
-    <input
-      onChange={props.onChange}
-      onKeyDown={props.onKeyDown}
-      onFocus={props.onFocus}
-      ref={props.ref}
-      type="search"
-      className="input-search-box"
-      placeholder="Search for feeds ..."
+    <MenuItem
+      key={subscription.subscriptionId}
+      value={'/streams/' + encodeURIComponent(subscription.streamId)}
+      primaryText={subscription.title}
+      secondaryText={
+        subscription.unreadCount > 0
+          ? Number(subscription.unreadCount).toLocaleString()
+          : ''
+      }
+      icon={
+        <SubscriptionIcon
+          title={subscription.title}
+          iconUrl={subscription.iconUrl}
+        />
+      }
     />
   );
 }
@@ -301,7 +260,7 @@ export default connect(() => {
     }),
     mapDispatchToProps: bindActions({
       onChangeSubscriptionOrder: changeSubscriptionOrder,
-      onChangeUnreadViewing: changeUnreadViewing,
+      onChangeOnlyUnread: changeOnlyUnread,
       onFetchSubscriptions: fetchSubscriptions,
       onFetchUser: fetchUser,
       onLogout: logout,

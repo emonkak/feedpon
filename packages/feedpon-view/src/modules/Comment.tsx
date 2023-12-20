@@ -6,7 +6,7 @@ interface CommentProps {
   comment: Comment;
 }
 
-const CommentComponent: React.FC<CommentProps> = ({ comment }) => {
+export default function CommentComponent({ comment }: CommentProps) {
   return (
     <div className="comment">
       <span className="comment-user">{comment.user}</span>
@@ -16,6 +16,4 @@ const CommentComponent: React.FC<CommentProps> = ({ comment }) => {
       </time>
     </div>
   );
-};
-
-export default CommentComponent;
+}

@@ -52,6 +52,7 @@ import {
   unselectStream,
 } from 'feedpon-messaging/ui';
 import * as CacheMap from 'feedpon-utils/CacheMap';
+import type { VirtualListRef } from '../components/VirtualList';
 import MainLayout from '../layouts/MainLayout';
 import CategoryHeader from '../modules/CategoryHeader';
 import EntryList from '../modules/EntryList';
@@ -102,21 +103,20 @@ interface StreamPageProps extends RouteComponentProps<{ stream_id: string }> {
 }
 
 class StreamPage extends PureComponent<StreamPageProps> {
-  private _entryList: EntryList | null = null;
+  private _virtualList: VirtualListRef | null = null;
 
   constructor(props: StreamPageProps) {
     super(props);
 
     this.handleChangeActiveEnetry = this.handleChangeActiveEnetry.bind(this);
-    this.handleChangeEntryOrderKind =
-      this.handleChangeEntryOrderKind.bind(this);
+    this.handleChangeEntryOrder = this.handleChangeEntryOrder.bind(this);
     this.handleChangeExpandedEntry = this.handleChangeExpandedEntry.bind(this);
     this.handleChangeNumberOfEntries =
       this.handleChangeNumberOfEntries.bind(this);
     this.handleChangeStreamView = this.handleChangeStreamView.bind(this);
     this.handleClearReadEntries = this.handleClearReadEntries.bind(this);
     this.handleCloseEntry = this.handleCloseEntry.bind(this);
-    this.handleHeightUpdated = this.handleHeightUpdated.bind(this);
+    this.handleUpdateHeights = this.handleUpdateHeights.bind(this);
     this.handleLoadMoreEntries = this.handleLoadMoreEntries.bind(this);
     this.handleMarkAllEntriesAsRead =
       this.handleMarkAllEntriesAsRead.bind(this);
@@ -201,7 +201,7 @@ class StreamPage extends PureComponent<StreamPageProps> {
     }
   }
 
-  handleChangeEntryOrderKind(entryOrder: EntryOrderKind) {
+  handleChangeEntryOrder(entryOrder: EntryOrderKind) {
     const { onFetchStream, stream } = this.props;
 
     if (stream) {
@@ -261,7 +261,7 @@ class StreamPage extends PureComponent<StreamPageProps> {
     }
   }
 
-  handleHeightUpdated(heights: { [id: string]: number }): void {
+  handleUpdateHeights(heights: { [id: string]: number }): void {
     const { onUpdateEntryHeights, stream } = this.props;
 
     if (stream) {
@@ -320,8 +320,8 @@ class StreamPage extends PureComponent<StreamPageProps> {
   }
 
   handleScrollToEntry(index: number) {
-    if (this._entryList) {
-      this._entryList.scrollToIndex(index);
+    if (this._virtualList) {
+      this._virtualList.scrollTo(index);
     }
   }
 
@@ -363,7 +363,7 @@ class StreamPage extends PureComponent<StreamPageProps> {
         isExpanded={stream.expandedEntryIndex > -1}
         isLoading={isLoading}
         keepUnread={keepUnread}
-        onChangeEntryOrderKind={this.handleChangeEntryOrderKind}
+        onChangeEntryOrder={this.handleChangeEntryOrder}
         onChangeNumberOfEntries={this.handleChangeNumberOfEntries}
         onChangeStreamView={this.handleChangeStreamView}
         onClearReadPosition={this.handleClearReadEntries}
@@ -453,7 +453,7 @@ class StreamPage extends PureComponent<StreamPageProps> {
         onExpand={this.handleChangeExpandedEntry}
         onFetchComments={onFetchEntryComments}
         onFetchFullContent={onFetchFullContent}
-        onHeightUpdated={this.handleHeightUpdated}
+        onUpdateHeights={this.handleUpdateHeights}
         onHideComments={onHideEntryComments}
         onHideFullContents={onHideFullContents}
         onPin={onPinEntry}
@@ -461,7 +461,7 @@ class StreamPage extends PureComponent<StreamPageProps> {
         onShowFullContents={onShowFullContents}
         onUnpin={onUnpinEntry}
         readEntryIndex={stream.readEntryIndex}
-        ref={this._handleEntryList}
+        ref={this._handleVirtualList}
         sameOrigin={stream.feed !== null}
         streamView={stream.streamView}
       />
@@ -491,8 +491,8 @@ class StreamPage extends PureComponent<StreamPageProps> {
     );
   }
 
-  private _handleEntryList = (entryList: EntryList | null) => {
-    this._entryList = entryList;
+  private _handleVirtualList = (virtualList: VirtualListRef | null) => {
+    this._virtualList = virtualList;
   };
 }
 

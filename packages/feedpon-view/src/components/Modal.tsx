@@ -1,5 +1,7 @@
+import React, { useEffect } from 'react';
 import CSSTransition from 'react-transition-group/CSSTransition';
-import React, { PureComponent } from 'react';
+
+import useEvent from '../hooks/useEvent';
 
 interface ModalProps {
   children?: React.ReactNode;
@@ -7,89 +9,72 @@ interface ModalProps {
   onClose?: () => void;
 }
 
-export default class Modal extends PureComponent<ModalProps> {
-  static defaultProps = {
-    isOpened: false,
-  };
-
-  constructor(props: ModalProps) {
-    super(props);
-
-    this.handleClick = this.handleClick.bind(this);
-    this.handleDocumentKeyDown = this.handleDocumentKeyDown.bind(this);
-  }
-
-  override componentDidMount() {
-    this.refreshBodyStyles(this.props.isOpened!);
-
-    document.addEventListener('keydown', this.handleDocumentKeyDown, true);
-  }
-
-  override componentDidUpdate(_prevProps: ModalProps) {
-    this.refreshBodyStyles(this.props.isOpened!);
-  }
-
-  override componentWillUnmount() {
-    this.refreshBodyStyles(false);
-
-    document.removeEventListener('keydown', this.handleDocumentKeyDown, true);
-  }
-
-  handleClick(event: React.MouseEvent<any>) {
-    if (event.target === event.currentTarget) {
-      event.preventDefault();
-
-      const { onClose } = this.props;
-
-      if (onClose) {
-        onClose();
-      }
-    }
-  }
-
-  handleDocumentKeyDown(event: KeyboardEvent) {
-    const { isOpened } = this.props;
-
+export default function Modal({
+  children,
+  isOpened = false,
+  onClose,
+}: ModalProps) {
+  const handleDocumentKeyDown = useEvent((event: KeyboardEvent) => {
     if (isOpened) {
       event.stopPropagation();
 
       if (event.key === 'Escape') {
-        const { onClose } = this.props;
-
         if (onClose) {
           onClose();
         }
       }
     }
-  }
+  });
 
-  refreshBodyStyles(isOpened: boolean) {
-    const numModals = document.getElementsByClassName('modal').length;
+  const handleCloseModal = useEvent((event: React.MouseEvent<any>) => {
+    if (event.target === event.currentTarget) {
+      event.preventDefault();
 
-    if (numModals <= 1) {
-      if (isOpened) {
-        document.documentElement.classList.add('modal-is-opened');
-      } else {
-        document.documentElement.classList.remove('modal-is-opened');
+      if (onClose) {
+        onClose();
       }
     }
-  }
+  });
 
-  override render() {
-    const { children, isOpened } = this.props;
+  useEffect(() => {
+    document.addEventListener('keydown', handleDocumentKeyDown, true);
 
-    return (
-      <CSSTransition
-        in={isOpened}
-        mountOnEnter
-        unmountOnExit
-        classNames="modal"
-        timeout={200}
-      >
-        <div className="modal" onClick={this.handleClick}>
-          <div className="modal-dialog">{children}</div>
-        </div>
-      </CSSTransition>
-    );
+    return () => {
+      document.removeEventListener('keydown', handleDocumentKeyDown, true);
+    };
+  }, []);
+
+  useEffect(() => {
+    updateModalStatus(isOpened);
+
+    () => {
+      updateModalStatus(false);
+    };
+  }, [isOpened]);
+
+  return (
+    <CSSTransition
+      in={isOpened}
+      mountOnEnter
+      unmountOnExit
+      classNames="modal"
+      timeout={200}
+    >
+      <div className="modal" onClick={handleCloseModal}>
+        <div className="modal-dialog">{children}</div>
+      </div>
+    </CSSTransition>
+  );
+}
+
+function updateModalStatus(isOpened: boolean) {
+  const availableModals = document.getElementsByClassName('modal').length;
+
+  if (availableModals <= 1) {
+    if (isOpened) {
+      document.documentElement.classList.add('modal-is-opened');
+    } else {
+      document.documentElement.classList.remove('modal-is-opened');
+    }
   }
 }

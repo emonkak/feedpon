@@ -1,5 +1,10 @@
-import React, { PureComponent } from 'react';
-import relativeTime from 'feedpon-utils/relativeTime';
+import React, { useEffect, useMemo, useState } from 'react';
+
+const MILLIS_PER_SECOND = 1000;
+const MILLIS_PER_MINITE = 60 * 1000;
+const MILLIS_PER_HOUR = 60 * 60 * 1000;
+const MILLIS_PER_DAY = 24 * 60 * 60 * 1000;
+const MILLIS_PER_YEAR = 24 * 60 * 60 * 365 * 1000;
 
 interface RelativeTimeProps {
   className?: string;
@@ -8,127 +13,65 @@ interface RelativeTimeProps {
   time: number;
 }
 
-interface RelativeTimeState {
-  formatter: Intl.RelativeTimeFormat;
-  prevLocales?: string | string[];
-  prevTime: number;
-  relativeTime: string;
-}
+export default function RelativeTime({
+  className,
+  locales = 'en',
+  time,
+  updateInterval = MILLIS_PER_MINITE,
+}: RelativeTimeProps) {
+  const [now, setNow] = useState(() => new Date());
 
-export default class RelativeTime extends PureComponent<
-  RelativeTimeProps,
-  RelativeTimeState
-> {
-  static defaultProps = {
-    locales: 'en',
-    updateInterval: 1000 * 60,
-  };
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setNow(new Date());
+    }, updateInterval);
 
-  private timer: number | null = null;
-
-  static getDerivedStateFromProps(
-    props: RelativeTimeProps,
-    state: RelativeTimeState,
-  ) {
-    const updates: Partial<RelativeTimeState> = {};
-    let hasUpdated = false;
-
-    if (props.locales !== state.prevLocales) {
-      updates.formatter = new Intl.RelativeTimeFormat(props.locales);
-      updates.prevLocales = props.locales;
-      hasUpdated = true;
-    }
-
-    if (props.time !== state.prevTime) {
-      updates.relativeTime = formatTime(
-        updates.formatter || state.formatter,
-        props.time,
-      );
-      updates.prevTime = props.time;
-      hasUpdated = true;
-    }
-
-    return hasUpdated ? updates : null;
-  }
-
-  constructor(props: RelativeTimeProps) {
-    super(props);
-
-    const formatter = new Intl.RelativeTimeFormat(props.locales);
-
-    this.state = {
-      formatter,
-      prevLocales: props.locales,
-      prevTime: props.time,
-      relativeTime: formatTime(formatter, props.time),
+    return () => {
+      clearInterval(timer);
     };
-  }
+  }, [updateInterval]);
 
-  override componentDidMount() {
-    this.startTimer(this.props.updateInterval!);
-  }
+  const formatter = useMemo(
+    () => new Intl.RelativeTimeFormat(locales),
+    [locales],
+  );
+  const date = typeof time === 'number' ? new Date(time) : time;
+  const [amount, unit] = relativeTime(date, now);
+  const relativeTimeString =
+    unit === 'second' && amount <= 0 ? 'now' : formatter.format(amount, unit);
 
-  override componentDidUpdate(
-    prevProps: RelativeTimeProps,
-    _prevState: RelativeTimeState,
-  ) {
-    const { updateInterval } = this.props;
-
-    if (updateInterval !== prevProps.updateInterval) {
-      this.restartTimer(updateInterval!);
-    }
-  }
-
-  override componentWillUnmount() {
-    this.stopTimer();
-  }
-
-  override render() {
-    const { className, time } = this.props;
-    const { relativeTime } = this.state;
-
-    const date = typeof time === 'number' ? new Date(time) : time;
-
-    return (
-      <time
-        className={className}
-        dateTime={date.toISOString()}
-        title={date.toLocaleString()}
-      >
-        {relativeTime}
-      </time>
-    );
-  }
-
-  private startTimer(updateInterval: number) {
-    this.timer = window.setInterval(this.update.bind(this), updateInterval);
-  }
-
-  private stopTimer() {
-    if (this.timer != null) {
-      window.clearInterval(this.timer);
-    }
-  }
-
-  private restartTimer(updateInterval: number) {
-    this.stopTimer();
-    this.startTimer(updateInterval);
-    this.update();
-  }
-
-  private update() {
-    const { time } = this.props;
-    const { formatter } = this.state;
-
-    this.setState({
-      relativeTime: formatTime(formatter, time),
-    });
-  }
+  return (
+    <time
+      className={className}
+      dateTime={date.toISOString()}
+      title={date.toLocaleString()}
+    >
+      {relativeTimeString}
+    </time>
+  );
 }
 
-function formatTime(formatter: Intl.RelativeTimeFormat, time: number): string {
-  const [amount, type] = relativeTime(new Date(time));
-  return type === 'second' && amount <= 0
-    ? 'now'
-    : formatter.format(amount, type);
+function relativeTime(
+  date: Date,
+  now: Date,
+): [number, Intl.RelativeTimeFormatUnit] {
+  const delta = date.getTime() - now.getTime();
+
+  if (Math.abs(delta) < MILLIS_PER_MINITE) {
+    return [(delta / MILLIS_PER_SECOND) << 0, 'second'];
+  }
+
+  if (Math.abs(delta) < MILLIS_PER_HOUR) {
+    return [(delta / MILLIS_PER_MINITE) << 0, 'minute'];
+  }
+
+  if (Math.abs(delta) < MILLIS_PER_DAY) {
+    return [(delta / MILLIS_PER_HOUR) << 0, 'hour'];
+  }
+
+  if (Math.abs(delta) < MILLIS_PER_YEAR) {
+    return [(delta / MILLIS_PER_DAY) << 0, 'day'];
+  }
+
+  return [date.getFullYear() - now.getFullYear(), 'year'];
 }

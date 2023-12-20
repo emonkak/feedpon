@@ -201,7 +201,7 @@ export type Event =
   | { type: 'SUBSCRIPTIONS_IMPORTING' }
   | { type: 'SUBSCRIPTIONS_IMPORTING_DONE' }
   | { type: 'SUBSCRIPTIONS_ORDER_CHANGED'; order: SubscriptionOrderKind }
-  | { type: 'SUBSCRIPTIONS_UNREAD_VIEWING_CHANGED'; onlyUnread: boolean }
+  | { type: 'SUBSCRIPTIONS_ONLY_UNREAD'; onlyUnread: boolean }
   | { type: 'THEME_CHANGED'; theme: ThemeKind }
   | { type: 'TOKEN_REVOKED' }
   | { type: 'TOKEN_REVOKING' }

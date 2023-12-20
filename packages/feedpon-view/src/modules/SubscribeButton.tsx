@@ -8,12 +8,12 @@ interface SubscribeButtonProps {
   onKeyDown?: React.KeyboardEventHandler<any>;
 }
 
-const SubscribeButton: React.FC<SubscribeButtonProps> = ({
+export default function SubscribeButton({
   isSubscribed,
   isLoading,
   onClick,
   onKeyDown,
-}) => {
+}: SubscribeButtonProps) {
   if (isSubscribed) {
     return (
       <button
@@ -47,6 +47,4 @@ const SubscribeButton: React.FC<SubscribeButtonProps> = ({
       </button>
     );
   }
-};
-
-export default SubscribeButton;
+}

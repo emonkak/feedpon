@@ -1,5 +1,6 @@
-import React, { PureComponent } from 'react';
+import React from 'react';
 
+import useEvent from '../hooks/useEvent';
 import Modal from './Modal';
 
 interface ConfirmModalProps {
@@ -16,76 +17,45 @@ interface ConfirmModalProps {
   title: string;
 }
 
-export default class ConfirmModal extends PureComponent<ConfirmModalProps> {
-  static defaultProps = {
-    cancelButtonClassName: 'button button-outline-default',
-    cancelButtonLabel: 'Cancel',
-    confirmButtonClassName: 'button button-outline-positive',
-    confirmButtonLabel: 'OK',
-    isOpened: false,
-  };
+export default function ConfirmModal({
+  cancelButtonClassName = 'button button-outline-default',
+  cancelButtonLabel = 'Cancel',
+  confirmButtonClassName = 'button button-outline-positive',
+  confirmButtonLabel = 'OK',
+  isOpened = false,
+  message,
+  onCancel,
+  onClose,
+  onConfirm,
+  title,
+}: ConfirmModalProps) {
+  const handleCancel = useEvent(() => {
+    onCancel?.();
+    onClose?.();
+  });
 
-  constructor(props: ConfirmModalProps) {
-    super(props);
+  const handleConfirm = useEvent(() => {
+    onConfirm?.();
+    onClose?.();
+  });
 
-    this.handleCancel = this.handleCancel.bind(this);
-    this.handleConfirm = this.handleConfirm.bind(this);
-  }
-
-  handleCancel() {
-    const { onClose, onCancel } = this.props;
-
-    if (onCancel) {
-      onCancel();
-    }
-
-    if (onClose) {
-      onClose();
-    }
-  }
-
-  handleConfirm() {
-    const { onClose, onConfirm } = this.props;
-
-    if (onConfirm) {
-      onConfirm();
-    }
-
-    if (onClose) {
-      onClose();
-    }
-  }
-
-  override render() {
-    const {
-      cancelButtonClassName,
-      cancelButtonLabel,
-      isOpened,
-      message,
-      confirmButtonClassName,
-      confirmButtonLabel,
-      onClose,
-      title,
-    } = this.props;
-
-    return (
-      <Modal isOpened={isOpened} onClose={onClose}>
-        <button className="close u-pull-right" onClick={onClose}></button>
-        <h1 className="modal-title">{title}</h1>
-        <p>{message}</p>
-        <p className="button-toolbar">
-          <button
-            autoFocus
-            className={confirmButtonClassName}
-            onClick={this.handleConfirm}
-          >
-            {confirmButtonLabel}
-          </button>
-          <button className={cancelButtonClassName} onClick={this.handleCancel}>
-            {cancelButtonLabel}
-          </button>
-        </p>
-      </Modal>
-    );
-  }
+  return (
+    <Modal isOpened={isOpened} onClose={onClose}>
+      <button className="close u-pull-right" onClick={onClose}></button>
+      <h1 className="modal-title">{title}</h1>
+      <p>{message}</p>
+      <p className="button-toolbar">
+        <button
+          autoFocus
+          className={confirmButtonClassName}
+          onClick={handleConfirm}
+        >
+          {confirmButtonLabel}
+        </button>
+        <button className={cancelButtonClassName} onClick={handleCancel}>
+          {cancelButtonLabel}
+        </button>
+      </p>
+    </Modal>
+  );
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 
-import EmbeddedHtml from '../components/EmbeddedHtml';
 import type { FullContent } from 'feedpon-messaging';
+import Sandbox from '../components/Sandbox';
 
 interface FullContentsProps {
   isLoading: boolean;
@@ -10,12 +10,12 @@ interface FullContentsProps {
   onFetchNext: React.MouseEventHandler<any>;
 }
 
-const FullContents: React.FC<FullContentsProps> = ({
+export default function FullContents({
   isLoading,
   isNotFound,
   items,
   onFetchNext,
-}) => {
+}: FullContentsProps) {
   if (items.length === 0) {
     return (
       <div className="entry-content u-clearfix u-text-wrap">
@@ -37,7 +37,7 @@ const FullContents: React.FC<FullContentsProps> = ({
           </h2>
         </header>
       )}
-      <EmbeddedHtml
+      <Sandbox
         baseUrl={fullContent.url}
         className="entry-page-content"
         html={fullContent.content}
@@ -80,6 +80,4 @@ const FullContents: React.FC<FullContentsProps> = ({
       {nextPageButton}
     </div>
   );
-};
-
-export default FullContents;
+}

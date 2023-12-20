@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React from 'react';
 
 import SubscriptionIcon from './SubscriptionIcon';
 import type {
@@ -16,86 +16,68 @@ interface SubscriptionTreeProps {
   selectedPath: string;
 }
 
-export default class SubscriptionTree extends PureComponent<SubscriptionTreeProps> {
-  renderCategory(
-    category: Category,
-    subscriptions: Subscription[],
-    unreadCount: number,
-  ) {
-    const { onSelect, selectedPath } = this.props;
-    const path = `/streams/${encodeURIComponent(category.streamId)}`;
+export default function SubscriptionTree({
+  categories,
+  groupedSubscriptions,
+  onSelect,
+  selectedPath,
+}: SubscriptionTreeProps) {
+  const visibleCategories = categories
+    .filter((category) => groupedSubscriptions.hasOwnProperty(category.label))
+    .map((category) => {
+      const { items, unreadCount } = groupedSubscriptions[category.label]!;
+      const path = `/streams/${encodeURIComponent(category.streamId)}`;
+      const children = items.map(renderSubscription);
 
-    return (
-      <TreeBranch
-        key={category.categoryId}
-        value={path}
-        isImportant={unreadCount > 0}
-        isSelected={selectedPath === path}
-        primaryText={category.label}
-        secondaryText={
-          unreadCount > 0 ? Number(unreadCount).toLocaleString() : ''
-        }
-        onSelect={onSelect}
-      >
-        {subscriptions.map(this.renderSubscription, this)}
-      </TreeBranch>
-    );
-  }
+      return (
+        <TreeBranch
+          key={category.categoryId}
+          value={path}
+          isImportant={unreadCount > 0}
+          primaryText={category.label}
+          secondaryText={
+            unreadCount > 0 ? Number(unreadCount).toLocaleString() : ''
+          }
+        >
+          {children}
+        </TreeBranch>
+      );
+    });
 
-  renderSubscription(subscription: Subscription) {
-    const { onSelect, selectedPath } = this.props;
-    const path = `/streams/${encodeURIComponent(subscription.streamId)}`;
-    const unreadCount =
-      subscription.unreadCount > subscription.readCount
-        ? subscription.unreadCount - subscription.readCount
-        : 0;
+  const uncategorizedSubscriptions = (
+    groupedSubscriptions[UNCATEGORIZED]?.items ?? []
+  ).map(renderSubscription);
 
-    return (
-      <TreeLeaf
-        key={subscription.subscriptionId}
-        primaryText={subscription.title}
-        secondaryText={
-          unreadCount > 0 ? Number(unreadCount).toLocaleString() : ''
-        }
-        icon={
-          <SubscriptionIcon
-            title={subscription.title}
-            iconUrl={subscription.iconUrl}
-          />
-        }
-        value={path}
-        isImportant={unreadCount > 0}
-        isSelected={selectedPath === path}
-        onSelect={onSelect}
-      />
-    );
-  }
+  return (
+    <Tree selectedValue={selectedPath} onSelect={onSelect}>
+      {visibleCategories}
+      {uncategorizedSubscriptions}
+    </Tree>
+  );
+}
 
-  override render() {
-    const { categories, groupedSubscriptions } = this.props;
+function renderSubscription(subscription: Subscription) {
+  const path = `/streams/${encodeURIComponent(subscription.streamId)}`;
+  const unreadCount =
+    subscription.unreadCount > subscription.readCount
+      ? subscription.unreadCount - subscription.readCount
+      : 0;
 
-    const visibleCategories = categories
-      .filter((category) => groupedSubscriptions.hasOwnProperty(category.label))
-      .map((category) => ({
-        category,
-        groupedSubscription: groupedSubscriptions[category.label]!,
-      }));
-
-    const uncategorizedSubscriptions = groupedSubscriptions[UNCATEGORIZED]
-      ? groupedSubscriptions[UNCATEGORIZED].items
-      : [];
-
-    return (
-      <Tree>
-        {visibleCategories.map(({ category, groupedSubscription }) =>
-          this.renderCategory(
-            category,
-            groupedSubscription.items,
-            groupedSubscription.unreadCount,
-          ),
-        )}
-        {uncategorizedSubscriptions.map(this.renderSubscription, this)}
-      </Tree>
-    );
-  }
+  return (
+    <TreeLeaf
+      key={subscription.subscriptionId}
+      primaryText={subscription.title}
+      secondaryText={
+        unreadCount > 0 ? Number(unreadCount).toLocaleString() : ''
+      }
+      icon={
+        <SubscriptionIcon
+          title={subscription.title}
+          iconUrl={subscription.iconUrl}
+        />
+      }
+      value={path}
+      isImportant={unreadCount > 0}
+    />
+  );
 }
