@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import throttle from 'lodash.throttle';
 import { findDOMNode } from 'react-dom';
 
+import throttle from 'feedpon-utils/throttle';
 import LazyListRenderer from './LazyListRenderer';
 
 interface LazyListProps {
@@ -143,9 +144,6 @@ export default class LazyList extends Component<LazyListProps, LazyListState> {
     this._handleScroll = throttle(
       createScheduledTask(() => this._update(), window.requestAnimationFrame),
       props.scrollThrottleTime!,
-      {
-        trailing: true,
-      },
     );
   }
 

@@ -1,34 +1,34 @@
 import React, { PureComponent } from 'react';
-import debounce from 'lodash.debounce';
 import { RouteComponentProps } from 'react-router';
 import { createSelector } from 'reselect';
 
-import CategoriesNav from '../modules/CategoriesNav';
-import Dropdown from '../components/Dropdown';
-import EditCategoryForm from '../modules/EditCategoryForm';
-import LazyList from '../components/LazyList';
-import MainLayout from '../layouts/MainLayout';
-import Navbar from '../components/Navbar';
-import SubscriptionItem from '../modules/Subscription';
 import { bindActions } from 'feedpon-flux';
 import connect from 'feedpon-flux/react/connect';
-import createAscendingComparer from 'feedpon-utils/createAscendingComparer';
 import type { Category, State, Subscription } from 'feedpon-messaging';
-import { MenuItem } from '../components/Menu';
-import { UNCATEGORIZED } from 'feedpon-messaging/categories';
+import {
+  UNCATEGORIZED,
+  createCategory,
+  createSortedCategoriesSelector,
+  deleteCategory,
+  updateCategory,
+} from 'feedpon-messaging/categories';
 import {
   addToCategory,
   importOpml,
   removeFromCategory,
   unsubscribe,
 } from 'feedpon-messaging/subscriptions';
-import {
-  createCategory,
-  deleteCategory,
-  updateCategory,
-} from 'feedpon-messaging/categories';
-import { createSortedCategoriesSelector } from 'feedpon-messaging/categories';
 import { toggleSidebar } from 'feedpon-messaging/ui';
+import createAscendingComparer from 'feedpon-utils/createAscendingComparer';
+import debounce from 'feedpon-utils/debounce';
+import Dropdown from '../components/Dropdown';
+import LazyList from '../components/LazyList';
+import { MenuItem } from '../components/Menu';
+import Navbar from '../components/Navbar';
+import MainLayout from '../layouts/MainLayout';
+import CategoriesNav from '../modules/CategoriesNav';
+import EditCategoryForm from '../modules/EditCategoryForm';
+import SubscriptionItem from '../modules/Subscription';
 
 interface CategoriesPageProps extends RouteComponentProps<{ label: string }> {
   activeCategory: Category | null;

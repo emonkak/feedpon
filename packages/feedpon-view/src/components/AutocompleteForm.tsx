@@ -1,7 +1,7 @@
-import React, { PureComponent } from 'react';
 import classnames from 'classnames';
-import debounce from 'lodash.debounce';
+import React, { PureComponent } from 'react';
 
+import debounce from 'feedpon-utils/debounce';
 import Closable from './Closable';
 import { Menu } from './Menu';
 
