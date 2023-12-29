@@ -1,9 +1,9 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
 import { createHashHistory } from 'history';
+import React from 'react';
+import { createRoot } from 'react-dom/client';
 
-import Bootstrap from 'feedpon-view/Bootstrap';
 import prepareSelectors from 'feedpon-messaging/prepareSelectors';
+import Bootstrap from 'feedpon-view/Bootstrap';
 import prepareStore from './prepareStore';
 
 function main() {
@@ -23,11 +23,11 @@ function main() {
   };
   const preparingStore = prepareStore(context);
 
-  const element = document.getElementById('app');
+  const element = document.getElementById('app')!;
+  const root = createRoot(element);
 
-  return ReactDOM.render(
+  root.render(
     <Bootstrap preparingStore={preparingStore} history={hashHistory} />,
-    element,
   );
 }
 
