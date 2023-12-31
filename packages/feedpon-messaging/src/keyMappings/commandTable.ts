@@ -1,5 +1,5 @@
 import * as CacheMap from 'feedpon-utils/CacheMap';
-import { smoothScrollBy } from 'feedpon-utils/smoothScroll';
+import { scrollBy as smoothScrollBy } from 'feedpon-utils/SmoothScroll';
 import {
   getNextEntryScrollPosition,
   getPreviousEntryScrollPosition,
@@ -12,6 +12,9 @@ import * as subscriptionActions from '../subscriptions/actions';
 import * as uiActions from '../ui/actions';
 
 const TEMPLATE_PATTERN = /\${([A-Z_]\w+)}/i;
+
+const SCROLL_DURATION = (1000 / 60) * 10;
+const SCROLL_EASING = (t: number) => t * t * t;
 
 export const clearReadPosition: Command<{}> = {
   name: 'Clear read position',
@@ -299,7 +302,7 @@ export const scrollDown: Command<{ scrollAmount: number }> = {
   },
   action({ scrollAmount }) {
     return () => {
-      smoothScrollBy(window, 0, scrollAmount);
+      smoothScrollBy(window, 0, scrollAmount, SCROLL_EASING, SCROLL_DURATION);
     };
   },
 };
@@ -316,6 +319,8 @@ export const scrollPageDown: Command<{ numPages: number }> = {
         window,
         0,
         document.documentElement.clientHeight * numPages,
+        SCROLL_EASING,
+        SCROLL_DURATION,
       );
     };
   },
@@ -333,6 +338,8 @@ export const scrollPageUp: Command<{ numPages: number }> = {
         window,
         0,
         -document.documentElement.clientHeight * numPages,
+        SCROLL_EASING,
+        SCROLL_DURATION,
       );
     };
   },
@@ -346,7 +353,7 @@ export const scrollUp: Command<{ scrollAmount: number }> = {
   },
   action({ scrollAmount }) {
     return () => {
-      smoothScrollBy(window, 0, -scrollAmount);
+      smoothScrollBy(window, 0, -scrollAmount, SCROLL_EASING, SCROLL_DURATION);
     };
   },
 };
@@ -429,7 +436,7 @@ export const selectNextEntry: Command<{}> = {
       const dy = getNextEntryScrollPosition();
 
       if (dy !== 0) {
-        smoothScrollBy(window, 0, dy);
+        smoothScrollBy(window, 0, dy, SCROLL_EASING, SCROLL_DURATION);
       } else if (!streams.isLoading) {
         const stream = dispatch(getSelectedStream);
 
@@ -554,7 +561,7 @@ export const selectPreviousEntry: Command<{}> = {
       const dy = getPreviousEntryScrollPosition();
 
       if (dy !== 0) {
-        smoothScrollBy(window, 0, dy);
+        smoothScrollBy(window, 0, dy, SCROLL_EASING, SCROLL_DURATION);
       }
     };
   },

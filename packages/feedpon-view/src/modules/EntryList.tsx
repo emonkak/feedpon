@@ -3,7 +3,7 @@ import { createSelector } from 'reselect';
 
 import type { Entry, StreamViewKind } from 'feedpon-messaging';
 import { getScrollOffset } from 'feedpon-messaging/domActions';
-import { isScrolling } from 'feedpon-utils/smoothScroll';
+import { isScrolling } from 'feedpon-utils/SmoothScroll';
 import LazyList, {
   Positioning,
   ViewportRectangle,
