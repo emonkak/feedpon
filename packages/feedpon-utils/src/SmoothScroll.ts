@@ -3,11 +3,12 @@ type Scrollable = Window | Element;
 type EasingFunc = (t: number) => number;
 
 interface ScrollState {
-  frame: number;
   previousTime: number;
+  promise: Promise<void>;
+  aborted: boolean;
 }
 
-const scrollStates = new WeakMap<Scrollable, ScrollState>();
+const globalScrollStates = new WeakMap<Scrollable, ScrollState>();
 
 export function scrollTo(
   scrollable: Scrollable,
@@ -61,8 +62,24 @@ export function scrollBy(
   }
 }
 
+export function abortScroll(scrollable: Scrollable): void {
+  const scrollState = globalScrollStates.get(scrollable);
+  if (scrollState) {
+    scrollState.aborted = true;
+  }
+}
+
 export function isScrolling(scrollable: Scrollable): boolean {
-  return scrollStates.has(scrollable);
+  const scrollState = globalScrollStates.get(scrollable);
+  return scrollState ? !scrollState.aborted : false;
+}
+
+export async function scrollLock(scrollable: Scrollable): Promise<void> {
+  let scrollState;
+
+  while ((scrollState = globalScrollStates.get(scrollable))) {
+    await scrollState.promise;
+  }
 }
 
 function smoothScroll(
@@ -74,27 +91,33 @@ function smoothScroll(
   easing: EasingFunc,
   duration: number,
 ): Promise<void> {
-  const scrollState = scrollStates.get(scrollable);
+  let scrollState = globalScrollStates.get(scrollable);
 
   if (scrollState) {
-    cancelAnimationFrame(scrollState.frame);
+    scrollState.aborted = true;
   }
 
   if (srcX === destX && srcY === destY) {
     return Promise.resolve();
   }
 
-  return new Promise((resolve) => {
-    const startTime = scrollState
-      ? scrollState.previousTime - duration / 2
-      : performance.now();
+  const startTime = scrollState
+    ? scrollState.previousTime - duration / 2
+    : performance.now();
 
+  const promise = new Promise<void>((resolve) => {
     const step = (currentTime: number) => {
+      if (scrollState!.aborted) {
+        globalScrollStates.delete(scrollable);
+        resolve();
+        return;
+      }
+
       const progress = Math.max(currentTime - startTime, 0) / duration;
 
       if (progress >= 1.0) {
         scrollable.scrollTo(destX, destY);
-        scrollStates.delete(scrollable);
+        globalScrollStates.delete(scrollable);
         resolve();
         return;
       }
@@ -105,11 +128,21 @@ function smoothScroll(
 
       scrollable.scrollTo(x, y);
 
-      const frame = requestAnimationFrame(step);
+      scrollState!.previousTime = currentTime;
 
-      scrollStates.set(scrollable, { frame, previousTime: currentTime });
+      requestAnimationFrame(step);
     };
 
     requestAnimationFrame(step);
   });
+
+  scrollState = {
+    promise,
+    previousTime: startTime,
+    aborted: false,
+  };
+
+  globalScrollStates.set(scrollable, scrollState);
+
+  return promise;
 }
