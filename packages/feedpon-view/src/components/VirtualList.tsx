@@ -44,7 +44,6 @@ export interface VirtualListProps<
   TId extends PropertyKey,
 > {
   assumedItemHeight?: number;
-  getHeightForDomNode?: (element: Element) => number;
   getScrollContainer?: () => Window | Element;
   getViewportInset?: () => BlockInset;
   idAttribute: TIdAttribute;
@@ -79,7 +78,6 @@ interface VirtualListRendererProps<
   TId extends PropertyKey,
 > {
   blockInsets: BlockInset[];
-  childElementsRef: React.MutableRefObject<Record<TId, Element>>;
   containerRef: React.RefObject<Element>;
   idAttribute: TIdAttribute;
   items: TItem[];
@@ -114,8 +112,6 @@ function VirtualList<
 >(
   {
     assumedItemHeight = 200,
-    getHeightForDomNode = (element: Element) =>
-      element.getBoundingClientRect().height,
     getViewportInset = () => ({ top: 0, bottom: window.innerHeight }),
     getScrollContainer = () => window,
     idAttribute,
@@ -136,7 +132,6 @@ function VirtualList<
   const containerRef = useRef<Element | null>(null);
   const scrollingItemIndexRef = useRef(initialItemIndex);
   const heightsRef = useRef(initialHeights);
-  const childElementsRef = useRef({} as Record<TId, Element>);
 
   const blockInsetsRef = useMemo(
     () => ({
@@ -176,7 +171,7 @@ function VirtualList<
     if (shallowEqual(currentIds, oldIds)) {
       if (sliceRef.current.end > items.length) {
         sliceRef.current = {
-          start: sliceRef.current.start,
+          start: Math.min(items.length - 1, sliceRef.current.start),
           end: items.length,
         };
       }
@@ -254,6 +249,30 @@ function VirtualList<
     });
   });
 
+  const updateHeights = useEvent((newHeights: Heights<TId>) => {
+    let hasChanged = false;
+
+    for (const id in newHeights) {
+      const oldHeight = heightsRef.current[id];
+      const newHeight = newHeights[id];
+      if (oldHeight !== newHeight) {
+        heightsRef.current[id] = newHeight;
+        hasChanged = true;
+      }
+    }
+
+    if (hasChanged) {
+      blockInsetsRef.current = computeBlockInsets(
+        items,
+        heightsRef.current,
+        idAttribute,
+        assumedItemHeight,
+      );
+      scheduleUpdate(updateDimensions);
+      onUpdateHeights?.(heightsRef.current);
+    }
+  });
+
   useEffect(() => {
     const scrollContainer = getScrollContainer();
 
@@ -273,19 +292,7 @@ function VirtualList<
   useEffect(() => {
     let willUpdate = false;
 
-    for (const id in childElementsRef.current) {
-      const element = childElementsRef.current[id];
-      const oldHeight = heightsRef.current[id];
-      const newHeight = getHeightForDomNode(element);
-
-      if (oldHeight !== newHeight) {
-        heightsRef.current[id] = newHeight;
-        willUpdate = true;
-      }
-    }
-
     if (
-      willUpdate ||
       items.length !== oldItems.length ||
       !shallowEqual(
         items.map((item) => item[idAttribute]),
@@ -298,7 +305,6 @@ function VirtualList<
         idAttribute,
         assumedItemHeight,
       );
-      onUpdateHeights?.(heightsRef.current);
       willUpdate = true;
     }
 
@@ -332,7 +338,6 @@ function VirtualList<
   return (
     <MemoizedVirtualListRenderer
       blockInsets={blockInsetsRef.current}
-      childElementsRef={childElementsRef}
       containerRef={containerRef}
       idAttribute={idAttribute}
       items={items}
@@ -358,23 +363,47 @@ function VirtualListRenderer<
   TId extends PropertyKey,
 >({
   blockInsets,
-  childElementsRef,
   idAttribute,
   containerRef,
   items,
+  onUpdateHeights,
   renderItem,
   renderList,
   slice,
 }: VirtualListRendererProps<TItem, TIdAttribute, TId>) {
-  const children = items.slice(slice.start, slice.end).map((item, index) => {
-    const ref = (element: Element | null) => {
-      const id = item[idAttribute];
-      if (element) {
-        childElementsRef.current[id] = element;
-      } else {
-        delete childElementsRef.current[id];
+  const elementToIdMap = useMemo(() => new WeakMap<Element, TId>(), []);
+
+  const resizeObserver = useResizeObserver((entries: ResizeObserverEntry[]) => {
+    const heights = {} as Heights<TId>;
+
+    for (let i = 0, l = entries.length; i < l; i++) {
+      const entry = entries[i]!;
+      const id = elementToIdMap.get(entry.target);
+      if (id !== undefined) {
+        heights[id] = entry.borderBoxSize[0]!.blockSize;
       }
+    }
+
+    onUpdateHeights(heights);
+  });
+
+  const children = items.slice(slice.start, slice.end).map((item, index) => {
+    const id = item[idAttribute];
+    let lastElemnt: Element | null = null;
+
+    const ref = (element: Element | null) => {
+      if (element) {
+        elementToIdMap.set(element, id);
+        resizeObserver.observe(element);
+      } else {
+        if (lastElemnt !== null) {
+          elementToIdMap.delete(lastElemnt);
+          resizeObserver.unobserve(lastElemnt);
+        }
+      }
+      lastElemnt = element;
     };
+
     return renderItem(item, index + slice.start, ref);
   });
 
@@ -522,12 +551,9 @@ function getScrollOffset(
     return 0;
   }
 
-  const offset =
-    index >= blockInsets.length
-      ? blockInsets[blockInsets.length - 1]!.bottom - viewportInset.top
-      : blockInsets[index]!.top - viewportInset.top;
-
-  return Math.ceil(offset);
+  return index >= blockInsets.length
+    ? blockInsets[blockInsets.length - 1]!.bottom - viewportInset.top
+    : blockInsets[index]!.top - viewportInset.top;
 }
 
 function translateViewportInset(
@@ -540,4 +566,48 @@ function translateViewportInset(
     top,
     bottom: top + height,
   };
+}
+
+function useResizeObserver(callback: ResizeObserverCallback) {
+  const isRendering = useIsRendering();
+  const defferedEntriesRef = useRef<ResizeObserverEntry[]>([]);
+
+  const resizeHandler = useEvent(
+    (entries: ResizeObserverEntry[], observer: ResizeObserver) => {
+      if (isRendering()) {
+        defferedEntriesRef.current.push(...entries);
+      } else {
+        callback(entries, observer);
+      }
+    },
+  );
+
+  const resizeObserver = useMemo(() => new ResizeObserver(resizeHandler), []);
+
+  useEffect(() => {
+    if (defferedEntriesRef.current.length > 0) {
+      callback(defferedEntriesRef.current, resizeObserver);
+      defferedEntriesRef.current = [];
+    }
+  });
+
+  useEffect(() => {
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, []);
+
+  return resizeObserver;
+}
+
+function useIsRendering(): () => boolean {
+  const isRenderingRef = useRef(true);
+
+  isRenderingRef.current = true;
+
+  useEffect(() => {
+    isRenderingRef.current = false;
+  });
+
+  return () => isRenderingRef.current;
 }
