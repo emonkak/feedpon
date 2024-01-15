@@ -120,7 +120,7 @@ class SharedSiteinfoSettings extends PureComponent<
           </button>
         </p>
         <VirtualList
-          assumedItemHeight={24 * 7}
+          assumedItemSize={24 * 7}
           idAttribute="id"
           items={matchedItems}
           renderItem={renderSiteinfoItem}

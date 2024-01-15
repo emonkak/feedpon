@@ -34,7 +34,7 @@ import {
   showEntryComments,
   showFullContents,
   unpinEntry,
-  updateEntryHeights,
+  updateEntrySizes,
 } from 'feedpon-messaging/streams';
 import {
   addToCategory,
@@ -95,7 +95,7 @@ interface StreamPageProps extends RouteComponentProps<{ stream_id: string }> {
   onUnpinEntry: typeof unpinEntry;
   onUnselectStream: typeof unselectStream;
   onUnsubscribe: typeof unsubscribe;
-  onUpdateEntryHeights: typeof updateEntryHeights;
+  onUpdateEntrySizes: typeof updateEntrySizes;
   readEntries: Entry[];
   shouldFetchStream: boolean;
   stream: Stream;
@@ -116,7 +116,7 @@ class StreamPage extends PureComponent<StreamPageProps> {
     this.handleChangeStreamView = this.handleChangeStreamView.bind(this);
     this.handleClearReadEntries = this.handleClearReadEntries.bind(this);
     this.handleCloseEntry = this.handleCloseEntry.bind(this);
-    this.handleUpdateHeights = this.handleUpdateHeights.bind(this);
+    this.handleUpdateBlockSizes = this.handleUpdateBlockSizes.bind(this);
     this.handleLoadMoreEntries = this.handleLoadMoreEntries.bind(this);
     this.handleMarkAllEntriesAsRead =
       this.handleMarkAllEntriesAsRead.bind(this);
@@ -261,11 +261,11 @@ class StreamPage extends PureComponent<StreamPageProps> {
     }
   }
 
-  handleUpdateHeights(heights: { [id: string]: number }): void {
-    const { onUpdateEntryHeights, stream } = this.props;
+  handleUpdateBlockSizes(heights: { [id: string]: number }): void {
+    const { onUpdateEntrySizes, stream } = this.props;
 
     if (stream) {
-      onUpdateEntryHeights(stream.streamId, heights);
+      onUpdateEntrySizes(stream.streamId, heights);
     }
   }
 
@@ -444,22 +444,22 @@ class StreamPage extends PureComponent<StreamPageProps> {
     return (
       <EntryList
         activeEntryIndex={stream.activeEntryIndex}
+        blockSizes={stream.entrySizes}
         entries={stream.entries}
         expandedEntryIndex={stream.expandedEntryIndex}
-        heights={stream.heights}
         isLoaded={isLoaded}
         isLoading={isLoading}
         onChangeActiveEntry={this.handleChangeActiveEnetry}
         onExpand={this.handleChangeExpandedEntry}
         onFetchComments={onFetchEntryComments}
         onFetchFullContent={onFetchFullContent}
-        onUpdateHeights={this.handleUpdateHeights}
         onHideComments={onHideEntryComments}
         onHideFullContents={onHideFullContents}
         onPin={onPinEntry}
         onShowComments={onShowEntryComments}
         onShowFullContents={onShowFullContents}
         onUnpin={onUnpinEntry}
+        onUpdateBlockSizes={this.handleUpdateBlockSizes}
         readEntryIndex={stream.readEntryIndex}
         ref={this._handleVirtualList}
         sameOrigin={stream.feed !== null}
@@ -624,7 +624,7 @@ export default connect(() => {
       onUnpinEntry: unpinEntry,
       onUnselectStream: unselectStream,
       onUnsubscribe: unsubscribe,
-      onUpdateEntryHeights: updateEntryHeights,
+      onUpdateEntrySizes: updateEntrySizes,
     }),
   };
 })(StreamPage);

@@ -107,6 +107,7 @@ export function fetchStream(
           title: 'Stream is not found',
           fetchedAt: 0,
           entries: [],
+          entrySizes: {},
           continuation: null,
           feed: null,
           category: null,
@@ -114,7 +115,6 @@ export function fetchStream(
           activeEntryIndex: -1,
           expandedEntryIndex: -1,
           readEntryIndex: -1,
-          heights: {},
           streamView,
         },
       } as Event); // XXX: Avoid the bug? on TypeScript 2.8
@@ -309,14 +309,14 @@ export function fetchFullContent(
   };
 }
 
-export function updateEntryHeights(
+export function updateEntrySizes(
   streamId: string,
-  heights: { [id: string]: number },
+  sizes: { [id: string]: number },
 ): Event {
   return {
-    type: 'STREAM_ENTRY_HEIGHTS_UPDATED',
+    type: 'STREAM_ENTRY_SIZES_UPDATED',
     streamId,
-    heights,
+    sizes,
   };
 }
 
@@ -711,6 +711,7 @@ function fetchFeedStream(
         feed.title || feed.website || (feed.id || '').replace(/^feed\//, ''),
       fetchedAt,
       entries: contents.items.map(entryConverter),
+      entrySizes: {},
       continuation: contents.continuation || null,
       feed: {
         feedId: feed.id,
@@ -727,7 +728,6 @@ function fetchFeedStream(
       activeEntryIndex: -1,
       expandedEntryIndex: -1,
       readEntryIndex: -1,
-      heights: {},
       streamView,
     };
 
@@ -765,13 +765,13 @@ function fetchCategoryStream(
       title: category ? category.label : '',
       fetchedAt,
       entries: contents.items.map(entryConverter),
+      entrySizes: {},
       continuation: contents.continuation || null,
       feed: null,
       fetchOptions,
       activeEntryIndex: -1,
       expandedEntryIndex: -1,
       readEntryIndex: -1,
-      heights: {},
       streamView,
     };
 
@@ -805,6 +805,7 @@ function fetchAllStream(
       streamId: ALL_STREAM_ID,
       title: 'All',
       entries: contents.items.map(entryConverter),
+      entrySizes: {},
       fetchedAt,
       continuation: contents.continuation || null,
       feed: null,
@@ -812,7 +813,6 @@ function fetchAllStream(
       activeEntryIndex: -1,
       expandedEntryIndex: -1,
       readEntryIndex: -1,
-      heights: {},
       streamView,
     };
 
@@ -848,18 +848,18 @@ function fetchPinsStream(
     const entryConverter = dispatch(getEntryConverter());
 
     const stream: Stream = {
-      streamId: PINS_STREAM_ID,
-      title: 'Pins',
-      entries: contents.items.map(entryConverter),
-      fetchedAt,
+      activeEntryIndex: -1,
       continuation: contents.continuation || null,
+      entries: contents.items.map(entryConverter),
+      entrySizes: {},
+      expandedEntryIndex: -1,
       feed: null,
       fetchOptions,
-      activeEntryIndex: -1,
-      expandedEntryIndex: -1,
+      fetchedAt,
       readEntryIndex: -1,
-      heights: {},
+      streamId: PINS_STREAM_ID,
       streamView,
+      title: 'Pins',
     };
 
     dispatch({

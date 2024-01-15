@@ -22,9 +22,9 @@ import {
 
 interface EntryListProps {
   activeEntryIndex: number;
+  blockSizes: { [id: string]: number };
   entries: Entry[];
   expandedEntryIndex: number;
-  heights: { [id: string]: number };
   isLoaded: boolean;
   isLoading: boolean;
   onChangeActiveEntry: (index: number) => void;
@@ -37,7 +37,7 @@ interface EntryListProps {
   onShowComments: (entryId: string | number) => void;
   onShowFullContents: (entryId: string | number) => void;
   onUnpin: (entryId: string | number) => void;
-  onUpdateHeights: (heights: { [id: string]: number }) => void;
+  onUpdateBlockSizes: (blockSizes: { [id: string]: number }) => void;
   readEntryIndex: number;
   sameOrigin: boolean;
   streamView: StreamViewKind;
@@ -56,22 +56,22 @@ export default forwardRef(EntryList);
 function EntryList(
   {
     activeEntryIndex,
+    blockSizes,
     entries,
     expandedEntryIndex,
-    heights,
     isLoaded,
     isLoading,
     onChangeActiveEntry,
     onExpand,
     onFetchComments,
     onFetchFullContent,
-    onUpdateHeights,
     onHideComments,
     onHideFullContents,
     onPin,
     onShowComments,
     onShowFullContents,
     onUnpin,
+    onUpdateBlockSizes,
     sameOrigin,
     streamView,
   }: EntryListProps,
@@ -168,14 +168,14 @@ function EntryList(
 
   return (
     <VirtualList<RenderingItem, 'id', string>
-      assumedItemHeight={streamView === 'expanded' ? 800 : 100}
+      assumedItemSize={streamView === 'expanded' ? 800 : 100}
       idAttribute="id"
-      initialHeights={heights}
+      initialBlockSizes={blockSizes}
       initialItemIndex={
         expandedEntryIndex >= 0 ? expandedEntryIndex : activeEntryIndex
       }
       items={items}
-      onUpdateHeights={onUpdateHeights}
+      onUpdateBlockSizes={onUpdateBlockSizes}
       onUpdateDimensions={handleUpdateDimensions}
       ref={ref}
       renderItem={renderItem}
@@ -199,10 +199,10 @@ function getActiveIndex(
   const { viewportInset } = dimensions;
   const bottomInsets = blockInsets[blockInsets.length - 1]!;
 
-  const viewportTop = viewportInset.top + scrollPadding;
-  const viewportBottom = viewportInset.bottom;
+  const viewportTop = viewportInset.start + scrollPadding;
+  const viewportBottom = viewportInset.end;
 
-  if (Math.abs(bottomInsets.bottom - viewportTop) < 1) {
+  if (Math.abs(bottomInsets.end - viewportTop) < 1) {
     return blockInsets.length;
   }
 
@@ -213,18 +213,18 @@ function getActiveIndex(
     const blockInset = blockInsets[i]!;
 
     if (
-      Math.ceil(blockInset.top) >= Math.floor(viewportTop) &&
-      Math.floor(blockInset.bottom) <= Math.ceil(viewportBottom)
+      Math.ceil(blockInset.start) >= Math.floor(viewportTop) &&
+      Math.floor(blockInset.end) <= Math.ceil(viewportBottom)
     ) {
       return i;
     }
 
-    if (blockInset.top < viewportBottom && blockInset.bottom > viewportTop) {
-      const visibleHeight =
-        Math.min(blockInset.bottom, viewportBottom) -
-        Math.max(blockInset.top, viewportTop);
-      if (visibleHeight > maxVisibleHeight) {
-        maxVisibleHeight = visibleHeight;
+    if (blockInset.start < viewportBottom && blockInset.end > viewportTop) {
+      const visibleSize =
+        Math.min(blockInset.end, viewportBottom) -
+        Math.max(blockInset.start, viewportTop);
+      if (visibleSize > maxVisibleHeight) {
+        maxVisibleHeight = visibleSize;
         activeIndex = i;
       }
     } else {

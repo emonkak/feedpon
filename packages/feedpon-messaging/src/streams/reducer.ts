@@ -10,6 +10,8 @@ export default function reducer(streams: Streams, event: Event): Streams {
         isMarking: false,
         items: CacheMap.mapValues(streams.items, (stream) => ({
           ...stream,
+          // Rename "heights" property to "entrySizes" (from v3.0)
+          entrySizes: stream.entrySizes ?? (stream as any).heights ?? {},
           feed: stream.feed
             ? {
                 ...stream.feed,
@@ -110,18 +112,18 @@ export default function reducer(streams: Streams, event: Event): Streams {
         isLoaded: false,
         isLoading: true,
         items: CacheMap.set(streams.items, event.streamId, {
-          streamId: event.streamId,
-          title: 'Loading...',
-          fetchedAt: event.fetchedAt,
-          entries: [],
+          activeEntryIndex: -1,
           continuation: null,
+          entries: [],
+          entrySizes: {},
+          expandedEntryIndex: -1,
           feed: null,
           fetchOptions: event.fetchOptions,
-          activeEntryIndex: -1,
-          expandedEntryIndex: -1,
+          fetchedAt: event.fetchedAt,
           readEntryIndex: -1,
-          heights: {},
+          streamId: event.streamId,
           streamView: event.streamView,
+          title: 'Loading...',
         }),
       };
 
@@ -131,18 +133,18 @@ export default function reducer(streams: Streams, event: Event): Streams {
         isLoaded: true,
         isLoading: false,
         items: CacheMap.set(streams.items, event.streamId, {
-          streamId: event.streamId,
-          title: 'Failed to fetch',
-          fetchedAt: event.fetchedAt,
-          entries: [],
+          activeEntryIndex: -1,
           continuation: null,
+          entries: [],
+          entrySizes: {},
+          expandedEntryIndex: -1,
           feed: null,
           fetchOptions: event.fetchOptions,
-          activeEntryIndex: -1,
-          expandedEntryIndex: -1,
+          fetchedAt: event.fetchedAt,
           readEntryIndex: -1,
-          heights: {},
+          streamId: event.streamId,
           streamView: event.streamView,
+          title: 'Failed to fetch',
         }),
       };
 
@@ -160,13 +162,13 @@ export default function reducer(streams: Streams, event: Event): Streams {
         items: CacheMap.empty(streams.items.capacity),
       };
 
-    case 'STREAM_ENTRY_HEIGHTS_UPDATED':
+    case 'STREAM_ENTRY_SIZES_UPDATED':
       return {
         ...streams,
         items: CacheMap.update(streams.items, event.streamId, (stream) => {
           return {
             ...stream,
-            heights: Object.assign({}, stream.heights, event.heights),
+            entrySizes: Object.assign({}, stream.entrySizes, event.sizes),
           };
         }),
       };

@@ -215,7 +215,7 @@ function CategoriesPage({
         </p>
         {description}
         <VirtualList
-          assumedItemHeight={60}
+          assumedItemSize={60}
           idAttribute="subscriptionId"
           items={filteredSubscriptions}
           renderItem={renderSubscriptionItem}

@@ -20,15 +20,15 @@ export interface BlankSpaces {
 }
 
 export interface BlockInset {
-  top: number;
-  bottom: number;
+  start: number;
+  end: number;
 }
 
-export type Heights<TId extends PropertyKey> = { [id in TId]: number };
+export type BlockSizes<TId extends PropertyKey> = { [id in TId]: number };
 
 export interface Dimensions<TId extends PropertyKey> {
   blockInsets: BlockInset[];
-  heights: Heights<TId>;
+  blockSizes: BlockSizes<TId>;
   slice: Slice;
   viewportInset: BlockInset;
 }
@@ -43,15 +43,15 @@ export interface VirtualListProps<
   TIdAttribute extends keyof TItem,
   TId extends PropertyKey,
 > {
-  assumedItemHeight?: number;
+  assumedItemSize?: number;
   getScrollContainer?: () => Window | Element;
   getViewportInset?: () => BlockInset;
   idAttribute: TIdAttribute;
-  initialHeights?: Heights<TId>;
+  initialBlockSizes?: BlockSizes<TId>;
   initialItemIndex?: number;
   items: TItem[];
   offscreenToViewportRatio?: number;
-  onUpdateHeights?: (newHeights: Heights<TId>) => void;
+  onUpdateBlockSizes?: (newBlockSizes: BlockSizes<TId>) => void;
   onUpdateDimensions?: (dimensions: Dimensions<TId>) => void;
   renderItem: (
     item: TItem,
@@ -81,7 +81,7 @@ interface VirtualListRendererProps<
   containerRef: React.RefObject<Element>;
   idAttribute: TIdAttribute;
   items: TItem[];
-  onUpdateHeights: (newHeights: Heights<TId>) => void;
+  onUpdateBlockSizes: (newBlockSizes: BlockSizes<TId>) => void;
   renderItem: (
     item: TItem,
     index: number,
@@ -111,15 +111,15 @@ function VirtualList<
   TId extends PropertyKey,
 >(
   {
-    assumedItemHeight = 200,
-    getViewportInset = () => ({ top: 0, bottom: window.innerHeight }),
+    assumedItemSize = 200,
+    getViewportInset = () => ({ start: 0, end: window.innerHeight }),
     getScrollContainer = () => window,
     idAttribute,
     items,
-    initialHeights = {} as Heights<TId>,
+    initialBlockSizes = {} as BlockSizes<TId>,
     initialItemIndex = -1,
     offscreenToViewportRatio = 1.0,
-    onUpdateHeights,
+    onUpdateBlockSizes,
     onUpdateDimensions,
     renderItem,
     renderList,
@@ -131,15 +131,15 @@ function VirtualList<
 ) {
   const containerRef = useRef<Element | null>(null);
   const scrollingItemIndexRef = useRef(initialItemIndex);
-  const heightsRef = useRef(initialHeights);
+  const blockSizesRef = useRef(initialBlockSizes);
 
   const blockInsetsRef = useMemo(
     () => ({
       current: computeBlockInsets(
         items,
-        heightsRef.current,
+        blockSizesRef.current,
         idAttribute,
-        assumedItemHeight,
+        assumedItemSize,
       ),
     }),
     [],
@@ -148,8 +148,8 @@ function VirtualList<
     () => ({
       current: getInitialSlice(
         items,
-        heightsRef.current,
-        assumedItemHeight,
+        blockSizesRef.current,
+        assumedItemSize,
         idAttribute,
         initialItemIndex,
         getViewportInset(),
@@ -176,12 +176,12 @@ function VirtualList<
         };
       }
     } else {
-      heightsRef.current = initialHeights;
+      blockSizesRef.current = initialBlockSizes;
       scrollingItemIndexRef.current = initialItemIndex;
       sliceRef.current = getInitialSlice(
         items,
-        heightsRef.current,
-        assumedItemHeight,
+        blockSizesRef.current,
+        assumedItemSize,
         idAttribute,
         initialItemIndex,
         getViewportInset(),
@@ -190,9 +190,9 @@ function VirtualList<
 
     blockInsetsRef.current = computeBlockInsets(
       items,
-      heightsRef.current,
+      blockSizesRef.current,
       idAttribute,
-      assumedItemHeight,
+      assumedItemSize,
     );
   }
 
@@ -202,8 +202,8 @@ function VirtualList<
     scrollTo(index: number): void {
       sliceRef.current = getInitialSlice(
         items,
-        heightsRef.current,
-        assumedItemHeight,
+        blockSizesRef.current,
+        assumedItemSize,
         idAttribute,
         index,
         getViewportInset(),
@@ -243,20 +243,20 @@ function VirtualList<
 
     onUpdateDimensions?.({
       blockInsets: blockInsetsRef.current,
-      heights: heightsRef.current,
+      blockSizes: blockSizesRef.current,
       slice: newSlice,
       viewportInset,
     });
   });
 
-  const updateHeights = useEvent((newHeights: Heights<TId>) => {
+  const updateBlockSizes = useEvent((newBlockSizes: BlockSizes<TId>) => {
     let hasChanged = false;
 
-    for (const id in newHeights) {
-      const oldHeight = heightsRef.current[id];
-      const newHeight = newHeights[id];
-      if (oldHeight !== newHeight) {
-        heightsRef.current[id] = newHeight;
+    for (const id in newBlockSizes) {
+      const oldBlockSize = blockSizesRef.current[id];
+      const newBlockSize = newBlockSizes[id];
+      if (oldBlockSize !== newBlockSize) {
+        blockSizesRef.current[id] = newBlockSize;
         hasChanged = true;
       }
     }
@@ -264,12 +264,12 @@ function VirtualList<
     if (hasChanged) {
       blockInsetsRef.current = computeBlockInsets(
         items,
-        heightsRef.current,
+        blockSizesRef.current,
         idAttribute,
-        assumedItemHeight,
+        assumedItemSize,
       );
       scheduleUpdate(updateDimensions);
-      onUpdateHeights?.(heightsRef.current);
+      onUpdateBlockSizes?.(blockSizesRef.current);
     }
   });
 
@@ -301,9 +301,9 @@ function VirtualList<
     ) {
       blockInsetsRef.current = computeBlockInsets(
         items,
-        heightsRef.current,
+        blockSizesRef.current,
         idAttribute,
-        assumedItemHeight,
+        assumedItemSize,
       );
       willUpdate = true;
     }
@@ -341,7 +341,7 @@ function VirtualList<
       containerRef={containerRef}
       idAttribute={idAttribute}
       items={items}
-      onUpdateHeights={updateHeights}
+      onUpdateBlockSizes={updateBlockSizes}
       renderItem={renderItem}
       renderList={renderList}
       slice={sliceRef.current}
@@ -366,7 +366,7 @@ function VirtualListRenderer<
   idAttribute,
   containerRef,
   items,
-  onUpdateHeights,
+  onUpdateBlockSizes,
   renderItem,
   renderList,
   slice,
@@ -374,17 +374,17 @@ function VirtualListRenderer<
   const elementToIdMap = useMemo(() => new WeakMap<Element, TId>(), []);
 
   const resizeObserver = useResizeObserver((entries: ResizeObserverEntry[]) => {
-    const heights = {} as Heights<TId>;
+    const blockSizes = {} as BlockSizes<TId>;
 
     for (let i = 0, l = entries.length; i < l; i++) {
       const entry = entries[i]!;
       const id = elementToIdMap.get(entry.target);
       if (id !== undefined) {
-        heights[id] = entry.borderBoxSize[0]!.blockSize;
+        blockSizes[id] = entry.borderBoxSize[0]!.blockSize;
       }
     }
 
-    onUpdateHeights(heights);
+    onUpdateBlockSizes(blockSizes);
   });
 
   const children = items.slice(slice.start, slice.end).map((item, index) => {
@@ -422,18 +422,18 @@ function computeBlockInsets<
   TId extends PropertyKey,
 >(
   items: TItem[],
-  heights: Heights<TId>,
+  blockSizes: BlockSizes<TId>,
   idAttribute: TIdAttribute,
-  assumedItemHeight: number,
+  assumedItemSize: number,
 ): BlockInset[] {
   const blockInsets = new Array(items.length);
 
-  for (let top = 0, i = 0, l = items.length; i < l; i++) {
+  for (let start = 0, i = 0, l = items.length; i < l; i++) {
     const item = items[i]!;
     const id = item[idAttribute];
-    const height = heights[id] ?? assumedItemHeight;
-    const blockInset = { top, bottom: top + height };
-    top = blockInset.bottom;
+    const size = blockSizes[id] ?? assumedItemSize;
+    const blockInset = { start, end: start + size };
+    start = blockInset.end;
     blockInsets[i] = blockInset;
   }
 
@@ -450,12 +450,11 @@ function getBlankSpaces(blockInsets: BlockInset[], slice: Slice): BlankSpaces {
 
   const above =
     slice.start < blockInsets.length
-      ? blockInsets[slice.start]!.top
-      : blockInsets[blockInsets.length - 1]!.bottom;
+      ? blockInsets[slice.start]!.start
+      : blockInsets[blockInsets.length - 1]!.end;
   const below =
     slice.end < blockInsets.length
-      ? blockInsets[blockInsets.length - 1]!.bottom -
-        blockInsets[slice.end]!.top
+      ? blockInsets[blockInsets.length - 1]!.end - blockInsets[slice.end]!.start
       : 0;
 
   return {
@@ -476,17 +475,17 @@ function getCurrentSlice(
     };
   }
 
-  const offscreenHeight =
-    (viewportInset.bottom - viewportInset.top) * offscreenToViewportRatio;
-  const viewportTop = viewportInset.top - offscreenHeight;
-  const viewportBottom = viewportInset.bottom + offscreenHeight;
+  const offscreenSize =
+    (viewportInset.end - viewportInset.start) * offscreenToViewportRatio;
+  const viewportStart = viewportInset.start - offscreenSize;
+  const viewportEnd = viewportInset.end + offscreenSize;
 
   const size = blockInsets.length;
   let start = 0;
 
   for (let i = 0; i < size; i++) {
     const blockInset = blockInsets[start]!;
-    if (blockInset.bottom > viewportTop) {
+    if (blockInset.end > viewportStart) {
       break;
     }
     start = i;
@@ -496,7 +495,7 @@ function getCurrentSlice(
 
   for (let i = end; i < size; i++) {
     const blockInset = blockInsets[end]!;
-    if (blockInset.top >= viewportBottom) {
+    if (blockInset.start >= viewportEnd) {
       break;
     }
     end = i + 1;
@@ -514,26 +513,26 @@ function getInitialSlice<
   TId extends PropertyKey,
 >(
   items: TItem[],
-  heights: Heights<TId>,
-  assumedItemHeight: number,
+  blockSizes: BlockSizes<TId>,
+  assumedItemSize: number,
   idAttribute: TIdAttribute,
   initialItemIndex: number,
   viewportInset: BlockInset,
 ): Slice {
-  const viewportHeight = viewportInset.bottom - viewportInset.top;
+  const viewportSize = viewportInset.end - viewportInset.start;
 
   const start = Math.max(0, initialItemIndex);
   let end = start;
 
   for (
-    let l = items.length, remainingSpace = viewportHeight;
+    let l = items.length, remainingSpace = viewportSize;
     end < l && remainingSpace > 0;
     end++
   ) {
     const item = items[end]!;
     const id = item[idAttribute];
-    const height = heights[id] ?? assumedItemHeight;
-    remainingSpace -= height;
+    const size = blockSizes[id] ?? assumedItemSize;
+    remainingSpace -= size;
   }
 
   return {
@@ -552,19 +551,19 @@ function getScrollOffset(
   }
 
   return index >= blockInsets.length
-    ? blockInsets[blockInsets.length - 1]!.bottom - viewportInset.top
-    : blockInsets[index]!.top - viewportInset.top;
+    ? blockInsets[blockInsets.length - 1]!.end - viewportInset.start
+    : blockInsets[index]!.start - viewportInset.start;
 }
 
 function translateViewportInset(
   viewportInset: BlockInset,
-  containerInset: BlockInset,
+  containerInset: DOMRect,
 ): BlockInset {
-  const top = viewportInset.top - containerInset.top;
-  const height = viewportInset.bottom - viewportInset.top;
+  const start = viewportInset.start - containerInset.top;
+  const size = viewportInset.end - viewportInset.start;
   return {
-    top,
-    bottom: top + height,
+    start,
+    end: start + size,
   };
 }
 
