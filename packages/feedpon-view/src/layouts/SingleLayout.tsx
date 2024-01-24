@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React from 'react';
 
 import InstantNotificationContainer from '../containers/InstantNotificationContainer';
 import NotificationList from '../containers/NotificationList';
@@ -10,29 +10,25 @@ interface SingleLayoutProps {
   isLoading: boolean;
 }
 
-class SingleLayout extends PureComponent<SingleLayoutProps> {
-  override render() {
-    const { children, isLoading } = this.props;
-
-    return (
-      <>
-        <div className="l-main">
-          <div className="l-notifications">
-            <NotificationList />
-          </div>
-          <div className="l-instant-notifications">
-            <InstantNotificationContainer />
-          </div>
-          {children}
+function SingleLayout({ children, isLoading }: SingleLayoutProps) {
+  return (
+    <>
+      <div className="l-main">
+        <div className="l-notifications">
+          <NotificationList />
         </div>
-        <div className="l-backdrop">
-          {isLoading ? (
-            <i className="icon icon-48 icon-spinner animation-rotating" />
-          ) : null}
+        <div className="l-instant-notifications">
+          <InstantNotificationContainer />
         </div>
-      </>
-    );
-  }
+        {children}
+      </div>
+      <div className="l-backdrop">
+        {isLoading ? (
+          <i className="icon icon-48 icon-spinner animation-rotating" />
+        ) : null}
+      </div>
+    </>
+  );
 }
 
 export default connect({

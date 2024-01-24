@@ -3,7 +3,9 @@ import React from 'react';
 import SharedSiteinfoSettings from '../containers/SharedSiteinfoSettings';
 import UserSiteinfoSettings from '../containers/UserSiteinfoSettings';
 
-const SiteinfoSettings: React.FC<{}> = () => {
+interface SiteinfoSettingsProps {}
+
+export default function SiteinfoSettings({}: SiteinfoSettingsProps) {
   return (
     <section>
       <h1 className="display-1">Siteinfo</h1>
@@ -12,6 +14,4 @@ const SiteinfoSettings: React.FC<{}> = () => {
       <SharedSiteinfoSettings />
     </section>
   );
-};
-
-export default SiteinfoSettings;
+}

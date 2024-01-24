@@ -1,5 +1,5 @@
-import React, { PureComponent } from 'react';
-import { RouteComponentProps } from 'react-router';
+import React, { useState, useEffect } from 'react';
+import { useParams, useHistory } from 'react-router';
 
 import FeedComponent from '../modules/Feed';
 import FeedPlaceholder from '../modules/FeedPlaceholder';
@@ -20,8 +20,10 @@ import {
 } from 'feedpon-messaging/categories';
 import { searchFeeds } from 'feedpon-messaging/search';
 import { toggleSidebar } from 'feedpon-messaging/ui';
+import useEvent from '../hooks/useEvent';
+import usePrevious from '../hooks/usePrevious';
 
-interface SearchPageProps extends RouteComponentProps<{ query: string }> {
+interface SearchPageProps {
   activeQuery: string;
   categories: Category[];
   feeds: Feed[];
@@ -37,179 +39,126 @@ interface SearchPageProps extends RouteComponentProps<{ query: string }> {
   subscriptions: { [key: string]: Subscription };
 }
 
-interface SearchPageState {
-  query: string;
-  prevActiveQuery: string;
-}
+function SearchPage({
+  activeQuery,
+  categories,
+  feeds,
+  isLoaded,
+  isLoading,
+  onAddToCategory,
+  onCreateCategory,
+  onRemoveFromCategory,
+  onSearchFeeds,
+  onSubscribe,
+  onToggleSidebar,
+  onUnsubscribe,
+  subscriptions,
+}: SearchPageProps) {
+  const params = useParams<{ query: string }>();
+  const history = useHistory();
 
-class SearchPage extends PureComponent<SearchPageProps, SearchPageState> {
-  static getDerivedStateFromProps(
-    props: SearchPageProps,
-    state: SearchPageState,
-  ) {
-    if (props.activeQuery !== state.prevActiveQuery) {
-      return {
-        query: props.activeQuery,
-        prevActiveQuery: props.activeQuery,
-      };
+  const previousActiveQuery = usePrevious(activeQuery);
+  const [currentQuery, setCurrentQuery] = useState(() =>
+    decodeURIComponent(params.query ?? ''),
+  );
+
+  if (activeQuery !== previousActiveQuery) {
+    setCurrentQuery(activeQuery);
+  }
+
+  useEffect(() => {
+    onSearchFeeds(params.query);
+  }, [params.query]);
+
+  const handleChange = useEvent(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const query = event.currentTarget.value;
+      setCurrentQuery(query);
+    },
+  );
+
+  const handleSearch = useEvent((event: React.FormEvent<any>) => {
+    event.preventDefault();
+
+    if (currentQuery !== '') {
+      history.replace('/search/' + encodeURIComponent(currentQuery));
     }
+  });
 
-    return null;
-  }
+  const navbar = (
+    <Navbar onToggleSidebar={onToggleSidebar}>
+      <div className="navbar-title">Search</div>
+    </Navbar>
+  );
 
-  constructor(props: SearchPageProps) {
-    super(props);
+  let feedList;
 
-    this.state = {
-      query: decodeURIComponent(props.match.params.query ?? ''),
-      prevActiveQuery: props.activeQuery,
-    };
-  }
-
-  override componentDidMount() {
-    const { activeQuery } = this.props;
-    const { query } = this.state;
-
-    if (query !== '' && query !== activeQuery) {
-      const { onSearchFeeds } = this.props;
-
-      onSearchFeeds(query);
-    }
-  }
-
-  override componentDidUpdate(prevProps: SearchPageProps) {
-    const { match } = this.props;
-    const { match: prevMatch } = prevProps;
-
-    if (match.params.query && match.params.query !== prevMatch.params.query) {
-      const { onSearchFeeds } = this.props;
-
-      onSearchFeeds(decodeURIComponent(match.params['query']));
-    }
-  }
-
-  override render() {
-    return (
-      <MainLayout header={this.renderNavbar()}>
-        {this.renderContent()}
-      </MainLayout>
+  if (decodeURIComponent(params.query) !== activeQuery) {
+    feedList = null;
+  } else if (isLoading) {
+    feedList = (
+      <ol className="list-group">
+        <FeedPlaceholder />
+        <FeedPlaceholder />
+        <FeedPlaceholder />
+        <FeedPlaceholder />
+        <FeedPlaceholder />
+        <FeedPlaceholder />
+        <FeedPlaceholder />
+        <FeedPlaceholder />
+        <FeedPlaceholder />
+        <FeedPlaceholder />
+      </ol>
+    );
+  } else if (isLoaded && feeds.length === 0) {
+    feedList = (
+      <p>
+        Your search "<strong>{activeQuery}</strong>" did not match any feeds.
+      </p>
+    );
+  } else {
+    feedList = (
+      <ol className="list-group">
+        {feeds.map((feed) => (
+          <FeedComponent
+            categories={categories}
+            feed={feed}
+            key={feed.feedId}
+            onAddToCategory={onAddToCategory}
+            onCreateCategory={onCreateCategory}
+            onRemoveFromCategory={onRemoveFromCategory}
+            onSubscribe={onSubscribe}
+            onUnsubscribe={onUnsubscribe}
+            subscription={subscriptions[feed.streamId]!}
+          />
+        ))}
+      </ol>
     );
   }
 
-  private renderNavbar() {
-    const { onToggleSidebar } = this.props;
-
-    return (
-      <Navbar onToggleSidebar={onToggleSidebar}>
-        <div className="navbar-title">Search</div>
-      </Navbar>
-    );
-  }
-
-  private renderFeeds() {
-    const { activeQuery, match } = this.props;
-    if (decodeURIComponent(match.params.query) !== activeQuery) {
-      return null;
-    }
-
-    const { isLoading } = this.props;
-    if (isLoading) {
-      return (
-        <ol className="list-group">
-          <FeedPlaceholder />
-          <FeedPlaceholder />
-          <FeedPlaceholder />
-          <FeedPlaceholder />
-          <FeedPlaceholder />
-          <FeedPlaceholder />
-          <FeedPlaceholder />
-          <FeedPlaceholder />
-          <FeedPlaceholder />
-          <FeedPlaceholder />
-        </ol>
-      );
-    }
-
-    const { feeds, isLoaded } = this.props;
-    if (isLoaded && feeds.length === 0) {
-      return (
-        <p>
-          Your search "<strong>{activeQuery}</strong>" did not match any feeds.
-        </p>
-      );
-    }
-
-    const {
-      categories,
-      onAddToCategory,
-      onCreateCategory,
-      onRemoveFromCategory,
-      onSubscribe,
-      onUnsubscribe,
-      subscriptions,
-    } = this.props;
-    const feedElements = feeds.map((feed) => (
-      <FeedComponent
-        categories={categories}
-        feed={feed}
-        key={feed.feedId}
-        onAddToCategory={onAddToCategory}
-        onCreateCategory={onCreateCategory}
-        onRemoveFromCategory={onRemoveFromCategory}
-        onSubscribe={onSubscribe}
-        onUnsubscribe={onUnsubscribe}
-        subscription={subscriptions[feed.streamId]!}
-      />
-    ));
-
-    return <ol className="list-group">{feedElements}</ol>;
-  }
-
-  private renderContent() {
-    const { query } = this.state;
-
-    return (
+  return (
+    <MainLayout header={navbar}>
       <div className="container u-margin-top-2 u-margin-bottom-4">
         <h1 className="display-1">Search for feeds to subscribe</h1>
-        <form className="form" onSubmit={this.handleSearch}>
+        <form className="form" onSubmit={handleSearch}>
           <div className="input-group">
             <input
               autoFocus
               className="form-control"
-              onChange={this.handleChange}
+              onChange={handleChange}
               placeholder="Search by title, URL, or topic"
               type="search"
-              value={query}
+              value={currentQuery}
             />
             <button className="button button-positive" type="submit">
               Search
             </button>
           </div>
         </form>
-        {this.renderFeeds()}
+        {feedList}
       </div>
-    );
-  }
-
-  private handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const query = event.currentTarget.value;
-
-    this.setState({ query });
-  };
-
-  private handleSearch = (event: React.FormEvent<any>) => {
-    event.preventDefault();
-
-    const { query } = this.state;
-
-    if (query !== '') {
-      const { onSearchFeeds, history } = this.props;
-
-      onSearchFeeds(query);
-
-      history.replace('/search/' + encodeURIComponent(query));
-    }
-  };
+    </MainLayout>
+  );
 }
 
 export default connect(() => {

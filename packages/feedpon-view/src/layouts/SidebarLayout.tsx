@@ -1,5 +1,4 @@
 import classnames from 'classnames';
-import { History, Location } from 'history';
 import React, { useCallback, useEffect, useRef } from 'react';
 
 import { Dispatcher, bindActions } from 'feedpon-flux';
@@ -26,10 +25,8 @@ interface SidebarLayoutProps {
   children: React.ReactNode;
   dispatch: Dispatcher<Event>;
   helpIsOpened: boolean;
-  history: History;
   isLoading: boolean;
   keyMappings: Trie.Trie<KeyMapping>;
-  location: Location;
   onCloseHelp: typeof closeHelp;
   onCloseSidebar: typeof closeSidebar;
   onOpenHelp: typeof openHelp;
@@ -41,10 +38,8 @@ function SidebarLayout({
   children,
   dispatch,
   helpIsOpened,
-  history,
   isLoading,
   keyMappings,
-  location,
   onCloseHelp,
   onCloseSidebar,
   onOpenSidebar,
@@ -165,7 +160,7 @@ function SidebarLayout({
         ref={sidebarRef}
         onTransitionEnd={handleTransitionEnd}
       >
-        <Sidebar history={history} location={location} />
+        <Sidebar />
       </div>
       <div className="l-main" style={mainStyle}>
         <div className="l-notifications">

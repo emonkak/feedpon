@@ -8,7 +8,6 @@
     "./Routes": "./src/Routes.tsx"
   },
   "dependencies": {
-    "@emonkak/enumerable": "^4.0.0",
     "classnames": "^2.3.2",
     "feedpon-adapters": "*",
     "feedpon-flux": "*",
@@ -19,8 +18,7 @@
     "react-dom": "^18.2.0",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
-    "react-transition-group": "^4.4.5",
-    "reselect": "^4.1.8"
+    "react-transition-group": "^4.4.5"
   },
   "devDependencies": {
     "@types/chrome": "^0.0.253",

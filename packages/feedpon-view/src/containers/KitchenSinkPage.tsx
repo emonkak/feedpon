@@ -1,14 +1,15 @@
-import React, { PureComponent } from 'react';
+import React, { useState } from 'react';
 import { RouteComponentProps } from 'react-router';
 
 import Dropdown from '../components/Dropdown';
 import MainLayout from '../layouts/MainLayout';
 import Modal from '../components/Modal';
 import Navbar from '../components/Navbar';
-import { bindActions } from 'feedpon-flux';
 import connect from 'feedpon-flux/react/connect';
-import { MenuItem } from '../components/Menu';
 import type { NotificationKind } from 'feedpon-messaging';
+import useEvent from '../hooks/useEvent';
+import { MenuItem } from '../components/Menu';
+import { bindActions } from 'feedpon-flux';
 import { sendNotification } from 'feedpon-messaging/notifications';
 import { toggleSidebar } from 'feedpon-messaging/ui';
 
@@ -17,57 +18,39 @@ interface KitchenSinkProps extends RouteComponentProps {
   onToggleSidebar: typeof toggleSidebar;
 }
 
-interface KitchenSinkState {
-  modalIsOpened: boolean;
-}
+function KitchenSinkPage({
+  onSendNotification,
+  onToggleSidebar,
+}: KitchenSinkProps) {
+  const [modalIsOpened, setModalIsOpened] = useState(false);
 
-class KitchenSinkPage extends PureComponent<
-  KitchenSinkProps,
-  KitchenSinkState
-> {
-  constructor(props: KitchenSinkProps) {
-    super(props);
-
-    this.state = {
-      modalIsOpened: false,
-    };
-  }
-
-  handleSelectAction(action: string) {
+  const handleSelectAction = useEvent((action: string) => {
     alert(action);
-  }
+  });
 
-  handleOpenModal() {
-    this.setState({ modalIsOpened: true });
-  }
+  const handleOpenModal = useEvent(() => {
+    setModalIsOpened(true);
+  });
 
-  handleCloseModal() {
-    this.setState({ modalIsOpened: false });
-  }
+  const handleCloseModal = useEvent(() => {
+    setModalIsOpened(false);
+  });
 
-  handleSendNotification(kind: NotificationKind) {
-    const { onSendNotification } = this.props;
-
+  const handleSendNotification = useEvent((kind: NotificationKind) => {
     onSendNotification(
       'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
       kind,
     );
-  }
+  });
 
-  renderNavbar() {
-    const { onToggleSidebar } = this.props;
+  const navbar = (
+    <Navbar onToggleSidebar={onToggleSidebar}>
+      <h1 className="navbar-title">Kitchen sink</h1>
+    </Navbar>
+  );
 
-    return (
-      <Navbar onToggleSidebar={onToggleSidebar}>
-        <h1 className="navbar-title">Kitchen sink</h1>
-      </Navbar>
-    );
-  }
-
-  renderContent() {
-    const { modalIsOpened } = this.state;
-
-    return (
+  return (
+    <MainLayout header={navbar}>
       <div className="container">
         <h1>Heading</h1>
         <div>
@@ -78,7 +61,6 @@ class KitchenSinkPage extends PureComponent<
           <h5>Heading level 5</h5>
           <h6>Heading level 6</h6>
         </div>
-
         <h1>Display</h1>
         <div>
           <h1 className="display-1">Display level 1</h1>
@@ -88,7 +70,6 @@ class KitchenSinkPage extends PureComponent<
           <h5 className="display-5">Display level 5</h5>
           <h6 className="display-6">Display level 6</h6>
         </div>
-
         <h2>Colors</h2>
         <p>
           <span className="u-text-muted">
@@ -103,7 +84,6 @@ class KitchenSinkPage extends PureComponent<
             Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
           </span>
         </p>
-
         <h2>Code</h2>
         <p>
           <kbd>Ctrl</kbd>
@@ -112,47 +92,45 @@ class KitchenSinkPage extends PureComponent<
           <br />
           <code>Code</code>
         </p>
-
         <h2>Button</h2>
         <p className="button-toolbar">
           <button
             className="button button-default"
-            onClick={this.handleSendNotification.bind(this, 'default')}
+            onClick={handleSendNotification.bind(null, 'default')}
           >
             Default
           </button>
           <button
             className="button button-positive"
-            onClick={this.handleSendNotification.bind(this, 'positive')}
+            onClick={handleSendNotification.bind(null, 'positive')}
           >
             Positive
           </button>
           <button
             className="button button-negative"
-            onClick={this.handleSendNotification.bind(this, 'negative')}
+            onClick={handleSendNotification.bind(null, 'negative')}
           >
             Negative
           </button>
           <button
             className="button button-outline-default"
-            onClick={this.handleSendNotification.bind(this, 'default')}
+            onClick={handleSendNotification.bind(null, 'default')}
           >
             Default
           </button>
           <button
             className="button button-outline-positive"
-            onClick={this.handleSendNotification.bind(this, 'positive')}
+            onClick={handleSendNotification.bind(null, 'positive')}
           >
             Positive
           </button>
           <button
             className="button button-outline-negative"
-            onClick={this.handleSendNotification.bind(this, 'negative')}
+            onClick={handleSendNotification.bind(null, 'negative')}
           >
             Negative
           </button>
         </p>
-
         <h2>Disabled Button</h2>
         <p className="button-toolbar">
           <button className="button button-default" disabled>
@@ -174,7 +152,6 @@ class KitchenSinkPage extends PureComponent<
             Negative
           </button>
         </p>
-
         <h2>Large Button</h2>
         <p className="button-toolbar">
           <button className="button button-large button-default">
@@ -196,7 +173,6 @@ class KitchenSinkPage extends PureComponent<
             Negative
           </button>
         </p>
-
         <h2>Group Button</h2>
         <div className="button-toolbar u-margin-bottom-2">
           <span className="button-group">
@@ -210,7 +186,6 @@ class KitchenSinkPage extends PureComponent<
             <button className="button button-outline-default">Third</button>
           </span>
         </div>
-
         <h2>Badge</h2>
         <div className="button-toolbar u-margin-bottom-2">
           <span className="badge badge-small badge-default">Default</span>
@@ -223,7 +198,6 @@ class KitchenSinkPage extends PureComponent<
           <span className="badge badge-large badge-positive">Positive</span>
           <span className="badge badge-large badge-negative">Negative</span>
         </div>
-
         <h2>Pill Badge</h2>
         <div className="button-toolbar u-margin-bottom-2">
           <span className="badge badge-small badge-pill badge-default">12</span>
@@ -250,7 +224,6 @@ class KitchenSinkPage extends PureComponent<
             56
           </span>
         </div>
-
         <h2>Paragraph</h2>
         <p>
           <em>Lorem Ipsum</em> is simply dummy text of the printing and
@@ -277,7 +250,6 @@ class KitchenSinkPage extends PureComponent<
           publishing software like Aldus PageMaker including versions of Lorem
           Ipsum.
         </p>
-
         <h2>Navigation</h2>
         <div className="u-margin-bottom-2">
           <nav className="nav">
@@ -292,7 +264,6 @@ class KitchenSinkPage extends PureComponent<
             </a>
           </nav>
         </div>
-
         <h2>Popover</h2>
         <div className="popover popover-default is-pull-down">
           <div className="popover-arrow" />
@@ -330,11 +301,10 @@ class KitchenSinkPage extends PureComponent<
             <p>Popover Content</p>
           </div>
         </div>
-
         <h2>Dropdown</h2>
         <div className="u-margin-bottom-2">
           <Dropdown
-            onSelect={this.handleSelectAction.bind(this)}
+            onSelect={handleSelectAction}
             className="u-inline-block"
             toggleButton={
               <button className="button button-outline-default dropdown-arrow">
@@ -365,23 +335,16 @@ class KitchenSinkPage extends PureComponent<
             ></MenuItem>
           </Dropdown>
         </div>
-
         <h2>Modal</h2>
         <p className="button-toolbar">
-          <button
-            className="button button-positive"
-            onClick={this.handleOpenModal.bind(this)}
-          >
+          <button className="button button-positive" onClick={handleOpenModal}>
             Launch Modal
           </button>
         </p>
-        <Modal
-          isOpened={modalIsOpened}
-          onClose={this.handleCloseModal.bind(this)}
-        >
+        <Modal isOpened={modalIsOpened} onClose={handleCloseModal}>
           <button
             className="close u-pull-right"
-            onClick={this.handleCloseModal.bind(this)}
+            onClick={handleCloseModal}
           ></button>
           <h1 className="modal-title">Modal Title</h1>
           <p>Modal body text goes here.</p>
@@ -389,13 +352,12 @@ class KitchenSinkPage extends PureComponent<
             <button className="button button-positive">Okay</button>
             <button
               className="button button-outline-default"
-              onClick={this.handleCloseModal.bind(this)}
+              onClick={handleCloseModal}
             >
               Cancel
             </button>
           </p>
         </Modal>
-
         <h2>Message</h2>
         <div className="message message-default">
           <button className="close u-pull-right"></button>
@@ -421,7 +383,6 @@ class KitchenSinkPage extends PureComponent<
             customers. We recommend reviewing the changes.
           </p>
         </div>
-
         <h2>Icon</h2>
         <p>
           <i className="icon icon-32 icon-angle-down" />
@@ -498,7 +459,6 @@ class KitchenSinkPage extends PureComponent<
           <i className="icon icon-16 icon-twitter" />
           <i className="icon icon-16 icon-warning" />
         </p>
-
         <h2>Placeholder</h2>
         <h2 className="placeholder placeholder-60 animation-shining"></h2>
         <p>
@@ -507,7 +467,6 @@ class KitchenSinkPage extends PureComponent<
           <span className="placeholder placeholder-100 animation-shining" />
           <span className="placeholder placeholder-80 animation-shining" />
         </p>
-
         <h2>List</h2>
         <ul>
           <li>
@@ -532,7 +491,6 @@ class KitchenSinkPage extends PureComponent<
             </ul>
           </li>
         </ul>
-
         <ol>
           <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li>
           <li>Nam eu nunc nec dolor facilisis feugiat ac accumsan risus.</li>
@@ -541,7 +499,6 @@ class KitchenSinkPage extends PureComponent<
           </li>
           <li>Mauris aliquet turpis et massa maximus dignissim.</li>
         </ol>
-
         <dl>
           <dt>First</dt>
           <dd>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</dd>
@@ -554,7 +511,6 @@ class KitchenSinkPage extends PureComponent<
           <dt>Fourth</dt>
           <dd>Mauris aliquet turpis et massa maximus dignissim.</dd>
         </dl>
-
         <h2>Table</h2>
         <table className="table table-striped">
           <caption>
@@ -624,7 +580,6 @@ class KitchenSinkPage extends PureComponent<
             </tr>
           </tbody>
         </table>
-
         <h2>Group List</h2>
         <div className="list-group">
           <a className="list-group-item" href="#">
@@ -638,7 +593,6 @@ class KitchenSinkPage extends PureComponent<
             </div>
           </a>
         </div>
-
         <h2>Blockquote</h2>
         <blockquote>
           Lorem Ipsum is simply dummy text of the printing and typesetting
@@ -652,16 +606,8 @@ class KitchenSinkPage extends PureComponent<
           including versions of Lorem Ipsum.
         </blockquote>
       </div>
-    );
-  }
-
-  override render() {
-    return (
-      <MainLayout header={this.renderNavbar()}>
-        {this.renderContent()}
-      </MainLayout>
-    );
-  }
+    </MainLayout>
+  );
 }
 
 export default connect({

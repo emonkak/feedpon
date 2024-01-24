@@ -1,21 +1,19 @@
-import React, { PureComponent } from 'react';
-import { RouteComponentProps } from 'react-router';
-import { createSelector } from 'reselect';
+import React, { useEffect, useMemo, useRef } from 'react';
+import { useParams } from 'react-router';
 
 import { bindActions } from 'feedpon-flux';
 import connect from 'feedpon-flux/react/connect';
 import type {
-  Category,
-  Entry,
+  Categories,
   EntryOrderKind,
   State,
-  Stream,
+  Streams,
   StreamViewKind,
-  Subscription,
+  Subscriptions,
 } from 'feedpon-messaging';
 import {
+  selectSortedCategories,
   createCategory,
-  createSortedCategoriesSelector,
 } from 'feedpon-messaging/categories';
 import {
   ALL_STREAM_ID,
@@ -59,12 +57,11 @@ import EntryList from '../modules/EntryList';
 import FeedHeader from '../modules/FeedHeader';
 import StreamFooter from '../modules/StreamFooter';
 import StreamNavbar from '../modules/StreamNavbar';
+import useEvent from '../hooks/useEvent';
+import useIsMounted from '../hooks/useIsMounted';
 
-interface StreamPageProps extends RouteComponentProps<{ stream_id: string }> {
-  canMarkAllEntriesAsRead: boolean;
-  canMarkStreamAsRead: boolean;
-  categories: Category[];
-  category: Category;
+interface StreamPageProps {
+  categories: Categories;
   isLoaded: boolean;
   isLoading: boolean;
   keepUnread: boolean;
@@ -96,182 +93,217 @@ interface StreamPageProps extends RouteComponentProps<{ stream_id: string }> {
   onUnselectStream: typeof unselectStream;
   onUnsubscribe: typeof unsubscribe;
   onUpdateEntrySizes: typeof updateEntrySizes;
-  readEntries: Entry[];
-  shouldFetchStream: boolean;
-  stream: Stream;
-  subscription: Subscription | null;
+  streams: Streams;
+  subscriptions: Subscriptions;
 }
 
-class StreamPage extends PureComponent<StreamPageProps> {
-  private _virtualList: VirtualListRef | null = null;
+function StreamPage({
+  categories: categoriesStore,
+  isLoaded,
+  isLoading,
+  keepUnread,
+  onAddToCategory,
+  onCreateCategory,
+  onFetchEntryComments,
+  onFetchFullContent,
+  onHideEntryComments,
+  onHideFullContents,
+  onResetReadEntry,
+  onChangeUnreadKeeping,
+  onFetchStream,
+  onMarkAllAsRead,
+  onMarkAsRead,
+  onSelectStream,
+  onMarkCategoryAsRead,
+  onMarkFeedAsRead,
+  onPinEntry,
+  onRemoveFromCategory,
+  onShowEntryComments,
+  onUpdateEntrySizes,
+  onShowFullContents,
+  onChangeStreamView,
+  onSubscribe,
+  onToggleSidebar,
+  onUnpinEntry,
+  onUnsubscribe,
+  onFetchMoreEntries,
+  onChangeExpandedEntry,
+  onChangeActiveEntry,
+  onUnselectStream,
+  subscriptions: subscriptionsStore,
+  streams: streamsStore,
+}: StreamPageProps) {
+  const params = useParams<{ stream_id: string }>();
+  const isMounted = useIsMounted();
+  const virtualListRef = useRef<VirtualListRef | null>(null);
 
-  constructor(props: StreamPageProps) {
-    super(props);
-
-    this.handleChangeActiveEnetry = this.handleChangeActiveEnetry.bind(this);
-    this.handleChangeEntryOrder = this.handleChangeEntryOrder.bind(this);
-    this.handleChangeExpandedEntry = this.handleChangeExpandedEntry.bind(this);
-    this.handleChangeNumberOfEntries =
-      this.handleChangeNumberOfEntries.bind(this);
-    this.handleChangeStreamView = this.handleChangeStreamView.bind(this);
-    this.handleClearReadEntries = this.handleClearReadEntries.bind(this);
-    this.handleCloseEntry = this.handleCloseEntry.bind(this);
-    this.handleUpdateBlockSizes = this.handleUpdateBlockSizes.bind(this);
-    this.handleLoadMoreEntries = this.handleLoadMoreEntries.bind(this);
-    this.handleMarkAllEntriesAsRead =
-      this.handleMarkAllEntriesAsRead.bind(this);
-    this.handleMarkStreamAsRead = this.handleMarkStreamAsRead.bind(this);
-    this.handleReloadEntries = this.handleReloadEntries.bind(this);
-    this.handleScrollToEntry = this.handleScrollToEntry.bind(this);
-    this.handleToggleOnlyUnread = this.handleToggleOnlyUnread.bind(this);
-    this.handleToggleUnreadKeeping = this.handleToggleUnreadKeeping.bind(this);
-  }
-
-  override componentDidMount() {
-    const { match, onFetchStream, onSelectStream, shouldFetchStream } =
-      this.props;
-
-    onSelectStream(decodeURIComponent(match.params['stream_id']));
-
-    if (shouldFetchStream) {
-      onFetchStream(decodeURIComponent(match.params['stream_id']));
-    }
-  }
-
-  override componentDidUpdate(prevProps: StreamPageProps, _prevState: {}) {
-    const { match, stream } = this.props;
-
-    // When transition to different stream
-    if (match.params['stream_id'] !== prevProps.match.params['stream_id']) {
-      const {
-        keepUnread,
-        onFetchStream,
-        onMarkAsRead,
-        onSelectStream,
-        readEntries,
-        shouldFetchStream,
-      } = this.props;
-
-      if (!keepUnread && readEntries.length > 0) {
-        onMarkAsRead(readEntries);
+  const stream = useMemo(() => {
+    const streamId = decodeURIComponent(params.stream_id);
+    return (
+      CacheMap.get(streamsStore.items, streamId) ?? {
+        activeEntryIndex: -1,
+        continuation: null,
+        entries: [],
+        entrySizes: {},
+        expandedEntryIndex: -1,
+        feed: null,
+        fetchOptions: streamsStore.defaultFetchOptions,
+        fetchedAt: 0,
+        readEntryIndex: -1,
+        streamId,
+        streamView: streamsStore.defaultStreamView,
+        title: '',
       }
+    );
+  }, [
+    streamsStore.items,
+    streamsStore.defaultStreamView,
+    streamsStore.defaultFetchOptions,
+    params.stream_id,
+  ]);
 
-      onSelectStream(decodeURIComponent(match.params['stream_id']));
+  const categories = useMemo(
+    () => selectSortedCategories(categoriesStore.items),
+    [categoriesStore.items],
+  );
 
-      if (shouldFetchStream) {
-        onFetchStream(decodeURIComponent(match.params['stream_id']));
-      }
-    } else {
-      if (stream.expandedEntryIndex !== prevProps.stream.expandedEntryIndex) {
-        if (stream.expandedEntryIndex > -1) {
-          this.handleScrollToEntry(stream.expandedEntryIndex);
-        } else if (stream.activeEntryIndex > -1) {
-          this.handleScrollToEntry(stream.activeEntryIndex);
-        }
-      }
-    }
+  const streamCategory = useMemo(() => {
+    const streamId = decodeURIComponent(params.stream_id);
+    return categoriesStore.items[streamId] ?? null;
+  }, [params.stream_id]);
 
-    const { isLoaded, isLoading } = this.props;
+  const streamSubscription = useMemo(() => {
+    const streamId = decodeURIComponent(params.stream_id);
+    return subscriptionsStore.items[streamId] ?? null;
+  }, [subscriptionsStore.items, params.stream_id]);
 
-    if (
-      (!isLoaded && isLoading && isLoading !== prevProps.isLoading) ||
-      (match.params['stream_id'] !== prevProps.match.params['stream_id'] &&
-        stream.activeEntryIndex < 0)
-    ) {
-      window.scrollTo(0, 0);
-    }
-  }
+  const readEntries = useMemo(
+    () =>
+      stream.entries
+        .slice(0, stream.readEntryIndex + 1)
+        .filter((entry) => !entry.markedAsRead),
+    [stream],
+  );
 
-  override componentWillUnmount() {
-    const { keepUnread, onMarkAsRead, onUnselectStream, readEntries } =
-      this.props;
+  const canMarkAllEntriesAsRead = useMemo(
+    () =>
+      !streamsStore.isMarking &&
+      stream.entries.some((entry) => !entry.markedAsRead),
+    [stream, streamsStore.isMarking],
+  );
 
-    onUnselectStream();
+  const canMarkStreamAsRead = useMemo(
+    () =>
+      !streamsStore.isMarking &&
+      (stream.streamId === ALL_STREAM_ID ||
+        streamSubscription !== null ||
+        streamCategory !== null),
+    [stream, streamSubscription, streamCategory, streamsStore.isMarking],
+  );
+
+  const shouldFetchStream = useMemo(
+    () =>
+      !stream ||
+      !isLoaded ||
+      subscriptionsStore.lastUpdatedAt > stream.fetchedAt,
+    [stream, streamsStore.isLoaded, subscriptionsStore.lastUpdatedAt],
+  );
+
+  useEffect(() => {
+    onSelectStream(decodeURIComponent(params['stream_id']));
 
     if (!keepUnread && readEntries.length > 0) {
       onMarkAsRead(readEntries);
     }
-  }
 
-  handleChangeActiveEnetry(nextActiveEntryIndex: number) {
-    const { stream, onChangeActiveEntry } = this.props;
-
-    if (stream) {
-      onChangeActiveEntry(stream.streamId, nextActiveEntryIndex);
+    if (shouldFetchStream) {
+      onFetchStream(decodeURIComponent(params['stream_id']));
     }
-  }
+  }, [params.stream_id]);
 
-  handleChangeEntryOrder(entryOrder: EntryOrderKind) {
-    const { onFetchStream, stream } = this.props;
+  useEffect(() => {
+    if (stream.expandedEntryIndex > -1) {
+      virtualListRef.current?.scrollTo(stream.expandedEntryIndex);
+    } else if (stream.activeEntryIndex > -1) {
+      virtualListRef.current?.scrollTo(stream.activeEntryIndex);
+    }
+  }, [stream.expandedEntryIndex]);
 
-    if (stream) {
+  useEffect(() => {
+    if (!isMounted()) {
+      return;
+    }
+    if (!isLoaded && isLoading) {
       window.scrollTo(0, 0);
-
-      onFetchStream(stream.streamId, stream.streamView, {
-        ...stream.fetchOptions,
-        entryOrder,
-      });
     }
-  }
+  }, [isLoading]);
 
-  handleChangeExpandedEntry(index: number) {
-    const { onChangeExpandedEntry, stream } = this.props;
-
-    if (stream) {
-      onChangeExpandedEntry(stream.streamId, index);
+  useEffect(() => {
+    if (!isMounted()) {
+      return;
     }
-  }
-
-  handleChangeNumberOfEntries(numEntries: number) {
-    const { onFetchStream, stream } = this.props;
-
-    if (stream) {
+    if (stream.activeEntryIndex < 0) {
       window.scrollTo(0, 0);
-
-      onFetchStream(stream.streamId, stream.streamView, {
-        ...stream.fetchOptions,
-        numEntries,
-      });
     }
-  }
+  }, [params.stream_id]);
 
-  handleChangeStreamView(streamView: StreamViewKind) {
-    const { onChangeStreamView, stream } = this.props;
+  useEffect(() => {
+    return () => {
+      onUnselectStream();
 
-    if (stream) {
-      onChangeStreamView(stream.streamId, streamView);
-    }
-  }
+      if (!keepUnread && readEntries.length > 0) {
+        onMarkAsRead(readEntries);
+      }
+    };
+  }, []);
 
-  handleClearReadEntries() {
-    const { onResetReadEntry, stream } = this.props;
+  const handleChangeActiveEnetry = useEvent((nextActiveEntryIndex: number) => {
+    onChangeActiveEntry(stream.streamId, nextActiveEntryIndex);
+  });
 
-    if (stream) {
-      window.scrollTo(0, 0);
+  const handleChangeEntryOrder = useEvent((entryOrder: EntryOrderKind) => {
+    window.scrollTo(0, 0);
 
-      onResetReadEntry(stream.streamId);
-    }
-  }
+    onFetchStream(stream.streamId, stream.streamView, {
+      ...stream.fetchOptions,
+      entryOrder,
+    });
+  });
 
-  handleCloseEntry() {
-    const { onChangeExpandedEntry, stream } = this.props;
+  const handleChangeExpandedEntry = useEvent((index: number) => {
+    onChangeExpandedEntry(stream.streamId, index);
+  });
 
-    if (stream) {
-      onChangeExpandedEntry(stream.streamId, -1);
-    }
-  }
+  const handleChangeNumberOfEntries = useEvent((numEntries: number) => {
+    window.scrollTo(0, 0);
 
-  handleUpdateBlockSizes(heights: { [id: string]: number }): void {
-    const { onUpdateEntrySizes, stream } = this.props;
+    onFetchStream(stream.streamId, stream.streamView, {
+      ...stream.fetchOptions,
+      numEntries,
+    });
+  });
 
-    if (stream) {
-      onUpdateEntrySizes(stream.streamId, heights);
-    }
-  }
+  const handleChangeStreamView = useEvent((streamView: StreamViewKind) => {
+    onChangeStreamView(stream.streamId, streamView);
+  });
 
-  handleLoadMoreEntries() {
-    const { onFetchMoreEntries, stream } = this.props;
+  const handleClearReadEntries = useEvent(() => {
+    window.scrollTo(0, 0);
 
+    onResetReadEntry(stream.streamId);
+  });
+
+  const handleCloseEntry = useEvent(() => {
+    onChangeExpandedEntry(stream.streamId, -1);
+  });
+
+  const handleUpdateBlockSizes = useEvent(
+    (entrySizes: { [id: string]: number }) => {
+      onUpdateEntrySizes(stream.streamId, entrySizes);
+    },
+  );
+
+  const handleLoadMoreEntries = useEvent(() => {
     if (stream.continuation) {
       onFetchMoreEntries(
         stream.streamId,
@@ -279,169 +311,118 @@ class StreamPage extends PureComponent<StreamPageProps> {
         stream.fetchOptions,
       );
     }
-  }
+  });
 
-  handleMarkAllEntriesAsRead() {
-    const { stream, onMarkAsRead } = this.props;
+  const handleMarkAllEntriesAsRead = useEvent(() => {
     const unreadEntries = stream.entries.filter((entry) => !entry.markedAsRead);
 
     if (unreadEntries.length > 0) {
       onMarkAsRead(unreadEntries);
     }
-  }
+  });
 
-  handleMarkStreamAsRead() {
-    const {
-      category,
-      onMarkAllAsRead,
-      onMarkCategoryAsRead,
-      onMarkFeedAsRead,
-      stream,
-      subscription,
-    } = this.props;
-
+  const handleMarkStreamAsRead = useEvent(() => {
     if (stream.streamId === ALL_STREAM_ID) {
       onMarkAllAsRead();
-    } else if (category) {
-      onMarkCategoryAsRead(category);
-    } else if (subscription) {
-      onMarkFeedAsRead(subscription);
+    } else if (streamCategory) {
+      onMarkCategoryAsRead(streamCategory);
+    } else if (streamSubscription) {
+      onMarkFeedAsRead(streamSubscription);
     }
-  }
+  });
 
-  handleReloadEntries() {
-    const { onFetchStream, stream } = this.props;
+  const handleReloadEntries = useEvent(() => {
+    window.scrollTo(0, 0);
 
-    if (stream) {
-      window.scrollTo(0, 0);
+    onFetchStream(stream.streamId, stream.streamView, stream.fetchOptions);
+  });
 
-      onFetchStream(stream.streamId, stream.streamView, stream.fetchOptions);
-    }
-  }
+  const handleScrollToEntry = useEvent((index: number) => {
+    virtualListRef.current?.scrollTo(index);
+  });
 
-  handleScrollToEntry(index: number) {
-    if (this._virtualList) {
-      this._virtualList.scrollTo(index);
-    }
-  }
+  const handleToggleOnlyUnread = useEvent(() => {
+    window.scrollTo(0, 0);
 
-  handleToggleOnlyUnread() {
-    const { onFetchStream, stream } = this.props;
+    onFetchStream(stream.streamId, stream.streamView, {
+      ...stream.fetchOptions,
+      onlyUnread: !stream.fetchOptions.onlyUnread,
+    });
+  });
 
-    if (stream) {
-      window.scrollTo(0, 0);
-
-      onFetchStream(stream.streamId, stream.streamView, {
-        ...stream.fetchOptions,
-        onlyUnread: !stream.fetchOptions.onlyUnread,
-      });
-    }
-  }
-
-  handleToggleUnreadKeeping() {
-    const { keepUnread, onChangeUnreadKeeping } = this.props;
-
+  const handleToggleUnreadKeeping = useEvent(() => {
     onChangeUnreadKeeping(!keepUnread);
-  }
+  });
 
-  renderNavbar() {
-    const {
-      canMarkStreamAsRead,
-      isLoading,
-      keepUnread,
-      onToggleSidebar,
-      stream,
-    } = this.props;
+  const navbar = (
+    <StreamNavbar
+      activeEntryIndex={stream.activeEntryIndex}
+      canMarkStreamAsRead={canMarkStreamAsRead}
+      entries={stream.entries}
+      feed={stream.feed}
+      fetchOptions={stream.fetchOptions}
+      isExpanded={stream.expandedEntryIndex > -1}
+      isLoading={isLoading}
+      keepUnread={keepUnread}
+      onChangeEntryOrder={handleChangeEntryOrder}
+      onChangeNumberOfEntries={handleChangeNumberOfEntries}
+      onChangeStreamView={handleChangeStreamView}
+      onClearReadPosition={handleClearReadEntries}
+      onCloseEntry={handleCloseEntry}
+      onMarkStreamAsRead={handleMarkStreamAsRead}
+      onReloadEntries={handleReloadEntries}
+      onScrollToEntry={handleScrollToEntry}
+      onToggleOnlyUnread={handleToggleOnlyUnread}
+      onToggleSidebar={onToggleSidebar}
+      onToggleUnreadKeeping={handleToggleUnreadKeeping}
+      readEntryIndex={stream.readEntryIndex}
+      streamView={stream.streamView}
+      title={stream.title}
+    />
+  );
 
-    return (
-      <StreamNavbar
-        activeEntryIndex={stream.activeEntryIndex}
-        canMarkStreamAsRead={canMarkStreamAsRead}
-        entries={stream.entries}
+  const footer = (
+    <StreamFooter
+      canMarkAllEntriesAsRead={canMarkAllEntriesAsRead}
+      hasMoreEntries={stream.continuation !== null}
+      isLoading={isLoading}
+      onLoadMoreEntries={handleLoadMoreEntries}
+      onMarkAllEntiresAsRead={handleMarkAllEntriesAsRead}
+    />
+  );
+
+  let streamHeader;
+
+  if (stream.feed) {
+    streamHeader = (
+      <FeedHeader
+        categories={categories}
         feed={stream.feed}
-        fetchOptions={stream.fetchOptions}
-        isExpanded={stream.expandedEntryIndex > -1}
-        isLoading={isLoading}
-        keepUnread={keepUnread}
-        onChangeEntryOrder={this.handleChangeEntryOrder}
-        onChangeNumberOfEntries={this.handleChangeNumberOfEntries}
-        onChangeStreamView={this.handleChangeStreamView}
-        onClearReadPosition={this.handleClearReadEntries}
-        onCloseEntry={this.handleCloseEntry}
-        onMarkStreamAsRead={this.handleMarkStreamAsRead}
-        onReloadEntries={this.handleReloadEntries}
-        onScrollToEntry={this.handleScrollToEntry}
-        onToggleOnlyUnread={this.handleToggleOnlyUnread}
-        onToggleSidebar={onToggleSidebar}
-        onToggleUnreadKeeping={this.handleToggleUnreadKeeping}
-        readEntryIndex={stream.readEntryIndex}
-        streamView={stream.streamView}
-        title={stream.title}
+        hasMoreEntries={!!stream.continuation}
+        numEntries={stream.entries.length}
+        onAddToCategory={onAddToCategory}
+        onCreateCategory={onCreateCategory}
+        onRemoveFromCategory={onRemoveFromCategory}
+        onSubscribe={onSubscribe}
+        onUnsubscribe={onUnsubscribe}
+        subscription={streamSubscription}
       />
     );
+  } else if (streamCategory) {
+    streamHeader = (
+      <CategoryHeader
+        category={streamCategory}
+        hasMoreEntries={!!stream.continuation}
+        numEntries={stream.entries.length}
+      />
+    );
+  } else {
+    streamHeader = null;
   }
 
-  renderStreamHeader() {
-    const {
-      categories,
-      category,
-      onAddToCategory,
-      onCreateCategory,
-      onRemoveFromCategory,
-      onSubscribe,
-      onUnsubscribe,
-      stream,
-      subscription,
-    } = this.props;
-
-    if (stream) {
-      if (stream.feed) {
-        return (
-          <FeedHeader
-            categories={categories}
-            feed={stream.feed}
-            hasMoreEntries={!!stream.continuation}
-            numEntries={stream.entries.length}
-            onAddToCategory={onAddToCategory}
-            onCreateCategory={onCreateCategory}
-            onRemoveFromCategory={onRemoveFromCategory}
-            onSubscribe={onSubscribe}
-            onUnsubscribe={onUnsubscribe}
-            subscription={subscription}
-          />
-        );
-      }
-
-      if (category) {
-        return (
-          <CategoryHeader
-            category={category}
-            hasMoreEntries={!!stream.continuation}
-            numEntries={stream.entries.length}
-          />
-        );
-      }
-    }
-
-    return null;
-  }
-
-  renderStreamEntries() {
-    const {
-      isLoaded,
-      isLoading,
-      onFetchEntryComments,
-      onFetchFullContent,
-      onHideEntryComments,
-      onHideFullContents,
-      onPinEntry,
-      onShowEntryComments,
-      onShowFullContents,
-      onUnpinEntry,
-      stream,
-    } = this.props;
-
-    return (
+  return (
+    <MainLayout header={navbar} footer={footer}>
+      {streamHeader}
       <EntryList
         activeEntryIndex={stream.activeEntryIndex}
         blockSizes={stream.entrySizes}
@@ -449,8 +430,8 @@ class StreamPage extends PureComponent<StreamPageProps> {
         expandedEntryIndex={stream.expandedEntryIndex}
         isLoaded={isLoaded}
         isLoading={isLoading}
-        onChangeActiveEntry={this.handleChangeActiveEnetry}
-        onExpand={this.handleChangeExpandedEntry}
+        onChangeActiveEntry={handleChangeActiveEnetry}
+        onExpand={handleChangeExpandedEntry}
         onFetchComments={onFetchEntryComments}
         onFetchFullContent={onFetchFullContent}
         onHideComments={onHideEntryComments}
@@ -459,142 +440,25 @@ class StreamPage extends PureComponent<StreamPageProps> {
         onShowComments={onShowEntryComments}
         onShowFullContents={onShowFullContents}
         onUnpin={onUnpinEntry}
-        onUpdateBlockSizes={this.handleUpdateBlockSizes}
+        onUpdateBlockSizes={handleUpdateBlockSizes}
         readEntryIndex={stream.readEntryIndex}
-        ref={this._handleVirtualList}
+        ref={virtualListRef}
         sameOrigin={stream.feed !== null}
         streamView={stream.streamView}
       />
-    );
-  }
-
-  renderFooter() {
-    const { canMarkAllEntriesAsRead, isLoading, stream } = this.props;
-
-    return (
-      <StreamFooter
-        canMarkAllEntriesAsRead={canMarkAllEntriesAsRead}
-        hasMoreEntries={stream.continuation !== null}
-        isLoading={isLoading}
-        onLoadMoreEntries={this.handleLoadMoreEntries}
-        onMarkAllEntiresAsRead={this.handleMarkAllEntriesAsRead}
-      />
-    );
-  }
-
-  override render() {
-    return (
-      <MainLayout header={this.renderNavbar()} footer={this.renderFooter()}>
-        {this.renderStreamHeader()}
-        {this.renderStreamEntries()}
-      </MainLayout>
-    );
-  }
-
-  private _handleVirtualList = (virtualList: VirtualListRef | null) => {
-    this._virtualList = virtualList;
-  };
+    </MainLayout>
+  );
 }
 
 export default connect(() => {
-  const categoriesSelector = createSortedCategoriesSelector();
-
-  const streamSelector = createSelector(
-    (state: State) => state.streams.items,
-    (state: State) => state.streams.defaultStreamView,
-    (state: State) => state.streams.defaultFetchOptions,
-    (_state: State, props: StreamPageProps) =>
-      decodeURIComponent(props.match.params['stream_id']),
-    (streams, defaultStreamView, defaultFetchOptions, streamId) =>
-      CacheMap.get(streams, streamId) || {
-        streamId,
-        title: '',
-        entries: [],
-        feed: null,
-        continuation: null,
-        fetchOptions: defaultFetchOptions,
-        streamView: defaultStreamView,
-        fetchedAt: 0,
-        activeEntryIndex: -1,
-        expandedEntryIndex: -1,
-        readEntryIndex: -1,
-        heights: {},
-      },
-  );
-
-  const readEntriesSelector = createSelector(streamSelector, (stream) =>
-    stream.entries
-      .slice(0, stream.readEntryIndex + 1)
-      .filter((entry) => !entry.markedAsRead),
-  );
-
-  const subscriptionSelector: (
-    state: State,
-    props: StreamPageProps,
-  ) => Subscription | null = createSelector(
-    (state: State) => state.subscriptions.items,
-    (_state: State, props: StreamPageProps) =>
-      decodeURIComponent(props.match.params['stream_id']),
-    (subscriptions, streamId) => subscriptions[streamId] || null,
-  );
-
-  const categorySelector: (
-    state: State,
-    props: StreamPageProps,
-  ) => Category | null = createSelector(
-    (state: State) => state.categories.items,
-    (_state: State, props: StreamPageProps) =>
-      decodeURIComponent(props.match.params['stream_id']),
-    (categories, streamId) => categories[streamId] || null,
-  );
-
-  const canMarkAllEntriesAsReadSelector = createSelector(
-    streamSelector,
-    (state: State) => state.streams.isMarking,
-    (stream, isMarking) => {
-      return !isMarking && stream.entries.some((entry) => !entry.markedAsRead);
-    },
-  );
-
-  const canMarkStreamAsReadSelector = createSelector(
-    streamSelector,
-    subscriptionSelector,
-    categorySelector,
-    (state: State) => state.streams.isMarking,
-    (stream, subscription, category, isMarking) => {
-      return (
-        !isMarking &&
-        (stream.streamId === ALL_STREAM_ID ||
-          subscription !== null ||
-          category !== null)
-      );
-    },
-  );
-
-  const shouldFetchStreamSelector = createSelector(
-    streamSelector,
-    (state: State) => state.streams.isLoaded,
-    (state: State) => state.subscriptions.lastUpdatedAt,
-    (stream, isLoaded, lastUpdateOfsubscriptions) => {
-      return (
-        !stream || !isLoaded || lastUpdateOfsubscriptions > stream.fetchedAt
-      );
-    },
-  );
-
   return {
-    mapStateToProps: (state: State, props: StreamPageProps) => ({
-      canMarkAllEntriesAsRead: canMarkAllEntriesAsReadSelector(state, props),
-      canMarkStreamAsRead: canMarkStreamAsReadSelector(state, props),
-      categories: categoriesSelector(state),
-      category: categorySelector(state, props),
+    mapStateToProps: (state: State, _props: StreamPageProps) => ({
+      categories: state.categories,
       isLoaded: state.streams.isLoaded,
       isLoading: state.streams.isLoading,
       keepUnread: state.streams.keepUnread,
-      readEntries: readEntriesSelector(state, props),
-      shouldFetchStream: shouldFetchStreamSelector(state, props),
-      stream: streamSelector(state, props),
-      subscription: subscriptionSelector(state, props) as Subscription | null,
+      streams: state.streams,
+      subscriptions: state.subscriptions,
     }),
     mapDispatchToProps: bindActions({
       onAddToCategory: addToCategory,

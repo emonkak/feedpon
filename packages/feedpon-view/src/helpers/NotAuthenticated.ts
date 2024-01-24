@@ -1,5 +1,4 @@
-import { History } from 'history';
-import { PureComponent } from 'react';
+import React from 'react';
 
 import connect from 'feedpon-flux/react/connect';
 import type { State } from 'feedpon-messaging';
@@ -7,15 +6,13 @@ import type { State } from 'feedpon-messaging';
 interface NotAuthenticatedProps {
   children: React.ReactElement<any>;
   isAuthenticated: boolean;
-  history: History;
 }
 
-class NotAuthenticated extends PureComponent<NotAuthenticatedProps> {
-  override render() {
-    const { children, isAuthenticated } = this.props;
-
-    return !isAuthenticated ? children : null;
-  }
+function NotAuthenticated({
+  children,
+  isAuthenticated,
+}: NotAuthenticatedProps) {
+  return !isAuthenticated ? children : null;
 }
 
 export default connect(() => ({

@@ -1,11 +1,14 @@
-import React, { PureComponent } from 'react';
-import { RouteComponentProps } from 'react-router';
+import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { createSelector } from 'reselect';
 
 import { bindActions } from 'feedpon-flux';
 import connect from 'feedpon-flux/react/connect';
-import type { State } from 'feedpon-messaging';
+import type {
+  Histories,
+  Categories,
+  Subscriptions,
+  State,
+} from 'feedpon-messaging';
 import { toggleSidebar } from 'feedpon-messaging/ui';
 import * as CacheMap from 'feedpon-utils/CacheMap';
 import Navbar from '../components/Navbar';
@@ -13,13 +16,11 @@ import RelativeTime from '../components/RelativeTime';
 import MainLayout from '../layouts/MainLayout';
 import SubscriptionIcon from '../modules/SubscriptionIcon';
 
-interface DashboardProps extends RouteComponentProps {
+interface DashboardProps {
+  histories: Histories;
+  subscriptions: Subscriptions;
+  categories: Categories;
   onToggleSidebar: typeof toggleSidebar;
-  streamHistories: StreamHistory[];
-}
-
-interface DashboardState {
-  modalIsOpened: boolean;
 }
 
 interface StreamHistory {
@@ -31,98 +32,15 @@ interface StreamHistory {
   fetchedAt: number;
 }
 
-class DashboardPage extends PureComponent<DashboardProps, DashboardState> {
-  constructor(props: any) {
-    super(props);
-  }
-
-  renderStreamHistory(streamHistory: StreamHistory) {
-    return (
-      <Link
-        key={streamHistory.streamId}
-        className="list-group-item"
-        to={`/streams/${encodeURIComponent(streamHistory.streamId)}`}
-      >
-        <div className="u-flex u-flex-align-items-center">
-          <div className="u-flex-shrink-0 u-margin-right-2">
-            {streamHistory.type === 'category' ? (
-              <i className="icon icon-16 icon-folder" />
-            ) : (
-              <SubscriptionIcon
-                title={streamHistory.title}
-                iconUrl={streamHistory.iconUrl}
-              />
-            )}
-          </div>
-          <div className="u-flex-grow-1 u-margin-right-2">
-            <div>{streamHistory.title}</div>
-            <div className="u-text-7 u-text-muted">
-              <RelativeTime time={streamHistory.fetchedAt} />
-            </div>
-          </div>
-          {streamHistory.unreadCount > 0 && (
-            <div className="u-flex-shrink-0">
-              <span className="badge badge-medium badge-positive">
-                {streamHistory.unreadCount}
-              </span>
-            </div>
-          )}
-        </div>
-      </Link>
-    );
-  }
-
-  renderStreamHistoryList() {
-    const { streamHistories } = this.props;
-
-    if (streamHistories.length === 0) {
-      return (
-        <p>{`Recently read streams does not exist yet. Let's subscribe to feeds and read the stream.`}</p>
-      );
-    }
-
-    return (
-      <ol className="list-group">
-        {streamHistories.map(this.renderStreamHistory, this)}
-      </ol>
-    );
-  }
-
-  renderNavbar() {
-    const { onToggleSidebar } = this.props;
-
-    return (
-      <Navbar onToggleSidebar={onToggleSidebar}>
-        <h1 className="navbar-title">Dashboard</h1>
-      </Navbar>
-    );
-  }
-
-  renderContent() {
-    return (
-      <div className="container">
-        <section className="section">
-          <h1 className="display-1">Recently read</h1>
-          {this.renderStreamHistoryList()}
-        </section>
-      </div>
-    );
-  }
-
-  override render() {
-    return (
-      <MainLayout header={this.renderNavbar()}>
-        {this.renderContent()}
-      </MainLayout>
-    );
-  }
-}
-
-export default connect(() => {
-  const categoryUnreadCountsSelector = createSelector(
-    (state: State) => state.subscriptions.items,
-    (subscriptions) =>
-      Object.values(subscriptions).reduce<{ [key: string]: number }>(
+function DashboardPage({
+  onToggleSidebar,
+  categories,
+  subscriptions,
+  histories,
+}: DashboardProps) {
+  const categoryUnreadCounts = useMemo(
+    () =>
+      Object.values(subscriptions.items).reduce<{ [key: string]: number }>(
         (acc, subscription) => {
           for (const label of subscription.labels) {
             if (subscription.unreadCount > subscription.readCount) {
@@ -136,18 +54,15 @@ export default connect(() => {
         },
         {},
       ),
+    [subscriptions.items],
   );
 
-  const streamHistoriesSelector = createSelector(
-    (state: State) => state.histories.recentlyReadStreams,
-    (state: State) => state.subscriptions.items,
-    (state: State) => state.categories.items,
-    categoryUnreadCountsSelector,
-    (recentlyReadStreams, subscriptions, categories, categoryUnreadCounts) =>
-      CacheMap.keys(recentlyReadStreams)
+  const streamHistories = useMemo(
+    () =>
+      CacheMap.keys(histories.recentlyReadStreams)
         .reduce<StreamHistory[]>((acc, streamId) => {
-          if (subscriptions[streamId]) {
-            const subscription = subscriptions[streamId]!;
+          if (subscriptions.items[streamId]) {
+            const subscription = subscriptions.items[streamId]!;
             acc.push({
               streamId,
               type: 'subscription',
@@ -157,27 +72,100 @@ export default connect(() => {
                 0,
                 subscription.unreadCount - subscription.readCount,
               ),
-              fetchedAt: CacheMap.get(recentlyReadStreams, streamId)!,
+              fetchedAt: CacheMap.get(histories.recentlyReadStreams, streamId)!,
             });
-          } else if (categories[streamId]) {
-            const category = categories[streamId]!;
+          } else if (categories.items[streamId]) {
+            const category = categories.items[streamId]!;
             acc.push({
               streamId,
               type: 'category',
               title: category.label,
               iconUrl: '',
               unreadCount: categoryUnreadCounts[category.label] || 0,
-              fetchedAt: CacheMap.get(recentlyReadStreams, streamId)!,
+              fetchedAt: CacheMap.get(histories.recentlyReadStreams, streamId)!,
             });
           }
           return acc;
         }, [])
         .reverse(),
+    [
+      categoryUnreadCounts,
+      histories.recentlyReadStreams,
+      subscriptions.items,
+      categories.items,
+    ],
   );
 
+  const navbar = (
+    <Navbar onToggleSidebar={onToggleSidebar}>
+      <h1 className="navbar-title">Dashboard</h1>
+    </Navbar>
+  );
+
+  let streamHistoryList;
+
+  if (streamHistories.length === 0) {
+    streamHistoryList = (
+      <p>{`Recently read streams does not exist yet. Let's subscribe to feeds and read the stream.`}</p>
+    );
+  } else {
+    streamHistoryList = (
+      <ol className="list-group">
+        {streamHistories.map((streamHistory) => (
+          <Link
+            key={streamHistory.streamId}
+            className="list-group-item"
+            to={`/streams/${encodeURIComponent(streamHistory.streamId)}`}
+          >
+            <div className="u-flex u-flex-align-items-center">
+              <div className="u-flex-shrink-0 u-margin-right-2">
+                {streamHistory.type === 'category' ? (
+                  <i className="icon icon-16 icon-folder" />
+                ) : (
+                  <SubscriptionIcon
+                    title={streamHistory.title}
+                    iconUrl={streamHistory.iconUrl}
+                  />
+                )}
+              </div>
+              <div className="u-flex-grow-1 u-margin-right-2">
+                <div>{streamHistory.title}</div>
+                <div className="u-text-7 u-text-muted">
+                  <RelativeTime time={streamHistory.fetchedAt} />
+                </div>
+              </div>
+              {streamHistory.unreadCount > 0 && (
+                <div className="u-flex-shrink-0">
+                  <span className="badge badge-medium badge-positive">
+                    {streamHistory.unreadCount}
+                  </span>
+                </div>
+              )}
+            </div>
+          </Link>
+        ))}
+      </ol>
+    );
+  }
+
+  return (
+    <MainLayout header={navbar}>
+      <div className="container">
+        <section className="section">
+          <h1 className="display-1">Recently read</h1>
+          {streamHistoryList}
+        </section>
+      </div>
+    </MainLayout>
+  );
+}
+
+export default connect(() => {
   return {
     mapStateToProps: (state: State) => ({
-      streamHistories: streamHistoriesSelector(state),
+      categories: state.categories,
+      histories: state.histories,
+      subscriptions: state.subscriptions,
     }),
     mapDispatchToProps: bindActions({
       onToggleSidebar: toggleSidebar,

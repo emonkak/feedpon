@@ -1,11 +1,5 @@
-import { History, Location } from 'history';
-import React, { PureComponent } from 'react';
-import { Link } from 'react-router-dom';
-
-import '@emonkak/enumerable/extensions/select';
-import '@emonkak/enumerable/extensions/take';
-import '@emonkak/enumerable/extensions/toArray';
-import '@emonkak/enumerable/extensions/where';
+import React, { useEffect } from 'react';
+import { Link, useHistory } from 'react-router-dom';
 
 import { bindActions } from 'feedpon-flux';
 import connect from 'feedpon-flux/react/connect';
@@ -37,13 +31,12 @@ import ProfileDropdown from '../modules/ProfileDropdown';
 import SubscriptionIcon from '../modules/SubscriptionIcon';
 import SubscriptionTree from '../modules/SubscriptionTree';
 import SubscriptionTreeHeader from '../modules/SubscriptionTreeHeader';
+import useEvent from '../hooks/useEvent';
 
 interface SidebarProps {
   categories: Category[];
   groupedSubscriptions: { [key: string]: GroupedSubscription };
-  history: History;
   lastUpdatedAt: number;
-  location: Location;
   onChangeSubscriptionOrder: typeof changeSubscriptionOrder;
   onChangeOnlyUnread: typeof changeOnlyUnread;
   onFetchSubscriptions: typeof fetchSubscriptions;
@@ -60,123 +53,114 @@ interface SidebarProps {
   userIsLoading: boolean;
 }
 
-class Sidebar extends PureComponent<SidebarProps> {
-  override componentDidMount() {
-    const { lastUpdatedAt, onFetchSubscriptions, onFetchUser, userIsLoaded } =
-      this.props;
+function Sidebar({
+  categories,
+  groupedSubscriptions,
+  lastUpdatedAt,
+  onChangeOnlyUnread: onChangeUnreadViewing,
+  onChangeSubscriptionOrder,
+  onFetchSubscriptions,
+  onFetchUser,
+  onLogout,
+  onlyUnread,
+  profile,
+  subscriptionOrder,
+  subscriptions,
+  subscriptionsIsLoading,
+  totalUnreadCount,
+  userIsLoaded,
+  userIsLoading,
+}: SidebarProps) {
+  const history = useHistory();
 
+  useEffect(() => {
     if (lastUpdatedAt === 0) {
       onFetchSubscriptions();
     }
+  }, [lastUpdatedAt]);
 
+  useEffect(() => {
     if (!userIsLoaded) {
       onFetchUser();
     }
-  }
+  }, [userIsLoaded]);
 
-  override render() {
-    const {
-      categories,
-      groupedSubscriptions,
-      lastUpdatedAt,
-      location,
-      onChangeSubscriptionOrder,
-      onChangeOnlyUnread: onChangeUnreadViewing,
-      onFetchSubscriptions,
-      onFetchUser,
-      onLogout,
-      onlyUnread,
-      profile,
-      subscriptionOrder,
-      subscriptions,
-      subscriptionsIsLoading,
-      totalUnreadCount,
-      userIsLoading,
-    } = this.props;
-
-    return (
-      <nav className="sidebar">
-        <div className="sidebar-group">
-          <AutoComplete<Subscription, string>
-            items={subscriptions}
-            onSelect={this._handleSelect}
-            onSubmit={this._handleSearch}
-            placeholder="Search for feeds ..."
-            renderItems={renderItems}
-          ></AutoComplete>
-        </div>
-        <div className="sidebar-group">
-          <Tree selectedValue={location.pathname} onSelect={this._handleSelect}>
-            <TreeLeaf value="/" primaryText="Dashboard" />
-            <TreeLeaf
-              value={`/streams/${ALL_STREAM_ID}`}
-              primaryText="All"
-              secondaryText={Number(totalUnreadCount).toLocaleString()}
-            />
-            <TreeLeaf value={`/streams/${PINS_STREAM_ID}`} primaryText="Pins" />
-          </Tree>
-        </div>
-        <div className="sidebar-group">
-          <SubscriptionTreeHeader
-            isLoading={subscriptionsIsLoading}
-            lastUpdatedAt={lastUpdatedAt}
-            onChangeSubscriptionOrder={onChangeSubscriptionOrder}
-            onChangeOnlyUnread={onChangeUnreadViewing}
-            onManageSubscriptions={this._handleManageSubscriptions}
-            onReload={onFetchSubscriptions}
-            onlyUnread={onlyUnread}
-            subscriptionOrder={subscriptionOrder}
-          />
-          <SubscriptionTree
-            categories={categories}
-            groupedSubscriptions={groupedSubscriptions}
-            selectedPath={location.pathname}
-            onSelect={this._handleSelect}
-          />
-        </div>
-        <div className="sidebar-group">
-          <Tree selectedValue={location.pathname} onSelect={this._handleSelect}>
-            <TreeLeaf value="/settings/ui" primaryText="Settings" />
-            <TreeLeaf value="/about/" primaryText="About" />
-          </Tree>
-        </div>
-        <div className="sidebar-group">
-          <Link
-            className="button button-block button-outline-default"
-            to="/search/"
-          >
-            New Subscription
-          </Link>
-        </div>
-        <div className="sidebar-group">
-          <ProfileDropdown
-            isLoading={userIsLoading}
-            profile={profile}
-            onRefresh={onFetchUser}
-            onLogout={onLogout}
-          />
-        </div>
-      </nav>
-    );
-  }
-
-  private _handleSearch = (query: string) => {
-    const { history } = this.props;
-
+  const handleSearch = useEvent((query: string) => {
     history.push('/search/' + encodeURIComponent(query));
-  };
+  });
 
-  private _handleSelect = (path: string) => {
-    const { history } = this.props;
-
+  const handleSelect = useEvent((path: string) => {
     history.push(path);
-  };
+  });
 
-  private _handleManageSubscriptions = () => {
-    const { history } = this.props;
-
+  const handleManageSubscriptions = useEvent(() => {
     history.push('/categories/');
-  };
+  });
+
+  return (
+    <nav className="sidebar">
+      <div className="sidebar-group">
+        <AutoComplete<Subscription, string>
+          items={subscriptions}
+          onSelect={handleSelect}
+          onSubmit={handleSearch}
+          placeholder="Search for feeds ..."
+          renderItems={renderItems}
+        ></AutoComplete>
+      </div>
+      <div className="sidebar-group">
+        <Tree selectedValue={history.location.pathname} onSelect={handleSelect}>
+          <TreeLeaf value="/" primaryText="Dashboard" />
+          <TreeLeaf
+            value={`/streams/${ALL_STREAM_ID}`}
+            primaryText="All"
+            secondaryText={Number(totalUnreadCount).toLocaleString()}
+          />
+          <TreeLeaf value={`/streams/${PINS_STREAM_ID}`} primaryText="Pins" />
+        </Tree>
+      </div>
+      <div className="sidebar-group">
+        <SubscriptionTreeHeader
+          isLoading={subscriptionsIsLoading}
+          lastUpdatedAt={lastUpdatedAt}
+          onChangeSubscriptionOrder={onChangeSubscriptionOrder}
+          onChangeOnlyUnread={onChangeUnreadViewing}
+          onManageSubscriptions={handleManageSubscriptions}
+          onReload={onFetchSubscriptions}
+          onlyUnread={onlyUnread}
+          subscriptionOrder={subscriptionOrder}
+        />
+        <SubscriptionTree
+          categories={categories}
+          groupedSubscriptions={groupedSubscriptions}
+          selectedPath={history.location.pathname}
+          onSelect={handleSelect}
+        />
+      </div>
+      <div className="sidebar-group">
+        <Tree selectedValue={history.location.pathname} onSelect={handleSelect}>
+          <TreeLeaf value="/settings/ui" primaryText="Settings" />
+          <TreeLeaf value="/about/" primaryText="About" />
+        </Tree>
+      </div>
+      <div className="sidebar-group">
+        <Link
+          className="button button-block button-outline-default"
+          to="/search/"
+        >
+          New Subscription
+        </Link>
+      </div>
+      <div className="sidebar-group">
+        <ProfileDropdown
+          isLoading={userIsLoading}
+          profile={profile}
+          onRefresh={onFetchUser}
+          onLogout={onLogout}
+        />
+      </div>
+    </nav>
+  );
 }
 
 function renderItems(subscriptions: Subscription[], query: string) {

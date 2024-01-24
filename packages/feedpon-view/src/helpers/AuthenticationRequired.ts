@@ -1,5 +1,5 @@
-import { History } from 'history';
-import { PureComponent } from 'react';
+import React, { useEffect } from 'react';
+import { useHistory } from 'react-router';
 
 import connect from 'feedpon-flux/react/connect';
 import type { State } from 'feedpon-messaging';
@@ -7,34 +7,21 @@ import type { State } from 'feedpon-messaging';
 interface AuthenticationRequiredProps {
   children: React.ReactElement<any>;
   isAuthenticated: boolean;
-  history: History;
 }
 
-class AuthenticationRequired extends PureComponent<AuthenticationRequiredProps> {
-  override componentDidMount() {
-    this._refresh(this.props);
-  }
+function AuthenticationRequired({
+  children,
+  isAuthenticated,
+}: AuthenticationRequiredProps) {
+  const history = useHistory();
 
-  override componentDidUpdate(
-    _prevProps: AuthenticationRequiredProps,
-    _prevState: {},
-  ) {
-    this._refresh(this.props);
-  }
-
-  override render() {
-    const { children, isAuthenticated } = this.props;
-
-    return isAuthenticated ? children : null;
-  }
-
-  private _refresh(props: AuthenticationRequiredProps) {
-    const { isAuthenticated, history } = props;
-
+  useEffect(() => {
     if (!isAuthenticated) {
       history.replace('/authentication');
     }
-  }
+  }, [isAuthenticated]);
+
+  return isAuthenticated ? children : null;
 }
 
 export default connect(() => ({

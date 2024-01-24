@@ -22,6 +22,25 @@ import TrackingUrlSettings from './containers/TrackingUrlSettings';
 import UISettings from './containers/UISettings';
 import UrlReplacementSettings from './containers/UrlReplacementSettings';
 
+interface RoutesProps {
+  history: History;
+}
+
+export default function Routes({}: RoutesProps) {
+  return (
+    <RootLayout>
+      <AuthenticationRequired>
+        <Route component={MainWrapper} path="/" />
+      </AuthenticationRequired>
+      <NotAuthenticated>
+        <SingleLayout>
+          <Route path="*" component={AuthenticationPage} />
+        </SingleLayout>
+      </NotAuthenticated>
+    </RootLayout>
+  );
+}
+
 function MainWrapper(props: RouteComponentProps) {
   return (
     <SidebarLayout {...props}>
@@ -53,24 +72,5 @@ function SettingsWrapper(props: RouteComponentProps) {
         <Route path="/settings/ui" component={UISettings} />
       </Switch>
     </SettingsPage>
-  );
-}
-
-interface RoutesProps {
-  history: History;
-}
-
-export default function Routes(props: RoutesProps) {
-  return (
-    <RootLayout>
-      <AuthenticationRequired history={props.history}>
-        <Route component={MainWrapper} path="/" />
-      </AuthenticationRequired>
-      <NotAuthenticated history={props.history}>
-        <SingleLayout>
-          <Route path="*" component={AuthenticationPage} />
-        </SingleLayout>
-      </NotAuthenticated>
-    </RootLayout>
   );
 }

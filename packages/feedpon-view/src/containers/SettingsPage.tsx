@@ -1,5 +1,5 @@
-import React, { PureComponent } from 'react';
-import { RouteComponentProps } from 'react-router';
+import React from 'react';
+import { useLocation, useHistory } from 'react-router';
 
 import MainLayout from '../layouts/MainLayout';
 import Navbar from '../components/Navbar';
@@ -7,41 +7,31 @@ import { bindActions } from 'feedpon-flux';
 import connect from 'feedpon-flux/react/connect';
 import { Nav, NavItem } from '../components/Nav';
 import { toggleSidebar } from 'feedpon-messaging/ui';
+import useEvent from '../hooks/useEvent';
 
-interface SettingsProps extends RouteComponentProps {
+interface SettingsProps {
   children: React.ReactElement<any>;
   onToggleSidebar: typeof toggleSidebar;
 }
 
-class SettingsPage extends PureComponent<SettingsProps> {
-  constructor(props: SettingsProps) {
-    super(props);
+function SettingsPage({ children, onToggleSidebar }: SettingsProps) {
+  const history = useHistory();
+  const location = useLocation();
 
-    this.handleSelectNavItem = this.handleSelectNavItem.bind(this);
-  }
-
-  handleSelectNavItem(path: string) {
-    const { history } = this.props;
-
+  const handleSelectNavItem = useEvent((path: string) => {
     history.replace(path);
-  }
+  });
 
-  renderNavbar() {
-    const { onToggleSidebar } = this.props;
+  const navbar = (
+    <Navbar onToggleSidebar={onToggleSidebar}>
+      <h1 className="navbar-title">Settings</h1>
+    </Navbar>
+  );
 
-    return (
-      <Navbar onToggleSidebar={onToggleSidebar}>
-        <h1 className="navbar-title">Settings</h1>
-      </Navbar>
-    );
-  }
-
-  renderContent() {
-    const { children, location } = this.props;
-
-    return (
+  return (
+    <MainLayout header={navbar}>
       <div className="container">
-        <Nav onSelect={this.handleSelectNavItem}>
+        <Nav onSelect={handleSelectNavItem}>
           <NavItem
             value="/settings/ui"
             title="UI"
@@ -93,16 +83,8 @@ class SettingsPage extends PureComponent<SettingsProps> {
         </Nav>
         {children}
       </div>
-    );
-  }
-
-  override render() {
-    return (
-      <MainLayout header={this.renderNavbar()}>
-        {this.renderContent()}
-      </MainLayout>
-    );
-  }
+    </MainLayout>
+  );
 }
 
 export default connect({

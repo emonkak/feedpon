@@ -1,5 +1,5 @@
 import CSSTransition from 'react-transition-group/CSSTransition';
-import React, { PureComponent } from 'react';
+import React from 'react';
 import TransitionGroup from 'react-transition-group/TransitionGroup';
 
 import NotificationComponent from '../modules/Notification';
@@ -13,35 +13,28 @@ interface NotificationListProps {
   onDismissNotification: typeof dismissNotification;
 }
 
-class NotificationList extends PureComponent<NotificationListProps> {
-  renderItem(notification: Notification) {
-    const { onDismissNotification } = this.props;
-
-    return (
-      <CSSTransition
-        key={notification.id}
-        classNames="notification"
-        timeout={200}
-      >
-        <div>
-          <NotificationComponent
-            notification={notification}
-            onDismiss={onDismissNotification}
-          />
-        </div>
-      </CSSTransition>
-    );
-  }
-
-  override render() {
-    const { notifications } = this.props;
-
-    return (
-      <TransitionGroup className="notification-list">
-        {notifications.map(this.renderItem, this)}
-      </TransitionGroup>
-    );
-  }
+function NotificationList({
+  notifications,
+  onDismissNotification,
+}: NotificationListProps) {
+  return (
+    <TransitionGroup className="notification-list">
+      {notifications.map((notification) => (
+        <CSSTransition
+          key={notification.id}
+          classNames="notification"
+          timeout={200}
+        >
+          <div>
+            <NotificationComponent
+              notification={notification}
+              onDismiss={onDismissNotification}
+            />
+          </div>
+        </CSSTransition>
+      ))}
+    </TransitionGroup>
+  );
 }
 
 export default connect({
