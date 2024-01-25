@@ -24,8 +24,8 @@ function AuthenticationRequired({
   return isAuthenticated ? children : null;
 }
 
-export default connect(() => ({
+export default connect(AuthenticationRequired, () => ({
   mapStateToProps: (state: State) => ({
     isAuthenticated: !!state.backend.token,
   }),
-}))(AuthenticationRequired);
+}));

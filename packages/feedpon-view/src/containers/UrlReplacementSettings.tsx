@@ -101,7 +101,7 @@ function UrlReplacementSettings({
   );
 }
 
-export default connect({
+export default connect(UrlReplacementSettings, {
   mapStateToProps: (state: State) => ({
     items: state.urlReplacements.items,
   }),
@@ -111,4 +111,4 @@ export default connect({
     onResetUrlReplacements: resetUrlReplacements,
     onUpdateUrlReplacement: updateUrlReplacement,
   }),
-})(UrlReplacementSettings);
+});

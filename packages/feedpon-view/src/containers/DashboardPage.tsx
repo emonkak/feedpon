@@ -160,7 +160,7 @@ function DashboardPage({
   );
 }
 
-export default connect(() => {
+export default connect(DashboardPage, () => {
   return {
     mapStateToProps: (state: State) => ({
       categories: state.categories,
@@ -171,4 +171,4 @@ export default connect(() => {
       onToggleSidebar: toggleSidebar,
     }),
   };
-})(DashboardPage);
+});

@@ -31,8 +31,8 @@ function SingleLayout({ children, isLoading }: SingleLayoutProps) {
   );
 }
 
-export default connect({
+export default connect(SingleLayout, {
   mapStateToProps: (state: State) => ({
     isLoading: state.backend.isLoading,
   }),
-})(SingleLayout);
+});

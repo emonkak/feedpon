@@ -125,7 +125,7 @@ function TrackingUrlSettings({
   );
 }
 
-export default connect({
+export default connect(TrackingUrlSettings, {
   mapStateToProps: (state: State) => ({
     cacheCapacity: state.trackingUrls.items.capacity,
     patterns: state.trackingUrls.patterns,
@@ -136,4 +136,4 @@ export default connect({
     onDeleteTrackingUrlPattern: deleteTrackingUrlPattern,
     onResetTrackingUrlPatterns: resetTrackingUrlPatterns,
   }),
-})(TrackingUrlSettings);
+});

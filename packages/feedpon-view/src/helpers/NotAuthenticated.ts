@@ -15,8 +15,8 @@ function NotAuthenticated({
   return !isAuthenticated ? children : null;
 }
 
-export default connect(() => ({
+export default connect(NotAuthenticated, () => ({
   mapStateToProps: (state: State) => ({
     isAuthenticated: !!state.backend.token,
   }),
-}))(NotAuthenticated);
+}));

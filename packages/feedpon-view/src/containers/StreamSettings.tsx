@@ -286,7 +286,7 @@ function StreamSettings({
   );
 }
 
-export default connect({
+export default connect(StreamSettings, {
   mapStateToProps: (state: State) => ({
     cacheCapacity: state.streams.items.capacity,
     fetchOptions: state.streams.defaultFetchOptions,
@@ -300,4 +300,4 @@ export default connect({
     onChangeStreamHistoryOptions: changeStreamHistoryOptions,
     onClearStreamCaches: clearStreamCaches,
   }),
-})(StreamSettings);
+});

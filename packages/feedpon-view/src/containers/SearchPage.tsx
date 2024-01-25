@@ -161,7 +161,7 @@ function SearchPage({
   );
 }
 
-export default connect(() => {
+export default connect(SearchPage, () => {
   const sortedCategoriesSelector = createSortedCategoriesSelector();
 
   return {
@@ -183,4 +183,4 @@ export default connect(() => {
       onUnsubscribe: unsubscribe,
     }),
   };
-})(SearchPage);
+});

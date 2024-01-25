@@ -37,11 +37,11 @@ function NotificationList({
   );
 }
 
-export default connect({
+export default connect(NotificationList, {
   mapStateToProps: (state: State) => ({
     notifications: state.notifications.items,
   }),
   mapDispatchToProps: bindActions({
     onDismissNotification: dismissNotification,
   }),
-})(NotificationList);
+});

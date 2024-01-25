@@ -226,7 +226,7 @@ function CategoriesPage({
   );
 }
 
-const ConnectedSubscriptionItem = connect(() => {
+const ConnectedSubscriptionItem = connect(SubscriptionItem, () => {
   const categoriesSelector = createSortedCategoriesSelector();
 
   return {
@@ -235,11 +235,12 @@ const ConnectedSubscriptionItem = connect(() => {
     }),
     mapDispatchToProps: bindActions({
       onAddToCategory: addToCategory,
+      onCreateCategory: createCategory,
       onRemoveFromCategory: removeFromCategory,
       onUnsubscribe: unsubscribe,
     }),
   };
-})(SubscriptionItem);
+});
 
 function renderSubscriptionList(
   children: React.ReactNode,
@@ -263,7 +264,7 @@ function renderSubscriptionItem(subscription: Subscription) {
   );
 }
 
-export default connect(() => {
+export default connect(CategoriesPage, () => {
   const categoriesSelector = createSortedCategoriesSelector();
   const subscriptionsSelector = createAllSubscriptionsSelector();
 
@@ -281,4 +282,4 @@ export default connect(() => {
       onUpdateCategory: updateCategory,
     }),
   };
-})(CategoriesPage);
+});

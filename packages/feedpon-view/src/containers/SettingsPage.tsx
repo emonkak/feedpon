@@ -87,8 +87,8 @@ function SettingsPage({ children, onToggleSidebar }: SettingsProps) {
   );
 }
 
-export default connect({
+export default connect(SettingsPage, {
   mapDispatchToProps: bindActions({
     onToggleSidebar: toggleSidebar,
   }),
-})(SettingsPage);
+});

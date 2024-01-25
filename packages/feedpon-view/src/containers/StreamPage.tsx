@@ -450,9 +450,9 @@ function StreamPage({
   );
 }
 
-export default connect(() => {
+export default connect(StreamPage, () => {
   return {
-    mapStateToProps: (state: State, _props: StreamPageProps) => ({
+    mapStateToProps: (state: State) => ({
       categories: state.categories,
       isLoaded: state.streams.isLoaded,
       isLoading: state.streams.isLoading,
@@ -491,4 +491,4 @@ export default connect(() => {
       onUpdateEntrySizes: updateEntrySizes,
     }),
   };
-})(StreamPage);
+});

@@ -1,7 +1,7 @@
 import classnames from 'classnames';
 import React, { useCallback, useEffect, useRef } from 'react';
 
-import { Dispatcher, bindActions } from 'feedpon-flux';
+import { Dispatch, bindActions } from 'feedpon-flux';
 import connect from 'feedpon-flux/react/connect';
 import type { Command, Event, KeyMapping, State } from 'feedpon-messaging';
 import { commandTable } from 'feedpon-messaging/keyMappings';
@@ -23,7 +23,7 @@ import KeyMappingsTable from '../modules/KeyMappingsTable';
 
 interface SidebarLayoutProps {
   children: React.ReactNode;
-  dispatch: Dispatcher<Event>;
+  dispatch: Dispatch<Event>;
   helpIsOpened: boolean;
   isLoading: boolean;
   keyMappings: Trie.Trie<KeyMapping>;
@@ -224,14 +224,14 @@ function clamp(n: number, min: number, max: number): number {
   return Math.min(Math.max(n, min), max);
 }
 
-export default connect(() => ({
+export default connect(SidebarLayout, () => ({
   mapStateToProps: (state: State) => ({
     helpIsOpened: state.ui.helpIsOpened,
     isLoading: state.backend.isLoading || state.subscriptions.isImporting,
     keyMappings: state.keyMappings.items,
     sidebarIsOpened: state.ui.sidebarIsOpened,
   }),
-  mapDispatchToProps: (dispatch) => ({
+  mapDispatchToProps: (dispatch: Dispatch<Event>) => ({
     ...bindActions({
       onCloseHelp: closeHelp,
       onCloseSidebar: closeSidebar,
@@ -240,4 +240,4 @@ export default connect(() => ({
     })(dispatch),
     dispatch,
   }),
-}))(SidebarLayout);
+}));

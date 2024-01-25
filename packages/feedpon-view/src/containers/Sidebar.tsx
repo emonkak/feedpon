@@ -47,7 +47,6 @@ interface SidebarProps {
   subscriptionOrder: SubscriptionOrderKind;
   subscriptions: Subscription[];
   subscriptionsIsLoading: boolean;
-  theme: boolean;
   totalUnreadCount: number;
   userIsLoaded: boolean;
   userIsLoading: boolean;
@@ -215,7 +214,7 @@ function renderItem(subscription: Subscription) {
   );
 }
 
-export default connect(() => {
+export default connect(Sidebar, () => {
   const categoriesSelector = createSortedCategoriesSelector();
   const allSubscriptionsSelector = createAllSubscriptionsSelector();
   const visibleSubscriptionsSelector = createVisibleSubscriptionsSelector(
@@ -250,4 +249,4 @@ export default connect(() => {
       onLogout: logout,
     }),
   };
-})(Sidebar);
+});

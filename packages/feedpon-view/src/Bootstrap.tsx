@@ -4,7 +4,7 @@ import { History } from 'history';
 import { Router } from 'react-router';
 
 import Routes from './Routes';
-import StoreProvider from 'feedpon-flux/react/StoreProvider';
+import StoreContext from 'feedpon-flux/react/StoreContext';
 import { Store } from 'feedpon-flux';
 
 interface BootstrapProps {
@@ -30,11 +30,11 @@ export default function Bootstrap({ preparingStore, history }: BootstrapProps) {
 
   if (store !== null) {
     return (
-      <StoreProvider store={store}>
+      <StoreContext.Provider value={store}>
         <Router history={history}>
           <Routes history={history} />
         </Router>
-      </StoreProvider>
+      </StoreContext.Provider>
     );
   } else {
     return (

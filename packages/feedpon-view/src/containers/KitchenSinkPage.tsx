@@ -610,9 +610,9 @@ function KitchenSinkPage({
   );
 }
 
-export default connect({
+export default connect(KitchenSinkPage, {
   mapDispatchToProps: bindActions({
     onSendNotification: sendNotification,
     onToggleSidebar: toggleSidebar,
   }),
-})(KitchenSinkPage);
+});

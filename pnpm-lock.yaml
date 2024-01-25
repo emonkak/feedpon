@@ -77,9 +77,6 @@ importers:
       react:
         specifier: ^18.2.0
         version: 18.2.0
-      reselect:
-        specifier: ^4.1.8
-        version: 4.1.8
     devDependencies:
       '@types/react':
         specifier: ^18.2.39
@@ -120,9 +117,6 @@ importers:
 
   packages/feedpon-view:
     dependencies:
-      '@emonkak/enumerable':
-        specifier: ^4.0.0
-        version: 4.0.0
       classnames:
         specifier: ^2.3.2
         version: 2.3.2
@@ -156,9 +150,6 @@ importers:
       react-transition-group:
         specifier: ^4.4.5
         version: 4.4.5(react-dom@18.2.0)(react@18.2.0)
-      reselect:
-        specifier: ^4.1.8
-        version: 4.1.8
     devDependencies:
       '@types/chrome':
         specifier: ^0.0.253

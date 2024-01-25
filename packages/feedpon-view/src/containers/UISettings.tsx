@@ -102,7 +102,7 @@ function UISettings({
   );
 }
 
-export default connect({
+export default connect(UISettings, {
   mapStateToProps: (state: State) => ({
     currentTheme: state.ui.theme,
     customStyles: state.ui.customStyles,
@@ -111,4 +111,4 @@ export default connect({
     onChangeTheme: changeTheme,
     onChangeCustomStyles: changeCustomStyles,
   }),
-})(UISettings);
+});

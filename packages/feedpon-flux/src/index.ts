@@ -9,9 +9,9 @@ export type Middleware<TState, TEvent> = (
   store: Store<TState, TEvent>,
 ) => Handler<TEvent>;
 
-export type Handler<TEvent> = (event: TEvent, next: Dispatcher<TEvent>) => any;
+export type Handler<TEvent> = (event: TEvent, next: Dispatch<TEvent>) => any;
 
-export type Dispatcher<TEvent> = (event: TEvent) => any;
+export type Dispatch<TEvent> = (event: TEvent) => any;
 
 export type Reducer<TState, TEvent> = (state: TState, event: TEvent) => TState;
 
@@ -31,23 +31,33 @@ export function applyMiddlewares<TState, TEvent>(
   return enhancedStore;
 }
 
-export function bindActions<T extends { [key: string]: Function }>(
-  actions: T,
-): (dispatch: (event: any) => void) => T {
-  return (dispatch) => {
-    const bindedActions: { [key: string]: Function } = {};
+type Action<TEvent> = (...args: any) => TEvent;
 
-    for (const key of Object.keys(actions)) {
+type Actions<TEvent> = { [key: string]: Action<TEvent> };
+
+type BoundActions<TEvent, TAction extends Actions<TEvent>> = {
+  [Property in keyof TAction]: (
+    ...args: Parameters<TAction[Property]>
+  ) => TEvent;
+};
+
+export function bindActions<TEvent, TActions extends Actions<TEvent>>(
+  actions: TActions,
+): (dispatch: Dispatch<TEvent>) => BoundActions<TEvent, TActions> {
+  return (dispatch) => {
+    const boundActions = {} as BoundActions<TEvent, TActions>;
+
+    for (const key of Object.keys(actions) as (keyof TActions)[]) {
       const action = actions[key]!;
 
-      bindedActions[key] = function bindedAction(this: any, ...args: any[]) {
-        const event = action.apply(this, args);
+      boundActions[key] = function bindedAction(...args: any[]) {
+        const event = action(...args);
         dispatch(event);
         return event;
       };
     }
 
-    return bindedActions as T;
+    return boundActions;
   };
 }
 

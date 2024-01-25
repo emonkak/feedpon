@@ -35,9 +35,9 @@ function RootLayout({ children, customStyles, theme }: RootLayoutProps) {
   );
 }
 
-export default connect({
+export default connect(RootLayout, {
   mapStateToProps: (state: State) => ({
     customStyles: state.ui.customStyles,
     theme: state.ui.theme,
   }),
-})(RootLayout);
+});

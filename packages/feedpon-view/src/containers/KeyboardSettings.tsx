@@ -97,7 +97,7 @@ function KeyboardSettings({
   );
 }
 
-export default connect(() => {
+export default connect(KeyboardSettings, () => {
   return {
     mapStateToProps: (state: State) => ({
       keyMappings: state.keyMappings.items,
@@ -108,4 +108,4 @@ export default connect(() => {
       onUpdateKeyMapping: updateKeyMapping,
     }),
   };
-})(KeyboardSettings);
+});

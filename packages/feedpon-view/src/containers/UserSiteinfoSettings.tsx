@@ -69,7 +69,7 @@ function UserSiteinfoSettings({
   );
 }
 
-export default connect({
+export default connect(UserSiteinfoSettings, {
   mapStateToProps: (state: State) => ({
     items: state.userSiteinfo.items,
   }),
@@ -78,4 +78,4 @@ export default connect({
     onDeleteUserSiteinfoItem: deleteUserSiteinfoItem,
     onUpdateUserSiteinfoItem: updateUserSiteinfoItem,
   }),
-})(UserSiteinfoSettings);
+});

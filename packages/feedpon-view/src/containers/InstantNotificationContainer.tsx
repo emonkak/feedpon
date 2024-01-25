@@ -47,11 +47,11 @@ function InstantNotificationContainer({
   );
 }
 
-export default connect({
+export default connect(InstantNotificationContainer, {
   mapStateToProps: (state: State) => ({
     instantNotification: state.instantNotifications.item,
   }),
   mapDispatchToProps: bindActions({
     onDismissInstantNotification: dismissInstantNotification,
   }),
-})(InstantNotificationContainer);
+});

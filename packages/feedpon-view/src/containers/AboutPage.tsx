@@ -215,11 +215,11 @@ function AboutPage({ onToggleSidebar, version }: AboutPageProps) {
   );
 }
 
-export default connect({
+export default connect(AboutPage, {
   mapStateToProps: (state: State) => ({
     version: state.version,
   }),
   mapDispatchToProps: bindActions({
     onToggleSidebar: toggleSidebar,
   }),
-})(AboutPage);
+});

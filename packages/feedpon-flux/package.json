@@ -7,11 +7,10 @@
     "./middlewares/*": "./src/middlewares/*.ts",
     "./persistence": "./src/persistence/index.ts",
     "./persistence/*": "./src/persistence/*.ts",
-    "./react/*": "./src/react/*.tsx"
+    "./react/*": "./src/react/*.ts"
   },
   "dependencies": {
-    "react": "^18.2.0",
-    "reselect": "^4.1.8"
+    "react": "^18.2.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.39"

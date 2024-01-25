@@ -121,7 +121,7 @@ function renderSiteinfoItem(item: SiteinfoItem) {
   return <SharedSiteinfoItem key={item.id} item={item} />;
 }
 
-export default connect({
+export default connect(SharedSiteinfoSettings, {
   mapStateToProps: (state: State) => ({
     isLoading: state.sharedSiteinfo.isLoading,
     items: state.sharedSiteinfo.items,
@@ -130,4 +130,4 @@ export default connect({
   mapDispatchToProps: bindActions({
     onUpdateSiteinfo: updateSiteinfo,
   }),
-})(SharedSiteinfoSettings);
+});

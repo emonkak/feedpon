@@ -53,8 +53,8 @@ function AuthenticationPage({ onAuthenticate }: AuthenticationPageProps) {
   );
 }
 
-export default connect({
+export default connect(AuthenticationPage, {
   mapDispatchToProps: bindActions({
     onAuthenticate: authenticate,
   }),
-})(AuthenticationPage);
+});
