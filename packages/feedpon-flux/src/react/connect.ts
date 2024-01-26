@@ -1,9 +1,4 @@
-import React, {
-  useSyncExternalStore,
-  useMemo,
-  useContext,
-  createElement,
-} from 'react';
+import React, { useSyncExternalStore, useContext, createElement } from 'react';
 
 import StoreContext from './StoreContext';
 import { Store } from '../index';
@@ -50,17 +45,11 @@ export default function connect<
     const state = useSyncExternalStore(store.subscribe, store.getState);
 
     const { mapDispatchToProps = () => ({}), mapStateToProps = () => ({}) } =
-      useMemo(
-        typeof connection === 'function' ? connection : () => connection,
-        [],
-      );
+      typeof connection === 'function' ? connection() : connection;
 
-    const dispatchProps = useMemo(
-      () => mapDispatchToProps(store.dispatch, ownProps),
-      [store.dispatch],
-    );
+    const stateProps = mapStateToProps(state, ownProps);
 
-    const stateProps = useMemo(() => mapStateToProps(state, ownProps), [state]);
+    const dispatchProps = mapDispatchToProps(store.dispatch, ownProps);
 
     const props = {
       ...stateProps,

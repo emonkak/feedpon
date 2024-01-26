@@ -269,11 +269,13 @@ export default connect(CategoriesPage, () => {
   const subscriptionsSelector = createAllSubscriptionsSelector();
 
   return {
-    mapStateToProps: (state: State) => ({
-      categories: categoriesSelector(state),
-      exportUrl: state.backend.exportUrl,
-      subscriptions: subscriptionsSelector(state),
-    }),
+    mapStateToProps: (state: State) => {
+      return {
+        categories: categoriesSelector(state),
+        exportUrl: state.backend.exportUrl,
+        subscriptions: subscriptionsSelector(state),
+      };
+    },
     mapDispatchToProps: bindActions({
       onCreateCategory: createCategory,
       onDeleteCategory: deleteCategory,

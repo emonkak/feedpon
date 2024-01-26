@@ -3,7 +3,13 @@ import React, { useCallback, useEffect, useRef } from 'react';
 
 import { Dispatch, bindActions } from 'feedpon-flux';
 import connect from 'feedpon-flux/react/connect';
-import type { Command, Event, KeyMapping, State } from 'feedpon-messaging';
+import type {
+  Command,
+  Thunk,
+  Event,
+  KeyMapping,
+  State,
+} from 'feedpon-messaging';
 import { commandTable } from 'feedpon-messaging/keyMappings';
 import {
   closeHelp,
@@ -23,7 +29,7 @@ import KeyMappingsTable from '../modules/KeyMappingsTable';
 
 interface SidebarLayoutProps {
   children: React.ReactNode;
-  dispatch: Dispatch<Event>;
+  dispatch: Dispatch<Event | Thunk<Event>>;
   helpIsOpened: boolean;
   isLoading: boolean;
   keyMappings: Trie.Trie<KeyMapping>;
@@ -57,7 +63,7 @@ function SidebarLayout({
       const params = { ...command.defaultParams, ...keyMapping.params };
       const event = command.action(params);
 
-      dispatch(event as any);
+      dispatch(event);
     }
   });
 
@@ -192,7 +198,7 @@ function SidebarLayout({
       </div>
       <Modal onClose={onCloseHelp} isOpened={helpIsOpened}>
         <KeyMappingsTable
-          commandTable={commandTable as any}
+          commandTable={commandTable}
           keyMappings={keyMappings}
         />
       </Modal>
@@ -231,13 +237,13 @@ export default connect(SidebarLayout, () => ({
     keyMappings: state.keyMappings.items,
     sidebarIsOpened: state.ui.sidebarIsOpened,
   }),
-  mapDispatchToProps: (dispatch: Dispatch<Event>) => ({
+  mapDispatchToProps: (dispatch: Dispatch<Event | Thunk<Event>>) => ({
     ...bindActions({
       onCloseHelp: closeHelp,
       onCloseSidebar: closeSidebar,
       onOpenHelp: openHelp,
       onOpenSidebar: openSidebar,
-    })(dispatch),
+    })(dispatch as any),
     dispatch,
   }),
 }));

@@ -4,16 +4,17 @@ import { useParams } from 'react-router';
 import { bindActions } from 'feedpon-flux';
 import connect from 'feedpon-flux/react/connect';
 import type {
-  Categories,
+  Category,
+  Entry,
   EntryOrderKind,
   State,
-  Streams,
+  Stream,
   StreamViewKind,
-  Subscriptions,
+  Subscription,
 } from 'feedpon-messaging';
 import {
-  selectSortedCategories,
   createCategory,
+  getSortedCategories,
 } from 'feedpon-messaging/categories';
 import {
   ALL_STREAM_ID,
@@ -51,17 +52,19 @@ import {
 } from 'feedpon-messaging/ui';
 import * as CacheMap from 'feedpon-utils/CacheMap';
 import type { VirtualListRef } from '../components/VirtualList';
+import useEvent from '../hooks/useEvent';
+import useIsMounted from '../hooks/useIsMounted';
 import MainLayout from '../layouts/MainLayout';
 import CategoryHeader from '../modules/CategoryHeader';
 import EntryList from '../modules/EntryList';
 import FeedHeader from '../modules/FeedHeader';
 import StreamFooter from '../modules/StreamFooter';
 import StreamNavbar from '../modules/StreamNavbar';
-import useEvent from '../hooks/useEvent';
-import useIsMounted from '../hooks/useIsMounted';
 
 interface StreamPageProps {
-  categories: Categories;
+  canMarkAllEntriesAsRead: boolean;
+  canMarkStreamAsRead: boolean;
+  categories: Category[];
   isLoaded: boolean;
   isLoading: boolean;
   keepUnread: boolean;
@@ -93,131 +96,69 @@ interface StreamPageProps {
   onUnselectStream: typeof unselectStream;
   onUnsubscribe: typeof unsubscribe;
   onUpdateEntrySizes: typeof updateEntrySizes;
-  streams: Streams;
-  subscriptions: Subscriptions;
+  readEntries: Entry[];
+  shouldFetchStream: boolean;
+  stream: Stream;
+  streamCategory: Category | null;
+  streamSubscription: Subscription | null;
 }
 
 function StreamPage({
-  categories: categoriesStore,
+  canMarkStreamAsRead,
+  categories,
   isLoaded,
   isLoading,
   keepUnread,
   onAddToCategory,
+  onChangeActiveEntry,
+  onChangeExpandedEntry,
+  onChangeStreamView,
+  onChangeUnreadKeeping,
   onCreateCategory,
   onFetchEntryComments,
   onFetchFullContent,
+  onFetchMoreEntries,
+  onFetchStream,
   onHideEntryComments,
   onHideFullContents,
-  onResetReadEntry,
-  onChangeUnreadKeeping,
-  onFetchStream,
   onMarkAllAsRead,
   onMarkAsRead,
-  onSelectStream,
   onMarkCategoryAsRead,
   onMarkFeedAsRead,
   onPinEntry,
   onRemoveFromCategory,
+  onResetReadEntry,
+  onSelectStream,
   onShowEntryComments,
-  onUpdateEntrySizes,
   onShowFullContents,
-  onChangeStreamView,
   onSubscribe,
   onToggleSidebar,
   onUnpinEntry,
-  onUnsubscribe,
-  onFetchMoreEntries,
-  onChangeExpandedEntry,
-  onChangeActiveEntry,
   onUnselectStream,
-  subscriptions: subscriptionsStore,
-  streams: streamsStore,
+  onUnsubscribe,
+  onUpdateEntrySizes,
+  readEntries,
+  shouldFetchStream,
+  stream,
+  streamCategory,
+  canMarkAllEntriesAsRead,
+  streamSubscription,
 }: StreamPageProps) {
   const params = useParams<{ stream_id: string }>();
   const isMounted = useIsMounted();
   const virtualListRef = useRef<VirtualListRef | null>(null);
 
-  const stream = useMemo(() => {
-    const streamId = decodeURIComponent(params.stream_id);
-    return (
-      CacheMap.get(streamsStore.items, streamId) ?? {
-        activeEntryIndex: -1,
-        continuation: null,
-        entries: [],
-        entrySizes: {},
-        expandedEntryIndex: -1,
-        feed: null,
-        fetchOptions: streamsStore.defaultFetchOptions,
-        fetchedAt: 0,
-        readEntryIndex: -1,
-        streamId,
-        streamView: streamsStore.defaultStreamView,
-        title: '',
-      }
-    );
-  }, [
-    streamsStore.items,
-    streamsStore.defaultStreamView,
-    streamsStore.defaultFetchOptions,
-    params.stream_id,
-  ]);
-
-  const categories = useMemo(
-    () => selectSortedCategories(categoriesStore.items),
-    [categoriesStore.items],
-  );
-
-  const streamCategory = useMemo(() => {
-    const streamId = decodeURIComponent(params.stream_id);
-    return categoriesStore.items[streamId] ?? null;
-  }, [params.stream_id]);
-
-  const streamSubscription = useMemo(() => {
-    const streamId = decodeURIComponent(params.stream_id);
-    return subscriptionsStore.items[streamId] ?? null;
-  }, [subscriptionsStore.items, params.stream_id]);
-
-  const readEntries = useMemo(
-    () =>
-      stream.entries
-        .slice(0, stream.readEntryIndex + 1)
-        .filter((entry) => !entry.markedAsRead),
-    [stream],
-  );
-
-  const canMarkAllEntriesAsRead = useMemo(
-    () =>
-      !streamsStore.isMarking &&
-      stream.entries.some((entry) => !entry.markedAsRead),
-    [stream, streamsStore.isMarking],
-  );
-
-  const canMarkStreamAsRead = useMemo(
-    () =>
-      !streamsStore.isMarking &&
-      (stream.streamId === ALL_STREAM_ID ||
-        streamSubscription !== null ||
-        streamCategory !== null),
-    [stream, streamSubscription, streamCategory, streamsStore.isMarking],
-  );
-
-  const shouldFetchStream = useMemo(
-    () =>
-      !stream ||
-      !isLoaded ||
-      subscriptionsStore.lastUpdatedAt > stream.fetchedAt,
-    [stream, streamsStore.isLoaded, subscriptionsStore.lastUpdatedAt],
-  );
-
   useEffect(() => {
-    onSelectStream(decodeURIComponent(params['stream_id']));
+    const streamId = decodeURIComponent(params.stream_id);
+
+    onSelectStream(streamId);
 
     if (!keepUnread && readEntries.length > 0) {
       onMarkAsRead(readEntries);
     }
 
     if (shouldFetchStream) {
-      onFetchStream(decodeURIComponent(params['stream_id']));
+      onFetchStream(streamId);
     }
   }, [params.stream_id]);
 
@@ -450,45 +391,124 @@ function StreamPage({
   );
 }
 
-export default connect(StreamPage, () => {
-  return {
-    mapStateToProps: (state: State) => ({
-      categories: state.categories,
+export default connect(StreamPage, {
+  mapStateToProps: (state: State) => {
+    const params = useParams<{ stream_id: string }>();
+
+    const stream = useMemo(() => {
+      const streamId = decodeURIComponent(params.stream_id);
+      return (
+        CacheMap.get(state.streams.items, streamId) ?? {
+          activeEntryIndex: -1,
+          continuation: null,
+          entries: [],
+          entrySizes: {},
+          expandedEntryIndex: -1,
+          feed: null,
+          fetchOptions: state.streams.defaultFetchOptions,
+          fetchedAt: 0,
+          readEntryIndex: -1,
+          streamId,
+          streamView: state.streams.defaultStreamView,
+          title: '',
+        }
+      );
+    }, [
+      state.streams.items,
+      state.streams.defaultStreamView,
+      state.streams.defaultFetchOptions,
+      params.stream_id,
+    ]);
+
+    const categories = useMemo(
+      () => getSortedCategories(state.categories.items),
+      [state.categories.items],
+    );
+
+    const streamCategory = useMemo(() => {
+      const streamId = decodeURIComponent(params.stream_id);
+      return state.categories.items[streamId] ?? null;
+    }, [params.stream_id]);
+
+    const streamSubscription = useMemo(() => {
+      const streamId = decodeURIComponent(params.stream_id);
+      return state.subscriptions.items[streamId] ?? null;
+    }, [state.subscriptions.items, params.stream_id]);
+
+    const readEntries = useMemo(
+      () =>
+        stream.entries
+          .slice(0, stream.readEntryIndex + 1)
+          .filter((entry) => !entry.markedAsRead),
+      [stream],
+    );
+
+    const canMarkAllEntriesAsRead = useMemo(
+      () =>
+        !state.streams.isMarking &&
+        stream.entries.some((entry) => !entry.markedAsRead),
+      [stream, state.streams.isMarking],
+    );
+
+    const canMarkStreamAsRead = useMemo(
+      () =>
+        !state.streams.isMarking &&
+        (stream.streamId === ALL_STREAM_ID ||
+          streamSubscription !== null ||
+          streamCategory !== null),
+      [stream, streamSubscription, streamCategory, state.streams.isMarking],
+    );
+
+    const shouldFetchStream = useMemo(
+      () =>
+        !stream ||
+        !state.streams.isLoaded ||
+        state.subscriptions.lastUpdatedAt > stream.fetchedAt,
+      [stream, state.streams.isLoaded, state.subscriptions.lastUpdatedAt],
+    );
+
+    return {
+      canMarkAllEntriesAsRead,
+      canMarkStreamAsRead,
+      categories,
       isLoaded: state.streams.isLoaded,
       isLoading: state.streams.isLoading,
       keepUnread: state.streams.keepUnread,
-      streams: state.streams,
-      subscriptions: state.subscriptions,
-    }),
-    mapDispatchToProps: bindActions({
-      onAddToCategory: addToCategory,
-      onChangeActiveEntry: changeActiveEntry,
-      onChangeExpandedEntry: changeExpandedEntry,
-      onChangeStreamView: changeStreamView,
-      onChangeUnreadKeeping: changeUnreadKeeping,
-      onCreateCategory: createCategory,
-      onFetchEntryComments: fetchEntryComments,
-      onFetchFullContent: fetchFullContent,
-      onFetchMoreEntries: fetchMoreEntries,
-      onFetchStream: fetchStream,
-      onHideEntryComments: hideEntryComments,
-      onHideFullContents: hideFullContents,
-      onMarkAllAsRead: markAllAsRead,
-      onMarkAsRead: markAsRead,
-      onMarkCategoryAsRead: markCategoryAsRead,
-      onMarkFeedAsRead: markFeedAsRead,
-      onPinEntry: pinEntry,
-      onRemoveFromCategory: removeFromCategory,
-      onResetReadEntry: resetReadEntry,
-      onSelectStream: selectStream,
-      onShowEntryComments: showEntryComments,
-      onShowFullContents: showFullContents,
-      onSubscribe: subscribe,
-      onToggleSidebar: toggleSidebar,
-      onUnpinEntry: unpinEntry,
-      onUnselectStream: unselectStream,
-      onUnsubscribe: unsubscribe,
-      onUpdateEntrySizes: updateEntrySizes,
-    }),
-  };
+      readEntries,
+      shouldFetchStream,
+      stream,
+      streamCategory,
+      streamSubscription,
+    };
+  },
+  mapDispatchToProps: bindActions({
+    onAddToCategory: addToCategory,
+    onChangeActiveEntry: changeActiveEntry,
+    onChangeExpandedEntry: changeExpandedEntry,
+    onChangeStreamView: changeStreamView,
+    onChangeUnreadKeeping: changeUnreadKeeping,
+    onCreateCategory: createCategory,
+    onFetchEntryComments: fetchEntryComments,
+    onFetchFullContent: fetchFullContent,
+    onFetchMoreEntries: fetchMoreEntries,
+    onFetchStream: fetchStream,
+    onHideEntryComments: hideEntryComments,
+    onHideFullContents: hideFullContents,
+    onMarkAllAsRead: markAllAsRead,
+    onMarkAsRead: markAsRead,
+    onMarkCategoryAsRead: markCategoryAsRead,
+    onMarkFeedAsRead: markFeedAsRead,
+    onPinEntry: pinEntry,
+    onRemoveFromCategory: removeFromCategory,
+    onResetReadEntry: resetReadEntry,
+    onSelectStream: selectStream,
+    onShowEntryComments: showEntryComments,
+    onShowFullContents: showFullContents,
+    onSubscribe: subscribe,
+    onToggleSidebar: toggleSidebar,
+    onUnpinEntry: unpinEntry,
+    onUnselectStream: unselectStream,
+    onUnsubscribe: unsubscribe,
+    onUpdateEntrySizes: updateEntrySizes,
+  }),
 });
