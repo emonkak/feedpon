@@ -1,14 +1,14 @@
 import classnames from 'classnames';
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 import { Dispatch, bindActions } from 'feedpon-flux';
 import connect from 'feedpon-flux/react/connect';
 import type {
   Command,
-  Thunk,
   Event,
   KeyMapping,
   State,
+  Thunk,
 } from 'feedpon-messaging';
 import { commandTable } from 'feedpon-messaging/keyMappings';
 import {
@@ -69,9 +69,11 @@ function SidebarLayout({
 
   const sidebarWidthRef = useRef(0);
 
-  const sidebarRef = useCallback((node: HTMLDivElement) => {
-    sidebarWidthRef.current = node.getBoundingClientRect().width;
-  }, []);
+  const sidebarRef = (node: HTMLDivElement | null) => {
+    if (node !== null) {
+      sidebarWidthRef.current = node.getBoundingClientRect().width;
+    }
+  };
 
   const handleTransitionEnd = useEvent(() => {
     if (!sidebarIsOpened) {

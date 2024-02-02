@@ -1,27 +1,27 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useHistory } from 'react-router';
+import React, { useEffect, useState } from 'react';
+import { useHistory, useParams } from 'react-router';
 
-import FeedComponent from '../modules/Feed';
-import FeedPlaceholder from '../modules/FeedPlaceholder';
-import MainLayout from '../layouts/MainLayout';
-import Navbar from '../components/Navbar';
 import { bindActions } from 'feedpon-flux';
 import connect from 'feedpon-flux/react/connect';
 import type { Category, Feed, State, Subscription } from 'feedpon-messaging';
+import {
+  createCategory,
+  createSortedCategoriesSelector,
+} from 'feedpon-messaging/categories';
+import { searchFeeds } from 'feedpon-messaging/search';
 import {
   addToCategory,
   removeFromCategory,
   subscribe,
   unsubscribe,
 } from 'feedpon-messaging/subscriptions';
-import {
-  createCategory,
-  createSortedCategoriesSelector,
-} from 'feedpon-messaging/categories';
-import { searchFeeds } from 'feedpon-messaging/search';
 import { toggleSidebar } from 'feedpon-messaging/ui';
+import Navbar from '../components/Navbar';
 import useEvent from '../hooks/useEvent';
 import usePrevious from '../hooks/usePrevious';
+import MainLayout from '../layouts/MainLayout';
+import FeedComponent from '../modules/Feed';
+import FeedPlaceholder from '../modules/FeedPlaceholder';
 
 interface SearchPageProps {
   activeQuery: string;
@@ -62,12 +62,16 @@ function SearchPage({
     decodeURIComponent(params.query ?? ''),
   );
 
-  if (activeQuery !== previousActiveQuery) {
+  if (
+    previousActiveQuery !== null &&
+    activeQuery !== previousActiveQuery &&
+    activeQuery !== currentQuery
+  ) {
     setCurrentQuery(activeQuery);
   }
 
   useEffect(() => {
-    onSearchFeeds(params.query);
+    onSearchFeeds(decodeURIComponent(params.query));
   }, [params.query]);
 
   const handleChange = useEvent(
