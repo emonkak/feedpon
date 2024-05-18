@@ -213,8 +213,8 @@ function getActiveIndex(
     const blockInset = blockInsets[i]!;
 
     if (
-      Math.ceil(blockInset.start) >= Math.floor(viewportTop) &&
-      Math.floor(blockInset.end) <= Math.ceil(viewportBottom)
+      blockInset.start + 0.5 >= viewportTop - 0.5 &&
+      blockInset.end - 0.5 <= viewportBottom + 0.5
     ) {
       return i;
     }
