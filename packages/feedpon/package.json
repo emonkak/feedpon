@@ -8,11 +8,11 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
-    "feedpon-adapters": "*",
-    "feedpon-flux": "*",
-    "feedpon-messaging": "*",
-    "feedpon-utils": "*",
-    "feedpon-view": "*",
+    "feedpon-adapters": "../feedpon-adapters",
+    "feedpon-flux": "../feedpon-flux",
+    "feedpon-messaging": "../feedpon-messaging",
+    "feedpon-utils": "../feedpon-utils",
+    "feedpon-view": "../feedpon-view",
     "history": "^4.10.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

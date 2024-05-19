@@ -25,11 +25,10 @@
     "./userSiteinfo": "./src/userSiteinfo/index.ts"
   },
   "dependencies": {
-    "@emonkak/enumerable": "^4.0.0",
     "@mozilla/readability": "^0.4.4",
-    "feedpon-adapters": "*",
-    "feedpon-flux": "*",
-    "feedpon-utils": "*",
+    "feedpon-adapters": "../feedpon-adapters",
+    "feedpon-flux": "../feedpon-flux",
+    "feedpon-utils": "../feedpon-utils",
     "history": "^4.10.1",
     "reselect": "^4.1.8"
   },

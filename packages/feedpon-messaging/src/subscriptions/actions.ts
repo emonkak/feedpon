@@ -1,13 +1,6 @@
-import Enumerable from '@emonkak/enumerable';
-
-import '@emonkak/enumerable/extensions/distinct';
-import '@emonkak/enumerable/extensions/join';
-import '@emonkak/enumerable/extensions/orderBy';
-import '@emonkak/enumerable/extensions/select';
-import '@emonkak/enumerable/extensions/selectMany';
-import '@emonkak/enumerable/extensions/toArray';
-
 import * as feedly from 'feedpon-adapters/feedly';
+import createAscendingComparer from 'feedpon-utils/createAscendingComparer';
+import { getFeedlyToken } from '../backend/actions';
 import type {
   AsyncThunk,
   Event,
@@ -15,7 +8,6 @@ import type {
   Subscription,
   SubscriptionOrderKind,
 } from '../index';
-import { getFeedlyToken } from '../backend/actions';
 
 export function fetchSubscriptions(): AsyncThunk {
   return async ({ dispatch }, { environment }) => {
@@ -31,45 +23,51 @@ export function fetchSubscriptions(): AsyncThunk {
         feedly.getUnreadCounts(environment.endPoint, token.access_token),
       ]);
 
-      const subscriptions = new Enumerable(feedlySubscriptions)
-        .join(
-          feedlyUnreadCounts.unreadcounts,
-          (subscription) => subscription.id,
-          (unreadCount) => unreadCount.id,
-          (subscription, unreadCount) => ({
-            subscription,
-            unreadCount,
-          }),
-        )
-        .select(({ subscription, unreadCount }) => ({
+      const unreadCountsById = feedlyUnreadCounts.unreadcounts.reduce(
+        (map, unreadCount) => {
+          map.set(unreadCount.id, unreadCount);
+          return map;
+        },
+        new Map<string, feedly.UnreadCount>(),
+      );
+
+      const subscriptions = feedlySubscriptions.map((subscription) => {
+        const unreadCount = unreadCountsById.get(subscription.id);
+        return {
           subscriptionId: subscription.id,
           streamId: subscription.id,
           feedId: subscription.id,
           labels: subscription.categories.map((category) => category.label),
-          title: subscription.title || '',
-          url: subscription.website || '',
+          title: subscription.title ?? '',
+          url: subscription.website ?? '',
           feedUrl: subscription.id.replace(/feed\//, ''),
           iconUrl: subscription.iconUrl || '',
-          unreadCount: unreadCount.count,
+          unreadCount: unreadCount?.count ?? 0,
           readCount: 0,
-          updatedAt: unreadCount.updated,
+          updatedAt: unreadCount?.updated ?? 0,
           isLoading: false,
-        }))
-        .toArray();
+        };
+      });
 
-      const categories = new Enumerable(feedlySubscriptions)
-        .selectMany((subscription) => {
-          return subscription.categories;
+      const visitedCategoryIds = new Set<string>();
+
+      const categories = feedlySubscriptions
+        .flatMap((subscription) => subscription.categories)
+        .filter((category) => {
+          const id = category.id;
+          if (visitedCategoryIds.has(id)) {
+            return false;
+          }
+          visitedCategoryIds.add(id);
+          return true;
         })
-        .distinct((category) => category.id)
-        .orderBy((category) => category.label)
-        .select((category) => ({
+        .sort(createAscendingComparer('label'))
+        .map((category) => ({
           categoryId: category.id,
           streamId: category.id,
           label: category.label,
           isLoading: false,
-        }))
-        .toArray();
+        }));
 
       dispatch({
         type: 'SUBSCRIPTIONS_FETCHED',
