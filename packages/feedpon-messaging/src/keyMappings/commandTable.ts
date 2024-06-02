@@ -435,7 +435,7 @@ export const selectNextEntry: Command<{}> = {
 
       const dy = getNextEntryScrollPosition();
 
-      if (dy !== 0) {
+      if (Math.abs(dy) >= 1.0) {
         smoothScrollBy(window, 0, dy, SCROLL_EASING, SCROLL_DURATION);
       } else if (!streams.isLoading) {
         const stream = dispatch(getSelectedStream);
@@ -560,7 +560,7 @@ export const selectPreviousEntry: Command<{}> = {
 
       const dy = getPreviousEntryScrollPosition();
 
-      if (dy !== 0) {
+      if (Math.abs(dy) >= 1.0) {
         smoothScrollBy(window, 0, dy, SCROLL_EASING, SCROLL_DURATION);
       }
     };

@@ -7,11 +7,11 @@ export function getNextEntryScrollPosition(): number {
     const { top, bottom } = element.getBoundingClientRect();
     const delta1 = top - scrollOffset;
     if (delta1 >= 1) {
-      return Math.ceil(delta1);
+      return delta1;
     }
     const delta2 = bottom - scrollOffset;
     if (delta2 >= 1) {
-      return Math.ceil(delta2);
+      return delta2;
     }
   }
 
@@ -36,7 +36,7 @@ export function getPreviousEntryScrollPosition(): number {
     const top = element.getBoundingClientRect().top;
     const delta = top - scrollOffset;
     if (delta <= -1) {
-      return Math.ceil(delta);
+      return delta;
     }
   }
 
