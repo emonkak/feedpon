@@ -202,7 +202,7 @@ function getActiveIndex(
   const viewportTop = viewportInset.start + scrollPadding;
   const viewportBottom = viewportInset.end;
 
-  if (Math.abs(bottomInsets.end - viewportTop) < 1) {
+  if (Math.abs(bottomInsets.end - viewportTop) <= 1.0) {
     return blockInsets.length;
   }
 
