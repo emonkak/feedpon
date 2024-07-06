@@ -35,7 +35,7 @@ export default async function prepareStore(
     eventSourcingMiddleware<State, Event>(eventStore, snapshot.version, 200),
   ];
 
-  if (process.env['NODE_ENV'] !== 'production') {
+  DEBUG: {
     middlewares.push(
       reduxMiddleware(
         createLogger({

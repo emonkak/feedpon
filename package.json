@@ -41,7 +41,7 @@
       ]
     },
     "build:js": {
-      "command": "esbuild --bundle packages/feedpon/src/index.tsx --outfile=dist/index.js",
+      "command": "esbuild --drop-labels=$([[ ${DEBUG:-0} -eq 0 ]] && echo 'DEBUG') --bundle packages/feedpon/src/index.tsx --outfile=dist/index.js",
       "files": [
         "packages/**/*.ts",
         "packages/**/*.tsx",
