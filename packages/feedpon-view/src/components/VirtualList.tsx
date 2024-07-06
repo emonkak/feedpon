@@ -580,27 +580,13 @@ function translateViewportInset(
 }
 
 function useResizeObserver(callback: ResizeObserverCallback) {
-  const isRendering = useIsRendering();
-  const defferedEntriesRef = useRef<ResizeObserverEntry[]>([]);
-
   const resizeHandler = useEvent(
     (entries: ResizeObserverEntry[], observer: ResizeObserver) => {
-      if (isRendering()) {
-        defferedEntriesRef.current.push(...entries);
-      } else {
-        callback(entries, observer);
-      }
+      callback(entries, observer);
     },
   );
 
   const resizeObserver = useMemo(() => new ResizeObserver(resizeHandler), []);
-
-  useEffect(() => {
-    if (defferedEntriesRef.current.length > 0) {
-      callback(defferedEntriesRef.current, resizeObserver);
-      defferedEntriesRef.current = [];
-    }
-  });
 
   useEffect(() => {
     return () => {
@@ -609,16 +595,4 @@ function useResizeObserver(callback: ResizeObserverCallback) {
   }, []);
 
   return resizeObserver;
-}
-
-function useIsRendering(): () => boolean {
-  const isRenderingRef = useRef(true);
-
-  isRenderingRef.current = true;
-
-  useEffect(() => {
-    isRenderingRef.current = false;
-  });
-
-  return () => isRenderingRef.current;
 }
