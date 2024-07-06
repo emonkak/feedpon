@@ -132,6 +132,7 @@ function VirtualList<
   const containerRef = useRef<Element | null>(null);
   const scrollingItemIndexRef = useRef(initialItemIndex);
   const blockSizesRef = useRef(initialBlockSizes);
+  const isScheduledRef = useRef(false);
 
   const blockInsetsRef = useMemo(
     () => ({
@@ -247,6 +248,8 @@ function VirtualList<
       slice: newSlice,
       viewportInset,
     });
+
+    isScheduledRef.current = false;
   });
 
   const updateBlockSizes = useEvent((newBlockSizes: BlockSizes<TId>) => {
@@ -268,7 +271,10 @@ function VirtualList<
         idAttribute,
         assumedItemSize,
       );
-      scheduleUpdate(updateDimensions);
+      if (!isScheduledRef.current) {
+        scheduleUpdate(updateDimensions);
+        isScheduledRef.current = true;
+      }
       onUpdateBlockSizes?.(blockSizesRef.current);
     }
   });
@@ -277,7 +283,10 @@ function VirtualList<
     const scrollContainer = getScrollContainer();
 
     const callback = throttle(() => {
-      scheduleUpdate(updateDimensions);
+      if (!isScheduledRef.current) {
+        scheduleUpdate(updateDimensions);
+        isScheduledRef.current = true;
+      }
     }, scrollThrottleTime);
 
     scrollContainer.addEventListener('scroll', callback, {
@@ -331,7 +340,10 @@ function VirtualList<
     }
 
     if (willUpdate) {
-      scheduleUpdate(updateDimensions);
+      if (!isScheduledRef.current) {
+        scheduleUpdate(updateDimensions);
+        isScheduledRef.current = true;
+      }
     }
   }, [items, scrollingItemIndexRef.current, sliceRef.current]);
 
