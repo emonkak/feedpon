@@ -24,7 +24,7 @@ export default function shallowEqual<T extends Object>(
 
   for (let i = 0; i < firstKeys.length; i++) {
     if (
-      !second.hasOwnProperty(firstKeys[i]!) ||
+      !Object.hasOwn(second, firstKeys[i]!) ||
       first[firstKeys[i]!] !== second[firstKeys[i]!]!
     ) {
       return false;

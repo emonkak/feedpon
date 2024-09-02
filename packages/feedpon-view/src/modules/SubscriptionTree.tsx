@@ -1,13 +1,13 @@
 import React from 'react';
 
-import SubscriptionIcon from './SubscriptionIcon';
 import type {
   Category,
   GroupedSubscription,
   Subscription,
 } from 'feedpon-messaging';
-import { Tree, TreeLeaf, TreeBranch } from '../components/Tree';
 import { UNCATEGORIZED } from 'feedpon-messaging/categories';
+import { Tree, TreeBranch, TreeLeaf } from '../components/Tree';
+import SubscriptionIcon from './SubscriptionIcon';
 
 interface SubscriptionTreeProps {
   categories: Category[];
@@ -23,7 +23,7 @@ export default function SubscriptionTree({
   selectedPath,
 }: SubscriptionTreeProps) {
   const visibleCategories = categories
-    .filter((category) => groupedSubscriptions.hasOwnProperty(category.label))
+    .filter((category) => Object.hasOwn(groupedSubscriptions, category.label))
     .map((category) => {
       const { items, unreadCount } = groupedSubscriptions[category.label]!;
       const path = `/streams/${encodeURIComponent(category.streamId)}`;

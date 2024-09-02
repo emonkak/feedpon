@@ -1,6 +1,6 @@
-import CSSTransition from 'react-transition-group/CSSTransition';
-import React, { useRef, useState } from 'react';
 import classnames from 'classnames';
+import React, { useRef, useState } from 'react';
+import CSSTransition from 'react-transition-group/CSSTransition';
 
 import Dismissible from '../components/Dismissible';
 import useEvent from '../hooks/useEvent';
@@ -57,6 +57,7 @@ export default function EntryShareButton({
               encodeURIComponent(title + ' ' + url)
             }
             onClick={closePopup}
+            rel="noreferrer"
           >
             <i className="icon icon-24 icon-twitter" />
           </a>
@@ -69,6 +70,7 @@ export default function EntryShareButton({
               encodeURIComponent(url)
             }
             onClick={closePopup}
+            rel="noreferrer"
           >
             <i className="icon icon-24 icon-facebook" />
           </a>
@@ -78,6 +80,7 @@ export default function EntryShareButton({
             title="Save to Hatena Bookmark"
             href={'http://b.hatena.ne.jp/entry/' + encodeURIComponent(url)}
             onClick={closePopup}
+            rel="noreferrer"
           >
             <i className="icon icon-24 icon-hatena-bookmark" />
           </a>
@@ -92,6 +95,7 @@ export default function EntryShareButton({
               encodeURIComponent(title)
             }
             onClick={closePopup}
+            rel="noreferrer"
           >
             <i className="icon icon-24 icon-pocket" />
           </a>
@@ -101,6 +105,7 @@ export default function EntryShareButton({
             title="Save to Instapaper"
             href={'http://www.instapaper.com/text?u=' + encodeURIComponent(url)}
             onClick={closePopup}
+            rel="noreferrer"
           >
             <i className="icon icon-24 icon-instapaper" />
           </a>
@@ -112,6 +117,7 @@ export default function EntryShareButton({
   return (
     <div className="button-group" ref={containerRef}>
       <button
+        type="button"
         className="button button-pill button-outline-default"
         title="Share..."
         onClick={handleTogglePopup}

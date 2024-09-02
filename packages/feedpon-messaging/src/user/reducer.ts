@@ -1,4 +1,4 @@
-import type { User, Event } from '../index';
+import type { Event, User } from '../index';
 
 export default function reduceUser(user: User, event: Event): User {
   switch (event.type) {

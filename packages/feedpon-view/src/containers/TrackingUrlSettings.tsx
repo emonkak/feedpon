@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 
-import ConfirmModal from '../components/ConfirmModal';
-import TrackingUrlPatternForm from '../modules/TrackingUrlPatternForm';
-import TrackingUrlPatternItem from '../modules/TrackingUrlPatternItem';
 import { bindActions } from 'feedpon-flux';
 import connect from 'feedpon-flux/react/connect';
 import type { State } from 'feedpon-messaging';
-import useEvent from '../hooks/useEvent';
 import {
   addTrackingUrlPattern,
   changeTrakingUrlCacheCapacity,
   deleteTrackingUrlPattern,
   resetTrackingUrlPatterns,
 } from 'feedpon-messaging/trackingUrls';
+import ConfirmModal from '../components/ConfirmModal';
+import useEvent from '../hooks/useEvent';
+import TrackingUrlPatternForm from '../modules/TrackingUrlPatternForm';
+import TrackingUrlPatternItem from '../modules/TrackingUrlPatternItem';
 
 interface TrackingUrlSettingsProps {
   cacheCapacity: number;
@@ -106,6 +106,7 @@ function TrackingUrlSettings({
       </div>
       <div className="form">
         <button
+          type="button"
           className="button button-outline-negative"
           onClick={handleStartResetting}
         >
@@ -119,7 +120,7 @@ function TrackingUrlSettings({
         message="Are you sure you want to reset all tracking URLs?"
         onClose={handleCancelResetting}
         onConfirm={onResetTrackingUrlPatterns}
-        title={`Reset all tracking URLs`}
+        title={'Reset all tracking URLs'}
       />
     </section>
   );

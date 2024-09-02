@@ -11,7 +11,7 @@ export default function mapObject<TValue, TResult, TContext>(
   const result: { [key: string]: TResult } = {};
 
   for (const name in object) {
-    if (object.hasOwnProperty(name)) {
+    if (Object.hasOwn(object, name)) {
       result[name] = callback.call(context, object[name]!, name, object);
     }
   }

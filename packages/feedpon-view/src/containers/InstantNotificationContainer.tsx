@@ -1,12 +1,12 @@
-import CSSTransition from 'react-transition-group/CSSTransition';
 import React, { useEffect } from 'react';
+import CSSTransition from 'react-transition-group/CSSTransition';
 import TransitionGroup from 'react-transition-group/TransitionGroup';
 
-import InstantNotificationComponent from '../modules/InstantNotification';
 import { bindActions } from 'feedpon-flux';
 import connect from 'feedpon-flux/react/connect';
 import type { InstantNotification, State } from 'feedpon-messaging';
 import { dismissInstantNotification } from 'feedpon-messaging/instantNotifications';
+import InstantNotificationComponent from '../modules/InstantNotification';
 
 interface InstantNotificationContainerProps {
   instantNotification: InstantNotification | null;

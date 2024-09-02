@@ -1,13 +1,13 @@
 import React from 'react';
-import { useLocation, useHistory } from 'react-router';
+import { useHistory, useLocation } from 'react-router';
 
-import MainLayout from '../layouts/MainLayout';
-import Navbar from '../components/Navbar';
 import { bindActions } from 'feedpon-flux';
 import connect from 'feedpon-flux/react/connect';
-import { Nav, NavItem } from '../components/Nav';
 import { toggleSidebar } from 'feedpon-messaging/ui';
+import { Nav, NavItem } from '../components/Nav';
+import Navbar from '../components/Navbar';
 import useEvent from '../hooks/useEvent';
+import MainLayout from '../layouts/MainLayout';
 
 interface SettingsProps {
   children: React.ReactElement<any>;

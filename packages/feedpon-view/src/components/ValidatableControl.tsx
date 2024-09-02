@@ -57,15 +57,15 @@ export default function ValidatableControl({
   useEffect(runValidations);
 
   const handleChange = useEvent(
-        (
-            event: React.FormEvent<
-                HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-            >,
-        ) => {
-            runValidations();
-            children.props.onChange?.(event);
-        },
-    );
+    (
+      event: React.FormEvent<
+        HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+      >,
+    ) => {
+      runValidations();
+      children.props.onChange?.(event);
+    },
+  );
 
   return cloneElement(children, {
     ref: controlRef,

@@ -1,4 +1,4 @@
-import type { Notifications, Event } from '../index';
+import type { Event, Notifications } from '../index';
 
 export default function reducer(
   notifications: Notifications,

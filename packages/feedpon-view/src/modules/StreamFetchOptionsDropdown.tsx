@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 
-import Dropdown from '../components/Dropdown';
 import type {
   EntryOrderKind,
   StreamFetchOptions,
   StreamViewKind,
 } from 'feedpon-messaging';
+import Dropdown from '../components/Dropdown';
 import { MenuForm, MenuItem } from '../components/Menu';
 import useEvent from '../hooks/useEvent';
 
@@ -58,7 +58,7 @@ export default function StreamFetchOptionsDropdown({
 
   const handleChangeNumberOfEntries = useEvent(
     (event: React.ChangeEvent<HTMLInputElement>) => {
-      const numEntries = parseInt(event.currentTarget.value, 10);
+      const numEntries = Number.parseInt(event.currentTarget.value, 10);
 
       setNumEntries(numEntries);
     },
@@ -70,7 +70,7 @@ export default function StreamFetchOptionsDropdown({
     <Dropdown
       onSelect={handleSelectAction}
       toggleButton={
-        <button className="navbar-action">
+        <button type="button" className="navbar-action">
           <i className="icon icon-24 icon-menu-2" />
         </button>
       }

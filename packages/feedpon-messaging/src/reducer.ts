@@ -1,8 +1,8 @@
-import type { State, Event } from './index';
+import type { Event, State } from './index';
 
+import { combineReducers } from 'feedpon-flux';
 import backend from './backend/reducer';
 import categories from './categories/reducer';
-import { combineReducers } from 'feedpon-flux';
 import histories from './histories/reducer';
 import instantNotifications from './instantNotifications/reducer';
 import keyMappings from './keyMappings/reducer';

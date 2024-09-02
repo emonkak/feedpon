@@ -62,6 +62,7 @@ export default function SubscriptionTreeHeader({
   return (
     <header className="sidebar-group-header">
       <button
+        type="button"
         className="link-soft u-flex-shrink-0"
         disabled={isLoading}
         onClick={onReload}
@@ -76,7 +77,7 @@ export default function SubscriptionTreeHeader({
       <Dropdown
         onSelect={handleSelectAction}
         toggleButton={
-          <button className="link-soft u-flex-shrink-0">
+          <button type="button" className="link-soft u-flex-shrink-0">
             <i className="icon icon-16 icon-width-32 icon-menu-2" />
           </button>
         }

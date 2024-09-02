@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
 import classnames from 'classnames';
+import React, { useState } from 'react';
 
+import type { Category, Subscription } from 'feedpon-messaging';
 import ConfirmModal from '../components/ConfirmModal';
 import Dropdown from '../components/Dropdown';
-import Portal from '../components/Portal';
-import type { Category, Subscription } from 'feedpon-messaging';
 import { MenuForm, MenuItem } from '../components/Menu';
+import Portal from '../components/Portal';
 import useEvent from '../hooks/useEvent';
 
 interface SubscriptionDropdownProps {
@@ -103,6 +103,7 @@ export default function SubscriptionDropdown({
         onSelect={handleSelectAction}
         toggleButton={
           <button
+            type="button"
             className="link-soft u-margin-left-2"
             disabled={subscription.isLoading}
           >

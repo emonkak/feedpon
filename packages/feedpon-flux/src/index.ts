@@ -88,9 +88,10 @@ export function combineReducers<TState, TEvent>(
 
 export function createStore<TState, TEvent>(
   reducer: Reducer<TState, TEvent>,
-  state: TState,
+  initialState: TState,
 ): Store<TState, TEvent> {
   const subscribers = new Set<Subscriber<TState>>();
+  let state = initialState;
 
   function getState(): TState {
     return state;
@@ -99,9 +100,9 @@ export function createStore<TState, TEvent>(
   function replaceState(nextState: TState): void {
     if (state !== nextState) {
       state = nextState;
-      subscribers.forEach((subscriber) => {
+      for (const subscriber of subscribers) {
         subscriber(nextState);
-      });
+      }
     }
   }
 

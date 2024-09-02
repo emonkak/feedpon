@@ -1,7 +1,7 @@
 import classnames from 'classnames';
 import React, { useEffect, useRef } from 'react';
 
-import { Dispatch, bindActions } from 'feedpon-flux';
+import { type Dispatch, bindActions } from 'feedpon-flux';
 import connect from 'feedpon-flux/react/connect';
 import type {
   Command,
@@ -17,7 +17,7 @@ import {
   openHelp,
   openSidebar,
 } from 'feedpon-messaging/ui';
-import * as Trie from 'feedpon-utils/Trie';
+import type * as Trie from 'feedpon-utils/Trie';
 import Modal from '../components/Modal';
 import InstantNotificationContainer from '../containers/InstantNotificationContainer';
 import NotificationList from '../containers/NotificationList';

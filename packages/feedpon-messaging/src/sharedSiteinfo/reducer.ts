@@ -1,4 +1,4 @@
-import type { SharedSiteinfo, Event } from '../index';
+import type { Event, SharedSiteinfo } from '../index';
 
 export default function reducer(
   siteinfo: SharedSiteinfo,

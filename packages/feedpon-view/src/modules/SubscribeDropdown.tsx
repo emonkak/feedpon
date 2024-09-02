@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 
+import type { Category, Feed, Subscription } from 'feedpon-messaging';
 import ConfirmModal from '../components/ConfirmModal';
 import Dropdown from '../components/Dropdown';
-import Portal from '../components/Portal';
-import SubscribeButton from './SubscribeButton';
-import type { Category, Feed, Subscription } from 'feedpon-messaging';
 import { MenuForm, MenuItem } from '../components/Menu';
+import Portal from '../components/Portal';
 import useEvent from '../hooks/useEvent';
+import SubscribeButton from './SubscribeButton';
 
 interface SubscribeDropdownProps {
   categories: Category[];

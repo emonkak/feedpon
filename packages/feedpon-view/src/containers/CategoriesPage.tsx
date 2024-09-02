@@ -1,5 +1,5 @@
 import React, { useMemo, useRef, useState } from 'react';
-import { useParams, useHistory } from 'react-router';
+import { useHistory, useParams } from 'react-router';
 
 import { bindActions } from 'feedpon-flux';
 import connect from 'feedpon-flux/react/connect';
@@ -24,12 +24,12 @@ import debounce from 'feedpon-utils/debounce';
 import Dropdown from '../components/Dropdown';
 import { MenuItem } from '../components/Menu';
 import Navbar from '../components/Navbar';
-import VirtualList, { BlankSpaces } from '../components/VirtualList';
+import VirtualList, { type BlankSpaces } from '../components/VirtualList';
+import useEvent from '../hooks/useEvent';
 import MainLayout from '../layouts/MainLayout';
 import CategoriesNav from '../modules/CategoriesNav';
 import EditCategoryForm from '../modules/EditCategoryForm';
 import SubscriptionItem from '../modules/Subscription';
-import useEvent from '../hooks/useEvent';
 
 type Action = 'IMPORT_OPML' | 'EXPORT_OPML';
 
@@ -91,27 +91,27 @@ function CategoriesPage({
     [],
   );
 
-  const handleChangeUploadFile = useEvent((
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    const target = event.currentTarget;
-    if (!target.files) {
-      return;
-    }
+  const handleChangeUploadFile = useEvent(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const target = event.currentTarget;
+      if (!target.files) {
+        return;
+      }
 
-    const file = target.files[0];
-    if (!file) {
-      return;
-    }
+      const file = target.files[0];
+      if (!file) {
+        return;
+      }
 
-    const reader = new FileReader();
+      const reader = new FileReader();
 
-    reader.onload = (_event) => {
-      onImportOpml(reader.result as string);
-    };
+      reader.onload = (_event) => {
+        onImportOpml(reader.result as string);
+      };
 
-    reader.readAsText(file);
-  });
+      reader.readAsText(file);
+    },
+  );
 
   const handleUpdateCategory = useEvent(
     (category: Category, newLabel: string) => {
@@ -160,7 +160,7 @@ function CategoriesPage({
       <h1 className="navbar-title">Organize subscriptions</h1>
       <Dropdown<Action>
         toggleButton={
-          <button className="navbar-action">
+          <button type="button" className="navbar-action">
             <i className="icon icon-24 icon-menu-2" />
           </button>
         }
@@ -248,9 +248,9 @@ function renderSubscriptionList(
 ): React.ReactElement<any> {
   return (
     <ul className="list-group">
-      <div style={{ height: blankSpaces.above }}></div>
+      <div style={{ height: blankSpaces.above }} />
       {children}
-      <div style={{ height: blankSpaces.below }}></div>
+      <div style={{ height: blankSpaces.below }} />
     </ul>
   );
 }

@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 
-import ConfirmModal from '../components/ConfirmModal';
-import KeyMappingForm from './KeyMappingForm';
-import Modal from '../components/Modal';
 import type { Command, KeyMapping } from 'feedpon-messaging';
+import ConfirmModal from '../components/ConfirmModal';
+import Modal from '../components/Modal';
 import useEvent from '../hooks/useEvent';
+import KeyMappingForm from './KeyMappingForm';
 
 interface KeyMappingItemProps {
   commandTable: { [commandId: string]: Command<any> };
@@ -66,12 +66,14 @@ export default function KeyMappingItem({
       <td className="u-text-nowrap">
         <div className="button-toolbar">
           <button
+            type="button"
             className="button button-small button-outline-default"
             onClick={handleStartEditing}
           >
             <i className="icon icon-16 icon-edit" />
           </button>
           <button
+            type="button"
             className="button button-small button-outline-negative"
             onClick={handleStartDeleting}
           >
@@ -100,6 +102,7 @@ export default function KeyMappingItem({
                 Update
               </button>
               <button
+                type="button"
                 className="button button-outline-default"
                 onClick={handleCancelEditing}
               >

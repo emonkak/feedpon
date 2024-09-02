@@ -45,6 +45,7 @@ export default function StreamFooter({
         <p>No more entries here.</p>
         <p>
           <button
+            type="button"
             className="button button-positive"
             onClick={onMarkAllEntiresAsRead}
             disabled={!canMarkAllEntriesAsRead}

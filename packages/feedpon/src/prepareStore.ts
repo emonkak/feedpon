@@ -1,18 +1,21 @@
 import { createLogger } from 'redux-logger';
 
-import IndexedDBEventStore from 'feedpon-flux/persistence/IndexedDBEventStore';
+import type { Middleware, Store } from 'feedpon-flux';
+import { applyMiddlewares, createStore } from 'feedpon-flux';
 import errorHandlingMiddleware from 'feedpon-flux/middlewares/errorHandlingMiddleware';
 import eventSourcingMiddleware from 'feedpon-flux/middlewares/eventSourcingMiddleware';
-import initialState from 'feedpon-messaging/initialState';
-import packageJson from '../package.json';
-import reducer from 'feedpon-messaging/reducer';
 import reduxMiddleware from 'feedpon-flux/middlewares/reduxMiddleware';
 import thunkMiddleware from 'feedpon-flux/middlewares/thunkMiddleware';
+import IndexedDBEventStore from 'feedpon-flux/persistence/IndexedDBEventStore';
+import {
+  type EventStore,
+  restoreSnapshot,
+} from 'feedpon-flux/persistence/index';
 import type { Event, State, ThunkContext } from 'feedpon-messaging';
-import { Middleware, Store } from 'feedpon-flux';
-import { applyMiddlewares, createStore } from 'feedpon-flux';
-import { restoreSnapshot, EventStore } from 'feedpon-flux/persistence/index';
+import initialState from 'feedpon-messaging/initialState';
 import { sendNotification } from 'feedpon-messaging/notifications';
+import reducer from 'feedpon-messaging/reducer';
+import packageJson from '../package.json';
 
 export default async function prepareStore(
   context: ThunkContext,

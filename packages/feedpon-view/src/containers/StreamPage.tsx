@@ -332,7 +332,7 @@ function StreamPage({
     />
   );
 
-  let streamHeader;
+  let streamHeader: React.ReactElement | null;
 
   if (stream.feed) {
     streamHeader = (

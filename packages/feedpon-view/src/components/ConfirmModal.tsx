@@ -41,18 +41,22 @@ export default function ConfirmModal({
 
   return (
     <Modal isOpened={isOpened} onClose={onClose}>
-      <button className="close u-pull-right" onClick={onClose}></button>
+      <button type="button" className="close u-pull-right" onClick={onClose} />
       <h1 className="modal-title">{title}</h1>
       <p>{message}</p>
       <p className="button-toolbar">
         <button
-          autoFocus
+          type="button"
           className={confirmButtonClassName}
           onClick={handleConfirm}
         >
           {confirmButtonLabel}
         </button>
-        <button className={cancelButtonClassName} onClick={handleCancel}>
+        <button
+          type="button"
+          className={cancelButtonClassName}
+          onClick={handleCancel}
+        >
           {cancelButtonLabel}
         </button>
       </p>

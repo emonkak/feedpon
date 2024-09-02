@@ -29,12 +29,20 @@ function DefaultFooter() {
       <div className="u-text-center">
         <ul className="list-inline list-inline-slashed">
           <li className="list-inline-item">
-            <a href="https://github.com/emonkak/feedpon" target="_blank">
+            <a
+              href="https://github.com/emonkak/feedpon"
+              target="_blank"
+              rel="noreferrer"
+            >
               Source code
             </a>
           </li>
           <li className="list-inline-item">
-            <a href="https://github.com/emonkak/feedpon/issues" target="_blank">
+            <a
+              href="https://github.com/emonkak/feedpon/issues"
+              target="_blank"
+              rel="noreferrer"
+            >
               Issues
             </a>
           </li>

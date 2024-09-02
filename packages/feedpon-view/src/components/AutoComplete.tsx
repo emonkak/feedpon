@@ -4,7 +4,7 @@ import React, { useMemo, useRef, useState } from 'react';
 import debounce from 'feedpon-utils/debounce';
 import useEvent from '../hooks/useEvent';
 import Dismissible from './Dismissible';
-import { Menu, MenuRef } from './Menu';
+import { Menu, type MenuRef } from './Menu';
 
 interface AutoCompleteProps<TItem, TValue> {
   completeDebounceTime?: number;

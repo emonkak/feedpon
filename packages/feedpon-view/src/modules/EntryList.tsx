@@ -9,9 +9,9 @@ import React, {
 import type { Entry, StreamViewKind } from 'feedpon-messaging';
 import * as SmoothScroll from 'feedpon-utils/SmoothScroll';
 import VirtualList, {
-  BlankSpaces,
-  Dimensions,
-  VirtualListRef,
+  type BlankSpaces,
+  type Dimensions,
+  type VirtualListRef,
 } from '../components/VirtualList';
 import useEvent from '../hooks/useEvent';
 import EntryItem from './EntryItem';
@@ -110,32 +110,34 @@ function EntryList(
     window.scrollBy(x, y - getHeaderHeight());
   }, []);
 
-  const renderItem = useEvent((
-    { entry, isActive, isExpanded, sameOrigin }: RenderingItem,
-    index: number,
-    ref: React.RefCallback<Element>,
-  ) => {
-    return (
-      <EntryItem
-        entry={entry}
-        index={index}
-        isActive={isActive}
-        isExpanded={isExpanded}
-        key={entry.entryId}
-        onExpand={onExpand}
-        onFetchComments={onFetchComments}
-        onFetchFullContent={onFetchFullContent}
-        onHideComments={onHideComments}
-        onHideFullContents={onHideFullContents}
-        onPin={onPin}
-        onShowComments={onShowComments}
-        onShowFullContents={onShowFullContents}
-        onUnpin={onUnpin}
-        ref={ref}
-        sameOrigin={sameOrigin}
-      />
-    );
-  });
+  const renderItem = useEvent(
+    (
+      { entry, isActive, isExpanded, sameOrigin }: RenderingItem,
+      index: number,
+      ref: React.RefCallback<Element>,
+    ) => {
+      return (
+        <EntryItem
+          entry={entry}
+          index={index}
+          isActive={isActive}
+          isExpanded={isExpanded}
+          key={entry.entryId}
+          onExpand={onExpand}
+          onFetchComments={onFetchComments}
+          onFetchFullContent={onFetchFullContent}
+          onHideComments={onHideComments}
+          onHideFullContents={onHideFullContents}
+          onPin={onPin}
+          onShowComments={onShowComments}
+          onShowFullContents={onShowFullContents}
+          onUnpin={onUnpin}
+          ref={ref}
+          sameOrigin={sameOrigin}
+        />
+      );
+    },
+  );
 
   if (isLoading && !isLoaded) {
     if (streamView === 'expanded') {
@@ -244,9 +246,9 @@ function renderList(
 ) {
   return (
     <div className="entry-list" ref={ref as React.RefObject<HTMLDivElement>}>
-      <div style={{ height: blankSpaces.above, overflowAnchor: 'none' }}></div>
+      <div style={{ height: blankSpaces.above, overflowAnchor: 'none' }} />
       {items}
-      <div style={{ height: blankSpaces.below, overflowAnchor: 'none' }}></div>
+      <div style={{ height: blankSpaces.below, overflowAnchor: 'none' }} />
     </div>
   );
 }

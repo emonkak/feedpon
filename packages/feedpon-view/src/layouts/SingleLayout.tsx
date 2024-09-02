@@ -1,9 +1,9 @@
 import React from 'react';
 
-import InstantNotificationContainer from '../containers/InstantNotificationContainer';
-import NotificationList from '../containers/NotificationList';
 import connect from 'feedpon-flux/react/connect';
 import type { State } from 'feedpon-messaging';
+import InstantNotificationContainer from '../containers/InstantNotificationContainer';
+import NotificationList from '../containers/NotificationList';
 
 interface SingleLayoutProps {
   children?: React.ReactNode;

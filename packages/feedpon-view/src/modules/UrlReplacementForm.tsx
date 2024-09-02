@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
-import ValidatableControl from '../components/ValidatableControl';
 import type { UrlReplacement } from 'feedpon-messaging';
+import ValidatableControl from '../components/ValidatableControl';
 import useEvent from '../hooks/useEvent';
 
 interface UrlReplacementFormProps {
@@ -26,21 +26,21 @@ export default function UrlReplacementForm({
   const [replacement, setReplacement] = useState(item?.replacement ?? '');
   const [flags, setFlags] = useState(item?.flags ?? '');
 
-  const handleChangePattern = useEvent((
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    const pattern = event.currentTarget.value;
+  const handleChangePattern = useEvent(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const pattern = event.currentTarget.value;
 
-    setPattern(pattern);
-  });
+      setPattern(pattern);
+    },
+  );
 
-  const handleChangeReplacement = useEvent((
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    const replacement = event.currentTarget.value;
+  const handleChangeReplacement = useEvent(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const replacement = event.currentTarget.value;
 
-    setReplacement(replacement);
-  });
+      setReplacement(replacement);
+    },
+  );
 
   const handleChangeFlags = useEvent(
     (event: React.ChangeEvent<HTMLInputElement>) => {

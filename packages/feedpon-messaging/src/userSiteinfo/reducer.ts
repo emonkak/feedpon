@@ -1,4 +1,4 @@
-import type { UserSiteinfo, Event } from '../index';
+import type { Event, UserSiteinfo } from '../index';
 
 export default function reducer(
   siteinfo: UserSiteinfo,

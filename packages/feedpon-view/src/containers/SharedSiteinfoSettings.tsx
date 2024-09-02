@@ -6,7 +6,7 @@ import type { SiteinfoItem, State } from 'feedpon-messaging';
 import { updateSiteinfo } from 'feedpon-messaging/sharedSiteinfo';
 import tryMatch from 'feedpon-utils/tryMatch';
 import RelativeTime from '../components/RelativeTime';
-import VirtualList, { BlankSpaces } from '../components/VirtualList';
+import VirtualList, { type BlankSpaces } from '../components/VirtualList';
 import SharedSiteinfoItem from '../modules/SharedSiteinfoItem';
 
 interface SharedSiteinfoProps {
@@ -57,17 +57,22 @@ function SharedSiteinfoSettings({
       <h2 className="display-2">Shared siteinfo</h2>
       <p>
         This siteinfo is shared by{' '}
-        <a target="_blank" href="http://wedata.net/">
+        <a target="_blank" href="http://wedata.net/" rel="noreferrer">
           Wedata
         </a>
         . It uses{' '}
-        <a target="_blank" href="http://wedata.net/databases/LDRFullFeed/items">
+        <a
+          target="_blank"
+          href="http://wedata.net/databases/LDRFullFeed/items"
+          rel="noreferrer"
+        >
           LDRFullFeed
         </a>{' '}
         and{' '}
         <a
           target="_blank"
           href="http://wedata.net/databases/AutoPagerize/items"
+          rel="noreferrer"
         >
           AutoPagerize
         </a>{' '}
@@ -84,6 +89,7 @@ function SharedSiteinfoSettings({
       {lastUpdate}
       <p>
         <button
+          type="button"
           className="button button-positive"
           onClick={onUpdateSiteinfo}
           disabled={isLoading}
@@ -109,9 +115,9 @@ function renderSiteinfoList(
   return (
     <div className="u-responsive">
       <ul className="list-group">
-        <div style={{ height: blankSpaces.above }}></div>
+        <div style={{ height: blankSpaces.above }} />
         {children}
-        <div style={{ height: blankSpaces.below }}></div>
+        <div style={{ height: blankSpaces.below }} />
       </ul>
     </div>
   );

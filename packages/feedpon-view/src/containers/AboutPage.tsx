@@ -1,15 +1,15 @@
 import React from 'react';
 import { useHistory } from 'react-router';
 
-import Dropdown from '../components/Dropdown';
-import MainLayout from '../layouts/MainLayout';
-import Navbar from '../components/Navbar';
+import { bindActions } from 'feedpon-flux';
 import connect from 'feedpon-flux/react/connect';
 import type { State } from 'feedpon-messaging';
-import useEvent from '../hooks/useEvent';
-import { MenuItem } from '../components/Menu';
-import { bindActions } from 'feedpon-flux';
 import { toggleSidebar } from 'feedpon-messaging/ui';
+import Dropdown from '../components/Dropdown';
+import { MenuItem } from '../components/Menu';
+import Navbar from '../components/Navbar';
+import useEvent from '../hooks/useEvent';
+import MainLayout from '../layouts/MainLayout';
 
 interface AboutPageProps {
   onToggleSidebar: typeof toggleSidebar;
@@ -164,9 +164,9 @@ function AboutPage({ onToggleSidebar, version }: AboutPageProps) {
   });
 
   const usingLibraries = USING_LIBRARIES.map(({ license, name, url }) => (
-    <li>
+    <li key={url}>
       <h2>
-        <a href={url} target="_blank">
+        <a href={url} target="_blank" rel="noreferrer">
           {name}
         </a>
       </h2>
@@ -179,7 +179,7 @@ function AboutPage({ onToggleSidebar, version }: AboutPageProps) {
       <h1 className="navbar-title">About</h1>
       <Dropdown
         toggleButton={
-          <button className="navbar-action">
+          <button type="button" className="navbar-action">
             <i className="icon icon-24 icon-menu-2" />
           </button>
         }
@@ -197,7 +197,11 @@ function AboutPage({ onToggleSidebar, version }: AboutPageProps) {
     <MainLayout header={header}>
       <section className="section u-text-center">
         <div className="container">
-          <a href="https://github.com/emonkak/feedpon" target="_blank">
+          <a
+            href="https://github.com/emonkak/feedpon"
+            target="_blank"
+            rel="noreferrer"
+          >
             <img src="./img/logo.svg" width="244" height="88" />
           </a>
           <div>

@@ -4,13 +4,13 @@ import composeComparers from 'feedpon-utils/composeComparers';
 import createAscendingComparer from 'feedpon-utils/createAscendingComparer';
 import createDescendingComparer from 'feedpon-utils/createDescendingComparer';
 import shallowEqual from 'feedpon-utils/shallowEqual';
+import { UNCATEGORIZED } from '../categories/constants';
 import type {
   GroupedSubscription,
   State,
   Subscription,
   SubscriptionOrderKind,
 } from '../index';
-import { UNCATEGORIZED } from '../categories/constants';
 
 export const subscriptionIdComparer = composeComparers(
   labelsComparer,

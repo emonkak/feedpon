@@ -89,7 +89,7 @@ export const toggleComments: Command<{}> = {
     return ({ dispatch }) => {
       const entry = dispatch(getActiveEntry);
 
-      if (entry && entry.url) {
+      if (entry?.url) {
         if (entry.comments.isLoaded) {
           if (entry.comments.isShown) {
             dispatch(streamActions.hideEntryComments(entry.entryId));
@@ -118,12 +118,12 @@ export const fetchFullContent: Command<{}> = {
     return ({ dispatch }) => {
       const entry = dispatch(getActiveEntry);
 
-      if (entry && entry.url && !entry.fullContents.isLoading) {
+      if (entry?.url && !entry.fullContents.isLoading) {
         if (entry.fullContents.isLoaded) {
           const lastFullContent =
             entry.fullContents.items[entry.fullContents.items.length - 1];
 
-          if (lastFullContent && lastFullContent.nextPageUrl) {
+          if (lastFullContent?.nextPageUrl) {
             dispatch(
               streamActions.fetchFullContent(
                 entry.entryId,
@@ -211,7 +211,7 @@ export const openUrl: Command<{ template: string; inBackground: boolean }> = {
     return ({ dispatch }) => {
       const entry = dispatch(getActiveEntry);
 
-      if (entry && entry.url) {
+      if (entry?.url) {
         const variables = {
           url: entry.url,
           title: entry.title,
@@ -394,7 +394,7 @@ export const selectNextCategory: Command<{}> = {
       const visibleCategories = selectors
         .sortedCategoriesSelector(state)
         .filter((category) =>
-          groupedSubscriptions.hasOwnProperty(category.label),
+          Object.hasOwn(groupedSubscriptions, category.label),
         );
 
       let targetIndex: number;
@@ -440,7 +440,7 @@ export const selectNextEntry: Command<{}> = {
       } else if (!streams.isLoading) {
         const stream = dispatch(getSelectedStream);
 
-        if (stream && stream.continuation) {
+        if (stream?.continuation) {
           dispatch(
             streamActions.fetchMoreEntries(
               stream.streamId,
@@ -511,7 +511,7 @@ export const selectPreviousCategory: Command<{}> = {
       const visibleCategories = selectors
         .sortedCategoriesSelector(state)
         .filter((category) =>
-          groupedSubscriptions.hasOwnProperty(category.label),
+          Object.hasOwn(groupedSubscriptions, category.label),
         );
 
       let targetIndex: number;
@@ -682,7 +682,7 @@ export const visitWebsite: Command<{ inBackground: boolean }> = {
     return ({ dispatch }) => {
       const entry = dispatch(getActiveEntry);
 
-      if (entry && entry.url) {
+      if (entry?.url) {
         if (inBackground) {
           openUrlInBackground(entry.url);
         } else {

@@ -1,4 +1,4 @@
-import type { Search, Event } from '../index';
+import type { Event, Search } from '../index';
 
 export default function reducer(search: Search, event: Event) {
   switch (event.type) {

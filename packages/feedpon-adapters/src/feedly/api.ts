@@ -1,12 +1,12 @@
-import * as types from './types';
 import {
-  putJson,
+  deleteJson,
   getRequest,
   postJson,
-  postXml,
   postRequest,
-  deleteJson,
+  postXml,
+  putJson,
 } from '../httpClient';
+import type * as types from './types';
 
 const ENDPOINT = 'https://cloud.feedly.com';
 

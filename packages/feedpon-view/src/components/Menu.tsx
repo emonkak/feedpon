@@ -71,12 +71,7 @@ function MenuRoot<TValue>(
 
   return (
     <MenuContext.Provider value={{ delegate: onSelect }}>
-      <div
-        className="menu"
-        onKeyDown={handleKeyDown}
-        ref={containerRef}
-        tabIndex={0}
-      >
+      <div className="menu" onKeyDown={handleKeyDown} ref={containerRef}>
         {children}
       </div>
     </MenuContext.Provider>
@@ -88,7 +83,7 @@ export function MenuItem<TValue>({
   isDisabled = false,
   primaryText,
   secondaryText,
-  value: value,
+  value,
 }: MenuItemProps<TValue>) {
   const { delegate } = useContext(MenuContext)!;
 
@@ -109,7 +104,12 @@ export function MenuItem<TValue>({
   );
 
   return (
-    <button className="menu-item" disabled={isDisabled} onClick={handleClick}>
+    <button
+      type="button"
+      className="menu-item"
+      disabled={isDisabled}
+      onClick={handleClick}
+    >
       {iconElement}
       {primaryTextElement}
       {secondaryTextElement}

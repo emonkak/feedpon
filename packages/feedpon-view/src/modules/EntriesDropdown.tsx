@@ -1,12 +1,12 @@
-import React, { useState, useMemo } from 'react';
 import classnames from 'classnames';
+import React, { useState, useMemo } from 'react';
 
+import type { Entry } from 'feedpon-messaging';
 import ConfirmModal from '../components/ConfirmModal';
 import Dropdown from '../components/Dropdown';
-import Portal from '../components/Portal';
-import type { Entry } from 'feedpon-messaging';
-import useEvent from '../hooks/useEvent';
 import { MenuItem } from '../components/Menu';
+import Portal from '../components/Portal';
+import useEvent from '../hooks/useEvent';
 
 interface EntriesDropdownProps {
   activeEntryIndex: number;
@@ -133,7 +133,7 @@ export default function EntriesDropdown({
       <Dropdown
         onSelect={handleSelectAction}
         toggleButton={
-          <button className="navbar-action">
+          <button type="button" className="navbar-action">
             <i className="icon icon-24 icon-checkmark" />
             <span
               className={classnames(

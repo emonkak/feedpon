@@ -1,7 +1,7 @@
 import { getRequest } from '../httpClient';
-import { createAuthHeader, handleJsonResponse } from './utils';
 import type { Category } from './categories';
 import type { Tag } from './tags';
+import { createAuthHeader, handleJsonResponse } from './utils';
 
 export interface GetStreamInput {
   streamId: string;

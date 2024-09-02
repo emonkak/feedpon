@@ -1,5 +1,5 @@
+import { deleteJson, getRequest, postJson } from '../httpClient';
 import type { Category } from './categories';
-import { postJson, getRequest, deleteJson } from '../httpClient';
 import { createAuthHeader, handleJsonResponse, handleResponse } from './utils';
 
 export interface SubscribeFeedInput {

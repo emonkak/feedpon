@@ -1,6 +1,6 @@
-import * as assert from 'assert';
+import * as assert from 'node:assert';
 
-import parseSrcset from '../src/dom/parseSrcset';
+import parseSrcset from '../src/parseSrcset';
 
 describe('parseSrcset()', () => {
   it('should parse urls', () => {

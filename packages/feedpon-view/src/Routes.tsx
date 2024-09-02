@@ -1,32 +1,32 @@
+import type { History } from 'history';
 import React from 'react';
-import { History } from 'history';
-import { Route, RouteComponentProps, Switch } from 'react-router';
+import { Route, type RouteComponentProps, Switch } from 'react-router';
 
 import AboutPage from './containers/AboutPage';
 import AuthenticationPage from './containers/AuthenticationPage';
-import AuthenticationRequired from './helpers/AuthenticationRequired';
 import CategoriesPage from './containers/CategoriesPage';
 import DashboardPage from './containers/DashboardPage';
 import KeyboardSettings from './containers/KeyboardSettings';
 import KitchenSinkPage from './containers/KitchenSinkPage';
-import NotAuthenticated from './helpers/NotAuthenticated';
-import RootLayout from './layouts/RootLayout';
 import SearchPage from './containers/SearchPage';
 import SettingsPage from './containers/SettingsPage';
-import SidebarLayout from './layouts/SidebarLayout';
-import SingleLayout from './layouts/SingleLayout';
 import SiteinfoSettings from './containers/SiteinfoSettings';
 import StreamPage from './containers/StreamPage';
 import StreamSettings from './containers/StreamSettings';
 import TrackingUrlSettings from './containers/TrackingUrlSettings';
 import UISettings from './containers/UISettings';
 import UrlReplacementSettings from './containers/UrlReplacementSettings';
+import AuthenticationRequired from './helpers/AuthenticationRequired';
+import NotAuthenticated from './helpers/NotAuthenticated';
+import RootLayout from './layouts/RootLayout';
+import SidebarLayout from './layouts/SidebarLayout';
+import SingleLayout from './layouts/SingleLayout';
 
 interface RoutesProps {
   history: History;
 }
 
-export default function Routes({}: RoutesProps) {
+export default function Routes(_props: RoutesProps) {
   return (
     <RootLayout>
       <AuthenticationRequired>

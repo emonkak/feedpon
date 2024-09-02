@@ -95,7 +95,7 @@ function SearchPage({
     </Navbar>
   );
 
-  let feedList;
+  let feedList: React.ReactElement | null = null;
 
   if (decodeURIComponent(params.query) !== activeQuery) {
     feedList = null;
@@ -147,14 +147,13 @@ function SearchPage({
         <form className="form" onSubmit={handleSearch}>
           <div className="input-group">
             <input
-              autoFocus
+              type="search"
               className="form-control"
               onChange={handleChange}
               placeholder="Search by title, URL, or topic"
-              type="search"
               value={currentQuery}
             />
-            <button className="button button-positive" type="submit">
+            <button type="submit" className="button button-positive">
               Search
             </button>
           </div>

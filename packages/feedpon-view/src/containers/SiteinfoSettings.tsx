@@ -5,7 +5,7 @@ import UserSiteinfoSettings from '../containers/UserSiteinfoSettings';
 
 interface SiteinfoSettingsProps {}
 
-export default function SiteinfoSettings({}: SiteinfoSettingsProps) {
+export default function SiteinfoSettings(_props: SiteinfoSettingsProps) {
   return (
     <section>
       <h1 className="display-1">Siteinfo</h1>

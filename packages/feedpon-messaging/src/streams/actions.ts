@@ -1,12 +1,12 @@
 import { Readability } from '@mozilla/readability';
 
-import * as hatena from 'feedpon-adapters/hatena';
 import * as feedly from 'feedpon-adapters/feedly';
+import * as hatena from 'feedpon-adapters/hatena';
 import PromiseQueue from 'feedpon-utils/PromiseQueue';
 import decodeResponseAsText from 'feedpon-utils/decodeResponseAsText';
 import stripTags from 'feedpon-utils/stripTags';
 import tryMatch from 'feedpon-utils/tryMatch';
-import { ALL_STREAM_ID, PINS_STREAM_ID } from './constants';
+import { getFeedlyToken } from '../backend/actions';
 import type {
   AsyncThunk,
   Category,
@@ -18,25 +18,25 @@ import type {
   Subscription,
   Thunk,
 } from '../index';
-import { expandUrl } from '../trackingUrls/actions';
-import { getFeedlyToken } from '../backend/actions';
-import { getSiteinfoItems } from '../sharedSiteinfo/actions';
 import { sendNotification } from '../notifications/actions';
+import { getSiteinfoItems } from '../sharedSiteinfo/actions';
+import { expandUrl } from '../trackingUrls/actions';
+import { ALL_STREAM_ID, PINS_STREAM_ID } from './constants';
 
 export function fetchStream(
   streamId: string,
-  streamView?: StreamViewKind,
-  fetchOptions?: StreamFetchOptions,
+  optionalStreamView?: StreamViewKind,
+  optionalFetchOptions?: StreamFetchOptions,
 ): AsyncThunk {
   return async ({ dispatch, getState }) => {
     const { streams } = getState();
     const fetchedAt = Date.now();
+    const streamView = optionalStreamView ?? streams.defaultStreamView;
+    let fetchOptions: StreamFetchOptions;
 
-    if (!streamView) {
-      streamView = streams.defaultStreamView;
-    }
-
-    if (!fetchOptions) {
+    if (optionalFetchOptions) {
+      fetchOptions = optionalFetchOptions;
+    } else {
       fetchOptions = streams.defaultFetchOptions;
 
       if (streamId === PINS_STREAM_ID) {
@@ -110,14 +110,13 @@ export function fetchStream(
           entrySizes: {},
           continuation: null,
           feed: null,
-          category: null,
           fetchOptions,
           activeEntryIndex: -1,
           expandedEntryIndex: -1,
           readEntryIndex: -1,
           streamView,
         },
-      } as Event); // XXX: Avoid the bug? on TypeScript 2.8
+      });
     }
   };
 }
@@ -191,9 +190,7 @@ export function fetchEntryComments(
     try {
       const bookmarks = await hatena.getBookmarkEntry(url);
 
-      const comments = (
-        bookmarks && bookmarks.bookmarks ? bookmarks.bookmarks : []
-      )
+      const comments = (bookmarks?.bookmarks ? bookmarks.bookmarks : [])
         .filter((bookmark) => bookmark.comment !== '')
         .map((bookmark) => ({
           user: bookmark.user,
@@ -1002,10 +999,7 @@ function getEntryConverter(): Thunk<(entry: feedly.Entry) => Entry> {
       entryId: entry.id,
       title: entry.title,
       author: entry.author || '',
-      url: urlReplacer(
-        (entry.alternate && entry.alternate[0] && entry.alternate[0].href) ||
-          '',
-      ),
+      url: urlReplacer(entry.alternate?.[0]?.href || ''),
       language: entry.language || null,
       summary: stripTags(
         (entry.summary ? entry.summary.content : '') ||
@@ -1028,16 +1022,13 @@ function getEntryConverter(): Thunk<(entry: feedly.Entry) => Entry> {
             url: entry.origin.htmlUrl,
           }
         : null,
-      visual:
-        entry.visual &&
-        entry.visual.contentType &&
-        entry.visual.contentType.startsWith('image/')
-          ? {
-              url: entry.visual.edgeCacheUrl ?? entry.visual.url,
-              width: entry.visual.width,
-              height: entry.visual.height,
-            }
-          : null,
+      visual: entry.visual?.contentType?.startsWith('image/')
+        ? {
+            url: entry.visual.edgeCacheUrl ?? entry.visual.url,
+            width: entry.visual.width,
+            height: entry.visual.height,
+          }
+        : null,
       fullContents: {
         isLoaded: false,
         isLoading: false,

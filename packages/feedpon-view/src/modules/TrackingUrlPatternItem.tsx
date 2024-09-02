@@ -33,6 +33,7 @@ export default function TrackingUrlPatternItem({
       </td>
       <td className="u-text-nowrap">
         <button
+          type="button"
           className="button button-small button-outline-negative"
           onClick={handleStartDeleting}
         >

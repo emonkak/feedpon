@@ -258,19 +258,19 @@ function sanitizeSrcset(srcsetString: string): string {
 }
 
 function isAllowedElement(tagName: string): boolean {
-  return ALLOWED_ELEMENTS.hasOwnProperty(tagName.toLowerCase());
+  return Object.hasOwn(ALLOWED_ELEMENTS, tagName.toLowerCase());
 }
 
 function isAllowedAttribute(attrName: string): boolean {
-  return ALLOWED_ATTRS.hasOwnProperty(attrName.toLowerCase());
+  return Object.hasOwn(ALLOWED_ATTRS, attrName.toLowerCase());
 }
 
 function isUriAttribute(attrName: string): boolean {
-  return URI_ATTRS.hasOwnProperty(attrName.toLowerCase());
+  return Object.hasOwn(URI_ATTRS, attrName.toLowerCase());
 }
 
 function isSrcsetAttribute(attrName: string): boolean {
-  return SRCSET_ATTRS.hasOwnProperty(attrName.toLowerCase());
+  return Object.hasOwn(SRCSET_ATTRS, attrName.toLowerCase());
 }
 
 function keyMirror(keys: string[]): { [key: string]: string } {

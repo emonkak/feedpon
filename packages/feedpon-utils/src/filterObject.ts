@@ -12,7 +12,7 @@ export default function filterObject<TValue, TContext>(
 
   for (const name in object) {
     if (
-      object.hasOwnProperty(name) &&
+      Object.hasOwn(object, name) &&
       callback.call(context, object[name]!, name, object)
     ) {
       result[name] = object[name]!;

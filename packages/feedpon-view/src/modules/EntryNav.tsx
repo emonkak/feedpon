@@ -1,5 +1,5 @@
-import React from 'react';
 import classnames from 'classnames';
+import React from 'react';
 
 interface EntryNavProps {
   fullContentsIsLoading: boolean;
@@ -23,6 +23,7 @@ export default function EntryNav({
     <nav className="entry-nav">
       <div className="button-toolbar">
         <button
+          type="button"
           className={classnames(
             'button button-pill',
             isPinned ? 'button-default' : 'button-outline-default',
@@ -39,6 +40,7 @@ export default function EntryNav({
           />
         </button>
         <button
+          type="button"
           className={classnames(
             'button button-pill',
             fullContentsIsShown ? 'button-default' : 'button-outline-default',

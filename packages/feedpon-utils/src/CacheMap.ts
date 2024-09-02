@@ -93,7 +93,7 @@ export function update<T>(
 }
 
 export function has<T>(map: CacheMap<T>, key: string): boolean {
-  return map.indices.hasOwnProperty(key);
+  return Object.hasOwn(map.indices, key);
 }
 
 export function remove<T>(map: CacheMap<T>, key: string): CacheMap<T> {

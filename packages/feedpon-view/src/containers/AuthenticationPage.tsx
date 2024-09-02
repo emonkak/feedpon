@@ -1,9 +1,9 @@
 import React from 'react';
 
-import connect from 'feedpon-flux/react/connect';
-import useEvent from '../hooks/useEvent';
-import { authenticate } from 'feedpon-messaging/backend';
 import { bindActions } from 'feedpon-flux';
+import connect from 'feedpon-flux/react/connect';
+import { authenticate } from 'feedpon-messaging/backend';
+import useEvent from '../hooks/useEvent';
 
 interface AuthenticationPageProps {
   onAuthenticate: typeof authenticate;
@@ -18,7 +18,11 @@ function AuthenticationPage({ onAuthenticate }: AuthenticationPageProps) {
     <div className="authentication">
       <div className="container">
         <div className="u-text-center u-margin-bottom-2">
-          <a href="https://github.com/emonkak/feedpon" target="_blank">
+          <a
+            href="https://github.com/emonkak/feedpon"
+            target="_blank"
+            rel="noreferrer"
+          >
             <img src="./img/logo.svg" width="244" height="88" />
           </a>
         </div>
@@ -43,6 +47,7 @@ function AuthenticationPage({ onAuthenticate }: AuthenticationPageProps) {
           </label>
         </div>
         <button
+          type="button"
           className="button button-positive button-block button-large"
           onClick={handleAuthenticate}
         >

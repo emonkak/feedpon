@@ -27,11 +27,11 @@ import { fetchUser } from 'feedpon-messaging/user';
 import AutoComplete from '../components/AutoComplete';
 import { MenuItem } from '../components/Menu';
 import { Tree, TreeLeaf } from '../components/Tree';
+import useEvent from '../hooks/useEvent';
 import ProfileDropdown from '../modules/ProfileDropdown';
 import SubscriptionIcon from '../modules/SubscriptionIcon';
 import SubscriptionTree from '../modules/SubscriptionTree';
 import SubscriptionTreeHeader from '../modules/SubscriptionTreeHeader';
-import useEvent from '../hooks/useEvent';
 
 interface SidebarProps {
   categories: Category[];
@@ -105,7 +105,7 @@ function Sidebar({
           onSubmit={handleSearch}
           placeholder="Search for feeds ..."
           renderItems={renderItems}
-        ></AutoComplete>
+        />
       </div>
       <div className="sidebar-group">
         <Tree selectedValue={history.location.pathname} onSelect={handleSelect}>

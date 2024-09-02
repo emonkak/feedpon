@@ -14,7 +14,11 @@ export default function Navbar({
   return (
     <nav className="navbar">
       <div className="navbar-container">
-        <button className="navbar-action" onClick={onToggleSidebar}>
+        <button
+          type="button"
+          className="navbar-action"
+          onClick={onToggleSidebar}
+        >
           <i className="icon icon-24 icon-menu" />
         </button>
         {children}

@@ -1,5 +1,5 @@
-import * as types from './types';
 import { getRequest } from '../httpClient';
+import type * as types from './types';
 
 const ENDPOINT = 'http://wedata.net/';
 

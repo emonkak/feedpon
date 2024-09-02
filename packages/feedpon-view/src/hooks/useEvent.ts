@@ -4,7 +4,7 @@ import { useCallback, useLayoutEffect, useRef } from 'react';
 export default function useEvent<THandler extends (...args: any) => any>(
   handler: THandler,
 ) {
-  let handlerRef = useRef<THandler>(handler);
+  const handlerRef = useRef<THandler>(handler);
 
   useLayoutEffect(() => {
     handlerRef.current = handler;

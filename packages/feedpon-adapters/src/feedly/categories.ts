@@ -1,4 +1,4 @@
-import { getRequest, postJson, deleteJson } from '../httpClient';
+import { deleteJson, getRequest, postJson } from '../httpClient';
 import { createAuthHeader, handleJsonResponse, handleResponse } from './utils';
 
 export interface Category {

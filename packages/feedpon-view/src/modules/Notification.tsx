@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
 import classnames from 'classnames';
+import React, { useEffect } from 'react';
 
 import type { Notification } from 'feedpon-messaging';
 import useEvent from '../hooks/useEvent';

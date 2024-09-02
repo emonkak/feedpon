@@ -1,6 +1,6 @@
 import * as feedly from 'feedpon-adapters/feedly';
-import type { AsyncThunk } from '../index';
 import { getFeedlyToken } from '../backend/actions';
+import type { AsyncThunk } from '../index';
 
 export function fetchUser(): AsyncThunk {
   return async ({ dispatch }, { environment }) => {

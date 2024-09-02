@@ -1,10 +1,10 @@
-import type { AsyncThunk, SiteinfoItem } from '../index';
 import {
-  LDRFullFeedData,
-  WedataItem,
+  type LDRFullFeedData,
+  type WedataItem,
   getAutoPagerizeItems,
   getLDRFullFeedItems,
 } from 'feedpon-adapters/wedata';
+import type { AsyncThunk, SiteinfoItem } from '../index';
 import { sendNotification } from '../notifications/actions';
 
 const LDR_FULL_FEED_TYPE_PRIORITIES: { [key: string]: number } = {

@@ -1,8 +1,8 @@
 import React from 'react';
 
 import type { Category } from 'feedpon-messaging';
-import { Nav, NavItem } from '../components/Nav';
 import { UNCATEGORIZED } from 'feedpon-messaging/categories';
+import { Nav, NavItem } from '../components/Nav';
 
 interface CategoriesNavProps {
   categories: Category[];

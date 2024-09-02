@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 
-import ConfirmModal from '../components/ConfirmModal';
-import Modal from '../components/Modal';
-import UserSiteinfoForm from './UserSiteinfoForm';
 import type { SiteinfoItem } from 'feedpon-messaging';
-import {
+import type {
   deleteUserSiteinfoItem,
   updateUserSiteinfoItem,
 } from 'feedpon-messaging/userSiteinfo';
+import ConfirmModal from '../components/ConfirmModal';
+import Modal from '../components/Modal';
 import useEvent from '../hooks/useEvent';
+import UserSiteinfoForm from './UserSiteinfoForm';
 
 interface UserSiteinfoItemProps {
   item: SiteinfoItem;
@@ -59,12 +59,14 @@ export default function UserSiteinfoItem({
       <td>
         <div className="button-toolbar u-text-nowrap">
           <button
+            type="button"
             className="button button-outline-default"
             onClick={handleStartEditing}
           >
             <i className="icon icon-16 icon-edit" />
           </button>
           <button
+            type="button"
             className="button button-outline-negative"
             onClick={handleStartDeleting}
           >
@@ -78,10 +80,11 @@ export default function UserSiteinfoItem({
             onSubmit={handleSubmit}
           >
             <div className="button-toolbar">
-              <button className="button button-outline-positive" type="submit">
+              <button type="submit" className="button button-outline-positive">
                 Save
               </button>
               <button
+                type="button"
                 className="button button-outline-default"
                 onClick={handleCancelEditing}
               >

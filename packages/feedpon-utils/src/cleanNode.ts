@@ -12,12 +12,13 @@ export default function cleanNode(node: Node, baseUrl: string): Node | null {
     case node.ELEMENT_NODE:
       return cleanElement(node as Element, baseUrl);
 
-    default:
+    default: {
       const nextNode = node.nextSibling ?? null;
       if (node.parentNode) {
         node.parentNode.removeChild(node);
       }
       return nextNode;
+    }
   }
 }
 
@@ -34,7 +35,7 @@ function cleanElement(element: Element, baseUrl: string): Node | null {
         if (parentNode) {
           const container = document.createElement('div');
           container.style.display = 'contents';
-          let child;
+          let child: ChildNode | null;
           while ((child = element.firstChild)) {
             container.appendChild(child);
           }
@@ -115,23 +116,25 @@ function qualifySrcset(srcsetString: string, baseUrlString: string): string {
 }
 
 function resolveLazyLoading(element: HTMLImageElement): void {
-  if (
-    element.dataset['src'] &&
-    !element.src.endsWith(encodeURI(element.dataset['src']))
-  ) {
-    element.src = element.dataset['src'];
+  // biome-ignore lint/complexity/useLiteralKeys:
+  const src = element.dataset['src'];
+  // biome-ignore lint/complexity/useLiteralKeys:
+  const srcset = element.dataset['srcset'];
+  // biome-ignore lint/complexity/useLiteralKeys:
+  const lazySrc = element.dataset['lazySrc'];
+  // biome-ignore lint/complexity/useLiteralKeys:
+  const lazySrcset = element.dataset['lazySrcset'];
+  if (src && !element.src.endsWith(encodeURI(src))) {
+    element.src = src;
   }
-  if (element.dataset['srcset']) {
-    element.srcset = element.dataset['srcset'];
+  if (srcset) {
+    element.srcset = srcset;
   }
-  if (
-    element.dataset['lazySrc'] &&
-    !element.src.endsWith(encodeURI(element.dataset['lazySrc']))
-  ) {
-    element.src = element.dataset['lazySrc'];
+  if (lazySrc && !element.src.endsWith(encodeURI(lazySrc))) {
+    element.src = lazySrc;
   }
-  if (element.dataset['lazySrcset']) {
-    element.srcset = element.dataset['lazySrcset'];
+  if (lazySrcset) {
+    element.srcset = lazySrcset;
   }
 }
 

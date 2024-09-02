@@ -31,7 +31,12 @@ export default function FullContents({
       {index > 0 && (
         <header className="entry-page-header">
           <h2 className="entry-page-title">
-            <a className="link-soft" href={fullContent.url} target="_blank">
+            <a
+              className="link-soft"
+              href={fullContent.url}
+              target="_blank"
+              rel="noreferrer"
+            >
               {'Page ' + (index + 1)}
             </a>
           </h2>
@@ -55,9 +60,10 @@ export default function FullContents({
     );
   } else {
     const latestItem = items[items.length - 1];
-    if (latestItem && latestItem.nextPageUrl) {
+    if (latestItem?.nextPageUrl) {
       nextPageButton = isLoading ? (
         <button
+          type="button"
           className="button button-block button-outline-positive"
           disabled={true}
         >
@@ -65,6 +71,7 @@ export default function FullContents({
         </button>
       ) : (
         <button
+          type="button"
           className="button button-block button-outline-positive"
           onClick={onFetchNext}
         >

@@ -3,7 +3,7 @@ import CSSTransition from 'react-transition-group/CSSTransition';
 
 import useEvent from '../hooks/useEvent';
 import Dismissible from './Dismissible';
-import { Menu, MenuRef } from './Menu';
+import { Menu, type MenuRef } from './Menu';
 
 interface DropdownProps<TValue> {
   children: React.ReactNode;
@@ -48,7 +48,7 @@ export default function Dropdown<TValue>({
     const leftSpace = containerRect.left;
     const rightSpace = viewportWidth - containerRect.right;
 
-    let dropdownStyle: React.CSSProperties = {};
+    const dropdownStyle: React.CSSProperties = {};
 
     if (leftSpace <= rightSpace) {
       dropdownStyle.left = containerRect.left;

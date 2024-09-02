@@ -1,5 +1,5 @@
-import initialState from './initialState';
 import type { Event, UrlReplacements } from '../index';
+import initialState from './initialState';
 
 export default function reduceUrlReplacement(
   urlReplacements: UrlReplacements,

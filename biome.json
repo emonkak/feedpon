@@ -5,19 +5,27 @@
   "javascript": {
     "formatter": {
       "quoteStyle": "single"
-    }
+    },
+    "jsxRuntime": "reactClassic"
   },
   "formatter": {
     "indentStyle": "space"
   },
   "linter": {
     "rules": {
+      "a11y": {
+        "all": false
+      },
       "complexity": {
         "noBannedTypes": "off",
         "noThisInStatic": "off"
       },
       "correctness": {
-        "noUnusedLabels": "off"
+        "noUnusedLabels": "off",
+        "useExhaustiveDependencies": "off"
+      },
+      "security": {
+        "noDangerouslySetInnerHtml": "off"
       },
       "style": {
         "noNonNullAssertion": "off",
@@ -26,6 +34,7 @@
         "useTemplate": "off"
       },
       "suspicious": {
+        "noArrayIndexKey": "off",
         "noAssignInExpressions": "off",
         "noConfusingLabels": "off",
         "noConfusingVoidType": "off",

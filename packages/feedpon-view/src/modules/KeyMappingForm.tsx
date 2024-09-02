@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
-import ValidatableControl from '../components/ValidatableControl';
 import type { Command, KeyMapping } from 'feedpon-messaging';
+import ValidatableControl from '../components/ValidatableControl';
 import useEvent from '../hooks/useEvent';
 
 interface KeyMappingFormProps {
@@ -101,6 +101,7 @@ export default function KeyMappingForm({
                   <a
                     href="https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key"
                     target="_blank"
+                    rel="noreferrer"
                   >
                     <code>event.key</code>
                   </a>{' '}
@@ -120,51 +121,51 @@ export default function KeyMappingForm({
               <p>The following keys require special name.</p>
               <ul>
                 <li>
-                  <kbd> </kbd>: <code>{`<Space>`}</code>
+                  <kbd> </kbd>: <code>{'<Space>'}</code>
                 </li>
                 <li>
-                  <kbd>\</kbd>: <code>{`<Bslash>`}</code>
+                  <kbd>\</kbd>: <code>{'<Bslash>'}</code>
                 </li>
                 <li>
-                  <kbd>|</kbd>: <code>{`<Bar>`}</code>
+                  <kbd>|</kbd>: <code>{'<Bar>'}</code>
                 </li>
                 <li>
-                  <kbd>&lt;</kbd>: <code>{`<Lt>`}</code>
+                  <kbd>&lt;</kbd>: <code>{'<Lt>'}</code>
                 </li>
               </ul>
 
               <h3>Modifier keys</h3>
               <ul>
                 <li>
-                  <kbd>Shift</kbd>: <code>{`<S-{key}>`}</code>
+                  <kbd>Shift</kbd>: <code>{'<S-{key}>'}</code>
                 </li>
                 <li>
-                  <kbd>Control</kbd>: <code>{`<C-{key}>`}</code>
+                  <kbd>Control</kbd>: <code>{'<C-{key}>'}</code>
                 </li>
                 <li>
-                  <kbd>Alt</kbd>: <code>{`<A-{key}>`}</code>
+                  <kbd>Alt</kbd>: <code>{'<A-{key}>'}</code>
                 </li>
                 <li>
-                  <kbd>Meta</kbd>: <code>{`<M-{key}>`}</code>
+                  <kbd>Meta</kbd>: <code>{'<M-{key}>'}</code>
                 </li>
               </ul>
 
               <h3>Examples</h3>
               <ul>
                 <li>
-                  <kbd>a</kbd>: <code>{`a`}</code>
+                  <kbd>a</kbd>: <code>{'a'}</code>
                 </li>
                 <li>
-                  <kbd>Shift-A</kbd>: <code>{`A`}</code>
+                  <kbd>Shift-A</kbd>: <code>{'A'}</code>
                 </li>
                 <li>
-                  <kbd>Ctrl-A</kbd>: <code>{`<C-a>`}</code>
+                  <kbd>Ctrl-A</kbd>: <code>{'<C-a>'}</code>
                 </li>
                 <li>
-                  <kbd>Ctrl-Shift-A</kbd>: <code>{`<C-A>`}</code>
+                  <kbd>Ctrl-Shift-A</kbd>: <code>{'<C-A>'}</code>
                 </li>
                 <li>
-                  <kbd>Ctrl-Shift-Space</kbd>: <code>{`<C-S-Space>`}</code>
+                  <kbd>Ctrl-Shift-Space</kbd>: <code>{'<C-S-Space>'}</code>
                 </li>
               </ul>
             </div>

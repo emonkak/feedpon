@@ -1,7 +1,7 @@
 import React from 'react';
 
-import CommentComponent from './Comment';
 import type { Comment } from 'feedpon-messaging';
+import CommentComponent from './Comment';
 
 interface CommentPopoverProps {
   arrowOffset: number;

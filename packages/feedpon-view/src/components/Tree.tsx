@@ -1,3 +1,4 @@
+import classnames from 'classnames';
 import React, {
   Children,
   createContext,
@@ -7,7 +8,6 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import classnames from 'classnames';
 
 import useEvent from '../hooks/useEvent';
 

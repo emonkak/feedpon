@@ -1,15 +1,15 @@
 import React from 'react';
 
-import UserSiteinfoForm from '../modules/UserSiteinfoForm';
-import UserSiteinfoItem from '../modules/UserSiteinfoItem';
 import { bindActions } from 'feedpon-flux';
 import connect from 'feedpon-flux/react/connect';
-import type { State, SiteinfoItem } from 'feedpon-messaging';
+import type { SiteinfoItem, State } from 'feedpon-messaging';
 import {
   addUserSiteinfoItem,
   deleteUserSiteinfoItem,
   updateUserSiteinfoItem,
 } from 'feedpon-messaging/userSiteinfo';
+import UserSiteinfoForm from '../modules/UserSiteinfoForm';
+import UserSiteinfoItem from '../modules/UserSiteinfoItem';
 
 interface UserSiteinfoProps {
   items: SiteinfoItem[];
@@ -33,7 +33,7 @@ function UserSiteinfoSettings({
           legend="New siteinfo"
           onSubmit={onAddUserSiteinfoItem}
         >
-          <button className="button button-outline-positive" type="submit">
+          <button type="submit" className="button button-outline-positive">
             Add
           </button>
         </UserSiteinfoForm>

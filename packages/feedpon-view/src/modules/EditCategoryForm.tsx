@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
-import ConfirmModal from '../components/ConfirmModal';
 import type { Category } from 'feedpon-messaging';
+import ConfirmModal from '../components/ConfirmModal';
 
 import useEvent from '../hooks/useEvent';
 import usePrevious from '../hooks/usePrevious';
@@ -68,6 +68,7 @@ export default function EditCategoryForm({
           required
         />
         <button
+          type="button"
           className="button button-positive"
           disabled={
             category.isLoading ||
@@ -79,6 +80,7 @@ export default function EditCategoryForm({
           Rename
         </button>
         <button
+          type="button"
           className="button button-negative"
           disabled={category.isLoading}
           onClick={handleStartDeleting}

@@ -1,8 +1,5 @@
 import React, { useState } from 'react';
 
-import ConfirmModal from '../components/ConfirmModal';
-import UrlReplacementForm from '../modules/UrlReplacementForm';
-import UrlReplacementItem from '../modules/UrlReplacementItem';
 import { bindActions } from 'feedpon-flux';
 import connect from 'feedpon-flux/react/connect';
 import type { State, UrlReplacement } from 'feedpon-messaging';
@@ -12,7 +9,10 @@ import {
   resetUrlReplacements,
   updateUrlReplacement,
 } from 'feedpon-messaging/urlReplacements';
+import ConfirmModal from '../components/ConfirmModal';
 import useEvent from '../hooks/useEvent';
+import UrlReplacementForm from '../modules/UrlReplacementForm';
+import UrlReplacementItem from '../modules/UrlReplacementItem';
 
 interface UrlReplacementSettingsProps {
   items: UrlReplacement[];
@@ -82,6 +82,7 @@ function UrlReplacementSettings({
       </div>
       <div className="form">
         <button
+          type="button"
           className="button button-outline-negative"
           onClick={handleStartResetting}
         >
@@ -95,7 +96,7 @@ function UrlReplacementSettings({
         message="Are you sure you want to reset all tracking URLs?"
         onClose={handleCancelResetting}
         onConfirm={onResetUrlReplacements}
-        title={`Reset all tracking URLs`}
+        title={'Reset all tracking URLs'}
       />
     </section>
   );

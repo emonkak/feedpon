@@ -1,8 +1,5 @@
 import React from 'react';
 
-import Navbar from '../components/Navbar';
-import EntriesDropdown from './EntriesDropdown';
-import StreamFetchOptionsDropdown from './StreamFetchOptionsDropdown';
 import type {
   Entry,
   EntryOrderKind,
@@ -10,6 +7,9 @@ import type {
   StreamFetchOptions,
   StreamViewKind,
 } from 'feedpon-messaging';
+import Navbar from '../components/Navbar';
+import EntriesDropdown from './EntriesDropdown';
+import StreamFetchOptionsDropdown from './StreamFetchOptionsDropdown';
 
 interface StreamNavbarProps {
   activeEntryIndex: number;
@@ -68,6 +68,7 @@ export default function StreamNavbar({
         <span className="stream-title u-text-truncate">{title}</span>
       </h1>
       <button
+        type="button"
         disabled={isLoading}
         className="navbar-action"
         onClick={onReloadEntries}
@@ -87,7 +88,7 @@ export default function StreamNavbar({
         title={title}
       />
       {isExpanded && (
-        <button className="navbar-action" onClick={onCloseEntry}>
+        <button type="button" className="navbar-action" onClick={onCloseEntry}>
           <i className="icon icon-24 icon-close" />
         </button>
       )}

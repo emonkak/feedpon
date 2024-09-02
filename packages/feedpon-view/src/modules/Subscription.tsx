@@ -1,15 +1,15 @@
 import React from 'react';
 
-import RelativeTime from '../components/RelativeTime';
-import SubscriptionDropdown from './SubscriptionDropdown';
-import SubscriptionIcon from './SubscriptionIcon';
 import type { Category, Subscription } from 'feedpon-messaging';
-import {
+import type { createCategory } from 'feedpon-messaging/categories';
+import type {
   addToCategory,
   removeFromCategory,
   unsubscribe,
 } from 'feedpon-messaging/subscriptions';
-import { createCategory } from 'feedpon-messaging/categories';
+import RelativeTime from '../components/RelativeTime';
+import SubscriptionDropdown from './SubscriptionDropdown';
+import SubscriptionIcon from './SubscriptionIcon';
 
 interface SubscriptionProps {
   categories: Category[];
@@ -29,7 +29,12 @@ export default function SubscriptionComponent({
   subscription,
 }: SubscriptionProps) {
   const title = subscription.url ? (
-    <a className="link-soft" target="_blank" href={subscription.url}>
+    <a
+      className="link-soft"
+      target="_blank"
+      href={subscription.url}
+      rel="noreferrer"
+    >
       {subscription.title}
     </a>
   ) : (
@@ -57,7 +62,7 @@ export default function SubscriptionComponent({
             {labels}
           </div>
           <div className="u-text-7 u-text-wrap">
-            <a target="_blank" href={subscription.feedUrl}>
+            <a target="_blank" href={subscription.feedUrl} rel="noreferrer">
               {subscription.feedUrl}
             </a>
           </div>

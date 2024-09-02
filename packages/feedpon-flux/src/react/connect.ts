@@ -1,7 +1,7 @@
 import React, { useSyncExternalStore, useContext, createElement } from 'react';
 
+import type { Store } from '../index';
 import StoreContext from './StoreContext';
-import { Store } from '../index';
 
 interface Connection<TState, TEvent, TStateProps, TDispatchProps, TOwnProps> {
   mapDispatchToProps?: (

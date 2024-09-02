@@ -1,5 +1,5 @@
-import throttle from 'feedpon-utils/throttle';
 import shallowEqual from 'feedpon-utils/shallowEqual';
+import throttle from 'feedpon-utils/throttle';
 import React, {
   forwardRef,
   memo,
@@ -95,7 +95,7 @@ interface VirtualListRendererProps<
   slice: Slice;
 }
 
-export default (forwardRef(VirtualList) as <
+export default forwardRef(VirtualList) as <
   TItem extends { [key in TIdAttribute]: TId },
   TIdAttribute extends keyof TItem,
   TId extends PropertyKey,
@@ -103,7 +103,7 @@ export default (forwardRef(VirtualList) as <
   props: VirtualListProps<TItem, TIdAttribute, TId> & {
     ref?: React.ForwardedRef<VirtualListRef>;
   },
-) => ReturnType<typeof VirtualList>);
+) => ReturnType<typeof VirtualList>;
 
 function VirtualList<
   TItem extends { [key in TIdAttribute]: TId },

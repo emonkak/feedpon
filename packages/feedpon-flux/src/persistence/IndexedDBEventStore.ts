@@ -1,4 +1,4 @@
-import { EventStore, Snapshot, IdentifiedEvent } from './index';
+import type { EventStore, IdentifiedEvent, Snapshot } from './index';
 
 const DB_NAME = 'feedpon';
 const DB_VERSION = 1;

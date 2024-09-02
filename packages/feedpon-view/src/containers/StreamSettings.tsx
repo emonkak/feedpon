@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 
-import ConfirmModal from '../components/ConfirmModal';
 import { bindActions } from 'feedpon-flux';
 import connect from 'feedpon-flux/react/connect';
 import type {
@@ -15,6 +14,7 @@ import {
   changeStreamHistoryOptions,
   clearStreamCaches,
 } from 'feedpon-messaging/streams';
+import ConfirmModal from '../components/ConfirmModal';
 import useEvent from '../hooks/useEvent';
 
 interface StreamSettingsProps {
@@ -52,50 +52,53 @@ function StreamSettings({
     setIsClearingStreamCaches(false);
   });
 
-  const handleChangeNumStreamHistories = useEvent((
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    const newNumStreamHistories = parseInt(event.currentTarget.value, 10);
-    setNumStreamHistories(newNumStreamHistories);
-  });
+  const handleChangeNumStreamHistories = useEvent(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const newNumStreamHistories = Number.parseInt(
+        event.currentTarget.value,
+        10,
+      );
+      setNumStreamHistories(newNumStreamHistories);
+    },
+  );
 
-  const handleChangeCacheCapacity = useEvent((
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    const newCacheCapacity = parseInt(event.currentTarget.value, 10);
-    setCacheCapacity(newCacheCapacity);
-  });
+  const handleChangeCacheCapacity = useEvent(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const newCacheCapacity = Number.parseInt(event.currentTarget.value, 10);
+      setCacheCapacity(newCacheCapacity);
+    },
+  );
 
-  const handleChangeFetchOptions = useEvent((
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    const target = event.currentTarget;
-    const name = target.name;
-    const value = target.type === 'checkbox' ? target.checked : target.value;
+  const handleChangeFetchOptions = useEvent(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const target = event.currentTarget;
+      const name = target.name;
+      const value = target.type === 'checkbox' ? target.checked : target.value;
 
-    setFetchOptions((fetchOptions) => ({
-      ...fetchOptions,
-      [name]: value,
-    }));
-  });
+      setFetchOptions((fetchOptions) => ({
+        ...fetchOptions,
+        [name]: value,
+      }));
+    },
+  );
 
-  const handleChangeStreamView = useEvent((
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    const newStreamView = event.currentTarget.value as StreamViewKind;
-    setStreamView(newStreamView);
-  });
+  const handleChangeStreamView = useEvent(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const newStreamView = event.currentTarget.value as StreamViewKind;
+      setStreamView(newStreamView);
+    },
+  );
 
   const handleStartClearingStreamCaches = useEvent(() => {
     setIsClearingStreamCaches(true);
   });
 
-  const handleSubmitFetchOptions = useEvent((
-    event: React.FormEvent<HTMLFormElement>,
-  ) => {
-    event.preventDefault();
-    onChangeDefaultStreamFetchOptions(fetchOptions);
-  });
+  const handleSubmitFetchOptions = useEvent(
+    (event: React.FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+      onChangeDefaultStreamFetchOptions(fetchOptions);
+    },
+  );
 
   const handleSubmitStreamView = useEvent(
     (event: React.FormEvent<HTMLFormElement>) => {
@@ -104,19 +107,19 @@ function StreamSettings({
     },
   );
 
-  const handleSubmitHistoryOptions = useEvent((
-    event: React.FormEvent<HTMLFormElement>,
-  ) => {
-    event.preventDefault();
-    onChangeStreamHistoryOptions(numStreamHistories);
-  });
+  const handleSubmitHistoryOptions = useEvent(
+    (event: React.FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+      onChangeStreamHistoryOptions(numStreamHistories);
+    },
+  );
 
-  const handleSubmitCacheCapacity = useEvent((
-    event: React.FormEvent<HTMLFormElement>,
-  ) => {
-    event.preventDefault();
-    onChangeStreamCacheCapacity(cacheCapacity);
-  });
+  const handleSubmitCacheCapacity = useEvent(
+    (event: React.FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+      onChangeStreamCacheCapacity(cacheCapacity);
+    },
+  );
 
   return (
     <section className="section">

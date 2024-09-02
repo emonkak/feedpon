@@ -13,7 +13,7 @@ const SPECIAL_KEYS: { [key: string]: string } = {
 export default function useKeyMappings(
   keyMappings: Trie.Trie<any>,
   onInvokeKeyMapping: (keyMappings: any) => void,
-  timeoutLength: number = 1000,
+  timeoutLength = 1000,
 ) {
   const pendingKeys = useRef<string[]>([]);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);

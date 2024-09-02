@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 
+import type { UrlReplacement } from 'feedpon-messaging';
 import ConfirmModal from '../components/ConfirmModal';
 import Modal from '../components/Modal';
-import UrlReplacementForm from './UrlReplacementForm';
-import type { UrlReplacement } from 'feedpon-messaging';
 import useEvent from '../hooks/useEvent';
+import UrlReplacementForm from './UrlReplacementForm';
 
 interface UrlReplacementItemProps {
   index: number;
@@ -63,12 +63,14 @@ export default function UrlReplacementItem({
       <td className="u-text-nowrap">
         <div className="button-toolbar">
           <button
+            type="button"
             className="button button-small button-outline-default"
             onClick={handleStartEditing}
           >
             <i className="icon icon-16 icon-edit" />
           </button>
           <button
+            type="button"
             className="button button-small button-outline-negative"
             onClick={handleStartDeleting}
           >
@@ -95,6 +97,7 @@ export default function UrlReplacementItem({
                 Update
               </button>
               <button
+                type="button"
                 className="button button-outline-default"
                 onClick={handleCancelEditing}
               >

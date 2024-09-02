@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import SubscribeDropdown from './SubscribeDropdown';
 import type { Category, Feed, Subscription } from 'feedpon-messaging';
+import SubscribeDropdown from './SubscribeDropdown';
 
 interface FeedProps {
   categories: Category[];

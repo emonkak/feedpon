@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 
+import type { Profile } from 'feedpon-messaging';
 import ConfirmModal from '../components/ConfirmModal';
 import Dropdown from '../components/Dropdown';
-import Portal from '../components/Portal';
 import { MenuItem } from '../components/Menu';
-import type { Profile } from 'feedpon-messaging';
+import Portal from '../components/Portal';
 import useEvent from '../hooks/useEvent';
 
 interface ProfileDropdownProps {
@@ -59,6 +59,7 @@ export default function ProfileDropdown({
         onSelect={handleSelectAction}
         toggleButton={
           <button
+            type="button"
             className="button button-outline-default button-block"
             disabled={isLoading}
           >

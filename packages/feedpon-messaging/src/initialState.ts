@@ -1,6 +1,7 @@
 import backend from './backend/initialState';
 import categories from './categories/initialState';
 import histories from './histories/initialState';
+import type { State } from './index';
 import instantNotifications from './instantNotifications/initialState';
 import keyMappings from './keyMappings/initialState';
 import notifications from './notifications/initialState';
@@ -13,7 +14,6 @@ import ui from './ui/initialState';
 import urlReplacements from './urlReplacements/initialState';
 import user from './user/initialState';
 import userSiteinfo from './userSiteinfo/initialState';
-import { State } from './index';
 
 const initialState: State = {
   backend,

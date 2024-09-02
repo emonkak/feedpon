@@ -1,5 +1,5 @@
-import React from 'react';
 import classnames from 'classnames';
+import React from 'react';
 
 import EntryShareButton from './EntryShareButton';
 
@@ -21,6 +21,7 @@ export default function EntryActionList({
   return (
     <div className="button-toolbar u-flex u-flex-align-items-center u-flex-justify-content-center">
       <button
+        type="button"
         className={classnames(
           'button button-pill',
           commentsIsShown ? 'button-default' : 'button-outline-default',
@@ -43,6 +44,7 @@ export default function EntryActionList({
         href={url}
         target="_blank"
         title="Visit website"
+        rel="noreferrer"
       >
         <i className="icon icon-20 icon-external-link" />
       </a>

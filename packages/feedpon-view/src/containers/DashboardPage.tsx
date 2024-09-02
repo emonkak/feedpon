@@ -4,10 +4,10 @@ import { Link } from 'react-router-dom';
 import { bindActions } from 'feedpon-flux';
 import connect from 'feedpon-flux/react/connect';
 import type {
-  Histories,
   Categories,
-  Subscriptions,
+  Histories,
   State,
+  Subscriptions,
 } from 'feedpon-messaging';
 import { toggleSidebar } from 'feedpon-messaging/ui';
 import * as CacheMap from 'feedpon-utils/CacheMap';
@@ -102,7 +102,7 @@ function DashboardPage({
     </Navbar>
   );
 
-  let streamHistoryList;
+  let streamHistoryList: React.ReactElement;
 
   if (streamHistories.length === 0) {
     streamHistoryList = (

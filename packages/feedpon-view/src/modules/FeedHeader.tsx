@@ -1,14 +1,14 @@
 import React from 'react';
 
-import SubscribeDropdown from './SubscribeDropdown';
 import type { Category, Feed, Subscription } from 'feedpon-messaging';
-import {
+import type { createCategory } from 'feedpon-messaging/categories';
+import type {
   addToCategory,
   removeFromCategory,
   subscribe,
   unsubscribe,
 } from 'feedpon-messaging/subscriptions';
-import { createCategory } from 'feedpon-messaging/categories';
+import SubscribeDropdown from './SubscribeDropdown';
 
 interface FeedHeaderProps {
   categories: Category[];
@@ -42,7 +42,12 @@ export default function FeedHeader({
           <div className="u-margin-right-2 u-flex-grow-1">
             <div>
               {feed.url ? (
-                <a target="_blank" className="link-strong" href={feed.url}>
+                <a
+                  target="_blank"
+                  className="link-strong"
+                  href={feed.url}
+                  rel="noreferrer"
+                >
                   {feed.title}
                 </a>
               ) : (
@@ -51,7 +56,12 @@ export default function FeedHeader({
             </div>
             <div className="u-text-wrap">{feed.description}</div>
             <div>
-              <a className="u-text-wrap" target="_blank" href={feed.feedUrl}>
+              <a
+                className="u-text-wrap"
+                target="_blank"
+                href={feed.feedUrl}
+                rel="noreferrer"
+              >
                 {feed.feedUrl}
               </a>
             </div>

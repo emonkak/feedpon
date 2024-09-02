@@ -75,7 +75,7 @@ export function isScrolling(scrollable: Scrollable): boolean {
 }
 
 export async function scrollLock(scrollable: Scrollable): Promise<void> {
-  let scrollState;
+  let scrollState: ScrollState | undefined;
 
   while ((scrollState = globalScrollStates.get(scrollable))) {
     await scrollState.promise;

@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
-import { RouteComponentProps } from 'react-router';
+import type { RouteComponentProps } from 'react-router';
 
-import Dropdown from '../components/Dropdown';
-import MainLayout from '../layouts/MainLayout';
-import Modal from '../components/Modal';
-import Navbar from '../components/Navbar';
+import { bindActions } from 'feedpon-flux';
 import connect from 'feedpon-flux/react/connect';
 import type { NotificationKind } from 'feedpon-messaging';
-import useEvent from '../hooks/useEvent';
-import { MenuItem } from '../components/Menu';
-import { bindActions } from 'feedpon-flux';
 import { sendNotification } from 'feedpon-messaging/notifications';
 import { toggleSidebar } from 'feedpon-messaging/ui';
+import Dropdown from '../components/Dropdown';
+import { MenuItem } from '../components/Menu';
+import Modal from '../components/Modal';
+import Navbar from '../components/Navbar';
+import useEvent from '../hooks/useEvent';
+import MainLayout from '../layouts/MainLayout';
 
 interface KitchenSinkProps extends RouteComponentProps {
   onSendNotification: typeof sendNotification;
@@ -95,36 +95,42 @@ function KitchenSinkPage({
         <h2>Button</h2>
         <p className="button-toolbar">
           <button
+            type="button"
             className="button button-default"
             onClick={handleSendNotification.bind(null, 'default')}
           >
             Default
           </button>
           <button
+            type="button"
             className="button button-positive"
             onClick={handleSendNotification.bind(null, 'positive')}
           >
             Positive
           </button>
           <button
+            type="button"
             className="button button-negative"
             onClick={handleSendNotification.bind(null, 'negative')}
           >
             Negative
           </button>
           <button
+            type="button"
             className="button button-outline-default"
             onClick={handleSendNotification.bind(null, 'default')}
           >
             Default
           </button>
           <button
+            type="button"
             className="button button-outline-positive"
             onClick={handleSendNotification.bind(null, 'positive')}
           >
             Positive
           </button>
           <button
+            type="button"
             className="button button-outline-negative"
             onClick={handleSendNotification.bind(null, 'negative')}
           >
@@ -133,57 +139,90 @@ function KitchenSinkPage({
         </p>
         <h2>Disabled Button</h2>
         <p className="button-toolbar">
-          <button className="button button-default" disabled>
+          <button type="button" className="button button-default" disabled>
             Default
           </button>
-          <button className="button button-positive" disabled>
+          <button type="button" className="button button-positive" disabled>
             Positive
           </button>
-          <button className="button button-negative" disabled>
+          <button type="button" className="button button-negative" disabled>
             Negative
           </button>
-          <button className="button button-outline-default" disabled>
+          <button
+            type="button"
+            className="button button-outline-default"
+            disabled
+          >
             Default
           </button>
-          <button className="button button-outline-positive" disabled>
+          <button
+            type="button"
+            className="button button-outline-positive"
+            disabled
+          >
             Positive
           </button>
-          <button className="button button-outline-negative" disabled>
+          <button
+            type="button"
+            className="button button-outline-negative"
+            disabled
+          >
             Negative
           </button>
         </p>
         <h2>Large Button</h2>
         <p className="button-toolbar">
-          <button className="button button-large button-default">
+          <button type="button" className="button button-large button-default">
             Default
           </button>
-          <button className="button button-large button-positive">
+          <button type="button" className="button button-large button-positive">
             Positive
           </button>
-          <button className="button button-large button-negative">
+          <button type="button" className="button button-large button-negative">
             Negative
           </button>
-          <button className="button button-large button-outline-default">
+          <button
+            type="button"
+            className="button button-large button-outline-default"
+          >
             Default
           </button>
-          <button className="button button-large button-outline-positive">
+          <button
+            type="button"
+            className="button button-large button-outline-positive"
+          >
             Positive
           </button>
-          <button className="button button-large button-outline-negative">
+          <button
+            type="button"
+            className="button button-large button-outline-negative"
+          >
             Negative
           </button>
         </p>
         <h2>Group Button</h2>
         <div className="button-toolbar u-margin-bottom-2">
           <span className="button-group">
-            <button className="button button-default">First</button>
-            <button className="button button-default">Second</button>
-            <button className="button button-default">Third</button>
+            <button type="button" className="button button-default">
+              First
+            </button>
+            <button type="button" className="button button-default">
+              Second
+            </button>
+            <button type="button" className="button button-default">
+              Third
+            </button>
           </span>
           <span className="button-group">
-            <button className="button button-outline-default">First</button>
-            <button className="button button-outline-default">Second</button>
-            <button className="button button-outline-default">Third</button>
+            <button type="button" className="button button-outline-default">
+              First
+            </button>
+            <button type="button" className="button button-outline-default">
+              Second
+            </button>
+            <button type="button" className="button button-outline-default">
+              Third
+            </button>
           </span>
         </div>
         <h2>Badge</h2>
@@ -307,7 +346,10 @@ function KitchenSinkPage({
             onSelect={handleSelectAction}
             className="u-inline-block"
             toggleButton={
-              <button className="button button-outline-default dropdown-arrow">
+              <button
+                type="button"
+                className="button button-outline-default dropdown-arrow"
+              >
                 Dropdown
               </button>
             }
@@ -316,41 +358,49 @@ function KitchenSinkPage({
               value="FIRST"
               primaryText="First Action"
               secondaryText="First"
-            ></MenuItem>
+            />
             <MenuItem
               value="SECOND"
               primaryText="Second Action"
               secondaryText="Second"
-            ></MenuItem>
+            />
             <MenuItem
               value="THIRD"
               primaryText="Third Action"
               secondaryText="Third"
-            ></MenuItem>
-            <div className="menu-divider"></div>
+            />
+            <div className="menu-divider" />
             <MenuItem
               value="FORTH"
               isDisabled={true}
               primaryText="Forth Action"
-            ></MenuItem>
+            />
           </Dropdown>
         </div>
         <h2>Modal</h2>
         <p className="button-toolbar">
-          <button className="button button-positive" onClick={handleOpenModal}>
+          <button
+            type="button"
+            className="button button-positive"
+            onClick={handleOpenModal}
+          >
             Launch Modal
           </button>
         </p>
         <Modal isOpened={modalIsOpened} onClose={handleCloseModal}>
           <button
+            type="button"
             className="close u-pull-right"
             onClick={handleCloseModal}
-          ></button>
+          />
           <h1 className="modal-title">Modal Title</h1>
           <p>Modal body text goes here.</p>
           <p className="button-toolbar">
-            <button className="button button-positive">Okay</button>
+            <button type="button" className="button button-positive">
+              Okay
+            </button>
             <button
+              type="button"
               className="button button-outline-default"
               onClick={handleCloseModal}
             >
@@ -360,7 +410,7 @@ function KitchenSinkPage({
         </Modal>
         <h2>Message</h2>
         <div className="message message-default">
-          <button className="close u-pull-right"></button>
+          <button type="button" className="close u-pull-right" />
           <h6 className="message-title">Changes in Service</h6>
           <p>
             We just updated our privacy policy here to better service our
@@ -368,7 +418,7 @@ function KitchenSinkPage({
           </p>
         </div>
         <div className="message message-positive">
-          <button className="close u-pull-right"></button>
+          <button type="button" className="close u-pull-right" />
           <h6 className="message-title">Changes in Service</h6>
           <p>
             We just updated our privacy policy here to better service our
@@ -376,7 +426,7 @@ function KitchenSinkPage({
           </p>
         </div>
         <div className="message message-negative">
-          <button className="close u-pull-right"></button>
+          <button type="button" className="close u-pull-right" />
           <h6 className="message-title">Changes in Service</h6>
           <p>
             We just updated our privacy policy here to better service our
@@ -460,7 +510,7 @@ function KitchenSinkPage({
           <i className="icon icon-16 icon-warning" />
         </p>
         <h2>Placeholder</h2>
-        <h2 className="placeholder placeholder-60 animation-shining"></h2>
+        <h2 className="placeholder placeholder-60 animation-shining" />
         <p>
           <span className="placeholder placeholder-100 animation-shining" />
           <span className="placeholder placeholder-100 animation-shining" />

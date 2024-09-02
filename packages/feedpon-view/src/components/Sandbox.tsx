@@ -22,7 +22,7 @@ export default function Sandbox({ className, baseUrl, html }: SandboxProps) {
 
     const container = containerRef.current!;
 
-    let child;
+    let child: ChildNode | null;
 
     while ((child = container.firstChild)) {
       container.removeChild(child);
@@ -33,5 +33,5 @@ export default function Sandbox({ className, baseUrl, html }: SandboxProps) {
     }
   }, [baseUrl, html]);
 
-  return <div ref={containerRef} className={className}></div>;
+  return <div ref={containerRef} className={className} />;
 }

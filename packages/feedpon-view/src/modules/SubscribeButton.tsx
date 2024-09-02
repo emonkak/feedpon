@@ -1,5 +1,5 @@
-import React from 'react';
 import classnames from 'classnames';
+import React from 'react';
 
 interface SubscribeButtonProps {
   isSubscribed: boolean;
@@ -17,6 +17,7 @@ export default function SubscribeButton({
   if (isSubscribed) {
     return (
       <button
+        type="button"
         onClick={onClick}
         onKeyDown={onKeyDown}
         className="button button-outline-default dropdown-arrow"
@@ -33,6 +34,7 @@ export default function SubscribeButton({
   } else {
     return (
       <button
+        type="button"
         onClick={onClick}
         onKeyDown={onKeyDown}
         className="button button-outline-positive dropdown-arrow"

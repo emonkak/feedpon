@@ -57,8 +57,8 @@ export function logout(): AsyncThunk {
       type: 'TOKEN_REVOKING',
     });
 
-    let { backend } = getState();
-    let token = backend.token as feedly.ExchangeTokenResponse;
+    const { backend } = getState();
+    const token = backend.token as feedly.ExchangeTokenResponse;
 
     try {
       if (token) {
@@ -75,7 +75,7 @@ export function logout(): AsyncThunk {
 export function getFeedlyToken(): AsyncThunk<feedly.ExchangeTokenResponse> {
   return async ({ dispatch, getState }, { environment }) => {
     const { backend } = getState();
-    let originalToken = backend.token as feedly.ExchangeTokenResponse;
+    const originalToken = backend.token as feedly.ExchangeTokenResponse;
 
     if (!originalToken) {
       throw new Error('Not authenticated yet');

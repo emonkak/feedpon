@@ -87,7 +87,7 @@ function EntryItem(
     const lastFullContent =
       entry.fullContents.items[entry.fullContents.items.length - 1];
 
-    if (lastFullContent && lastFullContent.nextPageUrl) {
+    if (lastFullContent?.nextPageUrl) {
       onFetchFullContent(entry.entryId, lastFullContent.nextPageUrl);
     }
   });
@@ -195,7 +195,12 @@ function ExpandedEntryContent({
           url={entry.url}
         />
         <h2 className="entry-title">
-          <a className="link-soft" target="_blank" href={entry.url}>
+          <a
+            className="link-soft"
+            target="_blank"
+            href={entry.url}
+            rel="noreferrer"
+          >
             {entry.title || 'No Title'}
           </a>
           {renderReadMarker(entry)}
@@ -240,7 +245,12 @@ function CollapsedEntryContent({
         <div className="u-flex-grow-1 u-flex-truncate">
           <header className="entry-header">
             <h2 className="entry-title">
-              <a className="link-soft" target="_blank" href={entry.url}>
+              <a
+                className="link-soft"
+                target="_blank"
+                href={entry.url}
+                rel="noreferrer"
+              >
                 {entry.title || 'No Title'}
               </a>
               {renderReadMarker(entry)}
@@ -286,6 +296,7 @@ function renderBookmarks(entry: Entry) {
         })}
         target="_blank"
         href={'http://b.hatena.ne.jp/entry/' + encodeURIComponent(entry.url)}
+        rel="noreferrer"
       >
         <i className="icon icon-16 icon-bookmark" />
         {entry.bookmarkCount > 0 ? entry.bookmarkCount : ''}
@@ -301,7 +312,12 @@ function renderOrign(entry: Entry, sameOrigin: boolean) {
 
   return (
     <li className="list-inline-item">
-      <a className="link-strong" href={entry.origin.url} target="_blank">
+      <a
+        className="link-strong"
+        href={entry.origin.url}
+        target="_blank"
+        rel="noreferrer"
+      >
         {entry.origin.title}
       </a>
     </li>

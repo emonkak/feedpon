@@ -1,12 +1,12 @@
-import CSSTransition from 'react-transition-group/CSSTransition';
 import React from 'react';
+import CSSTransition from 'react-transition-group/CSSTransition';
 import TransitionGroup from 'react-transition-group/TransitionGroup';
 
-import NotificationComponent from '../modules/Notification';
 import { bindActions } from 'feedpon-flux';
 import connect from 'feedpon-flux/react/connect';
-import { Notification, State } from 'feedpon-messaging';
+import type { Notification, State } from 'feedpon-messaging';
 import { dismissNotification } from 'feedpon-messaging/notifications';
+import NotificationComponent from '../modules/Notification';
 
 interface NotificationListProps {
   notifications: Notification[];
