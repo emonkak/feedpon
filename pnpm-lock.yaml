@@ -23,6 +23,9 @@ importers:
 
   packages/feedpon:
     dependencies:
+      '@emonkak/ebit':
+        specifier: github:emonkak/ebit
+        version: https://codeload.github.com/emonkak/ebit/tar.gz/21d8e1c50c0e42d59d1e0b1ad28a1f05d72305e1
       '@types/chrome':
         specifier: ^0.0.253
         version: 0.0.253
@@ -73,6 +76,9 @@ importers:
 
   packages/feedpon-flux:
     dependencies:
+      '@emonkak/ebit':
+        specifier: github:emonkak/ebit
+        version: https://codeload.github.com/emonkak/ebit/tar.gz/21d8e1c50c0e42d59d1e0b1ad28a1f05d72305e1
       '@types/react':
         specifier: ^18.3.11
         version: 18.3.11
@@ -116,7 +122,7 @@ importers:
     dependencies:
       '@emonkak/ebit':
         specifier: github:emonkak/ebit
-        version: https://codeload.github.com/emonkak/ebit/tar.gz/b391ee7948d0b7ef185333ef0930fb68e99b6f35
+        version: https://codeload.github.com/emonkak/ebit/tar.gz/21d8e1c50c0e42d59d1e0b1ad28a1f05d72305e1
       '@types/chrome':
         specifier: ^0.0.253
         version: 0.0.253
@@ -231,8 +237,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@emonkak/ebit@https://codeload.github.com/emonkak/ebit/tar.gz/b391ee7948d0b7ef185333ef0930fb68e99b6f35':
-    resolution: {tarball: https://codeload.github.com/emonkak/ebit/tar.gz/b391ee7948d0b7ef185333ef0930fb68e99b6f35}
+  '@emonkak/ebit@https://codeload.github.com/emonkak/ebit/tar.gz/21d8e1c50c0e42d59d1e0b1ad28a1f05d72305e1':
+    resolution: {tarball: https://codeload.github.com/emonkak/ebit/tar.gz/21d8e1c50c0e42d59d1e0b1ad28a1f05d72305e1}
     version: 0.0.0
 
   '@esbuild/aix-ppc64@0.23.1':
@@ -696,7 +702,7 @@ snapshots:
   '@biomejs/cli-win32-x64@1.9.3':
     optional: true
 
-  '@emonkak/ebit@https://codeload.github.com/emonkak/ebit/tar.gz/b391ee7948d0b7ef185333ef0930fb68e99b6f35': {}
+  '@emonkak/ebit@https://codeload.github.com/emonkak/ebit/tar.gz/21d8e1c50c0e42d59d1e0b1ad28a1f05d72305e1': {}
 
   '@esbuild/aix-ppc64@0.23.1':
     optional: true

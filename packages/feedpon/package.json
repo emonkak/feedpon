@@ -8,6 +8,7 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
+    "@emonkak/ebit": "github:emonkak/ebit",
     "@types/chrome": "^0.0.253",
     "@types/history": "^4.7.11",
     "@types/node": "^20.16.10",

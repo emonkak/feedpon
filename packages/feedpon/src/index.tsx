@@ -1,14 +1,13 @@
+import { ClientRenderHost, ConcurrentUpdater } from '@emonkak/ebit';
 import { createHashHistory } from 'history';
-import React from 'react';
-import { createRoot } from 'react-dom/client';
 
+import { component } from '@emonkak/ebit/directives.js';
 import prepareSelectors from 'feedpon-messaging/prepareSelectors';
-import Bootstrap from 'feedpon-view/Bootstrap';
+import { App } from 'feedpon-view';
 import prepareStore from './prepareStore';
 
 function main() {
   const hashHistory = createHashHistory();
-
   const selectors = prepareSelectors();
   const context = {
     environment: {
@@ -23,12 +22,16 @@ function main() {
   };
   const preparingStore = prepareStore(context);
 
-  const element = document.getElementById('app')!;
-  const root = createRoot(element);
-
-  root.render(
-    <Bootstrap preparingStore={preparingStore} history={hashHistory} />,
+  const host = new ClientRenderHost();
+  const updater = new ConcurrentUpdater();
+  const container = document.getElementById('app')!;
+  const root = host.createRoot(
+    component(App, { preparingStore, history: hashHistory }),
+    container,
+    updater,
   );
+
+  root.mount();
 }
 
 main();
