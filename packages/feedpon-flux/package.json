@@ -10,9 +10,8 @@
     "./react/*": "./src/react/*.ts"
   },
   "dependencies": {
-    "react": "^18.2.0"
-  },
-  "devDependencies": {
-    "@types/react": "^18.2.39"
+    "@types/react": "^18.3.11",
+    "react": "^18.3.1",
+    "redux": "^5.0.1"
   }
 }

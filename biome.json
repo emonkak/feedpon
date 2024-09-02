@@ -9,5 +9,29 @@
   },
   "formatter": {
     "indentStyle": "space"
+  },
+  "linter": {
+    "rules": {
+      "complexity": {
+        "noBannedTypes": "off",
+        "noThisInStatic": "off"
+      },
+      "correctness": {
+        "noUnusedLabels": "off"
+      },
+      "style": {
+        "noNonNullAssertion": "off",
+        "noUselessElse": "off",
+        "useEnumInitializers": "off",
+        "useTemplate": "off"
+      },
+      "suspicious": {
+        "noAssignInExpressions": "off",
+        "noConfusingLabels": "off",
+        "noConfusingVoidType": "off",
+        "noEmptyInterface": "off",
+        "noExplicitAny": "off"
+      }
+    }
   }
 }

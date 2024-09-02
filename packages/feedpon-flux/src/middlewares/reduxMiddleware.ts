@@ -1,30 +1,11 @@
-import { Middleware } from '../index';
+import type * as Redux from 'redux';
+import type { Middleware } from '../index';
 
-export interface ReduxAction {
-  type: any;
-}
-
-interface ReduxDispatch {
-  <TAction extends ReduxAction>(action: TAction): TAction;
-}
-
-export interface ReduxMiddlewareAPI<TState> {
-  dispatch: ReduxDispatch;
-  getState(): TState;
-}
-
-interface ReduxMiddleware {
-  <TState>(api: ReduxMiddlewareAPI<TState>): (
-    next: ReduxDispatch,
-  ) => ReduxDispatch;
-}
-
-function reduxMiddlewareFactory<TState, TEvent extends ReduxAction>(
-  middleware: ReduxMiddleware,
+function reduxMiddlewareFactory<TState, TEvent>(
+  middleware: Redux.Middleware<{}, TState>,
 ): Middleware<TState, TEvent> {
   return (store) => {
     const handler = middleware(store as any);
-
     return (event, next) => handler(next as any)(event as any);
   };
 }
