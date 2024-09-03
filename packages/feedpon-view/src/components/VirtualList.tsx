@@ -1,4 +1,4 @@
-import shallowEqual from 'feedpon-utils/shallowEqual';
+import sequentialEqual from 'feedpon-utils/sequentialEqual';
 import throttle from 'feedpon-utils/throttle';
 import React, {
   forwardRef,
@@ -169,7 +169,7 @@ function VirtualList<
       .slice(sliceRef.current.start, sliceRef.current.end)
       .map((item) => item[idAttribute]);
 
-    if (shallowEqual(currentIds, oldIds)) {
+    if (sequentialEqual(currentIds, oldIds)) {
       if (sliceRef.current.end > items.length) {
         sliceRef.current = {
           start: Math.min(items.length - 1, sliceRef.current.start),
@@ -304,7 +304,7 @@ function VirtualList<
 
     if (
       items.length !== oldItems.length ||
-      !shallowEqual(
+      !sequentialEqual(
         items.map((item) => item[idAttribute]),
         oldItems.map((item) => item[idAttribute]),
       )

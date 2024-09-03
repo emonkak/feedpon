@@ -6,15 +6,6 @@ export default function shallowEqual<T extends {}>(
     return true;
   }
 
-  if (
-    typeof first !== 'object' ||
-    first === null ||
-    typeof second !== 'object' ||
-    second === null
-  ) {
-    return false;
-  }
-
   const firstKeys = Object.keys(first) as (keyof T)[];
   const secondKeys = Object.keys(second) as (keyof T)[];
 
@@ -22,11 +13,9 @@ export default function shallowEqual<T extends {}>(
     return false;
   }
 
-  for (let i = 0; i < firstKeys.length; i++) {
-    if (
-      !Object.hasOwn(second, firstKeys[i]!) ||
-      first[firstKeys[i]!] !== second[firstKeys[i]!]!
-    ) {
+  for (let i = 0, l = firstKeys.length; i < l; i++) {
+    const key = firstKeys[i]!;
+    if (!Object.hasOwn(second, key) || first[key] !== second[key]) {
       return false;
     }
   }

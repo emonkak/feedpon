@@ -3,7 +3,7 @@ import { createSelector } from 'reselect';
 import composeComparers from 'feedpon-utils/composeComparers';
 import createAscendingComparer from 'feedpon-utils/createAscendingComparer';
 import createDescendingComparer from 'feedpon-utils/createDescendingComparer';
-import shallowEqual from 'feedpon-utils/shallowEqual';
+import sequentialEqual from 'feedpon-utils/sequentialEqual';
 import { UNCATEGORIZED } from '../categories/constants';
 import type {
   GroupedSubscription,
@@ -146,7 +146,7 @@ function labelsComparer(x: Subscription, y: Subscription): number {
   if (y.labels.length === 0) {
     return x.labels.length > 0 ? -1 : 0;
   }
-  if (shallowEqual(x.labels, y.labels)) {
+  if (sequentialEqual(x.labels, y.labels)) {
     return 0;
   }
   return x.labels < y.labels ? -1 : 1;
