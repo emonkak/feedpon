@@ -1,8 +1,10 @@
-import classnames from 'classnames';
-import React, { useEffect, useRef } from 'react';
-
+import type { RenderContext, TemplateResult } from '@emonkak/ebit';
+import { classMap, optional, ref, styleMap } from '@emonkak/ebit/directives.js';
+import { currentLocation } from '@emonkak/ebit/router.js';
 import { type Dispatch, bindActions } from 'feedpon-flux';
-import { useStore } from 'feedpon-flux/react';
+import type { Store } from 'feedpon-flux';
+import { getStoreHook } from 'feedpon-flux/ebit';
+import { StoreContext } from 'feedpon-flux/react';
 import type {
   Command,
   Event,
@@ -17,20 +19,25 @@ import {
   openHelp,
   openSidebar,
 } from 'feedpon-messaging/ui';
+import * as React from 'react';
+
 import Modal from '../components/Modal';
 import { InstantNotificationContainer } from '../containers/InstantNotificationContainer';
 import { NotificationList } from '../containers/NotificationList';
 import { Sidebar } from '../containers/Sidebar';
-import useEvent from '../hooks/useEvent';
-import useKeyMappings from '../hooks/useKeyMappings';
-import useSwipeable from '../hooks/useSwipeable';
+import { reactElement } from '../directives/reactElement';
+import { keyMappingsHook } from '../hooks/keyMappingsHook';
+import { swipeableHook } from '../hooks/swipeableHook';
 import KeyMappingsTable from '../modules/KeyMappingsTable';
 
 export interface SidebarLayoutProps {
-  children: React.ReactNode;
+  child: unknown;
 }
 
-export function SidebarLayout({ children }: SidebarLayoutProps) {
+export function SidebarLayout(
+  { child }: SidebarLayoutProps,
+  context: RenderContext,
+): TemplateResult {
   const {
     dispatch,
     helpIsOpened,
@@ -40,64 +47,65 @@ export function SidebarLayout({ children }: SidebarLayoutProps) {
     onCloseSidebar,
     onOpenSidebar,
     sidebarIsOpened,
-  } = useStore({
-    mapStateToProps: (state: State) => ({
-      helpIsOpened: state.ui.helpIsOpened,
-      isLoading: state.backend.isLoading || state.subscriptions.isImporting,
-      keyMappings: state.keyMappings.items,
-      sidebarIsOpened: state.ui.sidebarIsOpened,
+    store,
+  } = context.use(
+    getStoreHook({
+      mapStateToProps: (state: State) => ({
+        helpIsOpened: state.ui.helpIsOpened,
+        isLoading: state.backend.isLoading || state.subscriptions.isImporting,
+        keyMappings: state.keyMappings.items,
+        sidebarIsOpened: state.ui.sidebarIsOpened,
+      }),
+      mapStoreToProps: (store) => ({ store }),
+      mapDispatchToProps: (dispatch: Dispatch<Event | Thunk<Event>>) => ({
+        ...bindActions({
+          onCloseHelp: closeHelp,
+          onCloseSidebar: closeSidebar,
+          onOpenHelp: openHelp,
+          onOpenSidebar: openSidebar,
+        })(dispatch as any),
+        dispatch,
+      }),
     }),
-    mapDispatchToProps: (dispatch: Dispatch<Event | Thunk<Event>>) => ({
-      ...bindActions({
-        onCloseHelp: closeHelp,
-        onCloseSidebar: closeSidebar,
-        onOpenHelp: openHelp,
-        onOpenSidebar: openSidebar,
-      })(dispatch as any),
-      dispatch,
-    }),
-  });
+  );
+  const [locationState, locationActions] = context.use(currentLocation);
+  const sidebarWidthRef = context.useRef(0);
+
   const { onTouchStart, onTouchEnd, onTouchMove, isSwiping, coordinates } =
-    useSwipeable();
+    context.use(swipeableHook);
 
-  useKeyMappings(keyMappings, (keyMapping: KeyMapping) => {
-    const command = (commandTable as { [key: string]: Command<any> })[
-      keyMapping.commandId
-    ];
-
-    if (command) {
-      const params = { ...command.defaultParams, ...keyMapping.params };
-      const event = command.action(params);
-
-      dispatch(event);
-    }
-  });
-
-  const sidebarWidthRef = useRef(0);
-
-  const sidebarRef = (node: HTMLDivElement | null) => {
-    if (node !== null) {
-      sidebarWidthRef.current = node.getBoundingClientRect().width;
-    }
-  };
-
-  const handleTransitionEnd = useEvent(() => {
+  const handleTransitionEnd = context.useCallback(() => {
     if (!sidebarIsOpened) {
       updateSidebarStatus(false);
     }
-  });
+  }, [sidebarIsOpened]);
 
-  useEffect(() => {
-    if (location.pathname.indexOf('/streams/') !== 0) {
+  context.use(
+    keyMappingsHook(keyMappings, (keyMapping: KeyMapping) => {
+      const command = (commandTable as { [key: string]: Command<any> })[
+        keyMapping.commandId
+      ];
+
+      if (command) {
+        const params = { ...command.defaultParams, ...keyMapping.params };
+        const event = command.action(params);
+
+        dispatch(event);
+      }
+    }),
+  );
+
+  context.useEffect(() => {
+    if (locationState.url.pathname.indexOf('/streams/') !== 0) {
       scrollTo(0, 0);
     }
 
     if (sidebarIsOpened && isMobileLayout()) {
       onCloseSidebar();
     }
-  }, [location]);
+  }, [locationState]);
 
-  useEffect(() => {
+  context.useEffect(() => {
     if (sidebarIsOpened) {
       document.documentElement.classList.add('sidebar-is-opened');
     } else {
@@ -109,7 +117,7 @@ export function SidebarLayout({ children }: SidebarLayoutProps) {
     };
   }, [sidebarIsOpened]);
 
-  useEffect(() => {
+  context.useEffect(() => {
     if (isSwiping) {
       updateSwipingStatus(true);
     } else {
@@ -130,6 +138,10 @@ export function SidebarLayout({ children }: SidebarLayoutProps) {
     }
   }, [isSwiping]);
 
+  const sidebarRef = (node: Element) => {
+    sidebarWidthRef.current = node.getBoundingClientRect().width;
+  };
+
   const swipeDistance = sidebarIsOpened
     ? clamp(
         coordinates.destX - coordinates.initialX,
@@ -145,73 +157,84 @@ export function SidebarLayout({ children }: SidebarLayoutProps) {
 
   const sidebarStyle = isSwiping
     ? {
-        left: sidebarIsOpened
-          ? swipeDistance
-          : swipeDistance - sidebarWidthRef.current,
+        left:
+          (sidebarIsOpened
+            ? swipeDistance
+            : swipeDistance - sidebarWidthRef.current) + ' px',
       }
     : {};
   const mainStyle = isSwiping
     ? {
-        paddingLeft: sidebarIsOpened
-          ? swipeDistance + sidebarWidthRef.current
-          : swipeDistance,
+        paddingLeft:
+          (sidebarIsOpened
+            ? swipeDistance + sidebarWidthRef.current
+            : swipeDistance) + ' px',
       }
     : {};
   const overlayStyle = isSwiping
     ? {
-        opacity: sidebarIsOpened ? 1 - swipeProgress : swipeProgress,
-        visibility: 'visible' as const,
+        opacity: (sidebarIsOpened
+          ? 1 - swipeProgress
+          : swipeProgress
+        ).toString(),
+        visibility: 'visible',
       }
     : {};
 
-  return (
-    <div className={classnames('l-root', { 'is-swiping': isSwiping })}>
+  return context.html`
+    <div class=${classMap({ 'l-root': true, 'is-swiping': isSwiping })}>
       <div
-        className={classnames('l-sidebar', {
-          'is-opened': sidebarIsOpened,
-        })}
-        style={sidebarStyle}
-        ref={sidebarRef}
-        onTransitionEnd={handleTransitionEnd}
+        class=${classMap({ 'l-sidebar': true, 'is-opened': sidebarIsOpened })}
+        style=${styleMap(sidebarStyle)}
+        ref=${ref(sidebarRef)}
+        @transitionend=${handleTransitionEnd}
       >
-        <Sidebar />
+        <${reactElement(wrapStoreContext(<Sidebar locationActions={locationActions} url={locationState.url} />, store))}>
       </div>
-      <div className="l-main" style={mainStyle}>
-        <div className="l-notifications">
-          <NotificationList />
+      <div class="l-main" style=${styleMap(mainStyle)}>
+        <div class="l-notifications">
+          <${reactElement(wrapStoreContext(<NotificationList />, store))}>
         </div>
-        <div className="l-instant-notifications">
-          <InstantNotificationContainer />
+        <div class="l-instant-notifications">
+          <${reactElement(wrapStoreContext(<InstantNotificationContainer />, store))}>
         </div>
-        {children}
+        <${child}>
         <div
-          className="l-overlay"
-          style={overlayStyle}
-          onClick={onCloseSidebar}
-          onTouchStart={onTouchStart}
-          onTouchMove={onTouchMove}
-          onTouchEnd={onTouchEnd}
+          class="l-overlay"
+          style=${styleMap(overlayStyle)}
+          @click=${onCloseSidebar}
+          @touchstart=${onTouchStart}
+          @touchmove=${onTouchMove}
+          @touchend=${onTouchEnd}
         />
         <div
-          className="l-swipeable-edge"
-          onTouchStart={onTouchStart}
-          onTouchMove={onTouchMove}
-          onTouchEnd={onTouchEnd}
+          class="l-swipeable-edge"
+          @ontouchstart=${onTouchStart}
+          @ontouchmove=${onTouchMove}
+          @ontouchend=${onTouchEnd}
         />
       </div>
-      <div className="l-backdrop">
-        {isLoading ? (
-          <i className="icon icon-48 icon-spinner animation-rotating" />
-        ) : null}
+      <div class=${classMap({ 'l-backdrop': true, 'is-shown': isLoading })}>
+        <${optional(isLoading ? context.html`<i class="icon icon-48 icon-spinner animation-rotating"></i>` : null)}>
       </div>
-      <Modal onClose={onCloseHelp} isOpened={helpIsOpened}>
-        <KeyMappingsTable
-          commandTable={commandTable}
-          keyMappings={keyMappings}
-        />
-      </Modal>
+      <${reactElement(
+        <Modal onClose={onCloseHelp} isOpened={helpIsOpened}>
+          <KeyMappingsTable
+            commandTable={commandTable}
+            keyMappings={keyMappings}
+          />
+        </Modal>,
+      )}>
     </div>
-  );
+  `;
+}
+
+function clamp(n: number, min: number, max: number): number {
+  return Math.min(Math.max(n, min), max);
+}
+
+function isMobileLayout() {
+  return matchMedia('(max-width: 768px)').matches;
 }
 
 function updateSidebarStatus(isOpened: boolean): void {
@@ -230,10 +253,9 @@ function updateSwipingStatus(isSwiping: boolean): void {
   }
 }
 
-function isMobileLayout() {
-  return matchMedia('(max-width: 768px)').matches;
-}
-
-function clamp(n: number, min: number, max: number): number {
-  return Math.min(Math.max(n, min), max);
+function wrapStoreContext(
+  element: React.ReactElement,
+  store: Store<unknown, unknown>,
+): React.ReactElement {
+  return <StoreContext.Provider value={store}>{element}</StoreContext.Provider>;
 }

@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo } from 'react';
-import { Link, useHistory } from 'react-router-dom';
 
+import { type LocationActions, RelativeURL } from '@emonkak/ebit/router.js';
 import { bindActions } from 'feedpon-flux';
 import { useStore } from 'feedpon-flux/react';
 import type { State, Subscription } from 'feedpon-messaging';
@@ -26,9 +26,12 @@ import SubscriptionIcon from '../modules/SubscriptionIcon';
 import SubscriptionTree from '../modules/SubscriptionTree';
 import SubscriptionTreeHeader from '../modules/SubscriptionTreeHeader';
 
-export interface SidebarProps {}
+export interface SidebarProps {
+  locationActions: LocationActions;
+  url: RelativeURL;
+}
 
-export function Sidebar(_props: SidebarProps) {
+export function Sidebar({ locationActions, url }: SidebarProps) {
   const categoriesSelector = useMemo(createSortedCategoriesSelector, []);
   const allSubscriptionsSelector = useMemo(createAllSubscriptionsSelector, []);
   const visibleSubscriptionsSelector = useMemo(
@@ -82,7 +85,6 @@ export function Sidebar(_props: SidebarProps) {
       onLogout: logout,
     }),
   });
-  const history = useHistory();
 
   useEffect(() => {
     if (lastUpdatedAt === 0) {
@@ -97,15 +99,17 @@ export function Sidebar(_props: SidebarProps) {
   }, [userIsLoaded]);
 
   const handleSearch = useEvent((query: string) => {
-    history.push('/search/' + encodeURIComponent(query));
+    locationActions.navigate(
+      new RelativeURL('/search/' + encodeURIComponent(query)),
+    );
   });
 
   const handleSelect = useEvent((path: string) => {
-    history.push(path);
+    locationActions.navigate(new RelativeURL(path));
   });
 
   const handleManageSubscriptions = useEvent(() => {
-    history.push('/categories/');
+    locationActions.navigate(new RelativeURL('/categories/'));
   });
 
   return (
@@ -120,7 +124,7 @@ export function Sidebar(_props: SidebarProps) {
         />
       </div>
       <div className="sidebar-group">
-        <Tree selectedValue={history.location.pathname} onSelect={handleSelect}>
+        <Tree selectedValue={url.pathname} onSelect={handleSelect}>
           <TreeLeaf value="/" primaryText="Dashboard" />
           <TreeLeaf
             value={`/streams/${ALL_STREAM_ID}`}
@@ -144,23 +148,23 @@ export function Sidebar(_props: SidebarProps) {
         <SubscriptionTree
           categories={categories}
           groupedSubscriptions={groupedSubscriptions}
-          selectedPath={history.location.pathname}
+          selectedPath={url.pathname}
           onSelect={handleSelect}
         />
       </div>
       <div className="sidebar-group">
-        <Tree selectedValue={history.location.pathname} onSelect={handleSelect}>
+        <Tree selectedValue={url.pathname} onSelect={handleSelect}>
           <TreeLeaf value="/settings/ui" primaryText="Settings" />
           <TreeLeaf value="/about/" primaryText="About" />
         </Tree>
       </div>
       <div className="sidebar-group">
-        <Link
+        <a
           className="button button-block button-outline-default"
-          to="/search/"
+          href="#/search/"
         >
           New Subscription
-        </Link>
+        </a>
       </div>
       <div className="sidebar-group">
         <ProfileDropdown

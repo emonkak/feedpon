@@ -1,17 +1,19 @@
-import React from 'react';
-import { useHistory } from 'react-router';
-
+import { type LocationActions, RelativeURL } from '@emonkak/ebit/router.js';
 import { bindActions } from 'feedpon-flux';
 import { useStore } from 'feedpon-flux/react';
 import type { State } from 'feedpon-messaging';
 import { toggleSidebar } from 'feedpon-messaging/ui';
+import React from 'react';
+
 import Dropdown from '../components/Dropdown';
 import { MenuItem } from '../components/Menu';
 import Navbar from '../components/Navbar';
 import useEvent from '../hooks/useEvent';
 import MainLayout from '../layouts/MainLayout';
 
-export interface AboutPageProps {}
+export interface AboutPageProps {
+  locationActions: LocationActions;
+}
 
 type Action = { type: 'GO_KITCHENSINK' };
 
@@ -149,7 +151,7 @@ SOFTWARE.
   },
 ];
 
-export function AboutPage(_props: AboutPageProps) {
+export function AboutPage({ locationActions }: AboutPageProps) {
   const { onToggleSidebar, version } = useStore({
     mapStateToProps: (state: State) => ({
       version: state.version,
@@ -158,12 +160,11 @@ export function AboutPage(_props: AboutPageProps) {
       onToggleSidebar: toggleSidebar,
     }),
   });
-  const history = useHistory();
 
   const handleSelectAction = useEvent((action: Action) => {
     switch (action.type) {
       case 'GO_KITCHENSINK': {
-        history.push('/kitchensink/');
+        locationActions.navigate(new RelativeURL('/kitchensink/'));
       }
     }
   });

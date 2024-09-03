@@ -4,6 +4,7 @@
   "main": "./dist/index.js",
   "exports": {
     ".": "./src/index.ts",
+    "./ebit": "./src/ebit.ts",
     "./middlewares/*": "./src/middlewares/*.ts",
     "./persistence": "./src/persistence/index.ts",
     "./persistence/*": "./src/persistence/*.ts",

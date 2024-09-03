@@ -1,6 +1,6 @@
 import React, { useMemo, useRef, useState } from 'react';
-import { useHistory, useParams } from 'react-router';
 
+import { type LocationActions, RelativeURL } from '@emonkak/ebit/router.js';
 import { bindActions } from 'feedpon-flux';
 import { useStore } from 'feedpon-flux/react';
 import type { Category, State, Subscription } from 'feedpon-messaging';
@@ -33,9 +33,15 @@ import SubscriptionItem from '../modules/Subscription';
 
 type Action = 'IMPORT_OPML' | 'EXPORT_OPML';
 
-export interface CategoriesPageProps {}
+export interface CategoriesPageProps {
+  label?: string;
+  locationActions: LocationActions;
+}
 
-export function CategoriesPage(_props: CategoriesPageProps) {
+export function CategoriesPage({
+  label,
+  locationActions,
+}: CategoriesPageProps) {
   const categoriesSelector = useMemo(
     () => createSortedCategoriesSelector(),
     [],
@@ -75,24 +81,20 @@ export function CategoriesPage(_props: CategoriesPageProps) {
   const searchInputRef = useRef<HTMLInputElement | null>(null);
   const uploadInputRef = useRef<HTMLInputElement | null>(null);
 
-  const history = useHistory();
-  const params = useParams<{ label: string }>();
-
   const activeCategory = useMemo(
-    () =>
-      categories.find((category) => category.label === params.label) ?? null,
-    [categories, params.label],
+    () => categories.find((category) => category.label === label) ?? null,
+    [categories, label],
   );
 
   const selectedSubscriptions = useMemo(() => {
     return Object.values(subscriptions)
       .filter(
-        params.label
-          ? (subscription) => subscription.labels.includes(params.label)
+        label
+          ? (subscription) => subscription.labels.includes(label)
           : (subscription) => subscription.labels.length === 0,
       )
       .sort(createAscendingComparer<Subscription>('subscriptionId'));
-  }, [subscriptions, params.label]);
+  }, [subscriptions, label]);
 
   const renderSubscriptionItem = useEvent((subscription: Subscription) => (
     <SubscriptionItem
@@ -144,7 +146,10 @@ export function CategoriesPage(_props: CategoriesPageProps) {
     (category: Category, newLabel: string) => {
       onUpdateCategory(category, newLabel);
 
-      history.replace('/categories/' + encodeURIComponent(newLabel));
+      locationActions.navigate(
+        new RelativeURL('/categories/' + encodeURIComponent(newLabel)),
+        { replace: true },
+      );
     },
   );
 
@@ -162,9 +167,12 @@ export function CategoriesPage(_props: CategoriesPageProps) {
   });
 
   const handleSelectCategory = useEvent((label: string | symbol) => {
-    history.replace(
-      '/categories/' +
-        (typeof label === 'string' ? encodeURIComponent(label) : ''),
+    locationActions.navigate(
+      new RelativeURL(
+        '/categories/' +
+          (typeof label === 'string' ? encodeURIComponent(label) : ''),
+      ),
+      { replace: true },
     );
   });
 
@@ -220,7 +228,7 @@ export function CategoriesPage(_props: CategoriesPageProps) {
       <div className="container">
         <CategoriesNav
           categories={categories}
-          label={params.label ?? UNCATEGORIZED}
+          label={label ?? UNCATEGORIZED}
           onSelectCategory={handleSelectCategory}
         />
         {activeCategory && (
@@ -230,7 +238,7 @@ export function CategoriesPage(_props: CategoriesPageProps) {
             onDelete={onDeleteCategory}
           />
         )}
-        <h1 className="display-1">{params.label ?? 'Uncategorized'}</h1>
+        <h1 className="display-1">{label ?? 'Uncategorized'}</h1>
         <p>
           <input
             ref={searchInputRef}

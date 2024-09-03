@@ -1,6 +1,6 @@
 import React from 'react';
-import { useHistory, useLocation } from 'react-router';
 
+import { type LocationActions, RelativeURL } from '@emonkak/ebit/router.js';
 import { bindActions } from 'feedpon-flux';
 import { useStore } from 'feedpon-flux/react';
 import { toggleSidebar } from 'feedpon-messaging/ui';
@@ -11,19 +11,23 @@ import MainLayout from '../layouts/MainLayout';
 
 export interface SettingsProps {
   children: React.ReactElement;
+  locationActions: LocationActions;
+  url: RelativeURL;
 }
 
-export function SettingsPage({ children }: SettingsProps) {
+export function SettingsPage({
+  children,
+  locationActions,
+  url,
+}: SettingsProps) {
   const { onToggleSidebar } = useStore({
     mapDispatchToProps: bindActions({
       onToggleSidebar: toggleSidebar,
     }),
   });
-  const history = useHistory();
-  const location = useLocation();
 
   const handleSelectNavItem = useEvent((path: string) => {
-    history.replace(path);
+    locationActions.navigate(new RelativeURL(path), { replace: true });
   });
 
   const navbar = (
@@ -39,7 +43,7 @@ export function SettingsPage({ children }: SettingsProps) {
           <NavItem
             value="/settings/ui"
             title="UI"
-            isSelected={location.pathname === '/settings/ui'}
+            isSelected={url.pathname === '/settings/ui'}
           >
             <i className="u-inline-block u-md-none icon icon-20 icon-browser-window" />
             <span className="u-none u-md-inline">UI</span>
@@ -47,7 +51,7 @@ export function SettingsPage({ children }: SettingsProps) {
           <NavItem
             value="/settings/stream"
             title="Stream"
-            isSelected={location.pathname === '/settings/stream'}
+            isSelected={url.pathname === '/settings/stream'}
           >
             <i className="u-inline-block u-md-none icon icon-20 icon-news-feed" />
             <span className="u-none u-md-inline">Stream</span>
@@ -55,7 +59,7 @@ export function SettingsPage({ children }: SettingsProps) {
           <NavItem
             value="/settings/tracking_url"
             title="Tracking URL"
-            isSelected={location.pathname === '/settings/tracking_url'}
+            isSelected={url.pathname === '/settings/tracking_url'}
           >
             <i className="u-inline-block u-md-none icon icon-20 icon-link" />
             <span className="u-none u-md-inline">Tracking URL</span>
@@ -63,7 +67,7 @@ export function SettingsPage({ children }: SettingsProps) {
           <NavItem
             value="/settings/url_replacement"
             title="URL Replacement"
-            isSelected={location.pathname === '/settings/url_replacement'}
+            isSelected={url.pathname === '/settings/url_replacement'}
           >
             <i className="u-inline-block u-md-none icon icon-20 icon-replace" />
             <span className="u-none u-md-inline">URL Replacement</span>
@@ -71,7 +75,7 @@ export function SettingsPage({ children }: SettingsProps) {
           <NavItem
             value="/settings/siteinfo"
             title="Siteinfo"
-            isSelected={location.pathname === '/settings/siteinfo'}
+            isSelected={url.pathname === '/settings/siteinfo'}
           >
             <i className="u-inline-block u-md-none icon icon-20 icon-database" />
             <span className="u-none u-md-inline">Siteinfo</span>
@@ -79,7 +83,7 @@ export function SettingsPage({ children }: SettingsProps) {
           <NavItem
             value="/settings/keyboard"
             title="Keyboard"
-            isSelected={location.pathname === '/settings/keyboard'}
+            isSelected={url.pathname === '/settings/keyboard'}
           >
             <i className="u-inline-block u-md-none icon icon-20 icon-keyboard" />
             <span className="u-none u-md-inline">Keyboard</span>

@@ -11,7 +11,7 @@ export default function sequentialEqual<T>(
   }
 
   for (let i = 0, l = first.length; i < l; i++) {
-    if (first[i] !== second[i]) {
+    if (!Object.is(first[i], second[i])) {
       return false;
     }
   }

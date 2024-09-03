@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import type { RouteComponentProps } from 'react-router';
 
 import { bindActions } from 'feedpon-flux';
 import { useStore } from 'feedpon-flux/react';
@@ -13,7 +12,7 @@ import Navbar from '../components/Navbar';
 import useEvent from '../hooks/useEvent';
 import MainLayout from '../layouts/MainLayout';
 
-export interface KitchenSinkProps extends RouteComponentProps {}
+export interface KitchenSinkProps {}
 
 export function KitchenSinkPage(_props: KitchenSinkProps) {
   const { onSendNotification, onToggleSidebar } = useStore({

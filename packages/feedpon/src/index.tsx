@@ -20,13 +20,13 @@ function main() {
     router: hashHistory,
     selectors,
   };
-  const preparingStore = prepareStore(context);
+  const getStore = () => prepareStore(context);
 
   const host = new ClientRenderHost();
   const updater = new ConcurrentUpdater();
   const container = document.getElementById('app')!;
   const root = host.createRoot(
-    component(App, { preparingStore, history: hashHistory }),
+    component(App, { getStore, history: hashHistory }),
     container,
     updater,
   );

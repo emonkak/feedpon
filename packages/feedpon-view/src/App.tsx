@@ -1,30 +1,33 @@
 import type { RenderContext, TemplateResult } from '@emonkak/ebit';
-import { classMap, optional } from '@emonkak/ebit/directives.js';
-import type { History } from 'history';
-import React from 'react';
-import { Router } from 'react-router';
-
+import { classMap, component, optional } from '@emonkak/ebit/directives.js';
+import { hashLocation, resetScrollPosition } from '@emonkak/ebit/router.js';
 import type { Store } from 'feedpon-flux';
-import { StoreContext } from 'feedpon-flux/react';
-import Routes from './Routes';
-import { reactElement } from './directives/reactElement';
+import { setStoreHook } from 'feedpon-flux/ebit';
+import type { History } from 'history';
+
+import { Dispatch } from './Dispatch';
 
 export interface AppProps {
-  preparingStore: Promise<Store<unknown, unknown>>;
+  getStore: () => Promise<Store<unknown, unknown>>;
   history: History;
 }
 
 export function App(
-  { preparingStore, history }: AppProps,
+  { getStore }: AppProps,
   context: RenderContext,
 ): TemplateResult {
   const [store, setStore] = context.useState<Store<unknown, unknown> | null>(
     null,
   );
   const [error, setError] = context.useState<NonNullable<unknown> | null>(null);
+  const [locationState] = context.use(hashLocation);
+
+  context.useLayoutEffect(() => {
+    resetScrollPosition(locationState);
+  }, [locationState]);
 
   context.useEffect(() => {
-    preparingStore.then(
+    getStore().then(
       (store) => {
         setStore(store);
       },
@@ -33,17 +36,9 @@ export function App(
         setError(error);
       },
     );
-  }, []);
+  }, [getStore]);
 
-  if (store !== null) {
-    return context.html`<${reactElement(
-      <StoreContext.Provider value={store}>
-        <Router history={history}>
-          <Routes history={history} />
-        </Router>
-      </StoreContext.Provider>,
-    )}>`;
-  } else {
+  if (store === null) {
     return context.html`
       <div class="l-boot">
         <img
@@ -67,4 +62,8 @@ export function App(
       </div>
     `;
   }
+
+  context.use(setStoreHook(store));
+
+  return context.html`<${component(Dispatch, {})}>`;
 }

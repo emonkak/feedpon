@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react';
-import { Link } from 'react-router-dom';
 
 import { bindActions } from 'feedpon-flux';
 import { useStore } from 'feedpon-flux/react';
@@ -108,10 +107,10 @@ export function DashboardPage(_props: DashboardProps) {
     streamHistoryList = (
       <ol className="list-group">
         {streamHistories.map((streamHistory) => (
-          <Link
+          <a
             key={streamHistory.streamId}
             className="list-group-item"
-            to={`/streams/${encodeURIComponent(streamHistory.streamId)}`}
+            href={`#/streams/${encodeURIComponent(streamHistory.streamId)}`}
           >
             <div className="u-flex u-flex-align-items-center">
               <div className="u-flex-shrink-0 u-margin-right-2">
@@ -138,7 +137,7 @@ export function DashboardPage(_props: DashboardProps) {
                 </div>
               )}
             </div>
-          </Link>
+          </a>
         ))}
       </ol>
     );

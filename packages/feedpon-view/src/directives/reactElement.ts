@@ -39,8 +39,8 @@ export class ReactElement implements Directive<ReactElement> {
   ): BlockBinding<ReactElement, unknown> {
     if (part.type !== PartType.ChildNode) {
       throw new Error(
-        'ReactAdapter directive must be used in a child node, but it is used here:\n' +
-          reportPart(part),
+        'ReactElement directive must be used in a child node, but it is used here:\n' +
+          reportPart(part, this),
       );
     }
     return new BlockBinding(new ReactElementBinding(this, part), context.block);
@@ -54,7 +54,7 @@ export class ReactElementBinding implements Binding<ReactElement>, Effect {
 
   private _root: ReactDOMClient.Root | null = null;
 
-  private _mountedElement: Element | null = null;
+  private _mountedNode: ChildNode | null = null;
 
   private _status = CommitStatus.Committed;
 
@@ -72,7 +72,7 @@ export class ReactElementBinding implements Binding<ReactElement>, Effect {
   }
 
   get startNode(): ChildNode {
-    return this._mountedElement ?? this._part.node;
+    return this._mountedNode ?? this._part.node;
   }
 
   get endNode(): ChildNode {
@@ -104,26 +104,21 @@ export class ReactElementBinding implements Binding<ReactElement>, Effect {
     switch (this._status) {
       case CommitStatus.Mounting:
         ReactDOM.flushSync(() => {
-          const reactElement = this._value.element;
-          const originalRef: React.ForwardedRef<Element> | undefined =
-            reactElement.props.ref;
-          const ref: React.Ref<Element> = (element) => {
-            if (typeof originalRef === 'function') {
-              originalRef(element);
-            } else if (originalRef != null) {
-              originalRef.current = element;
-            }
-            this._mountedElement = element;
-          };
           const container = this._part.node;
           const originalData = container.data;
           container.data = REACT_MOUNT_POINT_TAG;
           try {
-            this._root ??= ReactDOMClient.createRoot(this._part.node as any);
+            this._root ??= ReactDOMClient.createRoot(container as any);
             this._root.render(
-              React.cloneElement(reactElement, {
-                ref,
-              }),
+              React.createElement(
+                ReactElementWrapper,
+                {
+                  callback: (node: ChildNode | null) => {
+                    this._mountedNode = node;
+                  },
+                },
+                this._value.element,
+              ),
             );
           } finally {
             container.data = originalData;
@@ -133,6 +128,7 @@ export class ReactElementBinding implements Binding<ReactElement>, Effect {
       case CommitStatus.Unmounting:
         ReactDOM.flushSync(() => {
           this._root?.unmount();
+          this._root = null;
         });
         break;
     }
@@ -143,5 +139,26 @@ export class ReactElementBinding implements Binding<ReactElement>, Effect {
     if (this._status === CommitStatus.Committed) {
       context.enqueueMutationEffect(this);
     }
+  }
+}
+
+interface ReactElementWrapperProps {
+  children?: React.ReactElement;
+  callback: (node: ChildNode | null) => void;
+}
+
+class ReactElementWrapper extends React.Component<ReactElementWrapperProps> {
+  override componentDidMount(): void {
+    const { callback } = this.props;
+    callback(ReactDOM.findDOMNode(this));
+  }
+
+  override componentWillUnmount(): void {
+    const { callback } = this.props;
+    callback(null);
+  }
+
+  override render() {
+    return this.props.children;
   }
 }

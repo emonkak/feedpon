@@ -32,20 +32,27 @@ export function useStore<
     );
   }
 
-  const [stateProps, setStateProps] = useState(() =>
-    mapStateToProps(store.getState()),
-  );
+  const state = store.getState();
+  const [stateProps, setStateProps] = useState(() => mapStateToProps(state));
   const dispatchProps = useMemo(() => mapDispatchToProps(store.dispatch), []);
 
   useEffect(() => {
-    return store.subscribe((newState) => {
+    const update = (newState: TState): void => {
       setStateProps((oldStateProps) => {
         const newStateProps = mapStateToProps(newState);
         return shallowEqual(oldStateProps, newStateProps)
           ? oldStateProps
           : newStateProps;
       });
-    });
+    };
+
+    const newState = store.getState();
+
+    if (state !== newState) {
+      update(newState);
+    }
+
+    return store.subscribe(update);
   }, []);
 
   return { ...stateProps, ...dispatchProps };

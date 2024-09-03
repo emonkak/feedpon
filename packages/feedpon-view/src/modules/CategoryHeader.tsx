@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 
 import type { Category } from 'feedpon-messaging';
 
@@ -33,13 +32,13 @@ export default function CategoryHeader({
             </div>
           </div>
           <div className="u-flex-shrink-0">
-            <Link
+            <a
               className="button button-outline-default"
-              to={`/categories/${category.label}`}
+              href={`#/categories/${category.label}`}
               title="Organize category..."
             >
               <i className="icon icon-20 icon-edit" />
-            </Link>
+            </a>
           </div>
         </div>
       </div>

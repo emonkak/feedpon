@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 
 import type { Category, Feed, Subscription } from 'feedpon-messaging';
 import SubscribeDropdown from './SubscribeDropdown';
@@ -32,12 +31,12 @@ export default function FeedComponent({
     <li className="list-group-item">
       <div className="u-flex u-flex-justify-content-between u-flex-align-items-center">
         <div className="u-flex-grow-1 u-margin-right-2">
-          <Link
+          <a
             className="link-strong"
-            to={`/streams/${encodeURIComponent(feed.streamId)}`}
+            href={`#/streams/${encodeURIComponent(feed.streamId)}`}
           >
             {feed.title}
-          </Link>
+          </a>
           <div className="u-text-7">
             <strong>{feed.subscribers}</strong> subscribers
           </div>

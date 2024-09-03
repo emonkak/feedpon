@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useHistory, useParams } from 'react-router';
 
+import { type LocationActions, RelativeURL } from '@emonkak/ebit/router.js';
 import { bindActions } from 'feedpon-flux';
 import { useStore } from 'feedpon-flux/react';
 import type { State } from 'feedpon-messaging';
@@ -23,9 +23,12 @@ import MainLayout from '../layouts/MainLayout';
 import FeedComponent from '../modules/Feed';
 import FeedPlaceholder from '../modules/FeedPlaceholder';
 
-export interface SearchPageProps {}
+export interface SearchPageProps {
+  query?: string;
+  locationActions: LocationActions;
+}
 
-export function SearchPage({}: SearchPageProps) {
+export function SearchPage({ query = '', locationActions }: SearchPageProps) {
   const sortedCategoriesSelector = useMemo(
     () => createSortedCategoriesSelector(),
     [],
@@ -63,13 +66,9 @@ export function SearchPage({}: SearchPageProps) {
       onUnsubscribe: unsubscribe,
     }),
   });
-  const params = useParams<{ query: string }>();
-  const history = useHistory();
 
   const previousActiveQuery = usePrevious(activeQuery);
-  const [currentQuery, setCurrentQuery] = useState(() =>
-    decodeURIComponent(params.query ?? ''),
-  );
+  const [currentQuery, setCurrentQuery] = useState(() => query);
 
   if (
     previousActiveQuery !== null &&
@@ -80,8 +79,8 @@ export function SearchPage({}: SearchPageProps) {
   }
 
   useEffect(() => {
-    onSearchFeeds(decodeURIComponent(params.query));
-  }, [params.query]);
+    onSearchFeeds(query);
+  }, [query]);
 
   const handleChange = useEvent(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -94,7 +93,10 @@ export function SearchPage({}: SearchPageProps) {
     event.preventDefault();
 
     if (currentQuery !== '') {
-      history.replace('/search/' + encodeURIComponent(currentQuery));
+      locationActions.navigate(
+        new RelativeURL('/search/' + encodeURIComponent(currentQuery)),
+        { replace: true },
+      );
     }
   });
 
@@ -106,7 +108,7 @@ export function SearchPage({}: SearchPageProps) {
 
   let feedList: React.ReactElement | null = null;
 
-  if (decodeURIComponent(params.query) !== activeQuery) {
+  if (query !== activeQuery) {
     feedList = null;
   } else if (isLoading) {
     feedList = (

@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useRef } from 'react';
-import { useParams } from 'react-router';
 
 import { bindActions } from 'feedpon-flux';
 import { useStore } from 'feedpon-flux/react';
@@ -53,10 +52,11 @@ import FeedHeader from '../modules/FeedHeader';
 import StreamFooter from '../modules/StreamFooter';
 import StreamNavbar from '../modules/StreamNavbar';
 
-export interface StreamPageProps {}
+export interface StreamPageProps {
+  streamId: string;
+}
 
-export function StreamPage(_props: StreamPageProps) {
-  const params = useParams<{ stream_id: string }>();
+export function StreamPage({ streamId }: StreamPageProps) {
   const {
     categories,
     isLoaded,
@@ -137,7 +137,6 @@ export function StreamPage(_props: StreamPageProps) {
   const isMounted = useIsMounted();
   const virtualListRef = useRef<VirtualListRef | null>(null);
 
-  const streamId = decodeURIComponent(params.stream_id);
   const stream = CacheMap.get(streams.items, streamId) ?? {
     activeEntryIndex: -1,
     continuation: null,
@@ -153,8 +152,7 @@ export function StreamPage(_props: StreamPageProps) {
     title: '',
   };
   const streamCategory = categories.items[streamId] ?? null;
-  const streamSubscription =
-    subscriptions.items[decodeURIComponent(params.stream_id)] ?? null;
+  const streamSubscription = subscriptions.items[streamId] ?? null;
   const canMarkAllEntriesAsRead =
     !streams.isMarking && stream.entries.some((entry) => !entry.markedAsRead);
   const canMarkStreamAsRead =
@@ -214,7 +212,7 @@ export function StreamPage(_props: StreamPageProps) {
     if (stream.activeEntryIndex < 0) {
       window.scrollTo(0, 0);
     }
-  }, [params.stream_id]);
+  }, [streamId]);
 
   useEffect(() => {
     return () => {
