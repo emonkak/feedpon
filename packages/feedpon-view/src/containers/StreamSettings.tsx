@@ -1,12 +1,8 @@
 import React, { useState } from 'react';
 
 import { bindActions } from 'feedpon-flux';
-import connect from 'feedpon-flux/react/connect';
-import type {
-  State,
-  StreamFetchOptions,
-  StreamViewKind,
-} from 'feedpon-messaging';
+import { useStore } from 'feedpon-flux/react';
+import type { State, StreamViewKind } from 'feedpon-messaging';
 import {
   changeDefaultStreamFetchOptions,
   changeDefaultStreamView,
@@ -17,29 +13,35 @@ import {
 import ConfirmModal from '../components/ConfirmModal';
 import useEvent from '../hooks/useEvent';
 
-interface StreamSettingsProps {
-  cacheCapacity: number;
-  fetchOptions: StreamFetchOptions;
-  numStreamHistories: number;
-  onChangeDefaultStreamFetchOptions: typeof changeDefaultStreamFetchOptions;
-  onChangeDefaultStreamView: typeof changeDefaultStreamView;
-  onChangeStreamCacheCapacity: typeof changeStreamCacheCapacity;
-  onChangeStreamHistoryOptions: typeof changeStreamHistoryOptions;
-  onClearStreamCaches: typeof clearStreamCaches;
-  streamView: StreamViewKind;
-}
+export interface StreamSettingsProps {}
 
-function StreamSettings({
-  cacheCapacity: initialCacheCapacity,
-  fetchOptions: initialFetchOptions,
-  numStreamHistories: initialNumStreamHistories,
-  onChangeDefaultStreamFetchOptions,
-  onChangeDefaultStreamView,
-  onChangeStreamHistoryOptions,
-  onChangeStreamCacheCapacity,
-  onClearStreamCaches,
-  streamView: initialStreamView,
-}: StreamSettingsProps) {
+export function StreamSettings({}: StreamSettingsProps) {
+  const {
+    cacheCapacity: initialCacheCapacity,
+    fetchOptions: initialFetchOptions,
+    numStreamHistories: initialNumStreamHistories,
+    onChangeDefaultStreamFetchOptions,
+    onChangeDefaultStreamView,
+    onChangeStreamHistoryOptions,
+    onChangeStreamCacheCapacity,
+    onClearStreamCaches,
+    streamView: initialStreamView,
+  } = useStore({
+    mapStateToProps: (state: State) => ({
+      cacheCapacity: state.streams.items.capacity,
+      fetchOptions: state.streams.defaultFetchOptions,
+      numStreamHistories: state.histories.recentlyReadStreams.capacity,
+      streamView: state.streams.defaultStreamView,
+    }),
+    mapDispatchToProps: bindActions({
+      onChangeDefaultStreamFetchOptions: changeDefaultStreamFetchOptions,
+      onChangeDefaultStreamView: changeDefaultStreamView,
+      onChangeStreamCacheCapacity: changeStreamCacheCapacity,
+      onChangeStreamHistoryOptions: changeStreamHistoryOptions,
+      onClearStreamCaches: clearStreamCaches,
+    }),
+  });
+
   const [cacheCapacity, setCacheCapacity] = useState(initialCacheCapacity);
   const [fetchOptions, setFetchOptions] = useState(initialFetchOptions);
   const [isClearingStreamCaches, setIsClearingStreamCaches] = useState(false);
@@ -288,19 +290,3 @@ function StreamSettings({
     </section>
   );
 }
-
-export default connect(StreamSettings, {
-  mapStateToProps: (state: State) => ({
-    cacheCapacity: state.streams.items.capacity,
-    fetchOptions: state.streams.defaultFetchOptions,
-    numStreamHistories: state.histories.recentlyReadStreams.capacity,
-    streamView: state.streams.defaultStreamView,
-  }),
-  mapDispatchToProps: bindActions({
-    onChangeDefaultStreamFetchOptions: changeDefaultStreamFetchOptions,
-    onChangeDefaultStreamView: changeDefaultStreamView,
-    onChangeStreamCacheCapacity: changeStreamCacheCapacity,
-    onChangeStreamHistoryOptions: changeStreamHistoryOptions,
-    onClearStreamCaches: clearStreamCaches,
-  }),
-});

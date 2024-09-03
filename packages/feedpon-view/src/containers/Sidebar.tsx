@@ -1,16 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 
 import { bindActions } from 'feedpon-flux';
-import connect from 'feedpon-flux/react/connect';
-import type {
-  Category,
-  GroupedSubscription,
-  Profile,
-  State,
-  Subscription,
-  SubscriptionOrderKind,
-} from 'feedpon-messaging';
+import { useStore } from 'feedpon-flux/react';
+import type { State, Subscription } from 'feedpon-messaging';
 import { logout } from 'feedpon-messaging/backend';
 import { createSortedCategoriesSelector } from 'feedpon-messaging/categories';
 import { ALL_STREAM_ID, PINS_STREAM_ID } from 'feedpon-messaging/streams';
@@ -33,43 +26,62 @@ import SubscriptionIcon from '../modules/SubscriptionIcon';
 import SubscriptionTree from '../modules/SubscriptionTree';
 import SubscriptionTreeHeader from '../modules/SubscriptionTreeHeader';
 
-interface SidebarProps {
-  categories: Category[];
-  groupedSubscriptions: { [key: string]: GroupedSubscription };
-  lastUpdatedAt: number;
-  onChangeSubscriptionOrder: typeof changeSubscriptionOrder;
-  onChangeOnlyUnread: typeof changeOnlyUnread;
-  onFetchSubscriptions: typeof fetchSubscriptions;
-  onFetchUser: typeof fetchUser;
-  onLogout: typeof logout;
-  onlyUnread: boolean;
-  profile: Profile;
-  subscriptionOrder: SubscriptionOrderKind;
-  subscriptions: Subscription[];
-  subscriptionsIsLoading: boolean;
-  totalUnreadCount: number;
-  userIsLoaded: boolean;
-  userIsLoading: boolean;
-}
+export interface SidebarProps {}
 
-function Sidebar({
-  categories,
-  groupedSubscriptions,
-  lastUpdatedAt,
-  onChangeOnlyUnread: onChangeUnreadViewing,
-  onChangeSubscriptionOrder,
-  onFetchSubscriptions,
-  onFetchUser,
-  onLogout,
-  onlyUnread,
-  profile,
-  subscriptionOrder,
-  subscriptions,
-  subscriptionsIsLoading,
-  totalUnreadCount,
-  userIsLoaded,
-  userIsLoading,
-}: SidebarProps) {
+export function Sidebar(_props: SidebarProps) {
+  const categoriesSelector = useMemo(createSortedCategoriesSelector, []);
+  const allSubscriptionsSelector = useMemo(createAllSubscriptionsSelector, []);
+  const visibleSubscriptionsSelector = useMemo(
+    () => createVisibleSubscriptionsSelector(allSubscriptionsSelector),
+    [],
+  );
+  const groupedSubscriptionsSelector = useMemo(
+    () => createGroupedSubscriptionsSelector(visibleSubscriptionsSelector),
+    [],
+  );
+  const totalUnreadCountSelector = useMemo(
+    () => createTotalUnreadCountSelector(visibleSubscriptionsSelector),
+    [],
+  );
+  const {
+    categories,
+    groupedSubscriptions,
+    lastUpdatedAt,
+    onChangeOnlyUnread: onChangeUnreadViewing,
+    onChangeSubscriptionOrder,
+    onFetchSubscriptions,
+    onFetchUser,
+    onLogout,
+    onlyUnread,
+    profile,
+    subscriptionOrder,
+    subscriptions,
+    subscriptionsIsLoading,
+    totalUnreadCount,
+    userIsLoaded,
+    userIsLoading,
+  } = useStore({
+    mapStateToProps: (state: State) => ({
+      categories: categoriesSelector(state),
+      groupedSubscriptions: groupedSubscriptionsSelector(state),
+      lastUpdatedAt: state.subscriptions.lastUpdatedAt,
+      onlyUnread: state.subscriptions.onlyUnread,
+      profile: state.user.profile,
+      subscriptions: allSubscriptionsSelector(state),
+      subscriptionsIsLoading: state.subscriptions.isLoading,
+      subscriptionOrder: state.subscriptions.order,
+      totalUnreadCount: totalUnreadCountSelector(state),
+      userIsLoaded: state.user.isLoaded,
+      userIsLoading: state.user.isLoading,
+    }),
+    mapDispatchToProps: bindActions({
+      onChangeSubscriptionOrder: changeSubscriptionOrder,
+      onChangeOnlyUnread: changeOnlyUnread,
+      onFetchSubscriptions: fetchSubscriptions,
+      onFetchUser: fetchUser,
+      onLogout: logout,
+    }),
+  });
   const history = useHistory();
 
   useEffect(() => {
@@ -213,40 +225,3 @@ function renderItem(subscription: Subscription) {
     />
   );
 }
-
-export default connect(Sidebar, () => {
-  const categoriesSelector = createSortedCategoriesSelector();
-  const allSubscriptionsSelector = createAllSubscriptionsSelector();
-  const visibleSubscriptionsSelector = createVisibleSubscriptionsSelector(
-    allSubscriptionsSelector,
-  );
-  const groupedSubscriptionsSelector = createGroupedSubscriptionsSelector(
-    visibleSubscriptionsSelector,
-  );
-  const totalUnreadCountSelector = createTotalUnreadCountSelector(
-    visibleSubscriptionsSelector,
-  );
-
-  return {
-    mapStateToProps: (state: State) => ({
-      categories: categoriesSelector(state),
-      groupedSubscriptions: groupedSubscriptionsSelector(state),
-      lastUpdatedAt: state.subscriptions.lastUpdatedAt,
-      onlyUnread: state.subscriptions.onlyUnread,
-      profile: state.user.profile,
-      subscriptions: allSubscriptionsSelector(state),
-      subscriptionsIsLoading: state.subscriptions.isLoading,
-      subscriptionOrder: state.subscriptions.order,
-      totalUnreadCount: totalUnreadCountSelector(state),
-      userIsLoaded: state.user.isLoaded,
-      userIsLoading: state.user.isLoading,
-    }),
-    mapDispatchToProps: bindActions({
-      onChangeSubscriptionOrder: changeSubscriptionOrder,
-      onChangeOnlyUnread: changeOnlyUnread,
-      onFetchSubscriptions: fetchSubscriptions,
-      onFetchUser: fetchUser,
-      onLogout: logout,
-    }),
-  };
-});

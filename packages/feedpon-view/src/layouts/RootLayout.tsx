@@ -1,16 +1,21 @@
 import React, { useEffect } from 'react';
 
-import connect from 'feedpon-flux/react/connect';
-import type { State, ThemeKind } from 'feedpon-messaging';
+import { useStore } from 'feedpon-flux/react';
+import type { State } from 'feedpon-messaging';
 import { THEMES } from 'feedpon-messaging/ui';
 
-interface RootLayoutProps {
+export interface RootLayoutProps {
   children: React.ReactNode;
-  customStyles: string;
-  theme: ThemeKind;
 }
 
-function RootLayout({ children, customStyles, theme }: RootLayoutProps) {
+export function RootLayout({ children }: RootLayoutProps) {
+  const { customStyles, theme } = useStore({
+    mapStateToProps: (state: State) => ({
+      customStyles: state.ui.customStyles,
+      theme: state.ui.theme,
+    }),
+  });
+
   useEffect(() => {
     for (const THEME of THEMES) {
       if (THEME.value !== theme) {
@@ -34,10 +39,3 @@ function RootLayout({ children, customStyles, theme }: RootLayoutProps) {
     </>
   );
 }
-
-export default connect(RootLayout, {
-  mapStateToProps: (state: State) => ({
-    customStyles: state.ui.customStyles,
-    theme: state.ui.theme,
-  }),
-});

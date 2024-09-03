@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 
 import { bindActions } from 'feedpon-flux';
-import connect from 'feedpon-flux/react/connect';
-import type { KeyMapping, State } from 'feedpon-messaging';
+import { useStore } from 'feedpon-flux/react';
+import type { State } from 'feedpon-messaging';
 import {
   commandTable,
   deleteKeyMapping,
@@ -16,19 +16,24 @@ import useEvent from '../hooks/useEvent';
 import KeyMappingForm from '../modules/KeyMappingForm';
 import KeyMappingItem from '../modules/KeyMappingItem';
 
-interface KeyboardSettingsProps {
-  keyMappings: Trie.Trie<KeyMapping>;
-  onDeleteKeyMapping: typeof deleteKeyMapping;
-  onResetKeyMappings: typeof resetKeyMappings;
-  onUpdateKeyMapping: typeof updateKeyMapping;
-}
+export interface KeyboardSettingsProps {}
 
-function KeyboardSettings({
-  keyMappings,
-  onDeleteKeyMapping,
-  onResetKeyMappings,
-  onUpdateKeyMapping,
-}: KeyboardSettingsProps) {
+export function KeyboardSettings(_props: KeyboardSettingsProps) {
+  const {
+    keyMappings,
+    onDeleteKeyMapping,
+    onResetKeyMappings,
+    onUpdateKeyMapping,
+  } = useStore({
+    mapStateToProps: (state: State) => ({
+      keyMappings: state.keyMappings.items,
+    }),
+    mapDispatchToProps: bindActions({
+      onDeleteKeyMapping: deleteKeyMapping,
+      onResetKeyMappings: resetKeyMappings,
+      onUpdateKeyMapping: updateKeyMapping,
+    }),
+  });
   const [isResetting, setIsResetting] = useState(false);
 
   const handleCancelResetting = useEvent(() => {
@@ -97,16 +102,3 @@ function KeyboardSettings({
     </section>
   );
 }
-
-export default connect(KeyboardSettings, () => {
-  return {
-    mapStateToProps: (state: State) => ({
-      keyMappings: state.keyMappings.items,
-    }),
-    mapDispatchToProps: bindActions({
-      onDeleteKeyMapping: deleteKeyMapping,
-      onResetKeyMappings: resetKeyMappings,
-      onUpdateKeyMapping: updateKeyMapping,
-    }),
-  };
-});

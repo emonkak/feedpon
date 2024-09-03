@@ -1,4 +1,4 @@
-export default function shallowEqual<T extends Object>(
+export default function shallowEqual<T extends {}>(
   first: T,
   second: T,
 ): boolean {

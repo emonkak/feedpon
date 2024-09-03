@@ -1,17 +1,16 @@
 import React from 'react';
 
 import { bindActions } from 'feedpon-flux';
-import connect from 'feedpon-flux/react/connect';
+import { useStore } from 'feedpon-flux/react';
 import { authenticate } from 'feedpon-messaging/backend';
-import useEvent from '../hooks/useEvent';
 
-interface AuthenticationPageProps {
-  onAuthenticate: typeof authenticate;
-}
+export interface AuthenticationPageProps {}
 
-function AuthenticationPage({ onAuthenticate }: AuthenticationPageProps) {
-  const handleAuthenticate = useEvent(() => {
-    onAuthenticate();
+export function AuthenticationPage(_props: AuthenticationPageProps) {
+  const { onAuthenticate } = useStore({
+    mapDispatchToProps: bindActions({
+      onAuthenticate: authenticate,
+    }),
   });
 
   return (
@@ -49,7 +48,7 @@ function AuthenticationPage({ onAuthenticate }: AuthenticationPageProps) {
         <button
           type="button"
           className="button button-positive button-block button-large"
-          onClick={handleAuthenticate}
+          onClick={onAuthenticate}
         >
           Authenticate...
         </button>
@@ -57,9 +56,3 @@ function AuthenticationPage({ onAuthenticate }: AuthenticationPageProps) {
     </div>
   );
 }
-
-export default connect(AuthenticationPage, {
-  mapDispatchToProps: bindActions({
-    onAuthenticate: authenticate,
-  }),
-});

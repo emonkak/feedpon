@@ -2,7 +2,7 @@ import React from 'react';
 import { useHistory } from 'react-router';
 
 import { bindActions } from 'feedpon-flux';
-import connect from 'feedpon-flux/react/connect';
+import { useStore } from 'feedpon-flux/react';
 import type { State } from 'feedpon-messaging';
 import { toggleSidebar } from 'feedpon-messaging/ui';
 import Dropdown from '../components/Dropdown';
@@ -11,10 +11,7 @@ import Navbar from '../components/Navbar';
 import useEvent from '../hooks/useEvent';
 import MainLayout from '../layouts/MainLayout';
 
-interface AboutPageProps {
-  onToggleSidebar: typeof toggleSidebar;
-  version: string;
-}
+export interface AboutPageProps {}
 
 type Action = { type: 'GO_KITCHENSINK' };
 
@@ -152,7 +149,15 @@ SOFTWARE.
   },
 ];
 
-function AboutPage({ onToggleSidebar, version }: AboutPageProps) {
+export function AboutPage(_props: AboutPageProps) {
+  const { onToggleSidebar, version } = useStore({
+    mapStateToProps: (state: State) => ({
+      version: state.version,
+    }),
+    mapDispatchToProps: bindActions({
+      onToggleSidebar: toggleSidebar,
+    }),
+  });
   const history = useHistory();
 
   const handleSelectAction = useEvent((action: Action) => {
@@ -218,12 +223,3 @@ function AboutPage({ onToggleSidebar, version }: AboutPageProps) {
     </MainLayout>
   );
 }
-
-export default connect(AboutPage, {
-  mapStateToProps: (state: State) => ({
-    version: state.version,
-  }),
-  mapDispatchToProps: bindActions({
-    onToggleSidebar: toggleSidebar,
-  }),
-});

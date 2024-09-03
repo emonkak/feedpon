@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 
 import { bindActions } from 'feedpon-flux';
-import connect from 'feedpon-flux/react/connect';
-import type { State, UrlReplacement } from 'feedpon-messaging';
+import { useStore } from 'feedpon-flux/react';
+import type { State } from 'feedpon-messaging';
 import {
   addUrlReplacement,
   deleteUrlReplacement,
@@ -14,21 +14,27 @@ import useEvent from '../hooks/useEvent';
 import UrlReplacementForm from '../modules/UrlReplacementForm';
 import UrlReplacementItem from '../modules/UrlReplacementItem';
 
-interface UrlReplacementSettingsProps {
-  items: UrlReplacement[];
-  onAddUrlReplacement: typeof addUrlReplacement;
-  onDeleteUrlReplacement: typeof deleteUrlReplacement;
-  onResetUrlReplacements: typeof resetUrlReplacements;
-  onUpdateUrlReplacement: typeof updateUrlReplacement;
-}
+export interface UrlReplacementSettingsProps {}
 
-function UrlReplacementSettings({
-  items,
-  onAddUrlReplacement,
-  onResetUrlReplacements,
-  onDeleteUrlReplacement,
-  onUpdateUrlReplacement,
-}: UrlReplacementSettingsProps) {
+export function UrlReplacementSettings({}: UrlReplacementSettingsProps) {
+  const {
+    items,
+    onAddUrlReplacement,
+    onResetUrlReplacements,
+    onDeleteUrlReplacement,
+    onUpdateUrlReplacement,
+  } = useStore({
+    mapStateToProps: (state: State) => ({
+      items: state.urlReplacements.items,
+    }),
+    mapDispatchToProps: bindActions({
+      onAddUrlReplacement: addUrlReplacement,
+      onDeleteUrlReplacement: deleteUrlReplacement,
+      onResetUrlReplacements: resetUrlReplacements,
+      onUpdateUrlReplacement: updateUrlReplacement,
+    }),
+  });
+
   const [isResetting, setIsResetting] = useState(false);
 
   const handleCancelResetting = useEvent(() => {
@@ -101,15 +107,3 @@ function UrlReplacementSettings({
     </section>
   );
 }
-
-export default connect(UrlReplacementSettings, {
-  mapStateToProps: (state: State) => ({
-    items: state.urlReplacements.items,
-  }),
-  mapDispatchToProps: bindActions({
-    onAddUrlReplacement: addUrlReplacement,
-    onDeleteUrlReplacement: deleteUrlReplacement,
-    onResetUrlReplacements: resetUrlReplacements,
-    onUpdateUrlReplacement: updateUrlReplacement,
-  }),
-});

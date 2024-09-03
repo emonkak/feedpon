@@ -2,13 +2,8 @@ import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 
 import { bindActions } from 'feedpon-flux';
-import connect from 'feedpon-flux/react/connect';
-import type {
-  Categories,
-  Histories,
-  State,
-  Subscriptions,
-} from 'feedpon-messaging';
+import { useStore } from 'feedpon-flux/react';
+import type { State } from 'feedpon-messaging';
 import { toggleSidebar } from 'feedpon-messaging/ui';
 import * as CacheMap from 'feedpon-utils/CacheMap';
 import Navbar from '../components/Navbar';
@@ -16,12 +11,7 @@ import RelativeTime from '../components/RelativeTime';
 import MainLayout from '../layouts/MainLayout';
 import SubscriptionIcon from '../modules/SubscriptionIcon';
 
-interface DashboardProps {
-  histories: Histories;
-  subscriptions: Subscriptions;
-  categories: Categories;
-  onToggleSidebar: typeof toggleSidebar;
-}
+export interface DashboardProps {}
 
 interface StreamHistory {
   streamId: string;
@@ -32,12 +22,18 @@ interface StreamHistory {
   fetchedAt: number;
 }
 
-function DashboardPage({
-  onToggleSidebar,
-  categories,
-  subscriptions,
-  histories,
-}: DashboardProps) {
+export function DashboardPage(_props: DashboardProps) {
+  const { onToggleSidebar, categories, subscriptions, histories } = useStore({
+    mapStateToProps: (state: State) => ({
+      categories: state.categories,
+      histories: state.histories,
+      subscriptions: state.subscriptions,
+    }),
+    mapDispatchToProps: bindActions({
+      onToggleSidebar: toggleSidebar,
+    }),
+  });
+
   const categoryUnreadCounts = useMemo(
     () =>
       Object.values(subscriptions.items).reduce<{ [key: string]: number }>(
@@ -159,16 +155,3 @@ function DashboardPage({
     </MainLayout>
   );
 }
-
-export default connect(DashboardPage, () => {
-  return {
-    mapStateToProps: (state: State) => ({
-      categories: state.categories,
-      histories: state.histories,
-      subscriptions: state.subscriptions,
-    }),
-    mapDispatchToProps: bindActions({
-      onToggleSidebar: toggleSidebar,
-    }),
-  };
-});

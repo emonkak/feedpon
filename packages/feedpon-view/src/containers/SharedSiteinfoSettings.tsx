@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useDeferredValue } from 'react';
 
 import { bindActions } from 'feedpon-flux';
-import connect from 'feedpon-flux/react/connect';
+import { useStore } from 'feedpon-flux/react';
 import type { SiteinfoItem, State } from 'feedpon-messaging';
 import { updateSiteinfo } from 'feedpon-messaging/sharedSiteinfo';
 import tryMatch from 'feedpon-utils/tryMatch';
@@ -9,19 +9,20 @@ import RelativeTime from '../components/RelativeTime';
 import VirtualList, { type BlankSpaces } from '../components/VirtualList';
 import SharedSiteinfoItem from '../modules/SharedSiteinfoItem';
 
-interface SharedSiteinfoProps {
-  isLoading: boolean;
-  items: SiteinfoItem[];
-  lastUpdatedAt: number;
-  onUpdateSiteinfo: typeof updateSiteinfo;
-}
+export interface SharedSiteinfoProps {}
 
-function SharedSiteinfoSettings({
-  isLoading,
-  items,
-  lastUpdatedAt,
-  onUpdateSiteinfo,
-}: SharedSiteinfoProps) {
+export function SharedSiteinfoSettings(_props: SharedSiteinfoProps) {
+  const { isLoading, items, lastUpdatedAt, onUpdateSiteinfo } = useStore({
+    mapStateToProps: (state: State) => ({
+      isLoading: state.sharedSiteinfo.isLoading,
+      items: state.sharedSiteinfo.items,
+      lastUpdatedAt: state.sharedSiteinfo.lastUpdatedAt,
+    }),
+    mapDispatchToProps: bindActions({
+      onUpdateSiteinfo: updateSiteinfo,
+    }),
+  });
+
   const [testUrl, setTestUrl] = useState('');
   const defferedTestUrl = useDeferredValue(testUrl);
 
@@ -126,14 +127,3 @@ function renderSiteinfoList(
 function renderSiteinfoItem(item: SiteinfoItem) {
   return <SharedSiteinfoItem key={item.id} item={item} />;
 }
-
-export default connect(SharedSiteinfoSettings, {
-  mapStateToProps: (state: State) => ({
-    isLoading: state.sharedSiteinfo.isLoading,
-    items: state.sharedSiteinfo.items,
-    lastUpdatedAt: state.sharedSiteinfo.lastUpdatedAt,
-  }),
-  mapDispatchToProps: bindActions({
-    onUpdateSiteinfo: updateSiteinfo,
-  }),
-});

@@ -5,7 +5,7 @@ import React from 'react';
 import { Router } from 'react-router';
 
 import type { Store } from 'feedpon-flux';
-import StoreContext from 'feedpon-flux/react/StoreContext';
+import { StoreContext } from 'feedpon-flux/react';
 import Routes from './Routes';
 import { reactElement } from './directives/reactElement';
 

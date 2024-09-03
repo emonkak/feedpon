@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useHistory, useParams } from 'react-router';
 
 import { bindActions } from 'feedpon-flux';
-import connect from 'feedpon-flux/react/connect';
-import type { Category, Feed, State, Subscription } from 'feedpon-messaging';
+import { useStore } from 'feedpon-flux/react';
+import type { State } from 'feedpon-messaging';
 import {
   createCategory,
   createSortedCategoriesSelector,
@@ -23,37 +23,46 @@ import MainLayout from '../layouts/MainLayout';
 import FeedComponent from '../modules/Feed';
 import FeedPlaceholder from '../modules/FeedPlaceholder';
 
-interface SearchPageProps {
-  activeQuery: string;
-  categories: Category[];
-  feeds: Feed[];
-  isLoaded: boolean;
-  isLoading: boolean;
-  onAddToCategory: typeof addToCategory;
-  onCreateCategory: typeof createCategory;
-  onRemoveFromCategory: typeof removeFromCategory;
-  onSearchFeeds: typeof searchFeeds;
-  onSubscribe: typeof subscribe;
-  onToggleSidebar: typeof toggleSidebar;
-  onUnsubscribe: typeof unsubscribe;
-  subscriptions: { [key: string]: Subscription };
-}
+export interface SearchPageProps {}
 
-function SearchPage({
-  activeQuery,
-  categories,
-  feeds,
-  isLoaded,
-  isLoading,
-  onAddToCategory,
-  onCreateCategory,
-  onRemoveFromCategory,
-  onSearchFeeds,
-  onSubscribe,
-  onToggleSidebar,
-  onUnsubscribe,
-  subscriptions,
-}: SearchPageProps) {
+export function SearchPage({}: SearchPageProps) {
+  const sortedCategoriesSelector = useMemo(
+    () => createSortedCategoriesSelector(),
+    [],
+  );
+  const {
+    activeQuery,
+    categories,
+    feeds,
+    isLoaded,
+    isLoading,
+    onAddToCategory,
+    onCreateCategory,
+    onRemoveFromCategory,
+    onSearchFeeds,
+    onSubscribe,
+    onToggleSidebar,
+    onUnsubscribe,
+    subscriptions,
+  } = useStore({
+    mapStateToProps: (state: State) => ({
+      activeQuery: state.search.query,
+      categories: sortedCategoriesSelector(state),
+      feeds: state.search.feeds,
+      isLoaded: state.search.isLoaded,
+      isLoading: state.search.isLoading,
+      subscriptions: state.subscriptions.items,
+    }),
+    mapDispatchToProps: bindActions({
+      onAddToCategory: addToCategory,
+      onCreateCategory: createCategory,
+      onRemoveFromCategory: removeFromCategory,
+      onSearchFeeds: searchFeeds,
+      onSubscribe: subscribe,
+      onToggleSidebar: toggleSidebar,
+      onUnsubscribe: unsubscribe,
+    }),
+  });
   const params = useParams<{ query: string }>();
   const history = useHistory();
 
@@ -163,27 +172,3 @@ function SearchPage({
     </MainLayout>
   );
 }
-
-export default connect(SearchPage, () => {
-  const sortedCategoriesSelector = createSortedCategoriesSelector();
-
-  return {
-    mapStateToProps: (state: State) => ({
-      activeQuery: state.search.query,
-      categories: sortedCategoriesSelector(state),
-      feeds: state.search.feeds,
-      isLoaded: state.search.isLoaded,
-      isLoading: state.search.isLoading,
-      subscriptions: state.subscriptions.items,
-    }),
-    mapDispatchToProps: bindActions({
-      onAddToCategory: addToCategory,
-      onCreateCategory: createCategory,
-      onRemoveFromCategory: removeFromCategory,
-      onSearchFeeds: searchFeeds,
-      onSubscribe: subscribe,
-      onToggleSidebar: toggleSidebar,
-      onUnsubscribe: unsubscribe,
-    }),
-  };
-});

@@ -1,22 +1,17 @@
 import React from 'react';
 
-import connect from 'feedpon-flux/react/connect';
+import { useStore } from 'feedpon-flux/react';
 import type { State } from 'feedpon-messaging';
 
-interface NotAuthenticatedProps {
+export interface NotAuthenticatedProps {
   children: React.ReactElement<any>;
-  isAuthenticated: boolean;
 }
 
-function NotAuthenticated({
-  children,
-  isAuthenticated,
-}: NotAuthenticatedProps) {
+export function NotAuthenticated({ children }: NotAuthenticatedProps) {
+  const { isAuthenticated } = useStore({
+    mapStateToProps: (state: State) => ({
+      isAuthenticated: !!state.backend.token,
+    }),
+  });
   return !isAuthenticated ? children : null;
 }
-
-export default connect(NotAuthenticated, () => ({
-  mapStateToProps: (state: State) => ({
-    isAuthenticated: !!state.backend.token,
-  }),
-}));

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 import { bindActions } from 'feedpon-flux';
-import connect from 'feedpon-flux/react/connect';
+import { useStore } from 'feedpon-flux/react';
 import type { State } from 'feedpon-messaging';
 import {
   addTrackingUrlPattern,
@@ -14,23 +14,29 @@ import useEvent from '../hooks/useEvent';
 import TrackingUrlPatternForm from '../modules/TrackingUrlPatternForm';
 import TrackingUrlPatternItem from '../modules/TrackingUrlPatternItem';
 
-interface TrackingUrlSettingsProps {
-  cacheCapacity: number;
-  onAddTrackingUrlPattern: typeof addTrackingUrlPattern;
-  onChangeTrakingUrlCacheCapacity: typeof changeTrakingUrlCacheCapacity;
-  onDeleteTrackingUrlPattern: typeof deleteTrackingUrlPattern;
-  onResetTrackingUrlPatterns: typeof resetTrackingUrlPatterns;
-  patterns: string[];
-}
+export interface TrackingUrlSettingsProps {}
 
-function TrackingUrlSettings({
-  cacheCapacity: initialCacheCapacity,
-  onAddTrackingUrlPattern,
-  onChangeTrakingUrlCacheCapacity,
-  onDeleteTrackingUrlPattern,
-  onResetTrackingUrlPatterns,
-  patterns,
-}: TrackingUrlSettingsProps) {
+export function TrackingUrlSettings(_props: TrackingUrlSettingsProps) {
+  const {
+    cacheCapacity: initialCacheCapacity,
+    onAddTrackingUrlPattern,
+    onChangeTrakingUrlCacheCapacity,
+    onDeleteTrackingUrlPattern,
+    onResetTrackingUrlPatterns,
+    patterns,
+  } = useStore({
+    mapStateToProps: (state: State) => ({
+      cacheCapacity: state.trackingUrls.items.capacity,
+      patterns: state.trackingUrls.patterns,
+    }),
+    mapDispatchToProps: bindActions({
+      onAddTrackingUrlPattern: addTrackingUrlPattern,
+      onChangeTrakingUrlCacheCapacity: changeTrakingUrlCacheCapacity,
+      onDeleteTrackingUrlPattern: deleteTrackingUrlPattern,
+      onResetTrackingUrlPatterns: resetTrackingUrlPatterns,
+    }),
+  });
+
   const [cacheCapacity, setCacheCapacity] = useState(initialCacheCapacity);
   const [isResetting, setIsResetting] = useState(false);
 
@@ -125,16 +131,3 @@ function TrackingUrlSettings({
     </section>
   );
 }
-
-export default connect(TrackingUrlSettings, {
-  mapStateToProps: (state: State) => ({
-    cacheCapacity: state.trackingUrls.items.capacity,
-    patterns: state.trackingUrls.patterns,
-  }),
-  mapDispatchToProps: bindActions({
-    onAddTrackingUrlPattern: addTrackingUrlPattern,
-    onChangeTrakingUrlCacheCapacity: changeTrakingUrlCacheCapacity,
-    onDeleteTrackingUrlPattern: deleteTrackingUrlPattern,
-    onResetTrackingUrlPatterns: resetTrackingUrlPatterns,
-  }),
-});

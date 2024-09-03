@@ -2,7 +2,7 @@ import classnames from 'classnames';
 import React, { useEffect, useRef } from 'react';
 
 import { type Dispatch, bindActions } from 'feedpon-flux';
-import connect from 'feedpon-flux/react/connect';
+import { useStore } from 'feedpon-flux/react';
 import type {
   Command,
   Event,
@@ -17,40 +17,46 @@ import {
   openHelp,
   openSidebar,
 } from 'feedpon-messaging/ui';
-import type * as Trie from 'feedpon-utils/Trie';
 import Modal from '../components/Modal';
-import InstantNotificationContainer from '../containers/InstantNotificationContainer';
-import NotificationList from '../containers/NotificationList';
-import Sidebar from '../containers/Sidebar';
+import { InstantNotificationContainer } from '../containers/InstantNotificationContainer';
+import { NotificationList } from '../containers/NotificationList';
+import { Sidebar } from '../containers/Sidebar';
 import useEvent from '../hooks/useEvent';
 import useKeyMappings from '../hooks/useKeyMappings';
 import useSwipeable from '../hooks/useSwipeable';
 import KeyMappingsTable from '../modules/KeyMappingsTable';
 
-interface SidebarLayoutProps {
+export interface SidebarLayoutProps {
   children: React.ReactNode;
-  dispatch: Dispatch<Event | Thunk<Event>>;
-  helpIsOpened: boolean;
-  isLoading: boolean;
-  keyMappings: Trie.Trie<KeyMapping>;
-  onCloseHelp: typeof closeHelp;
-  onCloseSidebar: typeof closeSidebar;
-  onOpenHelp: typeof openHelp;
-  onOpenSidebar: typeof openSidebar;
-  sidebarIsOpened: boolean;
 }
 
-function SidebarLayout({
-  children,
-  dispatch,
-  helpIsOpened,
-  isLoading,
-  keyMappings,
-  onCloseHelp,
-  onCloseSidebar,
-  onOpenSidebar,
-  sidebarIsOpened,
-}: SidebarLayoutProps) {
+export function SidebarLayout({ children }: SidebarLayoutProps) {
+  const {
+    dispatch,
+    helpIsOpened,
+    isLoading,
+    keyMappings,
+    onCloseHelp,
+    onCloseSidebar,
+    onOpenSidebar,
+    sidebarIsOpened,
+  } = useStore({
+    mapStateToProps: (state: State) => ({
+      helpIsOpened: state.ui.helpIsOpened,
+      isLoading: state.backend.isLoading || state.subscriptions.isImporting,
+      keyMappings: state.keyMappings.items,
+      sidebarIsOpened: state.ui.sidebarIsOpened,
+    }),
+    mapDispatchToProps: (dispatch: Dispatch<Event | Thunk<Event>>) => ({
+      ...bindActions({
+        onCloseHelp: closeHelp,
+        onCloseSidebar: closeSidebar,
+        onOpenHelp: openHelp,
+        onOpenSidebar: openSidebar,
+      })(dispatch as any),
+      dispatch,
+    }),
+  });
   const { onTouchStart, onTouchEnd, onTouchMove, isSwiping, coordinates } =
     useSwipeable();
 
@@ -231,21 +237,3 @@ function isMobileLayout() {
 function clamp(n: number, min: number, max: number): number {
   return Math.min(Math.max(n, min), max);
 }
-
-export default connect(SidebarLayout, () => ({
-  mapStateToProps: (state: State) => ({
-    helpIsOpened: state.ui.helpIsOpened,
-    isLoading: state.backend.isLoading || state.subscriptions.isImporting,
-    keyMappings: state.keyMappings.items,
-    sidebarIsOpened: state.ui.sidebarIsOpened,
-  }),
-  mapDispatchToProps: (dispatch: Dispatch<Event | Thunk<Event>>) => ({
-    ...bindActions({
-      onCloseHelp: closeHelp,
-      onCloseSidebar: closeSidebar,
-      onOpenHelp: openHelp,
-      onOpenSidebar: openSidebar,
-    })(dispatch as any),
-    dispatch,
-  }),
-}));

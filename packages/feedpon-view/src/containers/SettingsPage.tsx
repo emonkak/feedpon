@@ -2,19 +2,23 @@ import React from 'react';
 import { useHistory, useLocation } from 'react-router';
 
 import { bindActions } from 'feedpon-flux';
-import connect from 'feedpon-flux/react/connect';
+import { useStore } from 'feedpon-flux/react';
 import { toggleSidebar } from 'feedpon-messaging/ui';
 import { Nav, NavItem } from '../components/Nav';
 import Navbar from '../components/Navbar';
 import useEvent from '../hooks/useEvent';
 import MainLayout from '../layouts/MainLayout';
 
-interface SettingsProps {
-  children: React.ReactElement<any>;
-  onToggleSidebar: typeof toggleSidebar;
+export interface SettingsProps {
+  children: React.ReactElement;
 }
 
-function SettingsPage({ children, onToggleSidebar }: SettingsProps) {
+export function SettingsPage({ children }: SettingsProps) {
+  const { onToggleSidebar } = useStore({
+    mapDispatchToProps: bindActions({
+      onToggleSidebar: toggleSidebar,
+    }),
+  });
   const history = useHistory();
   const location = useLocation();
 
@@ -86,9 +90,3 @@ function SettingsPage({ children, onToggleSidebar }: SettingsProps) {
     </MainLayout>
   );
 }
-
-export default connect(SettingsPage, {
-  mapDispatchToProps: bindActions({
-    onToggleSidebar: toggleSidebar,
-  }),
-});

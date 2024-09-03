@@ -1,24 +1,30 @@
 import React, { useState } from 'react';
 
 import { bindActions } from 'feedpon-flux';
-import connect from 'feedpon-flux/react/connect';
+import { useStore } from 'feedpon-flux/react';
 import type { State, ThemeKind } from 'feedpon-messaging';
 import { THEMES, changeCustomStyles, changeTheme } from 'feedpon-messaging/ui';
 import useEvent from '../hooks/useEvent';
 
-interface UISettingsProps {
-  currentTheme: ThemeKind;
-  customStyles: string;
-  onChangeCustomStyles: typeof changeCustomStyles;
-  onChangeTheme: typeof changeTheme;
-}
+export interface UISettingsProps {}
 
-function UISettings({
-  currentTheme,
-  customStyles: initialCustomStyles,
-  onChangeCustomStyles,
-  onChangeTheme,
-}: UISettingsProps) {
+export function UISettings(_props: UISettingsProps) {
+  const {
+    currentTheme,
+    customStyles: initialCustomStyles,
+    onChangeCustomStyles,
+    onChangeTheme,
+  } = useStore({
+    mapStateToProps: (state: State) => ({
+      currentTheme: state.ui.theme,
+      customStyles: state.ui.customStyles,
+    }),
+    mapDispatchToProps: bindActions({
+      onChangeTheme: changeTheme,
+      onChangeCustomStyles: changeCustomStyles,
+    }),
+  });
+
   const [customStyles, setCustomStyles] = useState(initialCustomStyles);
 
   const handleChangeCustomStyle = useEvent(
@@ -101,14 +107,3 @@ function UISettings({
     </section>
   );
 }
-
-export default connect(UISettings, {
-  mapStateToProps: (state: State) => ({
-    currentTheme: state.ui.theme,
-    customStyles: state.ui.customStyles,
-  }),
-  mapDispatchToProps: bindActions({
-    onChangeTheme: changeTheme,
-    onChangeCustomStyles: changeCustomStyles,
-  }),
-});

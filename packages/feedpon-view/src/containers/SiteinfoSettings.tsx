@@ -1,11 +1,11 @@
 import React from 'react';
 
-import SharedSiteinfoSettings from '../containers/SharedSiteinfoSettings';
-import UserSiteinfoSettings from '../containers/UserSiteinfoSettings';
+import { SharedSiteinfoSettings } from '../containers/SharedSiteinfoSettings';
+import { UserSiteinfoSettings } from '../containers/UserSiteinfoSettings';
 
 interface SiteinfoSettingsProps {}
 
-export default function SiteinfoSettings(_props: SiteinfoSettingsProps) {
+export function SiteinfoSettings(_props: SiteinfoSettingsProps) {
   return (
     <section>
       <h1 className="display-1">Siteinfo</h1>

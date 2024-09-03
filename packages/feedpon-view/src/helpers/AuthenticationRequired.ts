@@ -1,18 +1,21 @@
 import React, { useEffect } from 'react';
 import { useHistory } from 'react-router';
 
-import connect from 'feedpon-flux/react/connect';
+import { useStore } from 'feedpon-flux/react';
 import type { State } from 'feedpon-messaging';
 
-interface AuthenticationRequiredProps {
-  children: React.ReactElement<any>;
-  isAuthenticated: boolean;
+export interface AuthenticationRequiredProps {
+  children: React.ReactElement;
 }
 
-function AuthenticationRequired({
+export function AuthenticationRequired({
   children,
-  isAuthenticated,
 }: AuthenticationRequiredProps) {
+  const { isAuthenticated } = useStore({
+    mapStateToProps: (state: State) => ({
+      isAuthenticated: !!state.backend.token,
+    }),
+  });
   const history = useHistory();
 
   useEffect(() => {
@@ -23,9 +26,3 @@ function AuthenticationRequired({
 
   return isAuthenticated ? children : null;
 }
-
-export default connect(AuthenticationRequired, () => ({
-  mapStateToProps: (state: State) => ({
-    isAuthenticated: !!state.backend.token,
-  }),
-}));

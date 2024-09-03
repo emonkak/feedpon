@@ -2,7 +2,7 @@ import React, { useMemo, useRef, useState } from 'react';
 import { useHistory, useParams } from 'react-router';
 
 import { bindActions } from 'feedpon-flux';
-import connect from 'feedpon-flux/react/connect';
+import { useStore } from 'feedpon-flux/react';
 import type { Category, State, Subscription } from 'feedpon-messaging';
 import {
   UNCATEGORIZED,
@@ -33,29 +33,44 @@ import SubscriptionItem from '../modules/Subscription';
 
 type Action = 'IMPORT_OPML' | 'EXPORT_OPML';
 
-interface CategoriesPageProps {
-  categories: Category[];
-  exportUrl: string;
-  onAddToCategory: typeof addToCategory;
-  onCreateCategory: typeof createCategory;
-  onDeleteCategory: typeof deleteCategory;
-  onImportOpml: typeof importOpml;
-  onRemoveFromCategory: typeof removeFromCategory;
-  onToggleSidebar: typeof toggleSidebar;
-  onUnsubscribe: typeof unsubscribe;
-  onUpdateCategory: typeof updateCategory;
-  subscriptions: Subscription[];
-}
+export interface CategoriesPageProps {}
 
-function CategoriesPage({
-  categories,
-  exportUrl,
-  onDeleteCategory,
-  onImportOpml,
-  onToggleSidebar,
-  onUpdateCategory,
-  subscriptions,
-}: CategoriesPageProps) {
+export function CategoriesPage(_props: CategoriesPageProps) {
+  const categoriesSelector = useMemo(
+    () => createSortedCategoriesSelector(),
+    [],
+  );
+  const subscriptionsSelector = useMemo(
+    () => createAllSubscriptionsSelector(),
+    [],
+  );
+  const {
+    categories,
+    exportUrl,
+    onDeleteCategory,
+    onImportOpml,
+    onToggleSidebar,
+    onUpdateCategory,
+    subscriptions,
+  } = useStore({
+    mapStateToProps: (state: State) => {
+      return {
+        categories: categoriesSelector(state),
+        exportUrl: state.backend.exportUrl,
+        subscriptions: subscriptionsSelector(state),
+      };
+    },
+    mapDispatchToProps: bindActions({
+      onAddToCategory: addToCategory,
+      onCreateCategory: createCategory,
+      onDeleteCategory: deleteCategory,
+      onImportOpml: importOpml,
+      onRemoveFromCategory: removeFromCategory,
+      onToggleSidebar: toggleSidebar,
+      onUnsubscribe: unsubscribe,
+      onUpdateCategory: updateCategory,
+    }),
+  });
   const [query, setQuery] = useState('');
   const searchInputRef = useRef<HTMLInputElement | null>(null);
   const uploadInputRef = useRef<HTMLInputElement | null>(null);
@@ -78,6 +93,18 @@ function CategoriesPage({
       )
       .sort(createAscendingComparer<Subscription>('subscriptionId'));
   }, [subscriptions, params.label]);
+
+  const renderSubscriptionItem = useEvent((subscription: Subscription) => (
+    <SubscriptionItem
+      categories={categories}
+      key={subscription.subscriptionId}
+      onAddToCategory={addToCategory}
+      onCreateCategory={createCategory}
+      onRemoveFromCategory={removeFromCategory}
+      onUnsubscribe={unsubscribe}
+      subscription={subscription}
+    />
+  ));
 
   const handleChangeSearchQuery = useMemo(
     () =>
@@ -226,22 +253,6 @@ function CategoriesPage({
   );
 }
 
-const ConnectedSubscriptionItem = connect(SubscriptionItem, () => {
-  const categoriesSelector = createSortedCategoriesSelector();
-
-  return {
-    mapStateToProps: (state: State) => ({
-      categories: categoriesSelector(state),
-    }),
-    mapDispatchToProps: bindActions({
-      onAddToCategory: addToCategory,
-      onCreateCategory: createCategory,
-      onRemoveFromCategory: removeFromCategory,
-      onUnsubscribe: unsubscribe,
-    }),
-  };
-});
-
 function renderSubscriptionList(
   children: React.ReactNode,
   blankSpaces: BlankSpaces,
@@ -254,34 +265,3 @@ function renderSubscriptionList(
     </ul>
   );
 }
-
-function renderSubscriptionItem(subscription: Subscription) {
-  return (
-    <ConnectedSubscriptionItem
-      key={subscription.subscriptionId}
-      subscription={subscription}
-    />
-  );
-}
-
-export default connect(CategoriesPage, () => {
-  const categoriesSelector = createSortedCategoriesSelector();
-  const subscriptionsSelector = createAllSubscriptionsSelector();
-
-  return {
-    mapStateToProps: (state: State) => {
-      return {
-        categories: categoriesSelector(state),
-        exportUrl: state.backend.exportUrl,
-        subscriptions: subscriptionsSelector(state),
-      };
-    },
-    mapDispatchToProps: bindActions({
-      onCreateCategory: createCategory,
-      onDeleteCategory: deleteCategory,
-      onImportOpml: importOpml,
-      onToggleSidebar: toggleSidebar,
-      onUpdateCategory: updateCategory,
-    }),
-  };
-});

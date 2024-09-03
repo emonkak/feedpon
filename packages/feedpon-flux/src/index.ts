@@ -31,26 +31,26 @@ export function applyMiddlewares<TState, TEvent>(
   return enhancedStore;
 }
 
-type Action<TEvent> = (...args: any) => TEvent;
+type Action = (...args: any[]) => any;
 
-type Actions<TEvent> = { [key: string]: Action<TEvent> };
+type Actions = { [key: string]: Action };
 
-type BoundActions<TEvent, TAction extends Actions<TEvent>> = {
-  [Property in keyof TAction]: (
-    ...args: Parameters<TAction[Property]>
-  ) => TEvent;
+type BoundActions<TActions extends Actions> = {
+  [P in keyof TActions]: (
+    ...args: Parameters<TActions[P]>
+  ) => ReturnType<TActions[P]>;
 };
 
-export function bindActions<TEvent, TActions extends Actions<TEvent>>(
+export function bindActions<TEvent, TActions extends Actions>(
   actions: TActions,
-): (dispatch: Dispatch<TEvent>) => BoundActions<TEvent, TActions> {
+): (dispatch: Dispatch<TEvent>) => BoundActions<TActions> {
   return (dispatch) => {
-    const boundActions = {} as BoundActions<TEvent, TActions>;
+    const boundActions = {} as BoundActions<TActions>;
 
     for (const key of Object.keys(actions) as (keyof TActions)[]) {
       const action = actions[key]!;
 
-      boundActions[key] = function bindedAction(...args: any[]) {
+      boundActions[key] = function boundAction(...args: any[]) {
         const event = action(...args);
         dispatch(event);
         return event;

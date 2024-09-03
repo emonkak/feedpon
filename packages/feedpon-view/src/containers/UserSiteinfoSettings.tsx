@@ -1,8 +1,8 @@
 import React from 'react';
 
 import { bindActions } from 'feedpon-flux';
-import connect from 'feedpon-flux/react/connect';
-import type { SiteinfoItem, State } from 'feedpon-messaging';
+import { useStore } from 'feedpon-flux/react';
+import type { State } from 'feedpon-messaging';
 import {
   addUserSiteinfoItem,
   deleteUserSiteinfoItem,
@@ -11,19 +11,25 @@ import {
 import UserSiteinfoForm from '../modules/UserSiteinfoForm';
 import UserSiteinfoItem from '../modules/UserSiteinfoItem';
 
-interface UserSiteinfoProps {
-  items: SiteinfoItem[];
-  onAddUserSiteinfoItem: typeof addUserSiteinfoItem;
-  onDeleteUserSiteinfoItem: typeof deleteUserSiteinfoItem;
-  onUpdateUserSiteinfoItem: typeof updateUserSiteinfoItem;
-}
+export interface UserSiteinfoProps {}
 
-function UserSiteinfoSettings({
-  onDeleteUserSiteinfoItem,
-  onUpdateUserSiteinfoItem,
-  onAddUserSiteinfoItem,
-  items,
-}: UserSiteinfoProps) {
+export function UserSiteinfoSettings({}: UserSiteinfoProps) {
+  const {
+    onDeleteUserSiteinfoItem,
+    onUpdateUserSiteinfoItem,
+    onAddUserSiteinfoItem,
+    items,
+  } = useStore({
+    mapStateToProps: (state: State) => ({
+      items: state.userSiteinfo.items,
+    }),
+    mapDispatchToProps: bindActions({
+      onAddUserSiteinfoItem: addUserSiteinfoItem,
+      onDeleteUserSiteinfoItem: deleteUserSiteinfoItem,
+      onUpdateUserSiteinfoItem: updateUserSiteinfoItem,
+    }),
+  });
+
   return (
     <section className="section">
       <h2 className="display-2">User siteinfo</h2>
@@ -68,14 +74,3 @@ function UserSiteinfoSettings({
     </section>
   );
 }
-
-export default connect(UserSiteinfoSettings, {
-  mapStateToProps: (state: State) => ({
-    items: state.userSiteinfo.items,
-  }),
-  mapDispatchToProps: bindActions({
-    onAddUserSiteinfoItem: addUserSiteinfoItem,
-    onDeleteUserSiteinfoItem: deleteUserSiteinfoItem,
-    onUpdateUserSiteinfoItem: updateUserSiteinfoItem,
-  }),
-});

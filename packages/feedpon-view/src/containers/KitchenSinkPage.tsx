@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import type { RouteComponentProps } from 'react-router';
 
 import { bindActions } from 'feedpon-flux';
-import connect from 'feedpon-flux/react/connect';
+import { useStore } from 'feedpon-flux/react';
 import type { NotificationKind } from 'feedpon-messaging';
 import { sendNotification } from 'feedpon-messaging/notifications';
 import { toggleSidebar } from 'feedpon-messaging/ui';
@@ -13,15 +13,15 @@ import Navbar from '../components/Navbar';
 import useEvent from '../hooks/useEvent';
 import MainLayout from '../layouts/MainLayout';
 
-interface KitchenSinkProps extends RouteComponentProps {
-  onSendNotification: typeof sendNotification;
-  onToggleSidebar: typeof toggleSidebar;
-}
+export interface KitchenSinkProps extends RouteComponentProps {}
 
-function KitchenSinkPage({
-  onSendNotification,
-  onToggleSidebar,
-}: KitchenSinkProps) {
+export function KitchenSinkPage(_props: KitchenSinkProps) {
+  const { onSendNotification, onToggleSidebar } = useStore({
+    mapDispatchToProps: bindActions({
+      onSendNotification: sendNotification,
+      onToggleSidebar: toggleSidebar,
+    }),
+  });
   const [modalIsOpened, setModalIsOpened] = useState(false);
 
   const handleSelectAction = useEvent((action: string) => {
@@ -659,10 +659,3 @@ function KitchenSinkPage({
     </MainLayout>
   );
 }
-
-export default connect(KitchenSinkPage, {
-  mapDispatchToProps: bindActions({
-    onSendNotification: sendNotification,
-    onToggleSidebar: toggleSidebar,
-  }),
-});

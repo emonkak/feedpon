@@ -1,16 +1,21 @@
 import React from 'react';
 
-import connect from 'feedpon-flux/react/connect';
+import { useStore } from 'feedpon-flux/react';
 import type { State } from 'feedpon-messaging';
-import InstantNotificationContainer from '../containers/InstantNotificationContainer';
-import NotificationList from '../containers/NotificationList';
+import { InstantNotificationContainer } from '../containers/InstantNotificationContainer';
+import { NotificationList } from '../containers/NotificationList';
 
-interface SingleLayoutProps {
+export interface SingleLayoutProps {
   children?: React.ReactNode;
-  isLoading: boolean;
 }
 
-function SingleLayout({ children, isLoading }: SingleLayoutProps) {
+export function SingleLayout({ children }: SingleLayoutProps) {
+  const { isLoading } = useStore({
+    mapStateToProps: (state: State) => ({
+      isLoading: state.backend.isLoading,
+    }),
+  });
+
   return (
     <>
       <div className="l-main">
@@ -30,9 +35,3 @@ function SingleLayout({ children, isLoading }: SingleLayoutProps) {
     </>
   );
 }
-
-export default connect(SingleLayout, {
-  mapStateToProps: (state: State) => ({
-    isLoading: state.backend.isLoading,
-  }),
-});
