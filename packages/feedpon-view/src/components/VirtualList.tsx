@@ -132,7 +132,7 @@ function VirtualList<
   const containerRef = useRef<Element | null>(null);
   const scrollingItemIndexRef = useRef(initialItemIndex);
   const blockSizesRef = useRef(initialBlockSizes);
-  const isScheduledRef = useRef(false);
+  const isDirtyRef = useRef(false);
 
   const blockInsetsRef = useMemo(
     () => ({
@@ -221,6 +221,7 @@ function VirtualList<
 
   const updateDimensions = useEvent(() => {
     if (!isMouted()) {
+      requestAnimationFrame(updateDimensions);
       return;
     }
 
@@ -249,7 +250,7 @@ function VirtualList<
       viewportInset,
     });
 
-    isScheduledRef.current = false;
+    isDirtyRef.current = false;
   });
 
   const updateBlockSizes = useEvent((newBlockSizes: BlockSizes<TId>) => {
@@ -271,9 +272,9 @@ function VirtualList<
         idAttribute,
         assumedItemSize,
       );
-      if (!isScheduledRef.current) {
+      if (!isDirtyRef.current) {
         scheduleUpdate(updateDimensions);
-        isScheduledRef.current = true;
+        isDirtyRef.current = true;
       }
       onUpdateBlockSizes?.(blockSizesRef.current);
     }
@@ -283,9 +284,9 @@ function VirtualList<
     const scrollContainer = getScrollContainer();
 
     const callback = throttle(() => {
-      if (!isScheduledRef.current) {
+      if (!isDirtyRef.current) {
         scheduleUpdate(updateDimensions);
-        isScheduledRef.current = true;
+        isDirtyRef.current = true;
       }
     }, scrollThrottleTime);
 
@@ -340,9 +341,9 @@ function VirtualList<
     }
 
     if (willUpdate) {
-      if (!isScheduledRef.current) {
+      if (!isDirtyRef.current) {
         scheduleUpdate(updateDimensions);
-        isScheduledRef.current = true;
+        isDirtyRef.current = true;
       }
     }
   }, [items, scrollingItemIndexRef.current, sliceRef.current]);
