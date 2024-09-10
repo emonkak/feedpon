@@ -1,4 +1,4 @@
-import React from 'react';
+import type { RenderContext, TemplateResult } from '@emonkak/ebit';
 
 import type { Category } from 'feedpon-messaging';
 
@@ -8,40 +8,35 @@ interface CategoryHeaderProps {
   numEntries: number;
 }
 
-export default function CategoryHeader({
-  category,
-  hasMoreEntries,
-  numEntries,
-}: CategoryHeaderProps) {
-  return (
-    <header className="stream-header">
-      <div className="container">
-        <div className="u-flex u-flex-align-items-center u-flex-justify-content-between">
-          <div className="u-margin-right-2 u-flex-grow-1">
+export default function CategoryHeader(
+  { category, hasMoreEntries, numEntries }: CategoryHeaderProps,
+  context: RenderContext,
+): TemplateResult {
+  return context.html`
+    <header class="stream-header">
+      <div class="container">
+        <div class="u-flex u-flex-align-items-center u-flex-justify-content-between">
+          <div class="u-margin-right-2 u-flex-grow-1">
             <div>
-              <strong>{category.label}</strong>
+              <strong>${category.label}</strong>
             </div>
-            <div className="list-inline list-inline-dotted">
-              <div className="list-inline-item u-text-muted">
-                <span className="u-text-4">
-                  {numEntries}
-                  {hasMoreEntries && '+'}
-                </span>{' '}
-                entries
+            <div class="list-inline list-inline-dotted">
+              <div class="list-inline-item u-text-muted">
+                <span class="u-text-4">${numEntries}${hasMoreEntries ? '+' : ''}</span> entries
               </div>
             </div>
           </div>
-          <div className="u-flex-shrink-0">
+          <div class="u-flex-shrink-0">
             <a
-              className="button button-outline-default"
-              href={`#/categories/${category.label}`}
+              class="button button-outline-default"
+              href=${`#/categories/${category.label}`}
               title="Organize category..."
             >
-              <i className="icon icon-20 icon-edit" />
+              <i class="icon icon-20 icon-edit"></i>
             </a>
           </div>
         </div>
       </div>
     </header>
-  );
+  `;
 }

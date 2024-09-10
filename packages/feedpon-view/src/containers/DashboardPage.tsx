@@ -7,7 +7,7 @@ import { toggleSidebar } from 'feedpon-messaging/ui';
 import * as CacheMap from 'feedpon-utils/CacheMap';
 import Navbar from '../components/Navbar';
 import RelativeTime from '../components/RelativeTime';
-import MainLayout from '../layouts/MainLayout';
+import MainLayout from '../layouts/ReactMainLayout';
 import SubscriptionIcon from '../modules/SubscriptionIcon';
 
 export interface DashboardProps {}

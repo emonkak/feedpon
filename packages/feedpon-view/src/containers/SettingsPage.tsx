@@ -7,7 +7,7 @@ import { toggleSidebar } from 'feedpon-messaging/ui';
 import { Nav, NavItem } from '../components/Nav';
 import Navbar from '../components/Navbar';
 import useEvent from '../hooks/useEvent';
-import MainLayout from '../layouts/MainLayout';
+import MainLayout from '../layouts/ReactMainLayout';
 
 export interface SettingsProps {
   children: React.ReactElement;

@@ -9,7 +9,7 @@ import Dropdown from '../components/Dropdown';
 import { MenuItem } from '../components/Menu';
 import Navbar from '../components/Navbar';
 import useEvent from '../hooks/useEvent';
-import MainLayout from '../layouts/MainLayout';
+import MainLayout from '../layouts/ReactMainLayout';
 
 export interface AboutPageProps {
   locationActions: LocationActions;

@@ -10,7 +10,7 @@ import { MenuItem } from '../components/Menu';
 import Modal from '../components/Modal';
 import Navbar from '../components/Navbar';
 import useEvent from '../hooks/useEvent';
-import MainLayout from '../layouts/MainLayout';
+import MainLayout from '../layouts/ReactMainLayout';
 
 export interface KitchenSinkProps {}
 

@@ -26,7 +26,7 @@ import { MenuItem } from '../components/Menu';
 import Navbar from '../components/Navbar';
 import VirtualList, { type BlankSpaces } from '../components/VirtualList';
 import useEvent from '../hooks/useEvent';
-import MainLayout from '../layouts/MainLayout';
+import MainLayout from '../layouts/ReactMainLayout';
 import CategoriesNav from '../modules/CategoriesNav';
 import EditCategoryForm from '../modules/EditCategoryForm';
 import SubscriptionItem from '../modules/Subscription';

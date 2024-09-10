@@ -19,7 +19,7 @@ import { toggleSidebar } from 'feedpon-messaging/ui';
 import Navbar from '../components/Navbar';
 import useEvent from '../hooks/useEvent';
 import usePrevious from '../hooks/usePrevious';
-import MainLayout from '../layouts/MainLayout';
+import MainLayout from '../layouts/ReactMainLayout';
 import FeedComponent from '../modules/Feed';
 import FeedPlaceholder from '../modules/FeedPlaceholder';
 

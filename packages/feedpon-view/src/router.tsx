@@ -1,6 +1,10 @@
-import { type Component, Either } from '@emonkak/ebit/directives.js';
-import type { LocationActions } from '@emonkak/ebit/router.js';
-import { Router, route, wildcard } from '@emonkak/ebit/router.js';
+import { type Component, Either, component } from '@emonkak/ebit/directives.js';
+import {
+  type LocationActions,
+  Router,
+  route,
+  wildcard,
+} from '@emonkak/ebit/router.js';
 import type { Store } from 'feedpon-messaging';
 import React from 'react';
 
@@ -184,10 +188,8 @@ export const router = new Router<
       ),
     ],
   ),
-  route(['streams', wildcard], ([streamId], _url, { store }) =>
-    Either.left(
-      reactElement(wrapStoreContext(<StreamPage streamId={streamId} />, store)),
-    ),
+  route(['streams', wildcard], ([streamId]) =>
+    Either.right(component(StreamPage, { streamId })),
   ),
 ]);
 

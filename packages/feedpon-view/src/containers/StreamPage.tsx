@@ -1,7 +1,11 @@
-import React, { useEffect, useMemo, useRef } from 'react';
-
+import type { RenderContext, TemplateResult } from '@emonkak/ebit';
+import {
+  type Component,
+  component,
+  optional,
+} from '@emonkak/ebit/directives.js';
 import { bindActions } from 'feedpon-flux';
-import { useStore } from 'feedpon-flux/react';
+import { getStoreHook } from 'feedpon-flux/ebit';
 import type { EntryOrderKind, State, StreamViewKind } from 'feedpon-messaging';
 import {
   createCategory,
@@ -42,10 +46,13 @@ import {
   unselectStream,
 } from 'feedpon-messaging/ui';
 import * as CacheMap from 'feedpon-utils/CacheMap';
+import React from 'react';
+
 import type { VirtualListRef } from '../components/VirtualList';
-import useEvent from '../hooks/useEvent';
-import useIsMounted from '../hooks/useIsMounted';
-import MainLayout from '../layouts/MainLayout';
+import { reactElement } from '../directives/reactElement';
+import { eventHook } from '../hooks/eventHook';
+import { isMountedHook } from '../hooks/isMountedHook';
+import { MainLayout } from '../layouts/MainLayout';
 import CategoryHeader from '../modules/CategoryHeader';
 import EntryList from '../modules/EntryList';
 import FeedHeader from '../modules/FeedHeader';
@@ -56,7 +63,10 @@ export interface StreamPageProps {
   streamId: string;
 }
 
-export function StreamPage({ streamId }: StreamPageProps) {
+export function StreamPage(
+  { streamId }: StreamPageProps,
+  context: RenderContext,
+): TemplateResult {
   const {
     categories,
     isLoaded,
@@ -92,50 +102,52 @@ export function StreamPage({ streamId }: StreamPageProps) {
     onUpdateEntrySizes,
     streams,
     subscriptions,
-  } = useStore({
-    mapStateToProps: (state: State) => {
-      return {
-        categories: state.categories,
-        isLoaded: state.streams.isLoaded,
-        isLoading: state.streams.isLoading,
-        keepUnread: state.streams.keepUnread,
-        streams: state.streams,
-        subscriptions: state.subscriptions,
-      };
-    },
-    mapDispatchToProps: bindActions({
-      onAddToCategory: addToCategory,
-      onChangeActiveEntry: changeActiveEntry,
-      onChangeExpandedEntry: changeExpandedEntry,
-      onChangeStreamView: changeStreamView,
-      onChangeUnreadKeeping: changeUnreadKeeping,
-      onCreateCategory: createCategory,
-      onFetchEntryComments: fetchEntryComments,
-      onFetchFullContent: fetchFullContent,
-      onFetchMoreEntries: fetchMoreEntries,
-      onFetchStream: fetchStream,
-      onHideEntryComments: hideEntryComments,
-      onHideFullContents: hideFullContents,
-      onMarkAllAsRead: markAllAsRead,
-      onMarkAsRead: markAsRead,
-      onMarkCategoryAsRead: markCategoryAsRead,
-      onMarkFeedAsRead: markFeedAsRead,
-      onPinEntry: pinEntry,
-      onRemoveFromCategory: removeFromCategory,
-      onResetReadEntry: resetReadEntry,
-      onSelectStream: selectStream,
-      onShowEntryComments: showEntryComments,
-      onShowFullContents: showFullContents,
-      onSubscribe: subscribe,
-      onToggleSidebar: toggleSidebar,
-      onUnpinEntry: unpinEntry,
-      onUnselectStream: unselectStream,
-      onUnsubscribe: unsubscribe,
-      onUpdateEntrySizes: updateEntrySizes,
+  } = context.use(
+    getStoreHook({
+      mapStateToProps: (state: State) => {
+        return {
+          categories: state.categories,
+          isLoaded: state.streams.isLoaded,
+          isLoading: state.streams.isLoading,
+          keepUnread: state.streams.keepUnread,
+          streams: state.streams,
+          subscriptions: state.subscriptions,
+        };
+      },
+      mapDispatchToProps: bindActions({
+        onAddToCategory: addToCategory,
+        onChangeActiveEntry: changeActiveEntry,
+        onChangeExpandedEntry: changeExpandedEntry,
+        onChangeStreamView: changeStreamView,
+        onChangeUnreadKeeping: changeUnreadKeeping,
+        onCreateCategory: createCategory,
+        onFetchEntryComments: fetchEntryComments,
+        onFetchFullContent: fetchFullContent,
+        onFetchMoreEntries: fetchMoreEntries,
+        onFetchStream: fetchStream,
+        onHideEntryComments: hideEntryComments,
+        onHideFullContents: hideFullContents,
+        onMarkAllAsRead: markAllAsRead,
+        onMarkAsRead: markAsRead,
+        onMarkCategoryAsRead: markCategoryAsRead,
+        onMarkFeedAsRead: markFeedAsRead,
+        onPinEntry: pinEntry,
+        onRemoveFromCategory: removeFromCategory,
+        onResetReadEntry: resetReadEntry,
+        onSelectStream: selectStream,
+        onShowEntryComments: showEntryComments,
+        onShowFullContents: showFullContents,
+        onSubscribe: subscribe,
+        onToggleSidebar: toggleSidebar,
+        onUnpinEntry: unpinEntry,
+        onUnselectStream: unselectStream,
+        onUnsubscribe: unsubscribe,
+        onUpdateEntrySizes: updateEntrySizes,
+      }),
     }),
-  });
-  const isMounted = useIsMounted();
-  const virtualListRef = useRef<VirtualListRef | null>(null);
+  );
+  const isMounted = context.use(isMountedHook);
+  const virtualListRef = context.useRef<VirtualListRef | null>(null);
 
   const stream = CacheMap.get(streams.items, streamId) ?? {
     activeEntryIndex: -1,
@@ -164,11 +176,11 @@ export function StreamPage({ streamId }: StreamPageProps) {
     !stream ||
     !streams.isLoaded ||
     subscriptions.lastUpdatedAt > stream.fetchedAt;
-  const sortedCategories = useMemo(
+  const sortedCategories = context.useMemo(
     () => getSortedCategories(categories.items),
     [categories.items],
   );
-  const readEntries = useMemo(
+  const readEntries = context.useMemo(
     () =>
       stream.entries
         .slice(0, stream.readEntryIndex + 1)
@@ -176,7 +188,7 @@ export function StreamPage({ streamId }: StreamPageProps) {
     [stream.entries],
   );
 
-  useEffect(() => {
+  context.useEffect(() => {
     onSelectStream(streamId);
 
     if (!keepUnread && readEntries.length > 0) {
@@ -188,7 +200,7 @@ export function StreamPage({ streamId }: StreamPageProps) {
     }
   }, [streamId]);
 
-  useEffect(() => {
+  context.useEffect(() => {
     if (stream.expandedEntryIndex > -1) {
       virtualListRef.current?.scrollTo(stream.expandedEntryIndex);
     } else if (stream.activeEntryIndex > -1) {
@@ -196,7 +208,7 @@ export function StreamPage({ streamId }: StreamPageProps) {
     }
   }, [stream.expandedEntryIndex]);
 
-  useEffect(() => {
+  context.useEffect(() => {
     if (!isMounted()) {
       return;
     }
@@ -205,7 +217,7 @@ export function StreamPage({ streamId }: StreamPageProps) {
     }
   }, [isLoading]);
 
-  useEffect(() => {
+  context.useEffect(() => {
     if (!isMounted()) {
       return;
     }
@@ -214,7 +226,7 @@ export function StreamPage({ streamId }: StreamPageProps) {
     }
   }, [streamId]);
 
-  useEffect(() => {
+  context.useEffect(() => {
     return () => {
       onUnselectStream();
 
@@ -224,104 +236,134 @@ export function StreamPage({ streamId }: StreamPageProps) {
     };
   }, []);
 
-  const handleChangeActiveEnetry = useEvent((nextActiveEntryIndex: number) => {
-    onChangeActiveEntry(stream.streamId, nextActiveEntryIndex);
-  });
-
-  const handleChangeEntryOrder = useEvent((entryOrder: EntryOrderKind) => {
-    window.scrollTo(0, 0);
-
-    onFetchStream(stream.streamId, stream.streamView, {
-      ...stream.fetchOptions,
-      entryOrder,
-    });
-  });
-
-  const handleChangeExpandedEntry = useEvent((index: number) => {
-    onChangeExpandedEntry(stream.streamId, index);
-  });
-
-  const handleChangeNumberOfEntries = useEvent((numEntries: number) => {
-    window.scrollTo(0, 0);
-
-    onFetchStream(stream.streamId, stream.streamView, {
-      ...stream.fetchOptions,
-      numEntries,
-    });
-  });
-
-  const handleChangeStreamView = useEvent((streamView: StreamViewKind) => {
-    onChangeStreamView(stream.streamId, streamView);
-  });
-
-  const handleClearReadEntries = useEvent(() => {
-    window.scrollTo(0, 0);
-
-    onResetReadEntry(stream.streamId);
-  });
-
-  const handleCloseEntry = useEvent(() => {
-    onChangeExpandedEntry(stream.streamId, -1);
-  });
-
-  const handleUpdateBlockSizes = useEvent(
-    (entrySizes: { [id: string]: number }) => {
-      onUpdateEntrySizes(stream.streamId, entrySizes);
-    },
+  const handleChangeActiveEnetry = context.use(
+    eventHook((nextActiveEntryIndex: number) => {
+      onChangeActiveEntry(stream.streamId, nextActiveEntryIndex);
+    }),
   );
 
-  const handleLoadMoreEntries = useEvent(() => {
-    if (stream.continuation) {
-      onFetchMoreEntries(
-        stream.streamId,
-        stream.continuation,
-        stream.fetchOptions,
+  const handleChangeEntryOrder = context.use(
+    eventHook((entryOrder: EntryOrderKind) => {
+      window.scrollTo(0, 0);
+
+      onFetchStream(stream.streamId, stream.streamView, {
+        ...stream.fetchOptions,
+        entryOrder,
+      });
+    }),
+  );
+
+  const handleChangeExpandedEntry = context.use(
+    eventHook((index: number) => {
+      onChangeExpandedEntry(stream.streamId, index);
+    }),
+  );
+
+  const handleChangeNumberOfEntries = context.use(
+    eventHook((numEntries: number) => {
+      window.scrollTo(0, 0);
+
+      onFetchStream(stream.streamId, stream.streamView, {
+        ...stream.fetchOptions,
+        numEntries,
+      });
+    }),
+  );
+
+  const handleChangeStreamView = context.use(
+    eventHook((streamView: StreamViewKind) => {
+      onChangeStreamView(stream.streamId, streamView);
+    }),
+  );
+
+  const handleClearReadEntries = context.use(
+    eventHook(() => {
+      window.scrollTo(0, 0);
+
+      onResetReadEntry(stream.streamId);
+    }),
+  );
+
+  const handleCloseEntry = context.use(
+    eventHook(() => {
+      onChangeExpandedEntry(stream.streamId, -1);
+    }),
+  );
+
+  const handleUpdateBlockSizes = context.use(
+    eventHook((entrySizes: { [id: string]: number }) => {
+      onUpdateEntrySizes(stream.streamId, entrySizes);
+    }),
+  );
+
+  const handleLoadMoreEntries = context.use(
+    eventHook(() => {
+      if (stream.continuation) {
+        onFetchMoreEntries(
+          stream.streamId,
+          stream.continuation,
+          stream.fetchOptions,
+        );
+      }
+    }),
+  );
+
+  const handleMarkAllEntriesAsRead = context.use(
+    eventHook(() => {
+      const unreadEntries = stream.entries.filter(
+        (entry) => !entry.markedAsRead,
       );
-    }
-  });
 
-  const handleMarkAllEntriesAsRead = useEvent(() => {
-    const unreadEntries = stream.entries.filter((entry) => !entry.markedAsRead);
+      if (unreadEntries.length > 0) {
+        onMarkAsRead(unreadEntries);
+      }
+    }),
+  );
 
-    if (unreadEntries.length > 0) {
-      onMarkAsRead(unreadEntries);
-    }
-  });
+  const handleMarkStreamAsRead = context.use(
+    eventHook(() => {
+      if (stream.streamId === ALL_STREAM_ID) {
+        onMarkAllAsRead();
+      } else if (streamCategory) {
+        onMarkCategoryAsRead(streamCategory);
+      } else if (streamSubscription) {
+        onMarkFeedAsRead(streamSubscription);
+      }
+    }),
+  );
 
-  const handleMarkStreamAsRead = useEvent(() => {
-    if (stream.streamId === ALL_STREAM_ID) {
-      onMarkAllAsRead();
-    } else if (streamCategory) {
-      onMarkCategoryAsRead(streamCategory);
-    } else if (streamSubscription) {
-      onMarkFeedAsRead(streamSubscription);
-    }
-  });
+  const handleReloadEntries = context.use(
+    eventHook(() => {
+      window.scrollTo(0, 0);
 
-  const handleReloadEntries = useEvent(() => {
-    window.scrollTo(0, 0);
+      onFetchStream(stream.streamId, stream.streamView, stream.fetchOptions);
+    }),
+  );
 
-    onFetchStream(stream.streamId, stream.streamView, stream.fetchOptions);
-  });
+  const handleScrollToEntry = context.use(
+    eventHook((index: number) => {
+      virtualListRef.current?.scrollTo(index);
+    }),
+  );
 
-  const handleScrollToEntry = useEvent((index: number) => {
-    virtualListRef.current?.scrollTo(index);
-  });
+  const handleToggleOnlyUnread = context.use(
+    eventHook(() => {
+      window.scrollTo(0, 0);
 
-  const handleToggleOnlyUnread = useEvent(() => {
-    window.scrollTo(0, 0);
+      onFetchStream(stream.streamId, stream.streamView, {
+        ...stream.fetchOptions,
+        onlyUnread: !stream.fetchOptions.onlyUnread,
+      });
+    }),
+  );
 
-    onFetchStream(stream.streamId, stream.streamView, {
-      ...stream.fetchOptions,
-      onlyUnread: !stream.fetchOptions.onlyUnread,
-    });
-  });
+  const handleToggleUnreadKeeping = context.use(
+    eventHook(() => {
+      onChangeUnreadKeeping(!keepUnread);
+    }),
+  );
 
-  const handleToggleUnreadKeeping = useEvent(() => {
-    onChangeUnreadKeeping(!keepUnread);
-  });
-
-  const navbar = (
+  const header = reactElement(
     <StreamNavbar
       activeEntryIndex={stream.activeEntryIndex}
       canMarkStreamAsRead={canMarkStreamAsRead}
@@ -345,51 +387,47 @@ export function StreamPage({ streamId }: StreamPageProps) {
       readEntryIndex={stream.readEntryIndex}
       streamView={stream.streamView}
       title={stream.title}
-    />
+    />,
   );
 
-  const footer = (
+  const footer = reactElement(
     <StreamFooter
       canMarkAllEntriesAsRead={canMarkAllEntriesAsRead}
       hasMoreEntries={stream.continuation !== null}
       isLoading={isLoading}
       onLoadMoreEntries={handleLoadMoreEntries}
       onMarkAllEntiresAsRead={handleMarkAllEntriesAsRead}
-    />
+    />,
   );
 
-  let streamHeader: React.ReactElement | null;
+  let streamHeader: Component<any, any, any> | null;
 
   if (stream.feed) {
-    streamHeader = (
-      <FeedHeader
-        categories={sortedCategories}
-        feed={stream.feed}
-        hasMoreEntries={!!stream.continuation}
-        numEntries={stream.entries.length}
-        onAddToCategory={onAddToCategory}
-        onCreateCategory={onCreateCategory}
-        onRemoveFromCategory={onRemoveFromCategory}
-        onSubscribe={onSubscribe}
-        onUnsubscribe={onUnsubscribe}
-        subscription={streamSubscription}
-      />
-    );
+    streamHeader = component(FeedHeader, {
+      categories: sortedCategories,
+      feed: stream.feed,
+      hasMoreEntries: !!stream.continuation,
+      numEntries: stream.entries.length,
+      onAddToCategory: onAddToCategory,
+      onCreateCategory: onCreateCategory,
+      onRemoveFromCategory: onRemoveFromCategory,
+      onSubscribe: onSubscribe,
+      onUnsubscribe: onUnsubscribe,
+      subscription: streamSubscription,
+    });
   } else if (streamCategory) {
-    streamHeader = (
-      <CategoryHeader
-        category={streamCategory}
-        hasMoreEntries={!!stream.continuation}
-        numEntries={stream.entries.length}
-      />
-    );
+    streamHeader = component(CategoryHeader, {
+      category: streamCategory,
+      hasMoreEntries: !!stream.continuation,
+      numEntries: stream.entries.length,
+    });
   } else {
     streamHeader = null;
   }
 
-  return (
-    <MainLayout header={navbar} footer={footer}>
-      {streamHeader}
+  const content = context.html`
+    <${optional(streamHeader)}>
+    <${reactElement(
       <EntryList
         activeEntryIndex={stream.activeEntryIndex}
         blockSizes={stream.entrySizes}
@@ -412,7 +450,13 @@ export function StreamPage({ streamId }: StreamPageProps) {
         ref={virtualListRef}
         sameOrigin={stream.feed !== null}
         streamView={stream.streamView}
-      />
-    </MainLayout>
-  );
+      />,
+    )}>
+  `;
+
+  return context.html`<${component(MainLayout, {
+    header,
+    footer,
+    content,
+  })}>`;
 }
