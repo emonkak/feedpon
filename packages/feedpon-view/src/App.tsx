@@ -5,7 +5,7 @@ import type { Store } from 'feedpon-flux';
 import { setStoreHook } from 'feedpon-flux/ebit';
 import type { History } from 'history';
 
-import { Dispatch } from './Dispatch';
+import { Dispatcher } from './Dispatcher';
 
 export interface AppProps {
   getStore: () => Promise<Store<unknown, unknown>>;
@@ -65,5 +65,5 @@ export function App(
 
   context.use(setStoreHook(store));
 
-  return context.html`<${component(Dispatch, {})}>`;
+  return context.html`<${component(Dispatcher, {})}>`;
 }

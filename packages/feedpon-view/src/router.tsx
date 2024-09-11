@@ -9,20 +9,23 @@ import type { Store } from 'feedpon-messaging';
 import React from 'react';
 
 import { StoreContext } from 'feedpon-flux/react';
-import { AboutPage } from './containers/AboutPage';
-import { CategoriesPage } from './containers/CategoriesPage';
-import { DashboardPage } from './containers/DashboardPage';
-import { KeyboardSettings } from './containers/KeyboardSettings';
-import { KitchenSinkPage } from './containers/KitchenSinkPage';
-import { SearchPage } from './containers/SearchPage';
-import { SettingsPage } from './containers/SettingsPage';
-import { SiteinfoSettings } from './containers/SiteinfoSettings';
-import { StreamPage } from './containers/StreamPage';
-import { StreamSettings } from './containers/StreamSettings';
-import { TrackingUrlSettings } from './containers/TrackingUrlSettings';
-import { UISettings } from './containers/UISettings';
-import { UrlReplacementSettings } from './containers/UrlReplacementSettings';
-import { type ReactElement, reactElement } from './directives/reactElement';
+import { AboutPage } from './about/AboutPage';
+import { CategoriesPage } from './category/CategoriesPage';
+import {
+  type ReactElement,
+  reactElement,
+} from './common/directives/reactElement';
+import { DashboardPage } from './dashboard/DashboardPage';
+import { KitchensinkPage } from './kitchensink/KitchensinkPage';
+import { SearchPage } from './search/SearchPage';
+import { KeyboardSettings } from './settings/KeyboardSettings';
+import { SettingsPage } from './settings/SettingsPage';
+import { SiteinfoSettings } from './settings/SiteinfoSettings';
+import { StreamSettings } from './settings/StreamSettings';
+import { TrackingUrlSettings } from './settings/TrackingUrlSettings';
+import { UISettings } from './settings/UISettings';
+import { UrlReplacementSettings } from './settings/UrlReplacementSettings';
+import { StreamPage } from './stream/StreamPage';
 
 export interface RouterState {
   locationActions: LocationActions;
@@ -74,7 +77,7 @@ export const router = new Router<
     ],
   ),
   route(['kitchensink'], (_args, _url, { store }) =>
-    Either.left(reactElement(wrapStoreContext(<KitchenSinkPage />, store))),
+    Either.left(reactElement(wrapStoreContext(<KitchensinkPage />, store))),
   ),
   route(
     ['search'],

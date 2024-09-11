@@ -1,0 +1,90 @@
+import React from 'react';
+
+import type { FullContent } from 'feedpon-messaging';
+import { SanitizedHTML } from '../common/components/SanitizedHTML';
+
+interface FullContentsProps {
+  isLoading: boolean;
+  isNotFound: boolean;
+  items: FullContent[];
+  onFetchNext: React.MouseEventHandler<any>;
+}
+
+export function FullContents({
+  isLoading,
+  isNotFound,
+  items,
+  onFetchNext,
+}: FullContentsProps) {
+  if (items.length === 0) {
+    return (
+      <div className="entry-content u-clearfix u-text-wrap">
+        <div className="message message-positive">
+          This entry could not extract the full content.
+        </div>
+      </div>
+    );
+  }
+
+  const pages = items.map((fullContent, index) => (
+    <section key={index} className="entry-page">
+      {index > 0 && (
+        <header className="entry-page-header">
+          <h2 className="entry-page-title">
+            <a
+              className="link-soft"
+              href={fullContent.url}
+              target="_blank"
+              rel="noreferrer"
+            >
+              {'Page ' + (index + 1)}
+            </a>
+          </h2>
+        </header>
+      )}
+      <SanitizedHTML
+        baseUrl={fullContent.url}
+        className="entry-page-content"
+        html={fullContent.content}
+      />
+    </section>
+  ));
+
+  let nextPageButton: React.ReactElement<any> | null = null;
+
+  if (isNotFound) {
+    nextPageButton = (
+      <div className="message message-positive">
+        The next page cannot be extracted.
+      </div>
+    );
+  } else {
+    const latestItem = items[items.length - 1];
+    if (latestItem?.nextPageUrl) {
+      nextPageButton = isLoading ? (
+        <button
+          type="button"
+          className="button button-block button-outline-positive"
+          disabled={true}
+        >
+          <i className="icon icon-20 icon-spinner animation-rotating" />
+        </button>
+      ) : (
+        <button
+          type="button"
+          className="button button-block button-outline-positive"
+          onClick={onFetchNext}
+        >
+          Next page
+        </button>
+      );
+    }
+  }
+
+  return (
+    <div className="entry-content u-clearfix u-text-wrap">
+      {pages}
+      {nextPageButton}
+    </div>
+  );
+}
