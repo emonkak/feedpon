@@ -8,7 +8,7 @@ import React from 'react';
 import { ReactMainLayout } from '../common/MainLayout';
 import { Dropdown } from '../common/components/Dropdown';
 import { MenuItem } from '../common/components/Menu';
-import { Navbar } from '../common/components/Navbar';
+import { ReactNavbar } from '../common/components/Navbar';
 import { useEvent } from '../common/hooks/useEvent';
 
 export interface AboutPageProps {
@@ -181,7 +181,7 @@ export function AboutPage({ locationActions }: AboutPageProps) {
   ));
 
   const header = (
-    <Navbar onToggleSidebar={onToggleSidebar}>
+    <ReactNavbar onToggleSidebar={onToggleSidebar}>
       <h1 className="navbar-title">About</h1>
       <Dropdown
         toggleButton={
@@ -196,7 +196,7 @@ export function AboutPage({ locationActions }: AboutPageProps) {
           primaryText="Go kitchensink..."
         />
       </Dropdown>
-    </Navbar>
+    </ReactNavbar>
   );
 
   return (

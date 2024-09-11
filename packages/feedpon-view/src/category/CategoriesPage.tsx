@@ -24,7 +24,7 @@ import React, { useMemo, useRef, useState } from 'react';
 import { ReactMainLayout } from '../common/MainLayout';
 import { Dropdown } from '../common/components/Dropdown';
 import { MenuItem } from '../common/components/Menu';
-import { Navbar } from '../common/components/Navbar';
+import { ReactNavbar } from '../common/components/Navbar';
 import {
   type BlankSpaces,
   VirtualList,
@@ -194,7 +194,7 @@ export function CategoriesPage({
   }, [query, selectedSubscriptions]);
 
   const header = (
-    <Navbar onToggleSidebar={onToggleSidebar}>
+    <ReactNavbar onToggleSidebar={onToggleSidebar}>
       <h1 className="navbar-title">Organize subscriptions</h1>
       <Dropdown<Action>
         toggleButton={
@@ -213,7 +213,7 @@ export function CategoriesPage({
         type="file"
         onChange={handleChangeUploadFile}
       />
-    </Navbar>
+    </ReactNavbar>
   );
 
   const description =

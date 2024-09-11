@@ -9,7 +9,7 @@ import { ReactMainLayout } from '../common/MainLayout';
 import { Dropdown } from '../common/components/Dropdown';
 import { MenuItem } from '../common/components/Menu';
 import { Modal } from '../common/components/Modal';
-import { Navbar } from '../common/components/Navbar';
+import { ReactNavbar } from '../common/components/Navbar';
 import { useEvent } from '../common/hooks/useEvent';
 
 export interface KitchenSinkProps {}
@@ -43,9 +43,9 @@ export function KitchensinkPage(_props: KitchenSinkProps) {
   });
 
   const navbar = (
-    <Navbar onToggleSidebar={onToggleSidebar}>
+    <ReactNavbar onToggleSidebar={onToggleSidebar}>
       <h1 className="navbar-title">Kitchen sink</h1>
-    </Navbar>
+    </ReactNavbar>
   );
 
   return (

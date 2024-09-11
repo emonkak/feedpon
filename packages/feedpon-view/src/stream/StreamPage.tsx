@@ -57,7 +57,7 @@ import { CategoryHeader } from './CategoryHeader';
 import { EntryList } from './EntryList';
 import { FeedHeader } from './FeedHeader';
 import { StreamFooter } from './StreamFooter';
-import { StreamNavbar } from './StreamNavbar';
+import { StreamHeader } from './StreamHeader';
 
 export interface StreamPageProps {
   streamId: string;
@@ -363,47 +363,43 @@ export function StreamPage(
     }),
   );
 
-  const header = reactElement(
-    <StreamNavbar
-      activeEntryIndex={stream.activeEntryIndex}
-      canMarkStreamAsRead={canMarkStreamAsRead}
-      entries={stream.entries}
-      feed={stream.feed}
-      fetchOptions={stream.fetchOptions}
-      isExpanded={stream.expandedEntryIndex > -1}
-      isLoading={isLoading}
-      keepUnread={keepUnread}
-      onChangeEntryOrder={handleChangeEntryOrder}
-      onChangeNumberOfEntries={handleChangeNumberOfEntries}
-      onChangeStreamView={handleChangeStreamView}
-      onClearReadPosition={handleClearReadEntries}
-      onCloseEntry={handleCloseEntry}
-      onMarkStreamAsRead={handleMarkStreamAsRead}
-      onReloadEntries={handleReloadEntries}
-      onScrollToEntry={handleScrollToEntry}
-      onToggleOnlyUnread={handleToggleOnlyUnread}
-      onToggleSidebar={onToggleSidebar}
-      onToggleUnreadKeeping={handleToggleUnreadKeeping}
-      readEntryIndex={stream.readEntryIndex}
-      streamView={stream.streamView}
-      title={stream.title}
-    />,
-  );
+  const header = component(StreamHeader, {
+    activeEntryIndex: stream.activeEntryIndex,
+    canMarkStreamAsRead: canMarkStreamAsRead,
+    entries: stream.entries,
+    feed: stream.feed,
+    fetchOptions: stream.fetchOptions,
+    isExpanded: stream.expandedEntryIndex > -1,
+    isLoading: isLoading,
+    keepUnread: keepUnread,
+    onChangeEntryOrder: handleChangeEntryOrder,
+    onChangeNumberOfEntries: handleChangeNumberOfEntries,
+    onChangeStreamView: handleChangeStreamView,
+    onClearReadPosition: handleClearReadEntries,
+    onCloseEntry: handleCloseEntry,
+    onMarkStreamAsRead: handleMarkStreamAsRead,
+    onReloadEntries: handleReloadEntries,
+    onScrollToEntry: handleScrollToEntry,
+    onToggleOnlyUnread: handleToggleOnlyUnread,
+    onToggleSidebar: onToggleSidebar,
+    onToggleUnreadKeeping: handleToggleUnreadKeeping,
+    readEntryIndex: stream.readEntryIndex,
+    streamView: stream.streamView,
+    title: stream.title,
+  });
 
-  const footer = reactElement(
-    <StreamFooter
-      canMarkAllEntriesAsRead={canMarkAllEntriesAsRead}
-      hasMoreEntries={stream.continuation !== null}
-      isLoading={isLoading}
-      onLoadMoreEntries={handleLoadMoreEntries}
-      onMarkAllEntiresAsRead={handleMarkAllEntriesAsRead}
-    />,
-  );
+  const footer = component(StreamFooter, {
+    canMarkAllEntriesAsRead: canMarkAllEntriesAsRead,
+    hasMoreEntries: stream.continuation !== null,
+    isLoading: isLoading,
+    onLoadMoreEntries: handleLoadMoreEntries,
+    onMarkAllEntiresAsRead: handleMarkAllEntriesAsRead,
+  });
 
-  let streamHeader: Component<any, any, any> | null;
+  let entryHeader: Component<any, any, any> | null;
 
   if (stream.feed) {
-    streamHeader = component(FeedHeader, {
+    entryHeader = component(FeedHeader, {
       categories: sortedCategories,
       feed: stream.feed,
       hasMoreEntries: !!stream.continuation,
@@ -416,17 +412,17 @@ export function StreamPage(
       subscription: streamSubscription,
     });
   } else if (streamCategory) {
-    streamHeader = component(CategoryHeader, {
+    entryHeader = component(CategoryHeader, {
       category: streamCategory,
       hasMoreEntries: !!stream.continuation,
       numEntries: stream.entries.length,
     });
   } else {
-    streamHeader = null;
+    entryHeader = null;
   }
 
   const content = context.html`
-    <${optional(streamHeader)}>
+    <${optional(entryHeader)}>
     <${reactElement(
       <EntryList
         activeEntryIndex={stream.activeEntryIndex}

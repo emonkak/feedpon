@@ -1,6 +1,4 @@
-import React from 'react';
-
-import { useEvent } from '../common/hooks/useEvent';
+import type { RenderContext, TemplateResult } from '@emonkak/ebit';
 
 interface StreamFooterProps {
   canMarkAllEntriesAsRead: boolean;
@@ -10,50 +8,55 @@ interface StreamFooterProps {
   onMarkAllEntiresAsRead: () => void;
 }
 
-export function StreamFooter({
-  canMarkAllEntriesAsRead,
-  hasMoreEntries,
-  isLoading,
-  onMarkAllEntiresAsRead,
-  onLoadMoreEntries,
-}: StreamFooterProps) {
-  const handleLoadMoreEntries = useEvent((event: React.MouseEvent<unknown>) => {
-    event.preventDefault();
-
-    onLoadMoreEntries();
-  });
+export function StreamFooter(
+  {
+    canMarkAllEntriesAsRead,
+    hasMoreEntries,
+    isLoading,
+    onMarkAllEntiresAsRead,
+    onLoadMoreEntries,
+  }: StreamFooterProps,
+  context: RenderContext,
+): TemplateResult {
+  const handleLoadMoreEntries = context.useCallback(
+    (event: Event) => {
+      event.preventDefault();
+      onLoadMoreEntries();
+    },
+    [onLoadMoreEntries],
+  );
 
   if (hasMoreEntries) {
     if (isLoading) {
-      return (
-        <footer className="stream-footer">
-          <i className="icon icon-32 icon-spinner animation-rotating" />
+      return context.html`
+        <footer class="stream-footer">
+          <i class="icon icon-32 icon-spinner animation-rotating"></i>
         </footer>
-      );
-    } else {
-      return (
-        <footer className="stream-footer">
-          <a className="link-strong" href="#" onClick={handleLoadMoreEntries}>
-            Load more entries...
-          </a>
-        </footer>
-      );
+      `;
     }
-  } else {
-    return (
-      <footer className="stream-footer">
-        <p>No more entries here.</p>
-        <p>
-          <button
-            type="button"
-            className="button button-positive"
-            onClick={onMarkAllEntiresAsRead}
-            disabled={!canMarkAllEntriesAsRead}
-          >
-            Mark all entries as read
-          </button>
-        </p>
+
+    return context.html`
+      <footer class="stream-footer">
+        <a class="link-strong" href="#" @click=${handleLoadMoreEntries}>
+          Load more entries...
+        </a>
       </footer>
-    );
+    `;
   }
+
+  return context.html`
+    <footer class="stream-footer">
+      <p>No more entries here.</p>
+      <p>
+        <button
+          type="button"
+          class="button button-positive"
+          disabled=${!canMarkAllEntriesAsRead}
+          @click=${onMarkAllEntiresAsRead}
+        >
+          Mark all entries as read
+        </button>
+      </p>
+    </footer>
+  `;
 }

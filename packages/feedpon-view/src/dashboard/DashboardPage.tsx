@@ -7,7 +7,7 @@ import { toggleSidebar } from 'feedpon-messaging/ui';
 import * as CacheMap from 'feedpon-utils/CacheMap';
 import { ReactMainLayout } from '../common/MainLayout';
 import { SubscriptionIcon } from '../common/SubscriptionIcon';
-import { Navbar } from '../common/components/Navbar';
+import { ReactNavbar } from '../common/components/Navbar';
 import { RelativeTime } from '../common/components/RelativeTime';
 
 export interface DashboardProps {}
@@ -92,9 +92,9 @@ export function DashboardPage(_props: DashboardProps) {
   );
 
   const navbar = (
-    <Navbar onToggleSidebar={onToggleSidebar}>
+    <ReactNavbar onToggleSidebar={onToggleSidebar}>
       <h1 className="navbar-title">Dashboard</h1>
-    </Navbar>
+    </ReactNavbar>
   );
 
   let streamHistoryList: React.ReactElement;

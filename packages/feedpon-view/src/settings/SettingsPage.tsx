@@ -6,7 +6,7 @@ import React from 'react';
 
 import { ReactMainLayout } from '../common/MainLayout';
 import { Nav, NavItem } from '../common/components/Nav';
-import { Navbar } from '../common/components/Navbar';
+import { ReactNavbar } from '../common/components/Navbar';
 import { useEvent } from '../common/hooks/useEvent';
 
 export interface SettingsProps {
@@ -31,9 +31,9 @@ export function SettingsPage({
   });
 
   const navbar = (
-    <Navbar onToggleSidebar={onToggleSidebar}>
+    <ReactNavbar onToggleSidebar={onToggleSidebar}>
       <h1 className="navbar-title">Settings</h1>
-    </Navbar>
+    </ReactNavbar>
   );
 
   return (

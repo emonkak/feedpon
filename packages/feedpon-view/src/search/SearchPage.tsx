@@ -17,7 +17,7 @@ import { toggleSidebar } from 'feedpon-messaging/ui';
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { ReactMainLayout } from '../common/MainLayout';
-import { Navbar } from '../common/components/Navbar';
+import { ReactNavbar } from '../common/components/Navbar';
 import { useEvent } from '../common/hooks/useEvent';
 import { usePrevious } from '../common/hooks/usePrevious';
 import { FeedPlaceholder } from './FeedPlaceholder';
@@ -101,9 +101,9 @@ export function SearchPage({ query = '', locationActions }: SearchPageProps) {
   });
 
   const navbar = (
-    <Navbar onToggleSidebar={onToggleSidebar}>
+    <ReactNavbar onToggleSidebar={onToggleSidebar}>
       <div className="navbar-title">Search</div>
-    </Navbar>
+    </ReactNavbar>
   );
 
   let feedList: React.ReactElement | null = null;
