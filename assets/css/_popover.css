@@ -75,17 +75,3 @@
   border-bottom-color: transparent;
   clip: rect(-1px 15px 15px -1px);
 }
-
-.popover-exit.popover-exit-active {
-  transition: opacity 0.2s ease-in-out;
-}
-
-.popover-enter,
-.popover-exit.popover-exit-active {
-  opacity: 0;
-}
-
-.popover-enter.popover-enter-active,
-.popover-exit {
-  opacity: 1;
-}

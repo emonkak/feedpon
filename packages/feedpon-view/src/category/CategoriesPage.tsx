@@ -27,8 +27,8 @@ import { MenuItem } from '../common/components/Menu';
 import { ReactNavbar } from '../common/components/Navbar';
 import {
   type BlankSpaces,
-  VirtualList,
-} from '../common/components/VirtualList';
+  ReactVirtualScrollList,
+} from '../common/components/VirtualScrollList';
 import { useEvent } from '../common/hooks/useEvent';
 import { CategoriesNav } from './CategoriesNav';
 import { CategoryEditForm } from './CategoryEditForm';
@@ -99,17 +99,19 @@ export function CategoriesPage({
       .sort(createAscendingComparer<Subscription>('subscriptionId'));
   }, [subscriptions, label]);
 
-  const renderSubscriptionItem = useEvent((subscription: Subscription) => (
-    <SubscriptionView
-      categories={categories}
-      key={subscription.subscriptionId}
-      onAddToCategory={addToCategory}
-      onCreateCategory={createCategory}
-      onRemoveFromCategory={removeFromCategory}
-      onUnsubscribe={unsubscribe}
-      subscription={subscription}
-    />
-  ));
+  const renderSubscriptionItem = useEvent(
+    ({ subscription }: { id: string | number; subscription: Subscription }) => (
+      <SubscriptionView
+        categories={categories}
+        key={subscription.subscriptionId}
+        onAddToCategory={addToCategory}
+        onCreateCategory={createCategory}
+        onRemoveFromCategory={removeFromCategory}
+        onUnsubscribe={unsubscribe}
+        subscription={subscription}
+      />
+    ),
+  );
 
   const handleChangeSearchQuery = useMemo(
     () =>
@@ -182,15 +184,27 @@ export function CategoriesPage({
   const filteredSubscriptions = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
     if (normalizedQuery === '') {
-      return selectedSubscriptions;
+      return selectedSubscriptions.map((subscription) => ({
+        id: subscription.subscriptionId,
+        subscription,
+      }));
     }
 
     const tokens = normalizedQuery.split(/\s+/);
 
-    return selectedSubscriptions.filter((subscription) => {
-      const input = (subscription.title + ' ' + subscription.url).toLowerCase();
-      return tokens.every((query) => input.includes(query));
-    });
+    return selectedSubscriptions
+      .filter((subscription) => {
+        const input = (
+          subscription.title +
+          ' ' +
+          subscription.url
+        ).toLowerCase();
+        return tokens.every((query) => input.includes(query));
+      })
+      .map((subscription) => ({
+        id: subscription.subscriptionId,
+        subscription,
+      }));
   }, [query, selectedSubscriptions]);
 
   const header = (
@@ -252,9 +266,8 @@ export function CategoriesPage({
           />
         </p>
         {description}
-        <VirtualList
+        <ReactVirtualScrollList
           assumedItemSize={60}
-          idAttribute="subscriptionId"
           items={filteredSubscriptions}
           renderItem={renderSubscriptionItem}
           renderList={renderSubscriptionList}

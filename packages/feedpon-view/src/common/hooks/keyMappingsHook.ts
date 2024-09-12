@@ -1,7 +1,7 @@
 import type { Usable } from '@emonkak/ebit';
 import * as Trie from 'feedpon-utils/Trie';
 
-import { eventHook } from '../hooks/eventHook';
+import { createEventHook } from '../hooks/eventHook';
 
 const SPECIAL_KEYS: { [key: string]: string } = {
   ' ': 'Space',
@@ -20,7 +20,7 @@ export function keyMappingsHook(
     const timer = context.useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const handleDocumentKeyDown = context.use(
-      eventHook((event: KeyboardEvent) => {
+      createEventHook((event: KeyboardEvent) => {
         if (shouldIgnoreEvent(event)) {
           return;
         }

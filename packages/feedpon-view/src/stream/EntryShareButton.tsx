@@ -1,144 +1,127 @@
-import classnames from 'classnames';
-import React, { useRef, useState } from 'react';
-import CSSTransition from 'react-transition-group/CSSTransition';
+import type { RenderContext, TemplateResult } from '@emonkak/ebit';
 
-import { Dismissible } from '../common/components/Dismissible';
-import { useEvent } from '../common/hooks/useEvent';
-import { usePopup } from '../common/hooks/usePopup';
+import { component, styleMap } from '@emonkak/ebit/directives.js';
+import { Dialog } from '../common/components/Dialog';
+import { createPopupHook } from '../common/hooks/popupHook';
 
 interface EntryShareButtonProps {
   url: string;
   title: string;
 }
 
-export function EntryShareButton({ url, title }: EntryShareButtonProps) {
-  const containerRef = useRef(null);
+export function EntryShareButton(
+  { url, title }: EntryShareButtonProps,
+  context: RenderContext,
+): TemplateResult {
+  const popup = context.use(createPopupHook(false, ['up', 'down']));
 
-  const { closePopup, isOpened, openPopup, popupStyle, pullDirection } =
-    usePopup(false, ['up', 'down']);
-  const [isEntered, setIsEntered] = useState(false);
+  const handleTogglePopup = context.useCallback(
+    (event: Event) => {
+      if (popup.opened) {
+        popup.close();
+      } else {
+        popup.open(event.currentTarget as Element);
+      }
+    },
+    [popup.opened],
+  );
 
-  const handleTogglePopup = useEvent(() => {
-    if (isOpened) {
-      closePopup();
-    } else {
-      openPopup(containerRef);
-    }
-  });
-
-  const handleTransitionEntered = useEvent(() => {
-    setIsEntered(true);
-  });
-
-  const handleTransitionExited = useEvent(() => {
-    setIsEntered(false);
-  });
-
-  const popover = (
+  const popover = context.html`
     <div
-      className={classnames(
+      class=${[
         'popover',
         'popover-default',
-        'is-pull-' + pullDirection,
-      )}
+        'is-pull-' + popup.pullDirection,
+      ].join(' ')}
     >
-      <div className="popover-arrow" />
-      <div className="popover-content">
-        <div className="list-actions">
+      <div class="popover-arrow"></div>
+      <div class="popover-content">
+        <div class="list-actions">
           <a
-            className="list-actions-item link-soft"
+            class="list-actions-item link-soft"
             target="_blank"
             title="Share to Twitter"
-            href={
+            href=${
               'https://twitter.com/intent/tweet?text=' +
               encodeURIComponent(title + ' ' + url)
             }
-            onClick={closePopup}
+            @click=${popup.close}
             rel="noreferrer"
           >
-            <i className="icon icon-24 icon-twitter" />
+            <i class="icon icon-24 icon-twitter"></i>
           </a>
           <a
-            className="list-actions-item link-soft"
+            class="list-actions-item link-soft"
             target="_blank"
             title="Share to Facebook"
-            href={
+            href=${
               'https://www.facebook.com/sharer/sharer.php?u=' +
               encodeURIComponent(url)
             }
-            onClick={closePopup}
+            @click=${popup.close}
             rel="noreferrer"
           >
-            <i className="icon icon-24 icon-facebook" />
+            <i class="icon icon-24 icon-facebook"></i>
           </a>
           <a
-            className="list-actions-item link-soft"
+            class="list-actions-item link-soft"
             target="_blank"
             title="Save to Hatena Bookmark"
-            href={'http://b.hatena.ne.jp/entry/' + encodeURIComponent(url)}
-            onClick={closePopup}
+            href=${'http://b.hatena.ne.jp/entry/' + encodeURIComponent(url)}
+            @click=${popup.close}
             rel="noreferrer"
           >
-            <i className="icon icon-24 icon-hatena-bookmark" />
+            <i class="icon icon-24 icon-hatena-bookmark"></i>
           </a>
           <a
-            className="list-actions-item link-soft"
+            class="list-actions-item link-soft"
             target="_blank"
             title="Save to Pocket"
-            href={
+            href=${
               'https://getpocket.com/save?url=' +
               encodeURIComponent(url) +
               '&title=' +
               encodeURIComponent(title)
             }
-            onClick={closePopup}
+            @click={closePopup}
             rel="noreferrer"
           >
-            <i className="icon icon-24 icon-pocket" />
+            <i class="icon icon-24 icon-pocket"></i>
           </a>
           <a
-            className="list-actions-item link-soft"
+            class="list-actions-item link-soft"
             target="_blank"
             title="Save to Instapaper"
-            href={'http://www.instapaper.com/text?u=' + encodeURIComponent(url)}
-            onClick={closePopup}
+            href=${'http://www.instapaper.com/text?u=' + encodeURIComponent(url)}
+            @click=${popup.close}
             rel="noreferrer"
           >
-            <i className="icon icon-24 icon-instapaper" />
+            <i class="icon icon-24 icon-instapaper"></i>
           </a>
         </div>
       </div>
     </div>
-  );
+  `;
 
-  return (
-    <div className="button-group" ref={containerRef}>
+  return context.html`
+    <div class="button-group">
       <button
         type="button"
-        className="button button-pill button-outline-default"
+        class="button button-pill button-outline-default"
         title="Share..."
-        onClick={handleTogglePopup}
+        @click=${handleTogglePopup}
       >
-        <i className="icon icon-20 icon-share" />
+        <i class="icon icon-20 icon-share"></i>
       </button>
-      <CSSTransition
-        in={isOpened}
-        mountOnEnter
-        unmountOnExit
-        classNames="popover"
-        timeout={200}
-        onEntered={handleTransitionEntered}
-        onExited={handleTransitionExited}
-      >
-        <Dismissible isDisabled={!isEntered} onDismiss={closePopup}>
-          <div
-            style={popupStyle}
-            className={classnames('popup', 'is-pull-' + pullDirection)}
-          >
-            {popover}
-          </div>
-        </Dismissible>
-      </CSSTransition>
+      <${component(Dialog, {
+        open: popup.opened,
+        child: popover,
+        onDismiss: popup.close,
+        restProps: {
+          style: styleMap(popup.style),
+          class: ['popup', 'is-pull-' + popup.pullDirection].join(' '),
+        },
+      })}>
     </div>
-  );
+  `;
 }

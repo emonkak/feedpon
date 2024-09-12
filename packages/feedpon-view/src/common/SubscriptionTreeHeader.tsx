@@ -4,7 +4,7 @@ import React from 'react';
 import type { SubscriptionOrderKind } from 'feedpon-messaging';
 import { Dropdown } from './components/Dropdown';
 import { MenuItem } from './components/Menu';
-import { RelativeTime } from './components/RelativeTime';
+import { ReactRelativeTime } from './components/RelativeTime';
 import { useEvent } from './hooks/useEvent';
 
 interface SubscriptionTreeHeaderProps {
@@ -53,7 +53,7 @@ export function SubscriptionTreeHeader({
   const lastUpdate =
     lastUpdatedAt > 0 ? (
       <span>
-        Updated <RelativeTime time={lastUpdatedAt} />
+        Updated <ReactRelativeTime time={lastUpdatedAt} />
       </span>
     ) : (
       'Not updated yet'

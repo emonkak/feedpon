@@ -215,6 +215,12 @@ th {
   vertical-align: middle;
 }
 
+dialog {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
 caption {
   font-weight: bold;
   caption-side: bottom;

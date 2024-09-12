@@ -1,3 +1,4 @@
+import type { RenderContext, TemplateResult } from '@emonkak/ebit';
 import React, { useEffect, useMemo, useState } from 'react';
 
 const MILLIS_PER_SECOND = 1000;
@@ -13,7 +14,48 @@ interface RelativeTimeProps {
   time: number;
 }
 
-export function RelativeTime({
+export function RelativeTime(
+  {
+    className,
+    locales = 'en',
+    time,
+    updateInterval = MILLIS_PER_MINITE,
+  }: RelativeTimeProps,
+  context: RenderContext,
+): TemplateResult {
+  const [now, setNow] = context.useState(() => new Date());
+
+  context.useEffect(() => {
+    const timer = setInterval(() => {
+      setNow(new Date());
+    }, updateInterval);
+
+    return () => {
+      clearInterval(timer);
+    };
+  }, [updateInterval]);
+
+  const formatter = context.useMemo(
+    () => new Intl.RelativeTimeFormat(locales),
+    [locales],
+  );
+  const date = typeof time === 'number' ? new Date(time) : time;
+  const [amount, unit] = relativeTime(date, now);
+  const relativeTimeString =
+    unit === 'second' && amount <= 0 ? 'now' : formatter.format(amount, unit);
+
+  return context.html`
+    <time
+      class=${className}
+      datetime=${date.toISOString()}
+      title=${date.toLocaleString()}
+    >
+      ${relativeTimeString}
+    </time>
+  `;
+}
+
+export function ReactRelativeTime({
   className,
   locales = 'en',
   time,

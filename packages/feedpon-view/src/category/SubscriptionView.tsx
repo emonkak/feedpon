@@ -9,7 +9,7 @@ import React from 'react';
 
 import { SubscriptionDropdown } from '../common/SubscriptionDropdown';
 import { SubscriptionIcon } from '../common/SubscriptionIcon';
-import { RelativeTime } from '../common/components/RelativeTime';
+import { ReactRelativeTime } from '../common/components/RelativeTime';
 
 interface SubscriptionViewProps {
   categories: Category[];
@@ -68,7 +68,7 @@ export function SubscriptionView({
           </div>
         </div>
         <div className="u-margin-right-2 u-text-right u-md-none">
-          <RelativeTime
+          <ReactRelativeTime
             className="u-text-7 u-text-muted"
             time={subscription.updatedAt}
           />

@@ -5,11 +5,11 @@ import { updateSiteinfo } from 'feedpon-messaging/sharedSiteinfo';
 import tryMatch from 'feedpon-utils/tryMatch';
 import React, { useMemo, useState, useDeferredValue } from 'react';
 
-import { RelativeTime } from '../common/components/RelativeTime';
+import { ReactRelativeTime } from '../common/components/RelativeTime';
 import {
   type BlankSpaces,
-  VirtualList,
-} from '../common/components/VirtualList';
+  ReactVirtualScrollList,
+} from '../common/components/VirtualScrollList';
 import { SharedSiteinfoItem } from './SharedSiteinfoItem';
 
 export interface SharedSiteinfoProps {}
@@ -48,7 +48,7 @@ export function SharedSiteinfoSettings(_props: SharedSiteinfoProps) {
         <strong>{matchedItems.length}</strong> items are available. Last update
         was{' '}
         <strong>
-          <RelativeTime time={lastUpdatedAt} />
+          <ReactRelativeTime time={lastUpdatedAt} />
         </strong>
         .
       </p>
@@ -101,9 +101,8 @@ export function SharedSiteinfoSettings(_props: SharedSiteinfoProps) {
           Update
         </button>
       </p>
-      <VirtualList
+      <ReactVirtualScrollList
         assumedItemSize={24 * 7}
-        idAttribute="id"
         items={matchedItems}
         renderItem={renderSiteinfoItem}
         renderList={renderSiteinfoList}

@@ -46,12 +46,10 @@ import {
   unselectStream,
 } from 'feedpon-messaging/ui';
 import * as CacheMap from 'feedpon-utils/CacheMap';
-import React from 'react';
 
 import { MainLayout } from '../common/MainLayout';
-import type { VirtualListRef } from '../common/components/VirtualList';
-import { reactElement } from '../common/directives/reactElement';
-import { eventHook } from '../common/hooks/eventHook';
+import type { VirtualScrollListRef } from '../common/components/VirtualScrollList';
+import { createEventHook } from '../common/hooks/eventHook';
 import { isMountedHook } from '../common/hooks/isMountedHook';
 import { CategoryHeader } from './CategoryHeader';
 import { EntryList } from './EntryList';
@@ -147,7 +145,7 @@ export function StreamPage(
     }),
   );
   const isMounted = context.use(isMountedHook);
-  const virtualListRef = context.useRef<VirtualListRef | null>(null);
+  const virtualListRef = context.useRef<VirtualScrollListRef | null>(null);
 
   const stream = CacheMap.get(streams.items, streamId) ?? {
     activeEntryIndex: -1,
@@ -237,13 +235,13 @@ export function StreamPage(
   }, []);
 
   const handleChangeActiveEnetry = context.use(
-    eventHook((nextActiveEntryIndex: number) => {
+    createEventHook((nextActiveEntryIndex: number) => {
       onChangeActiveEntry(stream.streamId, nextActiveEntryIndex);
     }),
   );
 
   const handleChangeEntryOrder = context.use(
-    eventHook((entryOrder: EntryOrderKind) => {
+    createEventHook((entryOrder: EntryOrderKind) => {
       window.scrollTo(0, 0);
 
       onFetchStream(stream.streamId, stream.streamView, {
@@ -254,13 +252,13 @@ export function StreamPage(
   );
 
   const handleChangeExpandedEntry = context.use(
-    eventHook((index: number) => {
+    createEventHook((index: number) => {
       onChangeExpandedEntry(stream.streamId, index);
     }),
   );
 
   const handleChangeNumberOfEntries = context.use(
-    eventHook((numEntries: number) => {
+    createEventHook((numEntries: number) => {
       window.scrollTo(0, 0);
 
       onFetchStream(stream.streamId, stream.streamView, {
@@ -271,13 +269,13 @@ export function StreamPage(
   );
 
   const handleChangeStreamView = context.use(
-    eventHook((streamView: StreamViewKind) => {
+    createEventHook((streamView: StreamViewKind) => {
       onChangeStreamView(stream.streamId, streamView);
     }),
   );
 
   const handleClearReadEntries = context.use(
-    eventHook(() => {
+    createEventHook(() => {
       window.scrollTo(0, 0);
 
       onResetReadEntry(stream.streamId);
@@ -285,19 +283,19 @@ export function StreamPage(
   );
 
   const handleCloseEntry = context.use(
-    eventHook(() => {
+    createEventHook(() => {
       onChangeExpandedEntry(stream.streamId, -1);
     }),
   );
 
   const handleUpdateBlockSizes = context.use(
-    eventHook((entrySizes: { [id: string]: number }) => {
+    createEventHook((entrySizes: { [id: string]: number }) => {
       onUpdateEntrySizes(stream.streamId, entrySizes);
     }),
   );
 
   const handleLoadMoreEntries = context.use(
-    eventHook(() => {
+    createEventHook(() => {
       if (stream.continuation) {
         onFetchMoreEntries(
           stream.streamId,
@@ -309,7 +307,7 @@ export function StreamPage(
   );
 
   const handleMarkAllEntriesAsRead = context.use(
-    eventHook(() => {
+    createEventHook(() => {
       const unreadEntries = stream.entries.filter(
         (entry) => !entry.markedAsRead,
       );
@@ -321,7 +319,7 @@ export function StreamPage(
   );
 
   const handleMarkStreamAsRead = context.use(
-    eventHook(() => {
+    createEventHook(() => {
       if (stream.streamId === ALL_STREAM_ID) {
         onMarkAllAsRead();
       } else if (streamCategory) {
@@ -333,7 +331,7 @@ export function StreamPage(
   );
 
   const handleReloadEntries = context.use(
-    eventHook(() => {
+    createEventHook(() => {
       window.scrollTo(0, 0);
 
       onFetchStream(stream.streamId, stream.streamView, stream.fetchOptions);
@@ -341,13 +339,13 @@ export function StreamPage(
   );
 
   const handleScrollToEntry = context.use(
-    eventHook((index: number) => {
+    createEventHook((index: number) => {
       virtualListRef.current?.scrollTo(index);
     }),
   );
 
   const handleToggleOnlyUnread = context.use(
-    eventHook(() => {
+    createEventHook(() => {
       window.scrollTo(0, 0);
 
       onFetchStream(stream.streamId, stream.streamView, {
@@ -358,7 +356,7 @@ export function StreamPage(
   );
 
   const handleToggleUnreadKeeping = context.use(
-    eventHook(() => {
+    createEventHook(() => {
       onChangeUnreadKeeping(!keepUnread);
     }),
   );
@@ -423,31 +421,29 @@ export function StreamPage(
 
   const content = context.html`
     <${optional(entryHeader)}>
-    <${reactElement(
-      <EntryList
-        activeEntryIndex={stream.activeEntryIndex}
-        blockSizes={stream.entrySizes}
-        entries={stream.entries}
-        expandedEntryIndex={stream.expandedEntryIndex}
-        isLoaded={isLoaded}
-        isLoading={isLoading}
-        onChangeActiveEntry={handleChangeActiveEnetry}
-        onExpand={handleChangeExpandedEntry}
-        onFetchComments={onFetchEntryComments}
-        onFetchFullContent={onFetchFullContent}
-        onHideComments={onHideEntryComments}
-        onHideFullContents={onHideFullContents}
-        onPin={onPinEntry}
-        onShowComments={onShowEntryComments}
-        onShowFullContents={onShowFullContents}
-        onUnpin={onUnpinEntry}
-        onUpdateBlockSizes={handleUpdateBlockSizes}
-        readEntryIndex={stream.readEntryIndex}
-        ref={virtualListRef}
-        sameOrigin={stream.feed !== null}
-        streamView={stream.streamView}
-      />,
-    )}>
+    <${component(EntryList, {
+      activeEntryIndex: stream.activeEntryIndex,
+      blockSizes: stream.entrySizes,
+      entries: stream.entries,
+      expandedEntryIndex: stream.expandedEntryIndex,
+      isLoaded,
+      isLoading,
+      onChangeActiveEntry: handleChangeActiveEnetry,
+      onExpand: handleChangeExpandedEntry,
+      onFetchComments: onFetchEntryComments,
+      onFetchFullContent,
+      onHideComments: onHideEntryComments,
+      onHideFullContents,
+      onPin: onPinEntry,
+      onShowComments: onShowEntryComments,
+      onShowFullContents,
+      onUnpin: onUnpinEntry,
+      onUpdateBlockSizes: handleUpdateBlockSizes,
+      readEntryIndex: stream.readEntryIndex,
+      ref: virtualListRef,
+      sameOrigin: stream.feed !== null,
+      streamView: stream.streamView,
+    })}>
   `;
 
   return context.html`<${component(MainLayout, {

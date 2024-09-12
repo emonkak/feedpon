@@ -1,7 +1,8 @@
-import React from 'react';
-
+import type { RenderContext, TemplateResult } from '@emonkak/ebit';
+import { Either, component, list, styleMap } from '@emonkak/ebit/directives.js';
 import type { Comment } from 'feedpon-messaging';
-import { CommentComponent } from './Comment';
+
+import { CommentView } from './CommentView';
 
 interface CommentPopoverProps {
   arrowOffset: number;
@@ -9,46 +10,45 @@ interface CommentPopoverProps {
   isLoading: boolean;
 }
 
-export function CommentPopover({
-  arrowOffset,
-  comments,
-  isLoading,
-}: CommentPopoverProps) {
+export function CommentPopover(
+  { arrowOffset, comments, isLoading }: CommentPopoverProps,
+  context: RenderContext,
+): TemplateResult {
   if (isLoading) {
-    return (
-      <div className="popover popover-default is-pull-down">
+    return context.html`
+      <div class="popover popover-default is-pull-down">
         <div
-          className="popover-arrow"
-          style={{ left: `calc(50% + ${arrowOffset}px)` }}
-        />
-        <div className="popover-content">
-          <div className="comment">
-            <span className="comment-user">
-              <span className="placeholder placeholder-10 animation-shining" />
+          class="popover-arrow"
+          style=${styleMap({ left: `calc(50% + ${arrowOffset}px)` })}
+        ></div>
+        <div class="popover-content">
+          <div class="comment">
+            <span class="comment-user">
+              <span class="placeholder placeholder-10 animation-shining"></div>
             </span>
-            <span className="comment-comment">
-              <span className="placeholder placeholder-60 animation-shining" />
+            <span class="comment-comment">
+              <span class="placeholder placeholder-60 animation-shining"></div>
             </span>
-            <span className="comment-timestamp">
-              <span className="placeholder placeholder-20 animation-shining" />
+            <span class="comment-timestamp">
+              <span class="placeholder placeholder-20 animation-shining"></div>
             </span>
           </div>
         </div>
       </div>
-    );
+    `;
   }
 
-  const commentItems =
+  const content =
     comments.length > 0
-      ? comments.map((item) => (
-          <CommentComponent key={item.user} comment={item} />
-        ))
-      : 'No comments yet in this entry.';
+      ? Either.left(
+          list(comments, (comment) => component(CommentView, { comment })),
+        )
+      : Either.right(context.html`No comments yet in this entry.`);
 
-  return (
-    <div className="popover popover-default is-pull-down">
-      <div className="popover-arrow" style={{ left: 'calc(50% - 44px)' }} />
-      <div className="popover-content">{commentItems}</div>
+  return context.html`
+    <div class="popover popover-default is-pull-down">
+      <div class="popover-arrow" style=${styleMap({ left: `calc(50% - ${arrowOffset}px)` })}></div>
+      <div class="popover-content"><${content}></div>
     </div>
-  );
+  `;
 }

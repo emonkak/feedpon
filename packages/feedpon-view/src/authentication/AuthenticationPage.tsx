@@ -44,7 +44,7 @@ export function AuthenticationPage(
                 value="feedly"
                 checked
               />
-              <i class="icon icon-48 icon-feedly u-margin-right-1" />
+              <i class="icon icon-48 icon-feedly u-margin-right-1"></i>
               <span class="u-flex-grow-1 u-text-5">Feedly</span>
             </div>
           </label>

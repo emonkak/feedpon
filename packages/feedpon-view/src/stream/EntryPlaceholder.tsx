@@ -1,71 +1,77 @@
-import React from 'react';
+import type { RenderContext, TemplateResult } from '@emonkak/ebit';
 
-export function ExpandedEntryPlaceholder(_props: {}) {
-  return (
-    <article className="entry is-expanded">
-      <div className="container">
-        <header className="entry-header">
-          <h2 className="entry-title">
-            <span className="placeholder placeholder-80 animation-shining" />
+export function ExpandedEntryPlaceholder(
+  _props: {},
+  context: RenderContext,
+): TemplateResult {
+  return context.html`
+    <article class="entry is-expanded">
+      <div class="container">
+        <header class="entry-header">
+          <h2 class="entry-title">
+            <span class="placeholder placeholder-80 animation-shining"></span>
           </h2>
-          <div className="entry-metadata">
-            <span className="placeholder placeholder-60 animation-shining" />
+          <div class="entry-metadata">
+            <span class="placeholder placeholder-60 animation-shining"></span>
           </div>
         </header>
-        <div className="entry-content u-clearfix u-text-wrap">
+        <div class="entry-content u-clearfix u-text-wrap">
           <p>
-            <span className="placeholder placeholder-100 animation-shining" />
-            <span className="placeholder placeholder-100 animation-shining" />
-            <span className="placeholder placeholder-100 animation-shining" />
-            <span className="placeholder placeholder-60 animation-shining" />
+            <span class="placeholder placeholder-100 animation-shining"></span>
+            <span class="placeholder placeholder-100 animation-shining"></span>
+            <span class="placeholder placeholder-100 animation-shining"></span>
+            <span class="placeholder placeholder-60 animation-shining"></span>
           </p>
           <p>
-            <span className="placeholder placeholder-100 animation-shining" />
-            <span className="placeholder placeholder-100 animation-shining" />
-            <span className="placeholder placeholder-100 animation-shining" />
-            <span className="placeholder placeholder-100 animation-shining" />
-            <span className="placeholder placeholder-80 animation-shining" />
+            <span class="placeholder placeholder-100 animation-shining"></span>
+            <span class="placeholder placeholder-100 animation-shining"></span>
+            <span class="placeholder placeholder-100 animation-shining"></span>
+            <span class="placeholder placeholder-100 animation-shining"></span>
+            <span class="placeholder placeholder-80 animation-shining"></span>
           </p>
           <p>
-            <span className="placeholder placeholder-100 animation-shining" />
-            <span className="placeholder placeholder-100 animation-shining" />
-            <span className="placeholder placeholder-40 animation-shining" />
+            <span class="placeholder placeholder-100 animation-shining"></span>
+            <span class="placeholder placeholder-100 animation-shining"></span>
+            <span class="placeholder placeholder-40 animation-shining"></span>
           </p>
         </div>
-        <footer className="entry-footer">
-          <div className="button-toolbar u-text-center">
-            <span className="button button-pill button-outline-default">
-              <i className="icon icon-20 icon-comments" />
+        <footer class="entry-footer">
+          <div class="button-toolbar u-text-center">
+            <span class="button button-pill button-outline-default">
+              <i class="icon icon-20 icon-comments"></i>
             </span>
-            <span className="button button-pill button-outline-default">
-              <i className="icon icon-20 icon-share" />
+            <span class="button button-pill button-outline-default">
+              <i class="icon icon-20 icon-share"></i>
             </span>
-            <span className="button button-pill button-outline-default">
-              <i className="icon icon-20 icon-external-link" />
+            <span class="button button-pill button-outline-default">
+              <i class="icon icon-20 icon-external-link"></i>
             </span>
           </div>
         </footer>
       </div>
     </article>
-  );
+  `;
 }
 
-export function CollapsedEntryPlaceholder(_props: {}) {
-  return (
-    <article className="entry">
-      <div className="container">
-        <header className="entry-header">
-          <h2 className="entry-title">
-            <span className="placeholder placeholder-80 animation-shining" />
+export function CollapsedEntryPlaceholder(
+  _props: {},
+  context: RenderContext,
+): TemplateResult {
+  return context.html`
+    <article class="entry">
+      <div class="container">
+        <header class="entry-header">
+          <h2 class="entry-title">
+            <span class="placeholder placeholder-80 animation-shining" />
           </h2>
-          <div className="entry-metadata">
-            <span className="placeholder placeholder-60 animation-shining" />
+          <div class="entry-metadata">
+            <span class="placeholder placeholder-60 animation-shining" />
           </div>
         </header>
-        <div className="entry-summary">
-          <span className="placeholder placeholder-100 animation-shining" />
+        <div class="entry-summary">
+          <span class="placeholder placeholder-100 animation-shining" />
         </div>
       </div>
     </article>
-  );
+  `;
 }

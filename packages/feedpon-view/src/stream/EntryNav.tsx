@@ -1,64 +1,70 @@
-import classnames from 'classnames';
-import React from 'react';
+import type { RenderContext, TemplateResult } from '@emonkak/ebit';
 
 interface EntryNavProps {
   fullContentsIsLoading: boolean;
   fullContentsIsShown: boolean;
   isPinned: boolean;
   isPinning: boolean;
-  onToggleFullContent: React.MouseEventHandler<any>;
-  onTogglePin: React.MouseEventHandler<any>;
+  onToggleFullContent: (event: Event) => void;
+  onTogglePin: (event: Event) => void;
   url: string;
 }
 
-export function EntryNav({
-  fullContentsIsLoading,
-  fullContentsIsShown,
-  isPinned,
-  isPinning,
-  onToggleFullContent,
-  onTogglePin,
-}: EntryNavProps) {
-  return (
-    <nav className="entry-nav">
-      <div className="button-toolbar">
+export function EntryNav(
+  {
+    fullContentsIsLoading,
+    fullContentsIsShown,
+    isPinned,
+    isPinning,
+    onToggleFullContent,
+    onTogglePin,
+  }: EntryNavProps,
+  context: RenderContext,
+): TemplateResult {
+  return context.html`
+    <nav class="entry-nav">
+      <div class="button-toolbar">
         <button
           type="button"
-          className={classnames(
-            'button button-pill',
+          class=${[
+            'button',
+            'button-pill',
             isPinned ? 'button-default' : 'button-outline-default',
-          )}
+          ].join(' ')}
           title="Pin"
-          onClick={onTogglePin}
-          disabled={isPinning}
+          @click=${onTogglePin}
+          disabled=${isPinning}
         >
           <i
-            className={classnames(
-              'icon icon-20',
+            class=${[
+              'icon',
+              'icon-20',
               isPinning ? 'icon-spinner animation-rotating' : 'icon-pin-3',
-            )}
-          />
+            ].join(' ')}
+          ></i>
         </button>
         <button
           type="button"
-          className={classnames(
-            'button button-pill',
+          class=${[
+            'button',
+            'button-pill',
             fullContentsIsShown ? 'button-default' : 'button-outline-default',
-          )}
+          ].join(' ')}
           title="Fetch full content"
-          onClick={onToggleFullContent}
-          disabled={fullContentsIsLoading}
+          @click=${onToggleFullContent}
+          disabled=${fullContentsIsLoading}
         >
           <i
-            className={classnames(
-              'icon icon-20',
+            class=${[
+              'icon',
+              'icon-20',
               fullContentsIsLoading
                 ? 'icon-spinner animation-rotating'
                 : 'icon-page-overview',
-            )}
-          />
+            ].join(' ')}
+          ></i>
         </button>
       </div>
     </nav>
-  );
+  `;
 }

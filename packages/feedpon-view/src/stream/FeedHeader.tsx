@@ -41,7 +41,7 @@ export function FeedHeader(
   context: RenderContext,
 ): TemplateResult {
   const feedLink = feed.url
-    ? context.html`<a target="_blank" class="link-strong" href=${feed.url} rel="external">${feed.title}</a>`
+    ? context.html`<a target="_blank" class="link-strong" href=${feed.url} rel="noreferrer">${feed.title}</a>`
     : context.html`<strong>${feed.title}</strong>`;
 
   return context.html`

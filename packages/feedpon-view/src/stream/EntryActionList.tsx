@@ -1,53 +1,56 @@
-import classnames from 'classnames';
-import React from 'react';
+import type { RenderContext, TemplateResult } from '@emonkak/ebit';
 
+import { component } from '@emonkak/ebit/directives.js';
 import { EntryShareButton } from './EntryShareButton';
 
 interface EntryActionListProps {
   commentsIsLoading: boolean;
   commentsIsShown: boolean;
-  onToggleComments: React.MouseEventHandler<any>;
+  onToggleComments: (event: Event) => void;
   title: string;
   url: string;
 }
 
-export function EntryActionList({
-  commentsIsLoading,
-  commentsIsShown,
-  onToggleComments,
-  title,
-  url,
-}: EntryActionListProps) {
-  return (
-    <div className="button-toolbar u-flex u-flex-align-items-center u-flex-justify-content-center">
+export function EntryActionList(
+  {
+    commentsIsLoading,
+    commentsIsShown,
+    onToggleComments,
+    title,
+    url,
+  }: EntryActionListProps,
+  context: RenderContext,
+): TemplateResult {
+  return context.html`
+    <div class="button-toolbar u-flex u-flex-align-items-center u-flex-justify-content-center">
       <button
         type="button"
-        className={classnames(
+        class=${[
           'button button-pill',
           commentsIsShown ? 'button-default' : 'button-outline-default',
-        )}
+        ].join(' ')}
         title="Comments..."
-        onClick={onToggleComments}
+        @click=${onToggleComments}
       >
         <i
-          className={classnames(
+          class=${[
             'icon icon-20',
             commentsIsLoading
               ? 'icon-spinner animation-rotating'
               : 'icon-comments',
-          )}
-        />
+          ].join(' ')}
+        ></i>
       </button>
-      <EntryShareButton url={url} title={title} />
+      <${component(EntryShareButton, { url, title })}>
       <a
-        className="button button-pill button-outline-default"
-        href={url}
+        class="button button-pill button-outline-default"
+        href=${url}
         target="_blank"
         title="Visit website"
         rel="noreferrer"
       >
-        <i className="icon icon-20 icon-external-link" />
+        <i class="icon icon-20 icon-external-link"></i>
       </a>
     </div>
-  );
+  `;
 }

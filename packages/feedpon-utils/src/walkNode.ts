@@ -2,24 +2,22 @@ export default function walkNode(
   rootNode: Node,
   callback: (node: Node) => Node | null,
 ): void {
-  let nextNode: Node | null = rootNode;
+  let currentNode: Node | null = rootNode.firstChild;
 
-  do {
-    const currentNode = nextNode! as Node;
-
-    // Save the parent node because it may be deleted
+  while (currentNode !== null) {
+    // Remember that parent node since it may be deleted.
     let { parentNode } = currentNode;
 
-    nextNode = callback(currentNode);
+    currentNode = callback(currentNode);
 
-    if (!nextNode) {
-      while (parentNode && parentNode !== rootNode) {
-        if (parentNode.nextSibling) {
-          nextNode = parentNode.nextSibling;
+    if (currentNode === null) {
+      while (parentNode !== null && parentNode !== rootNode) {
+        currentNode = parentNode.nextSibling;
+        if (currentNode !== null) {
           break;
         }
         parentNode = parentNode.parentNode;
       }
     }
-  } while (nextNode);
+  }
 }

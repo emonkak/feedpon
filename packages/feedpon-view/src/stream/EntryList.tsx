@@ -1,20 +1,20 @@
-import React, {
-  forwardRef,
-  useCallback,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-} from 'react';
-
+import type { RefObject, RenderContext, TemplateResult } from '@emonkak/ebit';
 import type { Entry, StreamViewKind } from 'feedpon-messaging';
 import * as SmoothScroll from 'feedpon-utils/SmoothScroll';
+
+import {
+  type ElementRef,
+  component,
+  ref,
+  styleMap,
+} from '@emonkak/ebit/directives.js';
 import {
   type BlankSpaces,
   type Dimensions,
-  VirtualList,
-  type VirtualListRef,
-} from '../common/components/VirtualList';
-import { useEvent } from '../common/hooks/useEvent';
+  VirtualScrollList,
+  type VirtualScrollListRef,
+} from '../common/components/VirtualScrollList';
+import { createEventHook } from '../common/hooks/eventHook';
 import { EntryItem } from './EntryItem';
 import {
   CollapsedEntryPlaceholder,
@@ -40,6 +40,7 @@ interface EntryListProps {
   onUnpin: (entryId: string | number) => void;
   onUpdateBlockSizes: (blockSizes: { [id: string]: number }) => void;
   readEntryIndex: number;
+  ref: RefObject<VirtualScrollListRef | null>;
   sameOrigin: boolean;
   streamView: StreamViewKind;
 }
@@ -52,7 +53,7 @@ interface RenderingItem {
   sameOrigin: boolean;
 }
 
-export const EntryList = forwardRef(function EntryList(
+export function EntryList(
   {
     activeEntryIndex,
     blockSizes,
@@ -73,20 +74,23 @@ export const EntryList = forwardRef(function EntryList(
     onUpdateBlockSizes,
     sameOrigin,
     streamView,
+    ref,
   }: EntryListProps,
-  ref: React.ForwardedRef<VirtualListRef>,
-) {
-  const getHeaderHeight = useHeaderHeight();
+  context: RenderContext,
+): TemplateResult {
+  const getHeaderHeight = context.use(getHeaderHeightHook);
 
-  const handleUpdateDimensions = useEvent((dimensions) => {
-    const newActiveEntryIndex = getActiveIndex(dimensions, getHeaderHeight());
+  const handleUpdateDimensions = context.use(
+    createEventHook((dimensions: Dimensions<string>) => {
+      const newActiveEntryIndex = getActiveIndex(dimensions, getHeaderHeight());
 
-    if (newActiveEntryIndex !== activeEntryIndex) {
-      onChangeActiveEntry(newActiveEntryIndex);
-    }
-  });
+      if (newActiveEntryIndex !== activeEntryIndex) {
+        onChangeActiveEntry(newActiveEntryIndex);
+      }
+    }),
+  );
 
-  const items = useMemo(
+  const items = context.useMemo(
     () =>
       entries.map((entry, index) => {
         const isActive = activeEntryIndex === index;
@@ -105,87 +109,90 @@ export const EntryList = forwardRef(function EntryList(
     [entries, activeEntryIndex, expandedEntryIndex, sameOrigin, streamView],
   );
 
-  const scrollBy = useCallback((x: number, y: number) => {
+  const scrollBy = context.useCallback((x: number, y: number) => {
     window.scrollBy(x, y - getHeaderHeight());
   }, []);
 
-  const renderItem = useEvent(
+  const renderItem = context.useCallback(
     (
       { entry, isActive, isExpanded, sameOrigin }: RenderingItem,
       index: number,
-      ref: React.RefCallback<Element>,
+      ref: ElementRef,
     ) => {
-      return (
-        <EntryItem
-          entry={entry}
-          index={index}
-          isActive={isActive}
-          isExpanded={isExpanded}
-          key={entry.entryId}
-          onExpand={onExpand}
-          onFetchComments={onFetchComments}
-          onFetchFullContent={onFetchFullContent}
-          onHideComments={onHideComments}
-          onHideFullContents={onHideFullContents}
-          onPin={onPin}
-          onShowComments={onShowComments}
-          onShowFullContents={onShowFullContents}
-          onUnpin={onUnpin}
-          ref={ref}
-          sameOrigin={sameOrigin}
-        />
-      );
+      return component(EntryItem, {
+        entry,
+        index,
+        isActive,
+        isExpanded,
+        onExpand,
+        onFetchComments,
+        onFetchFullContent,
+        onHideComments,
+        onHideFullContents,
+        onPin,
+        onShowComments,
+        onShowFullContents,
+        onUnpin,
+        ref,
+        sameOrigin,
+      });
     },
+    [
+      onFetchComments,
+      onFetchFullContent,
+      onHideComments,
+      onHideFullContents,
+      onPin,
+      onShowComments,
+      onShowFullContents,
+      onUnpin,
+    ],
   );
 
   if (isLoading && !isLoaded) {
     if (streamView === 'expanded') {
-      return (
-        <div className="entry-list">
-          <ExpandedEntryPlaceholder />
-          <ExpandedEntryPlaceholder />
-          <ExpandedEntryPlaceholder />
-          <ExpandedEntryPlaceholder />
-          <ExpandedEntryPlaceholder />
+      return context.html`
+        <div class="entry-list">
+          <${component(ExpandedEntryPlaceholder, {})}>
+          <${component(ExpandedEntryPlaceholder, {})}>
+          <${component(ExpandedEntryPlaceholder, {})}>
+          <${component(ExpandedEntryPlaceholder, {})}>
+          <${component(ExpandedEntryPlaceholder, {})}>
         </div>
-      );
+      `;
     } else {
-      return (
-        <div className="entry-list">
-          <CollapsedEntryPlaceholder />
-          <CollapsedEntryPlaceholder />
-          <CollapsedEntryPlaceholder />
-          <CollapsedEntryPlaceholder />
-          <CollapsedEntryPlaceholder />
-          <CollapsedEntryPlaceholder />
-          <CollapsedEntryPlaceholder />
-          <CollapsedEntryPlaceholder />
-          <CollapsedEntryPlaceholder />
-          <CollapsedEntryPlaceholder />
+      return context.html`
+        <div class="entry-list">
+          <${component(CollapsedEntryPlaceholder, {})}>
+          <${component(CollapsedEntryPlaceholder, {})}>
+          <${component(CollapsedEntryPlaceholder, {})}>
+          <${component(CollapsedEntryPlaceholder, {})}>
+          <${component(CollapsedEntryPlaceholder, {})}>
+          <${component(CollapsedEntryPlaceholder, {})}>
+          <${component(CollapsedEntryPlaceholder, {})}>
+          <${component(CollapsedEntryPlaceholder, {})}>
+          <${component(CollapsedEntryPlaceholder, {})}>
+          <${component(CollapsedEntryPlaceholder, {})}>
         </div>
-      );
+      `;
     }
   }
 
-  return (
-    <VirtualList<RenderingItem, 'id', string>
-      assumedItemSize={streamView === 'expanded' ? 800 : 100}
-      idAttribute="id"
-      initialBlockSizes={blockSizes}
-      initialItemIndex={
-        expandedEntryIndex >= 0 ? expandedEntryIndex : activeEntryIndex
-      }
-      items={items}
-      onUpdateBlockSizes={onUpdateBlockSizes}
-      onUpdateDimensions={handleUpdateDimensions}
-      ref={ref}
-      renderItem={renderItem}
-      renderList={renderList}
-      scheduleUpdate={scheduleUpdate}
-      scrollBy={scrollBy}
-    />
-  );
-});
+  return context.html`<${component(VirtualScrollList<RenderingItem, unknown>, {
+    assumedItemSize: streamView === 'expanded' ? 800 : 100,
+    initialBlockSizes: blockSizes,
+    initialItemIndex:
+      expandedEntryIndex >= 0 ? expandedEntryIndex : activeEntryIndex,
+    items,
+    onUpdateBlockSizes,
+    onUpdateDimensions: handleUpdateDimensions,
+    ref,
+    renderItem,
+    renderList,
+    scheduleUpdate,
+    scrollBy,
+  })}>`;
+}
 
 function getActiveIndex(
   dimensions: Dimensions<string>,
@@ -238,28 +245,10 @@ function getActiveIndex(
   return activeIndex;
 }
 
-function renderList(
-  items: React.ReactElement<unknown>[],
-  blankSpaces: BlankSpaces,
-  ref: React.RefObject<Element>,
-) {
-  return (
-    <div className="entry-list" ref={ref as React.RefObject<HTMLDivElement>}>
-      <div style={{ height: blankSpaces.above, overflowAnchor: 'none' }} />
-      {items}
-      <div style={{ height: blankSpaces.below, overflowAnchor: 'none' }} />
-    </div>
-  );
-}
+function getHeaderHeightHook(context: RenderContext): () => number {
+  const headerHeightRef = context.useRef(0);
 
-function scheduleUpdate(callback: VoidFunction) {
-  SmoothScroll.scrollLock(window).then(callback);
-}
-
-function useHeaderHeight() {
-  const headerHeightRef = useRef(0);
-
-  useLayoutEffect(() => {
+  context.useLayoutEffect(() => {
     const header = document.querySelector('.l-header');
     if (header) {
       headerHeightRef.current = header.getBoundingClientRect().height;
@@ -267,4 +256,23 @@ function useHeaderHeight() {
   }, []);
 
   return () => headerHeightRef.current;
+}
+
+function renderList(
+  children: unknown,
+  blankSpaces: BlankSpaces,
+  elementRef: ElementRef,
+  context: RenderContext,
+): TemplateResult {
+  return context.html`
+    <div class="entry-list" ref=${ref(elementRef)}>
+      <div style=${styleMap({ height: blankSpaces.above + 'px', overflowAnchor: 'none' })}></div>
+      <${children}>
+      <div style=${styleMap({ height: blankSpaces.below + 'px', overflowAnchor: 'none' })}></div>
+    </div>
+  `;
+}
+
+function scheduleUpdate(callback: VoidFunction) {
+  SmoothScroll.scrollLock(window).then(callback);
 }

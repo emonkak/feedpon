@@ -8,7 +8,7 @@ import * as CacheMap from 'feedpon-utils/CacheMap';
 import { ReactMainLayout } from '../common/MainLayout';
 import { SubscriptionIcon } from '../common/SubscriptionIcon';
 import { ReactNavbar } from '../common/components/Navbar';
-import { RelativeTime } from '../common/components/RelativeTime';
+import { ReactRelativeTime } from '../common/components/RelativeTime';
 
 export interface DashboardProps {}
 
@@ -126,7 +126,7 @@ export function DashboardPage(_props: DashboardProps) {
               <div className="u-flex-grow-1 u-margin-right-2">
                 <div>{streamHistory.title}</div>
                 <div className="u-text-7 u-text-muted">
-                  <RelativeTime time={streamHistory.fetchedAt} />
+                  <ReactRelativeTime time={streamHistory.fetchedAt} />
                 </div>
               </div>
               {streamHistory.unreadCount > 0 && (

@@ -1,9 +1,11 @@
 .popup {
   position: fixed;
-  display: flex;
-  align-items: stretch;
   z-index: 2000;
-  box-sizing: border-box;
+  animation: popup-fade-out 0.2s ease-out;
+}
+
+.popup[open] {
+  animation: popup-fade-in 0.2s ease-out;
 }
 
 .popup.is-pull-up {
@@ -49,4 +51,28 @@
 
 .popup > .popover > .popover-arrow {
   box-shadow: -1px 1px 2px var(--shadow-color);
+}
+
+@keyframes popup-fade-in {
+  0% {
+    opacity: 0;
+    display: none;
+  }
+
+  100% {
+    opacity: 1;
+    display: block;
+  }
+}
+
+@keyframes popup-fade-out {
+  0% {
+    opacity: 1;
+    display: block;
+  }
+
+  100% {
+    opacity: 0;
+    display: none;
+  }
 }
