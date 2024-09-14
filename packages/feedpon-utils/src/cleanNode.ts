@@ -178,6 +178,6 @@ function responsifyTable(element: HTMLTableElement): void {
 function sandboxifyIframe(element: HTMLElement): void {
   element.setAttribute(
     'sandbox',
-    'allow-popups allow-same-origin allow-scripts',
+    'allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts',
   );
 }
