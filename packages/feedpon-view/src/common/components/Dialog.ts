@@ -10,20 +10,29 @@ export interface DialogProps {
   open: boolean;
   child?: unknown;
   onDismiss?: () => void;
-  restProps?: { [key: string]: unknown };
+  dialogProps?: { [key: string]: unknown };
 }
 
 export function Dialog(
-  { open, child, restProps = {}, onDismiss }: DialogProps,
+  { open, child, dialogProps = {}, onDismiss }: DialogProps,
   context: RenderContext,
 ): TemplateResult {
   const dialogRef = context.useRef<HTMLDialogElement | null>(null);
 
   context.use(createClickOutsideHook(dialogRef, onDismiss));
+
   context.use(createFocusOutsideHook(dialogRef, onDismiss));
 
+  context.useLayoutEffect(() => {
+    if (open) {
+      dialogRef.current!.showModal();
+    } else {
+      dialogRef.current!.close();
+    }
+  }, [open]);
+
   return context.html`
-    <dialog ref=${ref(dialogRef)} open=${open} ${restProps}>
+    <dialog ref=${ref(dialogRef)} @close=${onDismiss} ${dialogProps}>
       <${child}>
     </dialog>
   `;
