@@ -432,7 +432,7 @@ export const ReactVirtualScrollList = forwardRef(
     const containerRef = useRef<Element | null>(null);
     const scrollingItemIndexRef = useRef(initialItemIndex);
     const blockSizesRef = useRef(initialBlockSizes);
-    const isDirtyRef = useRef(false);
+    const requestUpdate = useMemo(() => createScheduler(scheduleUpdate), [scheduleUpdate]);
 
     const blockInsetsRef = useMemo(
       () => ({
@@ -544,8 +544,6 @@ export const ReactVirtualScrollList = forwardRef(
         slice: newSlice,
         viewportInset,
       });
-
-      isDirtyRef.current = false;
     });
 
     const updateBlockSizes = useEvent(
@@ -567,10 +565,7 @@ export const ReactVirtualScrollList = forwardRef(
             blockSizesRef.current,
             assumedItemSize,
           );
-          if (!isDirtyRef.current) {
-            scheduleUpdate(updateDimensions);
-            isDirtyRef.current = true;
-          }
+          requestUpdate(updateDimensions);
           onUpdateBlockSizes?.(blockSizesRef.current);
         }
       },
@@ -580,10 +575,7 @@ export const ReactVirtualScrollList = forwardRef(
       const scrollContainer = getScrollContainer();
 
       const callback = throttle(() => {
-        if (!isDirtyRef.current) {
-          scheduleUpdate(updateDimensions);
-          isDirtyRef.current = true;
-        }
+        requestUpdate(updateDimensions);
       }, scrollThrottleTime);
 
       scrollContainer.addEventListener('scroll', callback, {
@@ -593,7 +585,7 @@ export const ReactVirtualScrollList = forwardRef(
       return () => {
         scrollContainer.removeEventListener('scroll', callback);
       };
-    }, [getScrollContainer, scheduleUpdate, scrollThrottleTime]);
+    }, [getScrollContainer, requestUpdate, scrollThrottleTime]);
 
     useEffect(() => {
       let willUpdate = false;
@@ -636,12 +628,9 @@ export const ReactVirtualScrollList = forwardRef(
       }
 
       if (willUpdate) {
-        if (!isDirtyRef.current) {
-          scheduleUpdate(updateDimensions);
-          isDirtyRef.current = true;
-        }
+        requestUpdate(updateDimensions);
       }
-    }, [items, scrollingItemIndexRef.current, sliceRef.current]);
+    }, [items, requestUpdate, scrollingItemIndexRef.current, sliceRef.current]);
 
     return (
       <MemoizedVirtualScrollListRenderer
@@ -760,6 +749,21 @@ function createResizeObserverHook(
 
     return resizeObserver;
   };
+}
+
+function createScheduler(scheduleFn: (callback: () => void) => void): (callback: () => void) => void {
+  let isScheduling = false;
+
+  return (callback) => {
+    if (isScheduling) {
+      return;
+    }
+    isScheduling = true;
+    scheduleFn(() => { 
+      isScheduling = false;
+      callback();
+    })
+  }
 }
 
 function getBlankSpaces(blockInsets: BlockInset[], slice: Slice): BlankSpaces {
