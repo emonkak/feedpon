@@ -25,7 +25,7 @@ export function Dialog(
 
   context.useLayoutEffect(() => {
     if (open) {
-      dialogRef.current!.showModal();
+      dialogRef.current!.show();
     } else {
       dialogRef.current!.close();
     }
