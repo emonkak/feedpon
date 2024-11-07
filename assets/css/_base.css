@@ -130,10 +130,14 @@ sup {
 }
 
 hr {
+  margin: 0;
+  border: 0;
+}
+
+hr:not[class] {
   margin: calc(var(--vertical-rhythm) + 6px) auto;
   width: 72px;
   height: 12px;
-  border: 0;
   background-color: var(--medium-light-color);
   mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2 1"><circle cx="1" cy="0.5" r="0.5"/></svg>');
   mask-repeat: repeat;

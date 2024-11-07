@@ -63,7 +63,7 @@ export function ProfileDropdown({
             className="button button-outline-default button-block"
             disabled={isLoading}
           >
-            <div className="u-flex u-flex-align-items-center dropdown-arrow">
+            <div className="u-flex u-flex-align-items-center DropdownArrow">
               {icon}
               <span className="u-flex-grow-1 u-margin-left-1 u-text-left">
                 <div className="u-text-wrap u-text-7">
@@ -77,8 +77,8 @@ export function ProfileDropdown({
           </button>
         }
       >
-        <MenuItem value={{ type: 'REFRESH' }} primaryText="Refresh" />
-        <MenuItem value={{ type: 'LOGOUT' }} primaryText="Logout..." />
+        <MenuItem value={{ type: 'REFRESH' }} label="Refresh" />
+        <MenuItem value={{ type: 'LOGOUT' }} label="Logout..." />
       </Dropdown>
       <Portal>
         <ConfirmModal

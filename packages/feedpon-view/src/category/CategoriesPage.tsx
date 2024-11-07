@@ -218,8 +218,8 @@ export function CategoriesPage({
         }
         onSelect={handleSelectAction}
       >
-        <MenuItem<Action> value="IMPORT_OPML" primaryText="Import OPML..." />
-        <MenuItem<Action> value="EXPORT_OPML" primaryText="Export OPML..." />
+        <MenuItem<Action> value="IMPORT_OPML" label="Import OPML..." />
+        <MenuItem<Action> value="EXPORT_OPML" label="Export OPML..." />
       </Dropdown>
       <input
         ref={uploadInputRef}

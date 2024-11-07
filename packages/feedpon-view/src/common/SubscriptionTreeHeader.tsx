@@ -93,7 +93,7 @@ export function SubscriptionTreeHeader({
               <i className="icon icon-16 icon-checkmark" />
             ) : null
           }
-          primaryText="ID"
+          label="ID"
         />
         <MenuItem<Action>
           value={{
@@ -105,7 +105,7 @@ export function SubscriptionTreeHeader({
               <i className="icon icon-16 icon-checkmark" />
             ) : null
           }
-          primaryText="Title"
+          label="Title"
         />
         <MenuItem<Action>
           value={{
@@ -117,7 +117,7 @@ export function SubscriptionTreeHeader({
               <i className="icon icon-16 icon-checkmark" />
             ) : null
           }
-          primaryText="Newest first"
+          label="Newest first"
         />
         <MenuItem<Action>
           value={{
@@ -129,7 +129,7 @@ export function SubscriptionTreeHeader({
               <i className="icon icon-16 icon-checkmark" />
             ) : null
           }
-          primaryText="Oldest first"
+          label="Oldest first"
         />
         <div className="menu-divider" />
         <MenuItem<Action>
@@ -140,12 +140,12 @@ export function SubscriptionTreeHeader({
           icon={
             onlyUnread ? <i className="icon icon-16 icon-checkmark" /> : null
           }
-          primaryText="Only unread"
+          label="Only unread"
         />
         <div className="menu-divider" />
         <MenuItem<Action>
           value={{ type: 'MANAGE_SUBSCRIPTIONS' }}
-          primaryText="Manage subscriptions..."
+          label="Manage subscriptions..."
         />
       </Dropdown>
     </header>

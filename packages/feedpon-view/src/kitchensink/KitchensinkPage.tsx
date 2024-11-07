@@ -347,33 +347,17 @@ export function KitchensinkPage(_props: KitchenSinkProps) {
             toggleButton={
               <button
                 type="button"
-                className="button button-outline-default dropdown-arrow"
+                className="button button-outline-default DropdownArrow"
               >
                 Dropdown
               </button>
             }
           >
-            <MenuItem
-              value="FIRST"
-              primaryText="First Action"
-              secondaryText="First"
-            />
-            <MenuItem
-              value="SECOND"
-              primaryText="Second Action"
-              secondaryText="Second"
-            />
-            <MenuItem
-              value="THIRD"
-              primaryText="Third Action"
-              secondaryText="Third"
-            />
+            <MenuItem value="FIRST" label="First Action" hint="First" />
+            <MenuItem value="SECOND" label="Second Action" hint="Second" />
+            <MenuItem value="THIRD" label="Third Action" hint="Third" />
             <div className="menu-divider" />
-            <MenuItem
-              value="FORTH"
-              isDisabled={true}
-              primaryText="Forth Action"
-            />
+            <MenuItem value="FORTH" isDisabled={true} label="Forth Action" />
           </Dropdown>
         </div>
         <h2>Modal</h2>

@@ -1,13 +1,11 @@
-import React, { useState } from 'react';
-
+import type { RenderContext, TemplateResult } from '@emonkak/ebit';
+import { atom, component, live, optional } from '@emonkak/ebit/directives.js';
 import type {
   EntryOrderKind,
   StreamFetchOptions,
   StreamViewKind,
 } from 'feedpon-messaging';
-import { Dropdown } from '../common/components/Dropdown';
-import { MenuForm, MenuItem } from '../common/components/Menu';
-import { useEvent } from '../common/hooks/useEvent';
+import { Menu } from '../primitives/Menu';
 
 interface StreamFetchOptionsDropdownProps {
   fetchOptions: StreamFetchOptions;
@@ -19,128 +17,153 @@ interface StreamFetchOptionsDropdownProps {
   streamView: StreamViewKind;
 }
 
-type Action =
-  | { type: 'CHANGE_ENTRY_ORDER'; entryOrder: EntryOrderKind }
-  | { type: 'CHANGE_ONLY_UNREAD'; enabled: boolean }
-  | { type: 'CHANGE_NUMBER_OF_ENTRIES' }
-  | { type: 'CHANGE_STREAM_VIEW'; streamView: StreamViewKind };
+export function StreamFetchOptionsDropdown(
+  {
+    fetchOptions,
+    isLoading,
+    onChangeEntryOrder,
+    onChangeNumberOfEntries,
+    onChangeStreamView,
+    onToggleOnlyUnread,
+    streamView,
+  }: StreamFetchOptionsDropdownProps,
+  context: RenderContext,
+): TemplateResult {
+  const [isOpened, setIsOpened] = context.useState(false);
+  const numEntries$ = context.useMemo(() => atom(fetchOptions.numEntries), []);
 
-export function StreamFetchOptionsDropdown({
-  fetchOptions,
-  isLoading,
-  onChangeEntryOrder,
-  onChangeNumberOfEntries,
-  onChangeStreamView,
-  onToggleOnlyUnread,
-  streamView,
-}: StreamFetchOptionsDropdownProps) {
-  const [numEntries, setNumEntries] = useState(fetchOptions.numEntries);
+  const toggleId = context.useId();
 
-  const handleSelectAction = useEvent((action: Action) => {
-    switch (action.type) {
-      case 'CHANGE_ENTRY_ORDER': {
-        onChangeEntryOrder(action.entryOrder);
-        break;
-      }
-      case 'CHANGE_ONLY_UNREAD':
-        onToggleOnlyUnread();
-        break;
-      case 'CHANGE_NUMBER_OF_ENTRIES': {
-        onChangeNumberOfEntries(numEntries);
-        break;
-      }
-      case 'CHANGE_STREAM_VIEW': {
-        onChangeStreamView(action.streamView);
-        break;
-      }
-    }
-  });
+  const closeDropdown = context.useCallback(() => {
+    setIsOpened(false);
+  }, []);
 
-  const handleChangeNumberOfEntries = useEvent(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      const numEntries = Number.parseInt(event.currentTarget.value, 10);
+  const toggleDropdown = context.useCallback(() => {
+    setIsOpened((isOpened) => !isOpened);
+  }, []);
 
-      setNumEntries(numEntries);
-    },
-  );
+  const checkmark = context.html`<i class="icon icon-16 icon-checkmark"></i>`;
 
-  const checkmarkIcon = <i className="icon icon-16 icon-checkmark" />;
-
-  return (
-    <Dropdown
-      onSelect={handleSelectAction}
-      toggleButton={
-        <button type="button" className="navbar-action">
-          <i className="icon icon-24 icon-menu-2" />
-        </button>
-      }
-    >
-      <div className="menu-heading">View</div>
-      <MenuItem<Action>
-        value={{
-          type: 'CHANGE_STREAM_VIEW',
-          streamView: 'expanded',
-        }}
-        icon={streamView === 'expanded' ? checkmarkIcon : null}
-        primaryText="Expanded view"
-      />
-      <MenuItem<Action>
-        value={{
-          type: 'CHANGE_STREAM_VIEW',
-          streamView: 'collapsible',
-        }}
-        icon={streamView === 'collapsible' ? checkmarkIcon : null}
-        primaryText="Collapsible view"
-      />
-      <div className="menu-divider" />
-      <div className="menu-heading">Order</div>
-      <MenuItem<Action>
-        value={{
-          type: 'CHANGE_ENTRY_ORDER',
-          entryOrder: 'newest',
-        }}
-        isDisabled={isLoading}
-        icon={fetchOptions.entryOrder === 'newest' ? checkmarkIcon : null}
-        primaryText="Newest first"
-      />
-      <MenuItem<Action>
-        value={{
-          type: 'CHANGE_ENTRY_ORDER',
-          entryOrder: 'oldest',
-        }}
-        isDisabled={isLoading}
-        icon={fetchOptions.entryOrder === 'oldest' ? checkmarkIcon : null}
-        primaryText="Oldest first"
-      />
-      <div className="menu-divider" />
-      <div className="menu-heading">
-        {fetchOptions.numEntries} entries fetching
+  const menuItems = context.html`
+    <div class="MenuSection" role="group">
+      <div class="MenuHeading" role="heading">View</div>
+      <button
+        class="MenuItem"
+        role="menuitem"
+        type="button"
+        @click=${context.useCallback(() => {
+          onChangeStreamView('expanded');
+          closeDropdown();
+        }, [onChangeStreamView])}>
+        <div class="MenuItem-icon"><${optional(streamView === 'expanded' ? checkmark : null)}></div>
+        <div class="MenuItem-content">Expanded view</div>
+      </button>
+      <button
+        class="MenuItem"
+        type="button"
+        @click=${context.useCallback(() => {
+          onChangeStreamView('collapsible');
+          closeDropdown();
+        }, [onChangeStreamView])}>
+        <div class="MenuItem-icon"><${optional(streamView === 'collapsible' ? checkmark : null)}></div>
+        <div class="MenuItem-content">Collapsible view</div>
+      </button>
+    </div>
+    <hr class="MenuSeparator">
+    <div class="MenuSection" role="group">
+      <div class="MenuHeading" role="heading">Order</div>
+      <button
+        class="MenuItem"
+        disabled=${isLoading}
+        role="menuitem"
+        type="button"
+        @click=${context.useCallback(() => {
+          onChangeEntryOrder('newest');
+          closeDropdown();
+        }, [onChangeEntryOrder])}>
+        <div class="MenuItem-icon"><${optional(fetchOptions.entryOrder === 'newest' ? checkmark : null)}></div>
+        <div class="MenuItem-content">Newest first</div>
+      </button>
+      <button
+        class="MenuItem"
+        disabled=${isLoading}
+        role="menuitem"
+        type="button"
+        @click=${context.useCallback(() => {
+          onChangeEntryOrder('oldest');
+          closeDropdown();
+        }, [onChangeEntryOrder])}>
+        <div class="MenuItem-icon"><${optional(fetchOptions.entryOrder === 'oldest' ? checkmark : null)}></div>
+        <div class="MenuItem-content">Oldest first</div>
+      </button>
+    </div>
+    <hr class="MenuSeparator">
+    <div class="MenuSection" role="group">
+      <div class="MenuHeading" role="heading">
+        ${fetchOptions.numEntries} entries fetching
       </div>
-      <MenuForm<Action> value={{ type: 'CHANGE_NUMBER_OF_ENTRIES' }}>
-        <div className="input-group">
-          <input
-            type="number"
-            className="form-control u-text-right"
-            style={{ width: '6rem' }}
-            value={numEntries + ''}
-            min={1}
-            onChange={handleChangeNumberOfEntries}
-          />
-          <button type="submit" className="button button-positive">
-            OK
-          </button>
+      <form
+        class="MenuItem"
+        role="menuitem"
+        @submit=${context.useCallback(() => {
+          onChangeNumberOfEntries(numEntries$.value);
+          closeDropdown();
+        }, [onChangeNumberOfEntries])}>
+        <div class="MenuItem-content">
+          <div class="input-group">
+            <input
+              class="form-control u-text-right"
+              disabled=${isLoading}
+              min="1"
+              style="width: 6ch"
+              type="number"
+              .value=${numEntries$.map(live)}
+              @input=${context.useCallback((event: Event) => {
+                numEntries$.value = Number.parseInt(
+                  (event.currentTarget as HTMLInputElement).value,
+                  10,
+                );
+              }, [])}
+            >
+            <button type="submit" class="button button-positive">
+              OK
+            </button>
+          </div>
         </div>
-      </MenuForm>
-      <div className="menu-divider" />
-      <MenuItem<Action>
-        value={{
-          type: 'CHANGE_ONLY_UNREAD',
-          enabled: !fetchOptions.onlyUnread,
-        }}
-        isDisabled={isLoading}
-        icon={fetchOptions.onlyUnread ? checkmarkIcon : null}
-        primaryText="Only unread"
-      />
-    </Dropdown>
-  );
+      </form>
+    </div>
+    <hr class="MenuSeparator">
+    <button
+      class="MenuItem"
+      disabled=${isLoading}
+      role="menuitem"
+      type="button"
+      @click=${context.useCallback(() => {
+        onToggleOnlyUnread();
+        closeDropdown();
+      }, [onToggleOnlyUnread])}>
+      <div class="MenuItem-icon"><${optional(fetchOptions.onlyUnread ? checkmark : null)}></div>
+      <div class="MenuItem-content">Only unread</div>
+    </button>
+  `;
+
+  return context.html`
+    <div class="Dropdown">
+      <button
+        aria-label="Stream fetch options"
+        type="button"
+        class="navbar-action"
+        id=${toggleId}
+        @click=${toggleDropdown}
+      >
+        <i class="icon icon-24 icon-menu-2"></i>
+      </button>
+      <${component(Menu, {
+        anchorTarget: toggleId,
+        children: menuItems,
+        onClose: closeDropdown,
+        open: isOpened,
+      })}>
+    </div>
+  `;
 }

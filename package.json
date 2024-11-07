@@ -7,15 +7,15 @@
   "scripts": {
     "build": "wireit",
     "ci": "wireit",
-    "clean": "rm --recursive dist",
+    "clean": "wireit",
     "format": "wireit",
     "lint": "wireit"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.4.1",
-    "esbuild": "^0.19.8",
-    "typescript": "^5.3.2",
-    "wireit": "^0.14.1"
+    "@biomejs/biome": "^1.9.4",
+    "esbuild": "^0.24.0",
+    "typescript": "^5.6.3",
+    "wireit": "^0.14.9"
   },
   "workspaces": [
     "packages/*"
@@ -41,12 +41,7 @@
       ]
     },
     "build:js": {
-      "command": "esbuild --drop-labels=$([[ ${DEBUG:-0} -eq 0 ]] && echo 'DEBUG') --metafile=dist/meta.json --bundle packages/feedpon/src/index.tsx --outfile=dist/index.js",
-      "files": [
-        "packages/**/*.ts",
-        "packages/**/*.tsx",
-        "packages/*/tsconfig.json"
-      ],
+      "command": "node build.mjs",
       "output": [
         "dist/index.js"
       ],
@@ -74,11 +69,23 @@
         "prebuild"
       ]
     },
+    "clean": {
+      "dependencies": [
+        "clean:dist",
+        "clean:tsc"
+      ]
+    },
+    "clean:dist": {
+      "command": "rm --force --recursive dist"
+    },
+    "clean:tsc": {
+      "command": "tsc --build --clean"
+    },
     "check": {
       "command": "biome check .",
       "files": [
-        "packages/**/*.ts",
-        "packages/**/*.tsx"
+        "packages/*/src/**/*.ts",
+        "packages/*/src/**/*.tsx"
       ],
       "output": []
     },
@@ -100,13 +107,18 @@
       ]
     },
     "tsc": {
-      "command": "tsc --build",
+      "command": "tsc --build --pretty --incremental",
+      "clean": "if-file-deleted",
       "files": [
-        "packages/**/*.ts",
-        "packages/**/*.tsx",
-        "packages/*/tsconfig.json"
+        "packages/*/src/**/*.ts",
+        "packages/*/src/**/*.tsx",
+        "packages/*/tsconfig.json",
+        "tsconfig.base.json",
+        "tsconfig.json"
       ],
-      "output": []
+      "output": [
+        "packages/*/*.tsbuildinfo"
+      ]
     }
   }
 }

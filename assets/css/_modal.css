@@ -1,61 +1,54 @@
-.modal {
-  display: flex;
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
-  z-index: 1000;
-  padding: var(--vertical-rhythm) 1.5rem;
-  overflow-y: auto;
-  overflow-x: hidden;
-  box-sizing: border-box;
-  background-color: var(--backdrop-background-color);
-  will-change: opacity, transform;
-}
-
-.modal-enter.modal-enter-active,
-.modal-exit.modal-exit-active {
-  transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
-}
-
-.modal-enter,
-.modal-exit.modal-exit-active {
-  opacity: 0;
-  transform: scale(1.15);
-}
-
-.modal-enter.modal-enter-active,
-.modal-exit {
-  opacity: 1;
-  transform: scale(1);
-}
-
-.modal-dialog {
-  padding: var(--vertical-rhythm) 1.5rem;
-  margin: 0 0 var(--vertical-rhythm);
+.Modal {
   background-color: var(--x-light-color);
   border-radius: 4px;
   box-shadow: 0 1px 2px var(--shadow-color);
+  margin-block: var(--vertical-rhythm);
+  margin-inline: auto;
+  max-inline-size: 640px;
+  opacity: 0;
+  padding-block: var(--vertical-rhythm) 1.5rem;
+  padding-inline: 1.5rem;
+  transform: scale(1.15);
+  transition:
+    display 0.2s ease-in-out allow-discrete,
+    overlay 0.2s ease-in-out allow-discrete,
+    opacity 0.2s ease-in-out,
+    transform 0.2s ease-in-out;
+
+  &[open] {
+    position: fixed;
+    inset: 0;
+    opacity: 1;
+    transform: scale(1);
+    transition-timing-function: ease-in;
+
+    @starting-style {
+      opacity: 0;
+      transform: scale(1.15);
+    }
+  }
 }
 
-.modal-dialog > *:last-child {
-  margin-bottom: 0;
+.Modal::backdrop {
+  background-color: var(--backdrop-background-color);
+  opacity: 0;
+  transition: display 0.2s ease-in-out allow-discrete, overlay 0.2s ease-in-out
+    allow-discrete, opacity 0.2s ease-in-out;
 }
 
-.modal > .modal-dialog {
-  flex: 1;
-  margin: auto;
-  max-width: 640px;
+.Modal[open]::backdrop {
+  opacity: 1;
+
+  @starting-style {
+    opacity: 0;
+  }
 }
 
-.modal-title {
-  --type-scale: var(--type-scale-2);
+.Modal > *:last-child {
+  margin-block-end: 0;
+}
+
+.Modal-title {
+  --type-scale: var(--type-scale-6);
   margin: 0;
-}
-
-.modal-is-opened {
-  overflow: hidden;
-  position: relative;
-  height: 100%;
 }

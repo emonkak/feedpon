@@ -203,7 +203,7 @@ function renderItems(subscriptions: Subscription[], query: string) {
       {matchedItems.length > 0 && <div className="menu-divider" />}
       <MenuItem
         value={'/search/' + encodeURIComponent(query)}
-        primaryText={`Search for "${query}"`}
+        label={`Search for "${query}"`}
       />
     </>
   );
@@ -214,8 +214,8 @@ function renderItem(subscription: Subscription) {
     <MenuItem
       key={subscription.subscriptionId}
       value={'/streams/' + encodeURIComponent(subscription.streamId)}
-      primaryText={subscription.title}
-      secondaryText={
+      label={subscription.title}
+      hint={
         subscription.unreadCount > 0
           ? Number(subscription.unreadCount).toLocaleString()
           : ''

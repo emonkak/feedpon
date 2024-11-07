@@ -81,24 +81,18 @@ export const router = new Router<
   ),
   route(
     ['search'],
-    (_args, _url, { locationActions, store }) =>
-      Either.left(
-        reactElement(
-          wrapStoreContext(
-            <SearchPage locationActions={locationActions} />,
-            store,
-          ),
-        ),
+    (_args, _url, { locationActions }) =>
+      Either.right(
+        component(SearchPage, { locationActions }) as Component<any, any, any>,
       ),
     [
-      route([wildcard], ([query], _url, { locationActions, store }) =>
-        Either.left(
-          reactElement(
-            wrapStoreContext(
-              <SearchPage locationActions={locationActions} query={query} />,
-              store,
-            ),
-          ),
+      route([wildcard], ([query], _url, { locationActions }) =>
+        Either.right(
+          component(SearchPage, { locationActions, query }) as Component<
+            any,
+            any,
+            any
+          >,
         ),
       ),
     ],
@@ -192,7 +186,9 @@ export const router = new Router<
     ],
   ),
   route(['streams', wildcard], ([streamId]) =>
-    Either.right(component(StreamPage, { streamId })),
+    Either.right(
+      component(StreamPage, { streamId }) as Component<any, any, any>,
+    ),
   ),
 ]);
 

@@ -7,11 +7,9 @@ import type {
   StreamFetchOptions,
   StreamViewKind,
 } from 'feedpon-messaging';
-import React from 'react';
 
 import { Navbar } from '../common/components/Navbar';
-import { reactElement } from '../common/directives/reactElement';
-import { EntriesDropdown } from './EntriesDropdown';
+import { EntryDisplaySettingsDropdown } from './EntryDisplaySettingsDropdown';
 import { StreamFetchOptionsDropdown } from './StreamFetchOptionsDropdown';
 
 interface StreamNavbarProps {
@@ -33,7 +31,7 @@ interface StreamNavbarProps {
   onScrollToEntry: (index: number) => void;
   onToggleOnlyUnread: () => void;
   onToggleSidebar: () => void;
-  onToggleUnreadKeeping: () => void;
+  onToggleKeepUneread: () => void;
   readEntryIndex: number;
   streamView: StreamViewKind;
   title: string;
@@ -58,7 +56,7 @@ export function StreamHeader(
     onScrollToEntry,
     onToggleOnlyUnread,
     onToggleSidebar,
-    onToggleUnreadKeeping,
+    onToggleKeepUneread,
     readEntryIndex,
     streamView,
     title,
@@ -80,20 +78,18 @@ export function StreamHeader(
       >
         <i class="icon icon-24 icon-refresh"></i>
       </button>
-      <${reactElement(
-        <EntriesDropdown
-          activeEntryIndex={activeEntryIndex}
-          canMarkStreamAsRead={canMarkStreamAsRead}
-          entries={entries}
-          keepUnread={keepUnread}
-          onClearReadPosition={onClearReadPosition}
-          onMarkStreamAsRead={onMarkStreamAsRead}
-          onScrollToEntry={onScrollToEntry}
-          onToggleUnreadKeeping={onToggleUnreadKeeping}
-          readEntryIndex={readEntryIndex}
-          title={title}
-        />,
-      )}>
+      <${component(EntryDisplaySettingsDropdown, {
+        activeEntryIndex,
+        canMarkStreamAsRead,
+        entries,
+        keepUnread,
+        onClearReadPosition,
+        onMarkStreamAsRead,
+        onScrollToEntry,
+        onToggleKeepUneread,
+        readEntryIndex,
+        title,
+      })}>
       <${optional(
         isExpanded
           ? context.html`
@@ -105,17 +101,15 @@ export function StreamHeader(
       )}>
       <${optional(
         !isExpanded && fetchOptions
-          ? reactElement(
-              <StreamFetchOptionsDropdown
-                fetchOptions={fetchOptions}
-                isLoading={isLoading}
-                onChangeEntryOrder={onChangeEntryOrder}
-                onChangeNumberOfEntries={onChangeNumberOfEntries}
-                onChangeStreamView={onChangeStreamView}
-                onToggleOnlyUnread={onToggleOnlyUnread}
-                streamView={streamView}
-              />,
-            )
+          ? component(StreamFetchOptionsDropdown, {
+              fetchOptions,
+              isLoading,
+              onChangeEntryOrder,
+              onChangeNumberOfEntries,
+              onChangeStreamView,
+              onToggleOnlyUnread,
+              streamView,
+            })
           : null,
       )}>
     `,

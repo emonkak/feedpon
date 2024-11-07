@@ -6,7 +6,7 @@ import React, {
   useRef,
 } from 'react';
 
-import { useEvent } from '../hooks/useEvent';
+import { useEvent } from '../../common/hooks/useEvent';
 
 interface MenuProps<TValue> {
   children?: React.ReactNode;
@@ -17,8 +17,8 @@ interface MenuProps<TValue> {
 interface MenuItemProps<TValue> {
   icon?: React.ReactNode;
   isDisabled?: boolean;
-  primaryText: string;
-  secondaryText?: string;
+  label: string;
+  hint?: string;
   value: TValue;
 }
 
@@ -67,7 +67,7 @@ export const Menu = forwardRef(function Menu<TValue>(
 
   return (
     <MenuContext.Provider value={{ delegate: onSelect }}>
-      <div className="menu" onKeyDown={handleKeyDown} ref={containerRef}>
+      <div className="Menu" onKeyDown={handleKeyDown} ref={containerRef}>
         {children}
       </div>
     </MenuContext.Provider>
@@ -79,8 +79,8 @@ export const Menu = forwardRef(function Menu<TValue>(
 export function MenuItem<TValue>({
   icon,
   isDisabled = false,
-  primaryText,
-  secondaryText,
+  label,
+  hint,
   value,
 }: MenuItemProps<TValue>) {
   const { delegate } = useContext(MenuContext)!;
@@ -92,13 +92,10 @@ export function MenuItem<TValue>({
     },
   );
 
-  const iconElement = icon && <span className="menu-item-icon">{icon}</span>;
-
-  const primaryTextElement = (
-    <span className="menu-item-primary-text">{primaryText}</span>
-  );
-  const secondaryTextElement = secondaryText && (
-    <span className="menu-item-secondary-text">{secondaryText}</span>
+  const iconElement = icon && <span className="MenuItem-icon">{icon}</span>;
+  const primaryTextElement = <div className="MenuItem-content">{label}</div>;
+  const secondaryTextElement = hint && (
+    <div className="MenuItem-hint">{hint}</div>
   );
 
   return (
@@ -124,28 +121,31 @@ export function MenuForm<TValue>({ children, value }: MenuFormProps<TValue>) {
   });
 
   return (
-    <form className="menu-form" onSubmit={handleSubmit}>
+    <form className="MenuItem" onSubmit={handleSubmit}>
       {children}
     </form>
   );
 }
 
-function getFocusableElements(container: Element): {
-  activeIndex: number;
-  elements: HTMLElement[];
-} {
-  const elements = Array.from(
-    container.querySelectorAll<HTMLElement>('.menu-item:not(.is-disabled)'),
-  );
+function activeIndexOf(elements: ArrayLike<Element>) {
   const { activeElement } = document;
-  const activeIndex = elements.findIndex((el) => el.contains(activeElement));
-  return { activeIndex, elements };
+  for (let i = 0, l = elements.length; i < l; i++) {
+    if (elements[i]!.contains(activeElement)) {
+      return i;
+    }
+  }
+  return -1;
 }
 
-function focusPrevious(container: Element): void {
-  const { activeIndex, elements } = getFocusableElements(container);
+function getFocusableItems(menu: Element): NodeListOf<HTMLElement> {
+  return menu.querySelectorAll<HTMLElement>('.MenuItem:not(:disabled)');
+}
+
+function focusPrevious(menu: Element): void {
+  const elements = getFocusableItems(menu);
 
   if (elements.length > 0) {
+    const activeIndex = activeIndexOf(elements);
     const previousIndex =
       activeIndex > 0 ? activeIndex - 1 : elements.length - 1;
     const previousElement = elements[previousIndex]!;
@@ -153,10 +153,11 @@ function focusPrevious(container: Element): void {
   }
 }
 
-function focusNext(container: Element): void {
-  const { activeIndex, elements } = getFocusableElements(container);
+function focusNext(menu: Element): void {
+  const elements = getFocusableItems(menu);
 
   if (elements.length > 0) {
+    const activeIndex = activeIndexOf(elements);
     const nextIndex = activeIndex < elements.length - 1 ? activeIndex + 1 : 0;
     const nextElement = elements[nextIndex]!;
     nextElement.focus();

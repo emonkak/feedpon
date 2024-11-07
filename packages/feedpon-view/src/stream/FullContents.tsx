@@ -1,5 +1,5 @@
 import type { RenderContext, TemplateResult } from '@emonkak/ebit';
-import { component, list } from '@emonkak/ebit/directives.js';
+import { component, nonKeyedList } from '@emonkak/ebit/directives.js';
 import type { FullContent } from 'feedpon-messaging';
 
 import { EmbeddedHTML } from '../common/components/EmbeddedHTML';
@@ -25,7 +25,7 @@ export function FullContents(
     `;
   }
 
-  const pages = list(
+  const pages = nonKeyedList(
     items,
     (fullContent, index) => context.html`
       <section class="entry-page">

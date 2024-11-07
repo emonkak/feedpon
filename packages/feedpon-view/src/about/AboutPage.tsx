@@ -193,7 +193,7 @@ export function AboutPage({ locationActions }: AboutPageProps) {
       >
         <MenuItem<Action>
           value={{ type: 'GO_KITCHENSINK' }}
-          primaryText="Go kitchensink..."
+          label="Go kitchensink..."
         />
       </Dropdown>
     </ReactNavbar>

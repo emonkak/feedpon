@@ -20,7 +20,7 @@ export function SubscribeButton({
         type="button"
         onClick={onClick}
         onKeyDown={onKeyDown}
-        className="button button-outline-default dropdown-arrow"
+        className="button button-outline-default DropdownArrow"
         disabled={isLoading}
       >
         <i
@@ -37,7 +37,7 @@ export function SubscribeButton({
         type="button"
         onClick={onClick}
         onKeyDown={onKeyDown}
-        className="button button-outline-positive dropdown-arrow"
+        className="button button-outline-positive DropdownArrow"
         disabled={isLoading}
       >
         <i

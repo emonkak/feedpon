@@ -1,5 +1,10 @@
 import type { RenderContext, TemplateResult } from '@emonkak/ebit';
-import { Either, component, list, styleMap } from '@emonkak/ebit/directives.js';
+import {
+  Either,
+  component,
+  nonKeyedList,
+  styleMap,
+} from '@emonkak/ebit/directives.js';
 import type { Comment } from 'feedpon-messaging';
 
 import { CommentView } from './CommentView';
@@ -41,7 +46,9 @@ export function CommentPopover(
   const content =
     comments.length > 0
       ? Either.left(
-          list(comments, (comment) => component(CommentView, { comment })),
+          nonKeyedList(comments, (comment) =>
+            component(CommentView, { comment }),
+          ),
         )
       : Either.right(context.html`No comments yet in this entry.`);
 

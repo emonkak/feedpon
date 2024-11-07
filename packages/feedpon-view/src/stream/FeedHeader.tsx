@@ -7,10 +7,9 @@ import type {
   subscribe,
   unsubscribe,
 } from 'feedpon-messaging/subscriptions';
-import React from 'react';
 
-import { SubscribeDropdown } from '../common/SubscribeDropdown';
-import { reactElement } from '../common/directives/reactElement';
+import { component } from '@emonkak/ebit/directives.js';
+import { SubscriptionSettingsDropdown } from '../common/SubscriptionSettingsDropdown';
 
 interface FeedHeaderProps {
   categories: Category[];
@@ -72,19 +71,18 @@ export function FeedHeader(
               </div>
             </div>
           </div>
-          <${reactElement(
-            <SubscribeDropdown
-              className="u-flex-shrink-0"
-              categories={categories}
-              feed={feed}
-              onAddToCategory={onAddToCategory}
-              onCreateCategory={onCreateCategory}
-              onRemoveFromCategory={onRemoveFromCategory}
-              onSubscribe={onSubscribe}
-              onUnsubscribe={onUnsubscribe}
-              subscription={subscription}
-            />,
-          )}>
+          <div class="u-flex-shrink-0">
+            <${component(SubscriptionSettingsDropdown, {
+              categories,
+              feed,
+              onAddToCategory,
+              onCreateCategory,
+              onRemoveFromCategory,
+              onSubscribe,
+              onUnsubscribe,
+              subscription,
+            })}>
+          </div>
         </div>
       </div>
     </header>

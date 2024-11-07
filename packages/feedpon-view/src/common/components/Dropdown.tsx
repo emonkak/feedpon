@@ -1,20 +1,21 @@
 import React, { cloneElement, useRef, useState } from 'react';
 import CSSTransition from 'react-transition-group/CSSTransition';
 
-import { useEvent } from '../hooks/useEvent';
+import classnames from 'classnames';
+import { useEvent } from '../../common/hooks/useEvent';
 import { Dismissible } from './Dismissible';
 import { Menu, type MenuRef } from './Menu';
 
 interface DropdownProps<TValue> {
+  as?: React.ElementType;
   children: React.ReactNode;
   className?: string;
-  as?: React.ElementType;
   onClose?: () => void;
   onSelect: (value: TValue) => void;
-  toggleButton: React.ReactElement<ToggleButtonProps>;
+  toggleButton: React.ReactElement<ReactToggleButtonProps>;
 }
 
-interface ToggleButtonProps {
+interface ReactToggleButtonProps {
   onClick?: (event: React.MouseEvent<any>) => void;
   onKeyDown?: (event: React.KeyboardEvent<any>) => void;
 }
@@ -134,11 +135,13 @@ export function Dropdown<TValue>({
   });
 
   return (
-    <As ref={containerRef} className={className}>
-      {cloneElement(toggleButton, {
-        onClick: handleToggle,
-        onKeyDown: handleKeyDown,
-      })}
+    <As ref={containerRef} className={classnames('Dropdown', className)}>
+      <div className="Dropdown-toggle">
+        {cloneElement(toggleButton, {
+          onClick: handleToggle,
+          onKeyDown: handleKeyDown,
+        })}
+      </div>
       <CSSTransition
         in={isOpened}
         mountOnEnter
@@ -149,7 +152,7 @@ export function Dropdown<TValue>({
         onExited={handleTransitionExited}
       >
         <Dismissible isDisabled={!isEntered} onDismiss={handleDismiss}>
-          <div className="dropdown" style={dropdownStyle}>
+          <div className="Dropdown-menu" style={dropdownStyle}>
             <Menu<TValue>
               ref={menuRef}
               onKeyDown={handleKeyDown}

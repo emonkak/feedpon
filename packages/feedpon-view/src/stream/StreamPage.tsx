@@ -380,7 +380,7 @@ export function StreamPage(
     onScrollToEntry: handleScrollToEntry,
     onToggleOnlyUnread: handleToggleOnlyUnread,
     onToggleSidebar: onToggleSidebar,
-    onToggleUnreadKeeping: handleToggleUnreadKeeping,
+    onToggleKeepUneread: handleToggleUnreadKeeping,
     readEntryIndex: stream.readEntryIndex,
     streamView: stream.streamView,
     title: stream.title,

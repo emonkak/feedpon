@@ -7,14 +7,15 @@ import type {
 import { ref } from '@emonkak/ebit/directives.js';
 
 export interface DialogProps {
-  open: boolean;
   child?: unknown;
-  onDismiss?: () => void;
   dialogProps?: { [key: string]: unknown };
+  modal?: boolean;
+  onDismiss?: () => void;
+  open: boolean;
 }
 
 export function Dialog(
-  { open, child, dialogProps = {}, onDismiss }: DialogProps,
+  { child, dialogProps = {}, modal = false, onDismiss, open }: DialogProps,
   context: RenderContext,
 ): TemplateResult {
   const dialogRef = context.useRef<HTMLDialogElement | null>(null);
@@ -25,11 +26,15 @@ export function Dialog(
 
   context.useLayoutEffect(() => {
     if (open) {
-      dialogRef.current!.show();
+      if (modal) {
+        dialogRef.current!.showModal();
+      } else {
+        dialogRef.current!.show();
+      }
     } else {
       dialogRef.current!.close();
     }
-  }, [open]);
+  }, [modal, open]);
 
   return context.html`
     <dialog ref=${ref(dialogRef)} @close=${onDismiss} ${dialogProps}>

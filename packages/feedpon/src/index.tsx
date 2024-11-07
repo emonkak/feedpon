@@ -1,4 +1,4 @@
-import { ClientRenderHost, ConcurrentUpdater } from '@emonkak/ebit';
+import { ClientRenderHost, ConcurrentUpdater, createRoot } from '@emonkak/ebit';
 import { createHashHistory } from 'history';
 
 import { component } from '@emonkak/ebit/directives.js';
@@ -25,9 +25,10 @@ function main() {
   const host = new ClientRenderHost();
   const updater = new ConcurrentUpdater();
   const container = document.getElementById('app')!;
-  const root = host.createRoot(
+  const root = createRoot(
     component(App, { getStore, history: hashHistory }),
     container,
+    host,
     updater,
   );
 

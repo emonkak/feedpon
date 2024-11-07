@@ -2,11 +2,11 @@ import classnames from 'classnames';
 import type { Category, Subscription } from 'feedpon-messaging';
 import React, { useState } from 'react';
 
-import { ConfirmModal } from '../common/components/ConfirmModal';
-import { Dropdown } from '../common/components/Dropdown';
-import { MenuForm, MenuItem } from '../common/components/Menu';
-import { Portal } from '../common/components/Portal';
-import { useEvent } from '../common/hooks/useEvent';
+import { ConfirmModal } from './components/ConfirmModal';
+import { Dropdown } from './components/Dropdown';
+import { MenuForm, MenuItem } from './components/Menu';
+import { Portal } from './components/Portal';
+import { useEvent } from './hooks/useEvent';
 
 interface SubscriptionDropdownProps {
   categories: Category[];
@@ -86,7 +86,7 @@ export function SubscriptionDropdown({
         icon={isAdded ? <i className="icon icon-16 icon-checkmark" /> : null}
         isDisabled={subscription.isLoading}
         key={category.categoryId}
-        primaryText={category.label}
+        label={category.label}
         value={
           isAdded
             ? { type: 'REMOVE_FROM_CATEGORY', category }
@@ -144,7 +144,7 @@ export function SubscriptionDropdown({
         <div className="menu-divider" />
         <MenuItem<Action>
           value={{ type: 'UNSUBSCRIBE' }}
-          primaryText="Unsubscribe..."
+          label="Unsubscribe..."
           isDisabled={subscription.isLoading}
         />
       </Dropdown>

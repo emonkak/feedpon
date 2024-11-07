@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@emonkak/ebit": "github:emonkak/ebit",
-    "@types/react": "^18.3.11",
+    "@types/react": "^18.3.12",
     "feedpon-utils": "link:../feedpon-utils",
     "react": "^18.3.1",
     "redux": "^5.0.1"
