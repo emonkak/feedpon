@@ -41,3 +41,28 @@ a.stream-title:hover {
   width: 100%;
   height: 100%;
 }
+
+.StreamItem {
+  --title-weight: normal;
+  display: flex;
+  gap: 1ch;
+
+  &.has-unread {
+    --title-weight: bold;
+  }
+}
+
+.StreamItem-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.StreamItem-title {
+  flex: 1;
+  font-weight: var(--title-weight);
+}
+
+.StreamItem-unread {
+  font-size: calc(1rem * var(--type-scale-7));
+}

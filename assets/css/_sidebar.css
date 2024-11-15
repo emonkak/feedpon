@@ -3,11 +3,12 @@
 }
 
 .sidebar-group-header {
-  display: flex;
   align-items: stretch;
+  border-bottom: 1px solid var(--x-dark-color);
+  display: flex;
+  margin-bottom: calc(var(--vertical-rhythm) / 4);
   padding: calc(var(--vertical-rhythm) / 4) 0
     calc(var(--vertical-rhythm) / 4 - 1px);
-  border-bottom: 1px solid var(--x-dark-color);
 }
 
 @media not all and (min-width: 768px) {

@@ -1,0 +1,301 @@
+import type { RenderContext, TemplateResult } from '@emonkak/ebit';
+import {
+  classMap,
+  component,
+  keyedList,
+  memo,
+  optional,
+  styleMap,
+} from '@emonkak/ebit/directives.js';
+
+export interface TreeProps<TKey, TValue> {
+  items: TreeItem<TKey, TValue>[];
+  renderItem: (
+    item: TreeItem<TKey, TValue>,
+    context: RenderContext,
+  ) => TemplateResult;
+  onSelect(item: TreeItem<TKey, TValue>): void;
+}
+
+export interface TreeItem<TKey, TValue> {
+  children: TreeItem<TKey, TValue>[];
+  defaultExpanded?: boolean;
+  key: TKey;
+  selected: boolean;
+  value: TValue;
+}
+
+interface ItemAggregation<TKey, TValue> {
+  item: TreeItem<TKey, TValue>;
+  state: UnmanagedState;
+  parent: ItemAggregation<TKey, TValue> | null;
+}
+
+interface UnmanagedState {
+  expanded: boolean;
+  level: number;
+  userInteraction: boolean;
+}
+
+export function Tree<TKey, TValue>(
+  { items, renderItem, onSelect }: TreeProps<TKey, TValue>,
+  context: RenderContext,
+): TemplateResult {
+  const unmanagedStatesRef = context.useMemo(
+    () => ({ current: new Map<TKey, UnmanagedState>() }),
+    [],
+  );
+  const oldUnmanagedStates = unmanagedStatesRef.current;
+  const newUnmanagedStates = new Map<TKey, UnmanagedState>();
+
+  const forceUpdate = context.useCallback(() => {
+    context.forceUpdate();
+  }, []);
+
+  const aggregate = (
+    accumulator: ItemAggregation<TKey, TValue>[],
+    item: TreeItem<TKey, TValue>,
+    parent: ItemAggregation<TKey, TValue> | null,
+  ): ItemAggregation<TKey, TValue>[] => {
+    const level = parent !== null ? parent.state.level + 1 : 0;
+    let state = oldUnmanagedStates.get(item.key);
+
+    if (state !== undefined) {
+      state.level = level;
+    } else {
+      state = {
+        expanded: item.defaultExpanded ?? false,
+        level,
+        userInteraction: false,
+      };
+    }
+
+    const aggregation = { item, state, parent };
+    const childAggregations = item.children.reduce(
+      (results, item) => aggregate(results, item, aggregation),
+      [] as typeof accumulator,
+    );
+
+    accumulator.push(aggregation);
+
+    if (item.selected && parent !== null && !parent.state.userInteraction) {
+      parent.state.expanded = true;
+    }
+
+    if (state.expanded) {
+      accumulator.push(...childAggregations);
+    }
+
+    state.userInteraction = false;
+    newUnmanagedStates.set(item.key, state);
+
+    return accumulator;
+  };
+
+  const childNodes = keyedList(
+    items.reduce(
+      (results, item) => aggregate(results, item, null),
+      [] as ItemAggregation<TKey, TValue>[],
+    ),
+    ({ item }) => item.key,
+    ({ item, state, parent }) => {
+      return memo(() => {
+        return component(TreeItemView<TKey, TValue>, {
+          content: renderItem(item, context),
+          item,
+          onSelect,
+          onStateUpadte: forceUpdate,
+          parent,
+          state,
+        });
+      }, [
+        item.children.length > 0,
+        item.selected,
+        item.value,
+        onSelect,
+        state.expanded,
+        state.level,
+      ]);
+    },
+  );
+
+  unmanagedStatesRef.current = newUnmanagedStates;
+
+  return context.html`
+    <div class="Tree" role="tree">
+      <${childNodes}>
+    </div>
+  `;
+}
+
+interface TreeItemViewProps<TKey, TValue> {
+  content: TemplateResult;
+  item: TreeItem<TKey, TValue>;
+  onSelect(item: TreeItem<TKey, TValue>): void;
+  onStateUpadte: () => void;
+  parent: ItemAggregation<TKey, TValue> | null;
+  state: UnmanagedState;
+}
+
+function TreeItemView<TKey, TValue>(
+  {
+    content,
+    item,
+    onSelect,
+    onStateUpadte,
+    state,
+    parent,
+  }: TreeItemViewProps<TKey, TValue>,
+  context: RenderContext,
+): TemplateResult {
+  const handleClick = context.useCallback(
+    (event: MouseEvent) => {
+      event.preventDefault();
+      onSelect(item);
+    },
+    [onSelect, item.value],
+  );
+
+  const handleKeyDown = context.useCallback(
+    (event: KeyboardEvent) => {
+      if (event.currentTarget !== event.target) {
+        return;
+      }
+
+      switch (event.key) {
+        case 'ArrowLeft':
+          event.preventDefault();
+          event.stopPropagation();
+          if (state.expanded) {
+            state.expanded = false;
+            state.userInteraction = true;
+            onStateUpadte();
+          } else if (parent !== null && parent.state.expanded) {
+            matchPrevious<HTMLElement>(
+              event.currentTarget as Element,
+              (element) =>
+                element.matches(`.TreeItem[aria-level="${state.level - 1}"]`),
+            )?.focus();
+            parent.state.expanded = false;
+            parent.state.userInteraction = true;
+            onStateUpadte();
+          }
+          break;
+        case 'ArrowRight':
+          event.preventDefault();
+          event.stopPropagation();
+          if (item.children.length > 0 && !state.expanded) {
+            state.expanded = true;
+            state.userInteraction = true;
+            onStateUpadte();
+          }
+          break;
+        case 'ArrowDown':
+          event.preventDefault();
+          event.stopPropagation();
+          matchNext<HTMLElement>(event.currentTarget as Element, (element) =>
+            element.matches('.TreeItem'),
+          )?.focus();
+          break;
+        case 'ArrowUp':
+          event.preventDefault();
+          event.stopPropagation();
+          matchPrevious<HTMLElement>(
+            event.currentTarget as Element,
+            (element) => element.matches('.TreeItem'),
+          )?.focus();
+          break;
+        case 'Enter':
+        case ' ':
+          event.stopPropagation();
+          event.preventDefault();
+          onSelect(item);
+          break;
+      }
+    },
+    [item.value, onSelect, onStateUpadte, parent?.state, state],
+  );
+
+  const handleExpand = context.useCallback(
+    (event: MouseEvent) => {
+      event.preventDefault();
+      event.stopPropagation();
+      state.expanded = !state.expanded;
+      state.userInteraction = true;
+      onStateUpadte();
+    },
+    [onStateUpadte, state],
+  );
+
+  // biome-ignore format:
+  const expandButton = item.children.length > 0 ? context.html`
+    <button
+      aria-expanded=${state.expanded.toString()}
+      aria-label=${state.expanded ? 'Shrink item' : 'Expand item'}
+      class="TreeItem-expand"
+      tabindex="-1"
+      type="button"
+      @click=${handleExpand}
+    >
+      <i
+        aria-hidden="true"
+        class=${
+          state.expanded
+            ? 'icon icon-16 icon-angle-down'
+            : 'icon icon-16 icon-angle-right'
+        }
+        role="img"
+      ></i>
+    </button>
+  ` : null;
+
+  return context.html`
+    <div
+      aria-level=${state.level}
+      aria-selected=${item.selected.toString()}
+      class=${classMap({ TreeItem: true, 'is-selected': item.selected })}
+      role="treeitem"
+      style=${styleMap({ '--level': state.level.toString() })}
+      tabindex="0"
+      @click=${handleClick}
+      @keydown=${handleKeyDown}
+    >
+      <${optional(expandButton)}>
+      <div class="TreeItem-content">
+        <${content}>
+      </div>
+    </div>
+  `;
+}
+
+function matchPrevious<T extends Element>(
+  element: Element,
+  predicate: (element: Element) => boolean,
+): T | null {
+  for (
+    let current = element.previousElementSibling;
+    current !== null;
+    current = current.previousElementSibling
+  ) {
+    if (predicate(current)) {
+      return current as T;
+    }
+  }
+  return null;
+}
+
+function matchNext<T extends Element>(
+  element: Element,
+  predicate: (element: Element) => boolean,
+): T | null {
+  for (
+    let current = element.nextElementSibling;
+    current !== null;
+    current = current.nextElementSibling
+  ) {
+    if (predicate(current)) {
+      return current as T;
+    }
+  }
+  return null;
+}

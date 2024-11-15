@@ -4,10 +4,10 @@ import type {
   Subscription,
 } from 'feedpon-messaging';
 import { UNCATEGORIZED } from 'feedpon-messaging/categories';
-import React from 'react';
 
-import { SubscriptionIcon } from './SubscriptionIcon';
-import { Tree, TreeBranch, TreeLeaf } from './components/Tree';
+import type { RenderContext, TemplateResult } from '@emonkak/ebit';
+import { classMap, component } from '@emonkak/ebit/directives.js';
+import { Tree, type TreeItem } from '../primitives/Tree';
 
 interface SubscriptionTreeProps {
   categories: Category[];
@@ -16,68 +16,137 @@ interface SubscriptionTreeProps {
   selectedPath: string;
 }
 
-export function SubscriptionTree({
-  categories,
-  groupedSubscriptions,
-  onSelect,
-  selectedPath,
-}: SubscriptionTreeProps) {
-  const visibleCategories = categories
-    .filter((category) => Object.hasOwn(groupedSubscriptions, category.label))
-    .map((category) => {
-      const { items, unreadCount } = groupedSubscriptions[category.label]!;
-      const path = `/streams/${encodeURIComponent(category.streamId)}`;
-      const children = items.map(renderSubscription);
+type StreamItem =
+  | {
+      type: 'subscription';
+      subscription: Subscription;
+    }
+  | {
+      type: 'category';
+      category: Category;
+      unreadCount: number;
+    };
 
-      return (
-        <TreeBranch
-          key={category.categoryId}
-          value={path}
-          isImportant={unreadCount > 0}
-          primaryText={category.label}
-          secondaryText={
-            unreadCount > 0 ? Number(unreadCount).toLocaleString() : ''
-          }
-        >
-          {children}
-        </TreeBranch>
-      );
-    });
+export function SubscriptionTree(
+  {
+    categories,
+    groupedSubscriptions,
+    onSelect,
+    selectedPath,
+  }: SubscriptionTreeProps,
+  context: RenderContext,
+): TemplateResult {
+  const items = context.useMemo(() => {
+    const items: TreeItem<string, StreamItem>[] = [];
 
-  const uncategorizedSubscriptions = (
-    groupedSubscriptions[UNCATEGORIZED]?.items ?? []
-  ).map(renderSubscription);
+    for (let i = 0, l = categories.length; i < l; i++) {
+      const category = categories[i]!;
+      const groupedSubscription = groupedSubscriptions[category.label];
+      if (groupedSubscription === undefined) {
+        continue;
+      }
+      const children = groupedSubscription.items.map((subscription) => {
+        const selected =
+          selectedPath ===
+          `/streams/${encodeURIComponent(subscription.streamId)}`;
+        return {
+          children: [],
+          key: category.label + '/' + subscription.streamId,
+          selected,
+          value: {
+            type: 'subscription',
+            subscription,
+          },
+        } satisfies TreeItem<string, StreamItem>;
+      });
+      items.push({
+        children,
+        key: category.label,
+        selected:
+          selectedPath === `/streams/${encodeURIComponent(category.streamId)}`,
+        value: {
+          type: 'category',
+          unreadCount: groupedSubscription.unreadCount,
+          category,
+        },
+      });
+    }
 
-  return (
-    <Tree selectedValue={selectedPath} onSelect={onSelect}>
-      {visibleCategories}
-      {uncategorizedSubscriptions}
-    </Tree>
+    if (groupedSubscriptions[UNCATEGORIZED] !== undefined) {
+      const uncategoriesSubscriptions =
+        groupedSubscriptions[UNCATEGORIZED].items;
+      for (let i = 0, l = uncategoriesSubscriptions.length; i < l; i++) {
+        const subscription = uncategoriesSubscriptions[i]!;
+        const selected =
+          selectedPath ===
+          `/streams/${encodeURIComponent(subscription.streamId)}`;
+        items.push({
+          children: [],
+          key: subscription.streamId,
+          selected,
+          value: {
+            type: 'subscription',
+            subscription,
+          },
+        });
+      }
+    }
+
+    return items;
+  }, [categories, groupedSubscriptions, selectedPath]);
+
+  const handleSelect = context.useCallback(
+    (item: TreeItem<string, StreamItem>) => {
+      const streamId =
+        item.value.type === 'category'
+          ? item.value.category.streamId
+          : item.value.subscription.streamId;
+      onSelect(`/streams/${encodeURIComponent(streamId)}`);
+    },
+    [onSelect],
   );
+
+  return context.html`<${component(Tree<string, StreamItem>, {
+    items,
+    onSelect: handleSelect,
+    renderItem,
+  })}>`;
 }
 
-function renderSubscription(subscription: Subscription) {
-  const path = `/streams/${encodeURIComponent(subscription.streamId)}`;
-  const unreadCount =
-    subscription.unreadCount > subscription.readCount
-      ? subscription.unreadCount - subscription.readCount
-      : 0;
-
-  return (
-    <TreeLeaf
-      key={subscription.subscriptionId}
-      primaryText={subscription.title}
-      secondaryText={
-        unreadCount > 0 ? Number(unreadCount).toLocaleString() : ''
-      }
-      icon={
-        <SubscriptionIcon
-          title={subscription.title}
-          iconUrl={subscription.iconUrl}
-        />
-      }
-      value={path}
-      isImportant={unreadCount > 0}
-    />
-  );
+function renderItem(
+  item: TreeItem<string, StreamItem>,
+  context: RenderContext,
+): TemplateResult {
+  if (item.value.type === 'category') {
+    const { unreadCount, category } = item.value;
+    return context.html`
+      <div class=${classMap({ StreamItem: true, 'has-unread': unreadCount > 0 })}>
+        <div class="StreamItem-title">${category.label}</div>
+        <div class="StreamItem-unread">${unreadCount > 0 ? unreadCount.toLocaleString() : ''}</div>
+      </div>
+    `;
+  } else {
+    const { subscription } = item.value;
+    const unreadCount = Math.max(
+      0,
+      subscription.unreadCount - subscription.readCount,
+    );
+    // biome-ignore format:
+    const icon = subscription.iconUrl !== '' ? context.html`
+      <img
+        alt=${subscription.title}
+        class="u-vertical-middle u-object-fit-cover"
+        height="16"
+        src=${subscription.iconUrl}
+        width="16"
+      >
+    ` : context.html`<i class="icon icon-16 icon-file"></i>`;
+    return context.html`
+      <div class=${classMap({ StreamItem: true, 'has-unread': unreadCount > 0 })}>
+        <div class="StreamItem-icon"><${icon}></div>
+        <div class="StreamItem-title">${subscription.title}</div>
+        <div class="StreamItem-unread">${unreadCount > 0 ? unreadCount.toLocaleString() : ''}</div>
+      </div>
+    `;
+  }
 }

@@ -1,6 +1,5 @@
-import { type LocationActions, RelativeURL } from '@emonkak/ebit/router.js';
+import { RelativeURL, currentLocation } from '@emonkak/ebit/router.js';
 import { bindActions } from 'feedpon-flux';
-import { useStore } from 'feedpon-flux/react';
 import type { State, Subscription } from 'feedpon-messaging';
 import { logout } from 'feedpon-messaging/backend';
 import { createSortedCategoriesSelector } from 'feedpon-messaging/categories';
@@ -15,8 +14,11 @@ import {
   fetchSubscriptions,
 } from 'feedpon-messaging/subscriptions';
 import { fetchUser } from 'feedpon-messaging/user';
-import React, { useEffect, useMemo } from 'react';
+import React from 'react';
 
+import type { RenderContext, TemplateResult } from '@emonkak/ebit';
+import { component } from '@emonkak/ebit/directives.js';
+import { getStoreHook } from 'feedpon-flux/ebit';
 import { ProfileDropdown } from './ProfileDropdown';
 import { SubscriptionIcon } from './SubscriptionIcon';
 import { SubscriptionTree } from './SubscriptionTree';
@@ -24,25 +26,33 @@ import { SubscriptionTreeHeader } from './SubscriptionTreeHeader';
 import { AutoComplete } from './components/AutoComplete';
 import { MenuItem } from './components/Menu';
 import { Tree, TreeLeaf } from './components/Tree';
-import { useEvent } from './hooks/useEvent';
+import { reactElement } from './directives/reactElement';
 
-export interface SidebarProps {
-  locationActions: LocationActions;
-  url: RelativeURL;
-}
+export interface SidebarProps {}
 
-export function Sidebar({ locationActions, url }: SidebarProps) {
-  const categoriesSelector = useMemo(createSortedCategoriesSelector, []);
-  const allSubscriptionsSelector = useMemo(createAllSubscriptionsSelector, []);
-  const visibleSubscriptionsSelector = useMemo(
+export function Sidebar(
+  {}: SidebarProps,
+  context: RenderContext,
+): TemplateResult {
+  const [locationState, locationActions] = context.use(currentLocation);
+
+  const categoriesSelector = context.useMemo(
+    createSortedCategoriesSelector,
+    [],
+  );
+  const allSubscriptionsSelector = context.useMemo(
+    createAllSubscriptionsSelector,
+    [],
+  );
+  const visibleSubscriptionsSelector = context.useMemo(
     () => createVisibleSubscriptionsSelector(allSubscriptionsSelector),
     [],
   );
-  const groupedSubscriptionsSelector = useMemo(
+  const groupedSubscriptionsSelector = context.useMemo(
     () => createGroupedSubscriptionsSelector(visibleSubscriptionsSelector),
     [],
   );
-  const totalUnreadCountSelector = useMemo(
+  const totalUnreadCountSelector = context.useMemo(
     () => createTotalUnreadCountSelector(visibleSubscriptionsSelector),
     [],
   );
@@ -63,119 +73,138 @@ export function Sidebar({ locationActions, url }: SidebarProps) {
     totalUnreadCount,
     userIsLoaded,
     userIsLoading,
-  } = useStore({
-    mapStateToProps: (state: State) => ({
-      categories: categoriesSelector(state),
-      groupedSubscriptions: groupedSubscriptionsSelector(state),
-      lastUpdatedAt: state.subscriptions.lastUpdatedAt,
-      onlyUnread: state.subscriptions.onlyUnread,
-      profile: state.user.profile,
-      subscriptions: allSubscriptionsSelector(state),
-      subscriptionsIsLoading: state.subscriptions.isLoading,
-      subscriptionOrder: state.subscriptions.order,
-      totalUnreadCount: totalUnreadCountSelector(state),
-      userIsLoaded: state.user.isLoaded,
-      userIsLoading: state.user.isLoading,
+  } = context.use(
+    getStoreHook({
+      mapStateToProps: (state: State) => ({
+        categories: categoriesSelector(state),
+        groupedSubscriptions: groupedSubscriptionsSelector(state),
+        lastUpdatedAt: state.subscriptions.lastUpdatedAt,
+        onlyUnread: state.subscriptions.onlyUnread,
+        profile: state.user.profile,
+        subscriptions: allSubscriptionsSelector(state),
+        subscriptionsIsLoading: state.subscriptions.isLoading,
+        subscriptionOrder: state.subscriptions.order,
+        totalUnreadCount: totalUnreadCountSelector(state),
+        userIsLoaded: state.user.isLoaded,
+        userIsLoading: state.user.isLoading,
+      }),
+      mapDispatchToProps: bindActions({
+        onChangeSubscriptionOrder: changeSubscriptionOrder,
+        onChangeOnlyUnread: changeOnlyUnread,
+        onFetchSubscriptions: fetchSubscriptions,
+        onFetchUser: fetchUser,
+        onLogout: logout,
+      }),
     }),
-    mapDispatchToProps: bindActions({
-      onChangeSubscriptionOrder: changeSubscriptionOrder,
-      onChangeOnlyUnread: changeOnlyUnread,
-      onFetchSubscriptions: fetchSubscriptions,
-      onFetchUser: fetchUser,
-      onLogout: logout,
-    }),
-  });
+  );
 
-  useEffect(() => {
+  context.useEffect(() => {
     if (lastUpdatedAt === 0) {
       onFetchSubscriptions();
     }
   }, [lastUpdatedAt]);
 
-  useEffect(() => {
+  context.useEffect(() => {
     if (!userIsLoaded) {
       onFetchUser();
     }
   }, [userIsLoaded]);
 
-  const handleSearch = useEvent((query: string) => {
+  const handleSearch = context.useCallback((query: string) => {
     locationActions.navigate(
       new RelativeURL('/search/' + encodeURIComponent(query)),
     );
-  });
+  }, []);
 
-  const handleSelect = useEvent((path: string) => {
+  const handleSelect = context.useCallback((path: string) => {
     locationActions.navigate(new RelativeURL(path));
-  });
+  }, []);
 
-  const handleManageSubscriptions = useEvent(() => {
+  const handleManageSubscriptions = context.useCallback(() => {
     locationActions.navigate(new RelativeURL('/categories/'));
-  });
+  }, []);
 
-  return (
-    <nav className="sidebar">
-      <div className="sidebar-group">
-        <AutoComplete<Subscription, string>
-          items={subscriptions}
-          onSelect={handleSelect}
-          onSubmit={handleSearch}
-          placeholder="Search for feeds ..."
-          renderItems={renderItems}
-        />
+  return context.html`
+    <nav class="sidebar">
+      <div class="sidebar-group">
+        <${reactElement(
+          <AutoComplete<Subscription, string>
+            items={subscriptions}
+            onSelect={handleSelect}
+            onSubmit={handleSearch}
+            placeholder="Search for feeds ..."
+            renderItems={renderItems}
+          />,
+        )}>
       </div>
-      <div className="sidebar-group">
-        <Tree selectedValue={url.pathname} onSelect={handleSelect}>
-          <TreeLeaf value="/" primaryText="Dashboard" />
-          <TreeLeaf
-            value={`/streams/${ALL_STREAM_ID}`}
-            primaryText="All"
-            secondaryText={Number(totalUnreadCount).toLocaleString()}
-          />
-          <TreeLeaf value={`/streams/${PINS_STREAM_ID}`} primaryText="Pins" />
-        </Tree>
+      <div class="sidebar-group">
+        <${reactElement(
+          <Tree
+            selectedValue={locationState.url.pathname}
+            onSelect={handleSelect}
+          >
+            <TreeLeaf value="/" primaryText="Dashboard" />
+            <TreeLeaf
+              value={`/streams/${ALL_STREAM_ID}`}
+              primaryText="All"
+              secondaryText={Number(totalUnreadCount).toLocaleString()}
+            />
+            <TreeLeaf value={`/streams/${PINS_STREAM_ID}`} primaryText="Pins" />
+          </Tree>,
+        )}>
       </div>
-      <div className="sidebar-group">
-        <SubscriptionTreeHeader
-          isLoading={subscriptionsIsLoading}
-          lastUpdatedAt={lastUpdatedAt}
-          onChangeSubscriptionOrder={onChangeSubscriptionOrder}
-          onChangeOnlyUnread={onChangeUnreadViewing}
-          onManageSubscriptions={handleManageSubscriptions}
-          onReload={onFetchSubscriptions}
-          onlyUnread={onlyUnread}
-          subscriptionOrder={subscriptionOrder}
-        />
-        <SubscriptionTree
-          categories={categories}
-          groupedSubscriptions={groupedSubscriptions}
-          selectedPath={url.pathname}
-          onSelect={handleSelect}
-        />
+      <div class="sidebar-group">
+        <${reactElement(
+          <SubscriptionTreeHeader
+            isLoading={subscriptionsIsLoading}
+            lastUpdatedAt={lastUpdatedAt}
+            onChangeSubscriptionOrder={onChangeSubscriptionOrder}
+            onChangeOnlyUnread={onChangeUnreadViewing}
+            onManageSubscriptions={handleManageSubscriptions}
+            onReload={onFetchSubscriptions}
+            onlyUnread={onlyUnread}
+            subscriptionOrder={subscriptionOrder}
+          />,
+        )}>
+        <${component(SubscriptionTree, {
+          categories,
+          groupedSubscriptions,
+          selectedPath: locationState.url.pathname,
+          onSelect: handleSelect,
+        })}>
       </div>
-      <div className="sidebar-group">
-        <Tree selectedValue={url.pathname} onSelect={handleSelect}>
-          <TreeLeaf value="/settings/ui" primaryText="Settings" />
-          <TreeLeaf value="/about/" primaryText="About" />
-        </Tree>
+      <div class="sidebar-group">
+        <${reactElement(
+          <Tree
+            selectedValue={locationState.url.pathname}
+            onSelect={handleSelect}
+          >
+            {' '}
+            <TreeLeaf value="/settings/ui" primaryText="Settings" />
+            <TreeLeaf value="/about/" primaryText="About" />
+          </Tree>,
+        )}>
       </div>
-      <div className="sidebar-group">
+      <div class="sidebar-group">
         <a
-          className="button button-block button-outline-default"
+          class="button button-block button-outline-default"
           href="#/search/"
         >
           New Subscription
         </a>
       </div>
-      <div className="sidebar-group">
-        <ProfileDropdown
-          isLoading={userIsLoading}
-          profile={profile}
-          onRefresh={onFetchUser}
-          onLogout={onLogout}
-        />
+      <div class="sidebar-group">
+        <${reactElement(
+          <ProfileDropdown
+            isLoading={userIsLoading}
+            profile={profile}
+            onRefresh={onFetchUser}
+            onLogout={onLogout}
+          />,
+        )}>
       </div>
     </nav>
-  );
+  `;
 }
 
 function renderItems(subscriptions: Subscription[], query: string) {

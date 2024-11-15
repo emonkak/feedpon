@@ -1,5 +1,11 @@
 import type { RenderContext, TemplateResult } from '@emonkak/ebit';
-import { classMap, optional, ref, styleMap } from '@emonkak/ebit/directives.js';
+import {
+  classMap,
+  component,
+  optional,
+  ref,
+  styleMap,
+} from '@emonkak/ebit/directives.js';
 import { currentLocation } from '@emonkak/ebit/router.js';
 import { type Dispatch, bindActions } from 'feedpon-flux';
 import type { Store } from 'feedpon-flux';
@@ -189,7 +195,10 @@ export function SidebarLayout(
         ref=${ref(sidebarRef)}
         @transitionend=${handleTransitionEnd}
       >
-        <${reactElement(wrapStoreContext(<Sidebar locationActions={locationActions} url={locationState.url} />, store))}>
+        <${component(Sidebar, {
+          locationActions: locationActions,
+          url: locationState.url,
+        })}>
       </div>
       <div class="l-main" style=${styleMap(mainStyle)}>
         <div class="l-notifications">

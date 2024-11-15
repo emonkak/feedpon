@@ -288,38 +288,13 @@ textarea {
   box-shadow: none;
 }
 
-input:focus,
-select:focus,
-textarea:focus {
-  outline: none;
-}
-
 button {
-  padding: 0;
-  margin: 0;
-  font-family: inherit;
-  font-size: inherit;
-  line-height: inherit;
-  background: none;
-  border: none;
-  color: inherit;
+  all: unset;
   cursor: pointer;
 }
 
 button:disabled {
   cursor: not-allowed;
-}
-
-button:focus {
-  outline: none;
-}
-
-button::-moz-focus-inner,
-[type="button"]::-moz-focus-inner,
-[type="reset"]::-moz-focus-inner,
-[type="submit"]::-moz-focus-inner {
-  border: none;
-  padding: 0;
 }
 
 summary {
