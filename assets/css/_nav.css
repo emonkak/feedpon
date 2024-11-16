@@ -7,7 +7,8 @@
 
 .nav-item {
   position: relative;
-  margin: calc(var(--vertical-rhythm) / 4) 0 calc(var(--vertical-rhythm) / 4) -1px;
+  margin: calc(var(--vertical-rhythm) / 4) 0 calc(var(--vertical-rhythm) / 4)
+    -1px;
   padding: calc(var(--vertical-rhythm) / 4 - 1px) 1.5rem;
   min-height: var(--vertical-rhythm);
   border: 1px solid var(--medium-dark-color);

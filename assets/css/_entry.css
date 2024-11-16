@@ -11,9 +11,7 @@
 }
 
 .entry.is-active {
-  box-shadow:
-    0 2px 18px var(--shadow-color),
-    0 0 6px var(--shadow-color);
+  box-shadow: 0 2px 18px var(--shadow-color), 0 0 6px var(--shadow-color);
 }
 
 .entry.is-pinned {
@@ -21,10 +19,8 @@
 }
 
 .entry.is-pinned.is-active {
-  box-shadow:
-    6px 0 0 var(--positive-background-color) inset,
-    0 2px 18px var(--shadow-color),
-    0 0 6px var(--shadow-color);
+  box-shadow: 6px 0 0 var(--positive-background-color) inset, 0 2px 18px
+    var(--shadow-color), 0 0 6px var(--shadow-color);
 }
 
 .entry:not(.is-expanded) {

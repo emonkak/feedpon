@@ -89,9 +89,7 @@
   background-color: var(--backdrop-background-color);
   opacity: 0;
   visibility: hidden;
-  transition:
-    visibility 0s linear 0.2s,
-    opacity 0.2s linear;
+  transition: visibility 0s linear 0.2s, opacity 0.2s linear;
   backface-visibility: hidden;
 }
 
@@ -111,9 +109,7 @@
   z-index: 200;
   opacity: 0;
   background-color: var(--backdrop-background-color);
-  transition:
-    visibility 0s linear 0.2s,
-    opacity 0.2s linear;
+  transition: visibility 0s linear 0.2s, opacity 0.2s linear;
   backface-visibility: hidden;
 }
 

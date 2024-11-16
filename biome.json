@@ -2,6 +2,12 @@
   "files": {
     "ignore": [".wireit", "dist", "node_modules"]
   },
+  "css": {
+    "formatter": {
+      "enabled": true,
+      "indentStyle": "space"
+    }
+  },
   "javascript": {
     "formatter": {
       "quoteStyle": "single"

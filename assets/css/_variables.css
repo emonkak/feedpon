@@ -33,9 +33,7 @@
   --default-background-color: var(--x-light-color);
   --default-border-color: var(--medium-dark-color);
   --default-hover-color: hsl(from var(--x-dark-color) h s calc(l + 0.05));
-  --default-active-color: hsl(
-    from var(--x-dark-color) h s calc(l + 0.05) / 90%
-  );
+  --default-active-color: hsl(from var(--x-dark-color) h s calc(l + 0.05) / 90%);
   --default-outline-color: hsl(from var(--medium-dark-color) h s l / 50%);
 
   --positive-color: #2eabff;
@@ -43,7 +41,8 @@
   --positive-border-color: var(--positive-color);
   --positive-hover-color: hsl(from var(--positive-color) h s calc(l + 0.05));
   --positive-active-color: hsl(
-    from var(--positive-color) h s calc(l + 0.05) / 90%
+    from var(--positive-color) h s calc(l + 0.05) /
+    90%
   );
   --positive-outline-color: hsl(from var(--positive-color) h s l / 90%);
 
@@ -52,7 +51,8 @@
   --negative-border-color: var(--negative-color);
   --negative-hover-color: hsl(from var(--negative-color) h s calc(l + 0.05));
   --negative-active-color: hsl(
-    from var(--negative-color) h s calc(l + 0.05) / 90%
+    from var(--negative-color) h s calc(l + 0.05) /
+    90%
   );
   --negative-outline-color: hsl(from var(--negative-color) h s l / 50%);
 
@@ -75,9 +75,7 @@
   --default-background-color: var(--x-dark-color);
   --default-border-color: var(--medium-light-color);
   --default-hover-color: hsl(from var(--x-light-color) h s calc(l - 0.1));
-  --default-active-color: hsl(
-    from var(--x-light-color) h s calc(l - 0.1) / 90%
-  );
+  --default-active-color: hsl(from var(--x-light-color) h s calc(l - 0.1) / 90%);
   --default-outline-color: hsl(from var(--x-light-color) h s l / 50%);
 
   --positive-color: #2eabff;
@@ -85,7 +83,8 @@
   --positive-border-color: var(--positive-color);
   --positive-hover-color: hsl(from var(--positive-color) h s calc(l - 0.1));
   --positive-active-color: hsl(
-    from var(--positive-color) h s calc(l - 0.1) / 90%
+    from var(--positive-color) h s calc(l - 0.1) /
+    90%
   );
   --positive-outline-color: hsl(from var(--positive-color) h s l / 50%);
 
@@ -94,7 +93,8 @@
   --negative-border-color: var(--negative-color);
   --negative-hover-color: hsl(from var(--negative-color) h s calc(l - 0.1));
   --negative-active-color: hsl(
-    from var(--negative-color) h s calc(l - 0.1) / 90%
+    from var(--negative-color) h s calc(l - 0.1) /
+    90%
   );
 
   --backdrop-color: var(--x-light-color);
