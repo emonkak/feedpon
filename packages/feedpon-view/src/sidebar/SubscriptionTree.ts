@@ -144,7 +144,7 @@ function renderItem(
     return context.html`
       <div class=${classMap({ StreamItem: true, 'has-unread': unreadCount > 0 })}>
         <div class="StreamItem-icon"><${icon}></div>
-        <div class="StreamItem-title">${subscription.title}</div>
+        <div class="StreamItem-title">${subscription.title !== '' ? subscription.title : '<NO TITLE>'}</div>
         <div class="StreamItem-unread">${unreadCount > 0 ? unreadCount.toLocaleString() : ''}</div>
       </div>
     `;

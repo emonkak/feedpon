@@ -24,8 +24,8 @@
     }
   }
 
-  &:empty {
-    display: none;
+  &:not(:has(*)) {
+    visibility: hidden;
   }
 
   &:focus {
@@ -73,8 +73,8 @@
 
   &:where(a, button):not(:disabled):hover,
   &:focus {
+    text-decoration: none;
     background-color: var(--medium-light-color);
-    outline: none;
   }
 
   &:disabled {

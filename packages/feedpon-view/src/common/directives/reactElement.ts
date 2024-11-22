@@ -11,6 +11,7 @@ import {
   type UpdateContext,
   directiveTag,
   reportPart,
+  reportUsedValue,
 } from '@emonkak/ebit';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
@@ -40,7 +41,7 @@ export class ReactElement implements Directive<ReactElement> {
     if (part.type !== PartType.ChildNode) {
       throw new Error(
         'ReactElement directive must be used in a child node, but it is used here:\n' +
-          reportPart(part, this),
+          reportPart(part, reportUsedValue(this)),
       );
     }
     return new BlockBinding(new ReactElementBinding(this, part), context.block);

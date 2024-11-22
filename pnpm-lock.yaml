@@ -25,7 +25,7 @@ importers:
     dependencies:
       '@emonkak/ebit':
         specifier: github:emonkak/ebit
-        version: https://codeload.github.com/emonkak/ebit/tar.gz/d1c8b81888d2221b922b730387eb03a46cd2ba92
+        version: https://codeload.github.com/emonkak/ebit/tar.gz/8170a7d6421365f18b407d1ffef24573e5ad851d
       '@types/chrome':
         specifier: ^0.0.253
         version: 0.0.253
@@ -78,7 +78,7 @@ importers:
     dependencies:
       '@emonkak/ebit':
         specifier: github:emonkak/ebit
-        version: https://codeload.github.com/emonkak/ebit/tar.gz/d1c8b81888d2221b922b730387eb03a46cd2ba92
+        version: https://codeload.github.com/emonkak/ebit/tar.gz/8170a7d6421365f18b407d1ffef24573e5ad851d
       '@types/react':
         specifier: ^18.3.12
         version: 18.3.12
@@ -125,7 +125,7 @@ importers:
     dependencies:
       '@emonkak/ebit':
         specifier: github:emonkak/ebit
-        version: https://codeload.github.com/emonkak/ebit/tar.gz/d1c8b81888d2221b922b730387eb03a46cd2ba92
+        version: https://codeload.github.com/emonkak/ebit/tar.gz/8170a7d6421365f18b407d1ffef24573e5ad851d
       '@types/chrome':
         specifier: ^0.0.253
         version: 0.0.253
@@ -240,8 +240,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@emonkak/ebit@https://codeload.github.com/emonkak/ebit/tar.gz/d1c8b81888d2221b922b730387eb03a46cd2ba92':
-    resolution: {tarball: https://codeload.github.com/emonkak/ebit/tar.gz/d1c8b81888d2221b922b730387eb03a46cd2ba92}
+  '@emonkak/ebit@https://codeload.github.com/emonkak/ebit/tar.gz/8170a7d6421365f18b407d1ffef24573e5ad851d':
+    resolution: {tarball: https://codeload.github.com/emonkak/ebit/tar.gz/8170a7d6421365f18b407d1ffef24573e5ad851d}
     version: 0.0.0
 
   '@esbuild/aix-ppc64@0.24.0':
@@ -705,7 +705,7 @@ snapshots:
   '@biomejs/cli-win32-x64@1.9.4':
     optional: true
 
-  '@emonkak/ebit@https://codeload.github.com/emonkak/ebit/tar.gz/d1c8b81888d2221b922b730387eb03a46cd2ba92': {}
+  '@emonkak/ebit@https://codeload.github.com/emonkak/ebit/tar.gz/8170a7d6421365f18b407d1ffef24573e5ad851d': {}
 
   '@esbuild/aix-ppc64@0.24.0':
     optional: true

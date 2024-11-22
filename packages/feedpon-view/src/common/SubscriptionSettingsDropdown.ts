@@ -133,7 +133,7 @@ export function SubscriptionSettingsDropdown(
           `,
         );
 
-  const menuItems = context.html`
+  const menuChildren = context.html`
     <div class="MenuSection" role="group">
       <div class="MenuHeading" role="heading">Category</div>
       <${categoryItems}>
@@ -199,7 +199,7 @@ export function SubscriptionSettingsDropdown(
       </button>
       <${component(Menu, {
         anchorTarget: toggleId,
-        children: menuItems,
+        children: menuChildren,
         onClose: closeDropdown,
         open: isOpened,
       })}>

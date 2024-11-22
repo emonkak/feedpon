@@ -29,12 +29,12 @@ import { createPreviousHook } from '../common/hooks/previousHook';
 import { FeedView } from './FeedView';
 
 export interface SearchPageProps {
-  query?: string;
+  defaultQuery?: string;
   locationActions: LocationActions;
 }
 
 export function SearchPage(
-  { query = '', locationActions }: SearchPageProps,
+  { defaultQuery = '', locationActions }: SearchPageProps,
   context: RenderContext,
 ): TemplateResult {
   const sortedCategoriesSelector = context.useMemo(
@@ -78,7 +78,7 @@ export function SearchPage(
   );
 
   const previousActiveQuery = context.use(createPreviousHook(activeQuery));
-  const currentQuery$ = context.useMemo(() => atom(live(query)), []);
+  const currentQuery$ = context.useMemo(() => atom(live(defaultQuery)), []);
 
   if (
     previousActiveQuery !== null &&
@@ -89,12 +89,14 @@ export function SearchPage(
   }
 
   context.useEffect(() => {
-    onSearchFeeds(query);
-  }, [query]);
+    if (defaultQuery !== '') {
+      onSearchFeeds(defaultQuery);
+    }
+  }, [defaultQuery]);
 
   const handleChange = context.useCallback((event: Event) => {
-    const newQuery = (event.currentTarget as HTMLInputElement).value;
-    currentQuery$.value = live(newQuery);
+    const newValue = (event.currentTarget as HTMLInputElement).value;
+    currentQuery$.value = live(newValue);
   }, []);
 
   const handleSearch = context.useCallback((event: SubmitEvent) => {
@@ -112,16 +114,15 @@ export function SearchPage(
 
   const header = component(Navbar, {
     onToggleSidebar,
-    child: context.html`<div className="navbar-title">Search</div>`,
+    child: context.html`<div class="navbar-title">Search</div>`,
   });
 
   let searchResult: unknown;
 
-  if (query !== activeQuery) {
+  if (activeQuery === '' || activeQuery !== defaultQuery) {
     searchResult = keyed(null, 'unmatched');
   } else if (isLoading) {
     searchResult = keyed(
-      'loading',
       context.html`
         <ol className="list-group">
           <${nonKeyedList(
@@ -143,17 +144,17 @@ export function SearchPage(
           )}>
         </ol>
       `,
+      'loading',
     );
   } else if (isLoaded && feeds.length === 0) {
     searchResult = keyed(
-      'not_found',
       context.html`
         <p>Your search "<strong>${activeQuery}</strong>" did not match any feeds.</p>
       `,
+      'not_found',
     );
   } else {
     searchResult = keyed(
-      'loaded',
       context.html`
         <ol class="list-group">
           <${nonKeyedList(feeds, (feed) =>
@@ -170,6 +171,7 @@ export function SearchPage(
           )}>
         </ol>
       `,
+      'loaded',
     );
   }
 

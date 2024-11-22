@@ -135,7 +135,7 @@ export function EntryDisplaySettingsDropdown(
     );
   }, [onMarkStreamAsRead, title]);
 
-  const menuItems = context.html`
+  const menuChildren = context.html`
     <div class="MenuSection" role="group">
       <div class="MenuHeading" role="heading">Entries</div>
       <${optional(
@@ -275,7 +275,7 @@ export function EntryDisplaySettingsDropdown(
       </button>
       <${component(Menu, {
         anchorTarget: toggleId,
-        children: menuItems,
+        children: menuChildren,
         onClose: closeDropdown,
         open: dropdownState.isOpened,
       })}>

@@ -78,7 +78,7 @@ export function SubscriptionDropdown({
     onUnsubscribe(subscription);
   });
 
-  const menuItems = categories.map((category) => {
+  const menuChildren = categories.map((category) => {
     const isAdded = subscription.labels.includes(category.label);
 
     return (
@@ -119,7 +119,7 @@ export function SubscriptionDropdown({
         }
       >
         <div className="menu-heading">Category</div>
-        {menuItems}
+        {menuChildren}
         <div className="menu-divider" />
         <div className="menu-heading">New category</div>
         <MenuForm<Action> value={{ type: 'CREATE_CATEGORY' }}>

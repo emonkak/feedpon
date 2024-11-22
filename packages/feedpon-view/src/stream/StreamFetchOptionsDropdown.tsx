@@ -44,7 +44,7 @@ export function StreamFetchOptionsDropdown(
 
   const checkmark = context.html`<i class="icon icon-16 icon-checkmark"></i>`;
 
-  const menuItems = context.html`
+  const menuChildren = context.html`
     <div class="MenuSection" role="group">
       <div class="MenuHeading" role="heading">View</div>
       <button
@@ -160,7 +160,7 @@ export function StreamFetchOptionsDropdown(
       </button>
       <${component(Menu, {
         anchorTarget: toggleId,
-        children: menuItems,
+        children: menuChildren,
         onClose: closeDropdown,
         open: isOpened,
       })}>

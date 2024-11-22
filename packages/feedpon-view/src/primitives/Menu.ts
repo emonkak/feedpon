@@ -1,12 +1,20 @@
-import type { RenderContext, TemplateResult } from '@emonkak/ebit';
+import type { RefObject, RenderContext, TemplateResult } from '@emonkak/ebit';
 import { ref } from '@emonkak/ebit/directives.js';
 
 export interface MenuProps {
   anchorTarget: string;
-  children: TemplateResult;
+  autoFocus?: boolean;
+  children: unknown;
   onClose?: () => void;
   open: boolean;
   preferredPosition?: MenuPosition;
+  ref?: RefObject<MenuRef | null>;
+  manual?: boolean;
+}
+
+export interface MenuRef {
+  focusNext(): void;
+  focusPrevious(): void;
 }
 
 export interface AnchorBounds {
@@ -26,10 +34,31 @@ const FOCUSABLE_ELEMENT_SELECTOR =
   'a, button, input, textarea, select, details, [tabindex]:not([tabindex="-1"])';
 
 export function Menu(
-  { anchorTarget, children, onClose, open, preferredPosition }: MenuProps,
+  {
+    anchorTarget,
+    autoFocus = true,
+    children,
+    manual = false,
+    onClose,
+    open,
+    preferredPosition,
+    ref: exposedMenuRef = { current: null },
+  }: MenuProps,
   context: RenderContext,
 ): TemplateResult {
   const menuRef = context.useRef<HTMLElement | null>(null);
+
+  exposedMenuRef.current = context.useMemo(
+    () => ({
+      focusPrevious() {
+        focusPrevious(menuRef.current!);
+      },
+      focusNext() {
+        focusNext(menuRef.current!);
+      },
+    }),
+    [],
+  );
 
   const handleKeyDown = context.useCallback(
     (event: KeyboardEvent) => {
@@ -39,23 +68,17 @@ export function Menu(
       ) {
         return;
       }
-      const target = event.currentTarget as HTMLDivElement;
+      const menuElement = event.currentTarget as HTMLDivElement;
       switch (event.key) {
         case 'ArrowUp':
           event.preventDefault();
           event.stopPropagation();
-          focusPrevious(getFocusableItems(target));
+          focusPrevious(menuElement);
           break;
         case 'ArrowDown':
           event.preventDefault();
           event.stopPropagation();
-          focusNext(getFocusableItems(target));
-          break;
-        case 'Escape':
-          event.preventDefault();
-          event.stopPropagation();
-          target.blur();
-          onClose?.();
+          focusNext(menuElement);
           break;
       }
     },
@@ -64,6 +87,7 @@ export function Menu(
 
   const handleToggle = context.useCallback(
     (event: ToggleEvent) => {
+      console.log(event);
       if (event.newState === 'closed') {
         onClose?.();
       }
@@ -86,20 +110,22 @@ export function Menu(
         dataset['position'] =
           preferredPosition ?? getMenuPosition(anchorBounds);
       }
+      console.log('showPopover');
       menu.showPopover();
     } else {
+      console.log('hidePopover');
       menu.hidePopover();
     }
   }, [open, preferredPosition]);
 
   return context.html`
     <div
-      autofocus
+      autofocus=${autoFocus}
       class="Menu"
-      popover
+      popover=${manual ? 'manual' : 'auto'}
       ref=${ref(menuRef)}
       role="menu"
-      tabindex="0"
+      tabindex=${autoFocus ? '0' : false}
       @keydown=${handleKeyDown}
       @toggle=${handleToggle}
     >
@@ -108,30 +134,13 @@ export function Menu(
   `;
 }
 
-function activeIndexOf(elements: ArrayLike<Element>) {
-  const { activeElement } = document;
+function activeIndexOf(activeElement: Element, elements: ArrayLike<Element>) {
   for (let i = 0, l = elements.length; i < l; i++) {
     if (elements[i]!.contains(activeElement)) {
       return i;
     }
   }
   return -1;
-}
-
-function focusNext(items: NodeListOf<HTMLElement>): void {
-  if (items.length > 0) {
-    const activeIndex = activeIndexOf(items);
-    const nextIndex = activeIndex < items.length - 1 ? activeIndex + 1 : 0;
-    focusElement(items[nextIndex]!);
-  }
-}
-
-function focusPrevious(items: NodeListOf<HTMLElement>): void {
-  if (items.length > 0) {
-    const activeIndex = activeIndexOf(items);
-    const previousIndex = activeIndex > 0 ? activeIndex - 1 : items.length - 1;
-    focusElement(items[previousIndex]!);
-  }
 }
 
 function focusElement(element: HTMLElement): void {
@@ -142,8 +151,32 @@ function focusElement(element: HTMLElement): void {
   }
 }
 
-function getFocusableItems(menu: Element): NodeListOf<HTMLElement> {
-  return menu.querySelectorAll<HTMLElement>('.MenuItem:not(:disabled)');
+function focusNext(element: HTMLElement): void {
+  const items = getFocusableItems(element);
+  if (items.length > 0) {
+    const activeIndex =
+      document.activeElement !== null
+        ? activeIndexOf(document.activeElement, items)
+        : -1;
+    const nextIndex = activeIndex < items.length - 1 ? activeIndex + 1 : 0;
+    focusElement(items[nextIndex]!);
+  }
+}
+
+function focusPrevious(element: HTMLElement): void {
+  const items = getFocusableItems(element);
+  if (items.length > 0) {
+    const activeIndex =
+      document.activeElement !== null
+        ? activeIndexOf(document.activeElement, items)
+        : -1;
+    const previousIndex = activeIndex > 0 ? activeIndex - 1 : items.length - 1;
+    focusElement(items[previousIndex]!);
+  }
+}
+
+function getFocusableItems(element: Element): NodeListOf<HTMLElement> {
+  return element.querySelectorAll<HTMLElement>('.MenuItem:not(:disabled)');
 }
 
 function getMenuPosition({

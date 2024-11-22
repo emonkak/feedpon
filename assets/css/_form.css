@@ -159,4 +159,5 @@ input.input-search-box {
 
 .input-search-box:focus {
   border-color: var(--positive-color);
+  outline: none;
 }

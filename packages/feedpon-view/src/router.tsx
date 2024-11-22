@@ -88,11 +88,10 @@ export const router = new Router<
     [
       route([wildcard], ([query], _url, { locationActions }) =>
         Either.right(
-          component(SearchPage, { locationActions, query }) as Component<
-            any,
-            any,
-            any
-          >,
+          component(SearchPage, {
+            locationActions,
+            defaultQuery: query,
+          }) as Component<any, any, any>,
         ),
       ),
     ],
