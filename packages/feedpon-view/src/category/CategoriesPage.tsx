@@ -21,7 +21,6 @@ import createAscendingComparer from 'feedpon-utils/createAscendingComparer';
 import debounce from 'feedpon-utils/debounce';
 import React, { useMemo, useRef, useState } from 'react';
 
-import { ReactMainLayout } from '../common/MainLayout';
 import { Dropdown } from '../common/components/Dropdown';
 import { MenuItem } from '../common/components/Menu';
 import { ReactNavbar } from '../common/components/Navbar';
@@ -30,9 +29,10 @@ import {
   ReactVirtualScrollList,
 } from '../common/components/VirtualScrollList';
 import { useEvent } from '../common/hooks/useEvent';
+import { ReactMainLayout } from '../layouts/MainLayout';
+import { SubscriptionView } from '../subscription/SubscriptionView';
 import { CategoriesNav } from './CategoriesNav';
 import { CategoryEditForm } from './CategoryEditForm';
-import { SubscriptionView } from './SubscriptionView';
 
 type Action = 'IMPORT_OPML' | 'EXPORT_OPML';
 

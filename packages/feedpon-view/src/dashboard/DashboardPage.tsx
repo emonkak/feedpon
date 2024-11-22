@@ -5,10 +5,10 @@ import { useStore } from 'feedpon-flux/react';
 import type { State } from 'feedpon-messaging';
 import { toggleSidebar } from 'feedpon-messaging/ui';
 import * as CacheMap from 'feedpon-utils/CacheMap';
-import { ReactMainLayout } from '../common/MainLayout';
-import { SubscriptionIcon } from '../common/SubscriptionIcon';
 import { ReactNavbar } from '../common/components/Navbar';
 import { ReactRelativeTime } from '../common/components/RelativeTime';
+import { ReactMainLayout } from '../layouts/MainLayout';
+import { SubscriptionIcon } from '../subscription/SubscriptionIcon';
 
 export interface DashboardProps {}
 

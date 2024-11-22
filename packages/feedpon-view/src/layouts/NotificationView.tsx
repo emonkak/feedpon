@@ -2,7 +2,7 @@ import classnames from 'classnames';
 import type { Notification } from 'feedpon-messaging';
 import React, { useEffect } from 'react';
 
-import { useEvent } from './hooks/useEvent';
+import { useEvent } from '../common/hooks/useEvent';
 
 interface NotificationViewProps {
   notification: Notification;

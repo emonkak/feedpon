@@ -1,4 +1,5 @@
 import type { RenderContext, TemplateResult } from '@emonkak/ebit';
+import { component } from '@emonkak/ebit/directives.js';
 import type { Category, Feed, Subscription } from 'feedpon-messaging';
 import type { createCategory } from 'feedpon-messaging/categories';
 import type {
@@ -8,8 +9,7 @@ import type {
   unsubscribe,
 } from 'feedpon-messaging/subscriptions';
 
-import { component } from '@emonkak/ebit/directives.js';
-import { SubscriptionSettingsDropdown } from '../common/SubscriptionSettingsDropdown';
+import { SubscriptionSettingsDropdown } from '../subscription/SubscriptionSettingsDropdown';
 
 interface FeedHeaderProps {
   categories: Category[];

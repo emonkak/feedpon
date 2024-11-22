@@ -1,6 +1,6 @@
 import type { RenderContext, TemplateResult } from '@emonkak/ebit';
-
 import { component, styleMap } from '@emonkak/ebit/directives.js';
+
 import { Dialog } from '../common/components/Dialog';
 import { createPopupHook } from '../common/hooks/popupHook';
 

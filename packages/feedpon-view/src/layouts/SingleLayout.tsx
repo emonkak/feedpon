@@ -6,9 +6,9 @@ import type { State } from 'feedpon-messaging';
 import React from 'react';
 
 import { optional } from '@emonkak/ebit/directives.js';
+import { reactElement } from '../common/directives/reactElement';
 import { InstantNotificationContainer } from './InstantNotificationContainer';
 import { NotificationList } from './NotificationList';
-import { reactElement } from './directives/reactElement';
 
 export interface SingleLayoutProps {
   child?: unknown;

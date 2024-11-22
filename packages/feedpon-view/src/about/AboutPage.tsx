@@ -5,11 +5,11 @@ import type { State } from 'feedpon-messaging';
 import { toggleSidebar } from 'feedpon-messaging/ui';
 import React from 'react';
 
-import { ReactMainLayout } from '../common/MainLayout';
 import { Dropdown } from '../common/components/Dropdown';
 import { MenuItem } from '../common/components/Menu';
 import { ReactNavbar } from '../common/components/Navbar';
 import { useEvent } from '../common/hooks/useEvent';
+import { ReactMainLayout } from '../layouts/MainLayout';
 
 export interface AboutPageProps {
   locationActions: LocationActions;

@@ -6,6 +6,7 @@ import {
   optional,
 } from '@emonkak/ebit/directives.js';
 import type { Entry } from 'feedpon-messaging';
+
 import { ConfirmModal } from '../primitives/ConfirmModal';
 import { Menu } from '../primitives/Menu';
 

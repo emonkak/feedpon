@@ -27,14 +27,14 @@ import {
 } from 'feedpon-messaging/ui';
 import * as React from 'react';
 
-import { InstantNotificationContainer } from '../common/InstantNotificationContainer';
-import { KeyMappingsTable } from '../common/KeyMappingsTable';
-import { NotificationList } from '../common/NotificationList';
 import { Modal } from '../common/components/Modal';
 import { reactElement } from '../common/directives/reactElement';
 import { keyMappingsHook } from '../common/hooks/keyMappingsHook';
 import { swipeableHook } from '../common/hooks/swipeableHook';
-import { Sidebar } from './Sidebar';
+import { Sidebar } from '../sidebar/Sidebar';
+import { InstantNotificationContainer } from './InstantNotificationContainer';
+import { KeyMappingsTable } from './KeyMappingsTable';
+import { NotificationList } from './NotificationList';
 
 export interface SidebarLayoutProps {
   child: unknown;

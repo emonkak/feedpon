@@ -7,9 +7,9 @@ import type {
 } from 'feedpon-messaging/subscriptions';
 import React from 'react';
 
-import { SubscriptionDropdown } from '../common/SubscriptionDropdown';
-import { SubscriptionIcon } from '../common/SubscriptionIcon';
 import { ReactRelativeTime } from '../common/components/RelativeTime';
+import { SubscriptionDropdown } from './SubscriptionDropdown';
+import { SubscriptionIcon } from './SubscriptionIcon';
 
 interface SubscriptionViewProps {
   categories: Category[];

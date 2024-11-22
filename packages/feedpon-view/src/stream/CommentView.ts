@@ -1,5 +1,4 @@
 import type { RenderContext, TemplateResult } from '@emonkak/ebit';
-
 import type { Comment } from 'feedpon-messaging';
 
 interface CommentViewProps {

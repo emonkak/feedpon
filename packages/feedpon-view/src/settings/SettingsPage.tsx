@@ -4,10 +4,10 @@ import { useStore } from 'feedpon-flux/react';
 import { toggleSidebar } from 'feedpon-messaging/ui';
 import React from 'react';
 
-import { ReactMainLayout } from '../common/MainLayout';
 import { Nav, NavItem } from '../common/components/Nav';
 import { ReactNavbar } from '../common/components/Navbar';
 import { useEvent } from '../common/hooks/useEvent';
+import { ReactMainLayout } from '../layouts/MainLayout';
 
 export interface SettingsProps {
   children: React.ReactElement;

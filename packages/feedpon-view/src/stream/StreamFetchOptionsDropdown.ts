@@ -5,6 +5,7 @@ import type {
   StreamFetchOptions,
   StreamViewKind,
 } from 'feedpon-messaging';
+
 import { Menu } from '../primitives/Menu';
 
 interface StreamFetchOptionsDropdownProps {

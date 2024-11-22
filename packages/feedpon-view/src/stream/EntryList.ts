@@ -1,13 +1,13 @@
 import type { RefObject, RenderContext, TemplateResult } from '@emonkak/ebit';
-import type { Entry, StreamViewKind } from 'feedpon-messaging';
-import * as SmoothScroll from 'feedpon-utils/SmoothScroll';
-
 import {
   type ElementRef,
   component,
   ref,
   styleMap,
 } from '@emonkak/ebit/directives.js';
+import type { Entry, StreamViewKind } from 'feedpon-messaging';
+import * as SmoothScroll from 'feedpon-utils/SmoothScroll';
+
 import {
   type BlankSpaces,
   type Dimensions,
