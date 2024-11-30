@@ -85,8 +85,7 @@ function shouldIgnoreEvent(event: KeyboardEvent): boolean {
       element.tagName === 'INPUT' ||
       element.tagName === 'SELECT' ||
       element.tagName === 'TEXTAREA' ||
-      element.isContentEditable ||
-      element.tabIndex === 0
+      element.isContentEditable
     ) {
       return true;
     }
