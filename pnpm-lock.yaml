@@ -15,8 +15,8 @@ importers:
         specifier: ^0.24.0
         version: 0.24.0
       typescript:
-        specifier: ^5.6.3
-        version: 5.6.3
+        specifier: ^5.7.2
+        version: 5.7.2
       wireit:
         specifier: ^0.14.9
         version: 0.14.9
@@ -25,7 +25,7 @@ importers:
     dependencies:
       '@emonkak/ebit':
         specifier: github:emonkak/ebit
-        version: https://codeload.github.com/emonkak/ebit/tar.gz/8170a7d6421365f18b407d1ffef24573e5ad851d
+        version: https://codeload.github.com/emonkak/ebit/tar.gz/b91c0f790aad3eb252fb6f78b2476cdbb7445358
       '@types/chrome':
         specifier: ^0.0.253
         version: 0.0.253
@@ -78,7 +78,7 @@ importers:
     dependencies:
       '@emonkak/ebit':
         specifier: github:emonkak/ebit
-        version: https://codeload.github.com/emonkak/ebit/tar.gz/8170a7d6421365f18b407d1ffef24573e5ad851d
+        version: https://codeload.github.com/emonkak/ebit/tar.gz/b91c0f790aad3eb252fb6f78b2476cdbb7445358
       '@types/react':
         specifier: ^18.3.12
         version: 18.3.12
@@ -125,7 +125,7 @@ importers:
     dependencies:
       '@emonkak/ebit':
         specifier: github:emonkak/ebit
-        version: https://codeload.github.com/emonkak/ebit/tar.gz/8170a7d6421365f18b407d1ffef24573e5ad851d
+        version: https://codeload.github.com/emonkak/ebit/tar.gz/b91c0f790aad3eb252fb6f78b2476cdbb7445358
       '@types/chrome':
         specifier: ^0.0.253
         version: 0.0.253
@@ -240,8 +240,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@emonkak/ebit@https://codeload.github.com/emonkak/ebit/tar.gz/8170a7d6421365f18b407d1ffef24573e5ad851d':
-    resolution: {tarball: https://codeload.github.com/emonkak/ebit/tar.gz/8170a7d6421365f18b407d1ffef24573e5ad851d}
+  '@emonkak/ebit@https://codeload.github.com/emonkak/ebit/tar.gz/b91c0f790aad3eb252fb6f78b2476cdbb7445358':
+    resolution: {tarball: https://codeload.github.com/emonkak/ebit/tar.gz/b91c0f790aad3eb252fb6f78b2476cdbb7445358}
     version: 0.0.0
 
   '@esbuild/aix-ppc64@0.24.0':
@@ -648,8 +648,8 @@ packages:
     resolution: {integrity: sha512-65P7iz6X5yEr1cwcgvQxbbIw7Uk3gOy5dIdtZ4rDveLqhrdJP+Li/Hx6tyK0NEb+2GCyneCMJiGqrADCSNk8sQ==}
     engines: {node: '>=8.0'}
 
-  typescript@5.6.3:
-    resolution: {integrity: sha512-hjcS1mhfuyi4WW8IWtjP7brDrG2cuDZukyrYrSauoXGNgx0S7zceP07adYkJycEr56BOUTNPzbInooiN3fn1qw==}
+  typescript@5.7.2:
+    resolution: {integrity: sha512-i5t66RHxDvVN40HfDd1PsEThGNnlMCMT3jMUuoh9/0TaqWevNontacunWyN02LA9/fIbEWlcHZcgTKb9QoaLfg==}
     engines: {node: '>=14.17'}
     hasBin: true
 
@@ -705,7 +705,7 @@ snapshots:
   '@biomejs/cli-win32-x64@1.9.4':
     optional: true
 
-  '@emonkak/ebit@https://codeload.github.com/emonkak/ebit/tar.gz/8170a7d6421365f18b407d1ffef24573e5ad851d': {}
+  '@emonkak/ebit@https://codeload.github.com/emonkak/ebit/tar.gz/b91c0f790aad3eb252fb6f78b2476cdbb7445358': {}
 
   '@esbuild/aix-ppc64@0.24.0':
     optional: true
@@ -1083,7 +1083,7 @@ snapshots:
     dependencies:
       is-number: 7.0.0
 
-  typescript@5.6.3: {}
+  typescript@5.7.2: {}
 
   undici-types@6.19.8: {}
 

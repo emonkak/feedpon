@@ -4,7 +4,6 @@ import type { KeyMapping, KeyMappings } from '../index';
 const initialState: KeyMappings = {
   items: Trie.create<KeyMapping>([
     [['/'], { commandId: 'searchSubscriptions', params: {} }],
-    [['<Escape>'], { commandId: 'closeSidebar', params: {} }],
     [['<S-Space>'], { commandId: 'scrollPageUp', params: { numPages: 0.5 } }],
     [['<Space>'], { commandId: 'scrollPageDown', params: { numPages: 0.5 } }],
     [['?'], { commandId: 'showHelp', params: {} }],

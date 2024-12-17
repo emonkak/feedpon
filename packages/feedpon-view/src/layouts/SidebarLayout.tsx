@@ -19,21 +19,16 @@ import type {
   Thunk,
 } from 'feedpon-messaging';
 import { commandTable } from 'feedpon-messaging/keyMappings';
-import {
-  closeHelp,
-  closeSidebar,
-  openHelp,
-  openSidebar,
-} from 'feedpon-messaging/ui';
+import { closeHelp, closeSidebar, openSidebar } from 'feedpon-messaging/ui';
 import * as React from 'react';
 
-import { Modal } from '../common/components/Modal';
 import { reactElement } from '../common/directives/reactElement';
 import { keyMappingsHook } from '../common/hooks/keyMappingsHook';
 import { swipeableHook } from '../common/hooks/swipeableHook';
+import { KeyMappingsTable } from '../keyMappings/KeyMappingsTable';
+import { Dialog } from '../primitives/Dialog';
 import { Sidebar } from '../sidebar/Sidebar';
 import { InstantNotificationContainer } from './InstantNotificationContainer';
-import { KeyMappingsTable } from './KeyMappingsTable';
 import { NotificationList } from './NotificationList';
 
 export interface SidebarLayoutProps {
@@ -57,18 +52,17 @@ export function SidebarLayout(
   } = context.use(
     getStoreHook({
       mapStateToProps: (state: State) => ({
-        helpIsOpened: state.ui.helpIsOpened,
         isLoading: state.backend.isLoading || state.subscriptions.isImporting,
         keyMappings: state.keyMappings.items,
         sidebarIsOpened: state.ui.sidebarIsOpened,
+        helpIsOpened: state.ui.helpIsOpened,
       }),
       mapStoreToProps: (store) => ({ store }),
       mapDispatchToProps: (dispatch: Dispatch<Event | Thunk<Event>>) => ({
         ...bindActions({
-          onCloseHelp: closeHelp,
           onCloseSidebar: closeSidebar,
-          onOpenHelp: openHelp,
           onOpenSidebar: openSidebar,
+          onCloseHelp: closeHelp,
         })(dispatch as any),
         dispatch,
       }),
@@ -85,6 +79,8 @@ export function SidebarLayout(
       updateSidebarStatus(false);
     }
   }, [sidebarIsOpened]);
+
+  const helpTitleId = context.useId();
 
   context.use(
     keyMappingsHook(keyMappings, (keyMapping: KeyMapping) => {
@@ -226,15 +222,21 @@ export function SidebarLayout(
       <div class=${classMap({ 'l-backdrop': true, 'is-shown': isLoading })}>
         <${optional(isLoading ? context.html`<i class="icon icon-48 icon-spinner animation-rotating"></i>` : null)}>
       </div>
-      <${reactElement(
-        <Modal onClose={onCloseHelp} isOpened={helpIsOpened}>
-          <KeyMappingsTable
-            commandTable={commandTable}
-            keyMappings={keyMappings}
-          />
-        </Modal>,
-      )}>
     </div>
+    <${component(Dialog, {
+      children: (_close, context) => {
+        return context.html`
+          <h1 class="Modal-title" id=${helpTitleId}>Available Key Mappings</h1>
+          <${component(KeyMappingsTable, {
+            commandTable,
+            keyMappings,
+          })}>
+        `;
+      },
+      onClose: onCloseHelp,
+      open: helpIsOpened,
+      ownProps: { 'aria-labelledby': helpTitleId },
+    })}>
   `;
 }
 

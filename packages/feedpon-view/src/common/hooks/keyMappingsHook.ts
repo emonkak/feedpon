@@ -1,8 +1,6 @@
 import type { Usable } from '@emonkak/ebit';
 import * as Trie from 'feedpon-utils/Trie';
 
-import { createEventHook } from '../hooks/eventHook';
-
 const SPECIAL_KEYS: { [key: string]: string } = {
   ' ': 'Space',
   '|': 'Bar',
@@ -19,8 +17,8 @@ export function keyMappingsHook(
     const pendingKeys = context.useRef<string[]>([]);
     const timer = context.useRef<ReturnType<typeof setTimeout> | null>(null);
 
-    const handleDocumentKeyDown = context.use(
-      createEventHook((event: KeyboardEvent) => {
+    const handleDocumentKeyDown = context.useCallback(
+      (event: KeyboardEvent) => {
         if (shouldIgnoreEvent(event)) {
           return;
         }
@@ -59,14 +57,19 @@ export function keyMappingsHook(
         } else {
           pendingKeys.current = hasNextMapping ? keys : [];
         }
-      }),
+      },
+      [keyMappings, onInvokeKeyMapping, timeoutLength],
     );
 
     context.useEffect(() => {
-      document.addEventListener('keydown', handleDocumentKeyDown);
+      window.addEventListener('keydown', handleDocumentKeyDown, {
+        capture: true,
+      });
 
       return () => {
-        document.removeEventListener('keydown', handleDocumentKeyDown);
+        window.removeEventListener('keydown', handleDocumentKeyDown, {
+          capture: true,
+        });
       };
     }, []);
   };

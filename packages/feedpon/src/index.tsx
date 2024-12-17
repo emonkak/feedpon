@@ -28,8 +28,7 @@ function main() {
   const root = createRoot(
     component(App, { getStore, history: hashHistory }),
     container,
-    host,
-    updater,
+    { host, updater },
   );
 
   root.mount();

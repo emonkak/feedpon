@@ -87,7 +87,6 @@ export function Menu(
 
   const handleToggle = context.useCallback(
     (event: ToggleEvent) => {
-      console.log(event);
       if (event.newState === 'closed') {
         onClose?.();
       }
@@ -110,10 +109,8 @@ export function Menu(
         dataset['position'] =
           preferredPosition ?? getMenuPosition(anchorBounds);
       }
-      console.log('showPopover');
       menu.showPopover();
     } else {
-      console.log('hidePopover');
       menu.hidePopover();
     }
   }, [open, preferredPosition]);

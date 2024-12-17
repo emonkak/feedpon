@@ -9,7 +9,7 @@ import {
   nonKeyedList,
   optional,
 } from '@emonkak/ebit/directives.js';
-import { ConfirmModal } from '../primitives/ConfirmModal';
+import { AlertDialog } from '../primitives/AlertDialog';
 import { Menu } from '../primitives/Menu';
 
 interface SubscriptionSettingsDropdownProps {
@@ -69,13 +69,13 @@ export function SubscriptionSettingsDropdown(
   }, []);
 
   const handleUnsubscribe = context.useCallback(() => {
-    ConfirmModal.open(
+    AlertDialog.open(
       {
-        confirmButton: (callback, context) => context.html`
-          <button class="button button-negative" type="button" @click=${callback}>Unsubscribe</button>
+        confirmButton: ({ onConfirm }, context) => context.html`
+          <button class="button button-negative" type="button" @click=${onConfirm}>Unsubscribe</button>
         `,
-        cancelButton: (callback, context) => context.html`
-          <button class="button button-outline-default" type="button" @click=${callback}>Cancel</button>
+        cancelButton: ({ onCancel }, context) => context.html`
+          <button class="button button-outline-default" type="button" @click=${onCancel}>Cancel</button>
         `,
         onConfirm: () => {
           if (subscription !== null) {
@@ -83,7 +83,7 @@ export function SubscriptionSettingsDropdown(
           }
         },
         title: `Unsubscribe "${feed.title}"`,
-        message: `Are you sure you want to unsubscribe the feed?`,
+        description: `Are you sure you want to unsubscribe the feed?`,
       },
       context,
     );

@@ -7,7 +7,7 @@ import {
 } from '@emonkak/ebit/directives.js';
 import type { Entry } from 'feedpon-messaging';
 
-import { ConfirmModal } from '../primitives/ConfirmModal';
+import { AlertDialog } from '../primitives/AlertDialog';
 import { Menu } from '../primitives/Menu';
 
 export interface EntryDisplaySettingsDropdownProps {
@@ -120,17 +120,17 @@ export function EntryDisplaySettingsDropdown(
   }, [onToggleKeepUneread]);
 
   const handleMarkAllAsRead = context.useCallback(() => {
-    ConfirmModal.open(
+    AlertDialog.open(
       {
-        confirmButton: (close, context) => context.html`
-          <button class="button button-positive" type="button" @click=${close}>Mark all as read</button>
+        confirmButton: ({ onConfirm }, context) => context.html`
+          <button class="button button-positive" type="button" @click=${onConfirm}>Mark all as read</button>
         `,
-        cancelButton: (close, context) => context.html`
-          <button class="button button-outline-default" type="button" @click=${close}>Cancel</button>
+        cancelButton: ({ onCancel }, context) => context.html`
+          <button class="button button-outline-default" type="button" @click=${onCancel}>Cancel</button>
         `,
         onConfirm: onMarkStreamAsRead,
         title: `Mark all as read in "${title}"`,
-        message: `Are you sure you want to mark all entires in this stream as read?`,
+        description: `Are you sure you want to mark all entires in this stream as read?`,
       },
       context,
     );

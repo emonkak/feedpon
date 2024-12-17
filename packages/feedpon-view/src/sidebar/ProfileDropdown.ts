@@ -1,7 +1,7 @@
 import type { RenderContext, TemplateResult } from '@emonkak/ebit';
 import { component } from '@emonkak/ebit/directives.js';
 import type { Profile } from 'feedpon-messaging';
-import { ConfirmModal } from '../primitives/ConfirmModal';
+import { AlertDialog } from '../primitives/AlertDialog';
 import { Menu } from '../primitives/Menu';
 
 interface ProfileDropdownProps {
@@ -32,19 +32,19 @@ export function ProfileDropdown(
   }, [onRefresh]);
 
   const handleLogout = context.useCallback(() => {
-    ConfirmModal.open(
+    AlertDialog.open(
       {
-        confirmButton: (callback, context) => context.html`
-          <button class="button button-negative" type="button" @click=${callback}>Logout</button>
+        confirmButton: ({ onConfirm }, context) => context.html`
+          <button class="button button-negative" type="button" @click=${onConfirm}>Logout</button>
         `,
-        cancelButton: (callback, context) => context.html`
-          <button class="button button-outline-default" type="button" @click=${callback}>Cancel</button>
+        cancelButton: ({ onCancel }, context) => context.html`
+          <button class="button button-outline-default" type="button" @click=${onCancel}>Cancel</button>
         `,
         onConfirm: () => {
           onLogout();
         },
         title: `Logout ${profile.userName}...`,
-        message: 'Are you sure you want to logout of the current session?',
+        description: 'Are you sure you want to logout of the current session?',
       },
       context,
     );

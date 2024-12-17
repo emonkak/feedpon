@@ -2,11 +2,14 @@
   background-color: var(--x-light-color);
   border-radius: 4px;
   box-shadow: 0 1px 2px var(--shadow-color);
+  box-sizing: border-box;
+  inline-size: 100%;
   margin-block: var(--vertical-rhythm);
   margin-inline: auto;
+  max-block-size: calc(100% - var(--vertical-rhythm) * 2);
   max-inline-size: 640px;
   opacity: 0;
-  padding-block: var(--vertical-rhythm) 1.5rem;
+  padding-block: var(--vertical-rhythm);
   padding-inline: 1.5rem;
   transform: scale(1.15);
   transition:
@@ -16,7 +19,6 @@
     transform 0.2s ease-in-out;
 
   &[open] {
-    position: fixed;
     inset: 0;
     opacity: 1;
     transform: scale(1);
@@ -50,5 +52,4 @@
 
 .Modal-title {
   --type-scale: var(--type-scale-6);
-  margin: 0;
 }

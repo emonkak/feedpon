@@ -1,36 +1,37 @@
 import {
   type RenderContext,
+  type RootContext,
   type TemplateResult,
   createRoot,
 } from '@emonkak/ebit';
 import { component, ref } from '@emonkak/ebit/directives.js';
 
-export interface ConfirmModalProps {
+export interface AlertDialogProps {
   cancelButton: (
-    callback: () => void,
+    props: { onCancel: () => void },
     context: RenderContext,
   ) => TemplateResult;
   confirmButton: (
-    callback: () => void,
+    props: { onConfirm: () => void },
     context: RenderContext,
   ) => TemplateResult;
-  message: string;
+  description: string;
   onCancel?: (dialog: HTMLDialogElement) => void;
   onConfirm?: (dialog: HTMLDialogElement) => void;
   open?: boolean;
   title: string;
 }
 
-export function ConfirmModal(
+export function AlertDialog(
   {
     cancelButton,
     confirmButton,
-    message,
+    description,
     onCancel,
     onConfirm,
     open = false,
     title,
-  }: ConfirmModalProps,
+  }: AlertDialogProps,
   context: RenderContext,
 ): TemplateResult {
   const dialogRef = context.useRef<HTMLDialogElement | null>(null);
@@ -43,23 +44,6 @@ export function ConfirmModal(
       dialog.close();
     }
   }, [open]);
-
-  context.useLayoutEffect(() => {
-    const dissmissOnClickOutside = (event: MouseEvent) => {
-      const dialog = dialogRef.current!;
-      if (
-        !event.defaultPrevented &&
-        dialog.open &&
-        !dialog.contains(event.target as Element)
-      ) {
-        dialog.close();
-      }
-    };
-    document.addEventListener('click', dissmissOnClickOutside);
-    return () => {
-      document.removeEventListener('click', dissmissOnClickOutside);
-    };
-  }, []);
 
   const handleConfirm = context.useCallback(() => {
     dialogRef.current!.close('confirmed');
@@ -83,22 +67,25 @@ export function ConfirmModal(
     }
   }, []);
 
-  const handleClose = context.useCallback(async () => {
-    const dialog = dialogRef.current!;
-    if (dialog.returnValue === 'confirmed') {
-      onConfirm?.(dialog);
-    } else {
-      onCancel?.(dialog);
-    }
-  }, [onCancel, onConfirm]);
+  const handleClose = context.useCallback(
+    async (event: Event) => {
+      const dialog = event.currentTarget as HTMLDialogElement;
+      if (dialog.returnValue === 'confirmed') {
+        onConfirm?.(dialog);
+      } else {
+        onCancel?.(dialog);
+      }
+    },
+    [onCancel, onConfirm],
+  );
 
   const titleId = context.useId();
-  const messageId = context.useId();
+  const descriptionId = context.useId();
 
   return context.html`
     <dialog
+      aria-describedby=${descriptionId}
       aria-labelledby=${titleId}
-      aria-describedby=${messageId}
       class="Modal"
       role="alertdialog"
       ref=${ref(dialogRef)}
@@ -106,23 +93,23 @@ export function ConfirmModal(
       @close=${handleClose}
     >
       <h1 class="Modal-title" id=${titleId}>${title}</h1>
-      <p id=${messageId}>${message}</p>
+      <p id=${descriptionId}>${description}</p>
       <div class="button-toolbar">
-        <${confirmButton(handleConfirm, context)}>
-        <${cancelButton(handleCancel, context)}>
+        <${confirmButton({ onConfirm: handleConfirm }, context)}>
+        <${cancelButton({ onCancel: handleCancel }, context)}>
       </div>
     </dialog>
   `;
 }
 
-ConfirmModal.open = async (
-  props: Omit<ConfirmModalProps, 'open'>,
-  context: RenderContext,
+AlertDialog.open = async (
+  props: AlertDialogProps,
+  context: RootContext<RenderContext>,
 ): Promise<boolean> => {
   const { resolve, promise } = Promise.withResolvers<boolean>();
-  const value = component(ConfirmModal, {
+  const value = component(AlertDialog, {
     ...props,
-    open: true,
+    open: props.open ?? true,
     onCancel: async (dialog) => {
       props.onCancel?.(dialog);
       await waitForTransition(dialog);
@@ -134,7 +121,7 @@ ConfirmModal.open = async (
       resolve(true);
     },
   });
-  const root = createRoot(value, document.body, context.host, context.updater);
+  const root = createRoot(value, document.body, context);
   root.mount();
   try {
     return await promise;

@@ -2,6 +2,12 @@ import type { Event, UI } from '../index';
 
 export default function uiReducer(ui: UI, event: Event): UI {
   switch (event.type) {
+    case 'APPLICATION_INITIALIZED':
+      return {
+        ...ui,
+        helpIsOpened: false,
+      };
+
     case 'CUSTOM_STYLE_CHANGED':
       return {
         ...ui,
