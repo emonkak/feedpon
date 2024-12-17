@@ -92,7 +92,7 @@ export function EntryList(
         const isActive = activeEntryIndex === index;
         const isExpanded =
           streamView === 'expanded' || expandedEntryIndex === index;
-        const id = (isExpanded ? 'e' : 'c') + '__' + entry.entryId;
+        const id = (isExpanded ? 'e' : 'c') + '.' + entry.entryId;
 
         return {
           id,
@@ -189,39 +189,39 @@ export function EntryList(
 }
 
 function getActiveIndex(dimensions: Dimensions, scrollPadding: number): number {
-  const { blockInsets } = dimensions;
+  const { blockPositions } = dimensions;
 
-  if (blockInsets.length === 0) {
+  if (blockPositions.length === 0) {
     return -1;
   }
 
-  const { viewportInset } = dimensions;
-  const bottomInsets = blockInsets[blockInsets.length - 1]!;
+  const { screen } = dimensions;
+  const bottomInsets = blockPositions[blockPositions.length - 1]!;
 
-  const viewportTop = viewportInset.start + scrollPadding;
-  const viewportBottom = viewportInset.end;
+  const screenTop = screen.top + scrollPadding;
+  const screenBottom = screen.bottom;
 
-  if (Math.abs(bottomInsets.end - viewportTop) <= 1.0) {
-    return blockInsets.length;
+  if (Math.abs(bottomInsets.end - screenTop) <= 1.0) {
+    return blockPositions.length;
   }
 
   let activeIndex = -1;
   let maxVisibleHeight = 0;
 
-  for (let i = 0, l = blockInsets.length; i < l; i++) {
-    const blockInset = blockInsets[i]!;
+  for (let i = 0, l = blockPositions.length; i < l; i++) {
+    const blockInset = blockPositions[i]!;
 
     if (
-      blockInset.start + 0.5 >= viewportTop - 0.5 &&
-      blockInset.end - 0.5 <= viewportBottom + 0.5
+      blockInset.start + 0.5 >= screenTop - 0.5 &&
+      blockInset.end - 0.5 <= screenBottom + 0.5
     ) {
       return i;
     }
 
-    if (blockInset.start < viewportBottom && blockInset.end > viewportTop) {
+    if (blockInset.start < screenBottom && blockInset.end > screenTop) {
       const visibleSize =
-        Math.min(blockInset.end, viewportBottom) -
-        Math.max(blockInset.start, viewportTop);
+        Math.min(blockInset.end, screenBottom) -
+        Math.max(blockInset.start, screenTop);
       if (visibleSize > maxVisibleHeight) {
         maxVisibleHeight = visibleSize;
         activeIndex = i;

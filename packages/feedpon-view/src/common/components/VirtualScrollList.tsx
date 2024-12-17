@@ -29,7 +29,7 @@ export interface BlankSpaces {
   below: number;
 }
 
-export interface BlockInset {
+export interface BlockPosition {
   start: number;
   end: number;
 }
@@ -37,13 +37,13 @@ export interface BlockInset {
 export type BlockSizes = Map<PropertyKey, number>;
 
 export interface Dimensions {
-  blockInsets: BlockInset[];
+  blockPositions: BlockPosition[];
   blockSizes: BlockSizes;
-  slice: Slice;
-  viewportInset: BlockInset;
+  scope: Scope;
+  screen: DOMRectReadOnly;
 }
 
-export interface Slice {
+export interface Scope {
   end: number;
   start: number;
 }
@@ -58,10 +58,10 @@ export interface VirtualScrollListProps<
 > {
   assumedItemSize?: number;
   getScrollContainer?: () => Window | Element;
-  getViewportInset?: () => BlockInset;
+  getScreen?: () => DOMRectReadOnly;
   initialItemIndex?: number;
   items: TItem[];
-  offscreenToViewportRatio?: number;
+  offscreenRatio?: number;
   onUpdateBlockSizes?: (newBlockSizes: BlockSizes) => void;
   onUpdateDimensions?: (dimensions: Dimensions) => void;
   ref: RefObject<VirtualScrollListRef | null>;
@@ -86,10 +86,10 @@ export function VirtualScrollList<TItem extends { id: PropertyKey }, TValue>(
   {
     assumedItemSize = 200,
     getScrollContainer = () => window,
-    getViewportInset = () => ({ start: 0, end: window.innerHeight }),
+    getScreen = () => new DOMRect(0, 0, window.innerWidth, window.innerHeight),
     initialItemIndex = -1,
     items,
-    offscreenToViewportRatio = 1.0,
+    offscreenRatio = 1.0,
     onUpdateBlockSizes,
     onUpdateDimensions,
     ref,
@@ -105,9 +105,9 @@ export function VirtualScrollList<TItem extends { id: PropertyKey }, TValue>(
   const scrollingItemIndexRef = context.useRef(initialItemIndex);
   const blockSizesRef = context.useMemo(() => ({ current: new Map() }), []);
   const isDirtyRef = context.useRef(false);
-  const blockInsetsRef = context.useMemo(
+  const blockPositionsRef = context.useMemo(
     () => ({
-      current: computeBlockInsets(
+      current: computeBlockPositions(
         items,
         blockSizesRef.current,
         assumedItemSize,
@@ -115,45 +115,46 @@ export function VirtualScrollList<TItem extends { id: PropertyKey }, TValue>(
     }),
     [],
   );
-  const sliceRef = context.useMemo(
+  const scopeRef = context.useMemo(
     () => ({
-      current: getInitialSlice(
+      current: getInitialScope(
         items,
         blockSizesRef.current,
         assumedItemSize,
         initialItemIndex,
-        getViewportInset(),
+        getScreen(),
       ),
     }),
     [],
   );
-  const oldItems = context.use(createPreviousHook(items)) ?? [];
 
+  const oldItems = context.use(createPreviousHook(items)) ?? [];
   if (items !== oldItems) {
-    if (
-      areIdenticalItems(
-        items.slice(sliceRef.current.start, sliceRef.current.end),
-        oldItems.slice(sliceRef.current.start, sliceRef.current.end),
-      )
-    ) {
-      if (sliceRef.current.end > items.length) {
-        sliceRef.current = {
-          start: Math.min(items.length - 1, sliceRef.current.start),
+    const newSlice = items.slice(scopeRef.current.start, scopeRef.current.end);
+    const oldSlice = oldItems.slice(
+      scopeRef.current.start,
+      scopeRef.current.end,
+    );
+
+    if (areIdenticalItems(newSlice, oldSlice)) {
+      if (items.length < scopeRef.current.end) {
+        scopeRef.current = {
+          start: Math.min(items.length - 1, scopeRef.current.start),
           end: items.length,
         };
       }
     } else {
       scrollingItemIndexRef.current = initialItemIndex;
-      sliceRef.current = getInitialSlice(
+      scopeRef.current = getInitialScope(
         items,
         blockSizesRef.current,
         assumedItemSize,
         initialItemIndex,
-        getViewportInset(),
+        getScreen(),
       );
     }
 
-    blockInsetsRef.current = computeBlockInsets(
+    blockPositionsRef.current = computeBlockPositions(
       items,
       blockSizesRef.current,
       assumedItemSize,
@@ -164,17 +165,17 @@ export function VirtualScrollList<TItem extends { id: PropertyKey }, TValue>(
 
   ref.current = {
     scrollTo(index: number): void {
-      sliceRef.current = getInitialSlice(
+      scopeRef.current = getInitialScope(
         items,
         blockSizesRef.current,
         assumedItemSize,
         index,
-        getViewportInset(),
+        getScreen(),
       );
 
       scrollingItemIndexRef.current = index;
 
-      // Force update even if the slice has not changed.
+      // Force update even if the scope has not changed.
       forceUpdate({});
     },
   };
@@ -187,29 +188,26 @@ export function VirtualScrollList<TItem extends { id: PropertyKey }, TValue>(
       return;
     }
 
-    const viewportInset = containerRef.current
-      ? translateViewportInset(
-          getViewportInset(),
-          containerRef.current.getBoundingClientRect(),
-        )
-      : getViewportInset();
+    const screen = containerRef.current
+      ? translateRect(getScreen(), containerRef.current.getBoundingClientRect())
+      : getScreen();
 
-    const newSlice = getCurrentSlice(
-      blockInsetsRef.current,
-      viewportInset,
-      offscreenToViewportRatio,
+    const newScope = getCurrentScope(
+      blockPositionsRef.current,
+      screen,
+      offscreenRatio,
     );
 
-    if (!areEqualSlices(sliceRef.current, newSlice)) {
-      sliceRef.current = newSlice;
+    if (!areEqualScopes(scopeRef.current, newScope)) {
+      scopeRef.current = newScope;
       forceUpdate({});
     }
 
     onUpdateDimensions?.({
-      blockInsets: blockInsetsRef.current,
+      blockPositions: blockPositionsRef.current,
       blockSizes: blockSizesRef.current,
-      slice: newSlice,
-      viewportInset,
+      scope: newScope,
+      screen,
     });
 
     isDirtyRef.current = false;
@@ -242,8 +240,14 @@ export function VirtualScrollList<TItem extends { id: PropertyKey }, TValue>(
   context.useEffect(() => {
     let willUpdate = false;
 
-    if (!areIdenticalItems(items, oldItems)) {
-      blockInsetsRef.current = computeBlockInsets(
+    const newSlice = items.slice(scopeRef.current.start, scopeRef.current.end);
+    const oldSlice = oldItems.slice(
+      scopeRef.current.start,
+      scopeRef.current.end,
+    );
+
+    if (!areIdenticalItems(newSlice, oldSlice)) {
+      blockPositionsRef.current = computeBlockPositions(
         items,
         blockSizesRef.current,
         assumedItemSize,
@@ -252,17 +256,17 @@ export function VirtualScrollList<TItem extends { id: PropertyKey }, TValue>(
     }
 
     if (scrollingItemIndexRef.current >= 0) {
-      const viewportInset = containerRef.current
-        ? translateViewportInset(
-            getViewportInset(),
+      const screen = containerRef.current
+        ? translateRect(
+            getScreen(),
             containerRef.current.getBoundingClientRect(),
           )
-        : getViewportInset();
+        : getScreen();
 
       const scrollOffset = getScrollOffset(
-        blockInsetsRef.current,
+        blockPositionsRef.current,
         scrollingItemIndexRef.current,
-        viewportInset,
+        screen,
       );
 
       if (scrollOffset !== 0) {
@@ -279,7 +283,7 @@ export function VirtualScrollList<TItem extends { id: PropertyKey }, TValue>(
         isDirtyRef.current = true;
       }
     }
-  }, [items, scrollingItemIndexRef.current, sliceRef.current]);
+  }, [items, scrollingItemIndexRef.current, scopeRef.current]);
 
   const elementToIdMap = context.useMemo(
     () => new WeakMap<Element, TItem['id']>(),
@@ -308,7 +312,7 @@ export function VirtualScrollList<TItem extends { id: PropertyKey }, TValue>(
         return;
       }
 
-      blockInsetsRef.current = computeBlockInsets(
+      blockPositionsRef.current = computeBlockPositions(
         items,
         blockSizesRef.current,
         assumedItemSize,
@@ -327,7 +331,7 @@ export function VirtualScrollList<TItem extends { id: PropertyKey }, TValue>(
   const children = memo(
     () =>
       keyedList(
-        items.slice(sliceRef.current.start, sliceRef.current.end),
+        items.slice(scopeRef.current.start, scopeRef.current.end),
         (item) => item.id,
         (item, index) => {
           const id = item.id;
@@ -339,13 +343,16 @@ export function VirtualScrollList<TItem extends { id: PropertyKey }, TValue>(
               resizeObserver.unobserve(element);
             };
           };
-          return renderItem(item, index + sliceRef.current.start, ref, context);
+          return renderItem(item, index + scopeRef.current.start, ref, context);
         },
       ),
-    [items, sliceRef.current.end, sliceRef.current.start],
+    [items, scopeRef.current],
   );
 
-  const blankSpaces = getBlankSpaces(blockInsetsRef.current, sliceRef.current);
+  const blankSpaces = getBlankSpaces(
+    blockPositionsRef.current,
+    scopeRef.current,
+  );
 
   return renderList(children, blankSpaces, containerRef, context);
 }
@@ -355,11 +362,11 @@ export interface ReactVirtualScrollListProps<
 > {
   assumedItemSize?: number;
   getScrollContainer?: () => Window | Element;
-  getViewportInset?: () => BlockInset;
+  getScreen?: () => DOMRectReadOnly;
   initialBlockSizes?: BlockSizes;
   initialItemIndex?: number;
   items: TItem[];
-  offscreenToViewportRatio?: number;
+  offscreenRatio?: number;
   onUpdateBlockSizes?: (newBlockSizes: BlockSizes) => void;
   onUpdateDimensions?: (dimensions: Dimensions) => void;
   renderItem: (
@@ -380,7 +387,7 @@ export interface ReactVirtualScrollListProps<
 interface ReactVirtualScrollListRendererProps<
   TItem extends { id: PropertyKey },
 > {
-  blockInsets: BlockInset[];
+  blockPositions: BlockPosition[];
   containerRef: React.RefObject<Element>;
   items: TItem[];
   onUpdateBlockSizes: (newBlockSizes: BlockSizes) => void;
@@ -394,18 +401,19 @@ interface ReactVirtualScrollListRendererProps<
     blankSpaces: BlankSpaces,
     ref: React.RefObject<Element>,
   ) => React.ReactElement<unknown>;
-  slice: Slice;
+  scope: Scope;
 }
 
 export const ReactVirtualScrollList = forwardRef(
   function ReactVirtualScrollList<TItem extends { id: PropertyKey }>(
     {
       assumedItemSize = 200,
-      getViewportInset = () => ({ start: 0, end: window.innerHeight }),
+      getScreen = () =>
+        new DOMRect(0, 0, window.innerWidth, window.innerHeight),
       getScrollContainer = () => window,
       items,
       initialItemIndex = -1,
-      offscreenToViewportRatio = 1.0,
+      offscreenRatio = 1.0,
       onUpdateBlockSizes,
       onUpdateDimensions,
       renderItem,
@@ -424,9 +432,9 @@ export const ReactVirtualScrollList = forwardRef(
       [scheduleUpdate],
     );
 
-    const blockInsetsRef = useMemo(
+    const blockPositionsRef = useMemo(
       () => ({
-        current: computeBlockInsets(
+        current: computeBlockPositions(
           items,
           blockSizesRef.current,
           assumedItemSize,
@@ -434,14 +442,14 @@ export const ReactVirtualScrollList = forwardRef(
       }),
       [],
     );
-    const sliceRef = useMemo(
+    const scopeRef = useMemo(
       () => ({
-        current: getInitialSlice(
+        current: getInitialScope(
           items,
           blockSizesRef.current,
           assumedItemSize,
           initialItemIndex,
-          getViewportInset(),
+          getScreen(),
         ),
       }),
       [],
@@ -450,31 +458,35 @@ export const ReactVirtualScrollList = forwardRef(
     const oldItems = usePrevious(items) ?? [];
 
     if (items !== oldItems) {
-      if (
-        areIdenticalItems(
-          items.slice(sliceRef.current.start, sliceRef.current.end),
-          oldItems.slice(sliceRef.current.start, sliceRef.current.end),
-        )
-      ) {
-        if (sliceRef.current.end > items.length) {
-          sliceRef.current = {
-            start: Math.min(items.length - 1, sliceRef.current.start),
+      const newSlice = items.slice(
+        scopeRef.current.start,
+        scopeRef.current.end,
+      );
+      const oldSlice = oldItems.slice(
+        scopeRef.current.start,
+        scopeRef.current.end,
+      );
+
+      if (areIdenticalItems(newSlice, oldSlice)) {
+        if (items.length < scopeRef.current.end) {
+          scopeRef.current = {
+            start: Math.min(items.length - 1, scopeRef.current.start),
             end: items.length,
           };
         }
       } else {
         blockSizesRef.current = new Map();
         scrollingItemIndexRef.current = initialItemIndex;
-        sliceRef.current = getInitialSlice(
+        scopeRef.current = getInitialScope(
           items,
           blockSizesRef.current,
           assumedItemSize,
           initialItemIndex,
-          getViewportInset(),
+          getScreen(),
         );
       }
 
-      blockInsetsRef.current = computeBlockInsets(
+      blockPositionsRef.current = computeBlockPositions(
         items,
         blockSizesRef.current,
         assumedItemSize,
@@ -485,17 +497,17 @@ export const ReactVirtualScrollList = forwardRef(
 
     useImperativeHandle(ref, () => ({
       scrollTo(index: number): void {
-        sliceRef.current = getInitialSlice(
+        scopeRef.current = getInitialScope(
           items,
           blockSizesRef.current,
           assumedItemSize,
           index,
-          getViewportInset(),
+          getScreen(),
         );
 
         scrollingItemIndexRef.current = index;
 
-        // Force update even if the slice has not changed.
+        // Force update even if the scope has not changed.
         forceUpdate({});
       },
     }));
@@ -508,29 +520,29 @@ export const ReactVirtualScrollList = forwardRef(
         return;
       }
 
-      const viewportInset = containerRef.current
-        ? translateViewportInset(
-            getViewportInset(),
+      const screen = containerRef.current
+        ? translateRect(
+            getScreen(),
             containerRef.current.getBoundingClientRect(),
           )
-        : getViewportInset();
+        : getScreen();
 
-      const newSlice = getCurrentSlice(
-        blockInsetsRef.current,
-        viewportInset,
-        offscreenToViewportRatio,
+      const newScope = getCurrentScope(
+        blockPositionsRef.current,
+        screen,
+        offscreenRatio,
       );
 
-      if (!areEqualSlices(sliceRef.current, newSlice)) {
-        sliceRef.current = newSlice;
+      if (!areEqualScopes(scopeRef.current, newScope)) {
+        scopeRef.current = newScope;
         forceUpdate({});
       }
 
       onUpdateDimensions?.({
-        blockInsets: blockInsetsRef.current,
+        blockPositions: blockPositionsRef.current,
         blockSizes: blockSizesRef.current,
-        slice: newSlice,
-        viewportInset,
+        scope: newScope,
+        screen,
       });
     });
 
@@ -547,7 +559,7 @@ export const ReactVirtualScrollList = forwardRef(
       }
 
       if (hasChanged) {
-        blockInsetsRef.current = computeBlockInsets(
+        blockPositionsRef.current = computeBlockPositions(
           items,
           blockSizesRef.current,
           assumedItemSize,
@@ -574,13 +586,18 @@ export const ReactVirtualScrollList = forwardRef(
     }, [getScrollContainer, requestUpdate, scrollThrottleTime]);
 
     useEffect(() => {
+      const newSlice = items.slice(
+        scopeRef.current.start,
+        scopeRef.current.end,
+      );
+      const oldSlice = oldItems.slice(
+        scopeRef.current.start,
+        scopeRef.current.end,
+      );
       let willUpdate = false;
 
-      if (
-        items.length !== oldItems.length ||
-        !areIdenticalItems(items, oldItems)
-      ) {
-        blockInsetsRef.current = computeBlockInsets(
+      if (!areIdenticalItems(newSlice, oldSlice)) {
+        blockPositionsRef.current = computeBlockPositions(
           items,
           blockSizesRef.current,
           assumedItemSize,
@@ -589,17 +606,17 @@ export const ReactVirtualScrollList = forwardRef(
       }
 
       if (scrollingItemIndexRef.current >= 0) {
-        const viewportInset = containerRef.current
-          ? translateViewportInset(
-              getViewportInset(),
+        const screen = containerRef.current
+          ? translateRect(
+              getScreen(),
               containerRef.current.getBoundingClientRect(),
             )
-          : getViewportInset();
+          : getScreen();
 
         const scrollOffset = getScrollOffset(
-          blockInsetsRef.current,
+          blockPositionsRef.current,
           scrollingItemIndexRef.current,
-          viewportInset,
+          screen,
         );
 
         if (scrollOffset !== 0) {
@@ -613,17 +630,17 @@ export const ReactVirtualScrollList = forwardRef(
       if (willUpdate) {
         requestUpdate(updateDimensions);
       }
-    }, [items, requestUpdate, scrollingItemIndexRef.current, sliceRef.current]);
+    }, [items, requestUpdate, scrollingItemIndexRef.current, scopeRef.current]);
 
     return (
       <MemoizedVirtualScrollListRenderer
-        blockInsets={blockInsetsRef.current}
+        blockPositions={blockPositionsRef.current}
         containerRef={containerRef}
         items={items}
         onUpdateBlockSizes={updateBlockSizes}
         renderItem={renderItem}
         renderList={renderList}
-        slice={sliceRef.current}
+        scope={scopeRef.current}
       />
     );
   },
@@ -635,13 +652,13 @@ export const ReactVirtualScrollList = forwardRef(
 
 const MemoizedVirtualScrollListRenderer = React.memo(
   function VirtualScrollListRenderer<TItem extends { id: PropertyKey }>({
-    blockInsets,
+    blockPositions,
     containerRef,
     items,
     onUpdateBlockSizes,
     renderItem,
     renderList,
-    slice,
+    scope,
   }: ReactVirtualScrollListRendererProps<TItem>) {
     const elementToIdMap = useMemo(
       () => new WeakMap<Element, TItem['id']>(),
@@ -664,7 +681,7 @@ const MemoizedVirtualScrollListRenderer = React.memo(
       },
     );
 
-    const children = items.slice(slice.start, slice.end).map((item, index) => {
+    const children = items.slice(scope.start, scope.end).map((item, index) => {
       const id = item.id;
       let lastElemnt: Element | null = null;
 
@@ -681,10 +698,10 @@ const MemoizedVirtualScrollListRenderer = React.memo(
         lastElemnt = element;
       };
 
-      return renderItem(item, index + slice.start, ref);
+      return renderItem(item, index + scope.start, ref);
     });
 
-    const blankSpaces = getBlankSpaces(blockInsets, slice);
+    const blankSpaces = getBlankSpaces(blockPositions, scope);
 
     return renderList(children, blankSpaces, containerRef);
   },
@@ -692,27 +709,27 @@ const MemoizedVirtualScrollListRenderer = React.memo(
   props: ReactVirtualScrollListRendererProps<TItem>,
 ) => React.ReactElement;
 
-function areEqualSlices(first: Slice, second: Slice) {
+function areEqualScopes(first: Scope, second: Scope) {
   return first.start === second.start && first.end === second.end;
 }
 
-function computeBlockInsets<TItem extends { id: PropertyKey }>(
+function computeBlockPositions<TItem extends { id: PropertyKey }>(
   items: TItem[],
   blockSizes: BlockSizes,
   assumedItemSize: number,
-): BlockInset[] {
-  const blockInsets = new Array(items.length);
+): BlockPosition[] {
+  const blockPositions = new Array(items.length);
 
   for (let start = 0, i = 0, l = items.length; i < l; i++) {
     const item = items[i]!;
     const id = item.id as TItem['id'];
     const size = blockSizes.get(id) ?? assumedItemSize;
-    const blockInset = { start, end: start + size };
-    start = blockInset.end;
-    blockInsets[i] = blockInset;
+    const blockPosition = { start, end: start + size };
+    start = blockPosition.end;
+    blockPositions[i] = blockPosition;
   }
 
-  return blockInsets;
+  return blockPositions;
 }
 
 function createResizeObserverHook(
@@ -751,8 +768,11 @@ function createScheduler(
   };
 }
 
-function getBlankSpaces(blockInsets: BlockInset[], slice: Slice): BlankSpaces {
-  if (blockInsets.length === 0) {
+function getBlankSpaces(
+  blockPositions: BlockPosition[],
+  scope: Scope,
+): BlankSpaces {
+  if (blockPositions.length === 0) {
     return {
       above: 0,
       below: 0,
@@ -760,12 +780,13 @@ function getBlankSpaces(blockInsets: BlockInset[], slice: Slice): BlankSpaces {
   }
 
   const above =
-    slice.start < blockInsets.length
-      ? blockInsets[slice.start]!.start
-      : blockInsets[blockInsets.length - 1]!.end;
+    scope.start < blockPositions.length
+      ? blockPositions[scope.start]!.start
+      : blockPositions[blockPositions.length - 1]!.end;
   const below =
-    slice.end < blockInsets.length
-      ? blockInsets[blockInsets.length - 1]!.end - blockInsets[slice.end]!.start
+    scope.end < blockPositions.length
+      ? blockPositions[blockPositions.length - 1]!.end -
+        blockPositions[scope.end]!.start
       : 0;
 
   return {
@@ -774,29 +795,28 @@ function getBlankSpaces(blockInsets: BlockInset[], slice: Slice): BlankSpaces {
   };
 }
 
-function getCurrentSlice(
-  blockInsets: BlockInset[],
-  viewportInset: BlockInset,
-  offscreenToViewportRatio: number,
-): Slice {
-  if (blockInsets.length === 0) {
+function getCurrentScope(
+  blockPositions: BlockPosition[],
+  screen: DOMRectReadOnly,
+  offscreenRatio: number,
+): Scope {
+  if (blockPositions.length === 0) {
     return {
       start: 0,
       end: 0,
     };
   }
 
-  const offscreenSize =
-    (viewportInset.end - viewportInset.start) * offscreenToViewportRatio;
-  const viewportStart = viewportInset.start - offscreenSize;
-  const viewportEnd = viewportInset.end + offscreenSize;
+  const offscreenHeight = screen.height * offscreenRatio;
+  const startPosition = screen.top - offscreenHeight;
+  const endPosition = screen.bottom + offscreenHeight;
 
-  const size = blockInsets.length;
+  const size = blockPositions.length;
   let start = 0;
 
   for (let i = 0; i < size; i++) {
-    const blockInset = blockInsets[start]!;
-    if (blockInset.end > viewportStart) {
+    const blockPosition = blockPositions[start]!;
+    if (blockPosition.end > startPosition) {
       break;
     }
     start = i;
@@ -805,8 +825,8 @@ function getCurrentSlice(
   let end = start + 1;
 
   for (let i = end; i < size; i++) {
-    const blockInset = blockInsets[end]!;
-    if (blockInset.start >= viewportEnd) {
+    const blockPosition = blockPositions[end]!;
+    if (blockPosition.start >= endPosition) {
       break;
     }
     end = i + 1;
@@ -818,20 +838,20 @@ function getCurrentSlice(
   };
 }
 
-function getInitialSlice<TItem extends { id: PropertyKey }>(
+function getInitialScope<TItem extends { id: PropertyKey }>(
   items: TItem[],
   blockSizes: BlockSizes,
   assumedItemSize: number,
   initialItemIndex: number,
-  viewportInset: BlockInset,
-): Slice {
-  const viewportSize = viewportInset.end - viewportInset.start;
+  screen: DOMRectReadOnly,
+): Scope {
+  const screenHeight = screen.bottom - screen.top;
 
   const start = Math.max(0, initialItemIndex);
   let end = start;
 
   for (
-    let l = items.length, remainingSpace = viewportSize;
+    let l = items.length, remainingSpace = screenHeight;
     end < l && remainingSpace > 0;
     end++
   ) {
@@ -848,17 +868,17 @@ function getInitialSlice<TItem extends { id: PropertyKey }>(
 }
 
 function getScrollOffset(
-  blockInsets: BlockInset[],
+  blockPositions: BlockPosition[],
   index: number,
-  viewportInset: BlockInset,
+  screen: DOMRectReadOnly,
 ): number {
-  if (index < 0 || blockInsets.length === 0) {
+  if (index < 0 || blockPositions.length === 0) {
     return 0;
   }
 
-  return index >= blockInsets.length
-    ? blockInsets[blockInsets.length - 1]!.end - viewportInset.start
-    : blockInsets[index]!.start - viewportInset.start;
+  return index >= blockPositions.length
+    ? blockPositions[blockPositions.length - 1]!.end - screen.top
+    : blockPositions[index]!.start - screen.top;
 }
 
 function areIdenticalItems<T extends { id: PropertyKey }>(
@@ -882,16 +902,13 @@ function areIdenticalItems<T extends { id: PropertyKey }>(
   return true;
 }
 
-function translateViewportInset(
-  viewportInset: BlockInset,
-  containerInset: DOMRect,
-): BlockInset {
-  const start = viewportInset.start - containerInset.top;
-  const size = viewportInset.end - viewportInset.start;
-  return {
-    start,
-    end: start + size,
-  };
+function translateRect(
+  rect: DOMRectReadOnly,
+  referenceRect: DOMRectReadOnly,
+): DOMRectReadOnly {
+  const top = rect.top - referenceRect.top;
+  const left = rect.left - referenceRect.left;
+  return new DOMRect(left, top, rect.width, rect.height);
 }
 
 function useResizeObserver(callback: ResizeObserverCallback) {
