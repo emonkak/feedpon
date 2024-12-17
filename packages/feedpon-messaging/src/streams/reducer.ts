@@ -10,8 +10,6 @@ export default function reducer(streams: Streams, event: Event): Streams {
         isMarking: false,
         items: CacheMap.mapValues(streams.items, (stream) => ({
           ...stream,
-          // Rename "heights" property to "entrySizes" (from v3.0)
-          entrySizes: stream.entrySizes ?? (stream as any).heights ?? {},
           feed: stream.feed
             ? {
                 ...stream.feed,
@@ -115,7 +113,6 @@ export default function reducer(streams: Streams, event: Event): Streams {
           activeEntryIndex: -1,
           continuation: null,
           entries: [],
-          entrySizes: {},
           expandedEntryIndex: -1,
           feed: null,
           fetchOptions: event.fetchOptions,
@@ -136,7 +133,6 @@ export default function reducer(streams: Streams, event: Event): Streams {
           activeEntryIndex: -1,
           continuation: null,
           entries: [],
-          entrySizes: {},
           expandedEntryIndex: -1,
           feed: null,
           fetchOptions: event.fetchOptions,
@@ -160,17 +156,6 @@ export default function reducer(streams: Streams, event: Event): Streams {
       return {
         ...streams,
         items: CacheMap.empty(streams.items.capacity),
-      };
-
-    case 'STREAM_ENTRY_SIZES_UPDATED':
-      return {
-        ...streams,
-        items: CacheMap.update(streams.items, event.streamId, (stream) => {
-          return {
-            ...stream,
-            entrySizes: Object.assign({}, stream.entrySizes, event.sizes),
-          };
-        }),
       };
 
     case 'MORE_ENTRIES_FETCHING':

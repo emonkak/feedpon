@@ -60,7 +60,6 @@ export interface VirtualScrollListProps<
   assumedItemSize?: number;
   getScrollContainer?: () => Window | Element;
   getViewportInset?: () => BlockInset;
-  initialBlockSizes?: BlockSizes<TItem['id']>;
   initialItemIndex?: number;
   items: TItem[];
   offscreenToViewportRatio?: number;
@@ -89,7 +88,6 @@ export function VirtualScrollList<TItem extends { id: PropertyKey }, TValue>(
     assumedItemSize = 200,
     getScrollContainer = () => window,
     getViewportInset = () => ({ start: 0, end: window.innerHeight }),
-    initialBlockSizes = {} as BlockSizes<TItem['id']>,
     initialItemIndex = -1,
     items,
     offscreenToViewportRatio = 1.0,
@@ -106,7 +104,7 @@ export function VirtualScrollList<TItem extends { id: PropertyKey }, TValue>(
 ): TemplateResult {
   const containerRef = context.useRef<Element | null>(null);
   const scrollingItemIndexRef = context.useRef(initialItemIndex);
-  const blockSizesRef = context.useRef(initialBlockSizes);
+  const blockSizesRef = context.useRef({} as BlockSizes<TItem['id']>);
   const isDirtyRef = context.useRef(false);
   const blockInsetsRef = context.useMemo(
     () => ({
@@ -148,7 +146,6 @@ export function VirtualScrollList<TItem extends { id: PropertyKey }, TValue>(
         };
       }
     } else {
-      blockSizesRef.current = initialBlockSizes;
       scrollingItemIndexRef.current = initialItemIndex;
       sliceRef.current = getInitialSlice(
         items,

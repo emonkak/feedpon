@@ -107,7 +107,6 @@ export function fetchStream(
           title: 'Stream is not found',
           fetchedAt: 0,
           entries: [],
-          entrySizes: {},
           continuation: null,
           feed: null,
           fetchOptions,
@@ -303,17 +302,6 @@ export function fetchFullContent(
 
       throw error;
     }
-  };
-}
-
-export function updateEntrySizes(
-  streamId: string,
-  sizes: { [id: string]: number },
-): Event {
-  return {
-    type: 'STREAM_ENTRY_SIZES_UPDATED',
-    streamId,
-    sizes,
   };
 }
 
@@ -708,7 +696,6 @@ function fetchFeedStream(
         feed.title || feed.website || (feed.id || '').replace(/^feed\//, ''),
       fetchedAt,
       entries: contents.items.map(entryConverter),
-      entrySizes: {},
       continuation: contents.continuation || null,
       feed: {
         feedId: feed.id,
@@ -762,7 +749,6 @@ function fetchCategoryStream(
       title: category ? category.label : '',
       fetchedAt,
       entries: contents.items.map(entryConverter),
-      entrySizes: {},
       continuation: contents.continuation || null,
       feed: null,
       fetchOptions,
@@ -802,7 +788,6 @@ function fetchAllStream(
       streamId: ALL_STREAM_ID,
       title: 'All',
       entries: contents.items.map(entryConverter),
-      entrySizes: {},
       fetchedAt,
       continuation: contents.continuation || null,
       feed: null,
@@ -848,7 +833,6 @@ function fetchPinsStream(
       activeEntryIndex: -1,
       continuation: contents.continuation || null,
       entries: contents.items.map(entryConverter),
-      entrySizes: {},
       expandedEntryIndex: -1,
       feed: null,
       fetchOptions,

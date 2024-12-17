@@ -162,11 +162,6 @@ export type Event =
   | { type: 'STREAM_CACHES_CLEARED' }
   | { type: 'STREAM_CACHE_CAPACITY_CHANGED'; capacity: number }
   | { type: 'STREAM_CACHE_LIFETIME_CHANGED'; lifetime: number }
-  | {
-      type: 'STREAM_ENTRY_SIZES_UPDATED';
-      streamId: string;
-      sizes: { [id: string]: number };
-    }
   | { type: 'STREAM_FETCHED'; stream: Stream }
   | {
       type: 'STREAM_FETCHING';
@@ -315,7 +310,6 @@ export interface Stream {
   activeEntryIndex: number;
   continuation: string | null;
   entries: Entry[];
-  entrySizes: { [id: string]: number };
   expandedEntryIndex: number;
   feed: Feed | null;
   fetchOptions: StreamFetchOptions;

@@ -28,7 +28,6 @@ import {
   showEntryComments,
   showFullContents,
   unpinEntry,
-  updateEntrySizes,
 } from 'feedpon-messaging/streams';
 import {
   addToCategory,
@@ -97,7 +96,6 @@ export function StreamPage(
     onUnpinEntry,
     onUnselectStream,
     onUnsubscribe,
-    onUpdateEntrySizes,
     streams,
     subscriptions,
   } = context.use(
@@ -140,7 +138,6 @@ export function StreamPage(
         onUnpinEntry: unpinEntry,
         onUnselectStream: unselectStream,
         onUnsubscribe: unsubscribe,
-        onUpdateEntrySizes: updateEntrySizes,
       }),
     }),
   );
@@ -151,7 +148,6 @@ export function StreamPage(
     activeEntryIndex: -1,
     continuation: null,
     entries: [],
-    entrySizes: {},
     expandedEntryIndex: -1,
     feed: null,
     fetchOptions: streams.defaultFetchOptions,
@@ -288,12 +284,6 @@ export function StreamPage(
     }),
   );
 
-  const handleUpdateBlockSizes = context.use(
-    createEventHook((entrySizes: { [id: string]: number }) => {
-      onUpdateEntrySizes(stream.streamId, entrySizes);
-    }),
-  );
-
   const handleLoadMoreEntries = context.use(
     createEventHook(() => {
       if (stream.continuation) {
@@ -423,7 +413,6 @@ export function StreamPage(
     <${optional(entryHeader)}>
     <${component(EntryList, {
       activeEntryIndex: stream.activeEntryIndex,
-      blockSizes: stream.entrySizes,
       entries: stream.entries,
       expandedEntryIndex: stream.expandedEntryIndex,
       isLoaded,
@@ -438,7 +427,6 @@ export function StreamPage(
       onShowComments: onShowEntryComments,
       onShowFullContents,
       onUnpin: onUnpinEntry,
-      onUpdateBlockSizes: handleUpdateBlockSizes,
       readEntryIndex: stream.readEntryIndex,
       ref: virtualListRef,
       sameOrigin: stream.feed !== null,

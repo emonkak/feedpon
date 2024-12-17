@@ -23,7 +23,6 @@ import {
 
 interface EntryListProps {
   activeEntryIndex: number;
-  blockSizes: { [id: string]: number };
   entries: Entry[];
   expandedEntryIndex: number;
   isLoaded: boolean;
@@ -38,7 +37,6 @@ interface EntryListProps {
   onShowComments: (entryId: string | number) => void;
   onShowFullContents: (entryId: string | number) => void;
   onUnpin: (entryId: string | number) => void;
-  onUpdateBlockSizes: (blockSizes: { [id: string]: number }) => void;
   readEntryIndex: number;
   ref: RefObject<VirtualScrollListRef | null>;
   sameOrigin: boolean;
@@ -56,7 +54,6 @@ interface RenderingItem {
 export function EntryList(
   {
     activeEntryIndex,
-    blockSizes,
     entries,
     expandedEntryIndex,
     isLoaded,
@@ -71,7 +68,6 @@ export function EntryList(
     onShowComments,
     onShowFullContents,
     onUnpin,
-    onUpdateBlockSizes,
     sameOrigin,
     streamView,
     ref,
@@ -180,11 +176,9 @@ export function EntryList(
 
   return context.html`<${component(VirtualScrollList<RenderingItem, unknown>, {
     assumedItemSize: streamView === 'expanded' ? 800 : 100,
-    initialBlockSizes: blockSizes,
     initialItemIndex:
       expandedEntryIndex >= 0 ? expandedEntryIndex : activeEntryIndex,
     items,
-    onUpdateBlockSizes,
     onUpdateDimensions: handleUpdateDimensions,
     ref,
     renderItem,
