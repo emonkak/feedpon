@@ -77,7 +77,7 @@ export function EntryList(
   const getHeaderHeight = context.use(getHeaderHeightHook);
 
   const handleUpdateDimensions = context.use(
-    createEventHook((dimensions: Dimensions<string>) => {
+    createEventHook((dimensions: Dimensions) => {
       const newActiveEntryIndex = getActiveIndex(dimensions, getHeaderHeight());
 
       if (newActiveEntryIndex !== activeEntryIndex) {
@@ -188,10 +188,7 @@ export function EntryList(
   })}>`;
 }
 
-function getActiveIndex(
-  dimensions: Dimensions<string>,
-  scrollPadding: number,
-): number {
+function getActiveIndex(dimensions: Dimensions, scrollPadding: number): number {
   const { blockInsets } = dimensions;
 
   if (blockInsets.length === 0) {

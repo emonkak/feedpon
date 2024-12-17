@@ -34,11 +34,11 @@ export interface BlockInset {
   end: number;
 }
 
-export type BlockSizes<TId extends PropertyKey> = { [id in TId]: number };
+export type BlockSizes = Map<PropertyKey, number>;
 
-export interface Dimensions<TId extends PropertyKey> {
+export interface Dimensions {
   blockInsets: BlockInset[];
-  blockSizes: BlockSizes<TId>;
+  blockSizes: BlockSizes;
   slice: Slice;
   viewportInset: BlockInset;
 }
@@ -62,8 +62,8 @@ export interface VirtualScrollListProps<
   initialItemIndex?: number;
   items: TItem[];
   offscreenToViewportRatio?: number;
-  onUpdateBlockSizes?: (newBlockSizes: BlockSizes<TItem['id']>) => void;
-  onUpdateDimensions?: (dimensions: Dimensions<TItem['id']>) => void;
+  onUpdateBlockSizes?: (newBlockSizes: BlockSizes) => void;
+  onUpdateDimensions?: (dimensions: Dimensions) => void;
   ref: RefObject<VirtualScrollListRef | null>;
   renderItem: (
     item: TItem,
@@ -103,7 +103,7 @@ export function VirtualScrollList<TItem extends { id: PropertyKey }, TValue>(
 ): TemplateResult {
   const containerRef = context.useRef<Element | null>(null);
   const scrollingItemIndexRef = context.useRef(initialItemIndex);
-  const blockSizesRef = context.useRef({} as BlockSizes<TItem['id']>);
+  const blockSizesRef = context.useMemo(() => ({ current: new Map() }), []);
   const isDirtyRef = context.useRef(false);
   const blockInsetsRef = context.useMemo(
     () => ({
@@ -295,10 +295,10 @@ export function VirtualScrollList<TItem extends { id: PropertyKey }, TValue>(
         const entry = entries[i]!;
         const id = elementToIdMap.get(entry.target);
         if (id !== undefined) {
-          const oldBlockSize = blockSizes[id as TItem['id']];
+          const oldBlockSize = blockSizes.get(id);
           const newBlockSize = entry.borderBoxSize[0]!.blockSize;
           if (oldBlockSize !== newBlockSize) {
-            blockSizes[id] = newBlockSize;
+            blockSizes.set(id, newBlockSize);
             hasChanged = true;
           }
         }
@@ -356,12 +356,12 @@ export interface ReactVirtualScrollListProps<
   assumedItemSize?: number;
   getScrollContainer?: () => Window | Element;
   getViewportInset?: () => BlockInset;
-  initialBlockSizes?: BlockSizes<TItem['id']>;
+  initialBlockSizes?: BlockSizes;
   initialItemIndex?: number;
   items: TItem[];
   offscreenToViewportRatio?: number;
-  onUpdateBlockSizes?: (newBlockSizes: BlockSizes<TItem['id']>) => void;
-  onUpdateDimensions?: (dimensions: Dimensions<TItem['id']>) => void;
+  onUpdateBlockSizes?: (newBlockSizes: BlockSizes) => void;
+  onUpdateDimensions?: (dimensions: Dimensions) => void;
   renderItem: (
     item: TItem,
     index: number,
@@ -383,7 +383,7 @@ interface ReactVirtualScrollListRendererProps<
   blockInsets: BlockInset[];
   containerRef: React.RefObject<Element>;
   items: TItem[];
-  onUpdateBlockSizes: (newBlockSizes: BlockSizes<TItem['id']>) => void;
+  onUpdateBlockSizes: (newBlockSizes: BlockSizes) => void;
   renderItem: (
     item: TItem,
     index: number,
@@ -404,7 +404,6 @@ export const ReactVirtualScrollList = forwardRef(
       getViewportInset = () => ({ start: 0, end: window.innerHeight }),
       getScrollContainer = () => window,
       items,
-      initialBlockSizes = {} as BlockSizes<TItem['id']>,
       initialItemIndex = -1,
       offscreenToViewportRatio = 1.0,
       onUpdateBlockSizes,
@@ -419,7 +418,7 @@ export const ReactVirtualScrollList = forwardRef(
   ) {
     const containerRef = useRef<Element | null>(null);
     const scrollingItemIndexRef = useRef(initialItemIndex);
-    const blockSizesRef = useRef(initialBlockSizes);
+    const blockSizesRef = useMemo(() => ({ current: new Map() }), []);
     const requestUpdate = useMemo(
       () => createScheduler(scheduleUpdate),
       [scheduleUpdate],
@@ -464,7 +463,7 @@ export const ReactVirtualScrollList = forwardRef(
           };
         }
       } else {
-        blockSizesRef.current = initialBlockSizes;
+        blockSizesRef.current = new Map();
         scrollingItemIndexRef.current = initialItemIndex;
         sliceRef.current = getInitialSlice(
           items,
@@ -535,30 +534,28 @@ export const ReactVirtualScrollList = forwardRef(
       });
     });
 
-    const updateBlockSizes = useEvent(
-      (newBlockSizes: BlockSizes<TItem['id']>) => {
-        let hasChanged = false;
+    const updateBlockSizes = useEvent((newBlockSizes: BlockSizes) => {
+      let hasChanged = false;
 
-        for (const id in newBlockSizes) {
-          const oldBlockSize = blockSizesRef.current[id as TItem['id']];
-          const newBlockSize = newBlockSizes[id as TItem['id']];
-          if (oldBlockSize !== newBlockSize) {
-            blockSizesRef.current[id as TItem['id']] = newBlockSize;
-            hasChanged = true;
-          }
+      for (const id in newBlockSizes) {
+        const oldBlockSize = blockSizesRef.current.get(id);
+        const newBlockSize = newBlockSizes.get(id);
+        if (oldBlockSize !== newBlockSize) {
+          blockSizesRef.current.set(id, newBlockSize);
+          hasChanged = true;
         }
+      }
 
-        if (hasChanged) {
-          blockInsetsRef.current = computeBlockInsets(
-            items,
-            blockSizesRef.current,
-            assumedItemSize,
-          );
-          requestUpdate(updateDimensions);
-          onUpdateBlockSizes?.(blockSizesRef.current);
-        }
-      },
-    );
+      if (hasChanged) {
+        blockInsetsRef.current = computeBlockInsets(
+          items,
+          blockSizesRef.current,
+          assumedItemSize,
+        );
+        requestUpdate(updateDimensions);
+        onUpdateBlockSizes?.(blockSizesRef.current);
+      }
+    });
 
     useEffect(() => {
       const scrollContainer = getScrollContainer();
@@ -653,13 +650,13 @@ const MemoizedVirtualScrollListRenderer = React.memo(
 
     const resizeObserver = useResizeObserver(
       (entries: ResizeObserverEntry[]) => {
-        const blockSizes = {} as BlockSizes<TItem['id']>;
+        const blockSizes = new Map();
 
         for (let i = 0, l = entries.length; i < l; i++) {
           const entry = entries[i]!;
           const id = elementToIdMap.get(entry.target);
           if (id !== undefined) {
-            blockSizes[id] = entry.borderBoxSize[0]!.blockSize;
+            blockSizes.set(id, entry.borderBoxSize[0]!.blockSize);
           }
         }
 
@@ -701,7 +698,7 @@ function areEqualSlices(first: Slice, second: Slice) {
 
 function computeBlockInsets<TItem extends { id: PropertyKey }>(
   items: TItem[],
-  blockSizes: BlockSizes<TItem['id']>,
+  blockSizes: BlockSizes,
   assumedItemSize: number,
 ): BlockInset[] {
   const blockInsets = new Array(items.length);
@@ -709,7 +706,7 @@ function computeBlockInsets<TItem extends { id: PropertyKey }>(
   for (let start = 0, i = 0, l = items.length; i < l; i++) {
     const item = items[i]!;
     const id = item.id as TItem['id'];
-    const size = blockSizes[id] ?? assumedItemSize;
+    const size = blockSizes.get(id) ?? assumedItemSize;
     const blockInset = { start, end: start + size };
     start = blockInset.end;
     blockInsets[i] = blockInset;
@@ -823,7 +820,7 @@ function getCurrentSlice(
 
 function getInitialSlice<TItem extends { id: PropertyKey }>(
   items: TItem[],
-  blockSizes: BlockSizes<TItem['id']>,
+  blockSizes: BlockSizes,
   assumedItemSize: number,
   initialItemIndex: number,
   viewportInset: BlockInset,
@@ -840,7 +837,7 @@ function getInitialSlice<TItem extends { id: PropertyKey }>(
   ) {
     const item = items[end]!;
     const id = item.id as TItem['id'];
-    const size = blockSizes[id] ?? assumedItemSize;
+    const size = blockSizes.get(id) ?? assumedItemSize;
     remainingSpace -= size;
   }
 
