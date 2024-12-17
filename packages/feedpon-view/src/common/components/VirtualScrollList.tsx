@@ -5,7 +5,6 @@ import type {
   Usable,
 } from '@emonkak/ebit';
 import { keyedList, memo } from '@emonkak/ebit/directives.js';
-import sequentialEqual from 'feedpon-utils/sequentialEqual';
 import throttle from 'feedpon-utils/throttle';
 import React, {
   forwardRef,
@@ -131,14 +130,12 @@ export function VirtualScrollList<TItem extends { id: PropertyKey }, TValue>(
   const oldItems = context.use(createPreviousHook(items)) ?? [];
 
   if (items !== oldItems) {
-    const newIds = items
-      .slice(sliceRef.current.start, sliceRef.current.end)
-      .map((item) => item.id);
-    const oldIds = oldItems
-      .slice(sliceRef.current.start, sliceRef.current.end)
-      .map((item) => item.id);
-
-    if (sequentialEqual(newIds, oldIds)) {
+    if (
+      areIdenticalItems(
+        items.slice(sliceRef.current.start, sliceRef.current.end),
+        oldItems.slice(sliceRef.current.start, sliceRef.current.end),
+      )
+    ) {
       if (sliceRef.current.end > items.length) {
         sliceRef.current = {
           start: Math.min(items.length - 1, sliceRef.current.start),
@@ -245,13 +242,7 @@ export function VirtualScrollList<TItem extends { id: PropertyKey }, TValue>(
   context.useEffect(() => {
     let willUpdate = false;
 
-    if (
-      items.length !== oldItems.length ||
-      !sequentialEqual(
-        items.map((item) => item.id),
-        oldItems.map((item) => item.id),
-      )
-    ) {
+    if (!areIdenticalItems(items, oldItems)) {
       blockInsetsRef.current = computeBlockInsets(
         items,
         blockSizesRef.current,
@@ -429,7 +420,10 @@ export const ReactVirtualScrollList = forwardRef(
     const containerRef = useRef<Element | null>(null);
     const scrollingItemIndexRef = useRef(initialItemIndex);
     const blockSizesRef = useRef(initialBlockSizes);
-    const requestUpdate = useMemo(() => createScheduler(scheduleUpdate), [scheduleUpdate]);
+    const requestUpdate = useMemo(
+      () => createScheduler(scheduleUpdate),
+      [scheduleUpdate],
+    );
 
     const blockInsetsRef = useMemo(
       () => ({
@@ -457,14 +451,12 @@ export const ReactVirtualScrollList = forwardRef(
     const oldItems = usePrevious(items) ?? [];
 
     if (items !== oldItems) {
-      const currentIds = items
-        .slice(sliceRef.current.start, sliceRef.current.end)
-        .map((item) => item.id);
-      const oldIds = oldItems
-        .slice(sliceRef.current.start, sliceRef.current.end)
-        .map((item) => item.id);
-
-      if (sequentialEqual(currentIds, oldIds)) {
+      if (
+        areIdenticalItems(
+          items.slice(sliceRef.current.start, sliceRef.current.end),
+          oldItems.slice(sliceRef.current.start, sliceRef.current.end),
+        )
+      ) {
         if (sliceRef.current.end > items.length) {
           sliceRef.current = {
             start: Math.min(items.length - 1, sliceRef.current.start),
@@ -589,10 +581,7 @@ export const ReactVirtualScrollList = forwardRef(
 
       if (
         items.length !== oldItems.length ||
-        !sequentialEqual(
-          items.map((item) => item.id),
-          oldItems.map((item) => item.id),
-        )
+        !areIdenticalItems(items, oldItems)
       ) {
         blockInsetsRef.current = computeBlockInsets(
           items,
@@ -748,7 +737,9 @@ function createResizeObserverHook(
   };
 }
 
-function createScheduler(scheduleFn: (callback: () => void) => void): (callback: () => void) => void {
+function createScheduler(
+  scheduleFn: (callback: () => void) => void,
+): (callback: () => void) => void {
   let isScheduling = false;
 
   return (callback) => {
@@ -756,11 +747,11 @@ function createScheduler(scheduleFn: (callback: () => void) => void): (callback:
       return;
     }
     isScheduling = true;
-    scheduleFn(() => { 
+    scheduleFn(() => {
       isScheduling = false;
       callback();
-    })
-  }
+    });
+  };
 }
 
 function getBlankSpaces(blockInsets: BlockInset[], slice: Slice): BlankSpaces {
@@ -871,6 +862,27 @@ function getScrollOffset(
   return index >= blockInsets.length
     ? blockInsets[blockInsets.length - 1]!.end - viewportInset.start
     : blockInsets[index]!.start - viewportInset.start;
+}
+
+function areIdenticalItems<T extends { id: PropertyKey }>(
+  first: readonly T[],
+  second: readonly T[],
+): boolean {
+  if (first === second) {
+    return true;
+  }
+
+  if (first.length !== second.length) {
+    return false;
+  }
+
+  for (let i = 0, l = first.length; i < l; i++) {
+    if (first[i]!.id !== second[i]!.id) {
+      return false;
+    }
+  }
+
+  return true;
 }
 
 function translateViewportInset(
