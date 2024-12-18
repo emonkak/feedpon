@@ -42,13 +42,13 @@ export function Menu(
     onClose,
     open,
     preferredPosition,
-    ref: exposedMenuRef = { current: null },
+    ref: exposedRef = { current: null },
   }: MenuProps,
   context: RenderContext,
 ): TemplateResult {
   const menuRef = context.useRef<HTMLElement | null>(null);
 
-  exposedMenuRef.current = context.useMemo(
+  exposedRef.current = context.useMemo(
     () => ({
       focusPrevious() {
         focusPrevious(menuRef.current!);
@@ -59,6 +59,18 @@ export function Menu(
     }),
     [],
   );
+
+  const handleClick = context.useCallback((event: MouseEvent) => {
+    if ((event.target as HTMLElement).closest('.MenuItem')) {
+      onClose?.();
+    }
+  }, []);
+
+  const handleSubmit = context.useCallback((event: SubmitEvent) => {
+    if ((event.target as HTMLElement).closest('.MenuItem')) {
+      onClose?.();
+    }
+  }, []);
 
   const handleKeyDown = context.useCallback(
     (event: KeyboardEvent) => {
@@ -123,6 +135,8 @@ export function Menu(
       ref=${ref(menuRef)}
       role="menu"
       tabindex=${autoFocus ? '0' : false}
+      @click=${handleClick}
+      @submit=${handleSubmit}
       @keydown=${handleKeyDown}
       @toggle=${handleToggle}
     >

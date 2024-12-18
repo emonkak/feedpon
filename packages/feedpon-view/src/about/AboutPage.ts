@@ -1,21 +1,18 @@
 import { type LocationActions, RelativeURL } from '@emonkak/ebit/router.js';
 import { bindActions } from 'feedpon-flux';
-import { useStore } from 'feedpon-flux/react';
+import { getStoreHook } from 'feedpon-flux/ebit';
 import type { State } from 'feedpon-messaging';
 import { toggleSidebar } from 'feedpon-messaging/ui';
-import React from 'react';
 
-import { Dropdown } from '../common/components/Dropdown';
-import { MenuItem } from '../common/components/Menu';
-import { ReactNavbar } from '../common/components/Navbar';
-import { useEvent } from '../common/hooks/useEvent';
-import { ReactMainLayout } from '../layouts/MainLayout';
+import type { RenderContext, TemplateResult } from '@emonkak/ebit';
+import { component, nonKeyedList } from '@emonkak/ebit/directives.js';
+import { Navbar } from '../common/components/Navbar';
+import { MainLayout } from '../layouts/MainLayout';
+import { Dropdown, type ToggleButtonProps } from '../primitives/Dropdown';
 
 export interface AboutPageProps {
   locationActions: LocationActions;
 }
-
-type Action = { type: 'GO_KITCHENSINK' };
 
 const USING_LIBRARIES = [
   {
@@ -83,21 +80,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     `.trim(),
   },
   {
-    name: 'react-router',
-    url: 'https://github.com/ReactTraining/react-router/blob/master/LICENSE.md',
-    license: `
-The MIT License (MIT)
-
-Copyright (c) 2015-present, Ryan Florence, Michael Jackson
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-`.trim(),
-  },
-  {
     name: 'redux-logger',
     url: 'https://github.com/evgenyrodionov/redux-logger/blob/master/LICENSE',
     license: `
@@ -151,76 +133,106 @@ SOFTWARE.
   },
 ];
 
-export function AboutPage({ locationActions }: AboutPageProps) {
-  const { onToggleSidebar, version } = useStore({
-    mapStateToProps: (state: State) => ({
-      version: state.version,
+export function AboutPage(
+  { locationActions }: AboutPageProps,
+  context: RenderContext,
+): TemplateResult {
+  const { onToggleSidebar, version } = context.use(
+    getStoreHook({
+      mapStateToProps: (state: State) => ({
+        version: state.version,
+      }),
+      mapDispatchToProps: bindActions({
+        onToggleSidebar: toggleSidebar,
+      }),
     }),
-    mapDispatchToProps: bindActions({
-      onToggleSidebar: toggleSidebar,
-    }),
-  });
-
-  const handleSelectAction = useEvent((action: Action) => {
-    switch (action.type) {
-      case 'GO_KITCHENSINK': {
-        locationActions.navigate(new RelativeURL('/kitchensink/'));
-      }
-    }
-  });
-
-  const usingLibraries = USING_LIBRARIES.map(({ license, name, url }) => (
-    <li key={url}>
-      <h2>
-        <a href={url} target="_blank" rel="noreferrer">
-          {name}
-        </a>
-      </h2>
-      <pre className="u-text-prewrap">{license}</pre>
-    </li>
-  ));
-
-  const header = (
-    <ReactNavbar onToggleSidebar={onToggleSidebar}>
-      <h1 className="navbar-title">About</h1>
-      <Dropdown
-        toggleButton={
-          <button type="button" className="navbar-action">
-            <i className="icon icon-24 icon-menu-2" />
-          </button>
-        }
-        onSelect={handleSelectAction}
-      >
-        <MenuItem<Action>
-          value={{ type: 'GO_KITCHENSINK' }}
-          label="Go kitchensink..."
-        />
-      </Dropdown>
-    </ReactNavbar>
   );
 
-  return (
-    <ReactMainLayout header={header}>
-      <section className="section u-text-center">
-        <div className="container">
-          <a
-            href="https://github.com/emonkak/feedpon"
-            target="_blank"
-            rel="noreferrer"
+  const handleGoKitchensink = context.useCallback(() => {
+    locationActions.navigate(new RelativeURL('/kitchensink'));
+  }, []);
+
+  const header = component(Navbar, {
+    onToggleSidebar,
+    child: context.html`
+      <h1 class="navbar-title">About</h1>
+      <${component(Dropdown, {
+        toggleButton: ToggleButton,
+        children: context.html`
+          <button
+            class="MenuItem"
+            role="option"
+            type="button"
+            @click=${handleGoKitchensink}
           >
-            <img src="./img/logo.svg" width="244" height="88" />
+            <div class="MenuItem-content">Go kitchensink...</div>
+          </button>
+        `,
+      })}>
+    `,
+  });
+
+  const usingLibraries = nonKeyedList(
+    USING_LIBRARIES,
+    ({ license, name, url }) => context.html`
+      <li>
+        <h2>
+          <a href=${url} target="_blank" rel="noreferrer">
+            ${name}
           </a>
-          <div>
-            Version <strong>{version}</strong>
-          </div>
-        </div>
-      </section>
-      <section className="section">
-        <div className="container">
-          <h1 className="display-1">Licenses</h1>
-          <ul>{usingLibraries}</ul>
-        </div>
-      </section>
-    </ReactMainLayout>
+        </h2>
+        <pre class="u-text-prewrap">${license}</pre>
+      </li>
+    `,
   );
+  const content = context.html`
+    <section class="section u-text-center">
+      <div class="container">
+        <a
+          href="https://github.com/emonkak/feedpon"
+          target="_blank"
+          rel="noreferrer"
+        >
+          <img src="./img/logo.svg" width="244" height="88" />
+        </a>
+        <div>
+          Version <strong>${version}</strong>
+        </div>
+      </div>
+    </section>
+    <section class="section">
+      <div class="container">
+        <h1 class="display-1">Licenses</h1>
+        <ul><${usingLibraries}></ul>
+      </div>
+    </section>
+  `;
+
+  return context.html`<${component(MainLayout, {
+    header,
+    content,
+  })}>`;
+}
+
+function ToggleButton(
+  { id, toggle, opened }: ToggleButtonProps,
+  context: RenderContext,
+): TemplateResult {
+  return context.html`
+    <button
+      aria-label="Open menu"
+      aria-expanded=${opened.toString()}
+      aria-haspopup="listbox"
+      class="navbar-action"
+      id=${id}
+      type="button"
+      @click=${toggle}
+    >
+      <i
+        aria-hidden
+        class="icon icon-24 icon-menu-2"
+        role="img"
+      ></i>
+    </button>
+  `;
 }

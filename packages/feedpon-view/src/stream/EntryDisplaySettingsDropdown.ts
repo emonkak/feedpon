@@ -106,17 +106,14 @@ export function EntryDisplaySettingsDropdown(
 
   const handleScrollToUnreadPosition = context.useCallback(() => {
     onScrollToEntry(activeEntryIndex + 1);
-    closeDropdown();
   }, [onScrollToEntry, activeEntryIndex]);
 
   const handleClearReadPosition = context.useCallback(() => {
     onClearReadPosition();
-    closeDropdown();
   }, [onClearReadPosition]);
 
   const handleKeepUnread = context.useCallback(() => {
     onToggleKeepUneread();
-    closeDropdown();
   }, [onToggleKeepUneread]);
 
   const handleMarkAllAsRead = context.useCallback(() => {
@@ -178,7 +175,6 @@ export function EntryDisplaySettingsDropdown(
               type="button"
               @click=${() => {
                 onScrollToEntry(index);
-                closeDropdown();
               }}
             >
               <div class="MenuItem-icon"><${icon}></div>
