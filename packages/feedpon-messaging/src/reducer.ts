@@ -4,9 +4,9 @@ import { combineReducers } from 'feedpon-flux';
 import backend from './backend/reducer';
 import categories from './categories/reducer';
 import histories from './histories/reducer';
-import instantNotifications from './instantNotifications/reducer';
 import keyMappings from './keyMappings/reducer';
 import notifications from './notifications/reducer';
+import osd from './osd/reducer';
 import search from './search/reducer';
 import sharedSiteinfo from './sharedSiteinfo/reducer';
 import streams from './streams/reducer';
@@ -22,9 +22,9 @@ export default combineReducers<State, Event>({
   backend,
   categories,
   histories,
-  instantNotifications,
   keyMappings,
   notifications,
+  osd,
   search,
   sharedSiteinfo,
   streams,

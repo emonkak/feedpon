@@ -65,7 +65,7 @@
   z-index: 200;
 }
 
-.l-instant-notifications {
+.l-osd {
   position: fixed;
   bottom: 0;
   left: 0;
@@ -134,7 +134,7 @@
 .l-root.is-swiping > .l-sidebar,
 .l-root.is-swiping > .l-main,
 .l-root.is-swiping > .l-notifications,
-.l-root.is-swiping > .l-instant-notifications,
+.l-root.is-swiping > .l-osd,
 .l-root.is-swiping > .l-overlay {
   transition: none;
 }
@@ -148,7 +148,7 @@
   .l-main,
   .l-header,
   .l-notifications,
-  .l-instant-notifications {
+  .l-osd {
     box-sizing: border-box;
   }
 }

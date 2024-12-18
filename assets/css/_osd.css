@@ -1,0 +1,25 @@
+.OSD {
+  background-color: var(--backdrop-background-color);
+  inline-size: fit-content;
+  border-radius: var(--vertical-rhythm);
+  color: var(--backdrop-color);
+  margin: var(--vertical-rhythm) auto;
+  opacity: 0;
+  padding: calc(var(--vertical-rhythm) / 2) 1.5rem;
+  transform: scale(1.15);
+  transition-behavior: allow-discrete;
+  transition-duration: 0.2s;
+  transition-property: display, opacity, transform;
+  transition-timing-function: ease-out;
+
+  &:not([hidden]) {
+    opacity: 1;
+    transform: scale(1);
+    transition-timing-function: ease-in;
+
+    @starting-style {
+      opacity: 0;
+      transform: scale(1.15);
+    }
+  }
+}

@@ -2,9 +2,9 @@ import backend from './backend/initialState';
 import categories from './categories/initialState';
 import histories from './histories/initialState';
 import type { State } from './index';
-import instantNotifications from './instantNotifications/initialState';
 import keyMappings from './keyMappings/initialState';
 import notifications from './notifications/initialState';
+import osd from './osd/initialState';
 import search from './search/initialState';
 import sharedSiteinfo from './sharedSiteinfo/initialState';
 import streams from './streams/initialState';
@@ -19,7 +19,7 @@ const initialState: State = {
   backend,
   categories,
   histories,
-  instantNotifications,
+  osd,
   keyMappings,
   notifications,
   search,

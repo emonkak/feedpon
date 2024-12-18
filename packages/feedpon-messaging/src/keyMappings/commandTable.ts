@@ -6,7 +6,7 @@ import {
   openUrlInBackground,
 } from '../domActions';
 import type { Command, Entry, Stream, Thunk } from '../index';
-import { sendInstantNotification } from '../instantNotifications/actions';
+import { showOSDMessage } from '../osd/actions';
 import * as streamActions from '../streams/actions';
 import * as subscriptionActions from '../subscriptions/actions';
 import * as uiActions from '../ui/actions';
@@ -30,7 +30,7 @@ export const clearReadPosition: Command<{}> = {
 
         dispatch(uiActions.resetReadEntry(streamId));
 
-        dispatch(sendInstantNotification(this.name));
+        dispatch(showOSDMessage(this.name));
       }
     };
   },
@@ -94,16 +94,16 @@ export const toggleComments: Command<{}> = {
           if (entry.comments.isShown) {
             dispatch(streamActions.hideEntryComments(entry.entryId));
 
-            dispatch(sendInstantNotification('Hide comments'));
+            dispatch(showOSDMessage('Hide comments'));
           } else {
             dispatch(streamActions.showEntryComments(entry.entryId));
 
-            dispatch(sendInstantNotification('Show comments'));
+            dispatch(showOSDMessage('Show comments'));
           }
         } else {
           dispatch(streamActions.fetchEntryComments(entry.entryId, entry.url));
 
-          dispatch(sendInstantNotification('Fetch comments'));
+          dispatch(showOSDMessage('Fetch comments'));
         }
       }
     };
@@ -131,22 +131,22 @@ export const fetchFullContent: Command<{}> = {
               ),
             );
 
-            dispatch(sendInstantNotification('Fetch full content'));
+            dispatch(showOSDMessage('Fetch full content'));
           } else {
             if (entry.fullContents.isShown) {
               dispatch(streamActions.hideFullContents(entry.entryId));
 
-              dispatch(sendInstantNotification('Hide full contents'));
+              dispatch(showOSDMessage('Hide full contents'));
             } else {
               dispatch(streamActions.showFullContents(entry.entryId));
 
-              dispatch(sendInstantNotification('Show full contents'));
+              dispatch(showOSDMessage('Show full contents'));
             }
           }
         } else {
           dispatch(streamActions.fetchFullContent(entry.entryId, entry.url));
 
-          dispatch(sendInstantNotification('Fetch full content'));
+          dispatch(showOSDMessage('Fetch full content'));
         }
       }
     };
@@ -193,7 +193,7 @@ export const markAllEntriesAsRead: Command<{}> = {
         if (unreadEntries.length > 0) {
           dispatch(streamActions.markAsRead(unreadEntries));
 
-          dispatch(sendInstantNotification(this.name));
+          dispatch(showOSDMessage(this.name));
         }
       }
     };
@@ -227,7 +227,7 @@ export const openUrl: Command<{ template: string; inBackground: boolean }> = {
           window.open(url);
         }
 
-        dispatch(sendInstantNotification(this.name));
+        dispatch(showOSDMessage(this.name));
       }
     };
   },
@@ -245,11 +245,11 @@ export const pinOrUnpinEntry: Command<{}> = {
         if (entry.isPinned) {
           dispatch(streamActions.unpinEntry(entry.entryId));
 
-          dispatch(sendInstantNotification('Unpin entry'));
+          dispatch(showOSDMessage('Unpin entry'));
         } else {
           dispatch(streamActions.pinEntry(entry.entryId));
 
-          dispatch(sendInstantNotification('Pin entry'));
+          dispatch(showOSDMessage('Pin entry'));
         }
       }
     };
@@ -275,7 +275,7 @@ export const reloadStream: Command<{}> = {
           ),
         );
 
-        dispatch(sendInstantNotification(this.name));
+        dispatch(showOSDMessage(this.name));
       }
     };
   },
@@ -289,7 +289,7 @@ export const reloadSubscriptions: Command<{}> = {
     return ({ dispatch }) => {
       dispatch(subscriptionActions.fetchSubscriptions());
 
-      dispatch(sendInstantNotification(this.name));
+      dispatch(showOSDMessage(this.name));
     };
   },
 };
@@ -689,7 +689,7 @@ export const visitWebsite: Command<{ inBackground: boolean }> = {
           window.open(entry.url);
         }
 
-        dispatch(sendInstantNotification(this.name));
+        dispatch(showOSDMessage(this.name));
       }
     };
   },

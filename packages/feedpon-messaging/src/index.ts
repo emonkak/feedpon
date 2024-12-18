@@ -12,9 +12,9 @@ export interface State {
   backend: Backend;
   categories: Categories;
   histories: Histories;
-  instantNotifications: InstantNotifications;
   keyMappings: KeyMappings;
   notifications: Notifications;
+  osd: OSDState;
   search: Search;
   sharedSiteinfo: SharedSiteinfo;
   streams: Streams;
@@ -135,10 +135,10 @@ export type Event =
   | { type: 'FULL_CONTENT_WAS_NOT_FOUND'; entryId: string | number }
   | { type: 'HELP_CLOSED' }
   | { type: 'HELP_OPENED' }
-  | { type: 'INSTANT_NOTIFICATION_DISMISSED' }
+  | { type: 'OSD_CLOSED' }
   | {
-      type: 'INSTANT_NOTIFICATION_SENT';
-      instantNotification: InstantNotification;
+      type: 'OSD_MESSAGE_SENT';
+      message: OSDMessage;
     }
   | { type: 'KEY_MAPPINGS_RESET' }
   | { type: 'KEY_MAPPING_DELETED'; keys: string[] }
@@ -400,14 +400,14 @@ export interface Comment {
   timestamp: string;
 }
 
-export interface InstantNotifications {
-  item: InstantNotification | null;
+export interface OSDState {
+  message: OSDMessage | null;
   version: number;
 }
 
-export interface InstantNotification {
-  dismissAfter: number;
-  message: string;
+export interface OSDMessage {
+  body: string;
+  closeAfter: number;
 }
 
 export interface Notifications {

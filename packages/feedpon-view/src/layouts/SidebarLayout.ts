@@ -8,9 +8,7 @@ import {
 } from '@emonkak/ebit/directives.js';
 import { currentLocation } from '@emonkak/ebit/router.js';
 import { type Dispatch, bindActions } from 'feedpon-flux';
-import type { Store } from 'feedpon-flux';
 import { getStoreHook } from 'feedpon-flux/ebit';
-import { StoreContext } from 'feedpon-flux/react';
 import type {
   Command,
   Event,
@@ -20,16 +18,14 @@ import type {
 } from 'feedpon-messaging';
 import { commandTable } from 'feedpon-messaging/keyMappings';
 import { closeHelp, closeSidebar, openSidebar } from 'feedpon-messaging/ui';
-import * as React from 'react';
 
-import { reactElement } from '../common/directives/reactElement';
 import { keyMappingsHook } from '../common/hooks/keyMappingsHook';
 import { swipeableHook } from '../common/hooks/swipeableHook';
 import { KeyMappingsTable } from '../keyMappings/KeyMappingsTable';
+import { NotificationStack } from '../notification/NotificationStack';
+import { OSD } from '../osd/OSD';
 import { Dialog } from '../primitives/Dialog';
 import { Sidebar } from '../sidebar/Sidebar';
-import { InstantNotificationContainer } from './InstantNotificationContainer';
-import { NotificationList } from './NotificationList';
 
 export interface SidebarLayoutProps {
   child: unknown;
@@ -48,7 +44,6 @@ export function SidebarLayout(
     onCloseSidebar,
     onOpenSidebar,
     sidebarIsOpened,
-    store,
   } = context.use(
     getStoreHook({
       mapStateToProps: (state: State) => ({
@@ -198,10 +193,10 @@ export function SidebarLayout(
       </div>
       <div class="l-main" style=${styleMap(mainStyle)}>
         <div class="l-notifications">
-          <${reactElement(wrapStoreContext(<NotificationList />, store))}>
+          <${component(NotificationStack, {})}>
         </div>
-        <div class="l-instant-notifications">
-          <${reactElement(wrapStoreContext(<InstantNotificationContainer />, store))}>
+        <div class="l-osd">
+          <${component(OSD, {})}>
         </div>
         <${child}>
         <div
@@ -211,13 +206,13 @@ export function SidebarLayout(
           @touchstart=${onTouchStart}
           @touchmove=${onTouchMove}
           @touchend=${onTouchEnd}
-        />
+        ></div>
         <div
           class="l-swipeable-edge"
           @ontouchstart=${onTouchStart}
           @ontouchmove=${onTouchMove}
           @ontouchend=${onTouchEnd}
-        />
+        ></div>
       </div>
       <div class=${classMap({ 'l-backdrop': true, 'is-shown': isLoading })}>
         <${optional(isLoading ? context.html`<i class="icon icon-48 icon-spinner animation-rotating"></i>` : null)}>
@@ -262,11 +257,4 @@ function updateSwipingStatus(isSwiping: boolean): void {
   } else {
     document.documentElement.classList.remove('sidebar-is-swiping');
   }
-}
-
-function wrapStoreContext(
-  element: React.ReactElement,
-  store: Store<unknown, unknown>,
-): React.ReactElement {
-  return <StoreContext.Provider value={store}>{element}</StoreContext.Provider>;
 }
