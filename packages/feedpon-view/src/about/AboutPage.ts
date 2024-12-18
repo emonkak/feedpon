@@ -8,7 +8,7 @@ import type { RenderContext, TemplateResult } from '@emonkak/ebit';
 import { component, nonKeyedList } from '@emonkak/ebit/directives.js';
 import { Navbar } from '../common/components/Navbar';
 import { MainLayout } from '../layouts/MainLayout';
-import { Dropdown, type ToggleButtonProps } from '../primitives/Dropdown';
+import { Dropdown } from '../primitives/Dropdown';
 
 export interface AboutPageProps {
   locationActions: LocationActions;
@@ -154,10 +154,26 @@ export function AboutPage(
 
   const header = component(Navbar, {
     onToggleSidebar,
-    child: context.html`
+    children: context.html`
       <h1 class="navbar-title">About</h1>
       <${component(Dropdown, {
-        toggleButton: ToggleButton,
+        toggleButton: ({ id, toggle, opened }, context) => context.html`
+          <button
+            aria-label="Open menu"
+            aria-expanded=${opened.toString()}
+            aria-haspopup="listbox"
+            class="navbar-action"
+            id=${id}
+            type="button"
+            @click=${toggle}
+          >
+            <i
+              aria-hidden
+              class="icon icon-24 icon-menu-2"
+              role="img"
+            ></i>
+          </button>
+        `,
         children: context.html`
           <button
             class="MenuItem"
@@ -212,27 +228,4 @@ export function AboutPage(
     header,
     content,
   })}>`;
-}
-
-function ToggleButton(
-  { id, toggle, opened }: ToggleButtonProps,
-  context: RenderContext,
-): TemplateResult {
-  return context.html`
-    <button
-      aria-label="Open menu"
-      aria-expanded=${opened.toString()}
-      aria-haspopup="listbox"
-      class="navbar-action"
-      id=${id}
-      type="button"
-      @click=${toggle}
-    >
-      <i
-        aria-hidden
-        class="icon icon-24 icon-menu-2"
-        role="img"
-      ></i>
-    </button>
-  `;
 }

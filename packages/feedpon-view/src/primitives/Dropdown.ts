@@ -36,7 +36,7 @@ export function Dropdown(
     <div
       class="Dropdown"
     >
-      <${component(toggleButton, { id: toggleId, toggle, opened })}>
+      <${toggleButton({ id: toggleId, toggle, opened }, context)}>
       <${component(Menu, {
         anchorTarget: toggleId,
         children,

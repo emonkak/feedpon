@@ -114,7 +114,7 @@ export function SearchPage(
 
   const header = component(Navbar, {
     onToggleSidebar,
-    child: context.html`<div class="navbar-title">Search</div>`,
+    children: context.html`<div class="navbar-title">Search</div>`,
   });
 
   let searchResult: unknown;

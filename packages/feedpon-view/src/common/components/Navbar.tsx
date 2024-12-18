@@ -36,13 +36,13 @@ export function ReactNavbar({
 }
 
 interface NavbarProps {
-  child: unknown;
+  children: TemplateResult;
   progress?: number;
   onToggleSidebar?: () => void;
 }
 
 export function Navbar(
-  { child, onToggleSidebar, progress }: NavbarProps,
+  { children, onToggleSidebar, progress }: NavbarProps,
   context: RenderContext,
 ): TemplateResult {
   return context.html`
@@ -55,7 +55,7 @@ export function Navbar(
         >
           <i class="icon icon-24 icon-menu"></i>
         </button>
-        <${child}>
+        <${children}>
       </div>
       <${optional(
         progress !== undefined

@@ -66,7 +66,7 @@ export function StreamHeader(
   return context.html`<${component(Navbar, {
     onToggleSidebar,
     progress: entries.length > 0 ? activeEntryIndex / entries.length : 0,
-    child: context.html`
+    children: context.html`
       <h1 class="navbar-title">
         <span class="stream-title u-text-truncate">${title}</span>
       </h1>

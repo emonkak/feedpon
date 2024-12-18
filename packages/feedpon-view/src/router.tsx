@@ -71,9 +71,7 @@ export const router = new Router<
       ),
     ],
   ),
-  route(['kitchensink'], (_args, _url, { store }) =>
-    Either.left(reactElement(wrapStoreContext(<KitchensinkPage />, store))),
-  ),
+  route(['kitchensink'], () => Either.right(component(KitchensinkPage, {}))),
   route(
     ['search'],
     (_args, _url, { locationActions }) =>
