@@ -36,9 +36,7 @@ export const router = new Router<
   Either<ReactElement, Component<any, any, any>>,
   RouterState
 >([
-  route([''], (_args, _url, { store }) =>
-    Either.left(reactElement(wrapStoreContext(<DashboardPage />, store))),
-  ),
+  route([''], () => Either.right(component(DashboardPage, {}))),
   route(['about'], (_args, _url, { locationActions }) =>
     Either.right(
       component(AboutPage, { locationActions }) as Component<any, any, any>,
