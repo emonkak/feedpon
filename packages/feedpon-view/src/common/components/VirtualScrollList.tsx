@@ -64,7 +64,7 @@ export interface VirtualScrollListProps<
   offscreenRatio?: number;
   onUpdateBlockSizes?: (newBlockSizes: BlockSizes) => void;
   onUpdateDimensions?: (dimensions: Dimensions) => void;
-  ref: RefObject<VirtualScrollListRef | null>;
+  ref?: RefObject<VirtualScrollListRef | null>;
   renderItem: (
     item: TItem,
     index: number,
@@ -92,7 +92,7 @@ export function VirtualScrollList<TItem extends { id: PropertyKey }, TValue>(
     offscreenRatio = 1.0,
     onUpdateBlockSizes,
     onUpdateDimensions,
-    ref,
+    ref = { current: null },
     renderItem,
     renderList,
     scheduleUpdate = queueMicrotask,

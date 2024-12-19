@@ -1,16 +1,12 @@
-import classnames from 'classnames';
 import type { Category, Subscription } from 'feedpon-messaging';
-import React, { useState } from 'react';
 
-import { ConfirmModal } from '../common/components/ConfirmModal';
-import { Dropdown } from '../common/components/Dropdown';
-import { MenuForm, MenuItem } from '../common/components/Menu';
-import { Portal } from '../common/components/Portal';
-import { useEvent } from '../common/hooks/useEvent';
+import type { RenderContext, TemplateResult } from '@emonkak/ebit';
+import { classMap, component, keyedList } from '@emonkak/ebit/directives.js';
+import { AlertDialog } from '../primitives/AlertDialog';
+import { Dropdown } from '../primitives/Dropdown';
 
 interface SubscriptionDropdownProps {
   categories: Category[];
-  className?: string;
   onAddToCategory: (subscription: Subscription, label: string) => void;
   onCreateCategory: (
     label: string,
@@ -21,144 +17,173 @@ interface SubscriptionDropdownProps {
   subscription: Subscription;
 }
 
-type Action =
-  | { type: 'CREATE_CATEGORY' }
-  | { type: 'UNSUBSCRIBE' }
-  | { type: 'REMOVE_FROM_CATEGORY'; category: Category }
-  | { type: 'ADD_TO_CATEGORY'; category: Category };
+export function SubscriptionDropdown(
+  {
+    categories,
+    onAddToCategory,
+    onCreateCategory,
+    onRemoveFromCategory,
+    onUnsubscribe,
+    subscription,
+  }: SubscriptionDropdownProps,
+  context: RenderContext,
+): TemplateResult {
+  const [categoryLabel, setCategoryLabel] = context.useState('');
 
-export function SubscriptionDropdown({
-  categories,
-  className,
-  onAddToCategory,
-  onCreateCategory,
-  onRemoveFromCategory,
-  onUnsubscribe,
-  subscription,
-}: SubscriptionDropdownProps) {
-  const [categoryLabel, setCategoryLabel] = useState('');
-  const [isUnsubscribing, setIsUnsubscribing] = useState(false);
+  const handleCreateCategory = context.useCallback(() => {
+    onCreateCategory(categoryLabel, () => {
+      onAddToCategory(subscription, categoryLabel);
+    });
+    setCategoryLabel('');
+  }, [onCreateCategory]);
 
-  const handleSelectAction = useEvent((action: Action) => {
-    switch (action.type) {
-      case 'CREATE_CATEGORY':
-        onCreateCategory(categoryLabel, () =>
-          onAddToCategory(subscription, categoryLabel),
-        );
+  const handleRemoveFromCategory = context.useCallback(
+    (event: Event) => {
+      const label = (event.currentTarget as HTMLElement).dataset['label']!;
+      onRemoveFromCategory(subscription, label);
+    },
+    [subscription, onRemoveFromCategory],
+  );
 
-        setCategoryLabel('');
-        break;
-      case 'UNSUBSCRIBE': {
-        setIsUnsubscribing(true);
-        break;
-      }
-      case 'ADD_TO_CATEGORY':
-        onAddToCategory(subscription, action.category.label);
-        break;
+  const handleAddToCategory = context.useCallback(
+    (event: Event) => {
+      const label = (event.currentTarget as HTMLElement).dataset['label']!;
+      onAddToCategory(subscription, label);
+    },
+    [subscription, onAddToCategory],
+  );
 
-      case 'REMOVE_FROM_CATEGORY':
-        onRemoveFromCategory(subscription, action.category.label);
-        break;
-    }
-  });
+  const handleChangeCategoryLabel = context.useCallback((event: Event) => {
+    setCategoryLabel((event.currentTarget as HTMLInputElement).value);
+  }, []);
 
-  const handleChangeCategoryLabel = useEvent(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      const categoryLabel = event.currentTarget.value;
+  const handleUnsubscribe = context.useCallback(() => {
+    AlertDialog.open(
+      {
+        confirmButton: ({ onConfirm }, context) => context.html`
+          <button
+            class="button button-negative"
+            type="button"
+            @click=${onConfirm}
+          >
+            Logout
+          </button>
+        `,
+        cancelButton: ({ onCancel }, context) => context.html`
+          <button
+            class="button button-outline-default"
+            type="button"
+            @click=${onCancel}
+          >
+            Cancel
+          </button>
+        `,
+        onConfirm: () => {
+          onUnsubscribe(subscription);
+        },
+        title: `Unsubscribe "${subscription.title}"`,
+        message: 'Are you sure you want to unsubscribe the feed?',
+      },
+      context,
+    );
+  }, []);
 
-      setCategoryLabel(categoryLabel);
+  const categoryMenuItems = keyedList(
+    categories,
+    (category) => category.categoryId,
+    (category) => {
+      const isAdded = subscription.labels.includes(category.label);
+      const icon = isAdded
+        ? context.html`<i aria-hidden class="icon icon-16 icon-checkmark" role="img"></i></div>`
+        : null;
+      const handleClick = isAdded
+        ? handleRemoveFromCategory
+        : handleAddToCategory;
+
+      return context.html`
+        <button
+          class="MenuItem"
+          role="menuitem"
+          data-label=${category.label}
+          disabled=${subscription.isLoading}
+          type="button"
+          @click=${handleClick}
+        >
+          <div class="MenuItem-content">${category.label}</div>
+          <div class="MenuItem-icon"><${icon}></div>
+        </button>
+      `;
     },
   );
 
-  const handleCloseUnsubscribeModal = useEvent(() => {
-    setIsUnsubscribing(false);
-  });
-
-  const handleUnsubscribe = useEvent(() => {
-    onUnsubscribe(subscription);
-  });
-
-  const menuChildren = categories.map((category) => {
-    const isAdded = subscription.labels.includes(category.label);
-
-    return (
-      <MenuItem<Action>
-        icon={isAdded ? <i className="icon icon-16 icon-checkmark" /> : null}
-        isDisabled={subscription.isLoading}
-        key={category.categoryId}
-        label={category.label}
-        value={
-          isAdded
-            ? { type: 'REMOVE_FROM_CATEGORY', category }
-            : { type: 'ADD_TO_CATEGORY', category }
-        }
-      />
-    );
-  });
-
-  return (
-    <>
-      <Dropdown
-        className={className}
-        onSelect={handleSelectAction}
-        toggleButton={
-          <button
-            type="button"
-            className="link-soft u-margin-left-2"
-            disabled={subscription.isLoading}
-          >
-            <i
-              className={classnames(
-                'icon icon-20 icon-width-32',
-                subscription.isLoading
-                  ? 'icon-spinner animation-rotating'
-                  : 'icon-menu-2',
-              )}
-            />
-          </button>
-        }
-      >
-        <div className="menu-heading">Category</div>
-        {menuChildren}
-        <div className="menu-divider" />
-        <div className="menu-heading">New category</div>
-        <MenuForm<Action> value={{ type: 'CREATE_CATEGORY' }}>
-          <div className="input-group">
-            <input
-              type="text"
-              className="form-control"
-              style={{ width: '12rem' }}
-              value={categoryLabel}
-              disabled={subscription.isLoading}
-              onChange={handleChangeCategoryLabel}
-            />
-            <button
-              type="submit"
-              className="button button-positive"
-              disabled={subscription.isLoading}
-            >
-              OK
-            </button>
+  const dropdown = component(Dropdown, {
+    children: context.html`
+      <div class="MenuSection">
+        <div class="MenuHeading" role="heading">Category</div>
+        <${categoryMenuItems}>
+      </div>
+      <hr class="MenuSeparator">
+      <div class="MenuSection">
+        <div class="MenuHeading" role="heading">New Category</div>
+        <form class="MenuItem" role="menuitem" @submit=${handleCreateCategory}>
+          <div class="MenuItem-content">
+            <div class="input-group">
+              <input
+                type="text"
+                class="form-control"
+                style="width: 12rem"
+                value=${categoryLabel}
+                disabled=${subscription.isLoading}
+                @change=${handleChangeCategoryLabel}
+              />
+              <button
+                type="submit"
+                class="button button-positive"
+                disabled=${subscription.isLoading}
+              >
+                OK
+              </button>
+            </div>
           </div>
-        </MenuForm>
-        <div className="menu-divider" />
-        <MenuItem<Action>
-          value={{ type: 'UNSUBSCRIBE' }}
-          label="Unsubscribe..."
-          isDisabled={subscription.isLoading}
-        />
-      </Dropdown>
-      <Portal>
-        <ConfirmModal
-          confirmButtonClassName="button button-negative"
-          confirmButtonLabel="Unsubscribe"
-          isOpened={isUnsubscribing}
-          message="Are you sure you want to unsubscribe this feed?"
-          onClose={handleCloseUnsubscribeModal}
-          onConfirm={handleUnsubscribe}
-          title={`Unsubscribe "${subscription.title}"`}
-        />
-      </Portal>
-    </>
-  );
+        </form>
+      </div>
+      <hr class="MenuSeparator">
+      <button
+        class="MenuItem"
+        role="menuitem"
+        type="button"
+        disabled=${subscription.isLoading}
+        @click=${handleUnsubscribe}
+      >
+        <div class="MenuItem-content">
+          Unsubscribe...
+        </div>
+      </button>
+    `,
+    toggleButton: ({ toggle, id, opened }, context) => context.html`
+      <button
+        aria-expanded=${opened.toString()}
+        type="button"
+        class="link-soft u-margin-left-2"
+        disabled=${subscription.isLoading}
+        id=${id}
+        @click=${toggle}
+      >
+        <i
+          aria-hidden
+          class=${classMap({
+            icon: true,
+            'icon-20': true,
+            'icon-width-32': true,
+            [subscription.isLoading
+              ? 'icon-spinner animation-rotating'
+              : 'icon-menu-2']: true,
+          })}
+          role="img"
+        ></i>
+      </button>
+    `,
+  });
+
+  return context.html`<${dropdown}>`;
 }

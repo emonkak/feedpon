@@ -1,0 +1,39 @@
+.TabList {
+  display: flex;
+  justify-content: center;
+  margin: var(--vertical-rhythm) 0;
+  flex-wrap: wrap;
+}
+
+.Tab {
+  --tab-border-radius: 4px;
+  align-items: center;
+  border: 1px solid var(--medium-dark-color);
+  display: flex;
+  margin-block: calc(var(--vertical-rhythm) / 4);
+  padding-block: calc(var(--vertical-rhythm) / 4);
+  padding-inline: 1ch;
+
+  &:first-child {
+    border-end-start-radius: var(--tab-border-radius);
+    border-start-start-radius: var(--tab-border-radius);
+  }
+
+  &:last-child {
+    border-end-end-radius: var(--tab-border-radius);
+    border-start-end-radius: var(--tab-border-radius);
+  }
+
+  &:not(:first-child) {
+    border-inline-start-width: 0;
+  }
+
+  &:hover {
+    background-color: var(--light-color);
+  }
+
+  &:active,
+  &.is-selected {
+    background-color: var(--medium-light-color);
+  }
+}

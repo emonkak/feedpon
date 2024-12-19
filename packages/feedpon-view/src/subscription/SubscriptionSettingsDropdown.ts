@@ -83,7 +83,7 @@ export function SubscriptionSettingsDropdown(
           }
         },
         title: `Unsubscribe "${feed.title}"`,
-        description: `Are you sure you want to unsubscribe the feed?`,
+        message: 'Are you sure you want to unsubscribe the feed?',
       },
       context,
     );

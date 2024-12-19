@@ -44,27 +44,22 @@ export const router = new Router<
   ),
   route(
     ['categories'],
-    (_args, _url, { locationActions, store }) =>
-      Either.left(
-        reactElement(
-          wrapStoreContext(
-            <CategoriesPage locationActions={locationActions} />,
-            store,
-          ),
-        ),
+    (_args, _url, { locationActions }) =>
+      Either.right(
+        component(CategoriesPage, { locationActions }) as Component<
+          any,
+          any,
+          any
+        >,
       ),
     [
-      route([wildcard], ([label], _url, { locationActions, store }) =>
-        Either.left(
-          reactElement(
-            wrapStoreContext(
-              <CategoriesPage
-                label={label}
-                locationActions={locationActions}
-              />,
-              store,
-            ),
-          ),
+      route([wildcard], ([label], _url, { locationActions }) =>
+        Either.right(
+          component(CategoriesPage, { label, locationActions }) as Component<
+            any,
+            any,
+            any
+          >,
         ),
       ),
     ],

@@ -122,7 +122,12 @@ function renderItem(
     return context.html`
       <div class=${classMap({ StreamItem: true, 'has-unread': unreadCount > 0 })}>
         <div class="StreamItem-title">${category.label}</div>
-        <div class="StreamItem-unread">${unreadCount > 0 ? unreadCount.toLocaleString() : ''}</div>
+        <div
+          aria-label=${`${unreadCount} unread item(s) available`}
+          class="StreamItem-unread"
+        >
+          ${unreadCount > 0 ? unreadCount.toLocaleString() : ''}
+        </div>
       </div>
     `;
   } else {

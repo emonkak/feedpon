@@ -92,7 +92,7 @@ export function Tree<TKey, TValue>(
     return accumulator;
   };
 
-  const childNodes = keyedList(
+  const children = keyedList(
     items.reduce(
       (results, item) => aggregate(results, item, null),
       [] as ItemAggregation<TKey, TValue>[],
@@ -100,8 +100,8 @@ export function Tree<TKey, TValue>(
     ({ item }) => item.key,
     ({ item, state, parent }) => {
       return memo(() => {
-        return component(TreeItemView<TKey, TValue>, {
-          content: renderItem(item, context),
+        return component(TreeNode<TKey, TValue>, {
+          children: renderItem(item, context),
           item,
           onSelect,
           onStateUpadte: forceUpdate,
@@ -123,13 +123,13 @@ export function Tree<TKey, TValue>(
 
   return context.html`
     <div class="Tree" role="tree">
-      <${childNodes}>
+      <${children}>
     </div>
   `;
 }
 
-interface TreeItemViewProps<TKey, TValue> {
-  content: TemplateResult;
+interface TreeNodeProps<TKey, TValue> {
+  children: TemplateResult;
   item: TreeItem<TKey, TValue>;
   onSelect(item: TreeItem<TKey, TValue>): void;
   onStateUpadte: () => void;
@@ -137,15 +137,15 @@ interface TreeItemViewProps<TKey, TValue> {
   state: UnmanagedState;
 }
 
-function TreeItemView<TKey, TValue>(
+function TreeNode<TKey, TValue>(
   {
-    content,
+    children,
     item,
     onSelect,
     onStateUpadte,
     state,
     parent,
-  }: TreeItemViewProps<TKey, TValue>,
+  }: TreeNodeProps<TKey, TValue>,
   context: RenderContext,
 ): TemplateResult {
   const handleClick = context.useCallback(
@@ -227,6 +227,8 @@ function TreeItemView<TKey, TValue>(
     [onStateUpadte, state],
   );
 
+  const ariaLabelId = context.useId();
+
   // biome-ignore format:
   const expandButton = item.children.length > 0 ? context.html`
     <button
@@ -251,6 +253,7 @@ function TreeItemView<TKey, TValue>(
 
   return context.html`
     <div
+      aria-labelledby=${ariaLabelId}
       aria-level=${state.level}
       aria-selected=${item.selected.toString()}
       class=${classMap({ TreeItem: true, 'is-selected': item.selected })}
@@ -261,8 +264,8 @@ function TreeItemView<TKey, TValue>(
       @keydown=${handleKeyDown}
     >
       <${optional(expandButton)}>
-      <div class="TreeItem-content">
-        <${content}>
+      <div class="TreeItem-content" id=${ariaLabelId}>
+        <${children}>
       </div>
     </div>
   `;

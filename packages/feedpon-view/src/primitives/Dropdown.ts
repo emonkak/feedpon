@@ -3,11 +3,11 @@ import { component } from '@emonkak/ebit/directives.js';
 import { Menu } from './Menu';
 
 export interface DropdownProps {
+  children: unknown;
   toggleButton: (
     props: ToggleButtonProps,
     context: RenderContext,
   ) => TemplateResult;
-  children: TemplateResult;
 }
 
 export interface ToggleButtonProps {

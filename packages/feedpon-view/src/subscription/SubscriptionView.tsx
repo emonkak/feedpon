@@ -5,11 +5,11 @@ import type {
   removeFromCategory,
   unsubscribe,
 } from 'feedpon-messaging/subscriptions';
-import React from 'react';
 
-import { ReactRelativeTime } from '../common/components/RelativeTime';
+import type { RenderContext, TemplateResult } from '@emonkak/ebit';
+import { component, keyedList } from '@emonkak/ebit/directives.js';
+import { RelativeTime } from '../common/components/RelativeTime';
 import { SubscriptionDropdown } from './SubscriptionDropdown';
-import { SubscriptionIcon } from './SubscriptionIcon';
 
 interface SubscriptionViewProps {
   categories: Category[];
@@ -20,69 +20,88 @@ interface SubscriptionViewProps {
   subscription: Subscription;
 }
 
-export function SubscriptionView({
-  categories,
-  onAddToCategory,
-  onCreateCategory,
-  onRemoveFromCategory,
-  onUnsubscribe,
-  subscription,
-}: SubscriptionViewProps) {
-  const title = subscription.url ? (
+export function SubscriptionView(
+  {
+    categories,
+    onAddToCategory,
+    onCreateCategory,
+    onRemoveFromCategory,
+    onUnsubscribe,
+    subscription,
+  }: SubscriptionViewProps,
+  context: RenderContext,
+): TemplateResult {
+  // biome-ignore format:
+  const title = subscription.url ? context.html`
     <a
-      className="link-soft"
-      target="_blank"
-      href={subscription.url}
+      class="link-soft"
+      href=${subscription.url}
       rel="noreferrer"
+      target="_blank"
     >
-      {subscription.title}
+      ${subscription.title}
     </a>
-  ) : (
-    <span>{subscription.title}</span>
+  ` : context.html`
+    <span>${subscription.title}</span>
+  `;
+
+  const labels = keyedList(
+    subscription.labels,
+    (label) => label,
+    (label) => context.html`
+      <span class="badge badge-small badge-default">
+        ${label}
+      </span>
+    `,
   );
 
-  const labels = subscription.labels.map((label) => (
-    <span key={label} className="badge badge-small badge-default">
-      {label}
-    </span>
-  ));
+  const icon =
+    subscription.iconUrl !== ''
+      ? context.html`
+      <img
+        class="u-vertical-middle u-object-fit-cover"
+        alt=${subscription.title}
+        src=${subscription.iconUrl}
+        width="16"
+        height="16"
+      >
+    `
+      : context.html`<i class="icon icon-16 icon-file"></i>`;
 
-  return (
-    <li className="list-group-item">
-      <div className="u-flex u-flex-align-items-center">
-        <div className="u-flex-shrink-0 u-margin-right-2">
-          <SubscriptionIcon
-            title={subscription.title}
-            iconUrl={subscription.iconUrl}
-          />
+  return context.html`
+    <li class="list-group-item">
+      <div class="u-flex u-flex-align-items-center">
+        <div class="u-flex-shrink-0 u-margin-right-2">
+          <${icon}>
         </div>
-        <div className="u-flex-grow-1 u-margin-right-2">
+        <div class="u-flex-grow-1 u-margin-right-2">
           <div>
-            {title}
-            {labels}
+            <${title}>
+            <${labels}>
           </div>
-          <div className="u-text-7 u-text-wrap">
+          <div class="u-text-7 u-text-wrap">
             <a target="_blank" href={subscription.feedUrl} rel="noreferrer">
-              {subscription.feedUrl}
+              ${subscription.feedUrl}
             </a>
           </div>
         </div>
-        <div className="u-margin-right-2 u-text-right u-md-none">
-          <ReactRelativeTime
-            className="u-text-7 u-text-muted"
-            time={subscription.updatedAt}
-          />
+        <div class="u-margin-right-2 u-text-right u-md-none">
+          <${component(RelativeTime, {
+            class: 'u-text-7 u-text-muted',
+            time: subscription.updatedAt,
+          })}>
         </div>
-        <SubscriptionDropdown
-          className="u-flex-shrink-0"
-          categories={categories}
-          onAddToCategory={onAddToCategory}
-          onCreateCategory={onCreateCategory}
-          onRemoveFromCategory={onRemoveFromCategory}
-          onUnsubscribe={onUnsubscribe}
-          subscription={subscription}
-        />
+        <div class="u-flex-shrink-0">
+          <${component(SubscriptionDropdown, {
+            categories,
+            onAddToCategory,
+            onCreateCategory,
+            onRemoveFromCategory,
+            onUnsubscribe,
+            subscription,
+          })}>
+        </div>
       </div>
     </li>
-  );
+  `;
 }

@@ -15,7 +15,7 @@ export interface AlertDialogProps {
     props: { onConfirm: () => void },
     context: RenderContext,
   ) => TemplateResult;
-  description: string;
+  message: string;
   onCancel?: (dialog: HTMLDialogElement) => void;
   onConfirm?: (dialog: HTMLDialogElement) => void;
   opened?: boolean;
@@ -26,7 +26,7 @@ export function AlertDialog(
   {
     cancelButton,
     confirmButton,
-    description,
+    message,
     onCancel,
     onConfirm,
     opened = false,
@@ -79,21 +79,21 @@ export function AlertDialog(
     [onCancel, onConfirm],
   );
 
-  const titleId = context.useId();
-  const descriptionId = context.useId();
+  const ariaDescriptionId = context.useId();
+  const ariaLabelId = context.useId();
 
   return context.html`
     <dialog
-      aria-describedby=${descriptionId}
-      aria-labelledby=${titleId}
+      aria-describedby=${ariaDescriptionId}
+      aria-labelledby=${ariaLabelId}
       class="Modal"
       role="alertdialog"
       ref=${ref(dialogRef)}
       @click=${handleClick}
       @close=${handleClose}
     >
-      <h1 class="Modal-title" id=${titleId}>${title}</h1>
-      <p id=${descriptionId}>${description}</p>
+      <h1 class="Modal-title" id=${ariaLabelId}>${title}</h1>
+      <p id=${ariaDescriptionId}>${message}</p>
       <div class="button-toolbar">
         <${confirmButton({ onConfirm: handleConfirm }, context)}>
         <${cancelButton({ onCancel: handleCancel }, context)}>

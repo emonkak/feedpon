@@ -8,7 +8,7 @@ const MILLIS_PER_DAY = 24 * 60 * 60 * 1000;
 const MILLIS_PER_YEAR = 24 * 60 * 60 * 365 * 1000;
 
 interface RelativeTimeProps {
-  className?: string;
+  class?: string;
   locales?: string | string[];
   updateInterval?: number;
   time: number;
@@ -16,7 +16,7 @@ interface RelativeTimeProps {
 
 export function RelativeTime(
   {
-    className,
+    class: className,
     locales = 'en',
     time,
     updateInterval = MILLIS_PER_MINITE,
@@ -55,12 +55,19 @@ export function RelativeTime(
   `;
 }
 
+export interface ReactRelativeTimeProps {
+  className?: string;
+  locales?: string | string[];
+  updateInterval?: number;
+  time: number;
+}
+
 export function ReactRelativeTime({
   className,
   locales = 'en',
   time,
   updateInterval = MILLIS_PER_MINITE,
-}: RelativeTimeProps) {
+}: ReactRelativeTimeProps) {
   const [now, setNow] = useState(() => new Date());
 
   useEffect(() => {

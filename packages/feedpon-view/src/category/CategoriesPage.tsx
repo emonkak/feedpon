@@ -1,6 +1,5 @@
 import { type LocationActions, RelativeURL } from '@emonkak/ebit/router.js';
 import { bindActions } from 'feedpon-flux';
-import { useStore } from 'feedpon-flux/react';
 import type { Category, State, Subscription } from 'feedpon-messaging';
 import {
   UNCATEGORIZED,
@@ -19,77 +18,87 @@ import {
 import { toggleSidebar } from 'feedpon-messaging/ui';
 import createAscendingComparer from 'feedpon-utils/createAscendingComparer';
 import debounce from 'feedpon-utils/debounce';
-import React, { useMemo, useRef, useState } from 'react';
 
-import { Dropdown } from '../common/components/Dropdown';
-import { MenuItem } from '../common/components/Menu';
-import { ReactNavbar } from '../common/components/Navbar';
+import type { RenderContext, TemplateResult } from '@emonkak/ebit';
+import {
+  type ElementRef,
+  component,
+  optional,
+  ref,
+  styleMap,
+} from '@emonkak/ebit/directives.js';
+import { getStoreHook } from 'feedpon-flux/ebit';
+import { Navbar } from '../common/components/Navbar';
 import {
   type BlankSpaces,
-  ReactVirtualScrollList,
+  VirtualScrollList,
 } from '../common/components/VirtualScrollList';
-import { useEvent } from '../common/hooks/useEvent';
-import { ReactMainLayout } from '../layouts/MainLayout';
+import { MainLayout } from '../layouts/MainLayout';
+import { Dropdown } from '../primitives/Dropdown';
+import { type TabItem, TabList } from '../primitives/TabList';
 import { SubscriptionView } from '../subscription/SubscriptionView';
-import { CategoriesNav } from './CategoriesNav';
-import { CategoryEditForm } from './CategoryEditForm';
-
-type Action = 'IMPORT_OPML' | 'EXPORT_OPML';
+import { CategoryEdit } from './CategoryEdit';
 
 export interface CategoriesPageProps {
   label?: string;
   locationActions: LocationActions;
 }
 
-export function CategoriesPage({
-  label,
-  locationActions,
-}: CategoriesPageProps) {
-  const categoriesSelector = useMemo(
+export function CategoriesPage(
+  { label, locationActions }: CategoriesPageProps,
+  context: RenderContext,
+): TemplateResult {
+  const categoriesSelector = context.useMemo(
     () => createSortedCategoriesSelector(),
     [],
   );
-  const subscriptionsSelector = useMemo(
+  const subscriptionsSelector = context.useMemo(
     () => createAllSubscriptionsSelector(),
     [],
   );
   const {
     categories,
     exportUrl,
+    onAddToCategory,
+    onCreateCategory,
     onDeleteCategory,
     onImportOpml,
+    onRemoveFromCategory,
     onToggleSidebar,
     onUpdateCategory,
+    onUnsubscribe,
     subscriptions,
-  } = useStore({
-    mapStateToProps: (state: State) => {
-      return {
-        categories: categoriesSelector(state),
-        exportUrl: state.backend.exportUrl,
-        subscriptions: subscriptionsSelector(state),
-      };
-    },
-    mapDispatchToProps: bindActions({
-      onAddToCategory: addToCategory,
-      onCreateCategory: createCategory,
-      onDeleteCategory: deleteCategory,
-      onImportOpml: importOpml,
-      onRemoveFromCategory: removeFromCategory,
-      onToggleSidebar: toggleSidebar,
-      onUnsubscribe: unsubscribe,
-      onUpdateCategory: updateCategory,
+  } = context.use(
+    getStoreHook({
+      mapStateToProps: (state: State) => {
+        return {
+          categories: categoriesSelector(state),
+          exportUrl: state.backend.exportUrl,
+          subscriptions: subscriptionsSelector(state),
+        };
+      },
+      mapDispatchToProps: bindActions({
+        onAddToCategory: addToCategory,
+        onCreateCategory: createCategory,
+        onDeleteCategory: deleteCategory,
+        onImportOpml: importOpml,
+        onRemoveFromCategory: removeFromCategory,
+        onToggleSidebar: toggleSidebar,
+        onUnsubscribe: unsubscribe,
+        onUpdateCategory: updateCategory,
+      }),
     }),
-  });
-  const [query, setQuery] = useState('');
-  const searchInputRef = useRef<HTMLInputElement | null>(null);
-  const uploadInputRef = useRef<HTMLInputElement | null>(null);
+  );
+  const [query, setQuery] = context.useState('');
+  const searchInputRef = context.useRef<HTMLInputElement | null>(null);
+  const uploadInputRef = context.useRef<HTMLInputElement | null>(null);
 
-  const activeCategory = useMemo(
+  const activeCategory = context.useMemo(
     () => categories.find((category) => category.label === label) ?? null,
     [categories, label],
   );
 
-  const selectedSubscriptions = useMemo(() => {
+  const selectedSubscriptions = context.useMemo(() => {
     return Object.values(subscriptions)
       .filter(
         label
@@ -99,23 +108,27 @@ export function CategoriesPage({
       .sort(createAscendingComparer<Subscription>('subscriptionId'));
   }, [subscriptions, label]);
 
-  const renderSubscriptionItem = useEvent(
-    ({ subscription }: { id: string | number; subscription: Subscription }) => (
-      <SubscriptionView
-        categories={categories}
-        key={subscription.subscriptionId}
-        onAddToCategory={addToCategory}
-        onCreateCategory={createCategory}
-        onRemoveFromCategory={removeFromCategory}
-        onUnsubscribe={unsubscribe}
-        subscription={subscription}
-      />
-    ),
+  const renderSubscriptionItem = context.useCallback(
+    (
+      { subscription }: { id: string | number; subscription: Subscription },
+      _index: number,
+      _ref: ElementRef,
+      _context: RenderContext,
+    ) =>
+      component(SubscriptionView, {
+        categories,
+        onAddToCategory,
+        onCreateCategory,
+        onRemoveFromCategory,
+        onUnsubscribe,
+        subscription,
+      }),
+    [categories],
   );
 
-  const handleChangeSearchQuery = useMemo(
+  const handleChangeSearchQuery = context.useMemo(
     () =>
-      debounce((_event: React.ChangeEvent<HTMLInputElement>) => {
+      debounce((_event: Event) => {
         if (!searchInputRef.current) {
           return;
         }
@@ -125,29 +138,27 @@ export function CategoriesPage({
     [],
   );
 
-  const handleChangeUploadFile = useEvent(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      const target = event.currentTarget;
-      if (!target.files) {
-        return;
-      }
+  const handleChangeUploadFile = context.useCallback((event: Event) => {
+    const target = event.currentTarget as HTMLInputElement;
+    if (!target.files) {
+      return;
+    }
 
-      const file = target.files[0];
-      if (!file) {
-        return;
-      }
+    const file = target.files[0];
+    if (!file) {
+      return;
+    }
 
-      const reader = new FileReader();
+    const reader = new FileReader();
 
-      reader.onload = (_event) => {
-        onImportOpml(reader.result as string);
-      };
+    reader.onload = (_event) => {
+      onImportOpml(reader.result as string);
+    };
 
-      reader.readAsText(file);
-    },
-  );
+    reader.readAsText(file);
+  }, []);
 
-  const handleUpdateCategory = useEvent(
+  const handleUpdateCategory = context.useCallback(
     (category: Category, newLabel: string) => {
       onUpdateCategory(category, newLabel);
 
@@ -156,22 +167,18 @@ export function CategoriesPage({
         { replace: true },
       );
     },
+    [],
   );
 
-  const handleSelectAction = useEvent((action: Action) => {
-    switch (action) {
-      case 'IMPORT_OPML': {
-        uploadInputRef.current?.click();
-        break;
-      }
-      case 'EXPORT_OPML': {
-        window.open(exportUrl, '_blank');
-        break;
-      }
-    }
-  });
+  const handleImportOpml = context.useCallback(() => {
+    uploadInputRef.current?.click();
+  }, []);
 
-  const handleSelectCategory = useEvent((label: string | symbol) => {
+  const handleExportOpml = context.useCallback(() => {
+    window.open(exportUrl, '_blank');
+  }, [exportUrl]);
+
+  const handleSelectCategory = context.useCallback((label: string) => {
     locationActions.navigate(
       new RelativeURL(
         '/categories/' +
@@ -179,9 +186,9 @@ export function CategoriesPage({
       ),
       { replace: true },
     );
-  });
+  }, []);
 
-  const filteredSubscriptions = useMemo(() => {
+  const filteredSubscriptions = context.useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
     if (normalizedQuery === '') {
       return selectedSubscriptions.map((subscription) => ({
@@ -207,85 +214,135 @@ export function CategoriesPage({
       }));
   }, [query, selectedSubscriptions]);
 
-  const header = (
-    <ReactNavbar onToggleSidebar={onToggleSidebar}>
-      <h1 className="navbar-title">Organize subscriptions</h1>
-      <Dropdown<Action>
-        toggleButton={
-          <button type="button" className="navbar-action">
-            <i className="icon icon-24 icon-menu-2" />
+  const header = component(Navbar, {
+    onToggleSidebar,
+    children: context.html`
+      <h1 class="navbar-title">Organize subscriptions</h1>
+      <${component(Dropdown, {
+        children: context.html`
+          <button
+            class="MenuItem"
+            role="menuitem"
+            type="button"
+            @click=${handleImportOpml}
+          >
+            <div class="MenuItem-content">Import OPML...</div>
           </button>
-        }
-        onSelect={handleSelectAction}
-      >
-        <MenuItem<Action> value="IMPORT_OPML" label="Import OPML..." />
-        <MenuItem<Action> value="EXPORT_OPML" label="Export OPML..." />
-      </Dropdown>
+          <button
+            class="MenuItem"
+            role="menuitem"
+            type="button"
+            @click=${handleExportOpml}
+          >
+            <div class="MenuItem-content">Export OPML...</div>
+          </button>
+        `,
+        toggleButton: ({ opened, id, toggle }, context) => context.html`
+          <button
+            aria-expanded=${opened.toString()}
+            class="navbar-action"
+            id=${id}
+            type="button"
+            @click=${toggle}
+          >
+            <i
+              aria-hidden
+              class="icon icon-24 icon-menu-2"
+              role="img"
+            ></i>
+          </button>
+        `,
+      })}>
       <input
-        ref={uploadInputRef}
-        className="u-none"
+        class="u-none"
+        ref=${ref(uploadInputRef)}
         type="file"
-        onChange={handleChangeUploadFile}
-      />
-    </ReactNavbar>
-  );
+        @change=${handleChangeUploadFile}
+      >
+    `,
+  });
 
+  const tabList = component(TabList, {
+    items: [
+      {
+        key: UNCATEGORIZED,
+        children: context.html`Uncategorized`,
+        selected: label === UNCATEGORIZED,
+      } as TabItem,
+    ].concat(
+      categories.map((category) => ({
+        key: category.label,
+        children: context.html`${category.label}`,
+        selected: label === category.label,
+      })),
+    ),
+    onTabSelect: handleSelectCategory,
+  });
+
+  // biome-ignore format:
   const description =
-    selectedSubscriptions.length > 0 ? (
+    selectedSubscriptions.length > 0 ? context.html`
       <p>
-        <strong>{selectedSubscriptions.length}</strong> subscriptions are
+        <strong>${selectedSubscriptions.length}</strong> subscriptions are
         available in this category.
       </p>
-    ) : (
-      <p>There are no subscriptions in this category.</p>
-    );
+    ` : context.html`<p>There are no subscriptions in this category.</p>`;
 
-  return (
-    <ReactMainLayout header={header}>
-      <div className="container">
-        <CategoriesNav
-          categories={categories}
-          label={label ?? UNCATEGORIZED}
-          onSelectCategory={handleSelectCategory}
-        />
-        {activeCategory && (
-          <CategoryEditForm
-            category={activeCategory}
-            onUpdate={handleUpdateCategory}
-            onDelete={onDeleteCategory}
-          />
-        )}
-        <h1 className="display-1">{label ?? 'Uncategorized'}</h1>
-        <p>
-          <input
-            ref={searchInputRef}
-            type="search"
-            className="form-control"
-            placeholder="Filter for subscriptions..."
-            onChange={handleChangeSearchQuery}
-          />
-        </p>
-        {description}
-        <ReactVirtualScrollList
-          assumedItemSize={60}
-          items={filteredSubscriptions}
-          renderItem={renderSubscriptionItem}
-          renderList={renderSubscriptionList}
-        />
-      </div>
-    </ReactMainLayout>
-  );
+  const content = context.html`
+    <div class="container">
+      <${tabList}>
+      <${optional(
+        activeCategory !== null
+          ? component(CategoryEdit, {
+              category: activeCategory,
+              onCategoryUpdate: handleUpdateCategory,
+              onCategoryDelete: onDeleteCategory,
+            })
+          : null,
+      )}>
+      <h1 class="display-1">${label ?? 'Uncategorized'}</h1>
+      <p>
+        <input
+          ref=${ref(searchInputRef)}
+          type="search"
+          class="form-control"
+          placeholder="Filter for subscriptions..."
+          @change=${handleChangeSearchQuery}
+        >
+      </p>
+      <${description}>
+      <${component(
+        VirtualScrollList<
+          { id: string | number; subscription: Subscription },
+          unknown
+        >,
+        {
+          assumedItemSize: 60,
+          items: filteredSubscriptions,
+          renderItem: renderSubscriptionItem,
+          renderList: renderSubscriptionList,
+        },
+      )}>
+    </div>
+  `;
+
+  return context.html`<${component(MainLayout, {
+    header,
+    content,
+  })}>`;
 }
 
 function renderSubscriptionList(
-  children: React.ReactNode,
+  children: unknown,
   blankSpaces: BlankSpaces,
-): React.ReactElement<any> {
-  return (
-    <ul className="list-group">
-      <div style={{ height: blankSpaces.above }} />
-      {children}
-      <div style={{ height: blankSpaces.below }} />
+  elementRef: ElementRef,
+  context: RenderContext,
+): TemplateResult {
+  return context.html`
+    <ul class="list-group" ref=${ref(elementRef)}>
+      <li style=${styleMap({ height: blankSpaces.above + 'px' })}></li>
+      <${children}>
+      <li style=${styleMap({ height: blankSpaces.below + 'px' })}></li>
     </ul>
-  );
+  `;
 }

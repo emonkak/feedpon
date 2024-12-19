@@ -122,7 +122,7 @@ export function Sidebar(
   }, []);
 
   const handleManageSubscriptions = context.useCallback(() => {
-    locationActions.navigate(new RelativeURL('/categories/'));
+    locationActions.navigate(new RelativeURL('/categories'));
   }, []);
 
   // biome-ignore format:

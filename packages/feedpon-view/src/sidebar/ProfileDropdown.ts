@@ -44,7 +44,7 @@ export function ProfileDropdown(
           onLogout();
         },
         title: `Logout ${profile.userName}...`,
-        description: 'Are you sure you want to logout of the current session?',
+        message: 'Are you sure you want to logout of the current session?',
       },
       context,
     );

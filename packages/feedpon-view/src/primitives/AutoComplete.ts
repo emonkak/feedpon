@@ -44,7 +44,7 @@ export function AutoComplete<T>(
   }, []);
 
   const handleSubmit = context.useCallback(
-    (event: React.FormEvent) => {
+    (event: SubmitEvent) => {
       event.preventDefault();
       onSubmit?.(inputRef.current!.value);
     },
