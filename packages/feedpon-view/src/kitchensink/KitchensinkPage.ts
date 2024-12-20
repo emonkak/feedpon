@@ -348,53 +348,48 @@ export function KitchensinkPage(
       <h2>Dropdown</h2>
       <div class="u-margin-bottom-2">
         <${component(Dropdown, {
-          toggleButton: ({ id, opened, toggle }, context) => context.html`
+          trigger: ({ id, onToggle, open }, context) => context.html`
             <button
-              aria-expanded=${opened.toString()}
+              aria-expanded=${open.toString()}
               aria-haspopup="listbox"
               id=${id}
               type="button"
               class="button button-outline-default DropdownArrow"
-              @click=${toggle}
+              @click=${onToggle}
             >
               Open Dropdown
             </button>
           `,
-          children: context.html`
-            <button
-              class="MenuItem"
-              role="menuitem"
-              type="button"
-              @click=${context.useCallback(() => alert('First'), [])}
-            >
-              <div class="MenuItem-content">First</div>
-            </button>
-            <button
-              class="MenuItem"
-              role="menuitem"
-              type="button"
-              @click=${context.useCallback(() => alert('Second'), [])}
-            >
-              <div class="MenuItem-content">Second</div>
-            </button>
-            <button
-              class="MenuItem"
-              role="menuitem"
-              type="button"
-              @click=${context.useCallback(() => alert('Third'), [])}
-            >
-              <div class="MenuItem-content">Third</div>
-            </button>
-            <hr class="MenuSeparator">
-            <button
-              class="MenuItem"
-              role="menuitem"
-              type="button"
-              @click=${context.useCallback(() => alert('Forth'), [])}
-            >
-              <div class="MenuItem-content">Forth</div>
-            </button>
-          `,
+          items: [
+            {
+              children: context.html`
+                <div class="MenuItem-content">First</div>
+              `,
+              type: 'button',
+              onAction: context.useCallback(() => alert('First'), []),
+              key: 'first',
+            },
+            {
+              children: context.html`
+                <div class="MenuItem-content">Second</div>
+              `,
+              type: 'button',
+              onAction: context.useCallback(() => alert('Second'), []),
+              key: 'second',
+            },
+            {
+              key: 'separator1',
+              type: 'separator',
+            },
+            {
+              children: context.html`
+                <div class="MenuItem-content">Thrid</div>
+              `,
+              type: 'button',
+              onAction: context.useCallback(() => alert('Thrid'), []),
+              key: 'thrid',
+            },
+          ],
         })}>
       </div>
       <h2>Modal</h2>
@@ -434,7 +429,7 @@ export function KitchensinkPage(
           </p>
         `,
         onClose: handleCloseModal,
-        opened: modalOpened,
+        open: modalOpened,
       })}>
       <h2>Message</h2>
       <div class="message message-default">

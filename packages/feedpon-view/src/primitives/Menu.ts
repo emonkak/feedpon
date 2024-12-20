@@ -1,27 +1,64 @@
 import type { RefObject, RenderContext, TemplateResult } from '@emonkak/ebit';
-import { ref } from '@emonkak/ebit/directives.js';
+import { component, keyedList, memo, ref } from '@emonkak/ebit/directives.js';
 
 export interface MenuProps {
-  anchorTarget: string;
   autoFocus?: boolean;
-  children: unknown;
-  onClose?: () => void;
-  open: boolean;
-  preferredPosition?: MenuPosition;
-  ref?: RefObject<MenuRef | null>;
+  items: MenuPrimitive[];
   manual?: boolean;
+  onItemSelect?: (key: string) => void;
+  onToggle?: (open: boolean) => void;
+  open?: boolean;
+  ref?: RefObject<MenuRef | null>;
+  target: string;
+}
+
+export type MenuPrimitive =
+  | MenuButton
+  | MenuForm
+  | MenuGroup
+  | MenuLink
+  | MenuSeparator;
+
+export interface MenuButton {
+  checked?: boolean;
+  children: TemplateResult;
+  disabled?: boolean;
+  key: string;
+  onAction?: (event: Event) => void;
+  type: 'button';
+}
+
+export interface MenuLink {
+  children: TemplateResult;
+  href: string;
+  key: string;
+  onAction?: (event: Event) => void;
+  type: 'link';
+}
+
+export interface MenuForm {
+  ariaLabel: string;
+  children: TemplateResult;
+  key: string;
+  onAction?: (event: Event) => void;
+  type: 'form';
+}
+
+export interface MenuGroup {
+  childItems: MenuPrimitive[];
+  key: string;
+  label: string;
+  type: 'group';
+}
+
+export interface MenuSeparator {
+  key: string;
+  type: 'separator';
 }
 
 export interface MenuRef {
   focusNext(): void;
   focusPrevious(): void;
-}
-
-export interface AnchorBounds {
-  top: number;
-  right: number;
-  bottom: number;
-  left: number;
 }
 
 export type MenuPosition =
@@ -31,18 +68,18 @@ export type MenuPosition =
   | 'bottom-right';
 
 const FOCUSABLE_ELEMENT_SELECTOR =
-  'a, button, input, textarea, select, details, [tabindex]:not([tabindex="-1"])';
+  'a[href], button:not(:disabled), input:not(:disabled), textarea:not(:disabled), select:not(:disabled), details, [tabindex]:not([tabindex="-1"])';
 
 export function Menu(
   {
-    anchorTarget,
     autoFocus = true,
-    children,
+    items,
     manual = false,
-    onClose,
-    open,
-    preferredPosition,
+    onItemSelect,
+    onToggle,
+    open = false,
     ref: exposedRef = { current: null },
+    target,
   }: MenuProps,
   context: RenderContext,
 ): TemplateResult {
@@ -51,81 +88,69 @@ export function Menu(
   exposedRef.current = context.useMemo(
     () => ({
       focusPrevious() {
-        focusPrevious(menuRef.current!);
+        focusPreviousItem(menuRef.current!);
       },
       focusNext() {
-        focusNext(menuRef.current!);
+        focusNextItem(menuRef.current!);
       },
     }),
     [],
   );
 
-  const handleClick = context.useCallback((event: MouseEvent) => {
-    if ((event.target as HTMLElement).closest('.MenuItem')) {
-      onClose?.();
+  const handleKeyDown = context.useCallback((event: KeyboardEvent) => {
+    if (
+      !(
+        event.target === event.currentTarget ||
+        (event.target as Element).matches('.MenuItem')
+      )
+    ) {
+      return;
+    }
+    const menuElement = event.currentTarget as HTMLDivElement;
+    switch (event.key) {
+      case 'ArrowUp':
+        event.preventDefault();
+        focusPreviousItem(menuElement);
+        break;
+      case 'ArrowDown':
+        event.preventDefault();
+        focusNextItem(menuElement);
+        break;
     }
   }, []);
-
-  const handleSubmit = context.useCallback((event: SubmitEvent) => {
-    if ((event.target as HTMLElement).closest('.MenuItem')) {
-      onClose?.();
-    }
-  }, []);
-
-  const handleKeyDown = context.useCallback(
-    (event: KeyboardEvent) => {
-      if (
-        event.target !== event.currentTarget &&
-        !(event.target as Element).matches('.MenuItem')
-      ) {
-        return;
-      }
-      const menuElement = event.currentTarget as HTMLDivElement;
-      switch (event.key) {
-        case 'ArrowUp':
-          event.preventDefault();
-          event.stopPropagation();
-          focusPrevious(menuElement);
-          break;
-        case 'ArrowDown':
-          event.preventDefault();
-          event.stopPropagation();
-          focusNext(menuElement);
-          break;
-      }
-    },
-    [onClose],
-  );
 
   const handleToggle = context.useCallback(
     (event: ToggleEvent) => {
-      if (event.newState === 'closed') {
-        onClose?.();
-      }
+      onToggle?.(event.newState === 'open');
     },
-    [onClose],
+    [onToggle],
   );
 
   context.useLayoutEffect(() => {
     const menu = menuRef.current!;
 
     if (open) {
-      const anchor = document.getElementById(anchorTarget);
-      if (anchor !== null) {
+      const trigger = document.getElementById(target);
+      if (trigger !== null) {
         const { dataset, style } = menu;
-        const anchorBounds = anchor.getBoundingClientRect();
-        style.setProperty('--anchor-top', anchorBounds.top + 'px');
-        style.setProperty('--anchor-right', anchorBounds.right + 'px');
-        style.setProperty('--anchor-bottom', anchorBounds.bottom + 'px');
-        style.setProperty('--anchor-left', anchorBounds.left + 'px');
-        dataset['position'] =
-          preferredPosition ?? getMenuPosition(anchorBounds);
+        const anchorBounds = trigger.getBoundingClientRect();
+        style.setProperty('--menu-top', anchorBounds.top + 'px');
+        style.setProperty('--menu-right', anchorBounds.right + 'px');
+        style.setProperty('--menu-bottom', anchorBounds.bottom + 'px');
+        style.setProperty('--menu-left', anchorBounds.left + 'px');
+        dataset['position'] = getMenuPosition(anchorBounds);
       }
       menu.showPopover();
     } else {
       menu.hidePopover();
     }
-  }, [open, preferredPosition]);
+  }, [open]);
+
+  const children = keyedList(
+    items,
+    (item) => item.key,
+    (item) => renderPrimitive(item, onItemSelect, context),
+  );
 
   return context.html`
     <div
@@ -135,8 +160,6 @@ export function Menu(
       ref=${ref(menuRef)}
       role="menu"
       tabindex=${autoFocus ? '0' : false}
-      @click=${handleClick}
-      @submit=${handleSubmit}
       @keydown=${handleKeyDown}
       @toggle=${handleToggle}
     >
@@ -145,16 +168,142 @@ export function Menu(
   `;
 }
 
-function activeIndexOf(activeElement: Element, elements: ArrayLike<Element>) {
-  for (let i = 0, l = elements.length; i < l; i++) {
-    if (elements[i]!.contains(activeElement)) {
-      return i;
+interface ButtonProps {
+  item: MenuButton;
+  onItemSelect?: (key: string) => void;
+}
+
+interface FormProps {
+  item: MenuForm;
+  onItemSelect?: (key: string) => void;
+}
+
+interface GroupProps {
+  item: MenuGroup;
+  onItemSelect?: (key: string) => void;
+}
+
+interface LinkProps {
+  item: MenuLink;
+  onItemSelect?: (key: string) => void;
+}
+
+function Button(
+  { item, onItemSelect }: ButtonProps,
+  context: RenderContext,
+): TemplateResult {
+  const handleAction = context.useCallback(
+    (event: Event) => {
+      item.onAction?.(event);
+      onItemSelect?.(item.key);
+    },
+    [item.key, item.onAction, onItemSelect],
+  );
+
+  return context.html`
+    <button
+      aria-checked=${item.checked?.toString()}
+      class="MenuItem"
+      data-key=${item.key}
+      disabled=${item.disabled}
+      role=${typeof item.checked === 'boolean' ? 'menuitemcheckbox' : 'menuitem'}
+      type="button"
+      @click=${handleAction}
+    >
+      <${item.children}>
+    </button>
+  `;
+}
+
+function Form(
+  { item, onItemSelect }: FormProps,
+  context: RenderContext,
+): TemplateResult {
+  const handleAction = context.useCallback(
+    (event: Event) => {
+      event.preventDefault();
+      item.onAction?.(event);
+      onItemSelect?.(item.key);
+    },
+    [item.key, item.onAction, onItemSelect],
+  );
+
+  return context.html`
+    <form
+      aria-label=${item.ariaLabel}
+      class="MenuItem"
+      data-key=${item.key}
+      role="menuitem"
+      @submit=${handleAction}
+    >
+      <${item.children}>
+    </form>
+  `;
+}
+
+function Group(
+  { item, onItemSelect }: GroupProps,
+  context: RenderContext,
+): TemplateResult {
+  const ariaLabelId = context.useId();
+
+  const children = keyedList(
+    item.childItems,
+    (item) => item.key,
+    (item) => renderPrimitive(item, onItemSelect, context),
+  );
+
+  return context.html`
+    <section
+      aria-labeledby=${ariaLabelId}
+      class="MenuGroup"
+      data-key=${item.key}
+      role="group"
+    >
+      <header class="MenuGroup-label" id=${ariaLabelId}>${item.label}</header>
+      <${children}>
+    </section>
+  `;
+}
+
+function Link(
+  { item, onItemSelect }: LinkProps,
+  context: RenderContext,
+): TemplateResult {
+  const handleAction = context.useCallback(
+    (event: Event) => {
+      item.onAction?.(event);
+      onItemSelect?.(item.key);
+    },
+    [item.key, item.onAction, onItemSelect],
+  );
+
+  return context.html`
+    <a
+      @click=${handleAction}
+      class="MenuItem"
+      data-key=${item.key}
+      href=${item.href}
+      role="menuitem"
+    >
+      <${item.children}>
+    </a>
+  `;
+}
+
+function activeElementIndex(children: ArrayLike<Element>) {
+  const { activeElement } = document;
+  if (activeElement !== null) {
+    for (let i = 0, l = children.length; i < l; i++) {
+      if (children[i]!.contains(activeElement)) {
+        return i;
+      }
     }
   }
   return -1;
 }
 
-function focusElement(element: HTMLElement): void {
+function focusChild(element: HTMLElement): void {
   if (element.matches(FOCUSABLE_ELEMENT_SELECTOR)) {
     element.focus();
   } else {
@@ -162,43 +311,65 @@ function focusElement(element: HTMLElement): void {
   }
 }
 
-function focusNext(element: HTMLElement): void {
-  const items = getFocusableItems(element);
-  if (items.length > 0) {
-    const activeIndex =
-      document.activeElement !== null
-        ? activeIndexOf(document.activeElement, items)
-        : -1;
-    const nextIndex = activeIndex < items.length - 1 ? activeIndex + 1 : 0;
-    focusElement(items[nextIndex]!);
+function focusNextItem(element: HTMLElement): void {
+  const children = getItemChildren(element);
+  if (children.length > 0) {
+    const activeIndex = activeElementIndex(children);
+    const nextIndex = activeIndex < children.length - 1 ? activeIndex + 1 : 0;
+    focusChild(children[nextIndex]!);
   }
 }
 
-function focusPrevious(element: HTMLElement): void {
-  const items = getFocusableItems(element);
-  if (items.length > 0) {
-    const activeIndex =
-      document.activeElement !== null
-        ? activeIndexOf(document.activeElement, items)
-        : -1;
-    const previousIndex = activeIndex > 0 ? activeIndex - 1 : items.length - 1;
-    focusElement(items[previousIndex]!);
+function focusPreviousItem(element: HTMLElement): void {
+  const children = getItemChildren(element);
+  if (children.length > 0) {
+    const activeIndex = activeElementIndex(children);
+    const previousIndex =
+      activeIndex > 0 ? activeIndex - 1 : children.length - 1;
+    focusChild(children[previousIndex]!);
   }
 }
 
-function getFocusableItems(element: Element): NodeListOf<HTMLElement> {
+function getItemChildren(element: Element): NodeListOf<HTMLElement> {
   return element.querySelectorAll<HTMLElement>('.MenuItem:not(:disabled)');
 }
 
-function getMenuPosition({
-  top,
-  bottom,
-  left,
-  right,
-}: AnchorBounds): MenuPosition {
+function getMenuPosition({ top, bottom, left, right }: DOMRect): MenuPosition {
   if (top > window.innerHeight - bottom) {
     return left > window.innerWidth - right ? 'top-left' : 'top-right';
   } else {
     return left > window.innerWidth - right ? 'bottom-left' : 'bottom-right';
+  }
+}
+
+function renderPrimitive(
+  item: MenuPrimitive,
+  onItemSelect: ((key: string) => void) | undefined,
+  context: RenderContext,
+): unknown {
+  switch (item.type) {
+    case 'button':
+      return memo(
+        () => component(Button, { item, onItemSelect }),
+        [item, onItemSelect],
+      );
+    case 'form':
+      return memo(
+        () => component(Form, { item, onItemSelect }),
+        [item, onItemSelect],
+      );
+    case 'group': {
+      return memo(
+        () => component(Group, { item, onItemSelect }),
+        [item, onItemSelect],
+      );
+    }
+    case 'link':
+      return memo(
+        () => component(Link, { item, onItemSelect }),
+        [item, onItemSelect],
+      );
+    case 'separator':
+      return context.html`<hr class="MenuSeparator">`;
   }
 }

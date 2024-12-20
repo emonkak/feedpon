@@ -1,9 +1,10 @@
 import type { Category, Subscription } from 'feedpon-messaging';
 
 import type { RenderContext, TemplateResult } from '@emonkak/ebit';
-import { classMap, component, keyedList } from '@emonkak/ebit/directives.js';
+import { classMap, component } from '@emonkak/ebit/directives.js';
 import { AlertDialog } from '../primitives/AlertDialog';
 import { Dropdown } from '../primitives/Dropdown';
+import type { MenuPrimitive } from '../primitives/Menu';
 
 interface SubscriptionDropdownProps {
   categories: Category[];
@@ -30,16 +31,20 @@ export function SubscriptionDropdown(
 ): TemplateResult {
   const [categoryLabel, setCategoryLabel] = context.useState('');
 
-  const handleCreateCategory = context.useCallback(() => {
-    onCreateCategory(categoryLabel, () => {
-      onAddToCategory(subscription, categoryLabel);
-    });
-    setCategoryLabel('');
-  }, [onCreateCategory]);
+  const handleCreateCategory = context.useCallback(
+    (event: Event) => {
+      event.preventDefault();
+      onCreateCategory(categoryLabel, () => {
+        onAddToCategory(subscription, categoryLabel);
+      });
+      setCategoryLabel('');
+    },
+    [onCreateCategory],
+  );
 
   const handleRemoveFromCategory = context.useCallback(
     (event: Event) => {
-      const label = (event.currentTarget as HTMLElement).dataset['label']!;
+      const label = (event.currentTarget as HTMLElement).dataset['key']!;
       onRemoveFromCategory(subscription, label);
     },
     [subscription, onRemoveFromCategory],
@@ -47,7 +52,7 @@ export function SubscriptionDropdown(
 
   const handleAddToCategory = context.useCallback(
     (event: Event) => {
-      const label = (event.currentTarget as HTMLElement).dataset['label']!;
+      const label = (event.currentTarget as HTMLElement).dataset['key']!;
       onAddToCategory(subscription, label);
     },
     [subscription, onAddToCategory],
@@ -88,86 +93,35 @@ export function SubscriptionDropdown(
     );
   }, []);
 
-  const categoryMenuItems = keyedList(
-    categories,
-    (category) => category.categoryId,
-    (category) => {
-      const isAdded = subscription.labels.includes(category.label);
-      const icon = isAdded
-        ? context.html`<i aria-hidden class="icon icon-16 icon-checkmark" role="img"></i></div>`
-        : null;
-      const handleClick = isAdded
-        ? handleRemoveFromCategory
-        : handleAddToCategory;
+  const categoryMenuItems = categories.map((category) => {
+    const isAdded = subscription.labels.includes(category.label);
+    const icon = isAdded
+      ? context.html`<i aria-hidden class="icon icon-16 icon-checkmark" role="img"></i></div>`
+      : null;
+    const handleAction = isAdded
+      ? handleRemoveFromCategory
+      : handleAddToCategory;
 
-      return context.html`
-        <button
-          class="MenuItem"
-          role="menuitem"
-          data-label=${category.label}
-          disabled=${subscription.isLoading}
-          type="button"
-          @click=${handleClick}
-        >
+    return {
+      type: 'button',
+      checked: isAdded,
+      key: category.label,
+      children: context.html`
           <div class="MenuItem-content">${category.label}</div>
           <div class="MenuItem-icon"><${icon}></div>
-        </button>
-      `;
-    },
-  );
-
+        `,
+      onAction: handleAction,
+    } as MenuPrimitive;
+  });
   const dropdown = component(Dropdown, {
-    children: context.html`
-      <div class="MenuSection">
-        <div class="MenuHeading" role="heading">Category</div>
-        <${categoryMenuItems}>
-      </div>
-      <hr class="MenuSeparator">
-      <div class="MenuSection">
-        <div class="MenuHeading" role="heading">New Category</div>
-        <form class="MenuItem" role="menuitem" @submit=${handleCreateCategory}>
-          <div class="MenuItem-content">
-            <div class="input-group">
-              <input
-                type="text"
-                class="form-control"
-                style="width: 12rem"
-                value=${categoryLabel}
-                disabled=${subscription.isLoading}
-                @change=${handleChangeCategoryLabel}
-              />
-              <button
-                type="submit"
-                class="button button-positive"
-                disabled=${subscription.isLoading}
-              >
-                OK
-              </button>
-            </div>
-          </div>
-        </form>
-      </div>
-      <hr class="MenuSeparator">
+    trigger: ({ id, onToggle, open }, context) => context.html`
       <button
-        class="MenuItem"
-        role="menuitem"
-        type="button"
-        disabled=${subscription.isLoading}
-        @click=${handleUnsubscribe}
-      >
-        <div class="MenuItem-content">
-          Unsubscribe...
-        </div>
-      </button>
-    `,
-    toggleButton: ({ toggle, id, opened }, context) => context.html`
-      <button
-        aria-expanded=${opened.toString()}
+        aria-expanded=${open.toString()}
         type="button"
         class="link-soft u-margin-left-2"
         disabled=${subscription.isLoading}
         id=${id}
-        @click=${toggle}
+        @click=${onToggle}
       >
         <i
           aria-hidden
@@ -183,6 +137,64 @@ export function SubscriptionDropdown(
         ></i>
       </button>
     `,
+    items: [
+      {
+        type: 'group',
+        key: 'categories',
+        label: 'Category',
+        childItems: categoryMenuItems,
+      },
+      {
+        type: 'separator',
+        key: 'separator1',
+      },
+      {
+        type: 'group',
+        key: 'new_category',
+        label: 'New Category',
+        childItems: [
+          {
+            type: 'form',
+            key: 'create_new_category',
+            ariaLabel: 'Create new category',
+            children: context.html`
+              <div class="MenuItem-content">
+                <div class="input-group">
+                  <input
+                    type="text"
+                    class="form-control"
+                    style="width: 12rem"
+                    value=${categoryLabel}
+                    disabled=${subscription.isLoading}
+                    @change=${handleChangeCategoryLabel}
+                  />
+                  <button
+                    type="submit"
+                    class="button button-positive"
+                    disabled=${subscription.isLoading}
+                  >
+                    OK
+                  </button>
+                </div>
+              </div>
+            `,
+            onAction: handleCreateCategory,
+          },
+        ],
+      },
+      {
+        type: 'separator',
+        key: 'separator2',
+      },
+      {
+        type: 'button',
+        key: 'unsubscribe',
+        children: context.html`
+          <div class="MenuItem-content">Unsubscribe...</div>
+        `,
+        onAction: handleUnsubscribe,
+      },
+    ],
   });
 
   return context.html`<${dropdown}>`;

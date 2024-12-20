@@ -13,25 +13,19 @@ export interface DialogProps {
   ) => TemplateResult;
   modal?: boolean;
   onClose?: (dialog: HTMLDialogElement) => void;
-  opened?: boolean;
+  open?: boolean;
   ownProps?: { [key: string]: unknown };
 }
 
 export function Dialog(
-  {
-    ownProps = {},
-    children,
-    modal = true,
-    onClose,
-    opened = true,
-  }: DialogProps,
+  { ownProps = {}, children, modal = true, onClose, open = true }: DialogProps,
   context: RenderContext,
 ): TemplateResult {
   const dialogRef = context.useRef<HTMLDialogElement | null>(null);
 
   context.useLayoutEffect(() => {
     const dialog = dialogRef.current!;
-    if (opened) {
+    if (open) {
       if (modal) {
         dialog.showModal();
       } else {
@@ -40,7 +34,7 @@ export function Dialog(
     } else {
       dialog.close();
     }
-  }, [opened, modal]);
+  }, [open, modal]);
 
   context.useLayoutEffect(() => {
     const dissmissOnClickOutside = (event: MouseEvent) => {

@@ -35,7 +35,7 @@ import {
 } from '../common/components/VirtualScrollList';
 import { MainLayout } from '../layouts/MainLayout';
 import { Dropdown } from '../primitives/Dropdown';
-import { type TabItem, TabList } from '../primitives/TabList';
+import { type Tab, TabList } from '../primitives/TabList';
 import { SubscriptionView } from '../subscription/SubscriptionView';
 import { CategoryEdit } from './CategoryEdit';
 
@@ -214,36 +214,15 @@ export function CategoriesPage(
       }));
   }, [query, selectedSubscriptions]);
 
-  const header = component(Navbar, {
-    onToggleSidebar,
-    children: context.html`
-      <h1 class="navbar-title">Organize subscriptions</h1>
-      <${component(Dropdown, {
-        children: context.html`
+  const dropdown = component(Dropdown, {
+    trigger: ({ id, onToggle, open }, context) => context.html`
           <button
-            class="MenuItem"
-            role="menuitem"
-            type="button"
-            @click=${handleImportOpml}
-          >
-            <div class="MenuItem-content">Import OPML...</div>
-          </button>
-          <button
-            class="MenuItem"
-            role="menuitem"
-            type="button"
-            @click=${handleExportOpml}
-          >
-            <div class="MenuItem-content">Export OPML...</div>
-          </button>
-        `,
-        toggleButton: ({ opened, id, toggle }, context) => context.html`
-          <button
-            aria-expanded=${opened.toString()}
+            aria-expanded=${open.toString()}
+            aria-label="Toggle menu"
             class="navbar-action"
             id=${id}
             type="button"
-            @click=${toggle}
+            @click=${onToggle}
           >
             <i
               aria-hidden
@@ -252,7 +231,31 @@ export function CategoriesPage(
             ></i>
           </button>
         `,
-      })}>
+    items: [
+      {
+        type: 'button',
+        key: 'import_opml',
+        children: context.html`
+          <div class="MenuItem-content">Import OPML...</div>
+        `,
+        onAction: handleImportOpml,
+      },
+      {
+        type: 'button',
+        key: 'export_opml',
+        children: context.html`
+          <div class="MenuItem-content">Export OPML...</div>
+        `,
+        onAction: handleExportOpml,
+      },
+    ],
+  });
+
+  const header = component(Navbar, {
+    onToggleSidebar,
+    children: context.html`
+      <h1 class="navbar-title">Organize subscriptions</h1>
+      <${dropdown}>
       <input
         class="u-none"
         ref=${ref(uploadInputRef)}
@@ -268,7 +271,7 @@ export function CategoriesPage(
         key: UNCATEGORIZED,
         children: context.html`Uncategorized`,
         selected: label === UNCATEGORIZED,
-      } as TabItem,
+      } as Tab,
     ].concat(
       categories.map((category) => ({
         key: category.label,

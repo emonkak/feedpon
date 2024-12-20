@@ -1,7 +1,8 @@
 import type { RenderContext, TemplateResult } from '@emonkak/ebit';
 import { component, optional } from '@emonkak/ebit/directives.js';
 import type { SubscriptionOrderKind } from 'feedpon-messaging';
-import { Menu } from '../primitives/Menu';
+import { Dropdown } from '../primitives/Dropdown';
+import type { MenuPrimitive } from '../primitives/Menu';
 
 interface SubscriptionDisplayDropdownProps {
   isLoading: boolean;
@@ -23,117 +24,36 @@ export function SubscriptionDisplayDropdown(
   }: SubscriptionDisplayDropdownProps,
   context: RenderContext,
 ): TemplateResult {
-  const [isOpened, setIsOpened] = context.useState(false);
-  const toggleId = context.useId();
-
-  const closeDropdown = context.useCallback(() => {
-    setIsOpened(false);
-  }, []);
-
-  const toggleDropdown = context.useCallback(() => {
-    setIsOpened((isOpened) => !isOpened);
-  }, []);
-
   const checkmark = context.html`<i class="icon icon-16 icon-checkmark"></i>`;
 
-  const menuChildren = context.html`
-    <div class="MenuSection">
-      <div class="MenuHeading" role="heading">Order</div>
-      <button
-        class="MenuItem"
-        role="menuitem"
-        type="button"
-        @click=${context.useCallback(() => {
-          onChangeSubscriptionOrder('id');
-          closeDropdown();
-        }, [onChangeSubscriptionOrder])}
-      >
-        <div class="MenuItem-icon">
-          <${optional(subscriptionOrder === 'id' ? checkmark : null)}>
-        </div>
-        <div class="MenuItem-content">ID</div>
-      </button>
-      <button
-        class="MenuItem"
-        role="menuitem"
-        type="button"
-        @click=${context.useCallback(() => {
-          onChangeSubscriptionOrder('title');
-          closeDropdown();
-        }, [onChangeSubscriptionOrder])}
-      >
-        <div class="MenuItem-icon">
-          <${optional(subscriptionOrder === 'title' ? checkmark : null)}>
-        </div>
-        <div class="MenuItem-content">Title</div>
-      </button>
-      <button
-        class="MenuItem"
-        role="menuitem"
-        type="button"
-        @click=${context.useCallback(() => {
-          onChangeSubscriptionOrder('newest');
-          closeDropdown();
-        }, [onChangeSubscriptionOrder])}
-      >
-        <div class="MenuItem-icon">
-          <${optional(subscriptionOrder === 'newest' ? checkmark : null)}>
-        </div>
-        <div class="MenuItem-content">Newest first</div>
-      </button>
-      <button
-        class="MenuItem"
-        role="menuitem"
-        type="button"
-        @click=${context.useCallback(() => {
-          onChangeSubscriptionOrder('oldest');
-          closeDropdown();
-        }, [onChangeSubscriptionOrder])}
-      >
-        <div class="MenuItem-icon">
-          <${optional(subscriptionOrder === 'oldest' ? checkmark : null)}>
-        </div>
-        <div class="MenuItem-content">Oldest first</div>
-      </button>
-    </div>
-    <hr class="MenuSeparator">
-    <button
-      class="MenuItem"
-      role="menuitem"
-      type="button"
-      @click=${context.useCallback(() => {
-        onChangeOnlyUnread(!onlyUnread);
-        closeDropdown();
-      }, [onlyUnread, onChangeOnlyUnread])}
-    >
-      <div class="MenuItem-icon">
-        <${optional(onlyUnread ? checkmark : null)}>
-      </div>
-      <div class="MenuItem-content">Only unread</div>
-    </button>
-    <hr class="MenuSeparator">
-    <button
-      class="MenuItem"
-      role="menuitem"
-      type="button"
-      @click=${context.useCallback(() => {
-        onManageSubscriptions();
-        closeDropdown();
-      }, [onManageSubscriptions])}
-    >
-      <div class="MenuItem-content">Manage subscriptions...</div>
-    </button>
-  `;
+  const handleChangeSubscriptionOrder = context.useCallback(
+    (event: Event) => {
+      const order = (event.currentTarget as HTMLElement).dataset[
+        'key'
+      ]! as SubscriptionOrderKind;
+      onChangeSubscriptionOrder(order);
+    },
+    [onChangeSubscriptionOrder],
+  );
 
-  return context.html`
-    <div class="Dropdown">
+  const handleToggleOnlyUnread = context.useCallback(() => {
+    onChangeOnlyUnread(!onlyUnread);
+  }, [onlyUnread, onChangeOnlyUnread]);
+
+  const handleManageSubscriptions = context.useCallback(() => {
+    onManageSubscriptions();
+  }, [onManageSubscriptions]);
+
+  const dropdown = component(Dropdown, {
+    trigger: ({ id, onToggle, open }) => context.html`
       <button
-        aria-label="Open subscription display menu"
+        aira-expanded=${open}
+        aria-label="Toggle subscription display dropdown"
         class="link-soft u-flex-shrink-0"
         disabled=${isLoading}
-        id=${toggleId}
+        id=${id}
         type="button"
-        @click=${toggleDropdown}
+        @click=${onToggle}
       >
         <i
           aria-hidden="true"
@@ -141,12 +61,63 @@ export function SubscriptionDisplayDropdown(
           role="img"
         ></i>
       </button>
-      <${component(Menu, {
-        anchorTarget: toggleId,
-        children: menuChildren,
-        onClose: closeDropdown,
-        open: isOpened,
-      })}>
-    </div>
-  `;
+    `,
+    items: [
+      {
+        type: 'group',
+        label: 'Order',
+        key: 'order',
+        childItems: [
+          { key: 'id', label: 'ID' },
+          { key: 'title', label: 'Title' },
+          { key: 'newest', label: 'Newest first' },
+          { key: 'oldest', label: 'Oldest first' },
+        ].map(
+          ({ key, label }) =>
+            ({
+              type: 'button',
+              key,
+              checked: subscriptionOrder === key,
+              children: context.html`
+                <div class="MenuItem-icon">
+                  <${optional(subscriptionOrder === key ? checkmark : null)}>
+                </div>
+                <div class="MenuItem-content">${label}</div>
+              `,
+              onAction: handleChangeSubscriptionOrder,
+            }) as MenuPrimitive,
+        ),
+      },
+      {
+        type: 'separator',
+        key: 'separator1',
+      },
+      {
+        type: 'button',
+        key: 'toggle_only_unread',
+        checked: onlyUnread,
+        children: context.html`
+          <div class="MenuItem-icon">
+            <${optional(onlyUnread ? checkmark : null)}>
+          </div>
+          <div class="MenuItem-content">Only unread</div>
+        `,
+        onAction: handleToggleOnlyUnread,
+      },
+      {
+        type: 'separator',
+        key: 'separator2',
+      },
+      {
+        type: 'button',
+        key: 'manage_subscriptions',
+        children: context.html`
+          <div class="MenuItem-content">Manage subscriptions...</div>
+        `,
+        onAction: handleManageSubscriptions,
+      },
+    ],
+  });
+
+  return context.html`<${dropdown}>`;
 }

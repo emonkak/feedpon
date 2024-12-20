@@ -16,15 +16,11 @@ import {
 import { fetchUser } from 'feedpon-messaging/user';
 
 import type { RenderContext, TemplateResult } from '@emonkak/ebit';
-import {
-  classMap,
-  component,
-  keyedList,
-  optional,
-} from '@emonkak/ebit/directives.js';
+import { classMap, component } from '@emonkak/ebit/directives.js';
 import { getStoreHook } from 'feedpon-flux/ebit';
 import { RelativeTime } from '../common/components/RelativeTime';
 import { AutoComplete } from '../primitives/AutoComplete';
+import type { MenuPrimitive } from '../primitives/Menu';
 import { ProfileDropdown } from './ProfileDropdown';
 import { SubscriptionDisplayDropdown } from './SubscriptionDisplayDropdown';
 import { SubscriptionTree } from './SubscriptionTree';
@@ -139,7 +135,7 @@ export function Sidebar(
           items: subscriptions,
           onSubmit: handleSearch,
           placeholder: 'Search for feeds ...',
-          renderItems,
+          getFilteredItems,
         })}>
       </div>
       <div class="SidebarSection">
@@ -252,31 +248,27 @@ export function Sidebar(
   `;
 }
 
-function renderItems(
+function getFilteredItems(
   subscriptions: Subscription[],
   query: string,
-  closeDropdown: () => void,
   context: RenderContext,
-): TemplateResult {
+): MenuPrimitive[] {
   const normalizedQuery = query.trim().toLowerCase();
-
   if (normalizedQuery === '') {
-    return context.html``;
+    return [];
   }
 
-  const words = query.trim().toLowerCase().split(/\s+/);
-  const matchedSubscriptions = filterNth(
+  const queryWords = query.trim().toLowerCase().split(/\s+/);
+  const menuItems = filterNth(
     subscriptions,
     (subscription) =>
-      words.every(
-        (word) =>
-          subscription.title.toLowerCase().includes(word) ||
-          subscription.url.toLowerCase().includes(word),
+      queryWords.every(
+        (queryWord) =>
+          subscription.title.toLowerCase().includes(queryWord) ||
+          subscription.url.toLowerCase().includes(queryWord),
       ),
     10,
-  );
-
-  const renderSubscription = (subscription: Subscription) => {
+  ).map((subscription) => {
     // biome-ignore format:
     const icon = subscription.iconUrl !== '' ? context.html`
       <img
@@ -288,41 +280,35 @@ function renderItems(
       >
     ` : context.html`<i class="icon icon-16 icon-file "></i>`;
 
-    return context.html`
-      <a
-        role="menuitem"
-        class="MenuItem"
-        href=${'#/streams/' + encodeURIComponent(subscription.streamId)}
-        @click=${closeDropdown}
-      >
+    return {
+      type: 'link',
+      key: 'subscription:' + subscription.subscriptionId,
+      children: context.html`
         <div class="MenuItem-icon"><${icon}></div>
         <div class="MenuItem-content">${subscription.title}</div>
-      </a>
-    `;
-  };
+      `,
+      href: '#/streams/' + encodeURIComponent(subscription.streamId),
+    } as MenuPrimitive;
+  });
 
-  return context.html`
-    <div class="MenuSection">
-      <${keyedList(
-        matchedSubscriptions,
-        (subscription) => subscription.subscriptionId,
-        renderSubscription,
-      )}>
-    </div>
-    <${optional(
-      matchedSubscriptions.length > 0
-        ? context.html`<hr class="MenuSeparator">`
-        : null,
-    )}>
-    <a
-      role="menuitem"
-      class="MenuItem"
-      href=${'#/search/' + encodeURIComponent(query)}
-      @click=${closeDropdown}
-    >
-      <div class="MenuItem-content">Search for "${query}"...</div>
-    </a>
-  `;
+  if (menuItems.length > 0) {
+    menuItems.push(
+      {
+        type: 'separator',
+        key: 'separator1',
+      },
+      {
+        type: 'link',
+        key: 'search_by_query',
+        href: '#/search/' + encodeURIComponent(query),
+        children: context.html`
+          <div class="MenuItem-content">Search for "${query}"...</div>
+        `,
+      },
+    );
+  }
+
+  return menuItems;
 }
 
 function filterNth<T>(

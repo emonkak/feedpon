@@ -2,7 +2,7 @@ import type { RenderContext, TemplateResult } from '@emonkak/ebit';
 import { component } from '@emonkak/ebit/directives.js';
 import type { Profile } from 'feedpon-messaging';
 import { AlertDialog } from '../primitives/AlertDialog';
-import { Menu } from '../primitives/Menu';
+import { Dropdown } from '../primitives/Dropdown';
 
 interface ProfileDropdownProps {
   isLoading: boolean;
@@ -15,19 +15,7 @@ export function ProfileDropdown(
   { isLoading, onLogout, onRefresh, profile }: ProfileDropdownProps,
   context: RenderContext,
 ): TemplateResult {
-  const [isOpened, setIsOpened] = context.useState(false);
-  const toggleId = context.useId();
-
-  const closeDropdown = context.useCallback(() => {
-    setIsOpened(false);
-  }, []);
-
-  const toggleDropdown = context.useCallback(() => {
-    setIsOpened((isOpened) => !isOpened);
-  }, []);
-
   const handleRefresh = context.useCallback(() => {
-    closeDropdown();
     onRefresh();
   }, [onRefresh]);
 
@@ -48,7 +36,6 @@ export function ProfileDropdown(
       },
       context,
     );
-    closeDropdown();
   }, [onLogout, profile]);
 
   // biome-ignore format:
@@ -65,33 +52,16 @@ export function ProfileDropdown(
     </span>
   `;
 
-  const menuChildren = context.html`
-    <button
-      class="MenuItem"
-      role="menuitem"
-      type="button"
-      @click=${handleRefresh}
-    >
-      <div class="MenuItem-content">Refresh</div>
-    </button>
-    <button
-      class="MenuItem"
-      role="menuitem"
-      type="button"
-      @click=${handleLogout}
-    >
-      <div class="MenuItem-content">Logout...</div>
-    </button>
-  `;
-
-  return context.html`
-    <div class="Dropdown">
+  const dropdown = component(Dropdown, {
+    trigger: ({ id, onToggle, open }) => context.html`
       <button
+        aria-expanded=${open.toString()}
+        aria-label="Toggle profile dropdown"
         class="button button-outline-default button-block"
         disabled=${isLoading}
-        id=${toggleId}
+        id=${id}
         type="button"
-        @click=${toggleDropdown}
+        @click=${onToggle}
       >
         <div class="u-flex u-flex-align-items-center DropdownArrow">
           <${profileIcon}>
@@ -105,12 +75,26 @@ export function ProfileDropdown(
           </span>
         </div>
       </button>
-      <${component(Menu, {
-        anchorTarget: toggleId,
-        children: menuChildren,
-        onClose: closeDropdown,
-        open: isOpened,
-      })}>
-    </div>
-  `;
+    `,
+    items: [
+      {
+        type: 'button',
+        key: 'refresh',
+        children: context.html`
+          <div class="MenuItem-content">Refresh</div>
+        `,
+        onAction: handleRefresh,
+      },
+      {
+        type: 'button',
+        key: 'logout',
+        children: context.html`
+          <div class="MenuItem-content">Logout...</div>
+        `,
+        onAction: handleLogout,
+      },
+    ],
+  });
+
+  return context.html`<${dropdown}>`;
 }

@@ -1,47 +1,56 @@
 import type { RenderContext, TemplateResult } from '@emonkak/ebit';
 import { component } from '@emonkak/ebit/directives.js';
-import { Menu } from './Menu';
+import { Menu, type MenuPrimitive } from './Menu';
 
 export interface DropdownProps {
-  children: unknown;
-  toggleButton: (
-    props: ToggleButtonProps,
-    context: RenderContext,
-  ) => TemplateResult;
+  items: MenuPrimitive[];
+  onToggle?: (open: boolean) => void;
+  trigger: (props: ToggleButtonProps, context: RenderContext) => TemplateResult;
 }
 
 export interface ToggleButtonProps {
   id: string;
-  toggle: () => void;
-  opened: boolean;
+  onToggle: () => void;
+  open: boolean;
 }
 
 export function Dropdown(
-  { children, toggleButton }: DropdownProps,
+  { items, trigger, onToggle }: DropdownProps,
   context: RenderContext,
 ): TemplateResult {
-  const [opened, setOpened] = context.useState(false);
+  const [open, setOpen] = context.useState(false);
 
-  const close = context.useCallback(() => {
-    setOpened(false);
+  const closeDropdown = context.useCallback(() => {
+    setOpen(false);
+    onToggle?.(false);
   }, []);
 
-  const toggle = context.useCallback(() => {
-    setOpened((isOpened) => !isOpened);
+  const toggleDropdown = context.useCallback(() => {
+    setOpen((open) => {
+      const newOpen = !open;
+      onToggle?.(newOpen);
+      return newOpen;
+    });
   }, []);
 
-  const toggleId = context.useId();
+  const handleToggle = context.useCallback((open: boolean) => {
+    setOpen(open);
+    onToggle?.(open);
+  }, []);
+
+  const triggerId = context.useId();
 
   return context.html`
     <div
       class="Dropdown"
     >
-      <${toggleButton({ id: toggleId, toggle, opened }, context)}>
+      <${trigger({ id: triggerId, onToggle: toggleDropdown, open }, context)}>
       <${component(Menu, {
-        anchorTarget: toggleId,
-        children,
-        onClose: close,
-        open: opened,
+        target: triggerId,
+        items,
+        onItemSelect: closeDropdown,
+        onToggle: handleToggle,
+        open: open,
       })}>
     </div>
   `;

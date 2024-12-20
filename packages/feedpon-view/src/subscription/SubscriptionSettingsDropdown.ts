@@ -6,11 +6,11 @@ import {
   classMap,
   component,
   live,
-  nonKeyedList,
   optional,
 } from '@emonkak/ebit/directives.js';
 import { AlertDialog } from '../primitives/AlertDialog';
-import { Menu } from '../primitives/Menu';
+import { Dropdown } from '../primitives/Dropdown';
+import type { MenuPrimitive } from '../primitives/Menu';
 
 interface SubscriptionSettingsDropdownProps {
   categories: Category[];
@@ -39,30 +39,25 @@ export function SubscriptionSettingsDropdown(
   }: SubscriptionSettingsDropdownProps,
   context: RenderContext,
 ): TemplateResult {
-  const [isOpened, setIsOpened] = context.useState(false);
   const categoryLabel$ = context.useMemo(() => atom(''), []);
 
-  const toggleId = context.useId();
-
-  const closeDropdown = context.useCallback(() => {
-    setIsOpened(false);
-  }, []);
-
-  const toggleDropdown = context.useCallback(() => {
-    setIsOpened((isOpened) => !isOpened);
-  }, []);
-
-  const handleCreateCategory = context.useCallback(() => {
-    const categoryLabel = categoryLabel$.value;
-    if (subscription !== null) {
-      onCreateCategory(categoryLabel, () =>
-        onAddToCategory(subscription, categoryLabel),
-      );
-    } else {
-      onCreateCategory(categoryLabel, () => onSubscribe(feed, [categoryLabel]));
-    }
-    categoryLabel$.value = '';
-  }, [onAddToCategory, onCreateCategory, onSubscribe, subscription]);
+  const handleCreateCategory = context.useCallback(
+    (event: Event) => {
+      event.preventDefault();
+      const categoryLabel = categoryLabel$.value;
+      if (subscription !== null) {
+        onCreateCategory(categoryLabel, () =>
+          onAddToCategory(subscription, categoryLabel),
+        );
+      } else {
+        onCreateCategory(categoryLabel, () =>
+          onSubscribe(feed, [categoryLabel]),
+        );
+      }
+      categoryLabel$.value = '';
+    },
+    [onAddToCategory, onCreateCategory, onSubscribe, subscription],
+  );
 
   const handleChangeCategoryLabel = context.useCallback((event: Event) => {
     categoryLabel$.value = (event.currentTarget as HTMLInputElement).value;
@@ -89,98 +84,53 @@ export function SubscriptionSettingsDropdown(
     );
   }, [feed, onUnsubscribe]);
 
-  const categoryItems =
+  const categoryMenuItems: MenuPrimitive[] =
     subscription !== null
-      ? nonKeyedList(categories, (category) => {
+      ? categories.map((category) => {
           const isAdded = subscription.labels.includes(category.label);
-          const handleClick = isAdded
+          const icon = optional(
+            isAdded
+              ? context.html`<i aria-hidden="true" class="icon icon-16 icon-checkmark" role="img"></i>`
+              : null,
+          );
+          const handleAction = isAdded
             ? () => {
                 onRemoveFromCategory(subscription, category.label);
-                closeDropdown();
               }
             : () => {
                 onAddToCategory(subscription, category.label);
-                closeDropdown();
               };
-          return context.html`
-            <button
-              class="MenuItem"
-              role="menuitem"
-              type="button"
-              @click=${handleClick}
-            >
-              <div class="MenuItem-icon">
-                <${optional(isAdded ? context.html`<i aria-hidden="true" class="icon icon-16 icon-checkmark" role="img"></i>` : null)}>
-              </div>
+          return {
+            type: 'button',
+            key: category.label,
+            checked: isAdded,
+            children: context.html`
+              <div class="MenuItem-icon"><${icon}></div>
               <div class="MenuItem-content">${category.label}</div>
-            </button>
-          `;
+            `,
+            onAction: handleAction,
+          };
         })
-      : nonKeyedList(
-          categories,
-          (category) => context.html`
-            <button
-              class="MenuItem"
-              role="menuitem"
-              type="button"
-              @click=${() => {
-                onSubscribe(feed, [category.label]);
-                closeDropdown();
-              }}
-            >
-              <div class="MenuItem-content">${category.label}</div>
-            </button>
+      : categories.map((category) => ({
+          type: 'button',
+          key: category.label,
+          children: context.html`
+            <div class="MenuItem-content">${category.label}</div>
           `,
-        );
-
-  const menuChildren = context.html`
-    <div class="MenuSection" role="group">
-      <div class="MenuHeading" role="heading">Category</div>
-      <${categoryItems}>
-    </div>
-    <hr class="MenuSeparator">
-    <div class="MenuSection" role="group">
-      <div class="MenuHeading" role="heading">New category</div>
-      <form
-        class="MenuItem"
-        role="menuitem"
-        @submit=${handleCreateCategory}
-      >
-        <div class="MenuItem-content">
-          <div class="input-group">
-            <input
-              type="text"
-              class="form-control"
-              style='width: 12ch'
-              .value=${categoryLabel$.map(live)}
-              @change=${handleChangeCategoryLabel}
-            >
-            <button type="submit" class="button button-positive">OK</button>
-          </div>
-        </div>
-      </form>
-    </div>
-    <hr class="MenuSeparator">
-    <button
-      class="MenuItem"
-      disabled=${subscription === null}
-      role="menuitem"
-      type="button"
-      @click=${handleUnsubscribe}
-    >
-      <div class="MenuItem-content">Unsubscribe...</div>
-    </button>
-  `;
-
-  return context.html`
-    <div class="Dropdown">
+          onAction: () => {
+            onSubscribe(feed, [category.label]);
+          },
+        }));
+  const dropdown = component(Dropdown, {
+    trigger: ({ id, onToggle, open }, context) => context.html`
       <button
-        @click=${toggleDropdown}
-        aria-label="Subscription settings"
+        aria-expanded=${open.toString()}
+        aria-label="Toggle subscription settings dropdown"
         class=${subscription !== null ? 'button button-outline-default dropdown-arrow' : 'button button-outline-positive dropdown-arrow'}
         disabled=${feed.isLoading}
-        id=${toggleId}
+        id=${id}
         type="button"
+        @click=${onToggle}
       >
         <i
           aria-hidden="true"
@@ -197,12 +147,59 @@ export function SubscriptionSettingsDropdown(
           role="img"
         ></i>
       </button>
-      <${component(Menu, {
-        anchorTarget: toggleId,
-        children: menuChildren,
-        onClose: closeDropdown,
-        open: isOpened,
-      })}>
-    </div>
-  `;
+    `,
+    items: [
+      {
+        type: 'group',
+        key: 'categories',
+        label: 'Categories',
+        childItems: categoryMenuItems,
+      },
+      {
+        type: 'separator',
+        key: 'separator1',
+      },
+      {
+        type: 'group',
+        key: 'categories',
+        label: 'New category',
+        childItems: [
+          {
+            type: 'form',
+            key: 'new_category',
+            ariaLabel: 'New category',
+            children: context.html`
+              <div class="MenuItem-content">
+                <div class="input-group">
+                  <input
+                    type="text"
+                    class="form-control"
+                    style="width: 12ch"
+                    .value=${categoryLabel$.map(live)}
+                    @change=${handleChangeCategoryLabel}
+                  >
+                  <button type="submit" class="button button-positive">OK</button>
+                </div>
+              </div>
+            `,
+            onAction: handleCreateCategory,
+          },
+        ],
+      },
+      {
+        type: 'separator',
+        key: 'separator2',
+      },
+      {
+        type: 'button',
+        key: 'unsubscribe',
+        children: context.html`
+          <div class="MenuItem-content">Unsubscribe...</div>
+        `,
+        onAction: handleUnsubscribe,
+      },
+    ],
+  });
+
+  return context.html`<${dropdown}>`;
 }

@@ -1,20 +1,19 @@
 import type { RenderContext, TemplateResult } from '@emonkak/ebit';
-import { classMap, component, memo, ref } from '@emonkak/ebit/directives.js';
+import { classMap, component, ref } from '@emonkak/ebit/directives.js';
 import debounce from 'feedpon-utils/debounce';
 
-import { Menu, type MenuRef } from './Menu';
+import { Menu, type MenuPrimitive, type MenuRef } from './Menu';
 
 interface AutoCompleteProps<T> {
   debounceTime?: number;
   items: T[];
   onSubmit?: (query: string) => void;
   placeholder?: string;
-  renderItems: (
+  getFilteredItems: (
     items: T[],
     query: string,
-    closeDropdown: () => void,
     context: RenderContext,
-  ) => TemplateResult;
+  ) => MenuPrimitive[];
 }
 
 export function AutoComplete<T>(
@@ -23,24 +22,24 @@ export function AutoComplete<T>(
     placeholder,
     items,
     onSubmit,
-    renderItems,
+    getFilteredItems,
   }: AutoCompleteProps<T>,
   context: RenderContext,
 ): TemplateResult {
-  const [isOpened, setIsOpened] = context.useState(false);
+  const [open, setOpen] = context.useState(false);
   const [query, setQuery] = context.useState('');
 
   const autocompleteRef = context.useRef<HTMLDivElement | null>(null);
   const menuRef = context.useRef<MenuRef | null>(null);
   const inputRef = context.useRef<HTMLInputElement | null>(null);
-  const inputId = context.useId();
+  const triggerId = context.useId();
 
   const openDropdown = context.useCallback(() => {
-    setTimeout(() => setIsOpened(true), 0);
+    setOpen(true);
   }, []);
 
   const closeDropdown = context.useCallback(() => {
-    setIsOpened(false);
+    setOpen(false);
   }, []);
 
   const handleSubmit = context.useCallback(
@@ -54,7 +53,7 @@ export function AutoComplete<T>(
   const handleInput = context.useMemo(
     () =>
       debounce(() => {
-        setIsOpened(true);
+        setOpen(true);
         setQuery(inputRef.current!.value, 'background');
       }, debounceTime),
     [debounceTime],
@@ -80,6 +79,10 @@ export function AutoComplete<T>(
     }
   }, []);
 
+  const handleMenuToggle = context.useCallback((open: boolean) => {
+    setOpen(open);
+  }, []);
+
   context.useLayoutEffect(() => {
     const dissmissOnClickOutside = (event: MouseEvent) => {
       const container = autocompleteRef.current!;
@@ -96,23 +99,23 @@ export function AutoComplete<T>(
     };
   }, []);
 
-  const menuChildren = memo(
-    () => renderItems(items, query, closeDropdown, context),
-    [items, query, renderItems],
+  const filteredItems = context.useMemo(
+    () => getFilteredItems(items, query, context),
+    [items, query, getFilteredItems],
   );
 
   return context.html`
     <div
       class=${classMap({
-        Autocomplete: true,
-        'is-opened': isOpened,
+        AutoComplete: true,
+        'is-open': open,
       })}
       ref=${ref(autocompleteRef)}
     >
-      <form class="Autocomplete-form" @submit=${handleSubmit}>
+      <form class="AutoComplete-form" @submit=${handleSubmit}>
         <input
           class="input-search-box"
-          id=${inputId}
+          id=${triggerId}
           placeholder=${placeholder}
           ref=${ref(inputRef)}
           type="search"
@@ -121,14 +124,15 @@ export function AutoComplete<T>(
           @keydown=${handleKeyDown}
         >
       </form>
-      <div class="Autocomplete-menu">
+      <div class="AutoComplete-menu">
         <${component(Menu, {
-          anchorTarget: inputId,
+          items: filteredItems,
+          target: triggerId,
           autoFocus: false,
-          children: menuChildren,
           manual: true,
-          onClose: closeDropdown,
-          open: isOpened,
+          onItemSelect: closeDropdown,
+          onToggle: handleMenuToggle,
+          open: open,
           ref: menuRef,
         })}>
       </div>

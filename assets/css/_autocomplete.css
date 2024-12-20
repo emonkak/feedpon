@@ -1,14 +1,14 @@
-.Autocomplete {
+.AutoComplete {
   display: inline-block;
   position: relative;
   width: 100%;
 }
 
-.Autocomplete-form {
+.AutoComplete-form {
   margin-bottom: 0;
 }
 
-.Autocomplete-menu {
+.AutoComplete-menu {
   display: none;
   position: absolute;
   top: 100%;
@@ -17,16 +17,16 @@
   z-index: 2000;
 }
 
-.Autocomplete.is-opened > .Autocomplete-form > .form-control {
+.AutoComplete.is-open > .Autocomplete-form > .form-control {
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
 }
 
-.Autocomplete.is-opened > .Autocomplete-menu {
+.AutoComplete.is-open > .Autocomplete-menu {
   display: block;
 }
 
-.Autocomplete.is-opened > .Autocomplete-menu > .Menu {
+.AutoComplete.is-open > .Autocomplete-menu > .Menu {
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }

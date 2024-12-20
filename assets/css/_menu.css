@@ -7,7 +7,7 @@
   inset: auto;
   margin: 0;
   opacity: 0;
-  overflow-y: auto;
+  overflow-block: auto;
   padding-block: calc(var(--vertical-rhythm) / 4 - 1px);
   padding-inline: 0;
   transition-behavior: allow-discrete;
@@ -34,26 +34,26 @@
 
   &[data-position="top-left"],
   &[data-position="top-right"] {
-    bottom: calc(100% - var(--anchor-top));
-    max-height: var(--anchor-top);
+    bottom: calc(100% - var(--menu-top));
+    max-height: var(--menu-top);
   }
 
   &[data-position="bottom-left"],
   &[data-position="bottom-right"] {
-    top: var(--anchor-bottom);
-    max-height: calc(100% - var(--anchor-bottom));
+    top: var(--menu-bottom);
+    max-height: calc(100% - var(--menu-bottom));
   }
 
   &[data-position="top-left"],
   &[data-position="bottom-left"] {
-    right: calc(100% - var(--anchor-right));
-    max-width: var(--anchor-right);
+    right: calc(100% - var(--menu-right));
+    max-width: var(--menu-right);
   }
 
   &[data-position="top-right"],
   &[data-position="bottom-right"] {
-    left: var(--anchor-left);
-    max-width: calc(100% - var(--anchor-left));
+    left: var(--menu-left);
+    max-width: calc(100% - var(--menu-left));
   }
 }
 
@@ -105,7 +105,7 @@
   padding-inline: 2ch;
 }
 
-.MenuHeading {
+.MenuGroup-label {
   padding-inline: 32px 24px;
   color: var(--dark-color);
   font-weight: bold;

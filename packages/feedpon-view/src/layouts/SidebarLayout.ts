@@ -229,7 +229,7 @@ export function SidebarLayout(
         `;
       },
       onClose: onCloseHelp,
-      opened: helpIsOpened,
+      open: helpIsOpened,
       ownProps: { 'aria-labelledby': helpTitleId },
     })}>
   `;

@@ -1,14 +1,10 @@
 import type { RenderContext, TemplateResult } from '@emonkak/ebit';
-import {
-  classMap,
-  component,
-  nonKeyedList,
-  optional,
-} from '@emonkak/ebit/directives.js';
+import { classMap, component, optional } from '@emonkak/ebit/directives.js';
 import type { Entry } from 'feedpon-messaging';
 
 import { AlertDialog } from '../primitives/AlertDialog';
-import { Menu } from '../primitives/Menu';
+import { Dropdown } from '../primitives/Dropdown';
+import type { MenuPrimitive } from '../primitives/Menu';
 
 export interface EntryDisplaySettingsDropdownProps {
   activeEntryIndex: number;
@@ -23,7 +19,7 @@ export interface EntryDisplaySettingsDropdownProps {
   title: string;
 }
 
-interface Slice {
+interface Range {
   start: number;
   end: number;
 }
@@ -44,15 +40,12 @@ export function EntryDisplaySettingsDropdown(
   context: RenderContext,
 ): TemplateResult {
   const [dropdownState, setDropdownState] = context.useState({
-    isOpened: false,
     aheadExpanded: false,
     behindExpanded: false,
   });
 
-  const toggleId = context.useId();
-
-  const slice = context.useMemo(() => {
-    const { start, end } = getSliceAtPosition(
+  const range = context.useMemo(() => {
+    const { start, end } = getRangeAtPosition(
       0,
       entries.length,
       activeEntryIndex >= 0 ? activeEntryIndex : 0,
@@ -74,20 +67,13 @@ export function EntryDisplaySettingsDropdown(
     .slice(0, readEntryIndex + 1)
     .reduce((total, entry) => total + (entry.markedAsRead ? 0 : 1), 0);
 
-  const closeDropdown = context.useCallback(() => {
-    setDropdownState({
-      behindExpanded: false,
-      aheadExpanded: false,
-      isOpened: false,
-    });
-  }, []);
-
-  const toggleDropdown = context.useCallback(() => {
-    setDropdownState((state) => ({
-      behindExpanded: false,
-      aheadExpanded: false,
-      isOpened: !state.isOpened,
-    }));
+  const handleDropdownToggle = context.useCallback((open: boolean) => {
+    if (open) {
+      setDropdownState({
+        behindExpanded: false,
+        aheadExpanded: false,
+      });
+    }
   }, []);
 
   const handleExpandBehind = context.useCallback(() => {
@@ -133,129 +119,80 @@ export function EntryDisplaySettingsDropdown(
     );
   }, [onMarkStreamAsRead, title]);
 
-  const menuChildren = context.html`
-    <div class="MenuSection" role="group">
-      <div class="MenuHeading" role="heading">Entries</div>
-      <${optional(
-        slice.start > 0
-          ? context.html`
-            <button class="MenuItem"
-              role="menuitem"
-              type="button"
-              @click=${handleExpandBehind}
-            >
-              <div class="MenuItem-content">
-                <strong class="u-text-muted">${slice.start} entries hidden</strong>
-              </div>
-            </button>
-          `
-          : null,
-      )}>
-      <${nonKeyedList(
-        entries.slice(slice.start, slice.end),
-        (entry, offset) => {
-          const index = offset + slice.start;
-          const iconClass =
-            index === activeEntryIndex
-              ? 'icon icon-16 icon-dot u-text-negative'
-              : entry.markedAsRead
-                ? 'icon icon-16 icon-dot u-text-muted'
-                : index <= readEntryIndex
-                  ? 'icon icon-16 icon-dot u-text-positive'
-                  : null;
-          const icon = optional(
-            iconClass !== null
-              ? context.html`<i aria-hidden="true" class=${iconClass} role="img"></i>`
-              : null,
-          );
-          return context.html`
-            <button
-              class="MenuItem"
-              role="menuitem"
-              type="button"
-              @click=${() => {
-                onScrollToEntry(index);
-              }}
-            >
-              <div class="MenuItem-icon"><${icon}></div>
-              <div class="MenuItem-content">${entry.title}</div>
-              <div class="MenuItem-hint">#${(index + 1).toString()}</div>
-            </button>
-          `;
-        },
-      )}>
-      <${optional(
-        slice.end < entries.length - 1
-          ? context.html`
-          <button
-            class="MenuItem"
-            role="menuitem"
-            type="button"
-            @click=${handleExpandAhead}
-          >
-            <div class="MenuItem-content">
-              <strong class="u-text-muted">${entries.length - slice.end} entries hidden</strong>
-            </div>
-          </button>
-        `
-          : null,
-      )}>
-    </div>
-    <hr class="MenuSeparator">
-    <button
-      class="MenuItem"
-      disabled=${readEntryIndex < entries.length}
-      role="menuitem"
-      type="button"
-      @click=${handleScrollToUnreadPosition}
-    >
-      <div class="MenuItem-content">Scroll to unread position</div>
-    </button>
-    <button
-      class="MenuItem"
-      disabled=${totalReadEntries === 0}
-      role="menuitem"
-      type="button"
-      @click=${handleClearReadPosition}
-    >
-      <div class="MenuItem-content">Clear read position</div>
-    </button>
-    <hr class="MenuSeparator">
-    <button
-      class="MenuItem"
-      disabled=${!canMarkStreamAsRead}
-      role="menuitem"
-      type="button"
-      @click=${handleMarkAllAsRead}
-    >
-      <div class="MenuItem-content">Mark all as read...</div>
-    </button>
-    <hr class="MenuSeparator">
-    <button
-      class="MenuItem"
-      role="menuitem"
-      type="button"
-      @click=${handleKeepUnread}
-    >
-      <div class="MenuItem-icon">
-        <${optional(
-          keepUnread
-            ? context.html`<i aria-hidden="true" class="icon icon-16 icon-checkmark" role="img"></i>`
-            : null,
-        )}>
-      </div>
-      <div class="MenuItem-content">Keep unread</div>
-    </button>
-  `;
+  const handleScrollToEntry = context.useCallback((event: Event) => {
+    const index = Number.parseInt(
+      (event.currentTarget as HTMLElement).dataset['key']!,
+      10,
+    );
+    onScrollToEntry(index);
+  }, []);
 
-  return context.html`
-    <div class="Drodown">
+  let entryMenuItems: MenuPrimitive[] = [];
+
+  if (range.start > 0) {
+    entryMenuItems.push({
+      type: 'button',
+      key: 'expand_behind',
+      children: context.html`
+        <div class="MenuItem-content">
+          <strong class="u-text-muted">${range.start} entries hidden</strong>
+        </div>
+      `,
+      onAction: handleExpandBehind,
+    });
+  }
+
+  entryMenuItems = entryMenuItems.concat(
+    entries.slice(range.start, range.end).map((entry, offset) => {
+      const index = offset + range.start;
+      const iconClass =
+        index === activeEntryIndex
+          ? 'icon icon-16 icon-dot u-text-negative'
+          : entry.markedAsRead
+            ? 'icon icon-16 icon-dot u-text-muted'
+            : index <= readEntryIndex
+              ? 'icon icon-16 icon-dot u-text-positive'
+              : null;
+      const icon = optional(
+        iconClass !== null
+          ? context.html`<i aria-hidden="true" class=${iconClass} role="img"></i>`
+          : null,
+      );
+      return {
+        type: 'button',
+        key: index.toString(),
+        children: context.html`
+          <div class="MenuItem-icon"><${icon}></div>
+          <div class="MenuItem-content">${entry.title}</div>
+          <div class="MenuItem-hint">#${(index + 1).toString()}</div>
+        `,
+        onAction: handleScrollToEntry,
+      } as MenuPrimitive;
+    }),
+  );
+
+  if (range.end < entries.length - 1) {
+    entryMenuItems.push({
+      type: 'button',
+      key: 'expand_ahead',
+      children: context.html`
+        <div class="MenuItem-content">
+          <strong class="u-text-muted">${entries.length - range.end} entries hidden</strong>
+        </div>
+      `,
+      onAction: handleExpandAhead,
+    });
+  }
+
+  const dropdown = component(Dropdown, {
+    trigger: ({ id, onToggle, open }, context) => context.html`
       <button
+        aria-expanded=${open.toString()}
         aria-label="Entry display settings"
         class="navbar-action"
-        id=${toggleId}
+        id=${id}
         type="button"
-        @click=${toggleDropdown}
+        @click=${onToggle}
       >
         <i aria-hidden="true" class="icon icon-24 icon-checkmark" role="img"></i>
         <span
@@ -270,22 +207,82 @@ export function EntryDisplaySettingsDropdown(
           ${totalReadEntries > 0 ? totalReadEntries : ''}
         </span>
       </button>
-      <${component(Menu, {
-        anchorTarget: toggleId,
-        children: menuChildren,
-        onClose: closeDropdown,
-        open: dropdownState.isOpened,
-      })}>
-    </div>
-  `;
+    `,
+    items: [
+      {
+        type: 'group',
+        key: 'entries',
+        label: 'Entries',
+        childItems: entryMenuItems,
+      },
+      {
+        type: 'separator',
+        key: 'separator1',
+      },
+      {
+        type: 'button',
+        key: 'scroll_to_unread_position',
+        children: context.html`
+          <div class="MenuItem-content">Scroll to unread position</div>
+        `,
+        onAction: handleScrollToUnreadPosition,
+      },
+      {
+        type: 'button',
+        key: 'clear_read_position',
+        children: context.html`
+          <div class="MenuItem-content">Clear read position</div>
+        `,
+        disabled: totalReadEntries === 0,
+        onAction: handleClearReadPosition,
+      },
+      {
+        type: 'separator',
+        key: 'separator2',
+      },
+      {
+        type: 'button',
+        key: 'mark_all_as_read',
+        children: context.html`
+          <div class="MenuItem-content">Mark all as read...</div>
+        `,
+        disabled: !canMarkStreamAsRead,
+        onAction: handleMarkAllAsRead,
+      },
+      {
+        type: 'separator',
+        key: 'separator3',
+      },
+      {
+        type: 'button',
+        key: 'keep_unread',
+        checked: keepUnread,
+        children: context.html`
+          <div class="MenuItem-icon">
+            <${optional(
+              keepUnread
+                ? context.html`<i aria-hidden="true" class="icon icon-16 icon-checkmark" role="img"></i>`
+                : null,
+            )}>
+          </div>
+          <div class="MenuItem-content">Keep unread</div>
+        `,
+        disabled: !canMarkStreamAsRead,
+        onAction: handleKeepUnread,
+      },
+    ],
+    onToggle: handleDropdownToggle,
+  });
+
+  return context.html`<${dropdown}>`;
 }
 
-function getSliceAtPosition(
+function getRangeAtPosition(
   start: number,
   end: number,
   position: number,
   size: number,
-): Slice {
+): Range {
   const behindSpace = position - start;
   const aheadSpace = end - 1 - position;
 

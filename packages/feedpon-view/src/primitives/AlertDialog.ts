@@ -18,7 +18,7 @@ export interface AlertDialogProps {
   message: string;
   onCancel?: (dialog: HTMLDialogElement) => void;
   onConfirm?: (dialog: HTMLDialogElement) => void;
-  opened?: boolean;
+  open?: boolean;
   title: string;
 }
 
@@ -29,7 +29,7 @@ export function AlertDialog(
     message,
     onCancel,
     onConfirm,
-    opened = false,
+    open = false,
     title,
   }: AlertDialogProps,
   context: RenderContext,
@@ -38,12 +38,12 @@ export function AlertDialog(
 
   context.useLayoutEffect(() => {
     const dialog = dialogRef.current!;
-    if (opened) {
+    if (open) {
       dialog.showModal();
     } else {
       dialog.close();
     }
-  }, [opened]);
+  }, [open]);
 
   const handleConfirm = context.useCallback(() => {
     dialogRef.current!.close('confirmed');
@@ -109,7 +109,7 @@ AlertDialog.open = async (
   const { resolve, promise } = Promise.withResolvers<boolean>();
   const value = component(AlertDialog, {
     ...props,
-    opened: props.opened ?? true,
+    open: props.open ?? true,
     onCancel: async (dialog) => {
       props.onCancel?.(dialog);
       await waitForTransition(dialog);

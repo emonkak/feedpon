@@ -157,15 +157,15 @@ export function AboutPage(
     children: context.html`
       <h1 class="navbar-title">About</h1>
       <${component(Dropdown, {
-        toggleButton: ({ id, toggle, opened }, context) => context.html`
+        trigger: ({ id, onToggle, open }, context) => context.html`
           <button
             aria-label="Open menu"
-            aria-expanded=${opened.toString()}
+            aria-expanded=${open.toString()}
             aria-haspopup="listbox"
             class="navbar-action"
             id=${id}
             type="button"
-            @click=${toggle}
+            @click=${onToggle}
           >
             <i
               aria-hidden
@@ -174,16 +174,16 @@ export function AboutPage(
             ></i>
           </button>
         `,
-        children: context.html`
-          <button
-            class="MenuItem"
-            role="option"
-            type="button"
-            @click=${handleGoKitchensink}
-          >
-            <div class="MenuItem-content">Go kitchensink...</div>
-          </button>
-        `,
+        items: [
+          {
+            type: 'button',
+            key: 'go_kitchensink',
+            children: context.html`
+              <div class="MenuItem-content">Go kitchensink...</div>
+            `,
+            onAction: handleGoKitchensink,
+          },
+        ],
       })}>
     `,
   });
