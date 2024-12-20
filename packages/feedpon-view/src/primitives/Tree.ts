@@ -80,13 +80,13 @@ export function Tree<TKey, TValue>(
 
     if (item.selected && parent !== null && !parent.state.userInteraction) {
       parent.state.expanded = true;
+      parent.state.userInteraction = false;
     }
 
     if (state.expanded) {
       accumulator.push(...childAggregations);
     }
 
-    state.userInteraction = false;
     newUnmanagedStates.set(item.key, state);
 
     return accumulator;
