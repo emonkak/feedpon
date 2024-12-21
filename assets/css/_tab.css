@@ -12,7 +12,8 @@
   display: flex;
   margin-block: calc(var(--vertical-rhythm) / 4);
   padding-block: calc(var(--vertical-rhythm) / 4);
-  padding-inline: 1ch;
+  padding-inline: 1.5ch;
+  color: inherit;
 
   &:first-child {
     border-end-start-radius: var(--tab-border-radius);
@@ -30,6 +31,7 @@
 
   &:hover {
     background-color: var(--light-color);
+    text-decoration: none;
   }
 
   &:active,

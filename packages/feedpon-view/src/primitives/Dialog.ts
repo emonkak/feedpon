@@ -7,18 +7,15 @@ import {
 import { component, ref } from '@emonkak/ebit/directives.js';
 
 export interface DialogProps {
-  children: (
-    props: { close: () => void },
-    context: RenderContext,
-  ) => TemplateResult;
+  children: TemplateResult;
   modal?: boolean;
   onClose?: (dialog: HTMLDialogElement) => void;
-  open?: boolean;
+  open: boolean;
   ownProps?: { [key: string]: unknown };
 }
 
 export function Dialog(
-  { ownProps = {}, children, modal = true, onClose, open = true }: DialogProps,
+  { ownProps = {}, children, modal = true, onClose, open }: DialogProps,
   context: RenderContext,
 ): TemplateResult {
   const dialogRef = context.useRef<HTMLDialogElement | null>(null);
@@ -74,10 +71,6 @@ export function Dialog(
     [onClose],
   );
 
-  const close = () => {
-    dialogRef.current?.close();
-  };
-
   return context.html`
     <dialog
       class="Modal"
@@ -86,7 +79,7 @@ export function Dialog(
       @close=${handleClose}
       ${ownProps}
     >
-      <${children({ close }, context)}>
+      <${children}>
     </dialog>
   `;
 }

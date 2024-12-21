@@ -56,17 +56,14 @@ export function StreamSettings({}: StreamSettingsProps) {
 
   const handleChangeNumStreamHistories = useEvent(
     (event: React.ChangeEvent<HTMLInputElement>) => {
-      const newNumStreamHistories = Number.parseInt(
-        event.currentTarget.value,
-        10,
-      );
+      const newNumStreamHistories = event.currentTarget.valueAsNumber;
       setNumStreamHistories(newNumStreamHistories);
     },
   );
 
   const handleChangeCacheCapacity = useEvent(
     (event: React.ChangeEvent<HTMLInputElement>) => {
-      const newCacheCapacity = Number.parseInt(event.currentTarget.value, 10);
+      const newCacheCapacity = event.currentTarget.valueAsNumber;
       setCacheCapacity(newCacheCapacity);
     },
   );

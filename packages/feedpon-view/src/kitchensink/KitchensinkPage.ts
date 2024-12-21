@@ -403,7 +403,7 @@ export function KitchensinkPage(
         </button>
       </p>
       <${component(Dialog, {
-        children: ({ close }, context) => context.html`
+        children: context.html`
           <button
             type="button"
             class="close u-pull-right"
@@ -415,14 +415,14 @@ export function KitchensinkPage(
             <button
               type="button"
               class="button button-positive"
-              @click=${close}
+              @click=${handleCloseModal}
               >
             OK
             </button>
             <button
               type="button"
               class="button button-outline-default"
-              @click=${close}
+              @click=${handleCloseModal}
             >
               Cancel
             </button>

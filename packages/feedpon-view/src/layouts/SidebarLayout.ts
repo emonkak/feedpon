@@ -219,15 +219,13 @@ export function SidebarLayout(
       </div>
     </div>
     <${component(Dialog, {
-      children: (_close, context) => {
-        return context.html`
-          <h1 class="Modal-title" id=${helpTitleId}>Available Key Mappings</h1>
-          <${component(KeyMappingsTable, {
-            commandTable,
-            keyMappings,
-          })}>
-        `;
-      },
+      children: context.html`
+        <h1 class="Modal-title" id=${helpTitleId}>Available Key Mappings</h1>
+        <${component(KeyMappingsTable, {
+          commandTable,
+          keyMappings,
+        })}>
+      `,
       onClose: onCloseHelp,
       open: helpIsOpened,
       ownProps: { 'aria-labelledby': helpTitleId },

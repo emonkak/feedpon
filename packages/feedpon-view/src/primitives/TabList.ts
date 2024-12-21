@@ -12,6 +12,7 @@ export interface TabListProps {
 }
 
 export interface Tab {
+  href?: string;
   children: TemplateResult;
   key: string;
   onSelect?: (event: Event) => void;
@@ -48,18 +49,37 @@ function Tab(
     [onTabSelect, tab.onSelect, tab.key],
   );
 
-  return context.html`
-    <button
-      aria-selected=${tab.selected.toString()}
-      class=${classMap({
-        Tab: true,
-        'is-selected': tab.selected,
-      })}
-      data-key=${tab.key}
-      role="tab"
-      @click=${handleTabSelect}
-    >
-      <${tab.children}>
-    </button>
-  `;
+  if (tab.href !== undefined) {
+    return context.html`
+      <a
+        aria-selected=${tab.selected.toString()}
+        class=${classMap({
+          Tab: true,
+          'is-selected': tab.selected,
+        })}
+        data-key=${tab.key}
+        href=${tab.href}
+        role="tab"
+        @click=${handleTabSelect}
+      >
+        <${tab.children}>
+      </button>
+    `;
+  } else {
+    return context.html`
+      <button
+        aria-selected=${tab.selected.toString()}
+        class=${classMap({
+          Tab: true,
+          'is-selected': tab.selected,
+        })}
+        data-key=${tab.key}
+        role="tab"
+        type="button"
+        @click=${handleTabSelect}
+      >
+        <${tab.children}>
+      </button>
+    `;
+  }
 }

@@ -1,6 +1,6 @@
 import type { RenderContext, TemplateResult } from '@emonkak/ebit';
 import { component } from '@emonkak/ebit/directives.js';
-import { type LocationActions, RelativeURL } from '@emonkak/ebit/router.js';
+import type { RelativeURL } from '@emonkak/ebit/router.js';
 import { bindActions } from 'feedpon-flux';
 import { getStoreHook } from 'feedpon-flux/ebit';
 import { toggleSidebar } from 'feedpon-messaging/ui';
@@ -11,12 +11,11 @@ import { TabList } from '../primitives/TabList';
 
 export interface SettingsProps {
   children: unknown;
-  locationActions: LocationActions;
   url: RelativeURL;
 }
 
 export function SettingsPage(
-  { children, locationActions, url }: SettingsProps,
+  { children, url }: SettingsProps,
   context: RenderContext,
 ): TemplateResult {
   const { onToggleSidebar } = context.use(
@@ -26,10 +25,6 @@ export function SettingsPage(
       }),
     }),
   );
-
-  const handleTabSelect = context.useCallback((path: string) => {
-    locationActions.navigate(new RelativeURL(path));
-  }, []);
 
   const header = component(Navbar, {
     onToggleSidebar,
@@ -42,6 +37,7 @@ export function SettingsPage(
     items: [
       {
         key: 'ui',
+        href: '#/settings/ui',
         selected: url.pathname === '/settings/ui',
         children: context.html`
           <i class="u-inline-block u-md-none icon icon-20 icon-browser-window"></i>
@@ -50,6 +46,7 @@ export function SettingsPage(
       },
       {
         key: 'stream',
+        href: '#/settings/stream',
         selected: url.pathname === '/settings/stream',
         children: context.html`
           <i class="u-inline-block u-md-none icon icon-20 icon-news-feed"></i>
@@ -58,6 +55,7 @@ export function SettingsPage(
       },
       {
         key: 'tracking_url',
+        href: '#/settings/tracking_url',
         selected: url.pathname === '/settings/tracking_url',
         children: context.html`
           <i class="u-inline-block u-md-none icon icon-20 icon-link"></i>
@@ -66,6 +64,7 @@ export function SettingsPage(
       },
       {
         key: 'url_replacement',
+        href: '#/settings/url_replacement',
         selected: url.pathname === '/settings/url_replacement',
         children: context.html`
           <i class="u-inline-block u-md-none icon icon-20 icon-replace"></i>
@@ -74,6 +73,7 @@ export function SettingsPage(
       },
       {
         key: 'siteinfo',
+        href: '#/settings/siteinfo',
         selected: url.pathname === '/settings/siteinfo',
         children: context.html`
           <i class="u-inline-block u-md-none icon icon-20 icon-database"></i>
@@ -82,6 +82,7 @@ export function SettingsPage(
       },
       {
         key: 'keyboard',
+        href: '#/settings/keyboard',
         selected: url.pathname === '/settings/keyboard',
         children: context.html`
           <i class="u-inline-block u-md-none icon icon-20 icon-keyboard"></i>
@@ -89,7 +90,6 @@ export function SettingsPage(
         `,
       },
     ],
-    onTabSelect: handleTabSelect,
   });
 
   const content = context.html`

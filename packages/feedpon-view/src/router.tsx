@@ -10,9 +10,9 @@ import type { Store } from 'feedpon-messaging';
 import { AboutPage } from './about/AboutPage';
 import { CategoriesPage } from './category/CategoriesPage';
 import { DashboardPage } from './dashboard/DashboardPage';
-// import { KeyboardSettings } from './settings/KeyboardSettings';
 import { KitchensinkPage } from './kitchensink/KitchensinkPage';
 import { SearchPage } from './search/SearchPage';
+import { KeyboardSettings } from './settings/KeyboardSettings';
 import { SettingsPage } from './settings/SettingsPage';
 // import { StreamSettings } from './settings/StreamSettings';
 // import { TrackingUrlSettings } from './settings/TrackingUrlSettings';
@@ -70,20 +70,18 @@ export const router = new Router<Component<any, any, any>, RouterState>([
     ],
   ),
   route(['settings'], null, [
-    route(['ui'], (_args, url, { locationActions }) =>
+    route(['ui'], (_args, url, {}) =>
       component(SettingsPage, {
         url,
-        locationActions,
         children: component(UISettings, {}),
       }),
     ),
-    // route(['keyboard'], (_args, url, { locationActions }) =>
-    //   component(SettingsPage, {
-    //     url,
-    //     locationActions,
-    //     children: component(KeyboardSettings, {}),
-    //   }),
-    // ),
+    route(['keyboard'], (_args, url, {}) =>
+      component(SettingsPage, {
+        url,
+        children: component(KeyboardSettings, {}),
+      }),
+    ),
     // route(['siteinfo'], (_args, url, { locationActions }) =>
     //   component(SettingsPage, {
     //     url,

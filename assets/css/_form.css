@@ -48,21 +48,21 @@ select.form-control:not([size]):not([multiple]) {
   height: calc(var(--vertical-rhythm) * 1.5);
 }
 
-.form-control.has-success {
+.form-control.is-valid {
   border-color: var(--positive-color);
   background-color: var(--x-light-color);
 }
 
-.form-control.has-success:focus {
+.form-control.is-valid:focus {
   box-shadow: 0 0 0 2px var(--positive-outline-color);
 }
 
-.form-control.has-error {
+.form-control.is-invalid {
   border-color: var(--negative-color);
   background-color: var(--x-light-color);
 }
 
-.form-control.has-error:focus {
+.form-control.is-invalid:focus {
   box-shadow: 0 0 0 2px var(--negative-outline-color);
 }
 
