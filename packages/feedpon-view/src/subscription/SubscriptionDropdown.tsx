@@ -4,7 +4,7 @@ import type { RenderContext, TemplateResult } from '@emonkak/ebit';
 import { classMap, component } from '@emonkak/ebit/directives.js';
 import { AlertDialog } from '../primitives/AlertDialog';
 import { Dropdown } from '../primitives/Dropdown';
-import type { MenuPrimitive } from '../primitives/Menu';
+import type { MenuItem } from '../primitives/Menu';
 
 interface SubscriptionDropdownProps {
   categories: Category[];
@@ -111,7 +111,7 @@ export function SubscriptionDropdown(
           <div class="MenuItem-icon"><${icon}></div>
         `,
       onAction: handleAction,
-    } as MenuPrimitive;
+    } as MenuItem;
   });
   const dropdown = component(Dropdown, {
     trigger: ({ id, onToggle, open }, context) => context.html`

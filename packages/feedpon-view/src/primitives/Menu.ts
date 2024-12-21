@@ -3,16 +3,16 @@ import { component, keyedList, memo, ref } from '@emonkak/ebit/directives.js';
 
 export interface MenuProps {
   autoFocus?: boolean;
-  items: MenuPrimitive[];
+  items: MenuItem[];
   manual?: boolean;
-  onItemAction?: (key: string) => void;
+  onItemAction?: (event: Event, key: string) => void;
   onToggle?: (open: boolean) => void;
   open?: boolean;
   ref?: RefObject<MenuRef | null>;
   target: string;
 }
 
-export type MenuPrimitive = Button | Form | Group | Link | Separator;
+export type MenuItem = Button | Form | Group | Link | Separator;
 
 interface Button {
   checked?: boolean;
@@ -40,7 +40,7 @@ interface Form {
 }
 
 interface Group {
-  childItems: MenuPrimitive[];
+  childItems: MenuItem[];
   key: string;
   label: string;
   type: 'group';
@@ -169,14 +169,14 @@ function Button(
     onItemAction,
   }: {
     item: Button;
-    onItemAction?: (key: string) => void;
+    onItemAction?: (event: Event, key: string) => void;
   },
   context: RenderContext,
 ): TemplateResult {
   const handleAction = context.useCallback(
     (event: Event) => {
       item.onAction?.(event);
-      onItemAction?.(item.key);
+      onItemAction?.(event, item.key);
     },
     [item.key, item.onAction, onItemAction],
   );
@@ -202,15 +202,15 @@ function Form(
     onItemAction,
   }: {
     item: Form;
-    onItemAction?: (key: string) => void;
+    onItemAction?: (event: Event, key: string) => void;
   },
   context: RenderContext,
 ): TemplateResult {
   const handleAction = context.useCallback(
     (event: Event) => {
-      event.preventDefault();
       item.onAction?.(event);
-      onItemAction?.(item.key);
+      onItemAction?.(event, item.key);
+      event.preventDefault();
     },
     [item.key, item.onAction, onItemAction],
   );
@@ -234,7 +234,7 @@ function Group(
     onItemAction,
   }: {
     item: Group;
-    onItemAction?: (key: string) => void;
+    onItemAction?: (event: Event, key: string) => void;
   },
   context: RenderContext,
 ): TemplateResult {
@@ -265,14 +265,14 @@ function Link(
     onItemAction,
   }: {
     item: Link;
-    onItemAction?: (key: string) => void;
+    onItemAction?: (event: Event, key: string) => void;
   },
   context: RenderContext,
 ): TemplateResult {
   const handleAction = context.useCallback(
     (event: Event) => {
       item.onAction?.(event);
-      onItemAction?.(item.key);
+      onItemAction?.(event, item.key);
     },
     [item.key, item.onAction, onItemAction],
   );
@@ -342,8 +342,8 @@ function getMenuPosition({ top, bottom, left, right }: DOMRect): MenuPosition {
 }
 
 function renderPrimitive(
-  item: MenuPrimitive,
-  onItemAction: ((key: string) => void) | undefined,
+  item: MenuItem,
+  onItemAction: ((event: Event, key: string) => void) | undefined,
   context: RenderContext,
 ): unknown {
   switch (item.type) {

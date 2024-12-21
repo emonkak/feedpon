@@ -7,7 +7,7 @@ import type {
 } from 'feedpon-messaging';
 
 import { Dropdown } from '../primitives/Dropdown';
-import type { MenuPrimitive } from '../primitives/Menu';
+import type { MenuItem } from '../primitives/Menu';
 
 interface StreamFetchOptionsDropdownProps {
   fetchOptions: StreamFetchOptions;
@@ -89,7 +89,7 @@ export function StreamFetchOptionsDropdown(
               onAction: context.useCallback(() => {
                 onChangeStreamView(key);
               }, [onChangeStreamView]),
-            }) as MenuPrimitive,
+            }) as MenuItem,
         ),
       },
       {
@@ -116,7 +116,7 @@ export function StreamFetchOptionsDropdown(
               onAction: context.useCallback(() => {
                 onChangeEntryOrder(key);
               }, [onChangeStreamView]),
-            }) as MenuPrimitive,
+            }) as MenuItem,
         ),
       },
       {

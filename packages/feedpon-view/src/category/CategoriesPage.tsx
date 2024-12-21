@@ -35,7 +35,7 @@ import {
 } from '../common/components/VirtualScrollList';
 import { MainLayout } from '../layouts/MainLayout';
 import { Dropdown } from '../primitives/Dropdown';
-import { type Tab, TabList } from '../primitives/TabList';
+import { type TabItem, TabList } from '../primitives/TabList';
 import { SubscriptionView } from '../subscription/SubscriptionView';
 import { CategoryEdit } from './CategoryEdit';
 
@@ -178,15 +178,15 @@ export function CategoriesPage(
     window.open(exportUrl, '_blank');
   }, [exportUrl]);
 
-  const handleSelectCategory = context.useCallback((label: string) => {
-    locationActions.navigate(
-      new RelativeURL(
-        '/categories/' +
-          (typeof label === 'string' ? encodeURIComponent(label) : ''),
-      ),
-      { replace: true },
-    );
-  }, []);
+  const handleSelectCategory = context.useCallback(
+    (_event: Event, key: string) => {
+      locationActions.navigate(
+        new RelativeURL('/categories/' + encodeURIComponent(key)),
+        { replace: true },
+      );
+    },
+    [],
+  );
 
   const filteredSubscriptions = context.useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
@@ -271,7 +271,7 @@ export function CategoriesPage(
         key: UNCATEGORIZED,
         children: context.html`Uncategorized`,
         selected: label === UNCATEGORIZED,
-      } as Tab,
+      } as TabItem,
     ].concat(
       categories.map((category) => ({
         key: category.label,

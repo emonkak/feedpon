@@ -10,7 +10,7 @@ import {
 } from '@emonkak/ebit/directives.js';
 import { AlertDialog } from '../primitives/AlertDialog';
 import { Dropdown } from '../primitives/Dropdown';
-import type { MenuPrimitive } from '../primitives/Menu';
+import type { MenuItem } from '../primitives/Menu';
 
 interface SubscriptionSettingsDropdownProps {
   categories: Category[];
@@ -84,7 +84,7 @@ export function SubscriptionSettingsDropdown(
     );
   }, [feed, onUnsubscribe]);
 
-  const categoryMenuItems: MenuPrimitive[] =
+  const categoryMenuItems: MenuItem[] =
     subscription !== null
       ? categories.map((category) => {
           const isAdded = subscription.labels.includes(category.label);

@@ -7,11 +7,11 @@ import {
 } from '@emonkak/ebit/directives.js';
 
 export interface TabListProps {
-  items: Tab[];
-  onTabSelect?: (key: string) => void;
+  items: TabItem[];
+  onTabSelect?: (event: Event, key: string) => void;
 }
 
-export interface Tab {
+export interface TabItem {
   href?: string;
   children: TemplateResult;
   key: string;
@@ -25,9 +25,12 @@ export function TabList(
 ): TemplateResult {
   const tabs = keyedList(
     items,
-    (tab) => tab.key,
-    (tab) =>
-      memo(() => component(Tab, { tab, onTabSelect }), [tab, onTabSelect]),
+    (item) => item.key,
+    (item) =>
+      memo(
+        () => component(TabItem, { item, onTabSelect }),
+        [item, onTabSelect],
+      ),
   );
 
   return context.html`
@@ -37,48 +40,51 @@ export function TabList(
   `;
 }
 
-function Tab(
-  { tab, onTabSelect }: { tab: Tab; onTabSelect?: (key: string) => void },
+function TabItem(
+  {
+    item,
+    onTabSelect,
+  }: { item: TabItem; onTabSelect?: (event: Event, key: string) => void },
   context: RenderContext,
 ): TemplateResult {
   const handleTabSelect = context.useCallback(
     (event: Event) => {
-      tab.onSelect?.(event);
-      onTabSelect?.(tab.key);
+      item.onSelect?.(event);
+      onTabSelect?.(event, item.key);
     },
-    [onTabSelect, tab.onSelect, tab.key],
+    [onTabSelect, item.onSelect, item.key],
   );
 
-  if (tab.href !== undefined) {
+  if (item.href !== undefined) {
     return context.html`
       <a
-        aria-selected=${tab.selected.toString()}
+        aria-selected=${item.selected.toString()}
         class=${classMap({
           Tab: true,
-          'is-selected': tab.selected,
+          'is-selected': item.selected,
         })}
-        data-key=${tab.key}
-        href=${tab.href}
+        data-key=${item.key}
+        href=${item.href}
         role="tab"
         @click=${handleTabSelect}
       >
-        <${tab.children}>
+        <${item.children}>
       </button>
     `;
   } else {
     return context.html`
       <button
-        aria-selected=${tab.selected.toString()}
+        aria-selected=${item.selected.toString()}
         class=${classMap({
           Tab: true,
-          'is-selected': tab.selected,
+          'is-selected': item.selected,
         })}
-        data-key=${tab.key}
+        data-key=${item.key}
         role="tab"
         type="button"
         @click=${handleTabSelect}
       >
-        <${tab.children}>
+        <${item.children}>
       </button>
     `;
   }

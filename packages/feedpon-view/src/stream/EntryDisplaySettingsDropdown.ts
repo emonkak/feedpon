@@ -4,7 +4,7 @@ import type { Entry } from 'feedpon-messaging';
 
 import { AlertDialog } from '../primitives/AlertDialog';
 import { Dropdown } from '../primitives/Dropdown';
-import type { MenuPrimitive } from '../primitives/Menu';
+import type { MenuItem } from '../primitives/Menu';
 
 export interface EntryDisplaySettingsDropdownProps {
   activeEntryIndex: number;
@@ -76,14 +76,16 @@ export function EntryDisplaySettingsDropdown(
     }
   }, []);
 
-  const handleExpandBehind = context.useCallback(() => {
+  const handleExpandBehind = context.useCallback((event: Event) => {
+    event.preventDefault();
     setDropdownState((state) => ({
       ...state,
       behindExpanded: true,
     }));
   }, []);
 
-  const handleExpandAhead = context.useCallback(() => {
+  const handleExpandAhead = context.useCallback((event: Event) => {
+    event.preventDefault();
     setDropdownState((state) => ({
       ...state,
       aheadExpanded: true,
@@ -127,7 +129,7 @@ export function EntryDisplaySettingsDropdown(
     onScrollToEntry(index);
   }, []);
 
-  let entryMenuItems: MenuPrimitive[] = [];
+  let entryMenuItems: MenuItem[] = [];
 
   if (range.start > 0) {
     entryMenuItems.push({
@@ -167,7 +169,7 @@ export function EntryDisplaySettingsDropdown(
           <div class="MenuItem-hint">#${(index + 1).toString()}</div>
         `,
         onAction: handleScrollToEntry,
-      } as MenuPrimitive;
+      } as MenuItem;
     }),
   );
 

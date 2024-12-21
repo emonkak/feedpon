@@ -20,7 +20,7 @@ import { classMap, component } from '@emonkak/ebit/directives.js';
 import { getStoreHook } from 'feedpon-flux/ebit';
 import { RelativeTime } from '../common/components/RelativeTime';
 import { AutoComplete } from '../primitives/AutoComplete';
-import type { MenuPrimitive } from '../primitives/Menu';
+import type { MenuItem } from '../primitives/Menu';
 import { ProfileDropdown } from './ProfileDropdown';
 import { SubscriptionDisplayDropdown } from './SubscriptionDisplayDropdown';
 import { SubscriptionTree } from './SubscriptionTree';
@@ -252,7 +252,7 @@ function getFilteredItems(
   subscriptions: Subscription[],
   query: string,
   context: RenderContext,
-): MenuPrimitive[] {
+): MenuItem[] {
   const normalizedQuery = query.trim().toLowerCase();
   if (normalizedQuery === '') {
     return [];
@@ -288,7 +288,7 @@ function getFilteredItems(
         <div class="MenuItem-content">${subscription.title}</div>
       `,
       href: '#/streams/' + encodeURIComponent(subscription.streamId),
-    } as MenuPrimitive;
+    } as MenuItem;
   });
 
   if (menuItems.length > 0) {

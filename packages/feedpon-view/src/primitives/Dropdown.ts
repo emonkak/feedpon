@@ -1,14 +1,14 @@
 import type { RenderContext, TemplateResult } from '@emonkak/ebit';
 import { component } from '@emonkak/ebit/directives.js';
-import { Menu, type MenuPrimitive } from './Menu';
+import { Menu, type MenuItem } from './Menu';
 
 export interface DropdownProps {
-  items: MenuPrimitive[];
+  items: MenuItem[];
   onToggle?: (open: boolean) => void;
-  trigger: (props: ToggleButtonProps, context: RenderContext) => TemplateResult;
+  trigger: (props: TriggerProps, context: RenderContext) => TemplateResult;
 }
 
-export interface ToggleButtonProps {
+export interface TriggerProps {
   id: string;
   onToggle: () => void;
   open: boolean;
@@ -33,6 +33,12 @@ export function Dropdown(
     });
   }, []);
 
+  const handleItemAction = context.useCallback((event: Event) => {
+    if (!event.defaultPrevented) {
+      closeDropdown();
+    }
+  }, []);
+
   const handleToggle = context.useCallback((open: boolean) => {
     setOpen(open);
     onToggle?.(open);
@@ -48,7 +54,7 @@ export function Dropdown(
       <${component(Menu, {
         target: triggerId,
         items,
-        onItemAction: closeDropdown,
+        onItemAction: handleItemAction,
         onToggle: handleToggle,
         open: open,
       })}>

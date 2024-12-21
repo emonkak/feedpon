@@ -2,7 +2,7 @@ import type { RenderContext, TemplateResult } from '@emonkak/ebit';
 import { component, optional } from '@emonkak/ebit/directives.js';
 import type { SubscriptionOrderKind } from 'feedpon-messaging';
 import { Dropdown } from '../primitives/Dropdown';
-import type { MenuPrimitive } from '../primitives/Menu';
+import type { MenuItem } from '../primitives/Menu';
 
 interface SubscriptionDisplayDropdownProps {
   isLoading: boolean;
@@ -85,7 +85,7 @@ export function SubscriptionDisplayDropdown(
                 <div class="MenuItem-content">${label}</div>
               `,
               onAction: handleChangeSubscriptionOrder,
-            }) as MenuPrimitive,
+            }) as MenuItem,
         ),
       },
       {
