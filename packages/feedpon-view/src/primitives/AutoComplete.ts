@@ -130,7 +130,7 @@ export function AutoComplete<T>(
           target: triggerId,
           autoFocus: false,
           manual: true,
-          onItemSelect: closeDropdown,
+          onItemAction: closeDropdown,
           onToggle: handleMenuToggle,
           open: open,
           ref: menuRef,

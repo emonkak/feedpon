@@ -5,21 +5,16 @@ export interface MenuProps {
   autoFocus?: boolean;
   items: MenuPrimitive[];
   manual?: boolean;
-  onItemSelect?: (key: string) => void;
+  onItemAction?: (key: string) => void;
   onToggle?: (open: boolean) => void;
   open?: boolean;
   ref?: RefObject<MenuRef | null>;
   target: string;
 }
 
-export type MenuPrimitive =
-  | MenuButton
-  | MenuForm
-  | MenuGroup
-  | MenuLink
-  | MenuSeparator;
+export type MenuPrimitive = Button | Form | Group | Link | Separator;
 
-export interface MenuButton {
+interface Button {
   checked?: boolean;
   children: TemplateResult;
   disabled?: boolean;
@@ -28,7 +23,7 @@ export interface MenuButton {
   type: 'button';
 }
 
-export interface MenuLink {
+interface Link {
   children: TemplateResult;
   href: string;
   key: string;
@@ -36,7 +31,7 @@ export interface MenuLink {
   type: 'link';
 }
 
-export interface MenuForm {
+interface Form {
   ariaLabel: string;
   children: TemplateResult;
   key: string;
@@ -44,14 +39,14 @@ export interface MenuForm {
   type: 'form';
 }
 
-export interface MenuGroup {
+interface Group {
   childItems: MenuPrimitive[];
   key: string;
   label: string;
   type: 'group';
 }
 
-export interface MenuSeparator {
+interface Separator {
   key: string;
   type: 'separator';
 }
@@ -75,7 +70,7 @@ export function Menu(
     autoFocus = true,
     items,
     manual = false,
-    onItemSelect,
+    onItemAction,
     onToggle,
     open = false,
     ref: exposedRef = { current: null },
@@ -149,7 +144,7 @@ export function Menu(
   const children = keyedList(
     items,
     (item) => item.key,
-    (item) => renderPrimitive(item, onItemSelect, context),
+    (item) => renderPrimitive(item, onItemAction, context),
   );
 
   return context.html`
@@ -168,36 +163,22 @@ export function Menu(
   `;
 }
 
-interface ButtonProps {
-  item: MenuButton;
-  onItemSelect?: (key: string) => void;
-}
-
-interface FormProps {
-  item: MenuForm;
-  onItemSelect?: (key: string) => void;
-}
-
-interface GroupProps {
-  item: MenuGroup;
-  onItemSelect?: (key: string) => void;
-}
-
-interface LinkProps {
-  item: MenuLink;
-  onItemSelect?: (key: string) => void;
-}
-
 function Button(
-  { item, onItemSelect }: ButtonProps,
+  {
+    item,
+    onItemAction,
+  }: {
+    item: Button;
+    onItemAction?: (key: string) => void;
+  },
   context: RenderContext,
 ): TemplateResult {
   const handleAction = context.useCallback(
     (event: Event) => {
       item.onAction?.(event);
-      onItemSelect?.(item.key);
+      onItemAction?.(item.key);
     },
-    [item.key, item.onAction, onItemSelect],
+    [item.key, item.onAction, onItemAction],
   );
 
   return context.html`
@@ -216,16 +197,22 @@ function Button(
 }
 
 function Form(
-  { item, onItemSelect }: FormProps,
+  {
+    item,
+    onItemAction,
+  }: {
+    item: Form;
+    onItemAction?: (key: string) => void;
+  },
   context: RenderContext,
 ): TemplateResult {
   const handleAction = context.useCallback(
     (event: Event) => {
       event.preventDefault();
       item.onAction?.(event);
-      onItemSelect?.(item.key);
+      onItemAction?.(item.key);
     },
-    [item.key, item.onAction, onItemSelect],
+    [item.key, item.onAction, onItemAction],
   );
 
   return context.html`
@@ -242,7 +229,13 @@ function Form(
 }
 
 function Group(
-  { item, onItemSelect }: GroupProps,
+  {
+    item,
+    onItemAction,
+  }: {
+    item: Group;
+    onItemAction?: (key: string) => void;
+  },
   context: RenderContext,
 ): TemplateResult {
   const ariaLabelId = context.useId();
@@ -250,7 +243,7 @@ function Group(
   const children = keyedList(
     item.childItems,
     (item) => item.key,
-    (item) => renderPrimitive(item, onItemSelect, context),
+    (item) => renderPrimitive(item, onItemAction, context),
   );
 
   return context.html`
@@ -267,24 +260,30 @@ function Group(
 }
 
 function Link(
-  { item, onItemSelect }: LinkProps,
+  {
+    item,
+    onItemAction,
+  }: {
+    item: Link;
+    onItemAction?: (key: string) => void;
+  },
   context: RenderContext,
 ): TemplateResult {
   const handleAction = context.useCallback(
     (event: Event) => {
       item.onAction?.(event);
-      onItemSelect?.(item.key);
+      onItemAction?.(item.key);
     },
-    [item.key, item.onAction, onItemSelect],
+    [item.key, item.onAction, onItemAction],
   );
 
   return context.html`
     <a
-      @click=${handleAction}
       class="MenuItem"
       data-key=${item.key}
       href=${item.href}
       role="menuitem"
+      @click=${handleAction}
     >
       <${item.children}>
     </a>
@@ -344,30 +343,30 @@ function getMenuPosition({ top, bottom, left, right }: DOMRect): MenuPosition {
 
 function renderPrimitive(
   item: MenuPrimitive,
-  onItemSelect: ((key: string) => void) | undefined,
+  onItemAction: ((key: string) => void) | undefined,
   context: RenderContext,
 ): unknown {
   switch (item.type) {
     case 'button':
       return memo(
-        () => component(Button, { item, onItemSelect }),
-        [item, onItemSelect],
+        () => component(Button, { item, onItemAction }),
+        [item, onItemAction],
       );
     case 'form':
       return memo(
-        () => component(Form, { item, onItemSelect }),
-        [item, onItemSelect],
+        () => component(Form, { item, onItemAction }),
+        [item, onItemAction],
       );
     case 'group': {
       return memo(
-        () => component(Group, { item, onItemSelect }),
-        [item, onItemSelect],
+        () => component(Group, { item, onItemAction }),
+        [item, onItemAction],
       );
     }
     case 'link':
       return memo(
-        () => component(Link, { item, onItemSelect }),
-        [item, onItemSelect],
+        () => component(Link, { item, onItemAction }),
+        [item, onItemAction],
       );
     case 'separator':
       return context.html`<hr class="MenuSeparator">`;

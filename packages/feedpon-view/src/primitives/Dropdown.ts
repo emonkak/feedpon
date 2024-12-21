@@ -48,7 +48,7 @@ export function Dropdown(
       <${component(Menu, {
         target: triggerId,
         items,
-        onItemSelect: closeDropdown,
+        onItemAction: closeDropdown,
         onToggle: handleToggle,
         open: open,
       })}>
