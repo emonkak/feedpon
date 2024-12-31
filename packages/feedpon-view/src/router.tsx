@@ -14,7 +14,7 @@ import { KitchensinkPage } from './kitchensink/KitchensinkPage';
 import { SearchPage } from './search/SearchPage';
 import { KeyboardSettings } from './settings/KeyboardSettings';
 import { SettingsPage } from './settings/SettingsPage';
-// import { StreamSettings } from './settings/StreamSettings';
+import { StreamSettings } from './settings/StreamSettings';
 // import { TrackingUrlSettings } from './settings/TrackingUrlSettings';
 import { UISettings } from './settings/UISettings';
 // import { SiteinfoSettings } from './settings/SiteinfoSettings';
@@ -70,16 +70,22 @@ export const router = new Router<Component<any, any, any>, RouterState>([
     ],
   ),
   route(['settings'], null, [
-    route(['ui'], (_args, url, {}) =>
+    route(['ui'], (_args, url) =>
       component(SettingsPage, {
         url,
         children: component(UISettings, {}),
       }),
     ),
-    route(['keyboard'], (_args, url, {}) =>
+    route(['keyboard'], (_args, url) =>
       component(SettingsPage, {
         url,
         children: component(KeyboardSettings, {}),
+      }),
+    ),
+    route(['stream'], (_args, url) =>
+      component(SettingsPage, {
+        url,
+        children: component(StreamSettings, {}),
       }),
     ),
     // route(['siteinfo'], (_args, url, { locationActions }) =>
@@ -87,13 +93,6 @@ export const router = new Router<Component<any, any, any>, RouterState>([
     //     url,
     //     locationActions,
     //     children: component(SiteinfoSettings, {}),
-    //   }),
-    // ),
-    // route(['stream'], (_args, url, { locationActions, store }) =>
-    //   component(SettingsPage, {
-    //     url,
-    //     locationActions,
-    //     children: component(StreamSettings, {}),
     //   }),
     // ),
     // route(['tracking_url'], (_args, url, { locationActions, store }) =>
