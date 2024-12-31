@@ -7,7 +7,7 @@ import { classMap, ref } from '@emonkak/ebit/directives.js';
 
 export interface FormControlProps<TTagName extends FormControlElementTagName> {
   as: TTagName;
-  validations?: Validation<TTagName>[];
+  validations?: FormValidation<TTagName>[];
   ownProps?: Record<string, any>;
 }
 
@@ -27,7 +27,7 @@ export interface FormControlElement extends HTMLElement {
   setCustomValidity(error: string): void;
 }
 
-export type Validation<TTagName extends FormControlElementTagName> = (
+export type FormValidation<TTagName extends FormControlElementTagName> = (
   element: HTMLElementTagNameMap[TTagName],
 ) => string | null;
 

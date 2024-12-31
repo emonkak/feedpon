@@ -212,7 +212,7 @@ export function Sidebar(
         <a
           class=${classMap({
             SidebarItem: true,
-            'is-selected': locationState.url.pathname === '/settings/ui',
+            'is-selected': locationState.url.pathname.startsWith('/settings/'),
           })}
           href="#/settings/ui"
         >

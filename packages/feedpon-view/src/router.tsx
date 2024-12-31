@@ -15,7 +15,7 @@ import { SearchPage } from './search/SearchPage';
 import { KeyboardSettings } from './settings/KeyboardSettings';
 import { SettingsPage } from './settings/SettingsPage';
 import { StreamSettings } from './settings/StreamSettings';
-// import { TrackingUrlSettings } from './settings/TrackingUrlSettings';
+import { TrackingUrlSettings } from './settings/TrackingUrlSettings';
 import { UISettings } from './settings/UISettings';
 // import { SiteinfoSettings } from './settings/SiteinfoSettings';
 import { StreamPage } from './stream/StreamPage';
@@ -88,18 +88,17 @@ export const router = new Router<Component<any, any, any>, RouterState>([
         children: component(StreamSettings, {}),
       }),
     ),
+    route(['tracking_url'], (_args, url) =>
+      component(SettingsPage, {
+        url,
+        children: component(TrackingUrlSettings, {}),
+      }),
+    ),
     // route(['siteinfo'], (_args, url, { locationActions }) =>
     //   component(SettingsPage, {
     //     url,
     //     locationActions,
     //     children: component(SiteinfoSettings, {}),
-    //   }),
-    // ),
-    // route(['tracking_url'], (_args, url, { locationActions, store }) =>
-    //   component(SettingsPage, {
-    //     url,
-    //     locationActions,
-    //     children: component(TrackingUrlSettings, {}),
     //   }),
     // ),
     // route(['url_replacement'], (_args, url, { locationActions, store }) =>
