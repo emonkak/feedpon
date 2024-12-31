@@ -8,14 +8,14 @@ import { ref } from '@emonkak/ebit/directives.js';
 
 export interface DialogProps {
   child?: unknown;
-  dialogProps?: { [key: string]: unknown };
   modal?: boolean;
   onDismiss?: () => void;
   open: boolean;
+  ownProps?: { [key: string]: unknown };
 }
 
 export function Dialog(
-  { child, dialogProps = {}, modal = false, onDismiss, open }: DialogProps,
+  { child, ownProps = {}, modal = false, onDismiss, open }: DialogProps,
   context: RenderContext,
 ): TemplateResult {
   const dialogRef = context.useRef<HTMLDialogElement | null>(null);
@@ -37,7 +37,7 @@ export function Dialog(
   }, [modal, open]);
 
   return context.html`
-    <dialog ref=${ref(dialogRef)} @close=${onDismiss} ${dialogProps}>
+    <dialog ref=${ref(dialogRef)} @close=${onDismiss} ${ownProps}>
       <${child}>
     </dialog>
   `;

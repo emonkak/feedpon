@@ -117,7 +117,7 @@ export function EntryShareButton(
         open: popup.opened,
         child: popover,
         onDismiss: popup.close,
-        dialogProps: {
+        ownProps: {
           style: styleMap(popup.style),
           class: ['popup', 'is-pull-' + popup.pullDirection].join(' '),
         },

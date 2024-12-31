@@ -17,9 +17,9 @@ import { SettingsPage } from './settings/SettingsPage';
 import { StreamSettings } from './settings/StreamSettings';
 import { TrackingUrlSettings } from './settings/TrackingUrlSettings';
 import { UISettings } from './settings/UISettings';
+import { UrlReplacementSettings } from './settings/UrlReplacementSettings';
 // import { SiteinfoSettings } from './settings/SiteinfoSettings';
 import { StreamPage } from './stream/StreamPage';
-// import { UrlReplacementSettings } from './settings/UrlReplacementSettings';
 
 export interface RouterState {
   locationActions: LocationActions;
@@ -94,18 +94,17 @@ export const router = new Router<Component<any, any, any>, RouterState>([
         children: component(TrackingUrlSettings, {}),
       }),
     ),
+    route(['url_replacement'], (_args, url) =>
+      component(SettingsPage, {
+        url,
+        children: component(UrlReplacementSettings, {}),
+      }),
+    ),
     // route(['siteinfo'], (_args, url, { locationActions }) =>
     //   component(SettingsPage, {
     //     url,
     //     locationActions,
     //     children: component(SiteinfoSettings, {}),
-    //   }),
-    // ),
-    // route(['url_replacement'], (_args, url, { locationActions, store }) =>
-    //   component(SettingsPage, {
-    //     url,
-    //     locationActions,
-    //     children: component(UrlReplacementSettings, {}),
     //   }),
     // ),
   ]),
