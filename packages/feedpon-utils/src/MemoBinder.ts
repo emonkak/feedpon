@@ -1,31 +1,22 @@
-type Binder = <TBoundArgs extends any[], TUnboundArgs extends any[], TResult>(
-  f: (...args: [...TBoundArgs, ...TUnboundArgs]) => TResult,
-  ...args: TBoundArgs
-) => (...args: TUnboundArgs) => TResult;
+export class MemoBinder {
+  private _cache = new WeakMap<Function, Map<unknown, Function>>();
 
-export function createBinder(): Binder {
-  const cache = new WeakMap<Function, Map<unknown, Function>>();
-
-  return function bind<
-    TBoundArgs extends any[],
-    TUnboundArgs extends any[],
-    TResult,
-  >(
+  bind<TBoundArgs extends any[], TUnboundArgs extends any[], TResult>(
     f: (...args: [...TBoundArgs, ...TUnboundArgs]) => TResult,
     ...args: TBoundArgs
   ): (...args: TUnboundArgs) => TResult {
     let g: (...args: any[]) => TResult = f;
     for (let i = 0, l = args.length; i < l; i++) {
-      g = bindInCache(cache, g, args[i]);
+      g = bindWithCache(g, args[i], this._cache);
     }
     return g;
-  };
+  }
 }
 
-function bindInCache<TBoundArg, TUnboundArgs extends any[], TResult>(
-  cache: WeakMap<Function, Map<unknown, Function>>,
+function bindWithCache<TBoundArg, TUnboundArgs extends any[], TResult>(
   f: (boundArg: TBoundArg, ...unboundArgs: TUnboundArgs) => TResult,
   boundArg: TBoundArg,
+  cache: WeakMap<Function, Map<unknown, Function>>,
 ): (...unboundArgs: TUnboundArgs) => TResult {
   let boundFunctions = cache.get(f);
 

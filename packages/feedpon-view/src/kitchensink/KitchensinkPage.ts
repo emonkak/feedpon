@@ -5,7 +5,7 @@ import { getStoreHook } from 'feedpon-flux/ebit';
 import type { NotificationKind } from 'feedpon-messaging';
 import { sendNotification } from 'feedpon-messaging/notifications';
 import { toggleSidebar } from 'feedpon-messaging/ui';
-import { createBinder } from 'feedpon-utils/createBinder';
+import { MemoBinder } from 'feedpon-utils/MemoBinder';
 
 import { MainLayout } from '../common/MainLayout';
 import { Navbar } from '../common/Navbar';
@@ -28,7 +28,7 @@ export function KitchensinkPage(
   );
   const [modalOpened, setModalOpened] = context.useState(false);
 
-  const bind = context.useMemo(createBinder, []);
+  const binder = context.useMemo(() => new MemoBinder(), []);
 
   const handleOpenModal = context.useCallback(() => {
     setModalOpened(true);
@@ -102,42 +102,42 @@ export function KitchensinkPage(
         <button
           type="button"
           class="button button-default"
-          @click=${bind(handleSendNotification, 'default')}
+          @click=${binder.bind(handleSendNotification, 'default')}
         >
           Default
         </button>
         <button
           type="button"
           class="button button-positive"
-          @click=${bind(handleSendNotification, 'positive')}
+          @click=${binder.bind(handleSendNotification, 'positive')}
         >
           Positive
         </button>
         <button
           type="button"
           class="button button-negative"
-          @click=${bind(handleSendNotification, 'negative')}
+          @click=${binder.bind(handleSendNotification, 'negative')}
         >
           Negative
         </button>
         <button
           type="button"
           class="button button-outline-default"
-          @click=${bind(handleSendNotification, 'default')}
+          @click=${binder.bind(handleSendNotification, 'default')}
         >
           Default
         </button>
         <button
           type="button"
           class="button button-outline-positive"
-          @click=${bind(handleSendNotification, 'positive')}
+          @click=${binder.bind(handleSendNotification, 'positive')}
         >
           Positive
         </button>
         <button
           type="button"
           class="button button-outline-negative"
-          @click=${bind(handleSendNotification, 'negative')}
+          @click=${binder.bind(handleSendNotification, 'negative')}
         >
           Negative
         </button>
