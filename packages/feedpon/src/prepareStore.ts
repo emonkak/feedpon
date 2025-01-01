@@ -1,10 +1,8 @@
-import { createLogger } from 'redux-logger';
-
 import type { Middleware, Store } from 'feedpon-flux';
 import { applyMiddlewares, createStore } from 'feedpon-flux';
 import errorHandlingMiddleware from 'feedpon-flux/middlewares/errorHandlingMiddleware';
 import eventSourcingMiddleware from 'feedpon-flux/middlewares/eventSourcingMiddleware';
-import reduxMiddleware from 'feedpon-flux/middlewares/reduxMiddleware';
+import { loggerMiddleware } from 'feedpon-flux/middlewares/loggerMiddleware';
 import thunkMiddleware from 'feedpon-flux/middlewares/thunkMiddleware';
 import IndexedDBEventStore from 'feedpon-flux/persistence/IndexedDBEventStore';
 import {
@@ -39,14 +37,7 @@ export default async function prepareStore(
   ];
 
   DEBUG: {
-    middlewares.push(
-      reduxMiddleware(
-        createLogger({
-          collapsed: true,
-          duration: true,
-        }),
-      ),
-    );
+    middlewares.push(loggerMiddleware());
   }
 
   const store = applyMiddlewares(

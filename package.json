@@ -83,10 +83,7 @@
     },
     "check": {
       "command": "biome check .",
-      "files": [
-        "packages/*/src/**/*.ts",
-        "packages/*/src/**/*.tsx"
-      ],
+      "files": ["packages/*/src/**/*.ts"],
       "output": []
     },
     "ci": {
@@ -111,7 +108,6 @@
       "clean": "if-file-deleted",
       "files": [
         "packages/*/src/**/*.ts",
-        "packages/*/src/**/*.tsx",
         "packages/*/tsconfig.json",
         "tsconfig.base.json",
         "tsconfig.json"

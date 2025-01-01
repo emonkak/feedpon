@@ -10,12 +10,10 @@
   "dependencies": {
     "@emonkak/ebit": "github:emonkak/ebit",
     "@types/chrome": "^0.0.253",
-    "@types/redux-logger": "^3.0.13",
     "feedpon-adapters": "link:../feedpon-adapters",
     "feedpon-flux": "link:../feedpon-flux",
     "feedpon-messaging": "link:../feedpon-messaging",
     "feedpon-utils": "link:../feedpon-utils",
-    "feedpon-view": "link:../feedpon-view",
-    "redux-logger": "^3.0.6"
+    "feedpon-view": "link:../feedpon-view"
   }
 }
