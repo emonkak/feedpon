@@ -3,9 +3,9 @@ import type { RenderContext } from '@emonkak/ebit';
 export interface SwipeableProps {
   coordinates: Coordinates;
   isSwiping: boolean;
-  onTouchEnd: (event: TouchEvent) => void;
-  onTouchMove: (event: TouchEvent) => void;
-  onTouchStart: (event: TouchEvent) => void;
+  onTouchEnd: TouchEventListenerObject;
+  onTouchMove: TouchEventListenerObject;
+  onTouchStart: TouchEventListenerObject;
 }
 
 export interface Coordinates {
@@ -13,6 +13,10 @@ export interface Coordinates {
   initialY: number;
   destX: number;
   destY: number;
+}
+
+interface TouchEventListenerObject {
+  handleEvent(event: TouchEvent): void;
 }
 
 export function swipeableHook(context: RenderContext): SwipeableProps {
@@ -24,37 +28,55 @@ export function swipeableHook(context: RenderContext): SwipeableProps {
     destY: 0,
   }));
 
-  const onTouchStart = context.useCallback((event: TouchEvent): void => {
-    if (event.targetTouches.length === 0) {
-      return;
-    }
+  const onTouchStart = context.useMemo(
+    () => ({
+      passive: true,
+      handleEvent(event: TouchEvent): void {
+        if (event.targetTouches.length === 0) {
+          return;
+        }
 
-    const { clientX, clientY } = event.targetTouches[0]!;
+        const { clientX, clientY } = event.targetTouches[0]!;
 
-    setIsSwping(true);
-    setCoordinates({
-      initialX: clientX,
-      initialY: clientY,
-      destX: clientX,
-      destY: clientY,
-    });
-  }, []);
-  const onTouchMove = context.useCallback((event: TouchEvent): void => {
-    if (event.targetTouches.length === 0) {
-      return;
-    }
+        setIsSwping(true);
+        setCoordinates({
+          initialX: clientX,
+          initialY: clientY,
+          destX: clientX,
+          destY: clientY,
+        });
+      },
+    }),
+    [],
+  );
+  const onTouchMove = context.useMemo(
+    () => ({
+      passive: true,
+      handleEvent(event: TouchEvent): void {
+        if (event.targetTouches.length === 0) {
+          return;
+        }
 
-    const { clientX, clientY } = event.targetTouches[0]!;
+        const { clientX, clientY } = event.targetTouches[0]!;
 
-    setCoordinates((coordinates) => ({
-      ...coordinates,
-      destX: clientX,
-      destY: clientY,
-    }));
-  }, []);
-  const onTouchEnd = context.useCallback((_event: TouchEvent): void => {
-    setIsSwping(false);
-  }, []);
+        setCoordinates((coordinates) => ({
+          ...coordinates,
+          destX: clientX,
+          destY: clientY,
+        }));
+      },
+    }),
+    [],
+  );
+  const onTouchEnd = context.useMemo(
+    () => ({
+      passive: true,
+      handleEvent(_event: TouchEvent): void {
+        setIsSwping(false);
+      },
+    }),
+    [],
+  );
 
   return {
     coordinates,
