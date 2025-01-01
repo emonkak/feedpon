@@ -1,28 +1,16 @@
 import type {
+  RefCallback,
   RefObject,
   RenderContext,
   TemplateResult,
   Usable,
 } from '@emonkak/ebit';
-import { keyedList, memo } from '@emonkak/ebit/directives.js';
+import { type ElementRef, keyedList, memo } from '@emonkak/ebit/directives.js';
 import throttle from 'feedpon-utils/throttle';
-import React, {
-  forwardRef,
-  useEffect,
-  useImperativeHandle,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
 
-import type { RefCallback } from '@emonkak/ebit';
-import type { ElementRef, List, Memo } from '@emonkak/ebit/directives.js';
-import { createEventHook } from '../hooks/eventHook';
-import { isMountedHook } from '../hooks/isMountedHook';
-import { createPreviousHook } from '../hooks/previousHook';
-import { useEvent } from '../hooks/useEvent';
-import { useIsMounted } from '../hooks/useIsMounted';
-import { usePrevious } from '../hooks/usePrevious';
+import { createEventHook } from '../common/hooks/eventHook';
+import { isMountedHook } from '../common/hooks/isMountedHook';
+import { createPreviousHook } from '../common/hooks/previousHook';
 
 export interface BlankSpaces {
   above: number;
@@ -52,10 +40,7 @@ export interface VirtualScrollListRef {
   scrollTo(index: number): void;
 }
 
-export interface VirtualScrollListProps<
-  TItem extends { id: PropertyKey },
-  TValue,
-> {
+export interface VirtualScrollListProps<TItem extends { id: PropertyKey }> {
   assumedItemSize?: number;
   getScrollContainer?: () => Window | Element;
   getScreen?: () => DOMRectReadOnly;
@@ -70,9 +55,9 @@ export interface VirtualScrollListProps<
     index: number,
     ref: ElementRef,
     context: RenderContext,
-  ) => TValue;
+  ) => unknown;
   renderList: (
-    children: Memo<List<TItem, TItem['id'], TValue>>,
+    children: unknown,
     blankSpaces: BlankSpaces,
     ref: ElementRef,
     context: RenderContext,
@@ -82,7 +67,7 @@ export interface VirtualScrollListProps<
   scrollThrottleTime?: number;
 }
 
-export function VirtualScrollList<TItem extends { id: PropertyKey }, TValue>(
+export function VirtualScrollList<TItem extends { id: PropertyKey }>(
   {
     assumedItemSize = 200,
     getScrollContainer = () => window,
@@ -98,7 +83,7 @@ export function VirtualScrollList<TItem extends { id: PropertyKey }, TValue>(
     scheduleUpdate = queueMicrotask,
     scrollBy = (x, y) => window.scrollBy(x, y),
     scrollThrottleTime = 100,
-  }: VirtualScrollListProps<TItem, TValue>,
+  }: VirtualScrollListProps<TItem>,
   context: RenderContext,
 ): TemplateResult {
   const containerRef = context.useRef<Element | null>(null);
@@ -357,358 +342,6 @@ export function VirtualScrollList<TItem extends { id: PropertyKey }, TValue>(
   return renderList(children, blankSpaces, containerRef, context);
 }
 
-export interface ReactVirtualScrollListProps<
-  TItem extends { id: PropertyKey },
-> {
-  assumedItemSize?: number;
-  getScrollContainer?: () => Window | Element;
-  getScreen?: () => DOMRectReadOnly;
-  initialBlockSizes?: BlockSizes;
-  initialItemIndex?: number;
-  items: TItem[];
-  offscreenRatio?: number;
-  onUpdateBlockSizes?: (newBlockSizes: BlockSizes) => void;
-  onUpdateDimensions?: (dimensions: Dimensions) => void;
-  renderItem: (
-    item: TItem,
-    index: number,
-    ref: React.RefCallback<Element>,
-  ) => React.ReactElement<unknown>;
-  renderList: (
-    children: React.ReactElement<unknown>[],
-    blankSpaces: BlankSpaces,
-    ref: React.RefObject<Element>,
-  ) => React.ReactElement<unknown>;
-  scheduleUpdate?: (callback: VoidFunction) => void;
-  scrollBy?: (x: number, y: number) => void;
-  scrollThrottleTime?: number;
-}
-
-interface ReactVirtualScrollListRendererProps<
-  TItem extends { id: PropertyKey },
-> {
-  blockPositions: BlockPosition[];
-  containerRef: React.RefObject<Element>;
-  items: TItem[];
-  onUpdateBlockSizes: (newBlockSizes: BlockSizes) => void;
-  renderItem: (
-    item: TItem,
-    index: number,
-    ref: React.RefCallback<Element>,
-  ) => React.ReactElement<unknown>;
-  renderList: (
-    children: React.ReactElement<unknown>[],
-    blankSpaces: BlankSpaces,
-    ref: React.RefObject<Element>,
-  ) => React.ReactElement<unknown>;
-  scope: Scope;
-}
-
-export const ReactVirtualScrollList = forwardRef(
-  function ReactVirtualScrollList<TItem extends { id: PropertyKey }>(
-    {
-      assumedItemSize = 200,
-      getScreen = () =>
-        new DOMRect(0, 0, window.innerWidth, window.innerHeight),
-      getScrollContainer = () => window,
-      items,
-      initialItemIndex = -1,
-      offscreenRatio = 1.0,
-      onUpdateBlockSizes,
-      onUpdateDimensions,
-      renderItem,
-      renderList,
-      scrollBy = (x, y) => window.scrollBy(x, y),
-      scheduleUpdate = queueMicrotask,
-      scrollThrottleTime = 100,
-    }: ReactVirtualScrollListProps<TItem>,
-    ref: React.ForwardedRef<VirtualScrollListRef>,
-  ) {
-    const containerRef = useRef<Element | null>(null);
-    const scrollingItemIndexRef = useRef(initialItemIndex);
-    const blockSizesRef = useMemo(() => ({ current: new Map() }), []);
-    const requestUpdate = useMemo(
-      () => createScheduler(scheduleUpdate),
-      [scheduleUpdate],
-    );
-
-    const blockPositionsRef = useMemo(
-      () => ({
-        current: computeBlockPositions(
-          items,
-          blockSizesRef.current,
-          assumedItemSize,
-        ),
-      }),
-      [],
-    );
-    const scopeRef = useMemo(
-      () => ({
-        current: getInitialScope(
-          items,
-          blockSizesRef.current,
-          assumedItemSize,
-          initialItemIndex,
-          getScreen(),
-        ),
-      }),
-      [],
-    );
-
-    const oldItems = usePrevious(items) ?? [];
-
-    if (items !== oldItems) {
-      const newSlice = items.slice(
-        scopeRef.current.start,
-        scopeRef.current.end,
-      );
-      const oldSlice = oldItems.slice(
-        scopeRef.current.start,
-        scopeRef.current.end,
-      );
-
-      if (areIdenticalItems(newSlice, oldSlice)) {
-        if (items.length < scopeRef.current.end) {
-          scopeRef.current = {
-            start: Math.min(items.length - 1, scopeRef.current.start),
-            end: items.length,
-          };
-        }
-      } else {
-        blockSizesRef.current = new Map();
-        scrollingItemIndexRef.current = initialItemIndex;
-        scopeRef.current = getInitialScope(
-          items,
-          blockSizesRef.current,
-          assumedItemSize,
-          initialItemIndex,
-          getScreen(),
-        );
-      }
-
-      blockPositionsRef.current = computeBlockPositions(
-        items,
-        blockSizesRef.current,
-        assumedItemSize,
-      );
-    }
-
-    const [, forceUpdate] = useState({});
-
-    useImperativeHandle(ref, () => ({
-      scrollTo(index: number): void {
-        scopeRef.current = getInitialScope(
-          items,
-          blockSizesRef.current,
-          assumedItemSize,
-          index,
-          getScreen(),
-        );
-
-        scrollingItemIndexRef.current = index;
-
-        // Force update even if the scope has not changed.
-        forceUpdate({});
-      },
-    }));
-
-    const isMounted = useIsMounted();
-
-    const updateDimensions = useEvent(() => {
-      if (!isMounted()) {
-        requestAnimationFrame(updateDimensions);
-        return;
-      }
-
-      const screen = containerRef.current
-        ? translateRect(
-            getScreen(),
-            containerRef.current.getBoundingClientRect(),
-          )
-        : getScreen();
-
-      const newScope = getCurrentScope(
-        blockPositionsRef.current,
-        screen,
-        offscreenRatio,
-      );
-
-      if (!areEqualScopes(scopeRef.current, newScope)) {
-        scopeRef.current = newScope;
-        forceUpdate({});
-      }
-
-      onUpdateDimensions?.({
-        blockPositions: blockPositionsRef.current,
-        blockSizes: blockSizesRef.current,
-        scope: newScope,
-        screen,
-      });
-    });
-
-    const updateBlockSizes = useEvent((newBlockSizes: BlockSizes) => {
-      let hasChanged = false;
-
-      for (const id in newBlockSizes) {
-        const oldBlockSize = blockSizesRef.current.get(id);
-        const newBlockSize = newBlockSizes.get(id);
-        if (oldBlockSize !== newBlockSize) {
-          blockSizesRef.current.set(id, newBlockSize);
-          hasChanged = true;
-        }
-      }
-
-      if (hasChanged) {
-        blockPositionsRef.current = computeBlockPositions(
-          items,
-          blockSizesRef.current,
-          assumedItemSize,
-        );
-        requestUpdate(updateDimensions);
-        onUpdateBlockSizes?.(blockSizesRef.current);
-      }
-    });
-
-    useEffect(() => {
-      const scrollContainer = getScrollContainer();
-
-      const callback = throttle(() => {
-        requestUpdate(updateDimensions);
-      }, scrollThrottleTime);
-
-      scrollContainer.addEventListener('scroll', callback, {
-        passive: true,
-      });
-
-      return () => {
-        scrollContainer.removeEventListener('scroll', callback);
-      };
-    }, [getScrollContainer, requestUpdate, scrollThrottleTime]);
-
-    useEffect(() => {
-      const newSlice = items.slice(
-        scopeRef.current.start,
-        scopeRef.current.end,
-      );
-      const oldSlice = oldItems.slice(
-        scopeRef.current.start,
-        scopeRef.current.end,
-      );
-      let willUpdate = false;
-
-      if (!areIdenticalItems(newSlice, oldSlice)) {
-        blockPositionsRef.current = computeBlockPositions(
-          items,
-          blockSizesRef.current,
-          assumedItemSize,
-        );
-        willUpdate = true;
-      }
-
-      if (scrollingItemIndexRef.current >= 0) {
-        const screen = containerRef.current
-          ? translateRect(
-              getScreen(),
-              containerRef.current.getBoundingClientRect(),
-            )
-          : getScreen();
-
-        const scrollOffset = getScrollOffset(
-          blockPositionsRef.current,
-          scrollingItemIndexRef.current,
-          screen,
-        );
-
-        if (scrollOffset !== 0) {
-          scrollBy(0, scrollOffset);
-        }
-
-        scrollingItemIndexRef.current = -1;
-        willUpdate = true;
-      }
-
-      if (willUpdate) {
-        requestUpdate(updateDimensions);
-      }
-    }, [items, requestUpdate, scrollingItemIndexRef.current, scopeRef.current]);
-
-    return (
-      <MemoizedVirtualScrollListRenderer
-        blockPositions={blockPositionsRef.current}
-        containerRef={containerRef}
-        items={items}
-        onUpdateBlockSizes={updateBlockSizes}
-        renderItem={renderItem}
-        renderList={renderList}
-        scope={scopeRef.current}
-      />
-    );
-  },
-) as <TItem extends { id: PropertyKey }>(
-  props: ReactVirtualScrollListProps<TItem> & {
-    ref?: React.ForwardedRef<VirtualScrollListRef>;
-  },
-) => React.ReactElement;
-
-const MemoizedVirtualScrollListRenderer = React.memo(
-  function VirtualScrollListRenderer<TItem extends { id: PropertyKey }>({
-    blockPositions,
-    containerRef,
-    items,
-    onUpdateBlockSizes,
-    renderItem,
-    renderList,
-    scope,
-  }: ReactVirtualScrollListRendererProps<TItem>) {
-    const elementToIdMap = useMemo(
-      () => new WeakMap<Element, TItem['id']>(),
-      [],
-    );
-
-    const resizeObserver = useResizeObserver(
-      (entries: ResizeObserverEntry[]) => {
-        const blockSizes = new Map();
-
-        for (let i = 0, l = entries.length; i < l; i++) {
-          const entry = entries[i]!;
-          const id = elementToIdMap.get(entry.target);
-          if (id !== undefined) {
-            blockSizes.set(id, entry.borderBoxSize[0]!.blockSize);
-          }
-        }
-
-        onUpdateBlockSizes(blockSizes);
-      },
-    );
-
-    const children = items.slice(scope.start, scope.end).map((item, index) => {
-      const id = item.id;
-      let lastElemnt: Element | null = null;
-
-      const ref = (element: Element | null) => {
-        if (element) {
-          elementToIdMap.set(element, id);
-          resizeObserver.observe(element);
-        } else {
-          if (lastElemnt !== null) {
-            elementToIdMap.delete(lastElemnt);
-            resizeObserver.unobserve(lastElemnt);
-          }
-        }
-        lastElemnt = element;
-      };
-
-      return renderItem(item, index + scope.start, ref);
-    });
-
-    const blankSpaces = getBlankSpaces(blockPositions, scope);
-
-    return renderList(children, blankSpaces, containerRef);
-  },
-) as <TItem extends { id: PropertyKey }>(
-  props: ReactVirtualScrollListRendererProps<TItem>,
-) => React.ReactElement;
-
 function areEqualScopes(first: Scope, second: Scope) {
   return first.start === second.start && first.end === second.end;
 }
@@ -748,23 +381,6 @@ function createResizeObserverHook(
     }, []);
 
     return resizeObserver;
-  };
-}
-
-function createScheduler(
-  scheduleFn: (callback: () => void) => void,
-): (callback: () => void) => void {
-  let isScheduling = false;
-
-  return (callback) => {
-    if (isScheduling) {
-      return;
-    }
-    isScheduling = true;
-    scheduleFn(() => {
-      isScheduling = false;
-      callback();
-    });
   };
 }
 
@@ -909,19 +525,4 @@ function translateRect(
   const top = rect.top - referenceRect.top;
   const left = rect.left - referenceRect.left;
   return new DOMRect(left, top, rect.width, rect.height);
-}
-
-function useResizeObserver(callback: ResizeObserverCallback) {
-  const resizeObserver = useMemo(
-    () => new ResizeObserver(callback),
-    [callback],
-  );
-
-  useEffect(() => {
-    return () => {
-      resizeObserver.disconnect();
-    };
-  }, []);
-
-  return resizeObserver;
 }

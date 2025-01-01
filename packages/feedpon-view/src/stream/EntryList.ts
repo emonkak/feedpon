@@ -8,13 +8,13 @@ import {
 import type { Entry, StreamViewKind } from 'feedpon-messaging';
 import * as SmoothScroll from 'feedpon-utils/SmoothScroll';
 
+import { createEventHook } from '../common/hooks/eventHook';
 import {
   type BlankSpaces,
   type Dimensions,
   VirtualScrollList,
   type VirtualScrollListRef,
-} from '../common/components/VirtualScrollList';
-import { createEventHook } from '../common/hooks/eventHook';
+} from '../primitives/VirtualScrollList';
 import { EntryItem } from './EntryItem';
 import {
   CollapsedEntryPlaceholder,
@@ -174,7 +174,7 @@ export function EntryList(
     }
   }
 
-  return context.html`<${component(VirtualScrollList<RenderingItem, unknown>, {
+  return context.html`<${component(VirtualScrollList<RenderingItem>, {
     assumedItemSize: streamView === 'expanded' ? 800 : 100,
     initialItemIndex:
       expandedEntryIndex >= 0 ? expandedEntryIndex : activeEntryIndex,

@@ -14,11 +14,11 @@ import { KitchensinkPage } from './kitchensink/KitchensinkPage';
 import { SearchPage } from './search/SearchPage';
 import { KeyboardSettings } from './settings/KeyboardSettings';
 import { SettingsPage } from './settings/SettingsPage';
+import { SiteinfoSettings } from './settings/SiteinfoSettings';
 import { StreamSettings } from './settings/StreamSettings';
 import { TrackingUrlSettings } from './settings/TrackingUrlSettings';
 import { UISettings } from './settings/UISettings';
 import { UrlReplacementSettings } from './settings/UrlReplacementSettings';
-// import { SiteinfoSettings } from './settings/SiteinfoSettings';
 import { StreamPage } from './stream/StreamPage';
 
 export interface RouterState {
@@ -70,16 +70,16 @@ export const router = new Router<Component<any, any, any>, RouterState>([
     ],
   ),
   route(['settings'], null, [
-    route(['ui'], (_args, url) =>
-      component(SettingsPage, {
-        url,
-        children: component(UISettings, {}),
-      }),
-    ),
     route(['keyboard'], (_args, url) =>
       component(SettingsPage, {
         url,
         children: component(KeyboardSettings, {}),
+      }),
+    ),
+    route(['siteinfo'], (_args, url) =>
+      component(SettingsPage, {
+        url,
+        children: component(SiteinfoSettings, {}),
       }),
     ),
     route(['stream'], (_args, url) =>
@@ -94,19 +94,18 @@ export const router = new Router<Component<any, any, any>, RouterState>([
         children: component(TrackingUrlSettings, {}),
       }),
     ),
+    route(['ui'], (_args, url) =>
+      component(SettingsPage, {
+        url,
+        children: component(UISettings, {}),
+      }),
+    ),
     route(['url_replacement'], (_args, url) =>
       component(SettingsPage, {
         url,
         children: component(UrlReplacementSettings, {}),
       }),
     ),
-    // route(['siteinfo'], (_args, url, { locationActions }) =>
-    //   component(SettingsPage, {
-    //     url,
-    //     locationActions,
-    //     children: component(SiteinfoSettings, {}),
-    //   }),
-    // ),
   ]),
   route(
     ['streams', wildcard],

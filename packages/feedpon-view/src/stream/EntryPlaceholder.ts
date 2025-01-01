@@ -62,14 +62,14 @@ export function CollapsedEntryPlaceholder(
       <div class="container">
         <header class="entry-header">
           <h2 class="entry-title">
-            <span class="placeholder placeholder-80 animation-shining" />
+            <span class="placeholder placeholder-80 animation-shining"></span>
           </h2>
           <div class="entry-metadata">
-            <span class="placeholder placeholder-60 animation-shining" />
+            <span class="placeholder placeholder-60 animation-shining"></span>
           </div>
         </header>
         <div class="entry-summary">
-          <span class="placeholder placeholder-100 animation-shining" />
+          <span class="placeholder placeholder-100 animation-shining"></span>
         </div>
       </div>
     </article>

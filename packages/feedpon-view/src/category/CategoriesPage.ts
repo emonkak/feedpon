@@ -29,15 +29,15 @@ import {
 } from '@emonkak/ebit/directives.js';
 import { getStoreHook } from 'feedpon-flux/ebit';
 import { Navbar } from '../common/components/Navbar';
-import {
-  type BlankSpaces,
-  VirtualScrollList,
-} from '../common/components/VirtualScrollList';
 import { MainLayout } from '../layouts/MainLayout';
 import { Dropdown } from '../primitives/Dropdown';
 import { type TabItem, TabList } from '../primitives/TabList';
+import {
+  type BlankSpaces,
+  VirtualScrollList,
+} from '../primitives/VirtualScrollList';
 import { SubscriptionView } from '../subscription/SubscriptionView';
-import { CategoryEdit } from './CategoryEdit';
+import { CategoryForm } from './CategoryForm';
 
 export interface CategoriesPageProps {
   label?: string;
@@ -296,7 +296,7 @@ export function CategoriesPage(
       <${tabList}>
       <${optional(
         activeCategory !== null
-          ? component(CategoryEdit, {
+          ? component(CategoryForm, {
               category: activeCategory,
               onCategoryUpdate: handleUpdateCategory,
               onCategoryDelete: onDeleteCategory,
@@ -315,10 +315,7 @@ export function CategoriesPage(
       </p>
       <${description}>
       <${component(
-        VirtualScrollList<
-          { id: string | number; subscription: Subscription },
-          unknown
-        >,
+        VirtualScrollList<{ id: string | number; subscription: Subscription }>,
         {
           assumedItemSize: 60,
           items: filteredSubscriptions,

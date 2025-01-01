@@ -26,7 +26,7 @@ export function AuthenticationPage(
             target="_blank"
             rel="noreferrer"
           >
-            <img src="./img/logo.svg" width="244" height="88" />
+            <img src="./img/logo.svg" width="244" height="88">
           </a>
         </div>
         <div class="u-text-muted u-text-center u-margin-bottom-2">
@@ -43,7 +43,7 @@ export function AuthenticationPage(
                 name="backend"
                 value="feedly"
                 checked
-              />
+              >
               <i class="icon icon-48 icon-feedly u-margin-right-1"></i>
               <span class="u-flex-grow-1 u-text-5">Feedly</span>
             </div>

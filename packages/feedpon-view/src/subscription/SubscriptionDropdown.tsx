@@ -167,7 +167,7 @@ export function SubscriptionDropdown(
                     value=${categoryLabel}
                     disabled=${subscription.isLoading}
                     @change=${handleChangeCategoryLabel}
-                  />
+                  >
                   <button
                     type="submit"
                     class="button button-positive"

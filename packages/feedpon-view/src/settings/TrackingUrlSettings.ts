@@ -109,7 +109,7 @@ export function TrackingUrlSettings(
                 type="number"
                 .value=${cacheCapacity$.map(live)}
                 @change=${handleChangeCacheCapacity}
-              />
+              >
               <button type="submit" class="button button-outline-positive">
                 Save
               </button>

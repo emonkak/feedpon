@@ -209,7 +209,7 @@ export function AboutPage(
           target="_blank"
           rel="noreferrer"
         >
-          <img src="./img/logo.svg" width="244" height="88" />
+          <img src="./img/logo.svg" width="244" height="88">
         </a>
         <div>
           Version <strong>${version}</strong>

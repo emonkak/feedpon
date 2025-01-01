@@ -4,14 +4,14 @@ import type { Category } from 'feedpon-messaging';
 
 import { AlertDialog } from '../primitives/AlertDialog';
 
-interface CategoryEditProps {
+interface CategoryFormProps {
   category: Category;
   onCategoryDelete: (categoryId: string | number, label: string) => void;
   onCategoryUpdate: (category: Category, newLabel: string) => void;
 }
 
-export function CategoryEdit(
-  { category, onCategoryDelete, onCategoryUpdate }: CategoryEditProps,
+export function CategoryForm(
+  { category, onCategoryDelete, onCategoryUpdate }: CategoryFormProps,
   context: RenderContext,
 ): TemplateResult {
   const currentLabel$ = context.useMemo(() => atom(category.label), [category]);

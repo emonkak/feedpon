@@ -1,151 +1,165 @@
+import type { RenderContext, TemplateResult } from '@emonkak/ebit';
 import type { SiteinfoItem } from 'feedpon-messaging';
-import React, { useState } from 'react';
 
-import { ValidatableControl } from '../common/components/ValidatableControl';
-import { useEvent } from '../common/hooks/useEvent';
+import { Atom, component, live } from '@emonkak/ebit/directives.js';
+import { FormControl, type FormValidation } from '../primitives/FormControl';
 
 interface UserSiteinfoFormProps {
-  children?: React.ReactNode;
   item?: SiteinfoItem;
-  legend: string;
   onSubmit: (item: SiteinfoItem) => void;
 }
 
-const PATTERN_VALIDATIONS = [
-  {
-    message: 'Invalid regular expression.',
-    rule: isValidPattern,
-  },
+const PATTERN_VALIDATIONS: FormValidation<'input'>[] = [
+  (element) =>
+    isValidPattern(element.value) ? null : 'Invalid regular expression.',
 ];
 
-const XPATH_VALIDATIONS = [
-  {
-    message: 'Invalid XPath expression.',
-    rule: isValidXPath,
-  },
+const XPATH_VALIDATIONS: FormValidation<'input'>[] = [
+  (element) =>
+    isValidXPath(element.value) ? null : 'Invalid XPath expression.',
 ];
 
-export function UserSiteinfoForm({
-  children,
-  item,
-  legend,
-  onSubmit,
-}: UserSiteinfoFormProps) {
-  const [formData, setFormData] = useState({
-    name: item?.name ?? '',
-    urlPattern: item?.urlPattern ?? '',
-    contentExpression: item?.contentExpression ?? '',
-    nextLinkExpression: item?.nextLinkExpression ?? '',
-  });
-
-  const handleSubmit = useEvent((event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    onSubmit({
-      id: item?.id ?? Date.now(),
-      name: formData.name,
-      urlPattern: formData.urlPattern,
-      contentExpression: formData.contentExpression,
-      nextLinkExpression: formData.nextLinkExpression,
-    });
-
-    if (!item) {
-      setFormData({
-        name: '',
-        urlPattern: '',
-        contentExpression: '',
-        nextLinkExpression: '',
-      });
-    }
-  });
-
-  const handleChange = useEvent(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      const { name, value } = event.currentTarget;
-
-      setFormData((formData) => ({
-        ...formData,
-        [name]: value,
-      }));
-    },
+export function UserSiteinfoForm(
+  { item, onSubmit }: UserSiteinfoFormProps,
+  context: RenderContext,
+): TemplateResult {
+  const name$ = context.useMemo(() => new Atom(item?.name ?? ''), []);
+  const urlPattern$ = context.useMemo(
+    () => new Atom(item?.urlPattern ?? ''),
+    [],
+  );
+  const contentExpression$ = context.useMemo(
+    () => new Atom(item?.contentExpression ?? ''),
+    [],
+  );
+  const nextLinkExpression$ = context.useMemo(
+    () => new Atom(item?.nextLinkExpression ?? ''),
+    [],
   );
 
-  return (
-    <form className="form" onSubmit={handleSubmit}>
-      <div className="form-legend">{legend}</div>
-      <div className="form-group">
+  const handleSubmit = context.useCallback(
+    (event: SubmitEvent) => {
+      event.preventDefault();
+
+      onSubmit({
+        id: item?.id ?? Date.now(),
+        name: name$.value,
+        urlPattern: urlPattern$.value,
+        contentExpression: contentExpression$.value,
+        nextLinkExpression: nextLinkExpression$.value,
+      });
+
+      if (item === undefined) {
+        name$.value = '';
+        urlPattern$.value = '';
+        contentExpression$.value = '';
+        nextLinkExpression$.value = '';
+      }
+    },
+    [onSubmit, item],
+  );
+
+  const handleNameInput = context.useCallback((event: Event) => {
+    name$.value = (event.currentTarget as HTMLInputElement).value;
+  }, []);
+
+  const handleUrlPatternInput = context.useCallback((event: Event) => {
+    urlPattern$.value = (event.currentTarget as HTMLInputElement).value;
+  }, []);
+
+  const handleContentExpressionInput = context.useCallback((event: Event) => {
+    contentExpression$.value = (event.currentTarget as HTMLInputElement).value;
+  }, []);
+
+  const handleNextLinkInput = context.useCallback((event: Event) => {
+    nextLinkExpression$.value = (event.currentTarget as HTMLInputElement).value;
+  }, []);
+
+  return context.html`
+    <form class="form" @submit=${handleSubmit}>
+      <div class="form-legend">${item !== undefined ? 'Edit siteinfo' : 'New siteinfo'}</div>
+      <div class="form-group">
         <label>
-          <span className="form-group-heading form-required">Name</span>
-          <ValidatableControl>
-            <input
-              className="form-control"
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-            />
-          </ValidatableControl>
+          <span class="form-group-heading form-required">Name</span>
+          <${component(FormControl<'input'>, {
+            as: 'input',
+            ownProps: {
+              class: 'form-control',
+              name: 'name',
+              required: true,
+              type: 'text',
+              '.value': name$.map(live),
+              '@input': handleNameInput,
+            },
+          })}>
         </label>
       </div>
-      <div className="form-group">
+      <div class="form-group">
         <label>
-          <span className="form-group-heading form-required">URL pattern</span>
-          <ValidatableControl validations={PATTERN_VALIDATIONS}>
-            <input
-              className="form-control"
-              name="urlPattern"
-              onChange={handleChange}
-              required
-              type="text"
-              value={formData.urlPattern}
-            />
-          </ValidatableControl>
+          <span class="form-group-heading form-required">URL pattern</span>
+          <${component(FormControl<'input'>, {
+            as: 'input',
+            validations: PATTERN_VALIDATIONS,
+            ownProps: {
+              class: 'form-control',
+              name: 'urlPattern',
+              required: true,
+              type: 'text',
+              '.value': urlPattern$.map(live),
+              '@input': handleUrlPatternInput,
+            },
+          })}>
         </label>
-        <span className="u-text-muted">
-          The regular expression for the url.
-        </span>
+        <span class="u-text-muted">The regular expression for URL.</span>
       </div>
-      <div className="form-group">
+      <div class="form-group">
         <label>
-          <span className="form-group-heading form-required">
+          <span class="form-group-heading form-required">
             Content expression
           </span>
-          <ValidatableControl validations={XPATH_VALIDATIONS}>
-            <input
-              className="form-control"
-              name="contentExpression"
-              onChange={handleChange}
-              required
-              type="text"
-              value={formData.contentExpression}
-            />
-          </ValidatableControl>
+          <${component(FormControl<'input'>, {
+            as: 'input',
+            validations: PATTERN_VALIDATIONS,
+            ownProps: {
+              class: 'form-control',
+              name: 'contentExpression',
+              required: true,
+              type: 'text',
+              '.value': contentExpression$.map(live),
+              '@input': handleContentExpressionInput,
+            },
+          })}>
         </label>
-        <span className="u-text-muted">
-          The XPath expression to the element representing the content.
+        <span class="u-text-muted">
+          The XPath expression to an element representing the content.
         </span>
       </div>
-      <div className="form-group">
+      <div class="form-group">
         <label>
-          <span className="form-group-heading">Next link expression</span>
-          <ValidatableControl validations={XPATH_VALIDATIONS}>
-            <input
-              className="form-control"
-              name="nextLinkExpression"
-              onChange={handleChange}
-              type="text"
-              value={formData.nextLinkExpression}
-            />
-          </ValidatableControl>
+          <span class="form-group-heading">Next link expression</span>
+          <${component(FormControl<'input'>, {
+            as: 'input',
+            validations: XPATH_VALIDATIONS,
+            ownProps: {
+              class: 'form-control',
+              name: 'nextLinkExpression',
+              type: 'text',
+              '.value': nextLinkExpression$.map(live),
+              '@input': handleNextLinkInput,
+            },
+          })}>
         </label>
-        <span className="u-text-muted">
-          The XPath expression to the anchor element representing the next link.
+        <span class="u-text-muted">
+          The XPath expression to an anchor element representing the next link.
         </span>
       </div>
-      <div className="form-group">{children}</div>
+      <div class="form-group">
+        <button class="button button-outline-positive" type="submit">
+          ${item !== undefined ? 'Update' : 'Add'}
+        </button>
+      </div>
     </form>
-  );
+  `;
 }
 
 function isValidXPath(expression: string): boolean {
