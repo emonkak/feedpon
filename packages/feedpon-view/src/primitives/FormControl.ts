@@ -31,10 +31,11 @@ export type FormValidation<TTagName extends FormControlElementTagName> = (
   element: HTMLElementTagNameMap[TTagName],
 ) => string | null;
 
-type FormControlStatus =
-  | { type: 'empty' }
-  | { type: 'valid' }
-  | { type: 'invalid'; errors: string[] };
+enum FormControlStatus {
+  Empty,
+  Valid,
+  Invalid,
+}
 
 const VOID_ELEMENTS = [
   'area',
@@ -57,14 +58,12 @@ export function FormControl<TTagName extends FormControlElementTagName>(
   { as, validations = [], ownProps = {} }: FormControlProps<TTagName>,
   context: RenderContext,
 ): TemplateResult {
-  const [status, setStatus] = context.useState<FormControlStatus>({
-    type: 'empty',
-  });
+  const [status, setStatus] = context.useState(FormControlStatus.Empty);
   const elementRef = context.useRef<HTMLElementTagNameMap[TTagName] | null>(
     null,
   );
 
-  const runValidations = context.useCallback(() => {
+  const runValidations = () => {
     const element = elementRef.current!;
 
     if (element.value !== '') {
@@ -77,30 +76,31 @@ export function FormControl<TTagName extends FormControlElementTagName>(
       }
       if (errors.length > 0) {
         element.setCustomValidity(errors.join('\n'));
-        setStatus({ type: 'invalid', errors });
+        setStatus(FormControlStatus.Invalid);
       } else {
-        element.setCustomValidity('');
-        setStatus({ type: 'valid' });
+        setStatus(FormControlStatus.Valid);
       }
     } else {
       element.setCustomValidity('');
-      setStatus({ type: 'empty' });
+      setStatus(FormControlStatus.Empty);
     }
-  }, [validations]);
+  };
 
   const handleInput = context.useCallback(() => {
     runValidations();
-  }, []);
+  }, [validations]);
 
-  context.useEffect(runValidations);
+  context.useEffect(() => {
+    runValidations();
+  });
 
   if (isVoidElement(as)) {
     return context.dynamicHTML`
       <${new Literal(as)}
         ref=${ref(elementRef)}
         class=${classMap({
-          'is-valid': status.type === 'valid',
-          'is-invalid': status.type === 'invalid',
+          'is-valid': status === FormControlStatus.Valid,
+          'is-invalid': status === FormControlStatus.Invalid,
         })}
         @change=${handleInput}
         ${ownProps}
@@ -112,8 +112,8 @@ export function FormControl<TTagName extends FormControlElementTagName>(
         ${ownProps}
         ref=${ref(elementRef)}
         class=${classMap({
-          'is-valid': status.type === 'valid',
-          'is-invalid': status.type === 'invalid',
+          'is-valid': status === FormControlStatus.Valid,
+          'is-invalid': status === FormControlStatus.Invalid,
         })}
         @input=${handleInput}
       ></${new Literal(as)}
