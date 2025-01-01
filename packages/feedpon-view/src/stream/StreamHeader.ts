@@ -8,7 +8,7 @@ import type {
   StreamViewKind,
 } from 'feedpon-messaging';
 
-import { Navbar } from '../common/components/Navbar';
+import { Navbar } from '../common/Navbar';
 import { EntryDisplaySettingsDropdown } from './EntryDisplaySettingsDropdown';
 import { StreamFetchOptionsDropdown } from './StreamFetchOptionsDropdown';
 

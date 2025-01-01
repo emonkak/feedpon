@@ -1,8 +1,8 @@
 import type { RenderContext, TemplateResult } from '@emonkak/ebit';
 import { component, styleMap } from '@emonkak/ebit/directives.js';
 
-import { Dialog } from '../common/components/Dialog';
 import { createPopupHook } from '../common/hooks/popupHook';
+import { Dialog } from '../primitives/Dialog';
 
 interface EntryShareButtonProps {
   url: string;
@@ -115,8 +115,9 @@ export function EntryShareButton(
       </button>
       <${component(Dialog, {
         open: popup.opened,
-        child: popover,
-        onDismiss: popup.close,
+        children: popover,
+        modal: false,
+        onClose: popup.close,
         ownProps: {
           style: styleMap(popup.style),
           class: ['popup', 'is-pull-' + popup.pullDirection].join(' '),

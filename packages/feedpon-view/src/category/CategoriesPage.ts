@@ -28,8 +28,8 @@ import {
   styleMap,
 } from '@emonkak/ebit/directives.js';
 import { getStoreHook } from 'feedpon-flux/ebit';
-import { Navbar } from '../common/components/Navbar';
-import { MainLayout } from '../layouts/MainLayout';
+import { MainLayout } from '../common/MainLayout';
+import { Navbar } from '../common/Navbar';
 import { Dropdown } from '../primitives/Dropdown';
 import { type TabItem, TabList } from '../primitives/TabList';
 import {

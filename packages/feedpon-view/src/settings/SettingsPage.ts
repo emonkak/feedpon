@@ -5,8 +5,8 @@ import { bindActions } from 'feedpon-flux';
 import { getStoreHook } from 'feedpon-flux/ebit';
 import { toggleSidebar } from 'feedpon-messaging/ui';
 
-import { Navbar } from '../common/components/Navbar';
-import { MainLayout } from '../layouts/MainLayout';
+import { MainLayout } from '../common/MainLayout';
+import { Navbar } from '../common/Navbar';
 import { TabList } from '../primitives/TabList';
 
 export interface SettingsProps {

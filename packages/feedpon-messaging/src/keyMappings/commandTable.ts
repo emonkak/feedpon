@@ -386,7 +386,7 @@ export const selectNextCategory: Command<{}> = {
   description: 'Select the next category.',
   defaultParams: {},
   action() {
-    return ({ getState }, { router, selectors }) => {
+    return ({ getState }, { selectors }) => {
       const state = getState();
       const streamId = state.ui.selectedStreamId;
       const groupedSubscriptions =
@@ -415,7 +415,11 @@ export const selectNextCategory: Command<{}> = {
 
       if (visibleCategories[targetIndex]) {
         const targetCategory = visibleCategories[targetIndex]!;
-        router.push(`/streams/${encodeURIComponent(targetCategory.streamId)}`);
+        history.pushState(
+          null,
+          '',
+          `#/streams/${encodeURIComponent(targetCategory.streamId)}`,
+        );
       }
     };
   },
@@ -459,7 +463,7 @@ export const selectNextSubscription: Command<{}> = {
   description: 'Select the next subscription.',
   defaultParams: {},
   action() {
-    return ({ getState }, { router, selectors }) => {
+    return ({ getState }, { selectors }) => {
       const state = getState();
       const streamId = state.ui.selectedStreamId;
       const visibleSubscriptions =
@@ -490,8 +494,10 @@ export const selectNextSubscription: Command<{}> = {
 
       if (visibleSubscriptions[targetIndex]) {
         const targetSubscription = visibleSubscriptions[targetIndex]!;
-        router.push(
-          `/streams/${encodeURIComponent(targetSubscription.streamId)}`,
+        history.pushState(
+          null,
+          '',
+          `#/streams/${encodeURIComponent(targetSubscription.streamId)}`,
         );
       }
     };
@@ -503,7 +509,7 @@ export const selectPreviousCategory: Command<{}> = {
   description: 'Select the previous category.',
   defaultParams: {},
   action() {
-    return ({ getState }, { router, selectors }) => {
+    return ({ getState }, { selectors }) => {
       const state = getState();
       const streamId = state.ui.selectedStreamId;
       const groupedSubscriptions =
@@ -540,7 +546,11 @@ export const selectPreviousCategory: Command<{}> = {
 
       if (visibleCategories[targetIndex]) {
         const targetCategory = visibleCategories[targetIndex]!;
-        router.push(`/streams/${encodeURIComponent(targetCategory.streamId)}`);
+        history.pushState(
+          null,
+          '',
+          `#/streams/${encodeURIComponent(targetCategory.streamId)}`,
+        );
       }
     };
   },
@@ -572,7 +582,7 @@ export const selectPreviousSubscription: Command<{}> = {
   description: 'Select the previous subscription.',
   defaultParams: {},
   action() {
-    return ({ getState }, { router, selectors }) => {
+    return ({ getState }, { selectors }) => {
       const state = getState();
       const streamId = state.ui.selectedStreamId;
       const visibleSubscriptions =
@@ -607,8 +617,10 @@ export const selectPreviousSubscription: Command<{}> = {
 
       if (visibleSubscriptions[targetIndex]) {
         const targetSubscription = visibleSubscriptions[targetIndex]!;
-        router.push(
-          `/streams/${encodeURIComponent(targetSubscription.streamId)}`,
+        history.pushState(
+          null,
+          '',
+          `#/streams/${encodeURIComponent(targetSubscription.streamId)}`,
         );
       }
     };

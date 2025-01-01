@@ -6,8 +6,8 @@ import type { State, Store, ThemeKind } from 'feedpon-messaging';
 import { THEMES } from 'feedpon-messaging/ui';
 
 import { AuthenticationPage } from './authentication/AuthenticationPage';
-import { SidebarLayout } from './layouts/SidebarLayout';
-import { SingleLayout } from './layouts/SingleLayout';
+import { SidebarLayout } from './common/SidebarLayout';
+import { SingleLayout } from './common/SingleLayout';
 import { router } from './router';
 
 export interface DispatcherProps {}

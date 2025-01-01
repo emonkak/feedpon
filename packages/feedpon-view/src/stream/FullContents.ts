@@ -2,7 +2,7 @@ import type { RenderContext, TemplateResult } from '@emonkak/ebit';
 import { component, nonKeyedList } from '@emonkak/ebit/directives.js';
 import type { FullContent } from 'feedpon-messaging';
 
-import { EmbeddedHTML } from '../common/components/EmbeddedHTML';
+import { EmbeddedHTML } from '../primitives/EmbeddedHTML';
 
 interface FullContentsProps {
   isLoading: boolean;

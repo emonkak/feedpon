@@ -1,5 +1,3 @@
-import type { History } from 'history';
-
 import type { Store as FluxStore } from 'feedpon-flux';
 import type { CacheMap } from 'feedpon-utils/CacheMap';
 import type { Trie } from 'feedpon-utils/Trie';
@@ -230,7 +228,6 @@ export type AsyncThunk<TResult = void> = Thunk<Promise<TResult>>;
 
 export interface ThunkContext {
   environment: Environment;
-  router: History;
   selectors: Selectors;
 }
 

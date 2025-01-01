@@ -7,8 +7,8 @@ import { sendNotification } from 'feedpon-messaging/notifications';
 import { toggleSidebar } from 'feedpon-messaging/ui';
 import { createBinder } from 'feedpon-utils/createBinder';
 
-import { Navbar } from '../common/components/Navbar';
-import { MainLayout } from '../layouts/MainLayout';
+import { MainLayout } from '../common/MainLayout';
+import { Navbar } from '../common/Navbar';
 import { Dialog } from '../primitives/Dialog';
 import { Dropdown } from '../primitives/Dropdown';
 

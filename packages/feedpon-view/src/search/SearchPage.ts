@@ -23,9 +23,9 @@ import {
 } from 'feedpon-messaging/subscriptions';
 import { toggleSidebar } from 'feedpon-messaging/ui';
 
-import { Navbar } from '../common/components/Navbar';
+import { MainLayout } from '../common/MainLayout';
+import { Navbar } from '../common/Navbar';
 import { createPreviousHook } from '../common/hooks/previousHook';
-import { MainLayout } from '../layouts/MainLayout';
 import { FeedView } from './FeedView';
 
 export interface SearchPageProps {

@@ -8,7 +8,7 @@ import type {
 
 import type { RenderContext, TemplateResult } from '@emonkak/ebit';
 import { component, keyedList } from '@emonkak/ebit/directives.js';
-import { RelativeTime } from '../common/components/RelativeTime';
+import { RelativeTime } from '../primitives/RelativeTime';
 import { SubscriptionDropdown } from './SubscriptionDropdown';
 
 interface SubscriptionViewProps {

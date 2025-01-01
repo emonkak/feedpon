@@ -17,7 +17,7 @@ import {
   ref,
 } from '@emonkak/ebit/directives.js';
 import { getStoreHook } from 'feedpon-flux/ebit';
-import { RelativeTime } from '../common/components/RelativeTime';
+import { RelativeTime } from '../primitives/RelativeTime';
 import {
   type BlankSpaces,
   VirtualScrollList,
@@ -71,10 +71,9 @@ export function SharedSiteinfoSection(
     [defferedTestUrl],
   );
 
-  const handleChangeTestUrl = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newTestUrl = event.target.value;
-    setTestUrl(newTestUrl);
-  };
+  const handleChangeTestUrl = context.useCallback((event: Event) => {
+    setTestUrl((event.currentTarget as HTMLInputElement).value);
+  }, []);
 
   const lastUpdate =
     lastUpdatedAt > 0

@@ -46,9 +46,9 @@ import {
 } from 'feedpon-messaging/ui';
 import * as CacheMap from 'feedpon-utils/CacheMap';
 
+import { MainLayout } from '../common/MainLayout';
 import { createEventHook } from '../common/hooks/eventHook';
 import { isMountedHook } from '../common/hooks/isMountedHook';
-import { MainLayout } from '../layouts/MainLayout';
 import type { VirtualScrollListRef } from '../primitives/VirtualScrollList';
 import { CategoryHeader } from './CategoryHeader';
 import { EntryList } from './EntryList';

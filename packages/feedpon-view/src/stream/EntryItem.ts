@@ -8,8 +8,8 @@ import {
 } from '@emonkak/ebit/directives.js';
 import type { Entry } from 'feedpon-messaging';
 
-import { EmbeddedHTML } from '../common/components/EmbeddedHTML';
-import { RelativeTime } from '../common/components/RelativeTime';
+import { EmbeddedHTML } from '../primitives/EmbeddedHTML';
+import { RelativeTime } from '../primitives/RelativeTime';
 import { CommentPopover } from './CommentPopover';
 import { EntryActionList } from './EntryActionList';
 import { EntryNav } from './EntryNav';

@@ -11,8 +11,7 @@
   "javascript": {
     "formatter": {
       "quoteStyle": "single"
-    },
-    "jsxRuntime": "reactClassic"
+    }
   },
   "formatter": {
     "indentStyle": "space"

@@ -5,9 +5,9 @@ import { getStoreHook } from 'feedpon-flux/ebit';
 import type { State } from 'feedpon-messaging';
 import { toggleSidebar } from 'feedpon-messaging/ui';
 import * as CacheMap from 'feedpon-utils/CacheMap';
-import { Navbar } from '../common/components/Navbar';
-import { RelativeTime } from '../common/components/RelativeTime';
-import { MainLayout } from '../layouts/MainLayout';
+import { MainLayout } from '../common/MainLayout';
+import { Navbar } from '../common/Navbar';
+import { RelativeTime } from '../primitives/RelativeTime';
 
 export interface DashboardProps {}
 

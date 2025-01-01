@@ -27,11 +27,9 @@
   "dependencies": {
     "@mozilla/readability": "^0.4.4",
     "@types/chrome": "^0.0.253",
-    "@types/history": "^4.7.11",
     "feedpon-adapters": "link:../feedpon-adapters",
     "feedpon-flux": "link:../feedpon-flux",
     "feedpon-utils": "link:../feedpon-utils",
-    "history": "^4.10.1",
     "reselect": "^4.1.8"
   }
 }

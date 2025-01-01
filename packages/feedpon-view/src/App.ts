@@ -3,13 +3,11 @@ import { classMap, component, optional } from '@emonkak/ebit/directives.js';
 import { hashLocation, resetScrollPosition } from '@emonkak/ebit/router.js';
 import type { Store } from 'feedpon-flux';
 import { setStoreHook } from 'feedpon-flux/ebit';
-import type { History } from 'history';
 
 import { Dispatcher } from './Dispatcher';
 
 export interface AppProps {
   getStore: () => Promise<Store<unknown, unknown>>;
-  history: History;
 }
 
 export function App(
