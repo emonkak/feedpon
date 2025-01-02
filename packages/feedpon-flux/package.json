@@ -11,6 +11,6 @@
   },
   "dependencies": {
     "@emonkak/ebit": "github:emonkak/ebit",
-    "feedpon-utils": "link:../feedpon-utils"
+    "feedpon-utils": "workspace:^"
   }
 }

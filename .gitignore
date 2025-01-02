@@ -1,6 +1,7 @@
-!/webextension/index.html
-!/webextension/manifest.json
-/.wireit
-/dist
+/dist/*
+!/dist/img
+!/dist/index.html
+!/dist/manifest.json
+.wireit
 node_modules
 *.tsbuildinfo

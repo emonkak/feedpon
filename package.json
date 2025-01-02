@@ -14,8 +14,8 @@
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "esbuild": "^0.24.2",
-    "typescript": "^5.7.2",
-    "wireit": "^0.14.9"
+    "typescript": "^5.7.3",
+    "wireit": "^0.14.10"
   },
   "workspaces": [
     "packages/*"
@@ -25,7 +25,7 @@
       "dependencies": [
         "build:css",
         "build:js",
-        "build:others"
+        "./packages/feedpon-api:build"
       ]
     },
     "build:css": {
@@ -35,38 +35,16 @@
       ],
       "output": [
         "dist/index.css"
-      ],
-      "dependencies": [
-        "prebuild"
       ]
     },
     "build:js": {
       "command": "node build.mjs",
       "output": [
-        "dist/index.js"
+        "dist/index.js",
+        "dist/background.js"
       ],
       "dependencies": [
-        "prebuild",
         "tsc"
-      ]
-    },
-    "build:others": {
-      "command": "cp --recursive --target-directory dist assets/{background.js,img,index.html,manifest.json}",
-      "clean": "if-file-deleted",
-      "files": [
-        "assets/background.js",
-        "assets/img/*",
-        "assets/index.html",
-        "assets/manifest.json"
-      ],
-      "output": [
-        "dist/background.js",
-        "dist/img/*",
-        "dist/index.html",
-        "dist/manifest.json"
-      ],
-      "dependencies": [
-        "prebuild"
       ]
     },
     "clean": {
@@ -83,8 +61,9 @@
     },
     "check": {
       "command": "biome check .",
-      "files": ["packages/*/src/**/*.ts"],
-      "output": []
+      "files": [
+        "packages/*/src/**/*.ts"
+      ]
     },
     "ci": {
       "dependencies": [
@@ -94,14 +73,6 @@
     },
     "format": {
       "command": "biome format --write ."
-    },
-    "prebuild": {
-      "clean": false,
-      "command": "mkdir --parents dist",
-      "files": [],
-      "output": [
-        "dist"
-      ]
     },
     "tsc": {
       "command": "tsc --build --pretty --incremental",

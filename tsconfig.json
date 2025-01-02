@@ -5,6 +5,9 @@
       "path": "packages/feedpon"
     },
     {
+      "path": "packages/feedpon-api"
+    },
+    {
       "path": "packages/feedpon-adapters"
     },
     {

@@ -1,0 +1,51 @@
+{
+  "name": "feedpon-api",
+  "private": true,
+  "main": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "openapi-fetch": "^0.13.4"
+  },
+  "devDependencies": {
+    "openapi-typescript": "^7.6.1",
+    "wireit": "^0.14.10"
+  },
+  "wireit": {
+    "build": {
+      "dependencies": [
+        "build:feedly",
+        "build:hatenaBookmark",
+        "build:wedata"
+      ]
+    },
+    "build:feedly": {
+      "command": "openapi-typescript openapi/feedly.json -o src/api/feedly.d.ts",
+      "files": [
+        "openapi/feedly.json"
+      ],
+      "output": [
+        "src/feedly.d.ts"
+      ]
+    },
+    "build:hatenaBookmark": {
+      "command": "openapi-typescript openapi/hatenaBookmark.json -o src/api/hatenaBookmark.d.ts",
+      "files": [
+        "openapi/hatenaBookmark.json"
+      ],
+      "output": [
+        "src/hatenaBookmark.d.ts"
+      ]
+    },
+    "build:wedata": {
+      "command": "openapi-typescript openapi/wedata.json -o src/api/wedata.d.ts",
+      "files": [
+        "openapi/wedata.json"
+      ],
+      "output": [
+        "src/wedata.d.ts"
+      ]
+    }
+  }
+}

@@ -1,4 +1,4 @@
-import { ClientRenderHost, ConcurrentUpdater, createRoot } from '@emonkak/ebit';
+import { BrowserRenderHost, ConcurrentUpdater, createRoot } from '@emonkak/ebit';
 
 import { component } from '@emonkak/ebit/directives.js';
 import prepareSelectors from 'feedpon-messaging/prepareSelectors';
@@ -19,7 +19,7 @@ function main() {
   };
   const getStore = () => prepareStore(context);
 
-  const host = new ClientRenderHost();
+  const host = new BrowserRenderHost();
   const updater = new ConcurrentUpdater();
   const container = document.getElementById('app')!;
   const root = createRoot(component(App, { getStore }), container, {

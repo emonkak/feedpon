@@ -26,11 +26,11 @@
   },
   "dependencies": {
     "@emonkak/ebit": "github:emonkak/ebit",
-    "@mozilla/readability": "^0.4.4",
-    "@types/chrome": "^0.0.253",
-    "feedpon-adapters": "link:../feedpon-adapters",
-    "feedpon-flux": "link:../feedpon-flux",
-    "feedpon-utils": "link:../feedpon-utils",
-    "reselect": "^4.1.8"
+    "@mozilla/readability": "^0.5.0",
+    "@types/chrome": "^0.0.300",
+    "feedpon-adapters": "workspace:^",
+    "feedpon-flux": "workspace:^",
+    "feedpon-utils": "workspace:^",
+    "reselect": "^5.1.1"
   }
 }

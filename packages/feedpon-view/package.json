@@ -7,10 +7,10 @@
   },
   "dependencies": {
     "@emonkak/ebit": "github:emonkak/ebit",
-    "@types/chrome": "^0.0.253",
-    "feedpon-adapters": "link:../feedpon-adapters",
-    "feedpon-flux": "link:../feedpon-flux",
-    "feedpon-messaging": "link:../feedpon-messaging",
-    "feedpon-utils": "link:../feedpon-utils"
+    "@types/chrome": "^0.0.300",
+    "feedpon-adapters": "workspace:^",
+    "feedpon-flux": "workspace:^",
+    "feedpon-messaging": "workspace:^",
+    "feedpon-utils": "workspace:^"
   }
 }

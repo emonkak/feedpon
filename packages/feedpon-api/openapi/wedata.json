@@ -1,0 +1,96 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Wedata API",
+    "version": "3"
+  },
+  "servers": [
+    {
+      "url": "http://wedata.net"
+    }
+  ],
+  "paths": {
+    "/database/AutoPagerize/items_all.json": {
+      "get": {
+        "summary": "get AutoPagerize items",
+        "operationId": "getAutoPagerizeItems",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AutoPagerizeItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AutoPagerizeItem": {
+        "type": "object",
+        "required": [
+          "resource_url",
+          "database_resource_url",
+          "data",
+          "created_by",
+          "name",
+          "created_at",
+          "updated_at"
+        ],
+        "properties": {
+          "resource_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "database_resource_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "data": {
+            "type": "object",
+            "required": ["url", "nextLink", "pageElement"],
+            "properties": {
+              "url": {
+                "type": "string"
+              },
+              "nextLink": {
+                "type": "string"
+              },
+              "pageElement": {
+                "type": "string"
+              },
+              "exampleUrl": {
+                "type": "string"
+              },
+              "insertBefore": {
+                "type": "string"
+              }
+            }
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    }
+  }
+}

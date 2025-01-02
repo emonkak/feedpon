@@ -1,0 +1,2105 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Feedly API",
+    "version": "3"
+  },
+  "servers": [
+    {
+      "url": "https://cloud.feedly.com/v3"
+    },
+    {
+      "url": "https://sandbox7.feedly.com"
+    }
+  ],
+  "security": [
+    {
+      "OAuth2": ["https://cloud.feedly.com/subscriptions"]
+    }
+  ],
+  "paths": {
+    "/auth/{exchangeToken}": {
+      "post": {
+        "summary": "Exchanging an auth code for a refresh token and an access token",
+        "operationId": "exchangeToken",
+        "security": [],
+        "parameters": [
+          {
+            "name": "exchangeToken",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": ["token"]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "code",
+                  "client_id",
+                  "client_secret",
+                  "redirect_uri",
+                  "grant_type"
+                ],
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "description": "the code returned from the previous call."
+                  },
+                  "client_id": {
+                    "type": "string",
+                    "description": "the clientId obtained during application registration."
+                  },
+                  "client_secret": {
+                    "type": "string",
+                    "description": "the client secret obtained during application registration."
+                  },
+                  "redirect_uri": {
+                    "type": "string",
+                    "description": "the URI registered with the application (if you pass it as a URL parameter, be sure to URL-encode it!)."
+                  },
+                  "state": {
+                    "type": "string",
+                    "description": "indicates any state which may be useful to your application upon receipt of the response. The feedly Authorization Server roundtrips this parameter, so your application receives the same value it sent. Possible uses include redirecting the user to the correct resource in your site, nonces, and cross-site-request-forgery mitigations."
+                  },
+                  "grant_type": {
+                    "type": "string",
+                    "enum": ["authorization_code"],
+                    "description": "as defined in the OAuth2 specification, this field must be set to `authorization_code`."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "access_token",
+                    "refresh_token",
+                    "expires_in",
+                    "token_type",
+                    "plan"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "the feedly user id"
+                    },
+                    "access_token": {
+                      "type": "string",
+                      "description": "a token that may be used to access APIs. Access tokens are have an expiration"
+                    },
+                    "refresh_token": {
+                      "type": "string",
+                      "description": "a token that may be used to obtain a new access token. Refresh tokens are valid until the user revokes access."
+                    },
+                    "expires_in": {
+                      "type": "integer",
+                      "description": "the remaining lifetime on the access token"
+                    },
+                    "token_type": {
+                      "type": "string",
+                      "description": "indicates the type of token returned. At this time, this field will always have the value of Bearer"
+                    },
+                    "plan": {
+                      "type": "string",
+                      "enum": ["standard", "pro", "business"],
+                      "description": "indicated the user plan"
+                    },
+                    "state": {
+                      "type": "string",
+                      "description": "the state that was passed in"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Unauthorized error",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/UnexpectedError"
+          }
+        }
+      }
+    },
+    "/auth/{refreshToken}": {
+      "post": {
+        "summary": "Refreshing an access token",
+        "operationId": "refreshToken",
+        "security": [],
+        "parameters": [
+          {
+            "name": "refreshToken",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": ["token"]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "refresh_token",
+                  "client_id",
+                  "client_secret",
+                  "grant_type"
+                ],
+                "properties": {
+                  "refresh_token": {
+                    "type": "string",
+                    "description": "the refresh token returned in the previous code."
+                  },
+                  "client_id": {
+                    "type": "string",
+                    "description": "the clientId obtained during application registration."
+                  },
+                  "client_secret": {
+                    "type": "string",
+                    "description": "the client secret obtained during application registration."
+                  },
+                  "grant_type": {
+                    "type": "string",
+                    "enum": ["refresh_token"],
+                    "description": "as defined in the OAuth2 specification, this field must be set to `refresh_token`."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "access_token",
+                    "expires_in",
+                    "token_type",
+                    "plan"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "the feedly user id"
+                    },
+                    "access_token": {
+                      "type": "string",
+                      "description": "a token that may be used to access APIs. Access tokens are have an expiration"
+                    },
+                    "expires_in": {
+                      "type": "integer",
+                      "description": "the remaining lifetime on the access token"
+                    },
+                    "token_type": {
+                      "type": "string",
+                      "description": "indicates the type of token returned. At this time, this field will always have the value of Bearer"
+                    },
+                    "plan": {
+                      "type": "string",
+                      "enum": ["standard", "pro", "business"],
+                      "description": "indicated the user plan"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Unauthorized error",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/UnexpectedError"
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "summary": "Logout",
+        "operationId": "logout",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "default": {
+            "$ref": "#/components/responses/UnexpectedError"
+          }
+        }
+      }
+    },
+    "/categories": {
+      "get": {
+        "summary": "Get the list of all categories",
+        "operationId": "getAllCategories",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Category"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/UnexpectedError"
+          }
+        }
+      }
+    },
+    "/categories/{categoryId}": {
+      "post": {
+        "summary": "Change the label of an existing category",
+        "operationId": "updateCategory",
+        "parameters": [
+          {
+            "name": "categoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["label"],
+                "properties": {
+                  "label": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Category"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/UnexpectedError"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a category",
+        "operationId": "deleteCategory",
+        "parameters": [
+          {
+            "name": "categoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "default": {
+            "$ref": "#/components/responses/UnexpectedError"
+          }
+        }
+      }
+    },
+    "/feeds/{feedId}": {
+      "get": {
+        "summary": "Get the metadata about a specific feed",
+        "operationId": "getFeed",
+        "parameters": [
+          {
+            "name": "feedId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Feed"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/UnexpectedError"
+          }
+        }
+      }
+    },
+    "/feeds/.mget": {
+      "post": {
+        "summary": "Get the metadata for a list of feeds",
+        "operationId": "getMultipleFeed",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Feed"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/UnexpectedError"
+          }
+        }
+      }
+    },
+    "/markers/counts": {
+      "get": {
+        "summary": "Get the list of unread counts",
+        "operationId": "getUnreadCounts",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "unreadCounts": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Category"
+                      }
+                    },
+                    "updated": {
+                      "type": "integer",
+                      "format": "int64"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/UnexpectedError"
+          }
+        }
+      }
+    },
+    "/markers": {
+      "post": {
+        "summary": "Mark one or multiple articles as read or saved",
+        "operationId": "updateMarkers",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "required": ["action", "type", "entryIds"],
+                    "properties": {
+                      "action": {
+                        "type": "string",
+                        "enum": [
+                          "markAsRead",
+                          "keepUnread",
+                          "markAsSaved",
+                          "markAsUnsaved"
+                        ]
+                      },
+                      "type": {
+                        "type": "string",
+                        "enum": ["entries"]
+                      },
+                      "entryIds": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "lastReadEntryId": {
+                        "type": "string"
+                      },
+                      "asOf": {
+                        "type": "integer",
+                        "format": "int64"
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "required": ["action", "type", "feedIds"],
+                    "properties": {
+                      "action": {
+                        "type": "string",
+                        "enum": ["markAsRead", "undoMarkAsRead"]
+                      },
+                      "type": {
+                        "type": "string",
+                        "enum": ["feeds"]
+                      },
+                      "feedIds": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "lastReadEntryId": {
+                        "type": "string"
+                      },
+                      "asOf": {
+                        "type": "integer",
+                        "format": "int64"
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "required": ["action", "type", "categoryIds"],
+                    "properties": {
+                      "action": {
+                        "type": "string",
+                        "enum": ["markAsRead", "undoMarkAsRead"]
+                      },
+                      "type": {
+                        "type": "string",
+                        "enum": ["categories"]
+                      },
+                      "categoryIds": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "lastReadEntryId": {
+                        "type": "string"
+                      },
+                      "asOf": {
+                        "type": "integer",
+                        "format": "int64"
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "required": ["action", "type", "tagIds"],
+                    "properties": {
+                      "action": {
+                        "type": "string",
+                        "enum": ["markAsRead"]
+                      },
+                      "type": {
+                        "type": "string",
+                        "enum": ["tags"]
+                      },
+                      "tagIds": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "lastReadEntryId": {
+                        "type": "string"
+                      },
+                      "asOf": {
+                        "type": "integer",
+                        "format": "int64"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Category"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/UnexpectedError"
+          }
+        }
+      }
+    },
+    "/markers/read": {
+      "get": {
+        "summary": "Get the latest read operations (to sync local cache)",
+        "operationId": "getLatestReadOperations",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "feeds": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Marker"
+                      },
+                      "description": "feeds that were marked as read in the time period. For each feed, the timestamp of the read marker will be returned."
+                    },
+                    "entires": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "the list of individual entries that were marked as read."
+                    },
+                    "unread": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "the list of individual entries that were kept unread. Note: only entries before the read marker will be returned here."
+                    },
+                    "updated": {
+                      "type": "integer",
+                      "format": "int64"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/UnexpectedError"
+          }
+        }
+      }
+    },
+    "/markers/tags": {
+      "get": {
+        "summary": "Get the latest tagged entry ids",
+        "operationId": "getLatestTaggedEntryIds",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "taggedEntries": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/UnexpectedError"
+          }
+        }
+      }
+    },
+    "/opml": {
+      "get": {
+        "summary": "Export the user's subscriptions as an OPML file",
+        "operationId": "exportOPML",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "default": {
+            "$ref": "#/components/responses/UnexpectedError"
+          }
+        }
+      },
+      "post": {
+        "summary": "Import an OPML",
+        "operationId": "importOPML",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "text/xml": {}
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "default": {
+            "$ref": "#/components/responses/UnexpectedError"
+          }
+        }
+      }
+    },
+    "/profile": {
+      "get": {
+        "summary": "Get the profile of the user",
+        "operationId": "getProfile",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Profile"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/UnexpectedError"
+          }
+        }
+      },
+      "post": {
+        "summary": "Update the profile of the user",
+        "operationId": "updateProfile",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "email",
+                    "givenName",
+                    "familyName",
+                    "picture",
+                    "gender",
+                    "locale",
+                    "twitter",
+                    "facebook",
+                    "wave"
+                  ],
+                  "properties": {
+                    "email": {
+                      "type": "string"
+                    },
+                    "givenName": {
+                      "type": "string"
+                    },
+                    "familyName": {
+                      "type": "string"
+                    },
+                    "picture": {
+                      "type": "string"
+                    },
+                    "gender": {
+                      "$ref": "#/components/schemas/Gender"
+                    },
+                    "locale": {
+                      "type": "string"
+                    },
+                    "twitter": {
+                      "type": "string"
+                    },
+                    "facebook": {
+                      "type": "string"
+                    },
+                    "wave": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/UnexpectedError"
+          }
+        }
+      }
+    },
+    "/search": {
+      "get": {
+        "summary": "Find feeds based on title, url or #topic",
+        "operationId": "searchFeeds",
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "description": "search query. Can be a feed url, a site title, a site url or a #topic.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "count",
+            "in": "query",
+            "description": "number of results.",
+            "schema": {
+              "type": "integer",
+              "default": 20
+            }
+          },
+          {
+            "name": "locale",
+            "in": "query",
+            "description": "hint the search engine to return feeds in that locale (e.g. \"pt\", \"fr_FR\")",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["hint", "related", "results"],
+                  "properties": {
+                    "hint": {
+                      "type": "string",
+                      "description": "an auto-completion guess of the keyword the user is trying to search for."
+                    },
+                    "related": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "a list of other keywords the user might be interested in searching."
+                    },
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/SearchResult"
+                      },
+                      "description": "a list of feeds matching the search query. Feeds which are sponsored should be listed above feeds which are featured and above other search results."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/search/{streamId}/contents": {
+      "get": {
+        "summary": "Search the content of a stream",
+        "operationId": "searchStream",
+        "parameters": [
+          {
+            "name": "streamId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "query",
+            "in": "query",
+            "description": "search query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "count",
+            "in": "query",
+            "description": "number of entries to return. Note: if the user isn't pro, only 2 articles will be returned.",
+            "schema": {
+              "type": "integer",
+              "default": 10,
+              "minimum": 1,
+              "maximum": 20
+            }
+          },
+          {
+            "name": "newerThan",
+            "in": "query",
+            "description": "timestamp in ms; cannot be older than 31 days ago.",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "unreadOnly",
+            "in": "query",
+            "description": "if true, only unread articles will be returned. Reminder: entries older than 31 days are automatically marked as read.",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "continuation",
+            "in": "query",
+            "description": "a continuation id is used to page through the content. Pass the continuation from a search result to get the next set of results for this search. Note: this value is ignored for non-Pro users.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "description": "a comma-separated list of fields. By default, all fields are used for matching. Valid field names: `all`, `title`, `author`, `keywords`.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": ["all", "title", "author", "keywords"]
+              },
+              "default": ["all"]
+            },
+            "style": "form"
+          },
+          {
+            "name": "embedded",
+            "in": "query",
+            "description": "`audio`, `video`, doc or `any` limit results to also include this media type. \"any\" means the article must contain at least one embed. Default behavior is to not filter by embedded.",
+            "schema": {
+              "type": "string",
+              "enum": ["audio", "video", "doc", "any"]
+            }
+          },
+          {
+            "name": "engagement",
+            "in": "query",
+            "description": "`medium` or `high` limit results to articles that have the specified engagement. Default behavior is to not filter by engagement.",
+            "schema": {
+              "type": "string",
+              "enum": ["medium", "high"]
+            }
+          },
+          {
+            "name": "locale",
+            "in": "query",
+            "description": "used to filter by locale. Only used in topic/global.popular searches.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Stream"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/UnexpectedError"
+          }
+        }
+      }
+    },
+    "/streams/{streamId}/contents": {
+      "get": {
+        "summary": "Get the content of a stream",
+        "operationId": "getStream",
+        "parameters": [
+          {
+            "name": "streamId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "count",
+            "in": "query",
+            "description": "number of entries to return.",
+            "schema": {
+              "type": "integer",
+              "default": 20,
+              "minimum": 1,
+              "maximum": 250
+            }
+          },
+          {
+            "name": "ranked",
+            "in": "query",
+            "description": "`newest`, `oldest`, or `engagement` (sort by popularity).",
+            "schema": {
+              "type": "string",
+              "enum": ["newest", "oldest", "engagement"],
+              "default": "newest"
+            }
+          },
+          {
+            "name": "unreadOnly",
+            "in": "query",
+            "description": "if true, only unread articles will be returned. Reminder: entries older than 31 days are automatically marked as read. This flag requires the authorization header. It is ignored for tag streams.",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "newerThan",
+            "in": "query",
+            "description": "timestamp in ms; cannot be older than 31 days ago.",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "continuation",
+            "in": "query",
+            "description": "a continuation id is used to page through the entry ids; you can also pass a timestamp in ms, which will act as an \"older than\" limit.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Stream"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/UnexpectedError"
+          }
+        }
+      }
+    },
+    "/streams/{streamId}/ids": {
+      "get": {
+        "summary": "Get a list of entry ids for a specific stream",
+        "operationId": "getEntryIds",
+        "parameters": [
+          {
+            "name": "streamId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "count",
+            "in": "query",
+            "description": "number of entry ids to return.",
+            "schema": {
+              "type": "integer",
+              "default": 20,
+              "minimum": 1,
+              "maximum": 250
+            }
+          },
+          {
+            "name": "ranked",
+            "in": "query",
+            "description": "`newest`, `oldest`, or `engagement` (sort by popularity).",
+            "schema": {
+              "type": "string",
+              "enum": ["newest", "oldest", "engagement"],
+              "default": "newest"
+            }
+          },
+          {
+            "name": "unreadOnly",
+            "in": "query",
+            "description": "if true, only unread articles will be returned. Reminder: entries older than 31 days are automatically marked as read. This flag requires the authorization header. It is ignored for tag streams.",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "newerThan",
+            "in": "query",
+            "description": "timestamp in ms; cannot be older than 31 days ago.",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "continuation",
+            "in": "query",
+            "description": " a continuation id is used to page through the entry ids; you can also pass a timestamp in ms, which will act as an \"older than\" limit.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["ids"],
+                  "properties": {
+                    "ids": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "a list of IDs which can be used with the entries API to retrieve the content."
+                    },
+                    "continuation": {
+                      "type": "string",
+                      "description": "the continuation id to pass to the next stream call, for pagination. This id guarantees that no entry will be duplicated in a stream (meaning, there is no need to de-duplicate entries returned by this call). If this value is not returned, it means the end of the stream has been reached."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/UnexpectedError"
+          }
+        }
+      }
+    },
+    "/subscriptions": {
+      "get": {
+        "summary": "Get the user's subscriptions",
+        "operationId": "getSubscriptions",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Subscription"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/UnexpectedError"
+          }
+        }
+      },
+      "post": {
+        "summary": "Subscribe to a feed",
+        "operationId": "subscribeToFeed",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["id"],
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "categories": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/Category"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "default": {
+            "$ref": "#/components/responses/UnexpectedError"
+          }
+        }
+      }
+    },
+    "/subscriptions/.mput": {
+      "post": {
+        "summary": "Update multiple subscriptions",
+        "operationId": "updateMultipleSubscriptions",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["id"],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "categories": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Category"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "default": {
+            "$ref": "#/components/responses/UnexpectedError"
+          }
+        }
+      }
+    },
+    "/subscriptions/{feedId}": {
+      "delete": {
+        "summary": "Unsubscribe from a feed",
+        "operationId": "unsubscribeFromFeed",
+        "parameters": [
+          {
+            "name": "feedId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "default": {
+            "$ref": "#/components/responses/UnexpectedError"
+          }
+        }
+      }
+    },
+    "/subscriptions/.mdelete": {
+      "delete": {
+        "summary": "Unsubscribe from multiple feeds",
+        "operationId": "unsubscribeFromMultipleFeeds",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "default": {
+            "$ref": "#/components/responses/UnexpectedError"
+          }
+        }
+      }
+    },
+    "/tags": {
+      "get": {
+        "summary": "Get the list of tags created by the user.",
+        "operationId": "getTags",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Tag"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/UnexpectedError"
+          }
+        }
+      }
+    },
+    "/tags/{tagId}": {
+      "post": {
+        "summary": "Change a tag label",
+        "operationId": "updateTag",
+        "parameters": [
+          {
+            "name": "tagId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["label"],
+                "properties": {
+                  "label": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "default": {
+            "$ref": "#/components/responses/UnexpectedError"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete tags",
+        "operationId": "deleteTags",
+        "parameters": [
+          {
+            "name": "tagId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "style": "simple"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "default": {
+            "$ref": "#/components/responses/UnexpectedError"
+          }
+        }
+      }
+    },
+    "/tags/{tagId}/{entryId}": {
+      "put": {
+        "summary": "Tag multiple entries.",
+        "operationId": "addTags",
+        "parameters": [
+          {
+            "name": "tagId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "style": "simple"
+          },
+          {
+            "name": "entryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "style": "simple"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "default": {
+            "$ref": "#/components/responses/UnexpectedError"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Untag multiple entries",
+        "operationId": "removeTags",
+        "parameters": [
+          {
+            "name": "tagId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "style": "simple"
+          },
+          {
+            "name": "entryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "style": "simple"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "default": {
+            "$ref": "#/components/responses/UnexpectedError"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "responses": {
+      "UnexpectedError": {
+        "description": "Unexpected error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          },
+          "text/plain": {
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "OAuth2": {
+        "type": "oauth2",
+        "flows": {
+          "implicit": {
+            "authorizationUrl": "/auth/auth",
+            "scopes": {
+              "https://cloud.feedly.com/subscriptions": "grant all access"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "Category": {
+        "type": "object",
+        "required": ["id"],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          }
+        }
+      },
+      "Feed": {
+        "type": "object",
+        "required": ["id", "subscribers", "title"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "the unique, immutable id of this feed."
+          },
+          "subscribers": {
+            "type": "integer",
+            "description": "number of feedly cloud subscribers who have this feed in their subscription list."
+          },
+          "title": {
+            "type": "string",
+            "description": "the feed name."
+          },
+          "description": {
+            "type": "string",
+            "description": "the feed description."
+          },
+          "language": {
+            "type": "string",
+            "description": "this field is a combination of the language reported by the RSS feed, and the language automatically detected from the feed’s content. It might not be accurate, as many feeds misreport it."
+          },
+          "velocity": {
+            "type": "number",
+            "format": "float",
+            "description": "the average number of articles published weekly. This number is updated every few days."
+          },
+          "website": {
+            "type": "string",
+            "format": "uri",
+            "description": "url the website for this feed."
+          },
+          "topics": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "an array of topics this feed covers. This list can be used in searches and mixes to build a list of related feeds and articles. E.g. if the list contains “productivity”, querying “productivity” in feed search will produce a list of related feeds."
+          },
+          "state": {
+            "type": "string",
+            "enum": ["dead", "dead.flooded", "dead.dropped", "dormant"],
+            "description": "only returned if the feed cannot be polled. Values include \"dead\" (cannot be polled), \"dead.flooded\" (if the feed produces too many articles per day), \"dead.dropped\" (if the feed has been removed), and \"dormant\" (if the feed hasn't been updated in a few months)."
+          }
+        }
+      },
+      "Entry": {
+        "type": "object",
+        "required": [
+          "id",
+          "crawled",
+          "published",
+          "unread",
+          "categories",
+          "fingerprint",
+          "originId"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "the unique, immutable ID for this particular article."
+          },
+          "title": {
+            "type": "string",
+            "description": "the article’s title. This string does not contain any HTML markup."
+          },
+          "content": {
+            "$ref": "#/components/schemas/Content",
+            "description": "the article content. The content itself contains sanitized HTML markup."
+          },
+          "summary": {
+            "$ref": "#/components/schemas/Content",
+            "description": "the article summary. See the content object above."
+          },
+          "author": {
+            "type": "string",
+            "description": "the author's name"
+          },
+          "crawled": {
+            "type": "integer",
+            "format": "int64",
+            "description": "the immutable timestamp, in ms, when this article was processed by the feedly Cloud servers."
+          },
+          "recrawled": {
+            "type": "integer",
+            "format": "int64",
+            "description": "the immutable timestamp, in ms, when this article was processed by the feedly Cloud servers."
+          },
+          "published": {
+            "type": "integer",
+            "format": "int64",
+            "description": "the timestamp, in ms, when this article was published, as reported by the RSS feed (often inaccurate)."
+          },
+          "updated": {
+            "type": "integer",
+            "format": "int64",
+            "description": "the timestamp, in ms, when this article was updated, as reported by the RSS feed"
+          },
+          "alternate": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Link"
+            },
+            "description": "a list of alternate links for this article. Each link object contains a media type and a URL. Typically, a single object is present, with a link to the original web page."
+          },
+          "origin": {
+            "$ref": "#/components/schemas/Origin",
+            "description": "the feed from which this article was crawled."
+          },
+          "keywords": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "a list of keyword strings extracted from the RSS entry."
+          },
+          "visual": {
+            "$ref": "#/components/schemas/Visual",
+            "description": "an image URL for this entry. If present, \"url\" will contain the image URL, \"width\" and \"height\" its dimension, and \"contentType\" its MIME type."
+          },
+          "unread": {
+            "type": "boolean",
+            "description": "was this entry read by the user? If an Authorization header is not provided, this will always return false. If an Authorization header is provided, it will reflect if the user has read this entry or not."
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Tag"
+            },
+            "description": "a list of tag objects (\"id\" and \"label\") that the user added to this entry. This value is only returned if an Authorization header is provided, and at least one tag has been added. If the entry has been explicitly marked as read (not the feed itself), the \"global.read\" tag will be present."
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Category"
+            },
+            "description": "a list of category objects (\"id\" and \"label\") that the user associated with the feed of this entry. This value is only returned if an Authorization header is provided."
+          },
+          "engagement": {
+            "type": "integer",
+            "description": "an indicator of how popular this entry is. The higher the number, the more readers have read, saved or shared this particular entry. This value changes over time."
+          },
+          "engagementRate": {
+            "type": "number",
+            "format": "float",
+            "description": "a normalized indicator for the relative popularity of this entry compared to past data from the same source. A value below 1.0 indicates this entry is less popular, on average. A value above 1.0 indicates this entry is more popular. Because this value is normalized, it can be used to compare entries from other sources, and is used for engagement ranking. This value changes over time."
+          },
+          "actionTimestamp": {
+            "type": "integer",
+            "format": "int64",
+            "description": "a timestamp for tagged articles, contains the timestamp when the article was tagged by the user. This will only be returned when the entry is returned through the streams API."
+          },
+          "enclosure": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Link"
+            },
+            "description": "a list of media links (videos, images, sound etc) provided by the feed. Some entries do not have a summary or content, only a collection of media links."
+          },
+          "fingerprint": {
+            "type": "string",
+            "description": "string the article fingerprint. This value might change if the article is updated."
+          },
+          "originId": {
+            "type": "string",
+            "description": "the unique id of this post in the RSS feed (not necessarily a URL!)"
+          },
+          "sid": {
+            "type": "string",
+            "description": "an internal search id."
+          },
+          "language": {
+            "type": "string",
+            "description": "what is the language associated with this article."
+          },
+          "canonicalUrl": {
+            "type": "string",
+            "format": "uri",
+            "description": "if available, the canonicalUrl of the article. The alternate might be a non canonical URL"
+          }
+        }
+      },
+      "Content": {
+        "type": "object",
+        "required": ["content", "direction"],
+        "properties": {
+          "content": {
+            "type": "string",
+            "description": "the content itself."
+          },
+          "direction": {
+            "$ref": "#/components/schemas/Direction",
+            "description": "the text direction (\"ltr\" for left-to-right, \"rtl\" for right-to-left)."
+          }
+        }
+      },
+      "Direction": {
+        "type": "string",
+        "enum": ["ltr", "rtl"]
+      },
+      "Link": {
+        "type": "object",
+        "required": ["href", "type"],
+        "properties": {
+          "href": {
+            "type": "string",
+            "format": "uri"
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "Origin": {
+        "type": "object",
+        "required": ["streamId", "title", "htmlUrl"],
+        "properties": {
+          "streamId": {
+            "type": "string",
+            "description": "the feed id"
+          },
+          "title": {
+            "type": "string",
+            "description": "the feed title"
+          },
+          "htmlUrl": {
+            "type": "string",
+            "format": "uri",
+            "description": "the feed’s website."
+          }
+        }
+      },
+      "Visual": {
+        "type": "object",
+        "required": ["url"],
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "width": {
+            "type": "integer"
+          },
+          "height": {
+            "type": "integer"
+          },
+          "contentType": {
+            "type": "string"
+          },
+          "edgeCacheUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "expirationDate": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "processor": {
+            "type": "string"
+          }
+        }
+      },
+      "UnreadCount": {
+        "type": "object",
+        "required": ["id", "count", "updated"],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "count": {
+            "type": "integer"
+          },
+          "updated": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "Marker": {
+        "type": "object",
+        "required": ["id", "asOf"],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "asOf": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "Profile": {
+        "type": "object",
+        "required": ["id", "wave"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "the unique, immutable user id."
+          },
+          "email": {
+            "type": "string",
+            "description": "the email address extracted from the OAuth profile. Not always available, depending on the OAuth method used."
+          },
+          "givenName": {
+            "type": "string",
+            "description": "the given (first) name. Not always available."
+          },
+          "familyName": {
+            "type": "string",
+            "description": "the family (last) name. Not always available."
+          },
+          "fullName": {
+            "type": "string",
+            "description": "the full name. Not always available."
+          },
+          "picture": {
+            "type": "string",
+            "format": "uri",
+            "description": "a picture URL for this user, extracted from the OAuth profile."
+          },
+          "gender": {
+            "$ref": "#/components/schemas/Gender",
+            "description": "\"male\" or \"female\""
+          },
+          "locale": {
+            "type": "string",
+            "description": "the locale, extracted from the OAuth profile."
+          },
+          "google": {
+            "type": "string",
+            "description": "the Google user id, if the user went through Google’s OAuth flow."
+          },
+          "reader": {
+            "type": "string",
+            "description": " the Google Reader user id. If present, this indicates a user who migrated from Google Reader."
+          },
+          "twitterUserId": {
+            "type": "string",
+            "description": "the Twitter user id, if the user went through the Twitter OAuth flow."
+          },
+          "facebookUserId": {
+            "type": "string",
+            "description": "the Facebook user id, if the user went through the Facebook OAuth flow."
+          },
+          "wordPressId": {
+            "type": "string",
+            "description": "the WordPress user id, if the user went through the WordPress OAuth flow."
+          },
+          "windowsLiveId": {
+            "type": "string",
+            "description": "the Windows Live user id, if the user went through the Windows Live OAuth flow."
+          },
+          "wave": {
+            "type": "string",
+            "description": "the analytics \"wave\". Format is: \"yyyy.ww\" where yyyy is the year, ww is the week number. E.g. \"2014.02\" means this user joined on the second week of 2014. See http://www.epochconverter.com/date-and-time/weeknumbers-by-year.php for week number definitions."
+          },
+          "client": {
+            "type": "string",
+            "description": "the client application used to create this account."
+          },
+          "source": {
+            "type": "string",
+            "description": "the client name/version used to create this account."
+          },
+          "created": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "Gender": {
+        "type": "string",
+        "enum": ["male", "female"]
+      },
+      "SearchResult": {
+        "type": "object",
+        "required": ["feedId", "subscribers", "title"],
+        "properties": {
+          "feedId": {
+            "type": "string",
+            "description": "the unique, immutable id of this feed."
+          },
+          "subscribers": {
+            "type": "integer",
+            "description": "number of Feedly Cloud subscribers who have this feed in their subscription list."
+          },
+          "title": {
+            "type": "string",
+            "description": "the feed name."
+          },
+          "description": {
+            "type": "string",
+            "description": "the feed description."
+          },
+          "website": {
+            "type": "string",
+            "description": "the website associated with this feed."
+          },
+          "lastUpdated": {
+            "type": "integer",
+            "format": "int64",
+            "description": "the timestamp, in ms, of the last article received for this feed. This value is useful to find “dormant” feeds (feeds that haven't updated in over 3 months)."
+          },
+          "velocity": {
+            "type": "number",
+            "format": "float",
+            "description": "the average number of articles published weekly. This number is updated every few days."
+          },
+          "language": {
+            "type": "string",
+            "description": "a combination of the language reported by the RSS feed, and the language automatically detected from the feed’s content. It might not be accurate, as many feeds misreport it."
+          },
+          "featured": {
+            "type": "boolean",
+            "description": "if true, this feed is featured (recommended) for the topic or search query"
+          },
+          "iconUrl": {
+            "type": "string",
+            "format": "uri",
+            "description": "a small (square) icon URL"
+          },
+          "visualUrl": {
+            "type": "string",
+            "format": "uri",
+            "description": "a larger (square) icon URL"
+          },
+          "coverUrl": {
+            "type": "string",
+            "format": "uri",
+            "description": "a large (rectangular) background image"
+          },
+          "logo": {
+            "type": "string",
+            "format": "uri",
+            "description": "a small (square) icon URL with transparency"
+          },
+          "contentType": {
+            "type": "string",
+            "description": "the auto-detected type of entries this feed publishes. Values include \"article\" (most common), \"longform\" (for longer article), \"videos\" (for YouTube, Vimeo and other video-centric feeds), and \"audio\" (for podcast feeds etc)."
+          },
+          "coverColor": {
+            "type": "string",
+            "description": "the background cover color"
+          }
+        }
+      },
+      "Stream": {
+        "type": "object",
+        "required": ["id", "items"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "the stream id, repeated."
+          },
+          "updated": {
+            "type": "integer",
+            "format": "int64",
+            "description": "the timestamp, in ms, of the most recent entry for this stream (regardless of continuation, newerThan, etc)."
+          },
+          "continuation": {
+            "type": "string",
+            "description": "the continuation id to pass to the next stream call, for pagination. This id guarantees that no entry will be duplicated in a stream (meaning, there is no need to de-duplicate entries returned by this call). If this value is not returned, it means the end of the stream has been reached."
+          },
+          "title": {
+            "type": "string",
+            "description": "for single feeds only, the feed title."
+          },
+          "direction": {
+            "$ref": "#/components/schemas/Direction",
+            "description": "for single feeds only, the text direction (\"ltr\" for left-to-right languages, \"rtl\" for right-to-left languages)."
+          },
+          "alternate": {
+            "$ref": "#/components/schemas/Link",
+            "description": "for single feeds only, the feed website URL and type."
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Entry"
+            }
+          }
+        }
+      },
+      "Subscription": {
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "categories",
+          "addded",
+          "updated",
+          "website",
+          "velocity",
+          "topics"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Category"
+            }
+          },
+          "added": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "updated": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "website": {
+            "type": "string"
+          },
+          "velocity": {
+            "type": "number",
+            "format": "float"
+          },
+          "topics": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "iconUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "visualUrl": {
+            "type": "string",
+            "format": "uri"
+          }
+        }
+      },
+      "Tag": {
+        "type": "object",
+        "required": ["id"],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "required": ["message"],
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
