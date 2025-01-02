@@ -1,6 +1,6 @@
 {
   "files": {
-    "ignore": [".wireit", "dist", "node_modules"]
+    "ignore": [".wireit", "dist", "node_modules", "package.json"]
   },
   "css": {
     "formatter": {
