@@ -121,13 +121,13 @@ export function EntryDisplaySettingsDropdown(
     );
   }, [onMarkStreamAsRead, title]);
 
-  const handleScrollToEntry = context.useCallback((event: Event) => {
-    const index = Number.parseInt(
-      (event.currentTarget as HTMLElement).dataset['key']!,
-      10,
-    );
-    onScrollToEntry(index);
-  }, []);
+  const handleScrollToEntry = context.useCallback(
+    (_event: Event, key: string) => {
+      const index = Number.parseInt(key, 10);
+      onScrollToEntry(index);
+    },
+    [],
+  );
 
   let entryMenuItems: MenuItem[] = [];
 

@@ -19,7 +19,7 @@ interface Button {
   children: TemplateResult;
   disabled?: boolean;
   key: string;
-  onAction?: (event: Event) => void;
+  onAction?: (event: Event, key: string) => void;
   type: 'button';
 }
 
@@ -27,7 +27,7 @@ interface Link {
   children: TemplateResult;
   href: string;
   key: string;
-  onAction?: (event: Event) => void;
+  onAction?: (event: Event, key: string) => void;
   type: 'link';
 }
 
@@ -35,7 +35,7 @@ interface Form {
   ariaLabel: string;
   children: TemplateResult;
   key: string;
-  onAction?: (event: Event) => void;
+  onAction?: (event: Event, key: string) => void;
   type: 'form';
 }
 
@@ -175,7 +175,7 @@ function Button(
 ): TemplateResult {
   const handleAction = context.useCallback(
     (event: Event) => {
-      item.onAction?.(event);
+      item.onAction?.(event, item.key);
       onItemAction?.(event, item.key);
     },
     [item.key, item.onAction, onItemAction],
@@ -185,7 +185,6 @@ function Button(
     <button
       aria-checked=${item.checked?.toString()}
       class="MenuItem"
-      data-key=${item.key}
       disabled=${item.disabled}
       role=${typeof item.checked === 'boolean' ? 'menuitemcheckbox' : 'menuitem'}
       type="button"
@@ -208,7 +207,7 @@ function Form(
 ): TemplateResult {
   const handleAction = context.useCallback(
     (event: Event) => {
-      item.onAction?.(event);
+      item.onAction?.(event, item.key);
       onItemAction?.(event, item.key);
       event.preventDefault();
     },
@@ -219,7 +218,6 @@ function Form(
     <form
       aria-label=${item.ariaLabel}
       class="MenuItem"
-      data-key=${item.key}
       role="menuitem"
       @submit=${handleAction}
     >
@@ -250,7 +248,6 @@ function Group(
     <section
       aria-labeledby=${ariaLabelId}
       class="MenuGroup"
-      data-key=${item.key}
       role="group"
     >
       <header class="MenuGroup-label" id=${ariaLabelId}>${item.label}</header>
@@ -271,7 +268,7 @@ function Link(
 ): TemplateResult {
   const handleAction = context.useCallback(
     (event: Event) => {
-      item.onAction?.(event);
+      item.onAction?.(event, item.key);
       onItemAction?.(event, item.key);
     },
     [item.key, item.onAction, onItemAction],
@@ -280,7 +277,6 @@ function Link(
   return context.html`
     <a
       class="MenuItem"
-      data-key=${item.key}
       href=${item.href}
       role="menuitem"
       @click=${handleAction}

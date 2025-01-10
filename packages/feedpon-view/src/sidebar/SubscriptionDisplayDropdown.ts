@@ -27,11 +27,8 @@ export function SubscriptionDisplayDropdown(
   const checkmark = context.html`<i class="icon icon-16 icon-checkmark"></i>`;
 
   const handleChangeSubscriptionOrder = context.useCallback(
-    (event: Event) => {
-      const order = (event.currentTarget as HTMLElement).dataset[
-        'key'
-      ]! as SubscriptionOrderKind;
-      onChangeSubscriptionOrder(order);
+    (_event: Event, key: string) => {
+      onChangeSubscriptionOrder(key as SubscriptionOrderKind);
     },
     [onChangeSubscriptionOrder],
   );

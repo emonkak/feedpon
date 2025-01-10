@@ -43,17 +43,15 @@ export function SubscriptionDropdown(
   );
 
   const handleRemoveFromCategory = context.useCallback(
-    (event: Event) => {
-      const label = (event.currentTarget as HTMLElement).dataset['key']!;
-      onRemoveFromCategory(subscription, label);
+    (_event: Event, key: string) => {
+      onRemoveFromCategory(subscription, key);
     },
     [subscription, onRemoveFromCategory],
   );
 
   const handleAddToCategory = context.useCallback(
-    (event: Event) => {
-      const label = (event.currentTarget as HTMLElement).dataset['key']!;
-      onAddToCategory(subscription, label);
+    (_event: Event, key: string) => {
+      onAddToCategory(subscription, key);
     },
     [subscription, onAddToCategory],
   );
