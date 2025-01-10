@@ -144,7 +144,7 @@ export function Menu(
   const children = keyedList(
     items,
     (item) => item.key,
-    (item) => renderPrimitive(item, onItemAction, context),
+    (item) => renderItem(item, onItemAction, context),
   );
 
   return context.html`
@@ -243,7 +243,7 @@ function Group(
   const children = keyedList(
     item.childItems,
     (item) => item.key,
-    (item) => renderPrimitive(item, onItemAction, context),
+    (item) => renderItem(item, onItemAction, context),
   );
 
   return context.html`
@@ -341,7 +341,7 @@ function getMenuPosition({ top, bottom, left, right }: DOMRect): MenuPosition {
   }
 }
 
-function renderPrimitive(
+function renderItem(
   item: MenuItem,
   onItemAction: ((event: Event, key: string) => void) | undefined,
   context: RenderContext,
