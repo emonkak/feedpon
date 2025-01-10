@@ -58,6 +58,9 @@ importers:
 
   packages/feedpon-messaging:
     dependencies:
+      '@emonkak/ebit':
+        specifier: github:emonkak/ebit
+        version: https://codeload.github.com/emonkak/ebit/tar.gz/87b10937ef063f80aeb89f2d9a12f9e6258653dd
       '@mozilla/readability':
         specifier: ^0.4.4
         version: 0.4.4

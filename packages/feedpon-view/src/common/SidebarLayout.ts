@@ -77,20 +77,20 @@ export function SidebarLayout(
 
   const helpTitleId = context.useId();
 
-  context.use(
-    keyMappingsHook(keyMappings, (keyMapping: KeyMapping) => {
-      const command = (commandTable as { [key: string]: Command<any> })[
-        keyMapping.commandId
-      ];
+  const handleKeyMapping = context.useCallback((keyMapping: KeyMapping) => {
+    const command = (commandTable as { [key: string]: Command<any> })[
+      keyMapping.commandId
+    ];
 
-      if (command) {
-        const params = { ...command.defaultParams, ...keyMapping.params };
-        const event = command.action(params);
+    if (command !== undefined) {
+      const params = { ...command.defaultParams, ...keyMapping.params };
+      const event = command.action(params, { locationActions });
 
-        dispatch(event);
-      }
-    }),
-  );
+      dispatch(event);
+    }
+  }, []);
+
+  context.use(keyMappingsHook(keyMappings, handleKeyMapping));
 
   context.useEffect(() => {
     if (locationState.url.pathname.indexOf('/streams/') !== 0) {

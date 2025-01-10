@@ -1,3 +1,4 @@
+import type { LocationActions } from '@emonkak/ebit/router.js';
 import type { Store as FluxStore } from 'feedpon-flux';
 import type { CacheMap } from 'feedpon-utils/CacheMap';
 import type { Trie } from 'feedpon-utils/Trie';
@@ -253,7 +254,11 @@ export interface Command<T extends object> {
   name: string;
   description: string;
   defaultParams: T;
-  action(params: T): Thunk<any> | Event;
+  action(params: T, context: CommandContext): Thunk<any> | Event;
+}
+
+export interface CommandContext {
+  locationActions: LocationActions;
 }
 
 export interface Backend {

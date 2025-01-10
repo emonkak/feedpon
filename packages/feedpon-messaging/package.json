@@ -25,6 +25,7 @@
     "./userSiteinfo": "./src/userSiteinfo/index.ts"
   },
   "dependencies": {
+    "@emonkak/ebit": "github:emonkak/ebit",
     "@mozilla/readability": "^0.4.4",
     "@types/chrome": "^0.0.253",
     "feedpon-adapters": "link:../feedpon-adapters",
