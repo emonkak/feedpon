@@ -205,6 +205,16 @@ function TreeNode<TKey, TValue>(
             (element) => element.matches('.TreeItem'),
           )?.focus();
           break;
+        case 'Home':
+          event.preventDefault();
+          event.stopPropagation();
+          (event.currentTarget as Element).parentElement?.querySelector<HTMLElement>('.TreeItem')?.focus();
+          break;
+        case 'End':
+          event.preventDefault();
+          event.stopPropagation();
+          (event.currentTarget as Element).parentElement?.querySelector<HTMLElement>('.TreeItem:last-of-type')?.focus();
+          break;
         case 'Enter':
         case ' ':
           event.stopPropagation();
