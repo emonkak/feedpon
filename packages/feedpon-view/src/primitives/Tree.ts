@@ -259,7 +259,7 @@ function TreeNode<TKey, TValue>(
       class=${classMap({ TreeItem: true, 'is-selected': item.selected })}
       role="treeitem"
       style=${styleMap({ '--level': state.level.toString() })}
-      tabindex="0"
+      tabindex=${item.selected ? '0' : '-1'}
       @click=${handleClick}
       @keydown=${handleKeyDown}
     >
