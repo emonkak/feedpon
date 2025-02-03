@@ -12,6 +12,19 @@ export interface MenuProps {
   target: string;
 }
 
+export interface MenuRef {
+  focusFirst(): void;
+  focusLast(): void;
+  focusNext(): void;
+  focusPrevious(): void;
+}
+
+export type MenuPosition =
+  | 'top-left'
+  | 'top-right'
+  | 'bottom-left'
+  | 'bottom-right';
+
 export type MenuItem = Button | Form | Group | Link | Separator;
 
 interface Button {
@@ -51,17 +64,6 @@ interface Separator {
   type: 'separator';
 }
 
-export interface MenuRef {
-  focusNext(): void;
-  focusPrevious(): void;
-}
-
-export type MenuPosition =
-  | 'top-left'
-  | 'top-right'
-  | 'bottom-left'
-  | 'bottom-right';
-
 const FOCUSABLE_ELEMENT_SELECTOR =
   'a[href], button:not(:disabled), input:not(:disabled), textarea:not(:disabled), select:not(:disabled), details, [tabindex]:not([tabindex="-1"])';
 
@@ -82,6 +84,12 @@ export function Menu(
 
   exposedRef.current = context.useMemo(
     () => ({
+      focusFirst() {
+        focusFirstItem(menuRef.current!);
+      },
+      focusLast() {
+        focusLastItem(menuRef.current!);
+      },
       focusPrevious() {
         focusPreviousItem(menuRef.current!);
       },
@@ -110,6 +118,14 @@ export function Menu(
       case 'ArrowDown':
         event.preventDefault();
         focusNextItem(menuElement);
+        break;
+      case 'Home':
+        event.preventDefault();
+        focusFirstItem(menuElement);
+        break;
+      case 'End':
+        event.preventDefault();
+        focusLastItem(menuElement);
         break;
     }
   }, []);
@@ -303,6 +319,20 @@ function focusChild(element: HTMLElement): void {
     element.focus();
   } else {
     element.querySelector<HTMLElement>(FOCUSABLE_ELEMENT_SELECTOR)?.focus();
+  }
+}
+
+function focusFirstItem(element: HTMLElement): void {
+  const children = getItemChildren(element);
+  if (children.length > 0) {
+    focusChild(children[0]!);
+  }
+}
+
+function focusLastItem(element: HTMLElement): void {
+  const children = getItemChildren(element);
+  if (children.length > 0) {
+    focusChild(children[children.length - 1]!);
   }
 }
 

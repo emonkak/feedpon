@@ -71,6 +71,16 @@ export function AutoComplete<T>(
         event.stopPropagation();
         menuRef.current!.focusNext();
         break;
+      case 'Home':
+        event.preventDefault();
+        event.stopPropagation();
+        menuRef.current!.focusFirst();
+        break;
+      case 'End':
+        event.preventDefault();
+        event.stopPropagation();
+        menuRef.current!.focusLast();
+        break;
       case 'Escape':
         event.preventDefault();
         event.stopPropagation();
