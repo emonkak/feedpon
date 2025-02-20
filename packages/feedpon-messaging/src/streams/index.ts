@@ -1,7 +1,7 @@
-export * from './actions';
+export * from './actions.ts';
 
-export * from './constants';
+export * from './constants.ts';
 
-export { default as initialState } from './initialState';
+export { default as initialState } from './initialState.ts';
 
-export { default as reducer } from './reducer';
+export { default as reducer } from './reducer.ts';

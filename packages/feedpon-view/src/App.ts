@@ -2,9 +2,9 @@ import type { RenderContext, TemplateResult } from '@emonkak/ebit';
 import { classMap, component, optional } from '@emonkak/ebit/directives.js';
 import { hashLocation, resetScrollPosition } from '@emonkak/ebit/router.js';
 import type { Store } from 'feedpon-flux';
-import { setStoreHook } from 'feedpon-flux/ebit';
+import { setStoreHook } from 'feedpon-flux/ebit.ts';
 
-import { Dispatcher } from './Dispatcher';
+import { Dispatcher } from './Dispatcher.ts';
 
 export interface AppProps {
   getStore: () => Promise<Store<unknown, unknown>>;

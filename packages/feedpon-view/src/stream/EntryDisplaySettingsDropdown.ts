@@ -2,9 +2,9 @@ import type { RenderContext, TemplateResult } from '@emonkak/ebit';
 import { classMap, component, optional } from '@emonkak/ebit/directives.js';
 import type { Entry } from 'feedpon-messaging';
 
-import { AlertDialog } from '../primitives/AlertDialog';
-import { Dropdown } from '../primitives/Dropdown';
-import type { MenuItem } from '../primitives/Menu';
+import { AlertDialog } from '../primitives/AlertDialog.ts';
+import { Dropdown } from '../primitives/Dropdown.ts';
+import type { MenuItem } from '../primitives/Menu.ts';
 
 export interface EntryDisplaySettingsDropdownProps {
   activeEntryIndex: number;

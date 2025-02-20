@@ -4,8 +4,8 @@ import {
   getAutoPagerizeItems,
   getLDRFullFeedItems,
 } from 'feedpon-adapters/wedata';
-import type { AsyncThunk, SiteinfoItem } from '../index';
-import { sendNotification } from '../notifications/actions';
+import { sendNotification } from '../notifications/actions.ts';
+import type { AsyncThunk, SiteinfoItem } from '../types.ts';
 
 const LDR_FULL_FEED_TYPE_PRIORITIES: { [key: string]: number } = {
   SBM: 3,

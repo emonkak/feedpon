@@ -1,4 +1,4 @@
-import { getRequest } from '../httpClient';
+import { getRequest } from '../httpClient.ts';
 
 export interface WedataItem<T> {
   resource_url: string;

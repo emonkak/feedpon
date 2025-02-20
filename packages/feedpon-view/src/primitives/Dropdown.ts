@@ -1,6 +1,6 @@
 import type { RenderContext, TemplateResult } from '@emonkak/ebit';
 import { component } from '@emonkak/ebit/directives.js';
-import { Menu, type MenuItem } from './Menu';
+import { Menu, type MenuItem } from './Menu.ts';
 
 export interface DropdownProps {
   items: MenuItem[];

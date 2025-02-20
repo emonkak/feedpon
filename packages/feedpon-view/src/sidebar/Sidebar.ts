@@ -17,13 +17,13 @@ import { fetchUser } from 'feedpon-messaging/user';
 
 import type { RenderContext, TemplateResult } from '@emonkak/ebit';
 import { classMap, component } from '@emonkak/ebit/directives.js';
-import { getStoreHook } from 'feedpon-flux/ebit';
-import { AutoComplete } from '../primitives/AutoComplete';
-import type { MenuItem } from '../primitives/Menu';
-import { RelativeTime } from '../primitives/RelativeTime';
-import { ProfileDropdown } from './ProfileDropdown';
-import { SubscriptionDisplayDropdown } from './SubscriptionDisplayDropdown';
-import { SubscriptionTree } from './SubscriptionTree';
+import { getStoreHook } from 'feedpon-flux/ebit.ts';
+import { AutoComplete } from '../primitives/AutoComplete.ts';
+import type { MenuItem } from '../primitives/Menu.ts';
+import { RelativeTime } from '../primitives/RelativeTime.ts';
+import { ProfileDropdown } from './ProfileDropdown.ts';
+import { SubscriptionDisplayDropdown } from './SubscriptionDisplayDropdown.ts';
+import { SubscriptionTree } from './SubscriptionTree.ts';
 
 export interface SidebarProps {}
 

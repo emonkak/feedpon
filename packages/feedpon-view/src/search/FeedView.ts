@@ -1,7 +1,7 @@
 import type { RenderContext, TemplateResult } from '@emonkak/ebit';
 import { component } from '@emonkak/ebit/directives.js';
 import type { Category, Feed, Subscription } from 'feedpon-messaging';
-import { SubscriptionSettingsDropdown } from '../subscription/SubscriptionSettingsDropdown';
+import { SubscriptionSettingsDropdown } from '../subscription/SubscriptionSettingsDropdown.ts';
 
 interface FeedViewProps {
   categories: Category[];

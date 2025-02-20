@@ -1,11 +1,11 @@
-import type { EventStore, IdentifiedEvent, Snapshot } from './index';
+import type { EventStore, IdentifiedEvent, Snapshot } from './interface.ts';
 
 const DB_NAME = 'feedpon';
 const DB_VERSION = 1;
 const EVENTS_STORE_NAME = 'events';
 const SNAPSHOTS_STORE_NAME = 'snapshots';
 
-export default class IndexedDBEventStore<TState, TEvent>
+export class IndexedDBEventStore<TState, TEvent>
   implements EventStore<TState, TEvent>
 {
   private _db: IDBDatabase | null = null;

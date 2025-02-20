@@ -8,7 +8,7 @@ import {
 } from '@emonkak/ebit/directives.js';
 import { type LocationActions, RelativeURL } from '@emonkak/ebit/router.js';
 import { bindActions } from 'feedpon-flux';
-import { getStoreHook } from 'feedpon-flux/ebit';
+import { getStoreHook } from 'feedpon-flux/ebit.ts';
 import type { State } from 'feedpon-messaging';
 import {
   createCategory,
@@ -23,10 +23,10 @@ import {
 } from 'feedpon-messaging/subscriptions';
 import { toggleSidebar } from 'feedpon-messaging/ui';
 
-import { MainLayout } from '../common/MainLayout';
-import { Navbar } from '../common/Navbar';
-import { createPreviousHook } from '../common/hooks/previousHook';
-import { FeedView } from './FeedView';
+import { MainLayout } from '../common/MainLayout.ts';
+import { Navbar } from '../common/Navbar.ts';
+import { createPreviousHook } from '../common/hooks/previousHook.ts';
+import { FeedView } from './FeedView.ts';
 
 export interface SearchPageProps {
   defaultQuery?: string;

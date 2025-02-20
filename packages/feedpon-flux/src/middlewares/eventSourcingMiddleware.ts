@@ -1,5 +1,5 @@
-import type { Middleware } from '../index';
-import type { EventStore, IdentifiedEvent, Snapshot } from '../persistence';
+import type { Middleware } from '../index.ts';
+import type { EventStore, IdentifiedEvent, Snapshot } from '../persistence.ts';
 
 export default function eventSourcingMiddlewareFactory<TState, TEvent>(
   eventStore: EventStore<TState, TEvent>,

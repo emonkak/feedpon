@@ -1,6 +1,6 @@
 import createClient, { type Middleware, type Client } from 'openapi-fetch';
 
-import type * as feedly from './api/feedly';
+import type * as feedly from './api/feedly.ts';
 
 export type FeedlyAPI = typeof feedly;
 

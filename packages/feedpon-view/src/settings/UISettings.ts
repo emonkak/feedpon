@@ -1,7 +1,7 @@
 import type { RenderContext, TemplateResult } from '@emonkak/ebit';
 import { atom, live, nonKeyedList } from '@emonkak/ebit/directives.js';
 import { bindActions } from 'feedpon-flux';
-import { getStoreHook } from 'feedpon-flux/ebit';
+import { getStoreHook } from 'feedpon-flux/ebit.ts';
 import type { State, ThemeKind } from 'feedpon-messaging';
 import { THEMES, changeCustomStyles, changeTheme } from 'feedpon-messaging/ui';
 

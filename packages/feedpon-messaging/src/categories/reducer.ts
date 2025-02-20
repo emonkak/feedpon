@@ -1,7 +1,7 @@
-import filterObject from 'feedpon-utils/filterObject';
-import mapObject from 'feedpon-utils/mapObject';
+import filterObject from 'feedpon-utils/filterObject.ts';
+import mapObject from 'feedpon-utils/mapObject.ts';
 
-import type { Categories, Category, Event } from '../index';
+import type { Categories, Category, Event } from '../types.ts';
 
 export default function reducer(
   categories: Categories,

@@ -1,4 +1,4 @@
-import type { Notifications } from '../index';
+import type { Notifications } from '../types.ts';
 
 const notifications: Notifications = {
   items: [],

@@ -1,4 +1,4 @@
-import type { Backend, Event } from '../index';
+import type { Backend, Event } from '../types.ts';
 
 export default function reduceBackend(backend: Backend, event: Event): Backend {
   switch (event.type) {

@@ -1,21 +1,21 @@
-import backend from './backend/initialState';
-import categories from './categories/initialState';
-import histories from './histories/initialState';
-import type { State } from './index';
-import keyMappings from './keyMappings/initialState';
-import notifications from './notifications/initialState';
-import osd from './osd/initialState';
-import search from './search/initialState';
-import sharedSiteinfo from './sharedSiteinfo/initialState';
-import streams from './streams/initialState';
-import subscriptions from './subscriptions/initialState';
-import trackingUrls from './trackingUrls/initialState';
-import ui from './ui/initialState';
-import urlReplacements from './urlReplacements/initialState';
-import user from './user/initialState';
-import userSiteinfo from './userSiteinfo/initialState';
+import backend from './backend/initialState.ts';
+import categories from './categories/initialState.ts';
+import histories from './histories/initialState.ts';
+import keyMappings from './keyMappings/initialState.ts';
+import notifications from './notifications/initialState.ts';
+import osd from './osd/initialState.ts';
+import search from './search/initialState.ts';
+import sharedSiteinfo from './sharedSiteinfo/initialState.ts';
+import streams from './streams/initialState.ts';
+import subscriptions from './subscriptions/initialState.ts';
+import trackingUrls from './trackingUrls/initialState.ts';
+import type { State } from './types.ts';
+import ui from './ui/initialState.ts';
+import urlReplacements from './urlReplacements/initialState.ts';
+import user from './user/initialState.ts';
+import userSiteinfo from './userSiteinfo/initialState.ts';
 
-const initialState: State = {
+export const initialState: State = {
   backend,
   categories,
   histories,
@@ -33,5 +33,3 @@ const initialState: State = {
   userSiteinfo,
   version: '0.0.0',
 };
-
-export default initialState;

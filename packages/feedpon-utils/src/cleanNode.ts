@@ -1,5 +1,5 @@
-import { SRCSET_ATTRS, URI_ATTRS, sanitizeElement } from './htmlSanitizer';
-import parseSrcset from './parseSrcset';
+import { SRCSET_ATTRS, URI_ATTRS, sanitizeElement } from './htmlSanitizer.ts';
+import parseSrcset from './parseSrcset.ts';
 
 const MINIUM_RESPONSIVE_ELEMENT_WIDTH = 128;
 const MINIUM_RESPONSIVE_ELEMENT_HEIGHT = 128;

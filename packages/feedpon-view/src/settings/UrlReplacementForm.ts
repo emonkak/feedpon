@@ -2,7 +2,7 @@ import type { RenderContext, TemplateResult } from '@emonkak/ebit';
 import { Atom, component, live } from '@emonkak/ebit/directives.js';
 import type { UrlReplacement } from 'feedpon-messaging';
 
-import { FormControl, type FormValidation } from '../primitives/FormControl';
+import { FormControl, type FormValidation } from '../primitives/FormControl.ts';
 
 interface UrlReplacementFormProps {
   item?: UrlReplacement;

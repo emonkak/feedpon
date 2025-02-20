@@ -1,4 +1,4 @@
-import type { Backend } from '../index';
+import type { Backend } from '../types.ts';
 
 const backend: Backend = {
   authenticatedAt: 0,

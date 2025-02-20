@@ -1,6 +1,6 @@
 import * as feedly from 'feedpon-adapters/feedly';
-import { getFeedlyToken } from '../backend/actions';
-import type { AsyncThunk, Category } from '../index';
+import { getFeedlyToken } from '../backend/actions.ts';
+import type { AsyncThunk, Category } from '../types.ts';
 
 export function createCategory(
   label: string,

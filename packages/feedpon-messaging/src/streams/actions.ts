@@ -2,11 +2,11 @@ import { Readability } from '@mozilla/readability';
 
 import * as feedly from 'feedpon-adapters/feedly';
 import * as hatena from 'feedpon-adapters/hatena';
-import PromiseQueue from 'feedpon-utils/PromiseQueue';
-import decodeResponseAsText from 'feedpon-utils/decodeResponseAsText';
-import stripTags from 'feedpon-utils/stripTags';
-import tryMatch from 'feedpon-utils/tryMatch';
-import { getFeedlyToken } from '../backend/actions';
+import PromiseQueue from 'feedpon-utils/PromiseQueue.ts';
+import decodeResponseAsText from 'feedpon-utils/decodeResponseAsText.ts';
+import stripTags from 'feedpon-utils/stripTags.ts';
+import tryMatch from 'feedpon-utils/tryMatch.ts';
+import { getFeedlyToken } from '../backend/actions.ts';
 import type {
   AsyncThunk,
   Category,
@@ -17,11 +17,11 @@ import type {
   StreamViewKind,
   Subscription,
   Thunk,
-} from '../index';
-import { sendNotification } from '../notifications/actions';
-import { getSiteinfoItems } from '../sharedSiteinfo/actions';
-import { expandUrl } from '../trackingUrls/actions';
-import { ALL_STREAM_ID, PINS_STREAM_ID } from './constants';
+} from '../index.ts';
+import { sendNotification } from '../notifications/actions.ts';
+import { getSiteinfoItems } from '../sharedSiteinfo/actions.ts';
+import { expandUrl } from '../trackingUrls/actions.ts';
+import { ALL_STREAM_ID, PINS_STREAM_ID } from './constants.ts';
 
 export function fetchStream(
   streamId: string,

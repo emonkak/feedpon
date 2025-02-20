@@ -1,5 +1,5 @@
-import * as CacheMap from 'feedpon-utils/CacheMap';
-import type { Event, Histories } from '../index';
+import * as CacheMap from 'feedpon-utils/CacheMap.ts';
+import type { Event, Histories } from '../types.ts';
 
 export default function historiesReducer(
   histories: Histories,

@@ -1,16 +1,16 @@
 import { createSelector } from 'reselect';
 
-import composeComparers from 'feedpon-utils/composeComparers';
-import createAscendingComparer from 'feedpon-utils/createAscendingComparer';
-import createDescendingComparer from 'feedpon-utils/createDescendingComparer';
-import sequentialEqual from 'feedpon-utils/sequentialEqual';
-import { UNCATEGORIZED } from '../categories/constants';
+import composeComparers from 'feedpon-utils/composeComparers.ts';
+import createAscendingComparer from 'feedpon-utils/createAscendingComparer.ts';
+import createDescendingComparer from 'feedpon-utils/createDescendingComparer.ts';
+import sequentialEqual from 'feedpon-utils/sequentialEqual.ts';
+import { UNCATEGORIZED } from '../categories/constants.ts';
 import type {
   GroupedSubscription,
   State,
   Subscription,
   SubscriptionOrderKind,
-} from '../index';
+} from '../index.ts';
 
 export const subscriptionIdComparer = composeComparers(
   labelsComparer,

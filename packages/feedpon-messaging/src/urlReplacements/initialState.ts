@@ -1,4 +1,4 @@
-import type { UrlReplacements } from '../index';
+import type { UrlReplacements } from '../types.ts';
 
 const urlReplacements: UrlReplacements = {
   items: [

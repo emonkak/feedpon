@@ -1,4 +1,4 @@
-import type { SharedSiteinfo } from '../index';
+import type { SharedSiteinfo } from '../types.ts';
 
 const sharedSiteinfo: SharedSiteinfo = {
   isLoading: false,

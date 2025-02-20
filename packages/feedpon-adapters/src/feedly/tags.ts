@@ -1,5 +1,9 @@
-import { deleteJson, getRequest, postJson, putJson } from '../httpClient';
-import { createAuthHeader, handleJsonResponse, handleResponse } from './utils';
+import { deleteJson, getRequest, postJson, putJson } from '../httpClient.ts';
+import {
+  createAuthHeader,
+  handleJsonResponse,
+  handleResponse,
+} from './utils.js';
 
 export interface Tag {
   id: string;

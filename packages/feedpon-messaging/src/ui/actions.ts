@@ -1,4 +1,4 @@
-import type { Event, StreamViewKind, ThemeKind, Thunk } from '../index';
+import type { Event, StreamViewKind, ThemeKind, Thunk } from '../types.ts';
 
 export function changeActiveEntry(streamId: string, index: number): Event {
   return {

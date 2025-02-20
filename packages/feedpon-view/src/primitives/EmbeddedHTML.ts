@@ -1,8 +1,8 @@
 import type { RenderContext, TemplateResult } from '@emonkak/ebit';
 import { ref } from '@emonkak/ebit/directives.js';
 
-import cleanNode from 'feedpon-utils/cleanNode';
-import walkNode from 'feedpon-utils/walkNode';
+import cleanNode from 'feedpon-utils/cleanNode.ts';
+import walkNode from 'feedpon-utils/walkNode.ts';
 
 interface EmbeddedHTMLProps {
   class?: string;

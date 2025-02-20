@@ -10,8 +10,8 @@ import {
   clearStreamCaches,
 } from 'feedpon-messaging/streams';
 
-import { getStoreHook } from 'feedpon-flux/ebit';
-import { AlertDialog } from '../primitives/AlertDialog';
+import { getStoreHook } from 'feedpon-flux/ebit.ts';
+import { AlertDialog } from '../primitives/AlertDialog.ts';
 
 export interface StreamSettingsProps {}
 

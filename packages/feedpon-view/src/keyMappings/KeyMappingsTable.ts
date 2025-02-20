@@ -1,7 +1,7 @@
 import type { RenderContext, TemplateResult } from '@emonkak/ebit';
 import { nonKeyedList } from '@emonkak/ebit/directives.js';
 import type { Command, KeyMapping } from 'feedpon-messaging';
-import * as Trie from 'feedpon-utils/Trie';
+import * as Trie from 'feedpon-utils/Trie.ts';
 
 interface KeyMappingsTableProps {
   commandTable: { [key: string]: Command<any> };

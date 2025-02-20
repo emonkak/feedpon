@@ -1,4 +1,4 @@
-import { getRequest } from '../httpClient';
+import { getRequest } from '../httpClient.ts';
 
 export interface BookmarkCounts {
   [key: string]: number;

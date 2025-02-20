@@ -1,7 +1,7 @@
 import type { RenderContext, TemplateResult } from '@emonkak/ebit';
 import { Atom, component, live } from '@emonkak/ebit/directives.js';
 
-import { FormControl, type FormValidation } from '../primitives/FormControl';
+import { FormControl, type FormValidation } from '../primitives/FormControl.ts';
 
 interface TrackingUrlPatternFormProps {
   onAdd: (pattern: string) => void;

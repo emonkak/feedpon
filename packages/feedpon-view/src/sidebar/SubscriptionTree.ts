@@ -7,7 +7,7 @@ import { UNCATEGORIZED } from 'feedpon-messaging/categories';
 
 import type { RenderContext, TemplateResult } from '@emonkak/ebit';
 import { classMap, component } from '@emonkak/ebit/directives.js';
-import { Tree, type TreeItem } from '../primitives/Tree';
+import { Tree, type TreeItem } from '../primitives/Tree.ts';
 
 interface SubscriptionTreeProps {
   categories: Category[];

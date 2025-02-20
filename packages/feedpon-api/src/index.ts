@@ -1,3 +1,3 @@
-export * from './feedly';
-export * from './hatenaBookmark';
-export * from './wedata';
+export * from './feedly.ts';
+export * from './hatenaBookmark.ts';
+export * from './wedata.ts';

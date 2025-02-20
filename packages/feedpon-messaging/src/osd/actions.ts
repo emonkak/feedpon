@@ -1,4 +1,4 @@
-import type { Event } from '../index';
+import type { Event } from '../types.ts';
 
 const DEFAULT_DISMISS_AFTER = 1000;
 

@@ -1,8 +1,8 @@
 import type { RenderContext, TemplateResult } from '@emonkak/ebit';
 import { component, optional } from '@emonkak/ebit/directives.js';
 import type { SubscriptionOrderKind } from 'feedpon-messaging';
-import { Dropdown } from '../primitives/Dropdown';
-import type { MenuItem } from '../primitives/Menu';
+import { Dropdown } from '../primitives/Dropdown.ts';
+import type { MenuItem } from '../primitives/Menu.ts';
 
 interface SubscriptionDisplayDropdownProps {
   isLoading: boolean;

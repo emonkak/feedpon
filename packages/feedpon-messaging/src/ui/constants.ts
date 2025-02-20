@@ -1,4 +1,4 @@
-import type { ThemeKind } from '../index';
+import type { ThemeKind } from '../types.ts';
 
 export const THEMES: { label: string; value: ThemeKind }[] = [
   {

@@ -6,7 +6,7 @@ import {
   deleteUserSiteinfoItem,
   updateUserSiteinfoItem,
 } from 'feedpon-messaging/userSiteinfo';
-import tryMatch from 'feedpon-utils/tryMatch';
+import tryMatch from 'feedpon-utils/tryMatch.ts';
 
 import type { RenderContext, TemplateResult } from '@emonkak/ebit';
 import {
@@ -16,15 +16,15 @@ import {
   memo,
   ref,
 } from '@emonkak/ebit/directives.js';
-import { getStoreHook } from 'feedpon-flux/ebit';
-import { RelativeTime } from '../primitives/RelativeTime';
+import { getStoreHook } from 'feedpon-flux/ebit.ts';
+import { RelativeTime } from '../primitives/RelativeTime.ts';
 import {
   type BlankSpaces,
   VirtualScrollList,
-} from '../primitives/VirtualScrollList';
-import { SharedSiteinfoItem } from './SharedSiteinfoItem';
-import { UserSiteinfoForm } from './UserSiteinfoForm';
-import { UserSiteinfoRow } from './UserSiteinfoRow';
+} from '../primitives/VirtualScrollList.ts';
+import { SharedSiteinfoItem } from './SharedSiteinfoItem.ts';
+import { UserSiteinfoForm } from './UserSiteinfoForm.ts';
+import { UserSiteinfoRow } from './UserSiteinfoRow.ts';
 
 interface SiteinfoSettingsProps {}
 

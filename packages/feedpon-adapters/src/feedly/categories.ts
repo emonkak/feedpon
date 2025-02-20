@@ -1,5 +1,9 @@
-import { deleteJson, getRequest, postJson } from '../httpClient';
-import { createAuthHeader, handleJsonResponse, handleResponse } from './utils';
+import { deleteJson, getRequest, postJson } from '../httpClient.ts';
+import {
+  createAuthHeader,
+  handleJsonResponse,
+  handleResponse,
+} from './utils.js';
 
 export interface Category {
   id: string;

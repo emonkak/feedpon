@@ -1,22 +1,22 @@
-import type { Event, State } from './index';
+import type { Event, State } from './types.ts';
 
 import { combineReducers } from 'feedpon-flux';
-import backend from './backend/reducer';
-import categories from './categories/reducer';
-import histories from './histories/reducer';
-import keyMappings from './keyMappings/reducer';
-import notifications from './notifications/reducer';
-import osd from './osd/reducer';
-import search from './search/reducer';
-import sharedSiteinfo from './sharedSiteinfo/reducer';
-import streams from './streams/reducer';
-import subscriptions from './subscriptions/reducer';
-import trackingUrls from './trackingUrls/reducer';
-import ui from './ui/reducer';
-import urlReplacements from './urlReplacements/reducer';
-import user from './user/reducer';
-import userSiteinfo from './userSiteinfo/reducer';
-import version from './versionReducer';
+import backend from './backend/reducer.ts';
+import categories from './categories/reducer.ts';
+import histories from './histories/reducer.ts';
+import keyMappings from './keyMappings/reducer.ts';
+import notifications from './notifications/reducer.ts';
+import osd from './osd/reducer.ts';
+import search from './search/reducer.ts';
+import sharedSiteinfo from './sharedSiteinfo/reducer.ts';
+import streams from './streams/reducer.ts';
+import subscriptions from './subscriptions/reducer.ts';
+import trackingUrls from './trackingUrls/reducer.ts';
+import ui from './ui/reducer.ts';
+import urlReplacements from './urlReplacements/reducer.ts';
+import user from './user/reducer.ts';
+import userSiteinfo from './userSiteinfo/reducer.ts';
+import version from './versionReducer.ts';
 
 export default combineReducers<State, Event>({
   backend,

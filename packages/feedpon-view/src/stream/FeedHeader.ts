@@ -9,7 +9,7 @@ import type {
   unsubscribe,
 } from 'feedpon-messaging/subscriptions';
 
-import { SubscriptionSettingsDropdown } from '../subscription/SubscriptionSettingsDropdown';
+import { SubscriptionSettingsDropdown } from '../subscription/SubscriptionSettingsDropdown.ts';
 
 interface FeedHeaderProps {
   categories: Category[];

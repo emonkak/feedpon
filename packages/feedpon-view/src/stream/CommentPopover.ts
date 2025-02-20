@@ -7,7 +7,7 @@ import {
 } from '@emonkak/ebit/directives.js';
 import type { Comment } from 'feedpon-messaging';
 
-import { CommentView } from './CommentView';
+import { CommentView } from './CommentView.ts';
 
 interface CommentPopoverProps {
   arrowOffset: number;

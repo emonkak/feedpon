@@ -1,4 +1,4 @@
-import type { Event, UrlReplacement } from '../index';
+import type { Event, UrlReplacement } from '../types.ts';
 
 export function addUrlReplacement(item: UrlReplacement): Event {
   return {

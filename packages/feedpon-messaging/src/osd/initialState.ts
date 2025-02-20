@@ -1,4 +1,4 @@
-import type { OSDState } from '../index';
+import type { OSDState } from '../types.ts';
 
 const initialState: OSDState = {
   version: 1,

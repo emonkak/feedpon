@@ -1,4 +1,4 @@
-import type { User } from '../index';
+import type { User } from '../types.ts';
 
 const user: User = {
   isLoaded: false,

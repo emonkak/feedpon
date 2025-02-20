@@ -1,5 +1,5 @@
-import * as CacheMap from 'feedpon-utils/CacheMap';
-import type { Histories } from '../index';
+import * as CacheMap from 'feedpon-utils/CacheMap.ts';
+import type { Histories } from '../types.ts';
 
 const initialState: Histories = {
   recentlyReadStreams: CacheMap.empty<number>(100),

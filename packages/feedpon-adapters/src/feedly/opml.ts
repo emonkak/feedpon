@@ -1,5 +1,5 @@
-import { postXml } from '../httpClient';
-import { createAuthHeader, handleResponse } from './utils';
+import { postXml } from '../httpClient.ts';
+import { createAuthHeader, handleResponse } from './utils.ts';
 
 export function createExportOpmlUrl(
   endPoint: string,

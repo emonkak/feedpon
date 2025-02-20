@@ -1,6 +1,6 @@
 import createClient, { type Client } from 'openapi-fetch';
 
-import type * as hatenaBookmark from './api/hatenaBookmark';
+import type * as hatenaBookmark from './api/hatenaBookmark.ts';
 
 export type HatenaBookmarkAPI = typeof hatenaBookmark;
 

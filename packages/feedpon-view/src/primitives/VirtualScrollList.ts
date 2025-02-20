@@ -6,11 +6,11 @@ import type {
   Usable,
 } from '@emonkak/ebit';
 import { type ElementRef, keyedList, memo } from '@emonkak/ebit/directives.js';
-import throttle from 'feedpon-utils/throttle';
+import throttle from 'feedpon-utils/throttle.ts';
 
-import { createEventHook } from '../common/hooks/eventHook';
-import { isMountedHook } from '../common/hooks/isMountedHook';
-import { createPreviousHook } from '../common/hooks/previousHook';
+import { createEventHook } from '../common/hooks/eventHook.ts';
+import { isMountedHook } from '../common/hooks/isMountedHook.ts';
+import { createPreviousHook } from '../common/hooks/previousHook.ts';
 
 export interface BlankSpaces {
   above: number;

@@ -1,8 +1,8 @@
 import type { RenderContext, TemplateResult } from '@emonkak/ebit';
 import { component, styleMap } from '@emonkak/ebit/directives.js';
 
-import { createPopupHook } from '../common/hooks/popupHook';
-import { Dialog } from '../primitives/Dialog';
+import { createPopupHook } from '../common/hooks/popupHook.ts';
+import { Dialog } from '../primitives/Dialog.ts';
 
 interface EntryShareButtonProps {
   url: string;

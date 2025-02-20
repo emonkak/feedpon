@@ -1,4 +1,4 @@
-import type { Categories } from '../index';
+import type { Categories } from '../types.ts';
 
 const categories: Categories = {
   isLoading: false,

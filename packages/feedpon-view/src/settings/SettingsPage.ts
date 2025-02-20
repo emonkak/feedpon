@@ -2,12 +2,12 @@ import type { RenderContext, TemplateResult } from '@emonkak/ebit';
 import { component } from '@emonkak/ebit/directives.js';
 import type { RelativeURL } from '@emonkak/ebit/router.js';
 import { bindActions } from 'feedpon-flux';
-import { getStoreHook } from 'feedpon-flux/ebit';
+import { getStoreHook } from 'feedpon-flux/ebit.ts';
 import { toggleSidebar } from 'feedpon-messaging/ui';
 
-import { MainLayout } from '../common/MainLayout';
-import { Navbar } from '../common/Navbar';
-import { TabList } from '../primitives/TabList';
+import { MainLayout } from '../common/MainLayout.ts';
+import { Navbar } from '../common/Navbar.ts';
+import { TabList } from '../primitives/TabList.ts';
 
 export interface SettingsProps {
   children: unknown;

@@ -1,4 +1,4 @@
-import type { Event, OSDState } from '../index';
+import type { Event, OSDState } from '../types.ts';
 
 export default function reducer(state: OSDState, event: Event): OSDState {
   switch (event.type) {

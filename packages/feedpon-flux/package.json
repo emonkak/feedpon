@@ -1,16 +1,15 @@
 {
   "name": "feedpon-flux",
   "private": true,
-  "main": "./dist/index.js",
+  "type": "module",
   "exports": {
     ".": "./src/index.ts",
-    "./ebit": "./src/ebit.ts",
-    "./middlewares/*": "./src/middlewares/*.ts",
-    "./persistence": "./src/persistence/index.ts",
-    "./persistence/*": "./src/persistence/*.ts"
+    "./ebit.ts": "./src/ebit.ts",
+    "./middlewares/*.ts": "./src/middlewares/*.ts",
+    "./persistence.ts": "./src/persistence.ts"
   },
   "dependencies": {
-    "@emonkak/ebit": "github:emonkak/ebit",
+    "@emonkak/ebit": "catalog:",
     "feedpon-utils": "workspace:^"
   }
 }

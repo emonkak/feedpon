@@ -1,7 +1,7 @@
 {
   "name": "feedpon-api",
   "private": true,
-  "main": "./src/index.ts",
+  "type": "module",
   "exports": {
     ".": "./src/index.ts"
   },

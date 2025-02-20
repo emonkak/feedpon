@@ -1,6 +1,6 @@
 import type { RenderContext, TemplateResult } from '@emonkak/ebit';
 import { bindActions } from 'feedpon-flux';
-import { getStoreHook } from 'feedpon-flux/ebit';
+import { getStoreHook } from 'feedpon-flux/ebit.ts';
 import { authenticate } from 'feedpon-messaging/backend';
 
 export interface AuthenticationPageProps {}

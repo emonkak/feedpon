@@ -6,20 +6,20 @@ import {
   styleMap,
 } from '@emonkak/ebit/directives.js';
 import type { Entry, StreamViewKind } from 'feedpon-messaging';
-import * as SmoothScroll from 'feedpon-utils/SmoothScroll';
+import * as SmoothScroll from 'feedpon-utils/SmoothScroll.ts';
 
-import { createEventHook } from '../common/hooks/eventHook';
+import { createEventHook } from '../common/hooks/eventHook.ts';
 import {
   type BlankSpaces,
   type Dimensions,
   VirtualScrollList,
   type VirtualScrollListRef,
-} from '../primitives/VirtualScrollList';
-import { EntryItem } from './EntryItem';
+} from '../primitives/VirtualScrollList.ts';
+import { EntryItem } from './EntryItem.ts';
 import {
   CollapsedEntryPlaceholder,
   ExpandedEntryPlaceholder,
-} from './EntryPlaceholder';
+} from './EntryPlaceholder.ts';
 
 interface EntryListProps {
   activeEntryIndex: number;

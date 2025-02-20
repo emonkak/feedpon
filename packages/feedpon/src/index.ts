@@ -1,9 +1,13 @@
-import { BrowserRenderHost, ConcurrentUpdater, createRoot } from '@emonkak/ebit';
+import {
+  BrowserRenderHost,
+  ConcurrentUpdater,
+  createRoot,
+} from '@emonkak/ebit';
 
 import { component } from '@emonkak/ebit/directives.js';
-import prepareSelectors from 'feedpon-messaging/prepareSelectors';
+import { prepareSelectors } from 'feedpon-messaging';
 import { App } from 'feedpon-view';
-import prepareStore from './prepareStore';
+import prepareStore from './prepareStore.js';
 
 function main() {
   const selectors = prepareSelectors();

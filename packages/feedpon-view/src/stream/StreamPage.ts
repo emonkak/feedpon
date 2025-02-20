@@ -5,7 +5,7 @@ import {
   optional,
 } from '@emonkak/ebit/directives.js';
 import { bindActions } from 'feedpon-flux';
-import { getStoreHook } from 'feedpon-flux/ebit';
+import { getStoreHook } from 'feedpon-flux/ebit.ts';
 import type { EntryOrderKind, State, StreamViewKind } from 'feedpon-messaging';
 import {
   createCategory,
@@ -44,17 +44,17 @@ import {
   toggleSidebar,
   unselectStream,
 } from 'feedpon-messaging/ui';
-import * as CacheMap from 'feedpon-utils/CacheMap';
+import * as CacheMap from 'feedpon-utils/CacheMap.ts';
 
-import { MainLayout } from '../common/MainLayout';
-import { createEventHook } from '../common/hooks/eventHook';
-import { isMountedHook } from '../common/hooks/isMountedHook';
-import type { VirtualScrollListRef } from '../primitives/VirtualScrollList';
-import { CategoryHeader } from './CategoryHeader';
-import { EntryList } from './EntryList';
-import { FeedHeader } from './FeedHeader';
-import { StreamFooter } from './StreamFooter';
-import { StreamHeader } from './StreamHeader';
+import { MainLayout } from '../common/MainLayout.ts';
+import { createEventHook } from '../common/hooks/eventHook.ts';
+import { isMountedHook } from '../common/hooks/isMountedHook.ts';
+import type { VirtualScrollListRef } from '../primitives/VirtualScrollList.ts';
+import { CategoryHeader } from './CategoryHeader.ts';
+import { EntryList } from './EntryList.ts';
+import { FeedHeader } from './FeedHeader.ts';
+import { StreamFooter } from './StreamFooter.ts';
+import { StreamHeader } from './StreamHeader.ts';
 
 export interface StreamPageProps {
   streamId: string;

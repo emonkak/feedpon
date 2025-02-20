@@ -208,12 +208,16 @@ function TreeNode<TKey, TValue>(
         case 'Home':
           event.preventDefault();
           event.stopPropagation();
-          (event.currentTarget as Element).parentElement?.querySelector<HTMLElement>('.TreeItem')?.focus();
+          (event.currentTarget as Element).parentElement
+            ?.querySelector<HTMLElement>('.TreeItem')
+            ?.focus();
           break;
         case 'End':
           event.preventDefault();
           event.stopPropagation();
-          (event.currentTarget as Element).parentElement?.querySelector<HTMLElement>('.TreeItem:last-of-type')?.focus();
+          (event.currentTarget as Element).parentElement
+            ?.querySelector<HTMLElement>('.TreeItem:last-of-type')
+            ?.focus();
           break;
         case 'Enter':
         case ' ':

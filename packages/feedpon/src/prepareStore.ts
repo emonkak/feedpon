@@ -1,19 +1,16 @@
 import type { Middleware, Store } from 'feedpon-flux';
 import { applyMiddlewares, createStore } from 'feedpon-flux';
-import errorHandlingMiddleware from 'feedpon-flux/middlewares/errorHandlingMiddleware';
-import eventSourcingMiddleware from 'feedpon-flux/middlewares/eventSourcingMiddleware';
-import { loggerMiddleware } from 'feedpon-flux/middlewares/loggerMiddleware';
-import thunkMiddleware from 'feedpon-flux/middlewares/thunkMiddleware';
-import IndexedDBEventStore from 'feedpon-flux/persistence/IndexedDBEventStore';
-import {
-  type EventStore,
-  restoreSnapshot,
-} from 'feedpon-flux/persistence/index';
+import errorHandlingMiddleware from 'feedpon-flux/middlewares/errorHandlingMiddleware.ts';
+import eventSourcingMiddleware from 'feedpon-flux/middlewares/eventSourcingMiddleware.ts';
+import { loggerMiddleware } from 'feedpon-flux/middlewares/loggerMiddleware.ts';
+import thunkMiddleware from 'feedpon-flux/middlewares/thunkMiddleware.ts';
+import { IndexedDBEventStore } from 'feedpon-flux/persistence.ts';
+import { type EventStore, restoreSnapshot } from 'feedpon-flux/persistence.ts';
 import type { Event, State, ThunkContext } from 'feedpon-messaging';
-import initialState from 'feedpon-messaging/initialState';
+import { initialState } from 'feedpon-messaging';
 import { sendNotification } from 'feedpon-messaging/notifications';
 import reducer from 'feedpon-messaging/reducer';
-import packageJson from '../package.json';
+import packageJson from '../package.json' with { type: 'json' };
 
 export default async function prepareStore(
   context: ThunkContext,

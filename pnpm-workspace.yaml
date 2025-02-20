@@ -1,2 +1,4 @@
 packages:
   - 'packages/*'
+catalog:
+  '@emonkak/ebit': github:emonkak/ebit

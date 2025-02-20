@@ -6,9 +6,9 @@ import type {
 
 import type { RenderContext, TemplateResult } from '@emonkak/ebit';
 import { component } from '@emonkak/ebit/directives.js';
-import { AlertDialog } from '../primitives/AlertDialog';
-import { Dialog } from '../primitives/Dialog';
-import { UserSiteinfoForm } from './UserSiteinfoForm';
+import { AlertDialog } from '../primitives/AlertDialog.ts';
+import { Dialog } from '../primitives/Dialog.ts';
+import { UserSiteinfoForm } from './UserSiteinfoForm.ts';
 
 interface UserSiteinfoRowProps {
   item: SiteinfoItem;

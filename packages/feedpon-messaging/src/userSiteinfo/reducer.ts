@@ -1,4 +1,4 @@
-import type { Event, UserSiteinfo } from '../index';
+import type { Event, UserSiteinfo } from '../types.ts';
 
 export default function reducer(
   siteinfo: UserSiteinfo,

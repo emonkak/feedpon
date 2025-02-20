@@ -8,7 +8,7 @@ import {
 } from '@emonkak/ebit/directives.js';
 import type { Command, KeyMapping } from 'feedpon-messaging';
 
-import { FormControl } from '../primitives/FormControl';
+import { FormControl } from '../primitives/FormControl.ts';
 
 interface KeyMappingFormProps {
   commandTable: { [commandId: string]: Command<any> };

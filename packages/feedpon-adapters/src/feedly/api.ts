@@ -5,8 +5,8 @@ import {
   postRequest,
   postXml,
   putJson,
-} from '../httpClient';
-import type * as types from './types';
+} from '../httpClient.ts';
+import type * as types from './types.ts';
 
 const ENDPOINT = 'https://cloud.feedly.com';
 

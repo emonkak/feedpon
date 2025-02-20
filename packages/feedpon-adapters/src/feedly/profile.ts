@@ -1,5 +1,9 @@
-import { getRequest, putJson } from '../httpClient';
-import { createAuthHeader, handleJsonResponse, handleResponse } from './utils';
+import { getRequest, putJson } from '../httpClient.ts';
+import {
+  createAuthHeader,
+  handleJsonResponse,
+  handleResponse,
+} from './utils.js';
 
 export interface Profile {
   id: string;

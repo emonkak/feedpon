@@ -6,8 +6,8 @@ import type {
   StreamViewKind,
 } from 'feedpon-messaging';
 
-import { Dropdown } from '../primitives/Dropdown';
-import type { MenuItem } from '../primitives/Menu';
+import { Dropdown } from '../primitives/Dropdown.ts';
+import type { MenuItem } from '../primitives/Menu.ts';
 
 interface StreamFetchOptionsDropdownProps {
   fetchOptions: StreamFetchOptions;

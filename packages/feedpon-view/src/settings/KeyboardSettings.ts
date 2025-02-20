@@ -1,6 +1,6 @@
 import type { RenderContext, TemplateResult } from '@emonkak/ebit';
 import { bindActions } from 'feedpon-flux';
-import { getStoreHook } from 'feedpon-flux/ebit';
+import { getStoreHook } from 'feedpon-flux/ebit.ts';
 import type { KeyMapping, State } from 'feedpon-messaging';
 import {
   commandTable,
@@ -8,14 +8,14 @@ import {
   resetKeyMappings,
   updateKeyMapping,
 } from 'feedpon-messaging/keyMappings';
-import * as Trie from 'feedpon-utils/Trie';
-import createAscendingComparer from 'feedpon-utils/createAscendingComparer';
+import * as Trie from 'feedpon-utils/Trie.ts';
+import createAscendingComparer from 'feedpon-utils/createAscendingComparer.ts';
 
 import { component, keyedList } from '@emonkak/ebit/directives.js';
-import { AlertDialog } from '../primitives/AlertDialog';
-import { Dialog } from '../primitives/Dialog';
-import { KeyMappingForm } from './KeyMappingForm';
-import { KeyMappingRow } from './KeyMappingRow';
+import { AlertDialog } from '../primitives/AlertDialog.ts';
+import { Dialog } from '../primitives/Dialog.ts';
+import { KeyMappingForm } from './KeyMappingForm.ts';
+import { KeyMappingRow } from './KeyMappingRow.ts';
 
 export interface KeyboardSettingsProps {}
 

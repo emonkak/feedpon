@@ -1,5 +1,5 @@
-import * as CacheMap from 'feedpon-utils/CacheMap';
-import type { Event, Streams } from '../index';
+import * as CacheMap from 'feedpon-utils/CacheMap.ts';
+import type { Event, Streams } from '../types.ts';
 
 export default function reducer(streams: Streams, event: Event): Streams {
   switch (event.type) {

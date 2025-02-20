@@ -1,7 +1,7 @@
-import { getRequest } from '../httpClient';
-import type { Category } from './categories';
-import type { Tag } from './tags';
-import { createAuthHeader, handleJsonResponse } from './utils';
+import { getRequest } from '../httpClient.ts';
+import type { Category } from './categories.ts';
+import type { Tag } from './tags.ts';
+import { createAuthHeader, handleJsonResponse } from './utils.ts';
 
 export interface GetStreamInput {
   streamId: string;

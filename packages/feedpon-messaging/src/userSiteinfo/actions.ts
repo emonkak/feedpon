@@ -1,4 +1,4 @@
-import type { Event, SiteinfoItem } from '../index';
+import type { Event, SiteinfoItem } from '../types.ts';
 
 export function addUserSiteinfoItem(item: SiteinfoItem): Event {
   return {

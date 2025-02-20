@@ -1,5 +1,5 @@
-import type { Event, UrlReplacements } from '../index';
-import initialState from './initialState';
+import type { Event, UrlReplacements } from '../types.ts';
+import initialState from './initialState.ts';
 
 export default function reduceUrlReplacement(
   urlReplacements: UrlReplacements,

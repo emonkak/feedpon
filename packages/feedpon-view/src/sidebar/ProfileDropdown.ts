@@ -1,8 +1,8 @@
 import type { RenderContext, TemplateResult } from '@emonkak/ebit';
 import { component } from '@emonkak/ebit/directives.js';
 import type { Profile } from 'feedpon-messaging';
-import { AlertDialog } from '../primitives/AlertDialog';
-import { Dropdown } from '../primitives/Dropdown';
+import { AlertDialog } from '../primitives/AlertDialog.ts';
+import { Dropdown } from '../primitives/Dropdown.ts';
 
 interface ProfileDropdownProps {
   isLoading: boolean;

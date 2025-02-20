@@ -1,4 +1,4 @@
-import type { Search } from '../index';
+import type { Search } from '../types.ts';
 
 const search: Search = {
   feeds: [],

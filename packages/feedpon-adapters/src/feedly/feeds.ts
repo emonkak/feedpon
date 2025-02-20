@@ -1,5 +1,5 @@
-import { getRequest } from '../httpClient';
-import { createAuthHeader, handleJsonResponse } from './utils';
+import { getRequest } from '../httpClient.ts';
+import { createAuthHeader, handleJsonResponse } from './utils.ts';
 
 export interface Feed {
   id: string;

@@ -1,14 +1,14 @@
 import { type LocationActions, RelativeURL } from '@emonkak/ebit/router.js';
 import { bindActions } from 'feedpon-flux';
-import { getStoreHook } from 'feedpon-flux/ebit';
+import { getStoreHook } from 'feedpon-flux/ebit.ts';
 import type { State } from 'feedpon-messaging';
 import { toggleSidebar } from 'feedpon-messaging/ui';
 
 import type { RenderContext, TemplateResult } from '@emonkak/ebit';
 import { component, nonKeyedList } from '@emonkak/ebit/directives.js';
-import { MainLayout } from '../common/MainLayout';
-import { Navbar } from '../common/Navbar';
-import { Dropdown } from '../primitives/Dropdown';
+import { MainLayout } from '../common/MainLayout.ts';
+import { Navbar } from '../common/Navbar.ts';
+import { Dropdown } from '../primitives/Dropdown.ts';
 
 export interface AboutPageProps {
   locationActions: LocationActions;

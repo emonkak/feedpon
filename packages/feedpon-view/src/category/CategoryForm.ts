@@ -2,7 +2,7 @@ import type { RenderContext, TemplateResult } from '@emonkak/ebit';
 import { atom, live } from '@emonkak/ebit/directives.js';
 import type { Category } from 'feedpon-messaging';
 
-import { AlertDialog } from '../primitives/AlertDialog';
+import { AlertDialog } from '../primitives/AlertDialog.ts';
 
 interface CategoryFormProps {
   category: Category;

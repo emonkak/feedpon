@@ -2,9 +2,9 @@ import type { RenderContext, TemplateResult } from '@emonkak/ebit';
 import { component } from '@emonkak/ebit/directives.js';
 import type { UrlReplacement } from 'feedpon-messaging';
 
-import { AlertDialog } from '../primitives/AlertDialog';
-import { Dialog } from '../primitives/Dialog';
-import { UrlReplacementForm } from './UrlReplacementForm';
+import { AlertDialog } from '../primitives/AlertDialog.ts';
+import { Dialog } from '../primitives/Dialog.ts';
+import { UrlReplacementForm } from './UrlReplacementForm.ts';
 
 interface UrlReplacementRowProps {
   index: number;

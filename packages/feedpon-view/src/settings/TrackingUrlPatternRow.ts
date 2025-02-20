@@ -1,5 +1,5 @@
 import type { RenderContext, TemplateResult } from '@emonkak/ebit';
-import { AlertDialog } from '../primitives/AlertDialog';
+import { AlertDialog } from '../primitives/AlertDialog.ts';
 
 interface TrackingUrlPatternRowProps {
   onDelete: (pattern: string) => void;

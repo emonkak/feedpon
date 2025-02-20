@@ -9,10 +9,10 @@ import {
 } from 'feedpon-messaging/urlReplacements';
 
 import { component, nonKeyedList } from '@emonkak/ebit/directives.js';
-import { getStoreHook } from 'feedpon-flux/ebit';
-import { AlertDialog } from '../primitives/AlertDialog';
-import { UrlReplacementForm } from './UrlReplacementForm';
-import { UrlReplacementRow } from './UrlReplacementRow';
+import { getStoreHook } from 'feedpon-flux/ebit.ts';
+import { AlertDialog } from '../primitives/AlertDialog.ts';
+import { UrlReplacementForm } from './UrlReplacementForm.ts';
+import { UrlReplacementRow } from './UrlReplacementRow.ts';
 
 export interface UrlReplacementSettingsProps {}
 

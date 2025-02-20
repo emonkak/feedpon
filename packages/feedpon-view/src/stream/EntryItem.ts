@@ -8,12 +8,12 @@ import {
 } from '@emonkak/ebit/directives.js';
 import type { Entry } from 'feedpon-messaging';
 
-import { EmbeddedHTML } from '../primitives/EmbeddedHTML';
-import { RelativeTime } from '../primitives/RelativeTime';
-import { CommentPopover } from './CommentPopover';
-import { EntryActionList } from './EntryActionList';
-import { EntryNav } from './EntryNav';
-import { FullContents } from './FullContents';
+import { EmbeddedHTML } from '../primitives/EmbeddedHTML.ts';
+import { RelativeTime } from '../primitives/RelativeTime.ts';
+import { CommentPopover } from './CommentPopover.ts';
+import { EntryActionList } from './EntryActionList.ts';
+import { EntryNav } from './EntryNav.ts';
+import { FullContents } from './FullContents.ts';
 
 interface EntryItemProps {
   entry: Entry;

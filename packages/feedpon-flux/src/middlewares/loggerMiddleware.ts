@@ -1,4 +1,4 @@
-import type { Middleware } from '../index';
+import type { Middleware } from '../index.ts';
 
 export function loggerMiddleware<
   TState,

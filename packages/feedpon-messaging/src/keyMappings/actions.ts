@@ -1,4 +1,4 @@
-import type { Event, KeyMapping } from '../index';
+import type { Event, KeyMapping } from '../types.ts';
 
 const KEY_STROKE_PATTERN = /(?:<(?:[SCAM]-)*(?:[A-Z][0-9A-Z]+|.)>|.)/gi;
 

@@ -1,13 +1,13 @@
 import * as feedly from 'feedpon-adapters/feedly';
-import createAscendingComparer from 'feedpon-utils/createAscendingComparer';
-import { getFeedlyToken } from '../backend/actions';
+import createAscendingComparer from 'feedpon-utils/createAscendingComparer.ts';
+import { getFeedlyToken } from '../backend/actions.ts';
 import type {
   AsyncThunk,
   Event,
   Feed,
   Subscription,
   SubscriptionOrderKind,
-} from '../index';
+} from '../index.ts';
 
 export function fetchSubscriptions(): AsyncThunk {
   return async ({ dispatch }, { environment }) => {

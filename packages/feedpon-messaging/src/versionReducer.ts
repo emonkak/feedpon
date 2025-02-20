@@ -1,4 +1,4 @@
-import type { Event } from './index';
+import type { Event } from './types.ts';
 
 export default function versionReducer(version: string, event: Event): string {
   if (event.type === 'APPLICATION_INITIALIZED') {

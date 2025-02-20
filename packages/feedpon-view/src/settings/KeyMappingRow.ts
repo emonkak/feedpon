@@ -1,10 +1,10 @@
 import type { RenderContext, TemplateResult } from '@emonkak/ebit';
 import { component, nonKeyedList } from '@emonkak/ebit/directives.js';
 import type { Command, KeyMapping } from 'feedpon-messaging';
-import { AlertDialog } from '../primitives/AlertDialog';
-import { Dialog } from '../primitives/Dialog';
+import { AlertDialog } from '../primitives/AlertDialog.ts';
+import { Dialog } from '../primitives/Dialog.ts';
 
-import { KeyMappingForm } from './KeyMappingForm';
+import { KeyMappingForm } from './KeyMappingForm.ts';
 
 interface KeyMappingRowProps {
   commandTable: { [commandId: string]: Command<any> };

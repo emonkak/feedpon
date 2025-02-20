@@ -3,12 +3,12 @@
   "description": "A feed reader for me",
   "version": "3.0.0",
   "private": true,
-  "main": "./dist/index.js",
+  "type": "module",
   "exports": {
     ".": "./src/index.ts"
   },
   "dependencies": {
-    "@emonkak/ebit": "github:emonkak/ebit",
+    "@emonkak/ebit": "catalog:",
     "@types/chrome": "^0.0.300",
     "feedpon-adapters": "workspace:^",
     "feedpon-flux": "workspace:^",

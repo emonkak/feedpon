@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
-    "module": "esnext",
-    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
     "noEmit": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitAny": true,

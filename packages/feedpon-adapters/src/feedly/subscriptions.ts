@@ -1,6 +1,10 @@
-import { deleteJson, getRequest, postJson } from '../httpClient';
-import type { Category } from './categories';
-import { createAuthHeader, handleJsonResponse, handleResponse } from './utils';
+import { deleteJson, getRequest, postJson } from '../httpClient.ts';
+import type { Category } from './categories.ts';
+import {
+  createAuthHeader,
+  handleJsonResponse,
+  handleResponse,
+} from './utils.js';
 
 export interface SubscribeFeedInput {
   categories: Category[];

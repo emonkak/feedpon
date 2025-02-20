@@ -8,7 +8,7 @@ import {
 } from '@emonkak/ebit/directives.js';
 import { currentLocation } from '@emonkak/ebit/router.js';
 import { type Dispatch, bindActions } from 'feedpon-flux';
-import { getStoreHook } from 'feedpon-flux/ebit';
+import { getStoreHook } from 'feedpon-flux/ebit.ts';
 import type {
   Command,
   Event,
@@ -19,13 +19,13 @@ import type {
 import { commandTable } from 'feedpon-messaging/keyMappings';
 import { closeHelp, closeSidebar, openSidebar } from 'feedpon-messaging/ui';
 
-import { keyMappingsHook } from '../common/hooks/keyMappingsHook';
-import { swipeableHook } from '../common/hooks/swipeableHook';
-import { KeyMappingsTable } from '../keyMappings/KeyMappingsTable';
-import { NotificationStack } from '../notification/NotificationStack';
-import { OSD } from '../osd/OSD';
-import { Dialog } from '../primitives/Dialog';
-import { Sidebar } from '../sidebar/Sidebar';
+import { keyMappingsHook } from '../common/hooks/keyMappingsHook.ts';
+import { swipeableHook } from '../common/hooks/swipeableHook.ts';
+import { KeyMappingsTable } from '../keyMappings/KeyMappingsTable.ts';
+import { NotificationStack } from '../notification/NotificationStack.ts';
+import { OSD } from '../osd/OSD.ts';
+import { Dialog } from '../primitives/Dialog.ts';
+import { Sidebar } from '../sidebar/Sidebar.ts';
 
 export interface SidebarLayoutProps {
   child: unknown;

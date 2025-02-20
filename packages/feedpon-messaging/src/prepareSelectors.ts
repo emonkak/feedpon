@@ -1,13 +1,13 @@
-import { createSortedCategoriesSelector } from './categories/selectors';
-import type { Selectors } from './index';
+import { createSortedCategoriesSelector } from './categories/selectors.ts';
 import {
   createAllSubscriptionsSelector,
   createGroupedSubscriptionsSelector,
   createTotalUnreadCountSelector,
   createVisibleSubscriptionsSelector,
-} from './subscriptions/selectors';
+} from './subscriptions/selectors.ts';
+import type { Selectors } from './types.ts';
 
-export default function prepareSelectors(): Selectors {
+export function prepareSelectors(): Selectors {
   const sortedCategoriesSelector = createSortedCategoriesSelector();
   const allSubscriptionsSelector = createAllSubscriptionsSelector();
   const visibleSubscriptionsSelector = createVisibleSubscriptionsSelector(

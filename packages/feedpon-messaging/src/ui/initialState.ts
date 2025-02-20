@@ -1,4 +1,4 @@
-import type { UI } from '../index';
+import type { UI } from '../types.ts';
 
 const ui: UI = {
   customStyles: '',

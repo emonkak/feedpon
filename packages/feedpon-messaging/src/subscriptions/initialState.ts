@@ -1,4 +1,4 @@
-import type { Subscriptions } from '../index';
+import type { Subscriptions } from '../types.ts';
 
 const subscriptions: Subscriptions = {
   isImporting: false,

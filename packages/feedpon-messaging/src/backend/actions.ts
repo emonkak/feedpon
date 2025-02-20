@@ -1,5 +1,5 @@
 import * as feedly from 'feedpon-adapters/feedly';
-import type { AsyncThunk } from '../index';
+import type { AsyncThunk } from '../types.ts';
 
 export function authenticate(): AsyncThunk {
   return async ({ dispatch }, { environment }) => {

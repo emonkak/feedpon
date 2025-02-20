@@ -7,19 +7,19 @@ import {
 } from '@emonkak/ebit/router.js';
 import type { Store } from 'feedpon-messaging';
 
-import { AboutPage } from './about/AboutPage';
-import { CategoriesPage } from './category/CategoriesPage';
-import { DashboardPage } from './dashboard/DashboardPage';
-import { KitchensinkPage } from './kitchensink/KitchensinkPage';
-import { SearchPage } from './search/SearchPage';
-import { KeyboardSettings } from './settings/KeyboardSettings';
-import { SettingsPage } from './settings/SettingsPage';
-import { SiteinfoSettings } from './settings/SiteinfoSettings';
-import { StreamSettings } from './settings/StreamSettings';
-import { TrackingUrlSettings } from './settings/TrackingUrlSettings';
-import { UISettings } from './settings/UISettings';
-import { UrlReplacementSettings } from './settings/UrlReplacementSettings';
-import { StreamPage } from './stream/StreamPage';
+import { AboutPage } from './about/AboutPage.ts';
+import { CategoriesPage } from './category/CategoriesPage.ts';
+import { DashboardPage } from './dashboard/DashboardPage.ts';
+import { KitchensinkPage } from './kitchensink/KitchensinkPage.ts';
+import { SearchPage } from './search/SearchPage.ts';
+import { KeyboardSettings } from './settings/KeyboardSettings.ts';
+import { SettingsPage } from './settings/SettingsPage.ts';
+import { SiteinfoSettings } from './settings/SiteinfoSettings.ts';
+import { StreamSettings } from './settings/StreamSettings.ts';
+import { TrackingUrlSettings } from './settings/TrackingUrlSettings.ts';
+import { UISettings } from './settings/UISettings.ts';
+import { UrlReplacementSettings } from './settings/UrlReplacementSettings.ts';
+import { StreamPage } from './stream/StreamPage.ts';
 
 export interface RouterState {
   locationActions: LocationActions;

@@ -1,5 +1,5 @@
-import * as Trie from 'feedpon-utils/Trie';
-import type { KeyMapping, KeyMappings } from '../index';
+import * as Trie from 'feedpon-utils/Trie.ts';
+import type { KeyMapping, KeyMappings } from '../types.ts';
 
 const initialState: KeyMappings = {
   items: Trie.create<KeyMapping>([

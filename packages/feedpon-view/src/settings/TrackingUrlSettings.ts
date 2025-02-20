@@ -9,10 +9,10 @@ import {
   resetTrackingUrlPatterns,
 } from 'feedpon-messaging/trackingUrls';
 
-import { getStoreHook } from 'feedpon-flux/ebit';
-import { AlertDialog } from '../primitives/AlertDialog';
-import { TrackingUrlPatternForm } from './TrackingUrlPatternForm';
-import { TrackingUrlPatternRow } from './TrackingUrlPatternRow';
+import { getStoreHook } from 'feedpon-flux/ebit.ts';
+import { AlertDialog } from '../primitives/AlertDialog.ts';
+import { TrackingUrlPatternForm } from './TrackingUrlPatternForm.ts';
+import { TrackingUrlPatternRow } from './TrackingUrlPatternRow.ts';
 
 export interface TrackingUrlSettingsProps {}
 

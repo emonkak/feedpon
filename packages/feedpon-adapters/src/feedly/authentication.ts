@@ -1,5 +1,9 @@
-import { postJson, postRequest } from '../httpClient';
-import { createAuthHeader, handleJsonResponse, handleResponse } from './utils';
+import { postJson, postRequest } from '../httpClient.ts';
+import {
+  createAuthHeader,
+  handleJsonResponse,
+  handleResponse,
+} from './utils.js';
 
 export interface AuthenticateInput {
   response_type: string;

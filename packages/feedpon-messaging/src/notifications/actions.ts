@@ -1,4 +1,4 @@
-import type { Event, NotificationKind } from '../index';
+import type { Event, NotificationKind } from '../types.ts';
 
 const DEFAULT_DISMISS_AFTER = 3000;
 

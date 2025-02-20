@@ -1,5 +1,5 @@
 import type { Usable } from '@emonkak/ebit';
-import * as Trie from 'feedpon-utils/Trie';
+import * as Trie from 'feedpon-utils/Trie.ts';
 
 const SPECIAL_KEYS: { [key: string]: string } = {
   ' ': 'Space',

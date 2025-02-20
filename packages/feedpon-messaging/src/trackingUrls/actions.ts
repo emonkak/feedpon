@@ -1,6 +1,6 @@
-import * as CacheMap from 'feedpon-utils/CacheMap';
-import type { AsyncThunk, Event, Thunk } from '../index';
-import { sendNotification } from '../notifications/actions';
+import * as CacheMap from 'feedpon-utils/CacheMap.ts';
+import { sendNotification } from '../notifications/actions.ts';
+import type { AsyncThunk, Event, Thunk } from '../types.ts';
 
 export function expandUrl(
   url: string,

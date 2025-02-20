@@ -1,6 +1,6 @@
 import type { Usable } from '@emonkak/ebit';
-import shallowEqual from 'feedpon-utils/shallowEqual';
-import type { Store } from './index';
+import shallowEqual from 'feedpon-utils/shallowEqual.ts';
+import type { Store } from './index.ts';
 
 const storeTag = Symbol('Store');
 

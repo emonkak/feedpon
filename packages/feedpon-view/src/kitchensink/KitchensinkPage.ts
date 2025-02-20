@@ -1,16 +1,16 @@
 import type { RenderContext, TemplateResult } from '@emonkak/ebit';
 import { component } from '@emonkak/ebit/directives.js';
 import { bindActions } from 'feedpon-flux';
-import { getStoreHook } from 'feedpon-flux/ebit';
+import { getStoreHook } from 'feedpon-flux/ebit.ts';
 import type { NotificationKind } from 'feedpon-messaging';
 import { sendNotification } from 'feedpon-messaging/notifications';
 import { toggleSidebar } from 'feedpon-messaging/ui';
-import { MemoBinder } from 'feedpon-utils/MemoBinder';
+import { MemoBinder } from 'feedpon-utils/MemoBinder.ts';
 
-import { MainLayout } from '../common/MainLayout';
-import { Navbar } from '../common/Navbar';
-import { Dialog } from '../primitives/Dialog';
-import { Dropdown } from '../primitives/Dropdown';
+import { MainLayout } from '../common/MainLayout.ts';
+import { Navbar } from '../common/Navbar.ts';
+import { Dialog } from '../primitives/Dialog.ts';
+import { Dropdown } from '../primitives/Dropdown.ts';
 
 export interface KitchenSinkProps {}
 

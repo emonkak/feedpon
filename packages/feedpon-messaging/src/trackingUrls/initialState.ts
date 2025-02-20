@@ -1,5 +1,5 @@
-import * as CacheMap from 'feedpon-utils/CacheMap';
-import type { TrackingUrls } from '../index';
+import * as CacheMap from 'feedpon-utils/CacheMap.ts';
+import type { TrackingUrls } from '../types.ts';
 
 const trackingUrls: TrackingUrls = {
   items: CacheMap.empty(1000),

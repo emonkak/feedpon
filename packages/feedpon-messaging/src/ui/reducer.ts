@@ -1,4 +1,4 @@
-import type { Event, UI } from '../index';
+import type { Event, UI } from '../types.ts';
 
 export default function uiReducer(ui: UI, event: Event): UI {
   switch (event.type) {

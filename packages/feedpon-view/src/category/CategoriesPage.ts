@@ -16,8 +16,8 @@ import {
   unsubscribe,
 } from 'feedpon-messaging/subscriptions';
 import { toggleSidebar } from 'feedpon-messaging/ui';
-import createAscendingComparer from 'feedpon-utils/createAscendingComparer';
-import debounce from 'feedpon-utils/debounce';
+import createAscendingComparer from 'feedpon-utils/createAscendingComparer.ts';
+import debounce from 'feedpon-utils/debounce.ts';
 
 import type { RenderContext, TemplateResult } from '@emonkak/ebit';
 import {
@@ -27,17 +27,17 @@ import {
   ref,
   styleMap,
 } from '@emonkak/ebit/directives.js';
-import { getStoreHook } from 'feedpon-flux/ebit';
-import { MainLayout } from '../common/MainLayout';
-import { Navbar } from '../common/Navbar';
-import { Dropdown } from '../primitives/Dropdown';
-import { type TabItem, TabList } from '../primitives/TabList';
+import { getStoreHook } from 'feedpon-flux/ebit.ts';
+import { MainLayout } from '../common/MainLayout.ts';
+import { Navbar } from '../common/Navbar.ts';
+import { Dropdown } from '../primitives/Dropdown.ts';
+import { type TabItem, TabList } from '../primitives/TabList.ts';
 import {
   type BlankSpaces,
   VirtualScrollList,
-} from '../primitives/VirtualScrollList';
-import { SubscriptionView } from '../subscription/SubscriptionView';
-import { CategoryForm } from './CategoryForm';
+} from '../primitives/VirtualScrollList.ts';
+import { SubscriptionView } from '../subscription/SubscriptionView.ts';
+import { CategoryForm } from './CategoryForm.ts';
 
 export interface CategoriesPageProps {
   label?: string;

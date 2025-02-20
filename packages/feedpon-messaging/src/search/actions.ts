@@ -1,6 +1,6 @@
 import { searchFeeds as feedlySearchFeeds } from 'feedpon-adapters/feedly';
-import { getFeedlyToken } from '../backend/actions';
-import type { AsyncThunk } from '../index';
+import { getFeedlyToken } from '../backend/actions.ts';
+import type { AsyncThunk } from '../types.ts';
 
 export function searchFeeds(query: string): AsyncThunk {
   return async ({ dispatch }, { environment }) => {

@@ -1,4 +1,4 @@
-import type { UserSiteinfo } from '../index';
+import type { UserSiteinfo } from '../types.ts';
 
 const userSiteinfo: UserSiteinfo = {
   items: [],

@@ -1,10 +1,10 @@
 import type { RenderContext, TemplateResult } from '@emonkak/ebit';
-import { getStoreHook } from 'feedpon-flux/ebit';
+import { getStoreHook } from 'feedpon-flux/ebit.ts';
 import type { State } from 'feedpon-messaging';
 
 import { component, optional } from '@emonkak/ebit/directives.js';
-import { NotificationStack } from '../notification/NotificationStack';
-import { OSD } from '../osd/OSD';
+import { NotificationStack } from '../notification/NotificationStack.ts';
+import { OSD } from '../osd/OSD.ts';
 
 export interface SingleLayoutProps {
   child?: unknown;

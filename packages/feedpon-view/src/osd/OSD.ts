@@ -1,6 +1,6 @@
 import type { RenderContext, TemplateResult } from '@emonkak/ebit';
 import { bindActions } from 'feedpon-flux';
-import { getStoreHook } from 'feedpon-flux/ebit';
+import { getStoreHook } from 'feedpon-flux/ebit.ts';
 import type { OSDMessage, State } from 'feedpon-messaging';
 import { closeOSD } from 'feedpon-messaging/osd';
 

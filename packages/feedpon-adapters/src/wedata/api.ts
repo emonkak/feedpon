@@ -1,5 +1,5 @@
-import { getRequest } from '../httpClient';
-import type * as types from './types';
+import { getRequest } from '../httpClient.ts';
+import type * as types from './types.ts';
 
 const ENDPOINT = 'http://wedata.net/';
 

@@ -1,8 +1,8 @@
 import type { RenderContext, TemplateResult } from '@emonkak/ebit';
 import { classMap, component, ref } from '@emonkak/ebit/directives.js';
-import debounce from 'feedpon-utils/debounce';
+import debounce from 'feedpon-utils/debounce.ts';
 
-import { Menu, type MenuItem, type MenuRef } from './Menu';
+import { Menu, type MenuItem, type MenuRef } from './Menu.ts';
 
 interface AutoCompleteProps<T> {
   debounceTime?: number;

@@ -1,4 +1,4 @@
-import parseSrcset from './parseSrcset';
+import parseSrcset from './parseSrcset.ts';
 
 // Safe Void Elements - HTML5
 // http://dev.w3.org/html5/spec/Overview.html#void-elements

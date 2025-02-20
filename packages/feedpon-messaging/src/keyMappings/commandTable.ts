@@ -1,16 +1,16 @@
 import { RelativeURL } from '@emonkak/ebit/router.js';
-import * as CacheMap from 'feedpon-utils/CacheMap';
-import { scrollBy as smoothScrollBy } from 'feedpon-utils/SmoothScroll';
+import * as CacheMap from 'feedpon-utils/CacheMap.ts';
+import { scrollBy as smoothScrollBy } from 'feedpon-utils/SmoothScroll.ts';
 import {
   getNextEntryScrollPosition,
   getPreviousEntryScrollPosition,
   openUrlInBackground,
-} from '../domActions';
-import type { Command, Entry, Stream, Thunk } from '../index';
-import { showOSDMessage } from '../osd/actions';
-import * as streamActions from '../streams/actions';
-import * as subscriptionActions from '../subscriptions/actions';
-import * as uiActions from '../ui/actions';
+} from '../domActions.ts';
+import { showOSDMessage } from '../osd/actions.ts';
+import * as streamActions from '../streams/actions.ts';
+import * as subscriptionActions from '../subscriptions/actions.ts';
+import type { Command, Entry, Stream, Thunk } from '../types.ts';
+import * as uiActions from '../ui/actions.ts';
 
 const TEMPLATE_PATTERN = /\${([A-Z_]\w+)}/i;
 

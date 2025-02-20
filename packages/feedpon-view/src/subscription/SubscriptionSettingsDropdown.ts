@@ -8,9 +8,9 @@ import {
   live,
   optional,
 } from '@emonkak/ebit/directives.js';
-import { AlertDialog } from '../primitives/AlertDialog';
-import { Dropdown } from '../primitives/Dropdown';
-import type { MenuItem } from '../primitives/Menu';
+import { AlertDialog } from '../primitives/AlertDialog.ts';
+import { Dropdown } from '../primitives/Dropdown.ts';
+import type { MenuItem } from '../primitives/Menu.ts';
 
 interface SubscriptionSettingsDropdownProps {
   categories: Category[];

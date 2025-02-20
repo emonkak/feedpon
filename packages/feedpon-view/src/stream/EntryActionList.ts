@@ -1,7 +1,7 @@
 import type { RenderContext, TemplateResult } from '@emonkak/ebit';
 import { component } from '@emonkak/ebit/directives.js';
 
-import { EntryShareButton } from './EntryShareButton';
+import { EntryShareButton } from './EntryShareButton.ts';
 
 interface EntryActionListProps {
   commentsIsLoading: boolean;

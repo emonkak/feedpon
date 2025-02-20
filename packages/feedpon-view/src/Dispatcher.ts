@@ -1,14 +1,14 @@
 import type { RenderContext, TemplateResult, Usable } from '@emonkak/ebit';
 import { component, optional } from '@emonkak/ebit/directives.js';
 import { currentLocation } from '@emonkak/ebit/router.js';
-import { getStoreHook } from 'feedpon-flux/ebit';
+import { getStoreHook } from 'feedpon-flux/ebit.ts';
 import type { State, Store, ThemeKind } from 'feedpon-messaging';
 import { THEMES } from 'feedpon-messaging/ui';
 
-import { AuthenticationPage } from './authentication/AuthenticationPage';
-import { SidebarLayout } from './common/SidebarLayout';
-import { SingleLayout } from './common/SingleLayout';
-import { router } from './router';
+import { AuthenticationPage } from './authentication/AuthenticationPage.ts';
+import { SidebarLayout } from './common/SidebarLayout.ts';
+import { SingleLayout } from './common/SingleLayout.ts';
+import { router } from './router.ts';
 
 export interface DispatcherProps {}
 

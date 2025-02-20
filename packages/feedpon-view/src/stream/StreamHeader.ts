@@ -8,9 +8,9 @@ import type {
   StreamViewKind,
 } from 'feedpon-messaging';
 
-import { Navbar } from '../common/Navbar';
-import { EntryDisplaySettingsDropdown } from './EntryDisplaySettingsDropdown';
-import { StreamFetchOptionsDropdown } from './StreamFetchOptionsDropdown';
+import { Navbar } from '../common/Navbar.ts';
+import { EntryDisplaySettingsDropdown } from './EntryDisplaySettingsDropdown.ts';
+import { StreamFetchOptionsDropdown } from './StreamFetchOptionsDropdown.ts';
 
 interface StreamNavbarProps {
   activeEntryIndex: number;
