@@ -115,7 +115,8 @@ export function EntryDisplaySettingsDropdown(
         `,
         onConfirm: onMarkStreamAsRead,
         title: `Mark all as read in "${title}"`,
-        message: `Are you sure you want to mark all entires in this stream as read?`,
+        message:
+          'Are you sure you want to mark all entires in this stream as read?',
       },
       context,
     );

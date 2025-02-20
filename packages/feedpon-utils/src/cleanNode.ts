@@ -116,13 +116,9 @@ function qualifySrcset(srcsetString: string, baseUrlString: string): string {
 }
 
 function resolveLazyLoading(element: HTMLImageElement): void {
-  // biome-ignore lint/complexity/useLiteralKeys:
   const src = element.dataset['src'];
-  // biome-ignore lint/complexity/useLiteralKeys:
   const srcset = element.dataset['srcset'];
-  // biome-ignore lint/complexity/useLiteralKeys:
   const lazySrc = element.dataset['lazySrc'];
-  // biome-ignore lint/complexity/useLiteralKeys:
   const lazySrcset = element.dataset['lazySrcset'];
   if (src && !element.src.endsWith(encodeURI(src))) {
     element.src = src;

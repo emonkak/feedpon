@@ -23,10 +23,12 @@
       },
       "complexity": {
         "noBannedTypes": "off",
-        "noThisInStatic": "off"
+        "noThisInStatic": "off",
+        "useLiteralKeys": "off"
       },
       "correctness": {
         "noUnusedLabels": "off",
+        "noEmptyPattern": "off",
         "useExhaustiveDependencies": "off"
       },
       "security": {

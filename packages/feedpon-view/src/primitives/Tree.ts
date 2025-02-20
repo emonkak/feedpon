@@ -170,7 +170,7 @@ function TreeNode<TKey, TValue>(
             state.expanded = false;
             state.userInteraction = true;
             onStateUpadte();
-          } else if (parent !== null && parent.state.expanded) {
+          } else if (parent?.state.expanded) {
             matchPrevious<HTMLElement>(
               event.currentTarget as Element,
               (element) =>
