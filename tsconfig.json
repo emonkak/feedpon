@@ -14,6 +14,9 @@
       "path": "packages/feedpon-messaging"
     },
     {
+      "path": "packages/feedpon-state"
+    },
+    {
       "path": "packages/feedpon-utils"
     },
     {

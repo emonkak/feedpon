@@ -30,8 +30,8 @@ importers:
   packages/feedpon:
     dependencies:
       '@emonkak/ebit':
-        specifier: github:emonkak/ebit
-        version: https://codeload.github.com/emonkak/ebit/tar.gz/2c51d952d0e66f34b31360295698337525dda133
+        specifier: 'catalog:'
+        version: https://codeload.github.com/emonkak/ebit/tar.gz/4b91cfcbbade90f537871105260afb61b2198fae
       '@types/chrome':
         specifier: ^0.0.300
         version: 0.0.300
@@ -53,24 +53,11 @@ importers:
 
   packages/feedpon-adapters: {}
 
-  packages/feedpon-api:
-    dependencies:
-      openapi-fetch:
-        specifier: ^0.13.4
-        version: 0.13.4
-    devDependencies:
-      openapi-typescript:
-        specifier: ^7.6.1
-        version: 7.6.1(typescript@5.7.3)
-      wireit:
-        specifier: ^0.14.10
-        version: 0.14.10
-
   packages/feedpon-flux:
     dependencies:
       '@emonkak/ebit':
         specifier: 'catalog:'
-        version: https://codeload.github.com/emonkak/ebit/tar.gz/2c51d952d0e66f34b31360295698337525dda133
+        version: https://codeload.github.com/emonkak/ebit/tar.gz/4b91cfcbbade90f537871105260afb61b2198fae
       feedpon-utils:
         specifier: workspace:^
         version: link:../feedpon-utils
@@ -79,7 +66,7 @@ importers:
     dependencies:
       '@emonkak/ebit':
         specifier: 'catalog:'
-        version: https://codeload.github.com/emonkak/ebit/tar.gz/2c51d952d0e66f34b31360295698337525dda133
+        version: https://codeload.github.com/emonkak/ebit/tar.gz/4b91cfcbbade90f537871105260afb61b2198fae
       '@mozilla/readability':
         specifier: ^0.5.0
         version: 0.5.0
@@ -99,13 +86,35 @@ importers:
         specifier: ^5.1.1
         version: 5.1.1
 
+  packages/feedpon-state:
+    dependencies:
+      '@emonkak/ebit':
+        specifier: 'catalog:'
+        version: https://codeload.github.com/emonkak/ebit/tar.gz/4b91cfcbbade90f537871105260afb61b2198fae
+      openapi-fetch:
+        specifier: ^0.13.4
+        version: 0.13.4
+    devDependencies:
+      json-schema-to-ts:
+        specifier: ^3.1.1
+        version: 3.1.1
+      openapi-typescript:
+        specifier: ^7.6.1
+        version: 7.6.1(typescript@5.7.3)
+      openapi-typescript-helpers:
+        specifier: ^0.0.15
+        version: 0.0.15
+      wireit:
+        specifier: ^0.14.10
+        version: 0.14.10
+
   packages/feedpon-utils: {}
 
   packages/feedpon-view:
     dependencies:
       '@emonkak/ebit':
         specifier: 'catalog:'
-        version: https://codeload.github.com/emonkak/ebit/tar.gz/2c51d952d0e66f34b31360295698337525dda133
+        version: https://codeload.github.com/emonkak/ebit/tar.gz/4b91cfcbbade90f537871105260afb61b2198fae
       '@types/chrome':
         specifier: ^0.0.300
         version: 0.0.300
@@ -130,6 +139,10 @@ packages:
 
   '@babel/helper-validator-identifier@7.25.9':
     resolution: {integrity: sha512-Ed61U6XJc3CVRfkERJWDz4dJwKe7iLmmJsbOGu9wSloNSFttHV0I8g6UAgb7qnK5ly5bGLPd4oXZlxCdANBOWQ==}
+    engines: {node: '>=6.9.0'}
+
+  '@babel/runtime@7.26.9':
+    resolution: {integrity: sha512-aA63XwOkcl4xxQa3HjPMqOP6LiK0ZDv3mUPYEFXkpHbaFjtGggE1A61FjFzJnB+p7/oy2gA8E+rcBNl/zC1tMg==}
     engines: {node: '>=6.9.0'}
 
   '@biomejs/biome@1.9.4':
@@ -185,8 +198,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@emonkak/ebit@https://codeload.github.com/emonkak/ebit/tar.gz/2c51d952d0e66f34b31360295698337525dda133':
-    resolution: {tarball: https://codeload.github.com/emonkak/ebit/tar.gz/2c51d952d0e66f34b31360295698337525dda133}
+  '@emonkak/ebit@https://codeload.github.com/emonkak/ebit/tar.gz/4b91cfcbbade90f537871105260afb61b2198fae':
+    resolution: {tarball: https://codeload.github.com/emonkak/ebit/tar.gz/4b91cfcbbade90f537871105260afb61b2198fae}
     version: 0.0.0
 
   '@esbuild/aix-ppc64@0.24.2':
@@ -499,6 +512,10 @@ packages:
     resolution: {integrity: sha512-wpxZs9NoxZaJESJGIZTyDEaYpl0FKSA+FB9aJiyemKhMwkxQg63h4T1KJgUGHpTqPDNRcmmYLugrRjJlBtWvRA==}
     hasBin: true
 
+  json-schema-to-ts@3.1.1:
+    resolution: {integrity: sha512-+DWg8jCJG2TEnpy7kOm/7/AxaYoaRbjVB4LFZLySZlWn8exGs3A4OLJR966cVvU26N7X9TWxl+Jsw7dzAqKT6g==}
+    engines: {node: '>=16'}
+
   json-schema-traverse@1.0.0:
     resolution: {integrity: sha512-NM8/P9n3XjXhIZn1lLhkFaACTOURQXjWhV4BA/RnOv8xvgqtqpAX9IO4mRQxSx1Rlo4tqzeqb0sOlruaOy3dug==}
 
@@ -561,6 +578,9 @@ packages:
     resolution: {integrity: sha512-hOS089on8RduqdbhvQ5Z37A0ESjsqz6qnRcffsMU3495FuTdqSm+7bhJ29JvIOsBDEEnan5DPu9t3To9VRlMzA==}
     engines: {node: '>=8.10.0'}
 
+  regenerator-runtime@0.14.1:
+    resolution: {integrity: sha512-dYnhHh0nJoMfnkZs6GmmhFknAGRrLznOu5nc9ML+EJxGvrx6H7teuevqVqCuPcPK//3eDrrjQhehXVx9cnkGdw==}
+
   require-from-string@2.0.2:
     resolution: {integrity: sha512-Xf0nWe6RseziFMu+Ap9biiUbmplq6S9/p+7w7YXP/JBHhrUDDUhwa+vANyubuqfZWTveU//DYVGsDG7RKL/vEw==}
     engines: {node: '>=0.10.0'}
@@ -589,6 +609,9 @@ packages:
   to-regex-range@5.0.1:
     resolution: {integrity: sha512-65P7iz6X5yEr1cwcgvQxbbIw7Uk3gOy5dIdtZ4rDveLqhrdJP+Li/Hx6tyK0NEb+2GCyneCMJiGqrADCSNk8sQ==}
     engines: {node: '>=8.0'}
+
+  ts-algebra@2.0.0:
+    resolution: {integrity: sha512-FPAhNPFMrkwz76P7cdjdmiShwMynZYN6SgOujD1urY4oNm80Ou9oMdmbR45LotcKOXoy7wSmHkRFE6Mxbrhefw==}
 
   type-fest@4.33.0:
     resolution: {integrity: sha512-s6zVrxuyKbbAsSAD5ZPTB77q4YIdRctkTbJ2/Dqlinwz+8ooH2gd+YA7VA6Pa93KML9GockVvoxjZ2vHP+mu8g==}
@@ -623,6 +646,10 @@ snapshots:
       picocolors: 1.1.1
 
   '@babel/helper-validator-identifier@7.25.9': {}
+
+  '@babel/runtime@7.26.9':
+    dependencies:
+      regenerator-runtime: 0.14.1
 
   '@biomejs/biome@1.9.4':
     optionalDependencies:
@@ -659,7 +686,7 @@ snapshots:
   '@biomejs/cli-win32-x64@1.9.4':
     optional: true
 
-  '@emonkak/ebit@https://codeload.github.com/emonkak/ebit/tar.gz/2c51d952d0e66f34b31360295698337525dda133': {}
+  '@emonkak/ebit@https://codeload.github.com/emonkak/ebit/tar.gz/4b91cfcbbade90f537871105260afb61b2198fae': {}
 
   '@esbuild/aix-ppc64@0.24.2':
     optional: true
@@ -921,6 +948,11 @@ snapshots:
     dependencies:
       argparse: 2.0.1
 
+  json-schema-to-ts@3.1.1:
+    dependencies:
+      '@babel/runtime': 7.26.9
+      ts-algebra: 2.0.0
+
   json-schema-traverse@1.0.0: {}
 
   jsonc-parser@3.3.1: {}
@@ -980,6 +1012,8 @@ snapshots:
     dependencies:
       picomatch: 2.3.1
 
+  regenerator-runtime@0.14.1: {}
+
   require-from-string@2.0.2: {}
 
   reselect@5.1.1: {}
@@ -999,6 +1033,8 @@ snapshots:
   to-regex-range@5.0.1:
     dependencies:
       is-number: 7.0.0
+
+  ts-algebra@2.0.0: {}
 
   type-fest@4.33.0: {}
 

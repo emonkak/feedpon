@@ -10,10 +10,20 @@
     }
   ],
   "paths": {
-    "/database/AutoPagerize/items_all.json": {
+    "/database/{name}/items_all.json": {
       "get": {
-        "summary": "get AutoPagerize items",
-        "operationId": "getAutoPagerizeItems",
+        "summary": "get database items",
+        "operationId": "getDatabaseItems",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -22,7 +32,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/AutoPagerizeItem"
+                    "$ref": "#/components/schemas/Item"
                   }
                 }
               }
@@ -34,7 +44,7 @@
   },
   "components": {
     "schemas": {
-      "AutoPagerizeItem": {
+      "Item": {
         "type": "object",
         "required": [
           "resource_url",
@@ -55,25 +65,7 @@
             "format": "uri"
           },
           "data": {
-            "type": "object",
-            "required": ["url", "nextLink", "pageElement"],
-            "properties": {
-              "url": {
-                "type": "string"
-              },
-              "nextLink": {
-                "type": "string"
-              },
-              "pageElement": {
-                "type": "string"
-              },
-              "exampleUrl": {
-                "type": "string"
-              },
-              "insertBefore": {
-                "type": "string"
-              }
-            }
+            "type": "object"
           },
           "created_by": {
             "type": "string"

@@ -434,6 +434,32 @@
       "get": {
         "summary": "Get the list of unread counts",
         "operationId": "getUnreadCounts",
+        "parameters": [
+          {
+            "name": "autorefresh",
+            "in": "query",
+            "description": "let's the server know if this is a background auto-refresh or not. In case of very high load on the service, the server can deny access to background requests and give priority to user facing operations.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "newerThan",
+            "in": "query",
+            "description": "timestamp used as a lower time limit, instead of the default 30 days.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "streamId",
+            "in": "query",
+            "description": "A user or system category can be passed to restrict the unread count response to feeds in this category.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -441,11 +467,12 @@
               "application/json": {
                 "schema": {
                   "type": "object",
+                  "required": ["unreadCounts", "updated"],
                   "properties": {
                     "unreadCounts": {
                       "type": "array",
                       "items": {
-                        "$ref": "#/components/schemas/Category"
+                        "$ref": "#/components/schemas/UnreadCount"
                       }
                     },
                     "updated": {
@@ -2025,12 +2052,7 @@
         "required": [
           "id",
           "title",
-          "categories",
-          "addded",
-          "updated",
-          "website",
-          "velocity",
-          "topics"
+          "categories"
         ],
         "properties": {
           "id": {
