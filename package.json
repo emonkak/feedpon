@@ -9,12 +9,14 @@
     "ci": "wireit",
     "clean": "wireit",
     "format": "wireit",
-    "lint": "wireit"
+    "lint": "wireit",
+    "test": "vitest"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "esbuild": "^0.24.2",
     "typescript": "^5.7.3",
+    "vitest": "^3.0.8",
     "wireit": "^0.14.10"
   },
   "workspaces": [

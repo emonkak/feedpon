@@ -1,0 +1,12 @@
+{
+  "name": "openapi-client",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "sideEffects": false,
+  "devDependencies": {
+    "vitest": "^3.0.8"
+  }
+}

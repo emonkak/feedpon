@@ -1,8 +1,8 @@
-import type { Schema } from './jsonSchema.ts';
+import type { Schema } from './schema.ts';
 
-export interface Definition {
+export interface Description {
   openapi: `3` | `3.${number}` | `3.${number}.${number}`;
-  paths?: Record<string, Path>;
+  paths: Record<string, Path>;
   components?: Components;
 }
 
@@ -45,19 +45,12 @@ export interface ExternalDocumentation {
 
 export interface Parameter {
   name: string;
-  in: 'query' | 'header' | 'path' | 'cookie';
+  in: ParameterLocation;
   description?: string;
   required?: boolean;
   deprecated?: boolean;
   allowEmptyValue?: boolean;
-  style?:
-    | 'matrix'
-    | 'label'
-    | 'simple'
-    | 'form'
-    | 'spaceDelimited'
-    | 'pipeDelimited'
-    | 'deepObject';
+  style?: ParameterStyle;
   explode?: boolean;
   allowReserved?: boolean;
   schema?: Schema;
@@ -65,6 +58,17 @@ export interface Parameter {
   examples?: Record<string, Example | Reference>;
   content?: Content;
 }
+
+export type ParameterLocation = 'query' | 'header' | 'path' | 'cookie';
+
+export type ParameterStyle =
+  | 'matrix'
+  | 'label'
+  | 'simple'
+  | 'form'
+  | 'spaceDelimited'
+  | 'pipeDelimited'
+  | 'deepObject';
 
 export interface RequestBody {
   description?: string;
@@ -78,12 +82,16 @@ export interface Response {
   description: string;
   headers?: Record<string, Header | Reference>;
   content?: Content;
-  required?: boolean;
 }
 
-export type Content = Record<string, MediaType | Reference>;
+export type Content = Record<ContentType, MediaType | Reference>;
 
-export type Header = Omit<Parameter, 'name' | 'in'>;
+export type ContentType = `${string}/${string}`;
+
+export type Header = Omit<
+  Parameter,
+  'name' | 'in' | 'style' | 'allowEmptyValue' | 'allowReserved'
+>;
 
 export interface MediaType {
   schema?: Schema;
@@ -104,21 +112,7 @@ export interface Encoding {
   headers?: Record<string, Header | Reference>;
 }
 
-type Digit = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
-
-export type InformationalCode = `1${Digit}${Digit | 'X'}` | `1XX`;
-export type SuccessfulCode = `2${Digit}${Digit | 'X'}` | `2XX`;
-export type RedirectionCode = `3${Digit}${Digit | 'X'}` | `3XX`;
-export type ClientErrorCode = `4${Digit}${Digit | 'X'}` | `4XX`;
-export type ServerErrorCode = `5${Digit}${Digit | 'X'}` | `5XX`;
-
-export type StatusCode =
-  | InformationalCode
-  | SuccessfulCode
-  | RedirectionCode
-  | ClientErrorCode
-  | ServerErrorCode
-  | 'default';
+export type StatusCode = `${number}` | `${1 | 2 | 3 | 4 | 5}XX` | 'default';
 
 export interface Reference {
   $ref: string;

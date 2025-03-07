@@ -1,54 +1,6 @@
-import { Client } from './client.ts';
-import type * as JSONSchema from './jsonSchema.ts';
-import type * as OpenAPI from './openAPI.ts';
+import type { OpenAPI } from './src/index.ts';
 
-export * as JSONSchema from './jsonSchema.ts';
-
-export * as OpenAPI from './openAPI.ts';
-
-export * from './client.ts';
-
-type X = JSONSchema.ParseSchema<
-  {
-    type: 'object';
-    properties: {
-      name: {
-        type: 'string';
-      };
-      age: {
-        type: 'integer';
-      };
-      sex: {
-        $ref: '#/Sex';
-      };
-      contacts: {
-        type: 'array';
-        items: {
-          type: 'string';
-        };
-      };
-      tuple: {
-        type: 'array';
-        prefixItems: [
-          {
-            const: 'foo';
-          },
-          {
-            const: 'bar';
-          },
-        ];
-      };
-    };
-    required: ['name', 'sex'];
-  },
-  {
-    Sex: {
-      enum: ['male', 'female'];
-    };
-  }
->;
-
-const FEEDLY_API = {
+export default {
   openapi: '3.1.0',
   paths: {
     '/auth/{exchangeToken}': {
@@ -2223,34 +2175,4 @@ const FEEDLY_API = {
       },
     },
   },
-} as const satisfies OpenAPI.Definition;
-
-const X: X = {
-  name: 'foo',
-  age: 123,
-  contacts: ['a'],
-  sex: 'male',
-};
-
-const x = new Client(FEEDLY_API).request({
-  method: 'get',
-  path: '/subscriptions',
-});
-
-const y = new Client(FEEDLY_API).request({
-  method: 'post',
-  path: '/auth/{exchangeToken}',
-  parameters: {
-    exchangeToken: 'token',
-  },
-  body: {
-    type: 'application/json',
-    payload: {
-      code: '',
-      client_id: 'feedly',
-      client_secret: '0XP4XQ07VVMDWBKUHTJM4WUQ',
-      redirect_uri: 'https://feedly.com/feedly.html',
-      grant_type: 'authorization_code',
-    },
-  },
-});
+} as const satisfies OpenAPI.Description;

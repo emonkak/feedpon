@@ -5,9 +5,6 @@
       "path": "packages/feedpon"
     },
     {
-      "path": "packages/feedpon-api"
-    },
-    {
       "path": "packages/feedpon-adapters"
     },
     {
@@ -21,6 +18,9 @@
     },
     {
       "path": "packages/feedpon-view"
+    },
+    {
+      "path": "packages/openapi-client"
     }
   ]
 }
