@@ -134,7 +134,20 @@ importers:
         specifier: workspace:^
         version: link:../feedpon-utils
 
-  packages/openapi-client: {}
+  packages/jsonschema:
+    devDependencies:
+      json-schema-test-suite:
+        specifier: github:json-schema-org/JSON-Schema-Test-Suite
+        version: https://codeload.github.com/json-schema-org/JSON-Schema-Test-Suite/tar.gz/83e866b46c9f9e7082fd51e83a61c5f2145a1ab7
+      vitest:
+        specifier: ^3.0.8
+        version: 3.0.8
+
+  packages/openapi-client:
+    devDependencies:
+      vitest:
+        specifier: ^3.0.8
+        version: 3.0.8
 
 packages:
 
@@ -831,6 +844,10 @@ packages:
   js-yaml@4.1.0:
     resolution: {integrity: sha512-wpxZs9NoxZaJESJGIZTyDEaYpl0FKSA+FB9aJiyemKhMwkxQg63h4T1KJgUGHpTqPDNRcmmYLugrRjJlBtWvRA==}
     hasBin: true
+
+  json-schema-test-suite@https://codeload.github.com/json-schema-org/JSON-Schema-Test-Suite/tar.gz/83e866b46c9f9e7082fd51e83a61c5f2145a1ab7:
+    resolution: {tarball: https://codeload.github.com/json-schema-org/JSON-Schema-Test-Suite/tar.gz/83e866b46c9f9e7082fd51e83a61c5f2145a1ab7}
+    version: 0.1.0
 
   json-schema-to-ts@3.1.1:
     resolution: {integrity: sha512-+DWg8jCJG2TEnpy7kOm/7/AxaYoaRbjVB4LFZLySZlWn8exGs3A4OLJR966cVvU26N7X9TWxl+Jsw7dzAqKT6g==}
@@ -1631,6 +1648,8 @@ snapshots:
   js-yaml@4.1.0:
     dependencies:
       argparse: 2.0.1
+
+  json-schema-test-suite@https://codeload.github.com/json-schema-org/JSON-Schema-Test-Suite/tar.gz/83e866b46c9f9e7082fd51e83a61c5f2145a1ab7: {}
 
   json-schema-to-ts@3.1.1:
     dependencies:

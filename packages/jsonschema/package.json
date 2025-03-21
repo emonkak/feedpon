@@ -1,0 +1,14 @@
+{
+  "name": "jsonschema",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./dialects/*.ts": "./src/dialects/*.ts"
+  },
+  "sideEffects": false,
+  "devDependencies": {
+    "json-schema-test-suite": "github:json-schema-org/JSON-Schema-Test-Suite",
+    "vitest": "^3.0.8"
+  }
+}
