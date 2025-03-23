@@ -26,8 +26,8 @@ export function ifThenElse<
     else: elseSchema = true,
   } = schema;
   const { schemaConstraint } = context;
-  const errorCount = context.errorReports.length;
-  const subContext = { ...context, errorReports: [] };
+  const errorCount = context.errors.length;
+  const subContext = { ...context, errors: [] };
 
   if (schemaConstraint(value, ifSchema, subContext)) {
     if (!schemaConstraint(value, thenSchema, context)) {

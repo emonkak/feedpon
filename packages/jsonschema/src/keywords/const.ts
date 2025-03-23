@@ -13,7 +13,7 @@ export function constValue(
   const { const: constValue } = schema;
 
   if (!deepEqual(constValue, value)) {
-    context.errorReports.push({
+    context.errors.push({
       error: `Value must be ${show(constValue)}, but got ${show(value)}`,
       instanceLocation: '',
       keywordLocation: '/const',

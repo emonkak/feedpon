@@ -14,7 +14,7 @@ export function pattern(
   const regexp = new RegExp(pattern);
 
   if (!regexp.test(value)) {
-    context.errorReports.push({
+    context.errors.push({
       error: `String does not match the required pattern ${quote(pattern)}.`,
       instanceLocation: '',
       keywordLocation: '/pattern',

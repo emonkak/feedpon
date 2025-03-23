@@ -16,10 +16,10 @@ export function not<
 ): boolean {
   const { not } = schema;
   const { schemaConstraint } = context;
-  const subContext = { ...context, errorReports: [] };
+  const subContext = { ...context, errors: [] };
 
   if (schemaConstraint(value, not, subContext)) {
-    context.errorReports.push({
+    context.errors.push({
       error: 'Value matches a forbidden schema.',
       instanceLocation: '',
       keywordLocation: '/not',

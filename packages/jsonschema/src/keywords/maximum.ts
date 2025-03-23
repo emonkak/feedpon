@@ -12,7 +12,7 @@ export function maximum(
   const { maximum } = schema;
 
   if (value > maximum) {
-    context.errorReports.push({
+    context.errors.push({
       error: `Number must be at most ${maximum}, but got ${value}.`,
       instanceLocation: '',
       keywordLocation: '/maximum',

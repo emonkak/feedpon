@@ -13,7 +13,7 @@ export function minProperties(
   const keys = Object.keys(value);
 
   if (keys.length < minProperties) {
-    context.errorReports.push({
+    context.errors.push({
       error: `Object must have at least ${minProperties} properties, but got ${keys.length}.`,
       instanceLocation: '',
       keywordLocation: '/minProperties',

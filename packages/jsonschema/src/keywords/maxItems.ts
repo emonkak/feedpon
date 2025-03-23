@@ -12,7 +12,7 @@ export function maxItems(
   const { maxItems } = schema;
 
   if (value.length > maxItems) {
-    context.errorReports.push({
+    context.errors.push({
       error: `Array must have at most ${maxItems} items, but got ${value.length}.`,
       instanceLocation: '',
       keywordLocation: '/maxItems',

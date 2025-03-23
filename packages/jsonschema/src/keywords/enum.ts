@@ -13,7 +13,7 @@ export function enumValues(
   const { enum: enumValues } = schema;
 
   if (!enumValues.some((enumValue) => deepEqual(value, enumValue))) {
-    context.errorReports.push({
+    context.errors.push({
       error: `Value must be one of ${enumValues.map(show).join(', ')}, but got ${show(value)}.`,
       instanceLocation: '',
       keywordLocation: '/enum',

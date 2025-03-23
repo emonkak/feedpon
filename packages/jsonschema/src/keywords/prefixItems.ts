@@ -30,7 +30,7 @@ export function prefixItems<
       ...context,
       evaluatedLocations: { index: -1, properties: null },
     };
-    const errorCount = context.errorReports.length;
+    const errorCount = context.errors.length;
 
     if (!schemaConstraint(value[i], prefixItems[i]!, subContext)) {
       fixInstanceLocations(context, errorCount, i.toString());

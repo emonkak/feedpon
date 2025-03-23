@@ -1,17 +1,16 @@
-import { anyKeywords, typed } from '../constraint.ts';
+import { anyKeywords, typeOf } from '../constraint.ts';
 import type {
   HasErrorReports,
   HasEvaluatedLocations,
   HasSchemaConstraint,
-  HasVocabularyConstraint,
 } from '../context.ts';
 import type {
   Constraint,
   CoreVocabulary,
+  Dialect,
   Schema,
   Type,
   ValidationResult,
-  Validator,
 } from '../core.ts';
 import {
   type AdditionalProperties,
@@ -87,10 +86,7 @@ export type JSONSchema = Schema<JSONSchemaVocabulary>;
 export interface JSONSchemaContext
   extends HasErrorReports<JSONSchemaVocabulary>,
     HasEvaluatedLocations,
-    HasSchemaConstraint<JSONSchemaVocabulary, JSONSchemaContext>,
-    HasVocabularyConstraint<JSONSchemaVocabulary, JSONSchemaContext> {}
-
-export interface JSONSchemaOptions {}
+    HasSchemaConstraint<JSONSchemaVocabulary, JSONSchemaContext> {}
 
 export interface JSONSchemaVocabulary
   extends CoreVocabulary<JSONSchemaVocabulary>,
@@ -163,7 +159,11 @@ interface MetadataVocabulary {
   examples?: unknown[];
 }
 
-const SCHEMA_KEYS: (keyof JSONSchemaVocabulary)[] = [
+type PickProperties<T, TValue> = {
+  [K in keyof T as T[K] extends TValue ? K : never]: T[K];
+};
+
+const SCHEMA_KEYS = [
   'additionalProperties',
   'contains',
   'contentSchema',
@@ -175,19 +175,28 @@ const SCHEMA_KEYS: (keyof JSONSchemaVocabulary)[] = [
   'then',
   'unevaluatedItems',
   'unevaluatedProperties',
-];
-const SCHEMA_ARRRAY_KEYS: (keyof JSONSchemaVocabulary)[] = [
+] as const satisfies (keyof PickProperties<
+  JSONSchemaVocabulary,
+  JSONSchema | undefined
+>)[];
+const SCHEMA_ARRRAY_KEYS = [
   'allOf',
   'anyOf',
   'oneOf',
   'prefixItems',
-];
-const SCHEMA_OBJECT_KEYS: (keyof JSONSchemaVocabulary)[] = [
+] as const satisfies (keyof PickProperties<
+  JSONSchemaVocabulary,
+  readonly JSONSchema[] | undefined
+>)[];
+const SCHEMA_OBJECT_KEYS = [
   '$defs',
   'dependentSchemas',
   'patternProperties',
   'properties',
-];
+] as const satisfies (keyof PickProperties<
+  JSONSchemaVocabulary,
+  Record<string, JSONSchema> | undefined
+>)[];
 
 const arrayConstraint: Constraint<
   unknown[],
@@ -197,26 +206,17 @@ const arrayConstraint: Constraint<
   maxItems,
   minItems,
   uniqueItems,
-  contains: contains as typeof contains<
-    JSONSchemaVocabulary,
-    JSONSchemaContext
-  >,
-  prefixItems: prefixItems as typeof prefixItems<
-    JSONSchemaVocabulary,
-    JSONSchemaContext
-  >,
-  items: items as typeof items<JSONSchemaVocabulary, JSONSchemaContext>,
+  contains: contains<JSONSchemaVocabulary, JSONSchemaContext>,
+  prefixItems: prefixItems<JSONSchemaVocabulary, JSONSchemaContext>,
+  items: items<JSONSchemaVocabulary, JSONSchemaContext>,
   const: constValue,
   enum: enumValues,
-  allOf: allOf as typeof allOf<JSONSchemaVocabulary, JSONSchemaContext>,
-  anyOf: anyOf as typeof anyOf<JSONSchemaVocabulary, JSONSchemaContext>,
-  oneOf: oneOf as typeof oneOf<JSONSchemaVocabulary, JSONSchemaContext>,
-  if: ifThenElse as typeof ifThenElse<JSONSchemaVocabulary, JSONSchemaContext>,
-  not: not as typeof not<JSONSchemaVocabulary, JSONSchemaContext>,
-  unevaluatedItems: unevaluatedItems as typeof unevaluatedItems<
-    JSONSchemaVocabulary,
-    JSONSchemaContext
-  >,
+  allOf: allOf<JSONSchemaVocabulary, JSONSchemaContext>,
+  anyOf: anyOf<JSONSchemaVocabulary, JSONSchemaContext>,
+  oneOf: oneOf<JSONSchemaVocabulary, JSONSchemaContext>,
+  if: ifThenElse<JSONSchemaVocabulary, JSONSchemaContext>,
+  not: not<JSONSchemaVocabulary, JSONSchemaContext>,
+  unevaluatedItems: unevaluatedItems<JSONSchemaVocabulary, JSONSchemaContext>,
 });
 
 const unknownConstraint: Constraint<
@@ -226,11 +226,11 @@ const unknownConstraint: Constraint<
 > = anyKeywords({
   const: constValue,
   enum: enumValues,
-  allOf: allOf as typeof allOf<JSONSchemaVocabulary, JSONSchemaContext>,
-  anyOf: anyOf as typeof anyOf<JSONSchemaVocabulary, JSONSchemaContext>,
-  oneOf: oneOf as typeof oneOf<JSONSchemaVocabulary, JSONSchemaContext>,
-  if: ifThenElse as typeof ifThenElse<JSONSchemaVocabulary, JSONSchemaContext>,
-  not: not as typeof not<JSONSchemaVocabulary, JSONSchemaContext>,
+  allOf: allOf<JSONSchemaVocabulary, JSONSchemaContext>,
+  anyOf: anyOf<JSONSchemaVocabulary, JSONSchemaContext>,
+  oneOf: oneOf<JSONSchemaVocabulary, JSONSchemaContext>,
+  if: ifThenElse<JSONSchemaVocabulary, JSONSchemaContext>,
+  not: not<JSONSchemaVocabulary, JSONSchemaContext>,
 });
 
 const numberConstraint: Constraint<
@@ -244,11 +244,11 @@ const numberConstraint: Constraint<
   exclusiveMinimum,
   const: constValue,
   eunm: enumValues,
-  allOf: allOf as typeof allOf<JSONSchemaVocabulary, JSONSchemaContext>,
-  anyOf: anyOf as typeof anyOf<JSONSchemaVocabulary, JSONSchemaContext>,
-  oneOf: oneOf as typeof oneOf<JSONSchemaVocabulary, JSONSchemaContext>,
-  if: ifThenElse as typeof ifThenElse<JSONSchemaVocabulary, JSONSchemaContext>,
-  not: not as typeof not<JSONSchemaVocabulary, JSONSchemaContext>,
+  allOf: allOf<JSONSchemaVocabulary, JSONSchemaContext>,
+  anyOf: anyOf<JSONSchemaVocabulary, JSONSchemaContext>,
+  oneOf: oneOf<JSONSchemaVocabulary, JSONSchemaContext>,
+  if: ifThenElse<JSONSchemaVocabulary, JSONSchemaContext>,
+  not: not<JSONSchemaVocabulary, JSONSchemaContext>,
 });
 
 const objectConstraint: Constraint<
@@ -260,34 +260,22 @@ const objectConstraint: Constraint<
   minProperties,
   required,
   dependentRequired,
-  propertyNames: propertyNames as typeof propertyNames<
-    JSONSchemaVocabulary,
-    JSONSchemaContext
-  >,
-  dependentSchemas: dependentSchemas as typeof dependentSchemas<
-    JSONSchemaVocabulary,
-    JSONSchemaContext
-  >,
-  properties: properties as typeof properties<
-    JSONSchemaVocabulary,
-    JSONSchemaContext
-  >,
-  patternProperties: patternProperties as typeof patternProperties<
-    JSONSchemaVocabulary,
-    JSONSchemaContext
-  >,
-  additionalProperties: additionalProperties as typeof additionalProperties<
+  propertyNames: propertyNames<JSONSchemaVocabulary, JSONSchemaContext>,
+  dependentSchemas: dependentSchemas<JSONSchemaVocabulary, JSONSchemaContext>,
+  properties: properties<JSONSchemaVocabulary, JSONSchemaContext>,
+  patternProperties: patternProperties<JSONSchemaVocabulary, JSONSchemaContext>,
+  additionalProperties: additionalProperties<
     JSONSchemaVocabulary,
     JSONSchemaContext
   >,
   const: constValue,
   enum: enumValues,
-  allOf: allOf as typeof allOf<JSONSchemaVocabulary, JSONSchemaContext>,
-  anyOf: anyOf as typeof anyOf<JSONSchemaVocabulary, JSONSchemaContext>,
-  oneOf: oneOf as typeof oneOf<JSONSchemaVocabulary, JSONSchemaContext>,
-  if: ifThenElse as typeof ifThenElse<JSONSchemaVocabulary, JSONSchemaContext>,
-  not: not as typeof not<JSONSchemaVocabulary, JSONSchemaContext>,
-  unevaluatedProperties: unevaluatedProperties as typeof unevaluatedProperties<
+  allOf: allOf<JSONSchemaVocabulary, JSONSchemaContext>,
+  anyOf: anyOf<JSONSchemaVocabulary, JSONSchemaContext>,
+  oneOf: oneOf<JSONSchemaVocabulary, JSONSchemaContext>,
+  if: ifThenElse<JSONSchemaVocabulary, JSONSchemaContext>,
+  not: not<JSONSchemaVocabulary, JSONSchemaContext>,
+  unevaluatedProperties: unevaluatedProperties<
     JSONSchemaVocabulary,
     JSONSchemaContext
   >,
@@ -303,78 +291,71 @@ const stringConstraint: Constraint<
   pattern,
   const: constValue,
   enum: enumValues,
-  allOf: allOf as typeof allOf<JSONSchemaVocabulary, JSONSchemaContext>,
-  anyOf: anyOf as typeof anyOf<JSONSchemaVocabulary, JSONSchemaContext>,
-  oneOf: oneOf as typeof oneOf<JSONSchemaVocabulary, JSONSchemaContext>,
-  if: ifThenElse as typeof ifThenElse<JSONSchemaVocabulary, JSONSchemaContext>,
-  not: not as typeof not<JSONSchemaVocabulary, JSONSchemaContext>,
+  allOf: allOf<JSONSchemaVocabulary, JSONSchemaContext>,
+  anyOf: anyOf<JSONSchemaVocabulary, JSONSchemaContext>,
+  oneOf: oneOf<JSONSchemaVocabulary, JSONSchemaContext>,
+  if: ifThenElse<JSONSchemaVocabulary, JSONSchemaContext>,
+  not: not<JSONSchemaVocabulary, JSONSchemaContext>,
 });
 
-export const jsonSchemaConstraint: Constraint<
-  unknown,
-  JSONSchemaVocabulary,
-  JSONSchemaContext
-> = typed({
-  array: arrayConstraint,
-  boolean: unknownConstraint,
-  integer: numberConstraint,
-  null: unknownConstraint,
-  number: numberConstraint,
-  object: objectConstraint,
-  string: stringConstraint,
-});
-
-export function jsonSchemaValidator(
-  value: unknown,
-  schema: JSONSchema,
-  constraint: Constraint<unknown, JSONSchema, JSONSchemaContext>,
-): ValidationResult<JSONSchemaVocabulary> {
-  const context = {
-    evaluatedLocations: { index: -1, properties: null },
-    schemaConstraint: constraint,
-    errorReports: [],
-    vocabularyConstraint: jsonSchemaConstraint,
-  };
-  const valid = constraint(value, schema, context);
-  return {
-    valid,
-    errors: context.errorReports,
-  } as ValidationResult<JSONSchemaVocabulary>;
-}
-
-export function* jsonSchemaTraverser(
-  schema: JSONSchemaVocabulary,
-): Generator<JSONSchemaVocabulary> {
-  for (let i = 0, l = SCHEMA_KEYS.length; i < l; i++) {
-    const key = SCHEMA_KEYS[i]!;
-    const value = schema[key] as JSONSchema | undefined;
-    if (typeof value === 'object') {
-      yield value;
+export const draft202012: Dialect<JSONSchemaVocabulary, JSONSchemaContext> = {
+  constraint: typeOf({
+    array: arrayConstraint,
+    boolean: unknownConstraint,
+    integer: numberConstraint,
+    null: unknownConstraint,
+    number: numberConstraint,
+    object: objectConstraint,
+    string: stringConstraint,
+  }),
+  validate(
+    value: unknown,
+    schema: JSONSchema,
+    constraint: Constraint<unknown, JSONSchema, JSONSchemaContext>,
+  ): ValidationResult<JSONSchemaVocabulary> {
+    const context = {
+      errors: [],
+      evaluatedLocations: { index: -1, properties: null },
+      schemaConstraint: constraint,
+    };
+    const valid = constraint(value, schema, context);
+    return {
+      valid,
+      errors: context.errors,
+    } as ValidationResult<JSONSchemaVocabulary>;
+  },
+  *traverse(schema: JSONSchemaVocabulary): Generator<JSONSchemaVocabulary> {
+    for (let i = 0, l = SCHEMA_KEYS.length; i < l; i++) {
+      const key = SCHEMA_KEYS[i]!;
+      const value = schema[key];
+      if (typeof value === 'object') {
+        yield value;
+      }
     }
-  }
 
-  for (let i = 0, l = SCHEMA_ARRRAY_KEYS.length; i < l; i++) {
-    const key = SCHEMA_ARRRAY_KEYS[i]!;
-    const values = schema[key] as JSONSchema[] | undefined;
-    if (values !== undefined) {
-      for (let i = 0, l = values.length; i < l; i++) {
-        const value = values[i];
-        if (typeof value === 'object') {
-          yield value;
+    for (let i = 0, l = SCHEMA_ARRRAY_KEYS.length; i < l; i++) {
+      const key = SCHEMA_ARRRAY_KEYS[i]!;
+      const values = schema[key];
+      if (values !== undefined) {
+        for (let i = 0, l = values.length; i < l; i++) {
+          const value = values[i];
+          if (typeof value === 'object') {
+            yield value;
+          }
         }
       }
     }
-  }
 
-  for (let i = 0, l = SCHEMA_OBJECT_KEYS.length; i < l; i++) {
-    const key = SCHEMA_OBJECT_KEYS[i]!;
-    const values = schema[key] as Record<string, JSONSchema> | undefined;
-    if (values !== undefined) {
-      for (const value of Object.values(values)) {
-        if (typeof value === 'object') {
-          yield value;
+    for (let i = 0, l = SCHEMA_OBJECT_KEYS.length; i < l; i++) {
+      const key = SCHEMA_OBJECT_KEYS[i]!;
+      const dictionary = schema[key];
+      if (dictionary !== undefined) {
+        for (const value of Object.values(dictionary)) {
+          if (typeof value === 'object') {
+            yield value;
+          }
         }
       }
     }
-  }
-}
+  },
+};

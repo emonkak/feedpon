@@ -24,7 +24,7 @@ export function dependentRequired(
         (dependentKey) => (value as any)[dependentKey] !== undefined,
       )
     ) {
-      context.errorReports.push({
+      context.errors.push({
         error: `Object must have property ${quote(key)} when ${dependentKeys.map(quote).join(', ')} ${dependentKeys.length > 1 ? 'are' : 'is'} present, but it is undefined.`,
         instanceLocation: '',
         keywordLocation:

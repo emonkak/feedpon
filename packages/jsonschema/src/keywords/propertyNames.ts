@@ -24,7 +24,7 @@ export function propertyNames<
   let valid = true;
 
   for (const key of Object.keys(value)) {
-    const errorCount = context.errorReports.length;
+    const errorCount = context.errors.length;
 
     if (!schemaConstraint(key, propertyNames, context)) {
       fixInstanceLocations(context, errorCount, key);

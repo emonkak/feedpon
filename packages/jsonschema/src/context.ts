@@ -7,7 +7,7 @@ export interface EvaluatedLocations {
 }
 
 export interface HasErrorReports<TVocabulary> {
-  errorReports: ErrorReport<TVocabulary>[];
+  errors: ErrorReport<TVocabulary>[];
 }
 
 export interface HasEvaluatedLocations {
@@ -18,20 +18,16 @@ export interface HasSchemaConstraint<TVocabulary, TContext> {
   schemaConstraint: Constraint<unknown, Schema<TVocabulary>, TContext>;
 }
 
-export interface HasVocabularyConstraint<TVocabulary, TContext> {
-  vocabularyConstraint: Constraint<unknown, TVocabulary, TContext>;
-}
-
 export function fixInstanceLocations<TVocabulary>(
   context: HasErrorReports<TVocabulary>,
   position: number,
   key: string,
 ): void {
-  const { errorReports } = context;
+  const { errors } = context;
   const prefix = '/' + escapeJSONPointerComponent(key);
-  for (let i = position, l = errorReports.length; i < l; i++) {
-    const errorReport = errorReports[i]!;
-    errorReport.instanceLocation = prefix + errorReport.instanceLocation;
+  for (let i = position, l = errors.length; i < l; i++) {
+    const error = errors[i]!;
+    error.instanceLocation = prefix + error.instanceLocation;
   }
 }
 
@@ -40,23 +36,22 @@ export function fixKeywordLocations<TVocabulary>(
   position: number,
   ...keys: string[]
 ): void {
-  const { errorReports } = context;
+  const { errors } = context;
   const prefix = '/' + keys.map(escapeJSONPointerComponent).join('/');
-  for (let i = position, l = errorReports.length; i < l; i++) {
-    const errorReport = errorReports[i]!;
-    errorReport.keywordLocation = prefix + errorReport.keywordLocation;
+  for (let i = position, l = errors.length; i < l; i++) {
+    const error = errors[i]!;
+    error.keywordLocation = prefix + error.keywordLocation;
   }
 }
 
 export function fixAbsoluteKeywordLocation<TVocabulary>(
   context: HasErrorReports<TVocabulary>,
   position: number,
-  url: URL,
+  url: string,
 ): void {
-  const { errorReports } = context;
-  const urlString = url.toString();
-  for (let i = position, l = errorReports.length; i < l; i++) {
-    const errorReport = errorReports[i]!;
-    errorReport.absoluteKeywordLocation = urlString;
+  const { errors } = context;
+  for (let i = position, l = errors.length; i < l; i++) {
+    const error = errors[i]!;
+    error.absoluteKeywordLocation = url;
   }
 }

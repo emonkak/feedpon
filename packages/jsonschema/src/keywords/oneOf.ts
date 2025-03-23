@@ -20,7 +20,7 @@ export function oneOf<
 ): boolean {
   const { oneOf } = schema;
   const { schemaConstraint } = context;
-  const subContext = { ...context, errorReports: [] };
+  const subContext = { ...context, errors: [] };
   let matchCount = 0;
 
   for (let i = 0, l = oneOf.length; i < l; i++) {
@@ -31,10 +31,10 @@ export function oneOf<
 
   if (matchCount === 0) {
     fixKeywordLocations(subContext, 0, 'oneOf');
-    context.errorReports.push(...subContext.errorReports);
+    context.errors.push(...subContext.errors);
     return false;
   } else if (matchCount > 1) {
-    context.errorReports.push({
+    context.errors.push({
       error: 'Value matches multiple schemas, but only one is allowed.',
       instanceLocation: '',
       keywordLocation: '/oneOf',

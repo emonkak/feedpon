@@ -15,7 +15,7 @@ export function required(
 
   for (const key of required) {
     if ((value as any)[key] === undefined) {
-      context.errorReports.push({
+      context.errors.push({
         error: `Object must have property ${quote(key)}, but it is undefined.`,
         instanceLocation: '',
         keywordLocation: '/required',

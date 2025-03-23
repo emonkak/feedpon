@@ -30,7 +30,7 @@ export function contains<
     const subContext = {
       ...context,
       evaluatedLocations: { index: -1, properties: null },
-      errorReports: [],
+      errors: [],
     };
     if (schemaConstraint(value[i], contains, subContext)) {
       matchCount++;
@@ -39,7 +39,7 @@ export function contains<
 
   if (minContains !== undefined) {
     if (matchCount < minContains) {
-      context.errorReports.push({
+      context.errors.push({
         error: `Array must contain at least ${minContains} items matching the "contains" schema, but found ${matchCount}.`,
         instanceLocation: '',
         keywordLocation: '/minContains',
@@ -50,7 +50,7 @@ export function contains<
       valid = false;
     }
   } else if (matchCount === 0) {
-    context.errorReports.push({
+    context.errors.push({
       error:
         'Array must contain at least one item matching the "contains" schema.',
       instanceLocation: '',
@@ -63,7 +63,7 @@ export function contains<
   }
 
   if (maxContains !== undefined && matchCount > maxContains) {
-    context.errorReports.push({
+    context.errors.push({
       error: `Array must contain at most ${maxContains} items matching the "contains" schema, but found ${matchCount}.`,
       instanceLocation: '',
       keywordLocation: '/maxContains',

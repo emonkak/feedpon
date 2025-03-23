@@ -14,7 +14,7 @@ export function uniqueItems(
 
   if (uniqueItems) {
     if (!unique(value)) {
-      context.errorReports.push({
+      context.errors.push({
         error: 'Array items must be unique.',
         instanceLocation: '',
         keywordLocation: 'uniqueItems',

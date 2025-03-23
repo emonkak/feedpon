@@ -1,17 +1,15 @@
 import { describe, expect, test } from 'vitest';
 
 import {
-  type Reference,
-  ReferenceCollector,
-  ValidationEngine,
+  JSONSchemaValidator,
+  type ValidationOptions,
   type ValidationResult,
 } from 'jsonschema';
 import {
   type JSONSchema,
   type JSONSchemaVocabulary,
-  jsonSchemaTraverser,
-  jsonSchemaValidator,
-} from 'jsonschema/dialects/2020-12.ts';
+  draft202012,
+} from 'jsonschema/dialects/draft202012.ts';
 
 export interface TestCase {
   description: string;
@@ -25,13 +23,9 @@ export interface TestUnit {
   valid: boolean;
 }
 
-export interface ValidateOptions {
-  preloadedReferences?: Reference<JSONSchemaVocabulary>[];
-}
-
 export function runTestCase(
   testCase: TestCase,
-  options: ValidateOptions = {},
+  options: ValidationOptions<JSONSchemaVocabulary> = {},
 ): void {
   describe(testCase.description, () => {
     for (const testUnit of testCase.tests) {
@@ -57,19 +51,11 @@ export function runTestCase(
 function validate(
   value: unknown,
   schema: JSONSchema,
-  { preloadedReferences = [] }: ValidateOptions,
+  options: ValidationOptions<JSONSchemaVocabulary>,
 ): ValidationResult<JSONSchemaVocabulary> {
-  const validationEngine = new ValidationEngine(jsonSchemaValidator);
-  const referenceCollector = new ReferenceCollector(jsonSchemaTraverser);
-  const references =
-    typeof schema !== 'boolean'
-      ? concat(preloadedReferences, referenceCollector.collect(schema))
-      : preloadedReferences;
-  return validationEngine.validate(value, schema, { references });
-}
-
-function* concat<T>(...iterables: Iterable<T>[]): Generator<T> {
-  for (const iterable of iterables) {
-    yield* iterable;
-  }
+  const validator = new JSONSchemaValidator(draft202012);
+  return validator.validate(value, schema, {
+    enableStaticReference: true,
+    ...options,
+  });
 }

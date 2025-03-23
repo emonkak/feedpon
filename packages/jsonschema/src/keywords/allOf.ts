@@ -23,7 +23,7 @@ export function allOf<
   let matchCount = 0;
 
   for (let i = 0, l = allOf.length; i < l; i++) {
-    const errorCount = context.errorReports.length;
+    const errorCount = context.errors.length;
     if (schemaConstraint(value, allOf[i]!, context)) {
       matchCount++;
     } else {

@@ -12,7 +12,7 @@ export function multipleOf(
   const { multipleOf } = schema;
 
   if (Math.floor(value % multipleOf) !== 0) {
-    context.errorReports.push({
+    context.errors.push({
       error: `Number must be a multiple of ${multipleOf}, but got ${value}.`,
       instanceLocation: '',
       keywordLocation: '/multipleOf',

@@ -40,7 +40,7 @@ export function anyKeywords<
   };
 }
 
-export function typed<TConstraints extends TypeConstraints<any, any>>(
+export function typeOf<TConstraints extends TypeConstraints<any, any>>(
   typeConstraints: TConstraints,
 ): Constraint<
   unknown,
@@ -53,7 +53,7 @@ export function typed<TConstraints extends TypeConstraints<any, any>>(
     const actualType = inferType(value);
 
     if (actualType === null) {
-      context.errorReports.push({
+      context.errors.push({
         error: `Value must have a valid JSON data type, but got ${show(value)}.`,
         instanceLocation: '',
         keywordLocation: '',
@@ -67,7 +67,7 @@ export function typed<TConstraints extends TypeConstraints<any, any>>(
     if (expectedType !== undefined) {
       if (Array.isArray(expectedType)) {
         if (expectedType.length === 0) {
-          context.errorReports.push({
+          context.errors.push({
             error: 'No type is allowed.',
             instanceLocation: '',
             keywordLocation: '/type',
@@ -81,7 +81,7 @@ export function typed<TConstraints extends TypeConstraints<any, any>>(
             matchType(actualType, expectedType),
           )
         ) {
-          context.errorReports.push({
+          context.errors.push({
             error: `Type must be one of ${expectedType.map(quote).join(', ')}, but got ${show(value)}.`,
             instanceLocation: '',
             keywordLocation: '/type',
@@ -92,7 +92,7 @@ export function typed<TConstraints extends TypeConstraints<any, any>>(
           return false;
         }
       } else if (!matchType(actualType, expectedType)) {
-        context.errorReports.push({
+        context.errors.push({
           error: `Type must be ${quote(expectedType)}, but got ${show(value)}.`,
           instanceLocation: '',
           keywordLocation: '/type',

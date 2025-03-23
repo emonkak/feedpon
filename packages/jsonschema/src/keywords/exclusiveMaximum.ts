@@ -12,7 +12,7 @@ export function exclusiveMaximum(
   const { exclusiveMaximum } = schema;
 
   if (value >= exclusiveMaximum) {
-    context.errorReports.push({
+    context.errors.push({
       error: `Number must be less than ${exclusiveMaximum}, but got ${value}.`,
       instanceLocation: '',
       keywordLocation: '/exclusiveMaximum',

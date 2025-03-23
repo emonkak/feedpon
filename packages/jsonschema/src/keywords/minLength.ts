@@ -13,7 +13,7 @@ export function minLength(
   const length = value[Symbol.iterator]().reduce((length) => length + 1, 0);
 
   if (length < minLength) {
-    context.errorReports.push({
+    context.errors.push({
       error: `String must have at least ${minLength} characters, but got ${value.length}.`,
       instanceLocation: '',
       keywordLocation: '/minLength',

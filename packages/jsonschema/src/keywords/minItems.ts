@@ -12,7 +12,7 @@ export function minItems(
   const { minItems } = schema;
 
   if (value.length < minItems) {
-    context.errorReports.push({
+    context.errors.push({
       error: `Array must have at least ${minItems} items, but got ${value.length}.`,
       instanceLocation: '',
       keywordLocation: '/minItems',

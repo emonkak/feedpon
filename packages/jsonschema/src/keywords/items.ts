@@ -27,7 +27,7 @@ export function items<
   let valid = true;
 
   for (let i = prefixItems?.length ?? 0, l = value.length; i < l; i++) {
-    const errorCount = context.errorReports.length;
+    const errorCount = context.errors.length;
 
     if (!schemaConstraint(value[i], items, context)) {
       fixInstanceLocations(context, errorCount, i.toString());

@@ -12,7 +12,7 @@ export function minimum(
   const { minimum } = schema;
 
   if (value < minimum) {
-    context.errorReports.push({
+    context.errors.push({
       error: `Number must be at least ${minimum}, but got ${value}.`,
       instanceLocation: '',
       keywordLocation: '/minimum',

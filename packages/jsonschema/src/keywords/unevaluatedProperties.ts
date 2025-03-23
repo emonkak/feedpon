@@ -33,7 +33,7 @@ export function unevaluatedProperties<
     }
 
     const subContext = { ...context, evaluatedLocations: null };
-    const errorCount = context.errorReports.length;
+    const errorCount = context.errors.length;
 
     if (
       !schemaConstraint((value as any)[key]!, unevaluatedProperties, subContext)

@@ -1,4 +1,12 @@
-export type Schema<TVocabulary> = TVocabulary | boolean;
+export interface Dialect<TVocabulary, TContext> {
+  constraint: Constraint<unknown, TVocabulary, TContext>;
+  validate(
+    value: unknown,
+    schema: Schema<TVocabulary>,
+    constraint: Constraint<unknown, Schema<TVocabulary>, TContext>,
+  ): ValidationResult<TVocabulary>;
+  traverse(schema: TVocabulary): Generator<TVocabulary>;
+}
 
 export type Constraint<T, TVocabulary, TContext> = (
   value: T,
@@ -6,11 +14,7 @@ export type Constraint<T, TVocabulary, TContext> = (
   context: TContext,
 ) => boolean;
 
-export type Validator<TVocabulary, TContext> = (
-  value: unknown,
-  schema: Schema<TVocabulary>,
-  constraint: Constraint<unknown, Schema<TVocabulary>, TContext>,
-) => ValidationResult<TVocabulary>;
+export type Schema<TVocabulary> = TVocabulary | boolean;
 
 export type ValidationResult<TVocabulary> =
   | {

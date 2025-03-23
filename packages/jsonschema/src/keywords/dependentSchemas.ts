@@ -24,7 +24,7 @@ export function dependentSchemas<
 
   for (const key of Object.keys(dependentSchemas)) {
     if ((value as any)[key] !== undefined) {
-      const errorCount = context.errorReports.length;
+      const errorCount = context.errors.length;
       if (!schemaConstraint(value, dependentSchemas[key]!, context)) {
         fixKeywordLocations(context, errorCount, 'dependentSchemas', key);
         valid = false;

@@ -40,7 +40,7 @@ export function patternProperties<
         ...context,
         evaluatedLocations: { index: -1, properties: null },
       };
-      const errorCount = context.errorReports.length;
+      const errorCount = context.errors.length;
 
       if (
         !schemaConstraint(

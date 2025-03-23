@@ -13,7 +13,7 @@ export function maxProperties(
   const keys = Object.keys(value);
 
   if (keys.length > maxProperties) {
-    context.errorReports.push({
+    context.errors.push({
       error: `Object must have at most ${maxProperties} properties, but got ${keys.length}.`,
       instanceLocation: '',
       keywordLocation: '/maxProperties',

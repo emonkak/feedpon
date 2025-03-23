@@ -20,7 +20,7 @@ export function anyOf<
 ): boolean {
   const { anyOf } = schema;
   const { schemaConstraint } = context;
-  const subContext = { ...context, errorReports: [] };
+  const subContext = { ...context, errors: [] };
   let matchCount = 0;
 
   for (let i = 0, l = anyOf.length; i < l; i++) {
@@ -31,7 +31,7 @@ export function anyOf<
 
   if (matchCount === 0) {
     fixKeywordLocations(subContext, 0, 'anyOf');
-    context.errorReports.push(...subContext.errorReports);
+    context.errors.push(...subContext.errors);
     return false;
   }
 

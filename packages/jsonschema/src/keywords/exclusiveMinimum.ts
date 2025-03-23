@@ -12,7 +12,7 @@ export function exclusiveMinimum(
   const { exclusiveMinimum } = schema;
 
   if (value <= exclusiveMinimum) {
-    context.errorReports.push({
+    context.errors.push({
       error: `Number must be greater than ${exclusiveMinimum}, but got ${value}.`,
       instanceLocation: '',
       keywordLocation: '/exclusiveMinimum',
