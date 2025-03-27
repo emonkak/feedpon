@@ -1,4 +1,4 @@
-import type { ContentType, MediaType } from './openapi.ts';
+import type { ContentType, MediaType } from './types.ts';
 
 export type ContentReader = (
   response: Response,

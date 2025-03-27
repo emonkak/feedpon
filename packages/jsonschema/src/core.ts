@@ -8,8 +8,8 @@ export interface Dialect<TVocabulary, TContext> {
   traverse(schema: TVocabulary): Generator<TVocabulary>;
 }
 
-export type Constraint<T, TVocabulary, TContext> = (
-  value: T,
+export type Constraint<TValue, TVocabulary, TContext> = (
+  value: TValue,
   schema: TVocabulary,
   context: TContext,
 ) => boolean;

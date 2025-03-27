@@ -44,7 +44,7 @@ export function fixKeywordLocations<TVocabulary>(
   }
 }
 
-export function fixAbsoluteKeywordLocation<TVocabulary>(
+export function fixAbsoluteKeywordLocations<TVocabulary>(
   context: HasErrorReports<TVocabulary>,
   position: number,
   url: string,

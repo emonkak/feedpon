@@ -1,4 +1,4 @@
-import type { Schema } from './schema.ts';
+import type { JSONSchema } from 'jsonschema/dialects/typed.ts';
 
 export interface Description {
   openapi: `3` | `3.${number}` | `3.${number}.${number}`;
@@ -9,7 +9,7 @@ export interface Description {
 export type Path = Partial<Record<Method, Operation>>;
 
 export interface Components {
-  schemas?: Record<string, Schema>;
+  schemas?: Record<string, JSONSchema>;
   responses?: Record<string, Response>;
   parameters?: Record<string, Parameter>;
   examples?: Record<string, Example>;
@@ -53,7 +53,7 @@ export interface Parameter {
   style?: ParameterStyle;
   explode?: boolean;
   allowReserved?: boolean;
-  schema?: Schema;
+  schema?: JSONSchema;
   example?: any;
   examples?: Record<string, Example | Reference>;
   content?: Content;
@@ -94,7 +94,7 @@ export type Header = Omit<
 >;
 
 export interface MediaType {
-  schema?: Schema;
+  schema?: JSONSchema;
   example?: any;
   examples?: Record<string, Example | Reference>;
   encoding?: Record<string, Encoding>;

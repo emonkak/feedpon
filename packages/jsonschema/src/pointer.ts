@@ -9,21 +9,21 @@ export type ResolveJSONPointerURL<
     ? FollowPath<TScope, UnescapeJSONPointerPath<Split<Path, '/'>>>
     : never;
 
-type FollowPath<T, TPath extends string[]> = TPath extends [
-  infer Head extends keyof T,
+type FollowPath<TObject, TPath extends string[]> = TPath extends [
+  infer Head extends keyof TObject,
   ...infer Tail extends string[],
 ]
-  ? FollowPath<T[Head], Tail>
-  : T;
+  ? FollowPath<TObject[Head], Tail>
+  : TObject;
 
 type Split<
-  T extends string,
+  TString extends string,
   TSeparator extends string,
-> = T extends `${infer Head}${TSeparator}${infer Tail}`
+> = TString extends `${infer Head}${TSeparator}${infer Tail}`
   ? [Head, ...Split<Tail, TSeparator>]
-  : T extends ''
+  : TString extends ''
     ? []
-    : [T];
+    : [TString];
 
 type UnescapeJSONPointerComponent<T extends string> =
   T extends `${infer Head}~${infer N extends number}${infer Tail}`

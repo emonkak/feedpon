@@ -1,6 +1,6 @@
-export type RequestResult<TSuccess, TError> =
+export type RequestResult<TSuccess, TFaulure> =
   | RequestResult.Success<TSuccess>
-  | RequestResult.Failure<TError>;
+  | RequestResult.Failure<TFaulure>;
 
 export namespace RequestResult {
   export class Success<T> {
@@ -16,7 +16,7 @@ export namespace RequestResult {
       this._body = body;
     }
 
-    get ok(): true {
+    get ok(): boolean {
       return true;
     }
 
@@ -32,8 +32,12 @@ export namespace RequestResult {
       return this._body;
     }
 
-    unwrap(): T {
+    unwrapSuccess(): T {
       return this._body;
+    }
+
+    unwrapError(): never {
+      throw Failure.errorResponse(this._request, this._response, this._body);
     }
   }
 
@@ -44,7 +48,7 @@ export namespace RequestResult {
 
     private readonly _body: T;
 
-    static erorrResponse<T>(
+    static errorResponse<T>(
       request: Request,
       response: Response,
       body: T,
@@ -59,7 +63,7 @@ export namespace RequestResult {
       );
     }
 
-    static invalidResponseBody(
+    static invalidBody(
       request: Request,
       response: Response,
       options?: ErrorOptions,
@@ -144,8 +148,12 @@ export namespace RequestResult {
       return this._body;
     }
 
-    unwrap(): never {
+    unwrapSuccess(): never {
       throw this;
+    }
+
+    unwrapError(): T {
+      return this._body;
     }
   }
 }

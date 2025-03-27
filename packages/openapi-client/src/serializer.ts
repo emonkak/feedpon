@@ -4,7 +4,7 @@ import type {
   Parameter,
   ParameterLocation,
   ParameterStyle,
-} from './openapi.ts';
+} from './types.ts';
 
 export type ContentSerializer = (
   value: unknown,

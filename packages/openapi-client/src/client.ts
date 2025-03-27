@@ -1,13 +1,29 @@
-import type { AllOf, Filter, OrElse, RequiredKeys } from './helpers.ts';
+import { ValidationError } from 'jsonschema';
+import type { ParseJSONSchema } from 'jsonschema/dialects/typed.ts';
+import {
+  type ResolveJSONPointerURL,
+  isJSONPointerURL,
+  resolveJSONPointerURL,
+} from 'jsonschema/pointer.ts';
 import {
   type Middleware,
   type RequestHandler,
   defaultMiddleware,
 } from './middleware.ts';
+import { applyTemplateVariables } from './path.ts';
+import { type ContentReader, defaultContentReader } from './reader.ts';
+import { RequestResult } from './result.ts';
+import {
+  type ContentSerializer,
+  type ParameterSerializer,
+  defaultContentSerializer,
+  defaultParameterSerializer,
+} from './serializer.ts';
 import type {
   Content,
   ContentType,
   Description,
+  Responses as ExpectedResponses,
   MediaType,
   Method,
   Operation,
@@ -15,29 +31,10 @@ import type {
   ParameterLocation,
   Reference,
   RequestBody,
-  Response as ResponseDefinition,
-  Responses as ResponsesDefinition,
+  Response as ResponseDeclaration,
   StatusCode,
-} from './openapi.ts';
-import { applyTemplateVariables } from './path.ts';
-import { type ContentReader, defaultContentReader } from './reader.ts';
-import { RequestResult } from './result.ts';
-import {
-  type LookupReference,
-  type ParseSchema,
-  lookupReference,
-} from './schema.ts';
-import {
-  type ContentSerializer,
-  type ParameterSerializer,
-  defaultContentSerializer,
-  defaultParameterSerializer,
-} from './serializer.ts';
-import {
-  type SchemaValidator,
-  ValidationError,
-  defaultSchemaValidator,
-} from './validator.ts';
+} from './types.ts';
+import { type SchemaValidator, defaultSchemaValidator } from './validator.ts';
 
 export interface ClientSettings {
   contentReader: ContentReader;
@@ -71,33 +68,48 @@ type ServerErrorCode = `50${0 | 1 | 2 | 3 | 4 | 5}` | `5XX`;
 
 type ParsedContentType = { type: string; subtype: string };
 
-type RequestOptions<T extends Operation, TDocumentRoot> = (T extends {
+type RequestOptions<
+  TOperation extends Operation,
+  TDocumentRoot,
+> = (TOperation extends {
   parameters: {};
 }
-  ? ResolveRequestParameters<T['parameters'], 'query', TDocumentRoot> &
-      ResolveRequestParameters<T['parameters'], 'path', TDocumentRoot> &
-      ResolveRequestParameters<T['parameters'], 'header', TDocumentRoot> &
-      ResolveRequestParameters<T['parameters'], 'cookie', TDocumentRoot>
+  ? ResolveRequestParameters<TOperation['parameters'], 'query', TDocumentRoot> &
+      ResolveRequestParameters<
+        TOperation['parameters'],
+        'path',
+        TDocumentRoot
+      > &
+      ResolveRequestParameters<
+        TOperation['parameters'],
+        'header',
+        TDocumentRoot
+      > &
+      ResolveRequestParameters<
+        TOperation['parameters'],
+        'cookie',
+        TDocumentRoot
+      >
   : { [K in `${ParameterLocation}Params`]?: {} }) &
-  (T extends { requestBody: {} }
+  (TOperation extends { requestBody: {} }
     ? ResolveRequestBody<
-        ResolveReference<T['requestBody'], RequestBody, TDocumentRoot>,
+        ResolveReference<TOperation['requestBody'], RequestBody, TDocumentRoot>,
         TDocumentRoot
       >
     : { body?: undefined; contentType?: undefined }) &
   Omit<RequestInit, 'body' | 'method'>;
 
 type ResponseBody<
-  T extends Operation,
+  TOperation extends Operation,
   TStatusCode extends StatusCode,
   TDocumentRoot,
-> = T['responses'] extends {}
+> = TOperation['responses'] extends {}
   ? {
-      [K in TStatusCode]: T['responses'][K] extends {}
+      [K in TStatusCode]: TOperation['responses'][K] extends {}
         ? ResolveResponseBody<
             ResolveReference<
-              T['responses'][K],
-              ResponseDefinition,
+              TOperation['responses'][K],
+              ResponseDeclaration,
               TDocumentRoot
             >,
             TDocumentRoot
@@ -107,14 +119,18 @@ type ResponseBody<
   : never;
 
 type ResolveRequestParameters<
-  T extends (Parameter | Reference)[],
+  TParameter extends (Parameter | Reference)[],
   TLocation extends ParameterLocation,
   TDocumentRoot,
 > = ToOptional<{
   [K in `${TLocation}Params`]: ParseParameters<
-    Filter<
+    FilterArray<
       {
-        [K in keyof T]: ResolveReference<T[K], Parameter, TDocumentRoot>;
+        [K in keyof TParameter]: ResolveReference<
+          TParameter[K],
+          Parameter,
+          TDocumentRoot
+        >;
       },
       { in: TLocation }
     >,
@@ -122,47 +138,68 @@ type ResolveRequestParameters<
   >;
 }>;
 
-type ResolveRequestBody<T extends RequestBody, TDocumentRoot> = SetOptional<
-  ParseContent<T['content'], TDocumentRoot>,
-  IsRequired<T> extends true ? never : any
+type ResolveRequestBody<
+  TRequstBody extends RequestBody,
+  TDocumentRoot,
+> = SetOptional<
+  ParseContent<TRequstBody['content'], TDocumentRoot>,
+  IsRequired<TRequstBody> extends true ? never : any
 >;
 
 type ResolveResponseBody<
-  T extends ResponseDefinition,
+  TResponse extends ResponseDeclaration,
   TDocumentRoot,
-> = T['content'] extends {}
-  ? ParseContent<T['content'], TDocumentRoot>['body']
+> = TResponse['content'] extends {}
+  ? ParseContent<TResponse['content'], TDocumentRoot>['body']
   : null; // Represent an empty response.
 
 type ResolveReference<
-  T extends TExpected | Reference,
+  TReference extends TExpected | Reference,
   TExpected,
   TDocumentRoot,
-> = T extends Reference
-  ? Extract<LookupReference<T['$ref'], TDocumentRoot>, TExpected>
-  : T;
+> = TReference extends Reference
+  ? Extract<ResolveJSONPointerURL<TReference['$ref'], TDocumentRoot>, TExpected>
+  : TReference;
 
-type ParseParameters<T extends Parameter[], TDocumentRoot> = AllOf<{
-  [K in keyof T]: SetOptional<
+type ParseParameters<TParameter extends Parameter[], TDocumentRoot> = {
+  [K in keyof TParameter]: SetOptional<
     {
-      [N in T[K]['name']]: ParseSchema<
-        NonNullable<T[K]['schema']>,
+      [N in TParameter[K]['name']]: ParseJSONSchema<
+        NonNullable<TParameter[K]['schema']>,
         TDocumentRoot
       >;
     },
-    IsRequired<T[K]> extends true ? never : any
+    IsRequired<TParameter[K]> extends true ? never : any
   >;
-}>;
+}[keyof TParameter];
 
-type ParseContent<T extends Content, TDocumentRoot> = {
-  [K in keyof T & ContentType]: {
+type ParseContent<TContent extends Content, TDocumentRoot> = {
+  [K in keyof TContent & ContentType]: {
     contentType: K;
-    body: ParseSchema<
-      OrElse<ResolveReference<T[K], MediaType, TDocumentRoot>['schema'], {}>,
+    body: ParseJSONSchema<
+      OrElse<
+        ResolveReference<TContent[K], MediaType, TDocumentRoot>['schema'],
+        {}
+      >,
       TDocumentRoot
     >;
   };
-}[keyof T & ContentType];
+}[keyof TContent & ContentType];
+
+type FilterArray<TArray extends any[], TValue> = TArray extends [
+  infer Head,
+  ...infer Tail,
+]
+  ? [Head] extends [TValue]
+    ? [Head, ...FilterArray<Tail, TValue>]
+    : FilterArray<Tail, TValue>
+  : [];
+
+type OrElse<T, U> = T extends {} ? T : U;
+
+type RequiredKeys<T> = {
+  [K in keyof T]-?: {} extends Pick<T, K> ? never : K;
+}[keyof T];
 
 type SetOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 
@@ -177,7 +214,7 @@ type IsRequired<T> = T extends { required: true } ? true : false;
 
 const CONTENT_TYPE_PATTERN = /(?<type>[A-Z]+)\/(?<subtype>[A-Z][0-9A-Z._-]*)/i;
 
-export class Client<const TDescription extends Description> {
+export class OpenAPIClient<const TDescription extends Description> {
   private readonly _description: TDescription;
 
   private readonly _settings: ClientSettings;
@@ -222,7 +259,7 @@ export class Client<const TDescription extends Description> {
       >
     >
   > {
-    const { responses: responsesDefinition = {} } =
+    const { responses: responsesDeclaration = {} } =
       this._description.paths[path]![method]!;
     const { middleware, requestHandler } = this._settings;
 
@@ -231,12 +268,12 @@ export class Client<const TDescription extends Description> {
     const responseBody = await this._parseResponseBody(
       request,
       response,
-      responsesDefinition,
+      responsesDeclaration,
     );
 
     return response.ok
       ? new RequestResult.Success(request, response, responseBody as any)
-      : RequestResult.Failure.erorrResponse(
+      : RequestResult.Failure.errorResponse(
           request,
           response,
           responseBody as any,
@@ -263,7 +300,7 @@ export class Client<const TDescription extends Description> {
       TDescription
     >,
   ): Request {
-    const { parameters = [], requestBody: requestBodyDefinition } =
+    const { parameters = [], requestBody: requestBodyDeclaration } =
       this._description.paths[path]![method]!;
     const {
       contentSerializer,
@@ -327,7 +364,7 @@ export class Client<const TDescription extends Description> {
 
     if (contentType !== undefined) {
       const mediaType = resolveReference(
-        resolveReference(requestBodyDefinition!, this._description).content[
+        resolveReference(requestBodyDeclaration!, this._description).content[
           contentType
         ]!,
         this._description,
@@ -358,19 +395,19 @@ export class Client<const TDescription extends Description> {
   private async _parseResponseBody(
     request: Request,
     response: Response,
-    responsesDefinition: ResponsesDefinition,
+    expectedResponses: ExpectedResponses,
   ): Promise<unknown> {
-    const responseDefinition = getResponseDefinition(
+    const responseDeclaration = getResponseDeclaration(
       response,
-      responsesDefinition,
+      expectedResponses,
       this._description,
     );
 
-    if (responseDefinition === null) {
+    if (responseDeclaration === null) {
       throw RequestResult.Failure.undefinedResponse(request, response);
     }
 
-    if (responseDefinition.content === undefined) {
+    if (responseDeclaration.content === undefined) {
       // Assume the response body is empty.
       return null;
     }
@@ -385,7 +422,7 @@ export class Client<const TDescription extends Description> {
 
     const mediaType = getResponseMediaType(
       parsedContentType,
-      responseDefinition.content,
+      responseDeclaration.content,
       this._description,
     );
 
@@ -408,7 +445,7 @@ export class Client<const TDescription extends Description> {
       );
     } catch (error) {
       if (error instanceof ValidationError) {
-        throw RequestResult.Failure.invalidResponseBody(request, response, {
+        throw RequestResult.Failure.invalidBody(request, response, {
           cause: error,
         });
       }
@@ -417,31 +454,31 @@ export class Client<const TDescription extends Description> {
   }
 }
 
-function getResponseDefinition(
+function getResponseDeclaration(
   response: Response,
-  responsesDefinition: ResponsesDefinition,
-  references: object,
-): ResponseDefinition | null {
+  expectedResponses: ExpectedResponses,
+  documentRoot: object,
+): ResponseDeclaration | null {
   const statusCode = response.status.toString() as StatusCode;
-  const responseDefinition =
-    responsesDefinition[statusCode] ??
-    responsesDefinition[(statusCode[0] + 'XX') as StatusCode] ??
-    (response.ok ? undefined : responsesDefinition.default);
-  if (responseDefinition === undefined) {
+  const responseDeclaration =
+    expectedResponses[statusCode] ??
+    expectedResponses[(statusCode[0] + 'XX') as StatusCode] ??
+    (response.ok ? undefined : expectedResponses.default);
+  if (responseDeclaration === undefined) {
     return null;
   }
-  return resolveReference(responseDefinition, references);
+  return resolveReference(responseDeclaration, documentRoot);
 }
 
 function getResponseMediaType(
   { type, subtype }: ParsedContentType,
-  contentDefinition: Content,
+  contentDeclaration: Content,
   references: object,
 ): MediaType | null {
   const mediaType =
-    contentDefinition[`${type}/${subtype}`] ??
-    contentDefinition[`${type}/*`] ??
-    contentDefinition['*/*'];
+    contentDeclaration[`${type}/${subtype}`] ??
+    contentDeclaration[`${type}/*`] ??
+    contentDeclaration['*/*'];
   if (mediaType === undefined) {
     return null;
   }
@@ -459,7 +496,15 @@ export function resolveReference<T extends object>(
   schema: T | Reference,
   documentRoot: object,
 ): T {
-  return '$ref' in schema
-    ? (lookupReference(schema.$ref, documentRoot) as T)
-    : schema;
+  if ('$ref' in schema) {
+    const referencedSchema = isJSONPointerURL(schema.$ref)
+      ? resolveJSONPointerURL(schema.$ref, documentRoot)
+      : null;
+    if (referencedSchema === null) {
+      throw new Error(`Unresolved reference: ${JSON.stringify(schema.$ref)}`);
+    }
+    return referencedSchema as T;
+  } else {
+    return schema;
+  }
 }

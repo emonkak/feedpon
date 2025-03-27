@@ -159,8 +159,8 @@ interface MetadataVocabulary {
   examples?: unknown[];
 }
 
-type PickProperties<T, TValue> = {
-  [K in keyof T as T[K] extends TValue ? K : never]: T[K];
+type PickProperties<T, U> = {
+  [K in keyof T as T[K] extends U ? K : never]: T[K];
 };
 
 const SCHEMA_KEYS = [

@@ -6,6 +6,9 @@
     ".": "./src/index.ts"
   },
   "sideEffects": false,
+  "dependencies": {
+    "jsonschema": "workspace:^"
+  },
   "devDependencies": {
     "vitest": "^3.0.8"
   }

@@ -148,6 +148,10 @@ importers:
         version: 3.0.8
 
   packages/openapi-client:
+    dependencies:
+      jsonschema:
+        specifier: workspace:^
+        version: link:../jsonschema
     devDependencies:
       vitest:
         specifier: ^3.0.8

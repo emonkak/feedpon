@@ -1,7 +1,7 @@
 import {
   type HasErrorReports,
   type HasSchemaConstraint,
-  fixAbsoluteKeywordLocation,
+  fixAbsoluteKeywordLocations,
   fixKeywordLocations,
 } from './context.ts';
 import type {
@@ -175,7 +175,7 @@ export class JSONSchemaValidator<
         valid = schemaConstraint(value, resource.schema, context);
         if (!valid) {
           fixKeywordLocations(context, errorCount, '$dynamicRef');
-          fixAbsoluteKeywordLocation(context, errorCount, resource.url);
+          fixAbsoluteKeywordLocations(context, errorCount, resource.url);
         }
       } else if ($ref !== undefined) {
         const resource =
@@ -190,12 +190,12 @@ export class JSONSchemaValidator<
         valid = schemaConstraint(value, resource.schema, context);
         if (!valid) {
           fixKeywordLocations(context, errorCount, '$ref');
-          fixAbsoluteKeywordLocation(context, errorCount, resource.url);
+          fixAbsoluteKeywordLocations(context, errorCount, resource.url);
         }
       } else {
         valid = this._dialect.constraint(value, schema, context);
         if (!valid) {
-          fixAbsoluteKeywordLocation(context, errorCount, currentFrame.url);
+          fixAbsoluteKeywordLocations(context, errorCount, currentFrame.url);
         }
       }
 
