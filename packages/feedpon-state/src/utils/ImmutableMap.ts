@@ -150,10 +150,10 @@ export class ImmutableMap<TKey, TValue> implements Iterable<[TKey, TValue]> {
   }
 }
 
-export function visualizeTree<TKey, TValue>({
+export function inspectTree<TKey, TValue>({
   tree,
 }: ImmutableMap<TKey, TValue>): string {
-  return tree === null ? '<empty>' : [...drawTree(tree, '', '')].join('\n');
+  return tree === null ? '<empty>' : [...drawBranch(tree, '', '')].join('\n');
 }
 
 function balanceLeft<TKey, TValue>(
@@ -316,7 +316,7 @@ function deleteMin<TKey, TValue>(
   }
 }
 
-function* drawTree<TKey, TValue>(
+function* drawBranch<TKey, TValue>(
   tree: Branch<TKey, TValue>,
   parentBorder: string,
   childBorder: string,
@@ -327,12 +327,12 @@ function* drawTree<TKey, TValue>(
     ':' +
     String(tree.value);
   if (tree.left !== null) {
-    for (const child of drawTree(tree.left, '+- ', '|  ')) {
+    for (const child of drawBranch(tree.left, '+- ', '|  ')) {
       yield childBorder + child;
     }
   }
   if (tree.right !== null) {
-    for (const child of drawTree(tree.right, '`- ', '   ')) {
+    for (const child of drawBranch(tree.right, '`- ', '   ')) {
       yield childBorder + child;
     }
   }
