@@ -1,5 +1,5 @@
-import type { RenderContext, TemplateResult } from '@emonkak/ebit';
-import { atom, live } from '@emonkak/ebit/directives.js';
+import type { RenderContext } from 'barebind';
+import { Atom } from 'barebind/extensions/signal';
 import type { Category } from 'feedpon-messaging';
 
 import { AlertDialog } from '../primitives/AlertDialog.ts';
@@ -13,47 +13,41 @@ interface CategoryFormProps {
 export function CategoryForm(
   { category, onCategoryDelete, onCategoryUpdate }: CategoryFormProps,
   context: RenderContext,
-): TemplateResult {
-  const currentLabel$ = context.useMemo(() => atom(category.label), [category]);
+): unknown {
+  const currentLabel$ = context.use(Atom.untracked(category.label));
 
   context.use(currentLabel$);
 
   const handleDelete = context.useCallback(() => {
-    AlertDialog.open(
-      {
-        confirmButton: ({ onConfirm }, context) => context.html`
+    AlertDialog.open({
+      confirmButton: ({ onConfirm }, context) => context.html`
           <button class="button button-negative" type="button" @click=${onConfirm}>Delete</button>
         `,
-        cancelButton: ({ onCancel }, context) => context.html`
+      cancelButton: ({ onCancel }, context) => context.html`
           <button class="button button-outline-default" type="button" @click=${onCancel}>Cancel</button>
         `,
-        onConfirm: () => {
-          onCategoryDelete(category.categoryId, category.label);
-        },
-        title: `Delete "${category.label}"`,
-        message: 'Are you sure you want to delete this category?',
+      onConfirm: () => {
+        onCategoryDelete(category.categoryId, category.label);
       },
-      context,
-    );
+      title: `Delete "${category.label}"`,
+      message: 'Are you sure you want to delete this category?',
+    });
   }, [category, onCategoryDelete]);
 
   const handleUpdate = context.useCallback(() => {
-    AlertDialog.open(
-      {
-        confirmButton: ({ onConfirm }, context) => context.html`
+    AlertDialog.open({
+      confirmButton: ({ onConfirm }, context) => context.html`
           <button class="button button-negative" type="button" @click=${onConfirm}>Delete</button>
         `,
-        cancelButton: ({ onCancel }, context) => context.html`
+      cancelButton: ({ onCancel }, context) => context.html`
           <button class="button button-outline-default" type="button" @click=${onCancel}>Cancel</button>
         `,
-        onConfirm: () => {
-          onCategoryUpdate(category, currentLabel$.value);
-        },
-        title: `Rename "${category.label}" to "${currentLabel$.value}"`,
-        message: 'Are you sure you want to change the label of this category?',
+      onConfirm: () => {
+        onCategoryUpdate(category, currentLabel$.value);
       },
-      context,
-    );
+      title: `Rename "${category.label}" to "${currentLabel$.value}"`,
+      message: 'Are you sure you want to change the label of this category?',
+    });
   }, [category, onCategoryUpdate]);
 
   const handleChangeLabel = context.useCallback((event: Event) => {
@@ -68,7 +62,7 @@ export function CategoryForm(
           class="form-control"
           required
           type="text"
-          .value=${currentLabel$.map(live)}
+          $value=${currentLabel$}
           @input=${handleChangeLabel}
         >
         <button

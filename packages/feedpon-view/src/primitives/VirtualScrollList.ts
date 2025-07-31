@@ -1,11 +1,11 @@
-import type {
-  RefCallback,
-  RefObject,
-  RenderContext,
-  TemplateResult,
-  Usable,
-} from '@emonkak/ebit';
-import { type ElementRef, keyedList, memo } from '@emonkak/ebit/directives.js';
+import {
+  type CustomHookFunction,
+  type ElementRef,
+  type RefCallback,
+  type RefObject,
+  type RenderContext,
+  repeat,
+} from 'barebind';
 import throttle from 'feedpon-utils/throttle.ts';
 
 import { createEventHook } from '../common/hooks/eventHook.ts';
@@ -61,7 +61,7 @@ export interface VirtualScrollListProps<TItem extends { id: PropertyKey }> {
     blankSpaces: BlankSpaces,
     ref: ElementRef,
     context: RenderContext,
-  ) => TemplateResult;
+  ) => unknown;
   scheduleUpdate?: (callback: VoidFunction) => void;
   scrollBy?: (x: number, y: number) => void;
   scrollThrottleTime?: number;
@@ -85,7 +85,7 @@ export function VirtualScrollList<TItem extends { id: PropertyKey }>(
     scrollThrottleTime = 100,
   }: VirtualScrollListProps<TItem>,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   const containerRef = context.useRef<Element | null>(null);
   const scrollingItemIndexRef = context.useRef(initialItemIndex);
   const blockSizesRef = context.useMemo(() => ({ current: new Map() }), []);
@@ -121,7 +121,7 @@ export function VirtualScrollList<TItem extends { id: PropertyKey }>(
       scopeRef.current.end,
     );
 
-    if (areIdenticalItems(newSlice, oldSlice)) {
+    if (areItemsIdentical(newSlice, oldSlice)) {
       if (items.length < scopeRef.current.end) {
         scopeRef.current = {
           start: Math.min(items.length - 1, scopeRef.current.start),
@@ -146,8 +146,6 @@ export function VirtualScrollList<TItem extends { id: PropertyKey }>(
     );
   }
 
-  const [, forceUpdate] = context.useState({});
-
   ref.current = {
     scrollTo(index: number): void {
       scopeRef.current = getInitialScope(
@@ -161,7 +159,7 @@ export function VirtualScrollList<TItem extends { id: PropertyKey }>(
       scrollingItemIndexRef.current = index;
 
       // Force update even if the scope has not changed.
-      forceUpdate({});
+      context.forceUpdate();
     },
   };
 
@@ -183,9 +181,9 @@ export function VirtualScrollList<TItem extends { id: PropertyKey }>(
       offscreenRatio,
     );
 
-    if (!areEqualScopes(scopeRef.current, newScope)) {
+    if (!areScopesEqual(scopeRef.current, newScope)) {
       scopeRef.current = newScope;
-      forceUpdate({});
+      context.forceUpdate();
     }
 
     onUpdateDimensions?.({
@@ -223,7 +221,7 @@ export function VirtualScrollList<TItem extends { id: PropertyKey }>(
   ]);
 
   context.useEffect(() => {
-    let willUpdate = false;
+    let shouldUpdate = false;
 
     const newSlice = items.slice(scopeRef.current.start, scopeRef.current.end);
     const oldSlice = oldItems.slice(
@@ -231,13 +229,13 @@ export function VirtualScrollList<TItem extends { id: PropertyKey }>(
       scopeRef.current.end,
     );
 
-    if (!areIdenticalItems(newSlice, oldSlice)) {
+    if (!areItemsIdentical(newSlice, oldSlice)) {
       blockPositionsRef.current = computeBlockPositions(
         items,
         blockSizesRef.current,
         assumedItemSize,
       );
-      willUpdate = true;
+      shouldUpdate = true;
     }
 
     if (scrollingItemIndexRef.current >= 0) {
@@ -259,10 +257,10 @@ export function VirtualScrollList<TItem extends { id: PropertyKey }>(
       }
 
       scrollingItemIndexRef.current = -1;
-      willUpdate = true;
+      shouldUpdate = true;
     }
 
-    if (willUpdate) {
+    if (shouldUpdate) {
       if (!isDirtyRef.current) {
         scheduleUpdate(updateDimensions);
         isDirtyRef.current = true;
@@ -282,6 +280,9 @@ export function VirtualScrollList<TItem extends { id: PropertyKey }>(
 
       for (let i = 0, l = entries.length; i < l; i++) {
         const entry = entries[i]!;
+        if (!entry.target.isConnected) {
+          continue;
+        }
         const id = elementToIdMap.get(entry.target);
         if (id !== undefined) {
           const oldBlockSize = blockSizes.get(id);
@@ -313,12 +314,12 @@ export function VirtualScrollList<TItem extends { id: PropertyKey }>(
     createResizeObserverHook(handleResizeObserverEntries),
   );
 
-  const children = memo(
+  const children = context.useMemo(
     () =>
-      keyedList(
-        items.slice(scopeRef.current.start, scopeRef.current.end),
-        (item) => item.id,
-        (item, index) => {
+      repeat({
+        source: items.slice(scopeRef.current.start, scopeRef.current.end),
+        keySelector: (item) => item.id,
+        valueSelector: (item, index) => {
           const id = item.id;
           const ref: RefCallback<Element> = (element) => {
             elementToIdMap.set(element, id);
@@ -330,7 +331,7 @@ export function VirtualScrollList<TItem extends { id: PropertyKey }>(
           };
           return renderItem(item, index + scopeRef.current.start, ref, context);
         },
-      ),
+      }),
     [items, scopeRef.current],
   );
 
@@ -342,7 +343,28 @@ export function VirtualScrollList<TItem extends { id: PropertyKey }>(
   return renderList(children, blankSpaces, containerRef, context);
 }
 
-function areEqualScopes(first: Scope, second: Scope) {
+function areItemsIdentical<T extends { id: PropertyKey }>(
+  first: readonly T[],
+  second: readonly T[],
+): boolean {
+  if (first === second) {
+    return true;
+  }
+
+  if (first.length !== second.length) {
+    return false;
+  }
+
+  for (let i = 0, l = first.length; i < l; i++) {
+    if (first[i]!.id !== second[i]!.id) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+function areScopesEqual(first: Scope, second: Scope) {
   return first.start === second.start && first.end === second.end;
 }
 
@@ -367,7 +389,7 @@ function computeBlockPositions<TItem extends { id: PropertyKey }>(
 
 function createResizeObserverHook(
   callback: ResizeObserverCallback,
-): Usable<ResizeObserver> {
+): CustomHookFunction<ResizeObserver> {
   return (context) => {
     const resizeObserver = context.useMemo(
       () => new ResizeObserver(callback),
@@ -495,27 +517,6 @@ function getScrollOffset(
   return index >= blockPositions.length
     ? blockPositions[blockPositions.length - 1]!.end - screen.top
     : blockPositions[index]!.start - screen.top;
-}
-
-function areIdenticalItems<T extends { id: PropertyKey }>(
-  first: readonly T[],
-  second: readonly T[],
-): boolean {
-  if (first === second) {
-    return true;
-  }
-
-  if (first.length !== second.length) {
-    return false;
-  }
-
-  for (let i = 0, l = first.length; i < l; i++) {
-    if (first[i]!.id !== second[i]!.id) {
-      return false;
-    }
-  }
-
-  return true;
 }
 
 function translateRect(

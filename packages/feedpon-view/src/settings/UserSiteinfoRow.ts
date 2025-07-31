@@ -1,11 +1,10 @@
+import { component, type RenderContext } from 'barebind';
 import type { SiteinfoItem } from 'feedpon-messaging';
 import type {
   deleteUserSiteinfoItem,
   updateUserSiteinfoItem,
 } from 'feedpon-messaging/userSiteinfo';
 
-import type { RenderContext, TemplateResult } from '@emonkak/ebit';
-import { component } from '@emonkak/ebit/directives.js';
 import { AlertDialog } from '../primitives/AlertDialog.ts';
 import { Dialog } from '../primitives/Dialog.ts';
 import { UserSiteinfoForm } from './UserSiteinfoForm.ts';
@@ -19,7 +18,7 @@ interface UserSiteinfoRowProps {
 export function UserSiteinfoRow(
   { item, onDelete, onUpdate }: UserSiteinfoRowProps,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   const [isEditing, setIsEditing] = context.useState(false);
 
   const handleStartEditing = context.useCallback(() => {
@@ -31,22 +30,19 @@ export function UserSiteinfoRow(
   }, []);
 
   const handleDelete = context.useCallback(() => {
-    AlertDialog.open(
-      {
-        confirmButton: ({ onConfirm }, context) => context.html`
+    AlertDialog.open({
+      confirmButton: ({ onConfirm }, context) => context.html`
           <button class="button button-negative" type="button" @click=${onConfirm}>Delete</button>
         `,
-        cancelButton: ({ onCancel }, context) => context.html`
+      cancelButton: ({ onCancel }, context) => context.html`
           <button class="button button-outline-default" type="button" @click=${onCancel}>Cancel</button>
         `,
-        onConfirm: () => {
-          onDelete(item.id);
-        },
-        title: `Delete "${item.name}"`,
-        message: 'Are you sure you want to delete this item?',
+      onConfirm: () => {
+        onDelete(item.id);
       },
-      context,
-    );
+      title: `Delete "${item.name}"`,
+      message: 'Are you sure you want to delete this item?',
+    });
   }, [item, onDelete]);
 
   const handleSubmit = context.useCallback(

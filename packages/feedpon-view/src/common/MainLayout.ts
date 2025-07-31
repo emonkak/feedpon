@@ -1,4 +1,4 @@
-import type { RenderContext, TemplateResult } from '@emonkak/ebit';
+import type { RenderContext } from 'barebind';
 
 interface MainLayoutProps {
   content: unknown;
@@ -9,7 +9,7 @@ interface MainLayoutProps {
 export function MainLayout(
   { content, footer, header }: MainLayoutProps,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   footer ??= context.html`
     <footer class="u-margin-top-4 u-margin-bottom-4">
       <div class="u-text-center">

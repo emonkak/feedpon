@@ -1,23 +1,23 @@
 import { ValidationError } from 'jsonschema';
 import type { ParseJSONSchema } from 'jsonschema/dialects/typed.ts';
 import {
-  type ResolveJSONPointerURL,
   isJSONPointerURL,
+  type ResolveJSONPointerURL,
   resolveJSONPointerURL,
 } from 'jsonschema/pointer.ts';
 import {
+  defaultMiddleware,
   type Middleware,
   type RequestHandler,
-  defaultMiddleware,
 } from './middleware.ts';
 import { applyTemplateVariables } from './path.ts';
 import { type ContentReader, defaultContentReader } from './reader.ts';
 import { RequestResult } from './result.ts';
 import {
   type ContentSerializer,
-  type ParameterSerializer,
   defaultContentSerializer,
   defaultParameterSerializer,
+  type ParameterSerializer,
 } from './serializer.ts';
 import type {
   Content,
@@ -34,7 +34,7 @@ import type {
   Response as ResponseDeclaration,
   StatusCode,
 } from './types.ts';
-import { type SchemaValidator, defaultSchemaValidator } from './validator.ts';
+import { defaultSchemaValidator, type SchemaValidator } from './validator.ts';
 
 export interface ClientSettings {
   contentReader: ContentReader;
@@ -309,7 +309,7 @@ export class OpenAPIClient<const TDescription extends Description> {
       schemaValidator,
     } = this._settings;
 
-    let requestBody;
+    let requestBody: BodyInit | null;
     const headers = new Headers(initialHeaders);
     const searchParams = [];
     const templateVariables = new Map();

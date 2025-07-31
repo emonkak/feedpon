@@ -4,7 +4,7 @@ export interface Trie<T> {
 
 export interface Node<T> {
   children: Trie<T>;
-  value?: T;
+  value: T | undefined;
 }
 
 export function empty<T>(): Trie<T> {
@@ -57,7 +57,7 @@ export function update<T>(tree: Trie<T>, path: string[], value: T): Trie<T> {
   }
 
   const key = path[0]!;
-  const node = tree[key] ?? { children: {} };
+  const node = tree[key] ?? { children: {}, value: undefined };
 
   if (path.length > 1) {
     return {
@@ -85,7 +85,7 @@ export function mutableUpdate<T>(
   }
 
   const key = path[0]!;
-  const node = tree[key] ?? { children: {} };
+  const node = tree[key] ?? { children: {}, value: undefined };
 
   if (path.length > 1) {
     mutableUpdate(node.children, path.slice(1), value);
@@ -123,6 +123,7 @@ export function remove<T>(tree: Trie<T>, path: string[]): Trie<T> {
       ...tree,
       [key]: {
         children: node.children,
+        value: undefined,
       },
     };
   }

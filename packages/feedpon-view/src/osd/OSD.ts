@@ -1,12 +1,12 @@
-import type { RenderContext, TemplateResult } from '@emonkak/ebit';
+import type { RenderContext } from 'barebind';
 import { bindActions } from 'feedpon-flux';
-import { getStoreHook } from 'feedpon-flux/ebit.ts';
+import { getStoreHook } from 'feedpon-flux/barebind.ts';
 import type { OSDMessage, State } from 'feedpon-messaging';
 import { closeOSD } from 'feedpon-messaging/osd';
 
 export interface OSDProps {}
 
-export function OSD({}: OSDProps, context: RenderContext): TemplateResult {
+export function OSD({}: OSDProps, context: RenderContext): unknown {
   const { message, onCloseOSD } = context.use(
     getStoreHook({
       mapStateToProps: (state: State) => ({

@@ -1,12 +1,11 @@
-import type { Usable } from '@emonkak/ebit';
-import type { StyleDeclaration } from '@emonkak/ebit/directives.js';
+import type { CustomHookFunction, StyleProperties } from 'barebind';
 
 export interface Popup {
   close: () => void;
   open: (target: Element) => void;
   opened: boolean;
   pullDirection: PullDirection;
-  style: StyleDeclaration;
+  style: StyleProperties;
 }
 
 export type PullDirection = 'left' | 'right' | 'up' | 'down';
@@ -15,14 +14,14 @@ export type PullDirections = [PullDirection, ...PullDirection[]];
 
 interface PopupState {
   opened: boolean;
-  style: StyleDeclaration;
+  style: StyleProperties;
   pullDirection: PullDirection;
 }
 
 export function createPopupHook(
   defaultOpened: boolean,
   pullDirections: PullDirections = ['down', 'up', 'right', 'left'],
-): Usable<Popup> {
+): CustomHookFunction<Popup> {
   return (context) => {
     const [popupState, setPopupState] = context.useState<PopupState>({
       opened: defaultOpened,
@@ -88,8 +87,8 @@ function getAdaptedPullDirection(
 function getPopupStyle(
   targetRect: DOMRect,
   pullDirection: PullDirection,
-): StyleDeclaration {
-  const style: StyleDeclaration = {};
+): StyleProperties {
+  const style: StyleProperties = {};
 
   switch (pullDirection) {
     case 'down':

@@ -1,14 +1,7 @@
-import type { RenderContext, TemplateResult } from '@emonkak/ebit';
-import {
-  classMap,
-  component,
-  optional,
-  ref,
-  styleMap,
-} from '@emonkak/ebit/directives.js';
-import { currentLocation } from '@emonkak/ebit/router.js';
-import { type Dispatch, bindActions } from 'feedpon-flux';
-import { getStoreHook } from 'feedpon-flux/ebit.ts';
+import { component, type RenderContext } from 'barebind';
+import { CurrentHistory } from 'barebind/extensions/router';
+import { bindActions, type Dispatch } from 'feedpon-flux';
+import { getStoreHook } from 'feedpon-flux/barebind.ts';
 import type {
   Command,
   Event,
@@ -34,7 +27,7 @@ export interface SidebarLayoutProps {
 export function SidebarLayout(
   { child }: SidebarLayoutProps,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   const {
     dispatch,
     helpIsOpened,
@@ -63,7 +56,7 @@ export function SidebarLayout(
       }),
     }),
   );
-  const [locationState, locationActions] = context.use(currentLocation);
+  const [locationState, navigator] = context.use(CurrentHistory);
   const sidebarWidthRef = context.useRef(0);
 
   const { onTouchStart, onTouchEnd, onTouchMove, isSwiping, coordinates } =
@@ -84,7 +77,7 @@ export function SidebarLayout(
 
     if (command !== undefined) {
       const params = { ...command.defaultParams, ...keyMapping.params };
-      const event = command.action(params, { locationActions });
+      const event = command.action(params, { navigator });
 
       dispatch(event);
     }
@@ -179,19 +172,19 @@ export function SidebarLayout(
     : {};
 
   return context.html`
-    <div class=${classMap({ 'l-root': true, 'is-swiping': isSwiping })}>
+    <div :classlist=${['l-root', { 'is-swiping': isSwiping }]}>
       <div
-        class=${classMap({ 'l-sidebar': true, 'is-opened': sidebarIsOpened })}
-        style=${styleMap(sidebarStyle)}
-        ref=${ref(sidebarRef)}
+        :classlist=${['l-sidebar', { 'is-opened': sidebarIsOpened }]}
+        :style=${sidebarStyle}
+        :ref=${sidebarRef}
         @transitionend=${handleTransitionEnd}
       >
         <${component(Sidebar, {
-          locationActions: locationActions,
+          navigator: navigator,
           url: locationState.url,
         })}>
       </div>
-      <div class="l-main" style=${styleMap(mainStyle)}>
+      <div :style=${mainStyle} class="l-main">
         <div class="l-notifications">
           <${component(NotificationStack, {})}>
         </div>
@@ -200,8 +193,8 @@ export function SidebarLayout(
         </div>
         <${child}>
         <div
+          :style=${overlayStyle}
           class="l-overlay"
-          style=${styleMap(overlayStyle)}
           @click=${onCloseSidebar}
           @touchstart=${onTouchStart}
           @touchmove=${onTouchMove}
@@ -214,8 +207,8 @@ export function SidebarLayout(
           @ontouchend=${onTouchEnd}
         ></div>
       </div>
-      <div class=${classMap({ 'l-backdrop': true, 'is-shown': isLoading })}>
-        <${optional(isLoading ? context.html`<i class="icon icon-48 icon-spinner animation-rotating"></i>` : null)}>
+      <div :classlist=${['l-backdrop', { 'is-shown': isLoading }]}>
+        <${isLoading ? context.html`<i class="icon icon-48 icon-spinner animation-rotating"></i>` : null}>
       </div>
     </div>
     <${component(Dialog, {

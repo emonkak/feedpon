@@ -1,4 +1,5 @@
 packages:
-  - 'packages/*'
+  - packages/*
+
 catalog:
-  '@emonkak/ebit': github:emonkak/ebit
+  barebind: github:emonkak/barebind

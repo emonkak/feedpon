@@ -1,6 +1,6 @@
-import type { RenderContext, TemplateResult } from '@emonkak/ebit';
-import { component } from '@emonkak/ebit/directives.js';
+import { component, type RenderContext } from 'barebind';
 import type { Category, Feed, Subscription } from 'feedpon-messaging';
+
 import { SubscriptionSettingsDropdown } from '../subscription/SubscriptionSettingsDropdown.ts';
 
 interface FeedViewProps {
@@ -29,7 +29,7 @@ export function FeedView(
     subscription,
   }: FeedViewProps,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   return context.html`
     <li class="list-group-item">
       <div class="u-flex u-flex-justify-content-between u-flex-align-items-center">
@@ -46,7 +46,6 @@ export function FeedView(
           <div class="u-text-muted">${feed.description}</div>
         </div>
         <${component(SubscriptionSettingsDropdown, {
-          className: 'u-flex-shrink-0',
           categories,
           feed,
           onAddToCategory,

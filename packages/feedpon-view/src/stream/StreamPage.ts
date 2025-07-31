@@ -1,11 +1,6 @@
-import type { RenderContext, TemplateResult } from '@emonkak/ebit';
-import {
-  type Component,
-  component,
-  optional,
-} from '@emonkak/ebit/directives.js';
+import { component, type RenderContext } from 'barebind';
 import { bindActions } from 'feedpon-flux';
-import { getStoreHook } from 'feedpon-flux/ebit.ts';
+import { getStoreHook } from 'feedpon-flux/barebind.ts';
 import type { EntryOrderKind, State, StreamViewKind } from 'feedpon-messaging';
 import {
   createCategory,
@@ -45,10 +40,9 @@ import {
   unselectStream,
 } from 'feedpon-messaging/ui';
 import * as CacheMap from 'feedpon-utils/CacheMap.ts';
-
-import { MainLayout } from '../common/MainLayout.ts';
 import { createEventHook } from '../common/hooks/eventHook.ts';
 import { isMountedHook } from '../common/hooks/isMountedHook.ts';
+import { MainLayout } from '../common/MainLayout.ts';
 import type { VirtualScrollListRef } from '../primitives/VirtualScrollList.ts';
 import { CategoryHeader } from './CategoryHeader.ts';
 import { EntryList } from './EntryList.ts';
@@ -63,7 +57,7 @@ export interface StreamPageProps {
 export function StreamPage(
   { streamId }: StreamPageProps,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   const {
     categories,
     isLoaded,
@@ -384,7 +378,7 @@ export function StreamPage(
     onMarkAllEntiresAsRead: handleMarkAllEntriesAsRead,
   });
 
-  let entryHeader: Component<any, any, any> | null;
+  let entryHeader: unknown;
 
   if (stream.feed) {
     entryHeader = component(FeedHeader, {
@@ -410,7 +404,7 @@ export function StreamPage(
   }
 
   const content = context.html`
-    <${optional(entryHeader)}>
+    <${entryHeader}>
     <${component(EntryList, {
       activeEntryIndex: stream.activeEntryIndex,
       entries: stream.entries,

@@ -1,4 +1,4 @@
-import type { RenderContext, TemplateResult } from '@emonkak/ebit';
+import type { RenderContext } from 'barebind';
 import type { Category } from 'feedpon-messaging';
 
 interface CategoryHeaderProps {
@@ -10,7 +10,7 @@ interface CategoryHeaderProps {
 export function CategoryHeader(
   { category, hasMoreEntries, numEntries }: CategoryHeaderProps,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   return context.html`
     <header class="stream-header">
       <div class="container">

@@ -29,49 +29,56 @@ export interface JSONSchemaVocabulary
   [x: keyof any]: unknown;
 }
 
-// biome-ignore format:
-export type ParseJSONSchema<TSchema extends JSONSchema, TScope = TSchema> =
-  TSchema extends true ? unknown :
-  TSchema extends false ? never :
-  TSchema extends JSONSchemaVocabulary ? ParseJSONSchemaVocabulary<TSchema, TScope> : never;
+export type ParseJSONSchema<
+  TSchema extends JSONSchema,
+  TScope = TSchema,
+> = TSchema extends true
+  ? unknown
+  : TSchema extends false
+    ? never
+    : TSchema extends JSONSchemaVocabulary
+      ? ParseJSONSchemaVocabulary<TSchema, TScope>
+      : never;
 
-// biome-ignore format:
-export type ParseJSONSchemaVocabulary<TSchema extends JSONSchemaVocabulary, TScope> =
-  TSchema extends { $ref: string; } ? ParseReference<TSchema['$ref'], TScope> :
-  (TSchema extends Type ? ParseType<TSchema['type']> : unknown) &
-  NeverToUnknown<
-    | (TSchema extends RequireAtLeastOne<
-        Items<JSONSchemaVocabulary> & PrefixItems<JSONSchemaVocabulary>
-      >
-        ? ParseItems<
-            OrElse<TSchema['items'], false>,
-            OrElse<TSchema['prefixItems'], []>,
-            TScope
+export type ParseJSONSchemaVocabulary<
+  TSchema extends JSONSchemaVocabulary,
+  TScope,
+> = TSchema extends { $ref: string }
+  ? ParseReference<TSchema['$ref'], TScope>
+  : (TSchema extends Type ? ParseType<TSchema['type']> : unknown) &
+      NeverToUnknown<
+        | (TSchema extends RequireAtLeastOne<
+            Items<JSONSchemaVocabulary> & PrefixItems<JSONSchemaVocabulary>
           >
-        : never)
-    | (TSchema extends RequireAtLeastOne<
-        Properties<JSONSchemaVocabulary> &
-          AdditionalProperties<JSONSchemaVocabulary>
-      >
-        ? ParseProperties<
-            OrElse<TSchema['properties'], {}>,
-            OrElse<TSchema['additionalProperties'], false>,
-            OrElse<TSchema['required'], []>,
-            TScope
+            ? ParseItems<
+                OrElse<TSchema['items'], false>,
+                OrElse<TSchema['prefixItems'], []>,
+                TScope
+              >
+            : never)
+        | (TSchema extends RequireAtLeastOne<
+            Properties<JSONSchemaVocabulary> &
+              AdditionalProperties<JSONSchemaVocabulary>
           >
-        : never)
-  > &
-  (TSchema extends Const ? TSchema['const'] : unknown) &
-  (TSchema extends Enum ? TSchema['enum'][number] : unknown) &
-  (TSchema extends AllOf<JSONSchemaVocabulary>
-    ? Intersection<ParseSchemas<TSchema['allOf'], TScope>>
-    : unknown) &
-  (TSchema extends AnyOf<JSONSchemaVocabulary>
-    ? ParseJSONSchema<TSchema['anyOf'][number], TScope>
-    : unknown) &
-  (TSchema extends OneOf<JSONSchemaVocabulary>
-    ? ParseJSONSchema<TSchema['oneOf'][number], TScope>
-    : unknown);
+            ? ParseProperties<
+                OrElse<TSchema['properties'], {}>,
+                OrElse<TSchema['additionalProperties'], false>,
+                OrElse<TSchema['required'], []>,
+                TScope
+              >
+            : never)
+      > &
+      (TSchema extends Const ? TSchema['const'] : unknown) &
+      (TSchema extends Enum ? TSchema['enum'][number] : unknown) &
+      (TSchema extends AllOf<JSONSchemaVocabulary>
+        ? Intersection<ParseSchemas<TSchema['allOf'], TScope>>
+        : unknown) &
+      (TSchema extends AnyOf<JSONSchemaVocabulary>
+        ? ParseJSONSchema<TSchema['anyOf'][number], TScope>
+        : unknown) &
+      (TSchema extends OneOf<JSONSchemaVocabulary>
+        ? ParseJSONSchema<TSchema['oneOf'][number], TScope>
+        : unknown);
 
 type ParseItems<
   TItems extends JSONSchema,

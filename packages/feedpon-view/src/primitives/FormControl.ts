@@ -1,9 +1,4 @@
-import {
-  Literal,
-  type RenderContext,
-  type TemplateResult,
-} from '@emonkak/ebit';
-import { classMap, ref } from '@emonkak/ebit/directives.js';
+import { Literal, type RenderContext } from 'barebind';
 
 export interface FormControlProps<TTagName extends FormControlElementTagName> {
   as: TTagName;
@@ -57,7 +52,7 @@ const VOID_ELEMENTS = [
 export function FormControl<TTagName extends FormControlElementTagName>(
   { as, validations = [], ownProps = {} }: FormControlProps<TTagName>,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   const [status, setStatus] = context.useState(FormControlStatus.Empty);
   const elementRef = context.useRef<HTMLElementTagNameMap[TTagName] | null>(
     null,
@@ -97,11 +92,13 @@ export function FormControl<TTagName extends FormControlElementTagName>(
   if (isVoidElement(as)) {
     return context.dynamicHTML`
       <${new Literal(as)}
-        ref=${ref(elementRef)}
-        class=${classMap({
-          'is-valid': status === FormControlStatus.Valid,
-          'is-invalid': status === FormControlStatus.Invalid,
-        })}
+        :ref=${elementRef}
+        :classlist=${[
+          {
+            'is-valid': status === FormControlStatus.Valid,
+            'is-invalid': status === FormControlStatus.Invalid,
+          },
+        ]}
         @change=${handleInput}
         ${ownProps}
       >
@@ -110,11 +107,13 @@ export function FormControl<TTagName extends FormControlElementTagName>(
     return context.dynamicHTML`
       <${new Literal(as)}
         ${ownProps}
-        ref=${ref(elementRef)}
-        class=${classMap({
-          'is-valid': status === FormControlStatus.Valid,
-          'is-invalid': status === FormControlStatus.Invalid,
-        })}
+        :ref=${elementRef}
+        :classlist=${[
+          {
+            'is-valid': status === FormControlStatus.Valid,
+            'is-invalid': status === FormControlStatus.Invalid,
+          },
+        ]}
         @input=${handleInput}
       ></${new Literal(as)}
     `;

@@ -1,5 +1,3 @@
-import type { Event, State } from './types.ts';
-
 import { combineReducers } from 'feedpon-flux';
 import backend from './backend/reducer.ts';
 import categories from './categories/reducer.ts';
@@ -12,6 +10,7 @@ import sharedSiteinfo from './sharedSiteinfo/reducer.ts';
 import streams from './streams/reducer.ts';
 import subscriptions from './subscriptions/reducer.ts';
 import trackingUrls from './trackingUrls/reducer.ts';
+import type { Event, State } from './types.ts';
 import ui from './ui/reducer.ts';
 import urlReplacements from './urlReplacements/reducer.ts';
 import user from './user/reducer.ts';

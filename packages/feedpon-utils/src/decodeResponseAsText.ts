@@ -34,6 +34,6 @@ function detectEncodingFromContent(buffer: ArrayBuffer): string | null {
     if (matches) {
       return matches[1] ?? null;
     }
-  } catch (error) {}
+  } catch {}
   return null;
 }

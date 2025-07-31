@@ -1,5 +1,4 @@
-import type { RenderContext, TemplateResult } from '@emonkak/ebit';
-import { component } from '@emonkak/ebit/directives.js';
+import { component, type RenderContext } from 'barebind';
 import type { Category, Feed, Subscription } from 'feedpon-messaging';
 import type { createCategory } from 'feedpon-messaging/categories';
 import type {
@@ -38,7 +37,7 @@ export function FeedHeader(
     subscription,
   }: FeedHeaderProps,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   const feedLink = feed.url
     ? context.html`<a target="_blank" class="link-strong" href=${feed.url} rel="noreferrer">${feed.title}</a>`
     : context.html`<strong>${feed.title}</strong>`;

@@ -1,14 +1,8 @@
-import type { RenderContext, TemplateResult } from '@emonkak/ebit';
-import {
-  atom,
-  component,
-  keyed,
-  live,
-  nonKeyedList,
-} from '@emonkak/ebit/directives.js';
-import { type LocationActions, RelativeURL } from '@emonkak/ebit/router.js';
+import { component, type RenderContext, repeat } from 'barebind';
+import { type HistoryNavigator, RelativeURL } from 'barebind/extensions/router';
+import { Atom } from 'barebind/extensions/signal';
 import { bindActions } from 'feedpon-flux';
-import { getStoreHook } from 'feedpon-flux/ebit.ts';
+import { getStoreHook } from 'feedpon-flux/barebind.ts';
 import type { State } from 'feedpon-messaging';
 import {
   createCategory,
@@ -22,21 +16,20 @@ import {
   unsubscribe,
 } from 'feedpon-messaging/subscriptions';
 import { toggleSidebar } from 'feedpon-messaging/ui';
-
+import { createPreviousHook } from '../common/hooks/previousHook.ts';
 import { MainLayout } from '../common/MainLayout.ts';
 import { Navbar } from '../common/Navbar.ts';
-import { createPreviousHook } from '../common/hooks/previousHook.ts';
 import { FeedView } from './FeedView.ts';
 
 export interface SearchPageProps {
   defaultQuery?: string;
-  locationActions: LocationActions;
+  navigator: HistoryNavigator;
 }
 
 export function SearchPage(
-  { defaultQuery = '', locationActions }: SearchPageProps,
+  { defaultQuery = '', navigator }: SearchPageProps,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   const sortedCategoriesSelector = context.useMemo(
     () => createSortedCategoriesSelector(),
     [],
@@ -78,14 +71,14 @@ export function SearchPage(
   );
 
   const previousActiveQuery = context.use(createPreviousHook(activeQuery));
-  const currentQuery$ = context.useMemo(() => atom(live(defaultQuery)), []);
+  const currentQuery$ = context.use(Atom.untracked(defaultQuery));
 
   if (
     previousActiveQuery !== null &&
     activeQuery !== previousActiveQuery &&
-    activeQuery !== currentQuery$.value.value
+    activeQuery !== currentQuery$.value
   ) {
-    currentQuery$.value = live(activeQuery);
+    currentQuery$.value = activeQuery;
   }
 
   context.useEffect(() => {
@@ -96,17 +89,15 @@ export function SearchPage(
 
   const handleChange = context.useCallback((event: Event) => {
     const newValue = (event.currentTarget as HTMLInputElement).value;
-    currentQuery$.value = live(newValue);
+    currentQuery$.value = newValue;
   }, []);
 
   const handleSearch = context.useCallback((event: SubmitEvent) => {
     event.preventDefault();
 
-    if (currentQuery$.value.value !== '') {
-      locationActions.navigate(
-        new RelativeURL(
-          '/search/' + encodeURIComponent(currentQuery$.value.value),
-        ),
+    if (currentQuery$.value !== '') {
+      navigator.navigate(
+        new RelativeURL('/search/' + encodeURIComponent(currentQuery$.value)),
         { replace: true },
       );
     }
@@ -120,44 +111,39 @@ export function SearchPage(
   let searchResult: unknown;
 
   if (activeQuery === '' || activeQuery !== defaultQuery) {
-    searchResult = keyed(null, 'unmatched');
+    searchResult = null;
   } else if (isLoading) {
-    searchResult = keyed(
-      context.html`
-        <ol className="list-group">
-          <${nonKeyedList(
-            new Array(10),
-            () => context.html`
-              <li class="list-group-item">
-                <div class="link-strong">
-                  <span class="placeholder placeholder-40 animation-shining"></span>
-                </div>
-                <div class="u-text-7">
-                  <span class="placeholder placeholder-10 animation-shining"></span>
-                </div>
-                <div class="u-text-muted">
-                  <span class="placeholder placeholder-100 animation-shining"></span>
-                  <span class="placeholder placeholder-60 animation-shining"></span>
-                </div>
-              </li>
-            `,
-          )}>
-        </ol>
-      `,
-      'loading',
-    );
+    searchResult = context.html`
+      <ol className="list-group">
+        <${repeat({
+          source: new Array(10),
+          valueSelector: () => context.html`
+            <li class="list-group-item">
+              <div class="link-strong">
+                <span class="placeholder placeholder-40 animation-shining"></span>
+              </div>
+              <div class="u-text-7">
+                <span class="placeholder placeholder-10 animation-shining"></span>
+              </div>
+              <div class="u-text-muted">
+                <span class="placeholder placeholder-100 animation-shining"></span>
+                <span class="placeholder placeholder-60 animation-shining"></span>
+              </div>
+            </li>
+          `,
+        })}>
+      </ol>
+    `;
   } else if (isLoaded && feeds.length === 0) {
-    searchResult = keyed(
-      context.html`
-        <p>Your search "<strong>${activeQuery}</strong>" did not match any feeds.</p>
-      `,
-      'not_found',
-    );
+    searchResult = context.html`
+      <p>Your search "<strong>${activeQuery}</strong>" did not match any feeds.</p>
+    `;
   } else {
-    searchResult = keyed(
-      context.html`
-        <ol class="list-group">
-          <${nonKeyedList(feeds, (feed) =>
+    searchResult = context.html`
+      <ol class="list-group">
+        <${repeat({
+          source: feeds,
+          valueSelector: (feed) =>
             component(FeedView, {
               categories,
               feed,
@@ -168,11 +154,9 @@ export function SearchPage(
               onUnsubscribe,
               subscription: subscriptions[feed.streamId] ?? null,
             }),
-          )}>
-        </ol>
-      `,
-      'loaded',
-    );
+        })}>
+      </ol>
+    `;
   }
 
   const content = context.html`

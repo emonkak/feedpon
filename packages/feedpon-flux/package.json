@@ -4,12 +4,12 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
-    "./ebit.ts": "./src/ebit.ts",
+    "./barebind.ts": "./src/barebind.ts",
     "./middlewares/*.ts": "./src/middlewares/*.ts",
     "./persistence.ts": "./src/persistence.ts"
   },
   "dependencies": {
-    "@emonkak/ebit": "catalog:",
+    "barebind": "catalog:",
     "feedpon-utils": "workspace:^"
   }
 }

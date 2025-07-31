@@ -1,5 +1,4 @@
-import type { RenderContext, TemplateResult } from '@emonkak/ebit';
-import { classMap, component, ref } from '@emonkak/ebit/directives.js';
+import { component, type RenderContext } from 'barebind';
 import debounce from 'feedpon-utils/debounce.ts';
 
 import { Menu, type MenuItem, type MenuRef } from './Menu.ts';
@@ -25,7 +24,7 @@ export function AutoComplete<T>(
     getFilteredItems,
   }: AutoCompleteProps<T>,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   const [open, setOpen] = context.useState(false);
   const [query, setQuery] = context.useState('');
 
@@ -54,7 +53,7 @@ export function AutoComplete<T>(
     () =>
       debounce(() => {
         setOpen(true);
-        setQuery(inputRef.current!.value, 'background');
+        setQuery(inputRef.current!.value, { priority: 'background' });
       }, debounceTime),
     [debounceTime],
   );
@@ -116,18 +115,20 @@ export function AutoComplete<T>(
 
   return context.html`
     <div
-      class=${classMap({
-        AutoComplete: true,
-        'is-open': open,
-      })}
-      ref=${ref(autocompleteRef)}
+      :classlist=${[
+        'AutoComplete',
+        {
+          'is-open': open,
+        },
+      ]}
+      :ref=${autocompleteRef}
     >
       <form class="AutoComplete-form" @submit=${handleSubmit}>
         <input
+          :ref=${inputRef}
           class="input-search-box"
           id=${triggerId}
           placeholder=${placeholder}
-          ref=${ref(inputRef)}
           type="search"
           @focus=${openDropdown}
           @input=${handleInput}

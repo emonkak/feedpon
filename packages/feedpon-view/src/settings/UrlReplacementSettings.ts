@@ -1,5 +1,6 @@
-import type { RenderContext, TemplateResult } from '@emonkak/ebit';
+import { component, type RenderContext, repeat } from 'barebind';
 import { bindActions } from 'feedpon-flux';
+import { getStoreHook } from 'feedpon-flux/barebind.ts';
 import type { State } from 'feedpon-messaging';
 import {
   addUrlReplacement,
@@ -8,8 +9,6 @@ import {
   updateUrlReplacement,
 } from 'feedpon-messaging/urlReplacements';
 
-import { component, nonKeyedList } from '@emonkak/ebit/directives.js';
-import { getStoreHook } from 'feedpon-flux/ebit.ts';
 import { AlertDialog } from '../primitives/AlertDialog.ts';
 import { UrlReplacementForm } from './UrlReplacementForm.ts';
 import { UrlReplacementRow } from './UrlReplacementRow.ts';
@@ -19,7 +18,7 @@ export interface UrlReplacementSettingsProps {}
 export function UrlReplacementSettings(
   {}: UrlReplacementSettingsProps,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   const {
     items,
     onAddUrlReplacement,
@@ -41,32 +40,31 @@ export function UrlReplacementSettings(
   );
 
   const handleReset = context.useCallback(() => {
-    AlertDialog.open(
-      {
-        confirmButton: ({ onConfirm }, context) => context.html`
+    AlertDialog.open({
+      confirmButton: ({ onConfirm }, context) => context.html`
           <button class="button button-negative" type="button" @click=${onConfirm}>Reset</button>
         `,
-        cancelButton: ({ onCancel }, context) => context.html`
+      cancelButton: ({ onCancel }, context) => context.html`
           <button class="button button-outline-default" type="button" @click=${onCancel}>Cancel</button>
         `,
-        onConfirm: () => {
-          onResetUrlReplacements();
-        },
-        title: 'Reset all tracking URLs',
-        message: 'Are you sure you want to reset all tracking URLs?',
+      onConfirm: () => {
+        onResetUrlReplacements();
       },
-      context,
-    );
+      title: 'Reset all tracking URLs',
+      message: 'Are you sure you want to reset all tracking URLs?',
+    });
   }, []);
 
-  const rows = nonKeyedList(items, (item, index) =>
-    component(UrlReplacementRow, {
-      index,
-      item,
-      onDelete: onDeleteUrlReplacement,
-      onUpdate: onUpdateUrlReplacement,
-    }),
-  );
+  const rows = repeat({
+    source: items,
+    valueSelector: (item, index) =>
+      component(UrlReplacementRow, {
+        index,
+        item,
+        onDelete: onDeleteUrlReplacement,
+        onUpdate: onUpdateUrlReplacement,
+      }),
+  });
 
   return context.html`
     <section class="section">

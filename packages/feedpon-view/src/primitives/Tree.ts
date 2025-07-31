@@ -1,19 +1,8 @@
-import type { RenderContext, TemplateResult } from '@emonkak/ebit';
-import {
-  classMap,
-  component,
-  keyedList,
-  memo,
-  optional,
-  styleMap,
-} from '@emonkak/ebit/directives.js';
+import { component, memo, type RenderContext, repeat } from 'barebind';
 
 export interface TreeProps<TKey, TValue> {
   items: TreeItem<TKey, TValue>[];
-  renderItem: (
-    item: TreeItem<TKey, TValue>,
-    context: RenderContext,
-  ) => TemplateResult;
+  renderItem: (item: TreeItem<TKey, TValue>, context: RenderContext) => unknown;
   onSelect(item: TreeItem<TKey, TValue>): void;
 }
 
@@ -40,7 +29,7 @@ interface UnmanagedState {
 export function Tree<TKey, TValue>(
   { items, renderItem, onSelect }: TreeProps<TKey, TValue>,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   const unmanagedStatesRef = context.useMemo(
     () => ({ current: new Map<TKey, UnmanagedState>() }),
     [],
@@ -92,32 +81,22 @@ export function Tree<TKey, TValue>(
     return accumulator;
   };
 
-  const children = keyedList(
-    items.reduce(
+  const children = repeat({
+    source: items.reduce(
       (results, item) => aggregate(results, item, null),
       [] as ItemAggregation<TKey, TValue>[],
     ),
-    ({ item }) => item.key,
-    ({ item, state, parent }) => {
-      return memo(() => {
-        return component(TreeNode<TKey, TValue>, {
-          children: renderItem(item, context),
-          item,
-          onSelect,
-          onStateUpadte: forceUpdate,
-          parent,
-          state,
-        });
-      }, [
-        item.children.length > 0,
-        item.selected,
-        item.value,
+    keySelector: ({ item }) => item.key,
+    valueSelector: ({ item, state, parent }) =>
+      component(TreeNode<TKey, TValue>, {
+        children: renderItem(item, context),
+        item,
         onSelect,
-        state.expanded,
-        state.level,
-      ]);
-    },
-  );
+        onStateUpadte: forceUpdate,
+        parent,
+        state,
+      }),
+  });
 
   unmanagedStatesRef.current = newUnmanagedStates;
 
@@ -129,7 +108,7 @@ export function Tree<TKey, TValue>(
 }
 
 interface TreeNodeProps<TKey, TValue> {
-  children: TemplateResult;
+  children: unknown;
   item: TreeItem<TKey, TValue>;
   onSelect(item: TreeItem<TKey, TValue>): void;
   onStateUpadte: () => void;
@@ -147,7 +126,7 @@ function TreeNode<TKey, TValue>(
     parent,
   }: TreeNodeProps<TKey, TValue>,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   const handleClick = context.useCallback(
     (event: MouseEvent) => {
       event.preventDefault();
@@ -243,47 +222,60 @@ function TreeNode<TKey, TValue>(
 
   const ariaLabelId = context.useId();
 
-  // biome-ignore format:
-  const expandButton = item.children.length > 0 ? context.html`
-    <button
-      aria-expanded=${state.expanded.toString()}
-      aria-label=${state.expanded ? 'Shrink item' : 'Expand item'}
-      class="TreeItem-expand"
-      tabindex="-1"
-      type="button"
-      @click=${handleExpand}
-    >
-      <i
-        aria-hidden="true"
-        class=${
-          state.expanded
-            ? 'icon icon-16 icon-angle-down'
-            : 'icon icon-16 icon-angle-right'
-        }
-        role="img"
-      ></i>
-    </button>
-  ` : null;
+  const expandButton =
+    item.children.length > 0
+      ? context.html`
+        <button
+          aria-expanded=${state.expanded.toString()}
+          aria-label=${state.expanded ? 'Shrink item' : 'Expand item'}
+          class="TreeItem-expand"
+          tabindex="-1"
+          type="button"
+          @click=${handleExpand}
+        >
+          <i
+            aria-hidden="true"
+            class=${
+              state.expanded
+                ? 'icon icon-16 icon-angle-down'
+                : 'icon icon-16 icon-angle-right'
+            }
+            role="img"
+          ></i>
+        </button>
+      `
+      : null;
 
   return context.html`
     <div
+      :classlist=${['TreeItem', { 'is-selected': item.selected }]}
+      :style=${{ '--level': state.level.toString() }}
       aria-labelledby=${ariaLabelId}
       aria-level=${state.level}
       aria-selected=${item.selected.toString()}
-      class=${classMap({ TreeItem: true, 'is-selected': item.selected })}
       role="treeitem"
-      style=${styleMap({ '--level': state.level.toString() })}
       tabindex=${item.selected ? '0' : '-1'}
       @click=${handleClick}
       @keydown=${handleKeyDown}
     >
-      <${optional(expandButton)}>
+      <${expandButton}>
       <div class="TreeItem-content" id=${ariaLabelId}>
         <${children}>
       </div>
     </div>
   `;
 }
+
+memo(TreeNode, (nextProps, prevProps): boolean => {
+  return (
+    nextProps.item.children.length === prevProps.item.children.length &&
+    nextProps.item.selected === prevProps.item.selected &&
+    nextProps.item.value === prevProps.item.value &&
+    nextProps.onSelect === prevProps.onSelect &&
+    nextProps.state.expanded === prevProps.state.expanded &&
+    nextProps.state.level === prevProps.state.level
+  );
+});
 
 function matchPrevious<T extends Element>(
   element: Element,

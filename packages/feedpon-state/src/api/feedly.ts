@@ -1,4 +1,4 @@
-import { type Atom, atom } from '@emonkak/ebit/directives.js';
+import { Atom } from 'barebind/extensions/signal';
 import createClient, { type Client } from 'openapi-fetch';
 
 import type { AsyncAction, State, Store } from '../store.ts';
@@ -28,11 +28,11 @@ export class FeedlyAuthState implements State<FeedlyAuthSeed> {
   readonly environment$: Atom<FeedlyEnviroment>;
 
   readonly acquiringAuth$: Atom<Promise<FeedlyAuth> | null> =
-    atom<Promise<FeedlyAuth> | null>(null);
+    new Atom<Promise<FeedlyAuth> | null>(null);
 
   constructor(seed: FeedlyAuthSeed = defaultSeed) {
-    this.auth$ = atom(seed.auth);
-    this.environment$ = atom(seed.environment);
+    this.auth$ = new Atom(seed.auth);
+    this.environment$ = new Atom(seed.environment);
   }
 
   toSnapshot(): FeedlyAuthSeed {

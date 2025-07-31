@@ -1,4 +1,4 @@
-import { type Atom, atom } from '@emonkak/ebit/directives.js';
+import { Atom } from 'barebind/extensions/signal';
 
 import type { FeedlyContext } from '../api/feedly.ts';
 import type * as Feedly from '../api/feedlyTypes.d.ts';
@@ -26,8 +26,8 @@ export class SearchState implements State<SearchSeed> {
   readonly version$: Atom<number>;
 
   constructor(seed: SearchSeed = defaultSeed) {
-    this.results$ = atom(seed.results);
-    this.version$ = atom(seed.version);
+    this.results$ = new Atom(seed.results);
+    this.version$ = new Atom(seed.version);
   }
 
   toSnapshot(): SearchSeed {

@@ -1,3 +1,4 @@
+import { component, type RenderContext } from 'barebind';
 import type {
   Category,
   GroupedSubscription,
@@ -5,8 +6,6 @@ import type {
 } from 'feedpon-messaging';
 import { UNCATEGORIZED } from 'feedpon-messaging/categories';
 
-import type { RenderContext, TemplateResult } from '@emonkak/ebit';
-import { classMap, component } from '@emonkak/ebit/directives.js';
 import { Tree, type TreeItem } from '../primitives/Tree.ts';
 
 interface SubscriptionTreeProps {
@@ -35,7 +34,7 @@ export function SubscriptionTree(
     selectedPath,
   }: SubscriptionTreeProps,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   const items = context.useMemo(() => {
     const items: TreeItem<string, StreamItem>[] = [];
 
@@ -116,11 +115,11 @@ export function SubscriptionTree(
 function renderItem(
   item: TreeItem<string, StreamItem>,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   if (item.value.type === 'category') {
     const { unreadCount, category } = item.value;
     return context.html`
-      <div class=${classMap({ StreamItem: true, 'has-unread': unreadCount > 0 })}>
+      <div :classlist=${['StreamItem', { 'has-unread': unreadCount > 0 }]}>
         <div class="StreamItem-title">${category.label}</div>
         <div
           aria-label=${`${unreadCount} unread item(s) available`}
@@ -136,18 +135,20 @@ function renderItem(
       0,
       subscription.unreadCount - subscription.readCount,
     );
-    // biome-ignore format:
-    const icon = subscription.iconUrl !== '' ? context.html`
-      <img
-        alt=${subscription.title}
-        class="u-vertical-middle u-object-fit-cover"
-        height="16"
-        src=${subscription.iconUrl}
-        width="16"
-      >
-    ` : context.html`<i class="icon icon-16 icon-file"></i>`;
+    const icon =
+      subscription.iconUrl !== ''
+        ? context.html`
+          <img
+            alt=${subscription.title}
+            class="u-vertical-middle u-object-fit-cover"
+            height="16"
+            src=${subscription.iconUrl}
+            width="16"
+          >
+        `
+        : context.html`<i class="icon icon-16 icon-file"></i>`;
     return context.html`
-      <div class=${classMap({ StreamItem: true, 'has-unread': unreadCount > 0 })}>
+      <div :classlist=${['StreamItem', { 'has-unread': unreadCount > 0 }]}>
         <div class="StreamItem-icon"><${icon}></div>
         <div class="StreamItem-title">${subscription.title !== '' ? subscription.title : '<NO TITLE>'}</div>
         <div class="StreamItem-unread">${unreadCount > 0 ? unreadCount.toLocaleString() : ''}</div>

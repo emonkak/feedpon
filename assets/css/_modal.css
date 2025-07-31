@@ -34,8 +34,10 @@
 .Modal::backdrop {
   background-color: var(--backdrop-background-color);
   opacity: 0;
-  transition: display 0.2s ease-in-out allow-discrete, overlay 0.2s ease-in-out
-    allow-discrete, opacity 0.2s ease-in-out;
+  transition:
+    display 0.2s ease-in-out allow-discrete,
+    overlay 0.2s ease-in-out allow-discrete,
+    opacity 0.2s ease-in-out;
 }
 
 .Modal[open]::backdrop {

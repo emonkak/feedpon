@@ -1,5 +1,4 @@
-import type { RenderContext, TemplateResult } from '@emonkak/ebit';
-import { component } from '@emonkak/ebit/directives.js';
+import { component, type RenderContext } from 'barebind';
 import type { UrlReplacement } from 'feedpon-messaging';
 
 import { AlertDialog } from '../primitives/AlertDialog.ts';
@@ -16,7 +15,7 @@ interface UrlReplacementRowProps {
 export function UrlReplacementRow(
   { index, item, onDelete, onUpdate }: UrlReplacementRowProps,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   const [isEditing, setIsEditing] = context.useState(false);
 
   const handleStartEditing = context.useCallback(() => {
@@ -28,22 +27,19 @@ export function UrlReplacementRow(
   }, []);
 
   const handleDelete = context.useCallback(() => {
-    AlertDialog.open(
-      {
-        confirmButton: ({ onConfirm }, context) => context.html`
+    AlertDialog.open({
+      confirmButton: ({ onConfirm }, context) => context.html`
           <button class="button button-negative" type="button" @click=${onConfirm}>Delete</button>
         `,
-        cancelButton: ({ onCancel }, context) => context.html`
+      cancelButton: ({ onCancel }, context) => context.html`
           <button class="button button-outline-default" type="button" @click=${onCancel}>Cancel</button>
         `,
-        onConfirm: () => {
-          onDelete(index);
-        },
-        title: `Delete #${index + 1}`,
-        message: 'Are you sure you want to delete the pattern?',
+      onConfirm: () => {
+        onDelete(index);
       },
-      context,
-    );
+      title: `Delete #${index + 1}`,
+      message: 'Are you sure you want to delete the pattern?',
+    });
   }, [onDelete]);
 
   const handleUpdate = context.useCallback((item: UrlReplacement) => {

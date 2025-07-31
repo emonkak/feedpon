@@ -36,7 +36,9 @@ input.form-control {
   background-color: var(--x-light-color);
   border: 1px solid var(--medium-dark-color);
   border-radius: 4px;
-  transition: border-color ease-in-out 0.2s, box-shadow ease-in-out 0.2s;
+  transition:
+    border-color ease-in-out 0.2s,
+    box-shadow ease-in-out 0.2s;
 }
 
 .form-control:focus {

@@ -1,4 +1,4 @@
-import type { RenderContext, TemplateResult } from '@emonkak/ebit';
+import type { RenderContext } from 'barebind';
 
 interface EntryNavProps {
   fullContentsIsLoading: boolean;
@@ -20,7 +20,7 @@ export function EntryNav(
     onTogglePin,
   }: EntryNavProps,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   return context.html`
     <nav class="entry-nav">
       <div class="button-toolbar">

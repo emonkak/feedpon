@@ -1,5 +1,4 @@
-import type { RenderContext, TemplateResult } from '@emonkak/ebit';
-import { nonKeyedList } from '@emonkak/ebit/directives.js';
+import { type RenderContext, repeat } from 'barebind';
 import type { Command, KeyMapping } from 'feedpon-messaging';
 import * as Trie from 'feedpon-utils/Trie.ts';
 
@@ -11,17 +10,25 @@ interface KeyMappingsTableProps {
 export function KeyMappingsTable(
   { commandTable, keyMappings }: KeyMappingsTableProps,
   context: RenderContext,
-): TemplateResult {
-  const rows = nonKeyedList(Trie.toArray(keyMappings), ([keys, keyMapping]) => {
-    const name =
-      commandTable[keyMapping.commandId]?.name ?? `<${keyMapping.commandId}>`;
+): unknown {
+  const rows = repeat({
+    source: Trie.toArray(keyMappings),
+    valueSelector: ([keys, keyMapping]) => {
+      const name =
+        commandTable[keyMapping.commandId]?.name ?? `<${keyMapping.commandId}>`;
 
-    return context.html`
-      <tr>
-        <td><${nonKeyedList(keys, (key) => context.html`<kbd>${key}</kbd>`)}></td>
-        <td>${name}</td>
-      </tr>
-    `;
+      return context.html`
+        <tr>
+          <td>
+            <${repeat({
+              source: keys,
+              valueSelector: (key) => context.html`<kbd>${key}</kbd>`,
+            })}>
+          </td>
+          <td>${name}</td>
+        </tr>
+      `;
+    },
   });
 
   return context.html`

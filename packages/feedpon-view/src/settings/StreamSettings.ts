@@ -1,6 +1,7 @@
-import type { RenderContext, TemplateResult } from '@emonkak/ebit';
-import { Atom, live } from '@emonkak/ebit/directives.js';
+import type { RenderContext } from 'barebind';
+import { Atom } from 'barebind/extensions/signal';
 import { bindActions } from 'feedpon-flux';
+import { getStoreHook } from 'feedpon-flux/barebind.ts';
 import type { State, StreamViewKind } from 'feedpon-messaging';
 import {
   changeDefaultStreamFetchOptions,
@@ -10,7 +11,6 @@ import {
   clearStreamCaches,
 } from 'feedpon-messaging/streams';
 
-import { getStoreHook } from 'feedpon-flux/ebit.ts';
 import { AlertDialog } from '../primitives/AlertDialog.ts';
 
 export interface StreamSettingsProps {}
@@ -18,7 +18,7 @@ export interface StreamSettingsProps {}
 export function StreamSettings(
   {}: StreamSettingsProps,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   const {
     cacheCapacity: initialCacheCapacity,
     fetchOptions: initialFetchOptions,
@@ -48,15 +48,11 @@ export function StreamSettings(
   );
 
   const [fetchOptions, setFetchOptions] = context.useState(initialFetchOptions);
-  const cacheCapacity$ = context.useMemo(
-    () => new Atom(initialCacheCapacity),
-    [],
+  const cacheCapacity$ = context.use(Atom.untracked(initialCacheCapacity));
+  const numStreamHistories$ = context.use(
+    Atom.untracked(initialNumStreamHistories),
   );
-  const numStreamHistories$ = context.useMemo(
-    () => new Atom(initialNumStreamHistories),
-    [],
-  );
-  const streamView$ = context.useMemo(() => new Atom(initialStreamView), []);
+  const streamView$ = context.use(Atom.untracked(initialStreamView));
 
   const handleChangeNumStreamHistories = context.useCallback((event: Event) => {
     numStreamHistories$.value = (
@@ -119,22 +115,19 @@ export function StreamSettings(
   );
 
   const handleClearStreamCaches = context.useCallback(() => {
-    AlertDialog.open(
-      {
-        confirmButton: ({ onConfirm }, context) => context.html`
+    AlertDialog.open({
+      confirmButton: ({ onConfirm }, context) => context.html`
           <button class="button button-negative" type="button" @click=${onConfirm}>Clear</button>
         `,
-        cancelButton: ({ onCancel }, context) => context.html`
+      cancelButton: ({ onCancel }, context) => context.html`
           <button class="button button-outline-default" type="button" @click=${onCancel}>Cancel</button>
         `,
-        onConfirm: () => {
-          onClearStreamCaches();
-        },
-        title: 'Clear stream caches',
-        message: 'Are you sure you want to clear stream caches?',
+      onConfirm: () => {
+        onClearStreamCaches();
       },
-      context,
-    );
+      title: 'Clear stream caches',
+      message: 'Are you sure you want to clear stream caches?',
+    });
   }, [onClearStreamCaches]);
 
   return context.html`
@@ -249,7 +242,7 @@ export function StreamSettings(
                 min="1"
                 required
                 type="number"
-                .value=${cacheCapacity$.map(live)}
+                $value=${cacheCapacity$}
                 @change=${handleChangeCacheCapacity}
               >
               <button type="submit" class="button button-outline-positive">
@@ -282,7 +275,7 @@ export function StreamSettings(
                 name="numStreamHistories"
                 required
                 type="number"
-                .value=${numStreamHistories$.map(live)}
+                $value=${numStreamHistories$}
                 @change=${handleChangeNumStreamHistories}
               >
               <button type="submit" class="button button-outline-positive">

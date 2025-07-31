@@ -1,5 +1,4 @@
-import type { RenderContext, TemplateResult } from '@emonkak/ebit';
-import { component, optional } from '@emonkak/ebit/directives.js';
+import { component, type RenderContext } from 'barebind';
 import type {
   Entry,
   EntryOrderKind,
@@ -62,7 +61,7 @@ export function StreamHeader(
     title,
   }: StreamNavbarProps,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   return context.html`<${component(Navbar, {
     onToggleSidebar,
     progress: entries.length > 0 ? activeEntryIndex / entries.length : 0,
@@ -90,16 +89,16 @@ export function StreamHeader(
         readEntryIndex,
         title,
       })}>
-      <${optional(
+      <${
         isExpanded
           ? context.html`
             <button type="button" class="navbar-action" @click=${onCloseEntry}>
               <i class="icon icon-24 icon-close"></i>
             </button>
           `
-          : null,
-      )}>
-      <${optional(
+          : null
+      }>
+      <${
         !isExpanded && fetchOptions
           ? component(StreamFetchOptionsDropdown, {
               fetchOptions,
@@ -110,8 +109,8 @@ export function StreamHeader(
               onToggleOnlyUnread,
               streamView,
             })
-          : null,
-      )}>
+          : null
+      }>
     `,
   })}>`;
 }

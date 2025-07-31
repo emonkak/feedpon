@@ -1,7 +1,6 @@
+import { component, type RenderContext } from 'barebind';
 import type { Category, Subscription } from 'feedpon-messaging';
 
-import type { RenderContext, TemplateResult } from '@emonkak/ebit';
-import { classMap, component } from '@emonkak/ebit/directives.js';
 import { AlertDialog } from '../primitives/AlertDialog.ts';
 import { Dropdown } from '../primitives/Dropdown.ts';
 import type { MenuItem } from '../primitives/Menu.ts';
@@ -28,7 +27,7 @@ export function SubscriptionDropdown(
     subscription,
   }: SubscriptionDropdownProps,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   const [categoryLabel, setCategoryLabel] = context.useState('');
 
   const handleCreateCategory = context.useCallback(
@@ -61,9 +60,8 @@ export function SubscriptionDropdown(
   }, []);
 
   const handleUnsubscribe = context.useCallback(() => {
-    AlertDialog.open(
-      {
-        confirmButton: ({ onConfirm }, context) => context.html`
+    AlertDialog.open({
+      confirmButton: ({ onConfirm }, context) => context.html`
           <button
             class="button button-negative"
             type="button"
@@ -72,7 +70,7 @@ export function SubscriptionDropdown(
             Logout
           </button>
         `,
-        cancelButton: ({ onCancel }, context) => context.html`
+      cancelButton: ({ onCancel }, context) => context.html`
           <button
             class="button button-outline-default"
             type="button"
@@ -81,14 +79,12 @@ export function SubscriptionDropdown(
             Cancel
           </button>
         `,
-        onConfirm: () => {
-          onUnsubscribe(subscription);
-        },
-        title: `Unsubscribe "${subscription.title}"`,
-        message: 'Are you sure you want to unsubscribe the feed?',
+      onConfirm: () => {
+        onUnsubscribe(subscription);
       },
-      context,
-    );
+      title: `Unsubscribe "${subscription.title}"`,
+      message: 'Are you sure you want to unsubscribe the feed?',
+    });
   }, []);
 
   const categoryMenuItems = categories.map((category) => {
@@ -123,14 +119,14 @@ export function SubscriptionDropdown(
       >
         <i
           aria-hidden
-          class=${classMap({
-            icon: true,
-            'icon-20': true,
-            'icon-width-32': true,
-            [subscription.isLoading
+          :classlist=${[
+            'icon',
+            'icon-20',
+            'icon-width-32',
+            subscription.isLoading
               ? 'icon-spinner animation-rotating'
-              : 'icon-menu-2']: true,
-          })}
+              : 'icon-menu-2',
+          ]}
           role="img"
         ></i>
       </button>

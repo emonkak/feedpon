@@ -1,4 +1,4 @@
-import { type Atom, atom } from '@emonkak/ebit/directives.js';
+import { Atom } from 'barebind/extensions/signal';
 
 import type { Action, State, Store } from '../store.ts';
 import type { StreamState } from './stream.ts';
@@ -89,10 +89,10 @@ export class NavigationState implements State<NavigationSeed> {
   readonly version$: Atom<number>;
 
   constructor(seed: NavigationSeed = defaultSeed) {
-    this.keyboardShortcuts$ = atom(seed.keyboardShortcuts);
-    this.scrollBehavior$ = atom(seed.scrollBehavior);
-    this.scrollDistanceRatio$ = atom(seed.scrollDistanceRatio);
-    this.version$ = atom(seed.version);
+    this.keyboardShortcuts$ = new Atom(seed.keyboardShortcuts);
+    this.scrollBehavior$ = new Atom(seed.scrollBehavior);
+    this.scrollDistanceRatio$ = new Atom(seed.scrollDistanceRatio);
+    this.version$ = new Atom(seed.version);
   }
 
   toSnapshot(): NavigationSeed {

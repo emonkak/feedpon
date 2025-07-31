@@ -1,4 +1,4 @@
-import type { RenderContext, TemplateResult } from '@emonkak/ebit';
+import { memo, type RenderContext } from 'barebind';
 
 import type { SiteinfoItem } from 'feedpon-messaging';
 
@@ -9,7 +9,7 @@ interface SharedSiteinfoItemProps {
 export function SharedSiteinfoItem(
   { item }: SharedSiteinfoItemProps,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   return context.html`
     <li class="list-group-item">
       <div>
@@ -34,3 +34,5 @@ export function SharedSiteinfoItem(
     </li>
   `;
 }
+
+memo(SharedSiteinfoItem);

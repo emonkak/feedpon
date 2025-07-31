@@ -1,7 +1,6 @@
-import type { RenderContext, TemplateResult } from '@emonkak/ebit';
-import { component } from '@emonkak/ebit/directives.js';
+import { component, type RenderContext } from 'barebind';
 import { bindActions } from 'feedpon-flux';
-import { getStoreHook } from 'feedpon-flux/ebit.ts';
+import { getStoreHook } from 'feedpon-flux/barebind.ts';
 import type { NotificationKind } from 'feedpon-messaging';
 import { sendNotification } from 'feedpon-messaging/notifications';
 import { toggleSidebar } from 'feedpon-messaging/ui';
@@ -17,7 +16,7 @@ export interface KitchenSinkProps {}
 export function KitchensinkPage(
   {}: KitchenSinkProps,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   const { onSendNotification, onToggleSidebar } = context.use(
     getStoreHook({
       mapDispatchToProps: bindActions({

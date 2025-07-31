@@ -4,8 +4,11 @@ import errorHandlingMiddleware from 'feedpon-flux/middlewares/errorHandlingMiddl
 import eventSourcingMiddleware from 'feedpon-flux/middlewares/eventSourcingMiddleware.ts';
 import { loggerMiddleware } from 'feedpon-flux/middlewares/loggerMiddleware.ts';
 import thunkMiddleware from 'feedpon-flux/middlewares/thunkMiddleware.ts';
-import { IndexedDBEventStore } from 'feedpon-flux/persistence.ts';
-import { type EventStore, restoreSnapshot } from 'feedpon-flux/persistence.ts';
+import {
+  type EventStore,
+  IndexedDBEventStore,
+  restoreSnapshot,
+} from 'feedpon-flux/persistence.ts';
 import type { Event, State, ThunkContext } from 'feedpon-messaging';
 import { initialState } from 'feedpon-messaging';
 import { sendNotification } from 'feedpon-messaging/notifications';

@@ -1,5 +1,5 @@
-import type { RenderContext, TemplateResult } from '@emonkak/ebit';
-import { Atom, component, live } from '@emonkak/ebit/directives.js';
+import { component, type RenderContext } from 'barebind';
+import { Atom } from 'barebind/extensions/signal';
 import type { UrlReplacement } from 'feedpon-messaging';
 
 import { FormControl, type FormValidation } from '../primitives/FormControl.ts';
@@ -17,13 +17,10 @@ const patternValidations: FormValidation<'input'>[] = [
 export function UrlReplacementForm(
   { item, onSubmit }: UrlReplacementFormProps,
   context: RenderContext,
-): TemplateResult {
-  const pattern$ = context.useMemo(() => new Atom(item?.pattern ?? ''), []);
-  const replacement$ = context.useMemo(
-    () => new Atom(item?.replacement ?? ''),
-    [],
-  );
-  const flags$ = context.useMemo(() => new Atom(item?.flags ?? ''), []);
+): unknown {
+  const pattern$ = context.use(Atom.untracked(item?.pattern ?? ''));
+  const replacement$ = context.use(Atom.untracked(item?.replacement ?? ''));
+  const flags$ = context.use(Atom.untracked(item?.flags ?? ''));
 
   const handleChangePattern = context.useCallback((event: Event) => {
     pattern$.value = (event.currentTarget as HTMLInputElement).value;
@@ -70,7 +67,7 @@ export function UrlReplacementForm(
               placeholder: 'https://...',
               type: 'text',
               required: true,
-              '.value': pattern$.map(live),
+              $value: pattern$,
               '@input': handleChangePattern,
             },
           })}>
@@ -82,7 +79,7 @@ export function UrlReplacementForm(
           <input
             class="form-control"
             type="text"
-            .value=${replacement$.map(live)}
+            $value=${replacement$}
             @change=${handleChangeReplacement}
           >
         </label>
@@ -96,7 +93,7 @@ export function UrlReplacementForm(
               class: 'form-control',
               pattern: '^[dgimsuvy]*$',
               type: 'text',
-              '.value': flags$.map(live),
+              $value: flags$,
               '@input': handleChangeFlags,
             },
           })}>

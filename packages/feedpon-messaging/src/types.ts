@@ -1,4 +1,4 @@
-import type { LocationActions } from '@emonkak/ebit/router.js';
+import type { HistoryNavigator } from 'barebind/extensions/router';
 import type { Store as FluxStore } from 'feedpon-flux';
 import type { CacheMap } from 'feedpon-utils/CacheMap.ts';
 import type { Trie } from 'feedpon-utils/Trie.ts';
@@ -258,7 +258,7 @@ export interface Command<T extends object> {
 }
 
 export interface CommandContext {
-  locationActions: LocationActions;
+  navigator: HistoryNavigator;
 }
 
 export interface Backend {
@@ -371,8 +371,8 @@ export interface Origin {
 
 export interface Visual {
   url: string;
-  width?: number;
-  height?: number;
+  width: number | undefined;
+  height: number | undefined;
 }
 
 export interface FullContents {

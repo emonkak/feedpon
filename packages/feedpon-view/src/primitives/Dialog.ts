@@ -1,13 +1,12 @@
 import {
+  AsyncRoot,
+  BrowserBackend,
+  component,
   type RenderContext,
-  type RootContext,
-  type TemplateResult,
-  createRoot,
-} from '@emonkak/ebit';
-import { component, ref } from '@emonkak/ebit/directives.js';
+} from 'barebind';
 
 export interface DialogProps {
-  children: TemplateResult;
+  children: unknown;
   modal?: boolean;
   onClose?: (dialog: HTMLDialogElement) => void;
   open: boolean;
@@ -17,7 +16,7 @@ export interface DialogProps {
 export function Dialog(
   { ownProps = {}, children, modal = true, onClose, open }: DialogProps,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   const dialogRef = context.useRef<HTMLDialogElement | null>(null);
 
   context.useLayoutEffect(() => {
@@ -73,8 +72,8 @@ export function Dialog(
 
   return context.html`
     <dialog
-      class="Modal"
-      ref=${ref(dialogRef)}
+      :ref=${dialogRef}
+      class=${modal ? 'Modal' : null}
       @click=${handleClick}
       @close=${handleClose}
       ${ownProps}
@@ -84,10 +83,7 @@ export function Dialog(
   `;
 }
 
-Dialog.open = async (
-  props: DialogProps,
-  context: RootContext<RenderContext>,
-): Promise<void> => {
+Dialog.open = async (props: DialogProps): Promise<void> => {
   const { resolve, promise } = Promise.withResolvers<void>();
   const value = component(Dialog, {
     ...props,
@@ -97,7 +93,7 @@ Dialog.open = async (
       resolve();
     },
   });
-  const root = createRoot(value, document.body, context);
+  const root = AsyncRoot.create(value, document.body, new BrowserBackend());
   root.mount();
   try {
     return await promise;

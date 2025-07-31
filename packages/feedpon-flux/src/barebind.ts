@@ -1,5 +1,5 @@
-import type { Usable } from '@emonkak/ebit';
-import shallowEqual from 'feedpon-utils/shallowEqual.ts';
+import { type CustomHookFunction, shallowEqual } from 'barebind';
+
 import type { Store } from './index.ts';
 
 const storeTag = Symbol('Store');
@@ -32,7 +32,7 @@ export function getStoreHook<
   TStateProps,
   TStoreProps,
   TDispatchProps
->): Usable<TStateProps & TStoreProps & TDispatchProps> {
+>): CustomHookFunction<TStateProps & TStoreProps & TDispatchProps> {
   return (context) => {
     const store = context.getContextValue(storeTag) as Store<
       TState,
@@ -80,7 +80,7 @@ export function getStoreHook<
 
 export function setStoreHook<TState, TEvent>(
   store: Store<TState, TEvent>,
-): Usable<void> {
+): CustomHookFunction<void> {
   return (context) => {
     context.setContextValue(storeTag, store);
   };

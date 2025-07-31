@@ -1,7 +1,10 @@
-import type { RenderContext, TemplateResult, Usable } from '@emonkak/ebit';
-import { component, optional } from '@emonkak/ebit/directives.js';
-import { currentLocation } from '@emonkak/ebit/router.js';
-import { getStoreHook } from 'feedpon-flux/ebit.ts';
+import {
+  type CustomHookFunction,
+  component,
+  type RenderContext,
+} from 'barebind';
+import { CurrentHistory } from 'barebind/extensions/router';
+import { getStoreHook } from 'feedpon-flux/barebind.ts';
 import type { State, Store, ThemeKind } from 'feedpon-messaging';
 import { THEMES } from 'feedpon-messaging/ui';
 
@@ -15,7 +18,7 @@ export interface DispatcherProps {}
 export function Dispatcher(
   _props: DispatcherProps,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   const { store, customStyles, isAuthenticated, theme } = context.use(
     getStoreHook({
       mapStateToProps: (state: State) => ({
@@ -26,7 +29,7 @@ export function Dispatcher(
       mapStoreToProps: (store) => ({ store: store as Store }),
     }),
   );
-  const [locationState, locationActions] = context.use(currentLocation);
+  const [location, navigator] = context.use(CurrentHistory);
 
   context.use(styleHook(customStyles));
   context.use(themeHook(theme));
@@ -37,16 +40,14 @@ export function Dispatcher(
     })}>`;
   }
 
-  const child = optional(
-    router.handle(locationState.url, { locationActions, store }),
-  );
+  const child = router.handle(location.url, { navigator, store });
 
   return context.html`<${component(SidebarLayout, {
     child,
   })}>`;
 }
 
-function styleHook(rule: string): Usable<void> {
+function styleHook(rule: string): CustomHookFunction<void> {
   return (context) => {
     context.useInsertionEffect(() => {
       const style = document.createElement('style');
@@ -64,7 +65,7 @@ function styleHook(rule: string): Usable<void> {
   };
 }
 
-function themeHook(theme: ThemeKind): Usable<void> {
+function themeHook(theme: ThemeKind): CustomHookFunction<void> {
   return (context) => {
     context.useLayoutEffect(() => {
       for (const THEME of THEMES) {

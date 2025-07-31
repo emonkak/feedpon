@@ -44,7 +44,7 @@ export function postRequest(
   return fetch(endpoint + path, {
     method: 'POST',
     headers: new Headers(headers),
-    body,
+    body: body ?? null,
   });
 }
 
@@ -81,7 +81,7 @@ export function putRequest(
   return fetch(endpoint + path, {
     method: 'PUT',
     headers: new Headers(headers),
-    body,
+    body: body ?? null,
   });
 }
 
@@ -106,7 +106,7 @@ export function deleteRequest(
   return fetch(endpoint + path, {
     method: 'DELETE',
     headers: new Headers(headers),
-    body,
+    body: body ?? null,
   });
 }
 

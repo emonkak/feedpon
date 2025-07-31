@@ -15,8 +15,8 @@ export interface AuthenticateInput {
 
 export interface AuthenticateResponse {
   code: string;
-  state?: string;
-  error?: string;
+  state: string | undefined;
+  error: string | undefined;
 }
 
 export interface ExchangeTokenInput {

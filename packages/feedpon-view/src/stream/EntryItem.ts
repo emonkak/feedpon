@@ -1,11 +1,4 @@
-import type { RenderContext, TemplateResult } from '@emonkak/ebit';
-import {
-  type ElementRef,
-  classMap,
-  component,
-  optional,
-  ref,
-} from '@emonkak/ebit/directives.js';
+import { component, type ElementRef, type RenderContext } from 'barebind';
 import type { Entry } from 'feedpon-messaging';
 
 import { EmbeddedHTML } from '../primitives/EmbeddedHTML.ts';
@@ -66,7 +59,7 @@ export function EntryItem(
     sameOrigin,
   }: EntryItemProps,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   const handleExpand = context.useCallback(
     (event: Event) => {
       if (isExpanded) {
@@ -149,16 +142,18 @@ export function EntryItem(
 
   return context.html`
     <article
+      :classlist=${[
+        {
+          entry: true,
+          'is-active': isActive,
+          'is-expanded': isExpanded,
+          'is-marked-as-read': entry.markedAsRead,
+          'is-pinned': entry.isPinned,
+        },
+      ]}
+      :ref=${elementRef}
       lang=${entry.language}
-      class=${classMap({
-        entry: true,
-        'is-active': isActive,
-        'is-expanded': isExpanded,
-        'is-marked-as-read': entry.markedAsRead,
-        'is-pinned': entry.isPinned,
-      })}
       @click=${handleExpand}
-      ref=${ref(elementRef)}
     >
       <${
         isExpanded
@@ -189,7 +184,7 @@ function ExpandedEntryContent(
     sameOrigin,
   }: ExpandedEntryContentProps,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   const content =
     entry.fullContents.isShown && entry.fullContents.isLoaded
       ? component(FullContents, {
@@ -245,15 +240,15 @@ function ExpandedEntryContent(
           title: entry.title,
           url: entry.url,
         })}>
-        <${optional(
+        <${
           entry.comments.isShown
             ? component(CommentPopover, {
                 arrowOffset: -44,
                 isLoading: entry.comments.isLoading,
                 comments: entry.comments.items,
               })
-            : null,
-        )}>
+            : null
+        }>
       </footer>
     </div>
   `;
@@ -262,7 +257,7 @@ function ExpandedEntryContent(
 function CollapsedEntryContent(
   { entry, sameOrigin }: CollapsedEntryContentProps,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   return context.html`
     <div class="container">
       <div class="u-flex">
@@ -291,18 +286,18 @@ function CollapsedEntryContent(
           <div class="entry-summary">${entry.summary}</div>
         </div>
         <div class="entry-visual">
-          <${optional(
+          <${
             entry.visual
               ? context.html`<img width=${entry.visual.width} height=${entry.visual.height} src=${entry.visual.url}>`
-              : null,
-          )}>
+              : null
+          }>
         </div>
       </div>
     </div>
   `;
 }
 
-function renderAuthor(entry: Entry, context: RenderContext): TemplateResult {
+function renderAuthor(entry: Entry, context: RenderContext): unknown {
   if (!entry.author) {
     return context.html``;
   }
@@ -314,17 +309,19 @@ function renderAuthor(entry: Entry, context: RenderContext): TemplateResult {
   `;
 }
 
-function renderBookmarks(entry: Entry, context: RenderContext): TemplateResult {
+function renderBookmarks(entry: Entry, context: RenderContext): unknown {
   return context.html`
     <li class="list-inline-item">
       <a
-        class=${classMap({
-          badge: true,
-          'badge-medium': true,
-          'badge-negative': entry.bookmarkCount >= 10,
-          'link-soft': true,
-          'u-text-negative': entry.bookmarkCount > 0,
-        })}
+        :classlist=${[
+          'badge',
+          'badge-medium',
+          'link-soft',
+          {
+            'badge-negative': entry.bookmarkCount >= 10,
+            'u-text-negative': entry.bookmarkCount > 0,
+          },
+        ]}
         target="_blank"
         href=${'https://b.hatena.ne.jp/entry/' + encodeURIComponent(entry.url)}
         rel="noreferrer"
@@ -339,7 +336,7 @@ function renderOrign(
   entry: Entry,
   sameOrigin: boolean,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   if (sameOrigin || !entry.origin) {
     return context.html``;
   }
@@ -358,10 +355,7 @@ function renderOrign(
   `;
 }
 
-function renderPublishedAt(
-  entry: Entry,
-  context: RenderContext,
-): TemplateResult {
+function renderPublishedAt(entry: Entry, context: RenderContext): unknown {
   if (!entry.publishedAt) {
     return context.html``;
   }
@@ -373,10 +367,7 @@ function renderPublishedAt(
   `;
 }
 
-function renderReadMarker(
-  entry: Entry,
-  context: RenderContext,
-): TemplateResult {
+function renderReadMarker(entry: Entry, context: RenderContext): unknown {
   return entry.markedAsRead
     ? context.html`<span class="badge badge-small badge-default">READ</span>`
     : context.html``;

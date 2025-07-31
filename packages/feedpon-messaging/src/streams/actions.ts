@@ -2,8 +2,8 @@ import { Readability } from '@mozilla/readability';
 
 import * as feedly from 'feedpon-adapters/feedly';
 import * as hatena from 'feedpon-adapters/hatena';
-import PromiseQueue from 'feedpon-utils/PromiseQueue.ts';
 import decodeResponseAsText from 'feedpon-utils/decodeResponseAsText.ts';
+import PromiseQueue from 'feedpon-utils/PromiseQueue.ts';
 import stripTags from 'feedpon-utils/stripTags.ts';
 import tryMatch from 'feedpon-utils/tryMatch.ts';
 import { getFeedlyToken } from '../backend/actions.ts';
@@ -272,7 +272,7 @@ export function fetchFullContent(
         if (!content) {
           const readabilityArticle = new Readability(parsedDocument).parse();
 
-          if (readabilityArticle) {
+          if (readabilityArticle?.content != null) {
             content = readabilityArticle.content;
           }
         }

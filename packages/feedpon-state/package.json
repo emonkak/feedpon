@@ -6,14 +6,14 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
-    "@emonkak/ebit": "catalog:",
-    "openapi-fetch": "^0.13.4"
+    "barebind": "catalog:",
+    "openapi-fetch": "^0.14.0"
   },
   "devDependencies": {
     "json-schema-to-ts": "^3.1.1",
-    "openapi-typescript": "^7.6.1",
+    "openapi-typescript": "^7.9.1",
     "openapi-typescript-helpers": "^0.0.15",
-    "wireit": "^0.14.10"
+    "wireit": "^0.14.12"
   },
   "sideEffects": false,
   "wireit": {

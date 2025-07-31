@@ -40,19 +40,19 @@ import {
 import { type IfThenElse, ifThenElse } from '../keywords/ifThenElse.ts';
 import { type Items, items } from '../keywords/items.ts';
 import { type MaxItems, maxItems } from '../keywords/maxItems.ts';
+import { type Maximum, maximum } from '../keywords/maximum.ts';
 import { type MaxLength, maxLength } from '../keywords/maxLength.ts';
 import {
   type MaxProperties,
   maxProperties,
 } from '../keywords/maxProperties.ts';
-import { type Maximum, maximum } from '../keywords/maximum.ts';
 import { type MinItems, minItems } from '../keywords/minItems.ts';
+import { type Minimum, minimum } from '../keywords/minimum.ts';
 import { type MinLength, minLength } from '../keywords/minLength.ts';
 import {
   type MinProperties,
   minProperties,
 } from '../keywords/minProperties.ts';
-import { type Minimum, minimum } from '../keywords/minimum.ts';
 import type { MultipleOf } from '../keywords/multipleOf.ts';
 import { type Not, not } from '../keywords/not.ts';
 import { type OneOf, oneOf } from '../keywords/oneOf.ts';

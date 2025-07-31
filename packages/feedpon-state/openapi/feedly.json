@@ -2049,11 +2049,7 @@
       },
       "Subscription": {
         "type": "object",
-        "required": [
-          "id",
-          "title",
-          "categories"
-        ],
+        "required": ["id", "title", "categories"],
         "properties": {
           "id": {
             "type": "string"

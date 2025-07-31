@@ -1,5 +1,5 @@
-import type { RenderContext, TemplateResult } from '@emonkak/ebit';
-import { Atom, component, live } from '@emonkak/ebit/directives.js';
+import { component, type RenderContext } from 'barebind';
+import { Atom } from 'barebind/extensions/signal';
 
 import { FormControl, type FormValidation } from '../primitives/FormControl.ts';
 
@@ -15,8 +15,8 @@ const patternValidations: FormValidation<'input'>[] = [
 export function TrackingUrlPatternForm(
   { onAdd }: TrackingUrlPatternFormProps,
   context: RenderContext,
-): TemplateResult {
-  const pattern$ = context.useMemo(() => new Atom(''), []);
+): unknown {
+  const pattern$ = context.use(Atom.untracked(''));
 
   const handleChange = context.useCallback((event: Event) => {
     pattern$.value = (event.currentTarget as HTMLInputElement).value;
@@ -43,7 +43,7 @@ export function TrackingUrlPatternForm(
             placeholder: '^https://...',
             required: true,
             type: 'text',
-            '.value': pattern$.map(live),
+            $value: pattern$,
             '@input': handleChange,
           },
         })}>

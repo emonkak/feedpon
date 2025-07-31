@@ -1,5 +1,4 @@
-import type { RenderContext, TemplateResult } from '@emonkak/ebit';
-import { component, nonKeyedList } from '@emonkak/ebit/directives.js';
+import { component, type RenderContext, repeat } from 'barebind';
 import type { FullContent } from 'feedpon-messaging';
 
 import { EmbeddedHTML } from '../primitives/EmbeddedHTML.ts';
@@ -14,7 +13,7 @@ interface FullContentsProps {
 export function FullContents(
   { isLoading, isNotFound, items, onFetchNext }: FullContentsProps,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   if (items.length === 0) {
     return context.html`
       <div class="entry-content u-clearfix u-text-wrap">
@@ -25,9 +24,9 @@ export function FullContents(
     `;
   }
 
-  const pages = nonKeyedList(
-    items,
-    (fullContent, index) => context.html`
+  const pages = repeat({
+    source: items,
+    valueSelector: (fullContent, index) => context.html`
       <section class="entry-page">
         <${
           index > 0
@@ -54,9 +53,9 @@ export function FullContents(
         })}>
       </section>
     `,
-  );
+  });
 
-  let nextPageButton: TemplateResult | null = null;
+  let nextPageButton: unknown = null;
 
   if (isNotFound) {
     nextPageButton = context.html`

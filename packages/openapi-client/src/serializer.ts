@@ -72,7 +72,7 @@ export const defaultContentSerializer: ContentSerializer = (
     value instanceof URLSearchParams ||
     typeof value === 'string'
   ) {
-    return value;
+    return value as BodyInit;
   }
   throw new Error('A value that cannot be serialized was given.');
 };
@@ -124,8 +124,8 @@ export function serializePrimitive(value: {}, parameter: Parameter): string {
     case 'matrix':
     case 'form':
       return prefix + encode(name) + '=' + encode(String(value));
-    case 'label':
-    case 'simple':
+    // case 'label':
+    // case 'simple':
     default:
       return prefix + encode(String(value));
   }
@@ -138,7 +138,7 @@ export function serializeArray(
   const {
     name,
     style = DEFAULT_STYLES[parameter.in] ?? 'simple',
-    explode = style === 'form' ? true : false,
+    explode = style === 'form',
     allowReserved = false,
   } = parameter;
   const prefix = PREFIXES[style];
@@ -182,7 +182,7 @@ export function serializeObject(
   const {
     name,
     style = DEFAULT_STYLES[parameter.in] ?? 'simple',
-    explode = style === 'form' ? true : false,
+    explode = style === 'form',
     allowReserved = false,
   } = parameter;
   const prefix = PREFIXES[style];

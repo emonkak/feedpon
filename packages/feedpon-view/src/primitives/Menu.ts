@@ -1,5 +1,10 @@
-import type { RefObject, RenderContext, TemplateResult } from '@emonkak/ebit';
-import { component, keyedList, memo, ref } from '@emonkak/ebit/directives.js';
+import {
+  component,
+  memo,
+  type RefObject,
+  type RenderContext,
+  repeat,
+} from 'barebind';
 
 export interface MenuProps {
   autoFocus?: boolean;
@@ -25,41 +30,46 @@ export type MenuPosition =
   | 'bottom-left'
   | 'bottom-right';
 
-export type MenuItem = Button | Form | Group | Link | Separator;
+export type MenuItem =
+  | MenuButton
+  | MenuForm
+  | MenuGroup
+  | MenuLink
+  | MenuSeparator;
 
-interface Button {
+interface MenuButton {
   checked?: boolean;
-  children: TemplateResult;
+  children: unknown;
   disabled?: boolean;
   key: string;
   onAction?: (event: Event, key: string) => void;
   type: 'button';
 }
 
-interface Link {
-  children: TemplateResult;
+interface MenuLink {
+  children: unknown;
   href: string;
   key: string;
   onAction?: (event: Event, key: string) => void;
   type: 'link';
 }
 
-interface Form {
+interface MenuForm {
   ariaLabel: string;
-  children: TemplateResult;
+  children: unknown;
   key: string;
   onAction?: (event: Event, key: string) => void;
   type: 'form';
 }
 
-interface Group {
+interface MenuGroup {
   childItems: MenuItem[];
   key: string;
   label: string;
   type: 'group';
 }
 
-interface Separator {
+interface MenuSeparator {
   key: string;
   type: 'separator';
 }
@@ -79,7 +89,7 @@ export function Menu(
     target,
   }: MenuProps,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   const menuRef = context.useRef<HTMLElement | null>(null);
 
   exposedRef.current = context.useMemo(
@@ -157,18 +167,18 @@ export function Menu(
     }
   }, [open]);
 
-  const children = keyedList(
-    items,
-    (item) => item.key,
-    (item) => renderItem(item, onItemAction, context),
-  );
+  const children = repeat({
+    source: items,
+    keySelector: (item) => item.key,
+    valueSelector: (item) => renderItem(item, onItemAction, context),
+  });
 
   return context.html`
     <div
+      :ref=${menuRef}
       autofocus=${autoFocus}
       class="Menu"
       popover=${manual ? 'manual' : 'auto'}
-      ref=${ref(menuRef)}
       role="menu"
       tabindex=${autoFocus ? '0' : false}
       @keydown=${handleKeyDown}
@@ -179,16 +189,16 @@ export function Menu(
   `;
 }
 
-function Button(
+function MenuButton(
   {
     item,
     onItemAction,
   }: {
-    item: Button;
-    onItemAction?: (event: Event, key: string) => void;
+    item: MenuButton;
+    onItemAction?: ((event: Event, key: string) => void) | undefined;
   },
   context: RenderContext,
-): TemplateResult {
+): unknown {
   const handleAction = context.useCallback(
     (event: Event) => {
       item.onAction?.(event, item.key);
@@ -211,16 +221,18 @@ function Button(
   `;
 }
 
-function Form(
+memo(MenuButton);
+
+function MenuForm(
   {
     item,
     onItemAction,
   }: {
-    item: Form;
-    onItemAction?: (event: Event, key: string) => void;
+    item: MenuForm;
+    onItemAction?: ((event: Event, key: string) => void) | undefined;
   },
   context: RenderContext,
-): TemplateResult {
+): unknown {
   const handleAction = context.useCallback(
     (event: Event) => {
       item.onAction?.(event, item.key);
@@ -242,23 +254,25 @@ function Form(
   `;
 }
 
-function Group(
+memo(MenuForm);
+
+function MenuGroup(
   {
     item,
     onItemAction,
   }: {
-    item: Group;
-    onItemAction?: (event: Event, key: string) => void;
+    item: MenuGroup;
+    onItemAction?: ((event: Event, key: string) => void) | undefined;
   },
   context: RenderContext,
-): TemplateResult {
+): unknown {
   const ariaLabelId = context.useId();
 
-  const children = keyedList(
-    item.childItems,
-    (item) => item.key,
-    (item) => renderItem(item, onItemAction, context),
-  );
+  const children = repeat({
+    source: item.childItems,
+    keySelector: (item) => item.key,
+    valueSelector: (item) => renderItem(item, onItemAction, context),
+  });
 
   return context.html`
     <section
@@ -272,16 +286,18 @@ function Group(
   `;
 }
 
-function Link(
+memo(MenuGroup);
+
+function MenuLink(
   {
     item,
     onItemAction,
   }: {
-    item: Link;
-    onItemAction?: (event: Event, key: string) => void;
+    item: MenuLink;
+    onItemAction?: ((event: Event, key: string) => void) | undefined;
   },
   context: RenderContext,
-): TemplateResult {
+): unknown {
   const handleAction = context.useCallback(
     (event: Event) => {
       item.onAction?.(event, item.key);
@@ -301,6 +317,8 @@ function Link(
     </a>
   `;
 }
+
+memo(MenuLink);
 
 function activeElementIndex(children: ArrayLike<Element>) {
   const { activeElement } = document;
@@ -374,26 +392,13 @@ function renderItem(
 ): unknown {
   switch (item.type) {
     case 'button':
-      return memo(
-        () => component(Button, { item, onItemAction }),
-        [item, onItemAction],
-      );
+      return component(MenuButton, { item, onItemAction });
     case 'form':
-      return memo(
-        () => component(Form, { item, onItemAction }),
-        [item, onItemAction],
-      );
-    case 'group': {
-      return memo(
-        () => component(Group, { item, onItemAction }),
-        [item, onItemAction],
-      );
-    }
+      return component(MenuForm, { item, onItemAction });
+    case 'group':
+      return component(MenuGroup, { item, onItemAction });
     case 'link':
-      return memo(
-        () => component(Link, { item, onItemAction }),
-        [item, onItemAction],
-      );
+      return component(MenuLink, { item, onItemAction });
     case 'separator':
       return context.html`<hr class="MenuSeparator">`;
   }

@@ -1,6 +1,7 @@
-import { RelativeURL } from '@emonkak/ebit/router.js';
+import { RelativeURL } from 'barebind/extensions/router';
 import * as CacheMap from 'feedpon-utils/CacheMap.ts';
 import { scrollBy as smoothScrollBy } from 'feedpon-utils/SmoothScroll.ts';
+
 import {
   getNextEntryScrollPosition,
   getPreviousEntryScrollPosition,
@@ -205,6 +206,7 @@ export const openUrl: Command<{ template: string; inBackground: boolean }> = {
   name: 'Open URL',
   description: 'Open the URL from template format.',
   defaultParams: {
+    // biome-ignore lint/suspicious/noTemplateCurlyInString: use placeholders in template
     template: 'https://www.example.com/?url=${url}&title=${title}',
     inBackground: false,
   },
@@ -386,7 +388,7 @@ export const selectNextCategory: Command<{}> = {
   name: 'Select next category',
   description: 'Select the next category.',
   defaultParams: {},
-  action({}, { locationActions }) {
+  action({}, { navigator }) {
     return ({ getState }, { selectors }) => {
       const state = getState();
       const streamId = state.ui.selectedStreamId;
@@ -416,7 +418,7 @@ export const selectNextCategory: Command<{}> = {
 
       if (visibleCategories[targetIndex]) {
         const targetCategory = visibleCategories[targetIndex]!;
-        locationActions.navigate(
+        navigator.navigate(
           new RelativeURL(
             `/streams/${encodeURIComponent(targetCategory.streamId)}`,
           ),
@@ -463,7 +465,7 @@ export const selectNextSubscription: Command<{}> = {
   name: 'Select next subscription',
   description: 'Select the next subscription.',
   defaultParams: {},
-  action({}, { locationActions }) {
+  action({}, { navigator }) {
     return ({ getState }, { selectors }) => {
       const state = getState();
       const streamId = state.ui.selectedStreamId;
@@ -495,7 +497,7 @@ export const selectNextSubscription: Command<{}> = {
 
       if (visibleSubscriptions[targetIndex]) {
         const targetSubscription = visibleSubscriptions[targetIndex]!;
-        locationActions.navigate(
+        navigator.navigate(
           new RelativeURL(
             `/streams/${encodeURIComponent(targetSubscription.streamId)}`,
           ),
@@ -509,7 +511,7 @@ export const selectPreviousCategory: Command<{}> = {
   name: 'Select previous category',
   description: 'Select the previous category.',
   defaultParams: {},
-  action({}, { locationActions }) {
+  action({}, { navigator }) {
     return ({ getState }, { selectors }) => {
       const state = getState();
       const streamId = state.ui.selectedStreamId;
@@ -547,7 +549,7 @@ export const selectPreviousCategory: Command<{}> = {
 
       if (visibleCategories[targetIndex]) {
         const targetCategory = visibleCategories[targetIndex]!;
-        locationActions.navigate(
+        navigator.navigate(
           new RelativeURL(
             `/streams/${encodeURIComponent(targetCategory.streamId)}`,
           ),
@@ -582,7 +584,7 @@ export const selectPreviousSubscription: Command<{}> = {
   name: 'Select previous subscription',
   description: 'Select the previous subscription.',
   defaultParams: {},
-  action({}, { locationActions }) {
+  action({}, { navigator }) {
     return ({ getState }, { selectors }) => {
       const state = getState();
       const streamId = state.ui.selectedStreamId;
@@ -618,7 +620,7 @@ export const selectPreviousSubscription: Command<{}> = {
 
       if (visibleSubscriptions[targetIndex]) {
         const targetSubscription = visibleSubscriptions[targetIndex]!;
-        locationActions.navigate(
+        navigator.navigate(
           new RelativeURL(
             `/streams/${encodeURIComponent(targetSubscription.streamId)}`,
           ),

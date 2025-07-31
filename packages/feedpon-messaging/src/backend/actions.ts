@@ -145,7 +145,7 @@ function chromeOpenWindow(
 
       const handleUpdateTab = (
         _tabId: number,
-        _changeInfo: chrome.tabs.TabChangeInfo,
+        _changeInfo: chrome.tabs.OnUpdatedInfo,
         tab: chrome.tabs.Tab,
       ) => {
         if (

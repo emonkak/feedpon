@@ -1,5 +1,4 @@
-import type { RenderContext, TemplateResult } from '@emonkak/ebit';
-import { component, styleMap } from '@emonkak/ebit/directives.js';
+import { component, type RenderContext } from 'barebind';
 
 import { createPopupHook } from '../common/hooks/popupHook.ts';
 import { Dialog } from '../primitives/Dialog.ts';
@@ -12,7 +11,7 @@ interface EntryShareButtonProps {
 export function EntryShareButton(
   { url, title }: EntryShareButtonProps,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   const popup = context.use(createPopupHook(false, ['up', 'down']));
 
   const handleTogglePopup = context.useCallback(
@@ -119,8 +118,8 @@ export function EntryShareButton(
         modal: false,
         onClose: popup.close,
         ownProps: {
-          style: styleMap(popup.style),
-          class: ['popup', 'is-pull-' + popup.pullDirection].join(' '),
+          ':style': popup.style,
+          ':classlist': ['popup', 'is-pull-' + popup.pullDirection],
         },
       })}>
     </div>

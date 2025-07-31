@@ -1,4 +1,4 @@
-import type { RenderContext, TemplateResult } from '@emonkak/ebit';
+import type { RenderContext } from 'barebind';
 
 const MILLIS_PER_SECOND = 1000;
 const MILLIS_PER_MINITE = 60 * 1000;
@@ -21,7 +21,7 @@ export function RelativeTime(
     updateInterval = MILLIS_PER_MINITE,
   }: RelativeTimeProps,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   const [now, setNow] = context.useState(() => new Date());
 
   context.useEffect(() => {

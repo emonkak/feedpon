@@ -57,13 +57,19 @@ export type PrimitiveType =
   | 'object'
   | 'string';
 
-// biome-ignore format:
 export type ParseType<T extends PrimitiveType | PrimitiveType[]> =
-  T extends PrimitiveType[] ? ParseType<T[number]> :
-  T extends 'array' ? unknown[] :
-  T extends 'boolean' ? boolean :
-  T extends 'null' ? null :
-  T extends 'integer' | 'number' ? number :
-  T extends 'object' ? object :
-  T extends 'string' ? string :
-  never;
+  T extends PrimitiveType[]
+    ? ParseType<T[number]>
+    : T extends 'array'
+      ? unknown[]
+      : T extends 'boolean'
+        ? boolean
+        : T extends 'null'
+          ? null
+          : T extends 'integer' | 'number'
+            ? number
+            : T extends 'object'
+              ? object
+              : T extends 'string'
+                ? string
+                : never;

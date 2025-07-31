@@ -25,6 +25,7 @@ const initialState: KeyMappings = {
       {
         commandId: 'openUrl',
         params: {
+          // biome-ignore lint/suspicious/noTemplateCurlyInString: use placeholders in template
           template: 'http://b.hatena.ne.jp/entry/${url}',
           inBackground: false,
         },

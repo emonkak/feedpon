@@ -1,7 +1,6 @@
-import { type Atom, atom } from '@emonkak/ebit/directives.js';
-import type * as Feedly from '../api/feedlyTypes.d.ts';
-
+import { Atom } from 'barebind/extensions/signal';
 import type { FeedlyContext } from '../api/feedly.ts';
+import type * as Feedly from '../api/feedlyTypes.d.ts';
 import type { State, Store } from '../store.ts';
 
 export interface UserSeed {
@@ -26,8 +25,8 @@ export class UserState implements State<UserSeed> {
   readonly version$: Atom<number>;
 
   constructor(seed: UserSeed = defaultSeed) {
-    this.profile$ = atom(seed.profile);
-    this.version$ = atom(seed.version);
+    this.profile$ = new Atom(seed.profile);
+    this.version$ = new Atom(seed.version);
   }
 
   toSnapshot(): UserSeed {

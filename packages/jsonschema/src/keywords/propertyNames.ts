@@ -1,8 +1,8 @@
 import {
-  type HasErrorReports,
-  type HasSchemaConstraint,
   fixInstanceLocations,
   fixKeywordLocations,
+  type HasErrorReports,
+  type HasSchemaConstraint,
 } from '../context.ts';
 import type { Schema } from '../core.ts';
 

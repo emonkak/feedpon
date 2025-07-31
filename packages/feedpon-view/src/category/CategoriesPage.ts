@@ -1,11 +1,13 @@
-import { type LocationActions, RelativeURL } from '@emonkak/ebit/router.js';
+import { component, type ElementRef, type RenderContext } from 'barebind';
+import { type HistoryNavigator, RelativeURL } from 'barebind/extensions/router';
 import { bindActions } from 'feedpon-flux';
+import { getStoreHook } from 'feedpon-flux/barebind.ts';
 import type { Category, State, Subscription } from 'feedpon-messaging';
 import {
-  UNCATEGORIZED,
   createCategory,
   createSortedCategoriesSelector,
   deleteCategory,
+  UNCATEGORIZED,
   updateCategory,
 } from 'feedpon-messaging/categories';
 import {
@@ -19,15 +21,6 @@ import { toggleSidebar } from 'feedpon-messaging/ui';
 import createAscendingComparer from 'feedpon-utils/createAscendingComparer.ts';
 import debounce from 'feedpon-utils/debounce.ts';
 
-import type { RenderContext, TemplateResult } from '@emonkak/ebit';
-import {
-  type ElementRef,
-  component,
-  optional,
-  ref,
-  styleMap,
-} from '@emonkak/ebit/directives.js';
-import { getStoreHook } from 'feedpon-flux/ebit.ts';
 import { MainLayout } from '../common/MainLayout.ts';
 import { Navbar } from '../common/Navbar.ts';
 import { Dropdown } from '../primitives/Dropdown.ts';
@@ -41,13 +34,13 @@ import { CategoryForm } from './CategoryForm.ts';
 
 export interface CategoriesPageProps {
   label?: string;
-  locationActions: LocationActions;
+  navigator: HistoryNavigator;
 }
 
 export function CategoriesPage(
-  { label, locationActions }: CategoriesPageProps,
+  { label, navigator }: CategoriesPageProps,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   const categoriesSelector = context.useMemo(
     () => createSortedCategoriesSelector(),
     [],
@@ -162,7 +155,7 @@ export function CategoriesPage(
     (category: Category, newLabel: string) => {
       onUpdateCategory(category, newLabel);
 
-      locationActions.navigate(
+      navigator.navigate(
         new RelativeURL('/categories/' + encodeURIComponent(newLabel)),
         { replace: true },
       );
@@ -180,7 +173,7 @@ export function CategoriesPage(
 
   const handleSelectCategory = context.useCallback(
     (_event: Event, key: string) => {
-      locationActions.navigate(
+      navigator.navigate(
         new RelativeURL('/categories/' + encodeURIComponent(key)),
         { replace: true },
       );
@@ -257,8 +250,8 @@ export function CategoriesPage(
       <h1 class="navbar-title">Organize subscriptions</h1>
       <${dropdown}>
       <input
+        :ref=${uploadInputRef}
         class="u-none"
-        ref=${ref(uploadInputRef)}
         type="file"
         @change=${handleChangeUploadFile}
       >
@@ -282,31 +275,32 @@ export function CategoriesPage(
     onTabSelect: handleSelectCategory,
   });
 
-  // biome-ignore format:
   const description =
-    selectedSubscriptions.length > 0 ? context.html`
-      <p>
-        <strong>${selectedSubscriptions.length}</strong> subscriptions are
-        available in this category.
-      </p>
-    ` : context.html`<p>There are no subscriptions in this category.</p>`;
+    selectedSubscriptions.length > 0
+      ? context.html`
+        <p>
+          <strong>${selectedSubscriptions.length}</strong> subscriptions are
+          available in this category.
+        </p>
+      `
+      : context.html`<p>There are no subscriptions in this category.</p>`;
 
   const content = context.html`
     <div class="container">
       <${tabList}>
-      <${optional(
+      <${
         activeCategory !== null
           ? component(CategoryForm, {
               category: activeCategory,
               onCategoryUpdate: handleUpdateCategory,
               onCategoryDelete: onDeleteCategory,
             })
-          : null,
-      )}>
+          : null
+      }>
       <h1 class="display-1">${label ?? 'Uncategorized'}</h1>
       <p>
         <input
-          ref=${ref(searchInputRef)}
+          :ref=${searchInputRef}
           type="search"
           class="form-control"
           placeholder="Filter for subscriptions..."
@@ -337,12 +331,12 @@ function renderSubscriptionList(
   blankSpaces: BlankSpaces,
   elementRef: ElementRef,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   return context.html`
-    <ul class="list-group" ref=${ref(elementRef)}>
-      <li style=${styleMap({ height: blankSpaces.above + 'px' })}></li>
+    <ul class="list-group" :ref=${elementRef}>
+      <li :style=${{ height: blankSpaces.above + 'px' }}></li>
       <${children}>
-      <li style=${styleMap({ height: blankSpaces.below + 'px' })}></li>
+      <li :style=${{ height: blankSpaces.below + 'px' }}></li>
     </ul>
   `;
 }

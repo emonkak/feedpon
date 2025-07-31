@@ -1,4 +1,4 @@
-import type { Usable } from '@emonkak/ebit';
+import type { CustomHookFunction } from 'barebind';
 import * as Trie from 'feedpon-utils/Trie.ts';
 
 const SPECIAL_KEYS: { [key: string]: string } = {
@@ -12,7 +12,7 @@ export function keyMappingsHook(
   keyMappings: Trie.Trie<any>,
   onInvokeKeyMapping: (keyMappings: any) => void,
   timeoutLength = 1000,
-): Usable<void> {
+): CustomHookFunction<void> {
   return (context) => {
     const pendingKeys = context.useRef<string[]>([]);
     const timer = context.useRef<ReturnType<typeof setTimeout> | null>(null);

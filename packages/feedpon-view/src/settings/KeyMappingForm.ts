@@ -1,11 +1,5 @@
-import type { RenderContext, TemplateResult } from '@emonkak/ebit';
-import {
-  atom,
-  component,
-  keyedList,
-  live,
-  optional,
-} from '@emonkak/ebit/directives.js';
+import { component, type RenderContext, repeat } from 'barebind';
+import { Atom } from 'barebind/extensions/signal';
 import type { Command, KeyMapping } from 'feedpon-messaging';
 
 import { FormControl } from '../primitives/FormControl.ts';
@@ -36,15 +30,11 @@ export function KeyMappingForm(
     onSubmit,
   }: KeyMappingFormProps,
   context: RenderContext,
-): TemplateResult {
-  const commandId$ = context.useMemo(
-    () => atom(keyMapping?.commandId ?? ''),
-    [keyMapping],
-  );
-  const keyStroke$ = context.useMemo(() => atom(keyStroke), [keyStroke]);
-  const paramsJson$ = context.useMemo(
-    () => atom(toPrettyJson(keyMapping?.params ?? {})),
-    [keyMapping],
+): unknown {
+  const commandId$ = context.use(Atom.untracked(keyMapping?.commandId ?? ''));
+  const keyStroke$ = context.use(Atom.untracked(keyStroke));
+  const paramsJson$ = context.use(
+    Atom.untracked(toPrettyJson(keyMapping?.params ?? {})),
   );
 
   const handleChangeCommand = context.useCallback(
@@ -89,15 +79,15 @@ export function KeyMappingForm(
     [keyMapping],
   );
 
-  const commandOptions = keyedList(
-    Object.keys(commandTable),
-    (key) => key,
-    (key) => context.html`
+  const commandOptions = repeat({
+    source: Object.keys(commandTable),
+    keySelector: (key) => key,
+    valueSelector: (key) => context.html`
       <option key=${key} value=${key}>
         ${commandTable[key]!.name}
       </option>
     `,
-  );
+  });
 
   const selectedCommand = commandTable[commandId$.value];
 
@@ -110,7 +100,7 @@ export function KeyMappingForm(
           <input
             class="form-control"
             required
-            .value=${keyStroke$.map(live)}
+            $value=${keyStroke$}
             @change=${handleChangeKeyStroke}
           >
         </label>
@@ -121,17 +111,17 @@ export function KeyMappingForm(
           <select
             class="form-control"
             required
-            .value=${commandId$.map(live)}
+            $value=${commandId$}
             @change=${handleChangeCommand}
           >
             <option value="">Please select a command...</option>
             <${commandOptions}>
           </select>
-          <${optional(
+          <${
             selectedCommand !== undefined
               ? context.html`<div class="u-text-muted">${selectedCommand.description}</div>`
-              : null,
-          )}>
+              : null
+          }>
         </label>
       </div>
       <div class="form-group">
@@ -145,7 +135,7 @@ export function KeyMappingForm(
               required: true,
               rows: '6',
               spellCheck: 'false',
-              '.value': paramsJson$.map(live),
+              $value: paramsJson$,
               '@input': handleChangeParamsJson,
             },
           })}>
@@ -172,7 +162,7 @@ function isValidJson(json: string): boolean {
   try {
     JSON.parse(json);
     return true;
-  } catch (e) {
+  } catch {
     return false;
   }
 }

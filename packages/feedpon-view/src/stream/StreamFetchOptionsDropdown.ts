@@ -1,5 +1,5 @@
-import type { RenderContext, TemplateResult } from '@emonkak/ebit';
-import { atom, component, live, optional } from '@emonkak/ebit/directives.js';
+import { component, type RenderContext } from 'barebind';
+import { Atom } from 'barebind/extensions/signal';
 import type {
   EntryOrderKind,
   StreamFetchOptions,
@@ -30,10 +30,9 @@ export function StreamFetchOptionsDropdown(
     streamView,
   }: StreamFetchOptionsDropdownProps,
   context: RenderContext,
-): TemplateResult {
-  const numEntriesToFetch$ = context.useMemo(
-    () => atom(fetchOptions.numEntries),
-    [],
+): unknown {
+  const numEntriesToFetch$ = context.use(
+    Atom.untracked(fetchOptions.numEntries),
   );
 
   const handleUpdateNumberOfEntries = context.useCallback(() => {
@@ -83,7 +82,7 @@ export function StreamFetchOptionsDropdown(
               key,
               checked: streamView === key,
               children: context.html`
-                <div class="MenuItem-icon"><${optional(streamView === key ? checkmark : null)}></div>
+                <div class="MenuItem-icon"><${streamView === key ? checkmark : null}></div>
                 <div class="MenuItem-content">${label}</div>
               `,
               onAction: context.useCallback(() => {
@@ -110,7 +109,7 @@ export function StreamFetchOptionsDropdown(
               key,
               checked: fetchOptions.entryOrder === key,
               children: context.html`
-                <div class="MenuItem-icon"><${optional(fetchOptions.entryOrder === key ? checkmark : null)}></div>
+                <div class="MenuItem-icon"><${fetchOptions.entryOrder === key ? checkmark : null}></div>
                 <div class="MenuItem-content">${label}</div>
               `,
               onAction: context.useCallback(() => {
@@ -141,7 +140,7 @@ export function StreamFetchOptionsDropdown(
                     min="1"
                     style="width: 6ch"
                     type="number"
-                    .value=${numEntriesToFetch$.map(live)}
+                    $value=${numEntriesToFetch$}
                     @input=${handleInputNumberOfEntries}
                   >
                   <button type="submit" class="button button-positive">
@@ -163,7 +162,7 @@ export function StreamFetchOptionsDropdown(
         key: 'only_unread',
         checked: fetchOptions.onlyUnread,
         children: context.html`
-          <div class="MenuItem-icon"><${optional(fetchOptions.onlyUnread ? checkmark : null)}></div>
+          <div class="MenuItem-icon"><${fetchOptions.onlyUnread ? checkmark : null}></div>
           <div class="MenuItem-content">Only unread</div>
         `,
         onAction: handleToggleOnlyUnread,

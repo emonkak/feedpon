@@ -1,10 +1,10 @@
-import type { RefObject, RenderContext, TemplateResult } from '@emonkak/ebit';
 import {
-  type ElementRef,
   component,
-  ref,
-  styleMap,
-} from '@emonkak/ebit/directives.js';
+  type ElementRef,
+  type HookContext,
+  type RefObject,
+  type RenderContext,
+} from 'barebind';
 import type { Entry, StreamViewKind } from 'feedpon-messaging';
 import * as SmoothScroll from 'feedpon-utils/SmoothScroll.ts';
 
@@ -73,7 +73,7 @@ export function EntryList(
     ref,
   }: EntryListProps,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   const getHeaderHeight = context.use(getHeaderHeightHook);
 
   const handleUpdateDimensions = context.use(
@@ -236,7 +236,7 @@ function getActiveIndex(dimensions: Dimensions, scrollPadding: number): number {
   return activeIndex;
 }
 
-function getHeaderHeightHook(context: RenderContext): () => number {
+function getHeaderHeightHook(context: HookContext): () => number {
   const headerHeightRef = context.useRef(0);
 
   context.useLayoutEffect(() => {
@@ -254,12 +254,12 @@ function renderList(
   blankSpaces: BlankSpaces,
   elementRef: ElementRef,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   return context.html`
-    <div class="entry-list" ref=${ref(elementRef)}>
-      <div style=${styleMap({ height: blankSpaces.above + 'px', overflowAnchor: 'none' })}></div>
+    <div :ref=${elementRef} class="entry-list">
+      <div :style=${{ height: blankSpaces.above + 'px', overflowAnchor: 'none' }}></div>
       <${children}>
-      <div style=${styleMap({ height: blankSpaces.below + 'px', overflowAnchor: 'none' })}></div>
+      <div :style=${{ height: blankSpaces.below + 'px', overflowAnchor: 'none' }}></div>
     </div>
   `;
 }

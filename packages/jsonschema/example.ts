@@ -1,7 +1,7 @@
 import { JSONSchemaValidator } from 'jsonschema';
 import {
-  type JSONSchemaVocabulary,
   draft202012,
+  type JSONSchemaVocabulary,
 } from 'jsonschema/dialects/draft202012.ts';
 
 const preloadedReferences = [

@@ -1,16 +1,20 @@
-import detachedDynamicRef from 'json-schema-test-suite/remotes/draft2020-12/detached-dynamicref.json' assert {
+import detachedDynamicRef from 'json-schema-test-suite/remotes/draft2020-12/detached-dynamicref.json' with {
   type: 'json',
 };
-import extendibleDynamicRef from 'json-schema-test-suite/remotes/draft2020-12/extendible-dynamic-ref.json' assert {
+
+import extendibleDynamicRef from 'json-schema-test-suite/remotes/draft2020-12/extendible-dynamic-ref.json' with {
   type: 'json',
 };
-import tree from 'json-schema-test-suite/remotes/draft2020-12/tree.json' assert {
+
+import tree from 'json-schema-test-suite/remotes/draft2020-12/tree.json' with {
   type: 'json',
 };
-import testCases from 'json-schema-test-suite/tests/draft2020-12/dynamicRef.json' assert {
+
+import testCases from 'json-schema-test-suite/tests/draft2020-12/dynamicRef.json' with {
   type: 'json',
 };
-import type { JSONSchemaVocabulary } from '../../src/dialects/2020-12.ts';
+
+import type { JSONSchemaVocabulary } from '../../src/dialects/draft202012.ts';
 import { runTestCase } from '../testRunner.ts';
 
 const preloadedReferences = [

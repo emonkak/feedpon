@@ -1,4 +1,4 @@
-import type { RenderContext, TemplateResult } from '@emonkak/ebit';
+import type { RenderContext } from 'barebind';
 import type { Comment } from 'feedpon-messaging';
 
 interface CommentViewProps {
@@ -8,7 +8,7 @@ interface CommentViewProps {
 export function CommentView(
   { comment }: CommentViewProps,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   return context.html`
     <div class="comment">
       <span class="comment-user">${comment.user}</span>

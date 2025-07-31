@@ -51,7 +51,9 @@
 
 .notification-enter.notification-enter-active,
 .notification-exit.notification-exit-active {
-  transition: transform 0.2s ease-in-out, opacity 0.2s ease-in-out;
+  transition:
+    transform 0.2s ease-in-out,
+    opacity 0.2s ease-in-out;
 }
 
 .notification-enter,

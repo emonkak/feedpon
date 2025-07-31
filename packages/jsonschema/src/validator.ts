@@ -1,8 +1,8 @@
 import {
-  type HasErrorReports,
-  type HasSchemaConstraint,
   fixAbsoluteKeywordLocations,
   fixKeywordLocations,
+  type HasErrorReports,
+  type HasSchemaConstraint,
 } from './context.ts';
 import type {
   CoreVocabulary,
@@ -143,7 +143,7 @@ export class JSONSchemaValidator<
       const errorCount = errors.length;
       const stackDepth = stackFrames.length;
       const currentFrame = enterStackFrame(schema);
-      let valid;
+      let valid: boolean;
 
       if ($dynamicRef !== undefined) {
         const resource =

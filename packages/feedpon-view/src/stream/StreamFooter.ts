@@ -1,4 +1,4 @@
-import type { RenderContext, TemplateResult } from '@emonkak/ebit';
+import type { RenderContext } from 'barebind';
 
 interface StreamFooterProps {
   canMarkAllEntriesAsRead: boolean;
@@ -17,7 +17,7 @@ export function StreamFooter(
     onLoadMoreEntries,
   }: StreamFooterProps,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   const handleLoadMoreEntries = context.useCallback(
     (event: Event) => {
       event.preventDefault();

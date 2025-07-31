@@ -1,10 +1,10 @@
-import type { RenderContext, TemplateResult } from '@emonkak/ebit';
-import { component, keyedList, optional } from '@emonkak/ebit/directives.js';
+import { component, type RenderContext, repeat } from 'barebind';
 import { bindActions } from 'feedpon-flux';
-import { getStoreHook } from 'feedpon-flux/ebit.ts';
+import { getStoreHook } from 'feedpon-flux/barebind.ts';
 import type { State } from 'feedpon-messaging';
 import { toggleSidebar } from 'feedpon-messaging/ui';
 import * as CacheMap from 'feedpon-utils/CacheMap.ts';
+
 import { MainLayout } from '../common/MainLayout.ts';
 import { Navbar } from '../common/Navbar.ts';
 import { RelativeTime } from '../primitives/RelativeTime.ts';
@@ -23,7 +23,7 @@ interface StreamHistory {
 export function DashboardPage(
   {}: DashboardProps,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   const { onToggleSidebar, categories, subscriptions, histories } = context.use(
     getStoreHook({
       mapStateToProps: (state: State) => ({
@@ -104,18 +104,19 @@ export function DashboardPage(
     })}>
   `;
 
-  // biome-ignore format:
   const streamHistoryList =
     streamHistories.length === 0
       ? context.html`
-    <p>Recently read streams does not exist yet. Let's subscribe to feeds and read the stream.</p>
-  ` : context.html`
+        <p>Recently read streams does not exist yet. Let's subscribe to feeds and read the stream.</p>
+      `
+      : context.html`
     <ol class="list-group">
-      <${keyedList(
-        streamHistories,
-        (streamHistory) => streamHistory.streamId,
-        (streamHistory) => component(StreamHistoryView, { streamHistory }),
-      )}>
+      <${repeat({
+        source: streamHistories,
+        keySelector: (streamHistory) => streamHistory.streamId,
+        valueSelector: (streamHistory) =>
+          component(StreamHistoryView, { streamHistory }),
+      })}>
     </ol>
   `;
   const content = context.html`
@@ -140,7 +141,7 @@ interface StreamHistoryViewProps {
 function StreamHistoryView(
   { streamHistory }: StreamHistoryViewProps,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   const icon =
     streamHistory.iconUrl !== ''
       ? context.html`
@@ -171,7 +172,7 @@ function StreamHistoryView(
             <${component(RelativeTime, { time: streamHistory.fetchedAt })}>
           </div>
         </div>
-        <${optional(
+        <${
           streamHistory.unreadCount > 0
             ? context.html`
               <div class="u-flex-shrink-0">
@@ -180,8 +181,8 @@ function StreamHistoryView(
                 </span>
               </div>
             `
-            : null,
-        )}>
+            : null
+        }>
       </div>
     </a>
   `;

@@ -1,10 +1,4 @@
-import type { RenderContext, TemplateResult } from '@emonkak/ebit';
-import {
-  Either,
-  component,
-  nonKeyedList,
-  styleMap,
-} from '@emonkak/ebit/directives.js';
+import { component, type RenderContext, repeat } from 'barebind';
 import type { Comment } from 'feedpon-messaging';
 
 import { CommentView } from './CommentView.ts';
@@ -18,13 +12,13 @@ interface CommentPopoverProps {
 export function CommentPopover(
   { arrowOffset, comments, isLoading }: CommentPopoverProps,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   if (isLoading) {
     return context.html`
       <div class="popover popover-default is-pull-down">
         <div
+          :style=${{ left: `calc(50% + ${arrowOffset}px)` }}
           class="popover-arrow"
-          style=${styleMap({ left: `calc(50% + ${arrowOffset}px)` })}
         ></div>
         <div class="popover-content">
           <div class="comment">
@@ -45,16 +39,15 @@ export function CommentPopover(
 
   const content =
     comments.length > 0
-      ? Either.left(
-          nonKeyedList(comments, (comment) =>
-            component(CommentView, { comment }),
-          ),
-        )
-      : Either.right(context.html`No comments yet in this entry.`);
+      ? repeat({
+          source: comments,
+          valueSelector: (comment) => component(CommentView, { comment }),
+        })
+      : context.html`No comments yet in this entry.`;
 
   return context.html`
     <div class="popover popover-default is-pull-down">
-      <div class="popover-arrow" style=${styleMap({ left: `calc(50% - ${arrowOffset}px)` })}></div>
+      <div class="popover-arrow" :style=${{ left: `calc(50% - ${arrowOffset}px)` }}></div>
       <div class="popover-content"><${content}></div>
     </div>
   `;

@@ -1,6 +1,5 @@
-import { createSelector } from 'reselect';
-
 import createAscendingComparer from 'feedpon-utils/createAscendingComparer.ts';
+import { createSelector } from 'reselect';
 import type { Categories, Category, State } from '../types.ts';
 
 const labelComparer = createAscendingComparer<Category>('label');

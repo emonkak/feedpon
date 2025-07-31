@@ -1,11 +1,11 @@
-import type { RenderContext, TemplateResult } from '@emonkak/ebit';
-import { component } from '@emonkak/ebit/directives.js';
+import { component, type RenderContext } from 'barebind';
+
 import { Menu, type MenuItem } from './Menu.ts';
 
 export interface DropdownProps {
   items: MenuItem[];
   onToggle?: (open: boolean) => void;
-  trigger: (props: TriggerProps, context: RenderContext) => TemplateResult;
+  trigger: (props: TriggerProps, context: RenderContext) => unknown;
 }
 
 export interface TriggerProps {
@@ -17,7 +17,7 @@ export interface TriggerProps {
 export function Dropdown(
   { items, trigger, onToggle }: DropdownProps,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   const [open, setOpen] = context.useState(false);
 
   const closeDropdown = context.useCallback(() => {

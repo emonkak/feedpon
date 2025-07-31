@@ -1,6 +1,6 @@
-import type { RenderContext, TemplateResult } from '@emonkak/ebit';
-import { component, optional } from '@emonkak/ebit/directives.js';
+import { component, type RenderContext } from 'barebind';
 import type { SubscriptionOrderKind } from 'feedpon-messaging';
+
 import { Dropdown } from '../primitives/Dropdown.ts';
 import type { MenuItem } from '../primitives/Menu.ts';
 
@@ -23,7 +23,7 @@ export function SubscriptionDisplayDropdown(
     subscriptionOrder,
   }: SubscriptionDisplayDropdownProps,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   const checkmark = context.html`<i class="icon icon-16 icon-checkmark"></i>`;
 
   const handleChangeSubscriptionOrder = context.useCallback(
@@ -77,7 +77,7 @@ export function SubscriptionDisplayDropdown(
               checked: subscriptionOrder === key,
               children: context.html`
                 <div class="MenuItem-icon">
-                  <${optional(subscriptionOrder === key ? checkmark : null)}>
+                  <${subscriptionOrder === key ? checkmark : null}>
                 </div>
                 <div class="MenuItem-content">${label}</div>
               `,
@@ -95,7 +95,7 @@ export function SubscriptionDisplayDropdown(
         checked: onlyUnread,
         children: context.html`
           <div class="MenuItem-icon">
-            <${optional(onlyUnread ? checkmark : null)}>
+            <${onlyUnread ? checkmark : null}>
           </div>
           <div class="MenuItem-content">Only unread</div>
         `,

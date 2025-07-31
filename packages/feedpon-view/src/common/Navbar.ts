@@ -1,8 +1,7 @@
-import type { RenderContext, TemplateResult } from '@emonkak/ebit';
-import { optional, styleMap } from '@emonkak/ebit/directives.js';
+import type { RenderContext } from 'barebind';
 
 interface NavbarProps {
-  children: TemplateResult;
+  children: unknown;
   progress?: number;
   onToggleSidebar?: () => void;
 }
@@ -10,7 +9,7 @@ interface NavbarProps {
 export function Navbar(
   { children, onToggleSidebar, progress }: NavbarProps,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   return context.html`
     <nav class="navbar">
       <div class="navbar-container">
@@ -23,11 +22,11 @@ export function Navbar(
         </button>
         <${children}>
       </div>
-      <${optional(
+      <${
         progress !== undefined
-          ? context.html`<div class="navbar-indicator" style=${styleMap({ width: `${progress * 100}%` })}></div>`
-          : null,
-      )}>
+          ? context.html`<div :style=${{ width: `${progress * 100}%` }} class="navbar-indicator"></div>`
+          : null
+      }>
     </nav>
   `;
 }

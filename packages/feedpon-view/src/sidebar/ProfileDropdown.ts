@@ -1,6 +1,6 @@
-import type { RenderContext, TemplateResult } from '@emonkak/ebit';
-import { component } from '@emonkak/ebit/directives.js';
+import { component, type RenderContext } from 'barebind';
 import type { Profile } from 'feedpon-messaging';
+
 import { AlertDialog } from '../primitives/AlertDialog.ts';
 import { Dropdown } from '../primitives/Dropdown.ts';
 
@@ -14,39 +14,38 @@ interface ProfileDropdownProps {
 export function ProfileDropdown(
   { isLoading, onLogout, onRefresh, profile }: ProfileDropdownProps,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   const handleRefresh = context.useCallback(() => {
     onRefresh();
   }, [onRefresh]);
 
   const handleLogout = context.useCallback(() => {
-    AlertDialog.open(
-      {
-        confirmButton: ({ onConfirm }, context) => context.html`
+    AlertDialog.open({
+      confirmButton: ({ onConfirm }, context) => context.html`
           <button class="button button-negative" type="button" @click=${onConfirm}>Logout</button>
         `,
-        cancelButton: ({ onCancel }, context) => context.html`
+      cancelButton: ({ onCancel }, context) => context.html`
           <button class="button button-outline-default" type="button" @click=${onCancel}>Cancel</button>
         `,
-        onConfirm: () => {
-          onLogout();
-        },
-        title: `Logout ${profile.userName}...`,
-        message: 'Are you sure you want to logout of the current session?',
+      onConfirm: () => {
+        onLogout();
       },
-      context,
-    );
+      title: `Logout ${profile.userName}...`,
+      message: 'Are you sure you want to logout of the current session?',
+    });
   }, [onLogout, profile]);
 
-  // biome-ignore format:
-  const profileIcon = profile.picture !== '' ? context.html`
-    <img
-      class="u-flex-shrink-0 u-rounded-circle"
-      height="40"
-      width="40"
-      src=${profile.picture}
-    >
-  ` : context.html`
+  const profileIcon =
+    profile.picture !== ''
+      ? context.html`
+        <img
+          class="u-flex-shrink-0 u-rounded-circle"
+          height="40"
+          width="40"
+          src=${profile.picture}
+        >
+      `
+      : context.html`
     <span class="u-flex-shrink-0">
       <i class="icon icon-40 icon-contacts"></i>
     </span>

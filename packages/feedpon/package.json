@@ -8,8 +8,8 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
-    "@emonkak/ebit": "catalog:",
-    "@types/chrome": "^0.0.300",
+    "@types/chrome": "^0.1.4",
+    "barebind": "catalog:",
     "feedpon-adapters": "workspace:^",
     "feedpon-flux": "workspace:^",
     "feedpon-messaging": "workspace:^",

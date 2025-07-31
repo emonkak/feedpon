@@ -1,3 +1,4 @@
+import { component, type RenderContext, repeat } from 'barebind';
 import type { Category, Subscription } from 'feedpon-messaging';
 import type { createCategory } from 'feedpon-messaging/categories';
 import type {
@@ -6,8 +7,6 @@ import type {
   unsubscribe,
 } from 'feedpon-messaging/subscriptions';
 
-import type { RenderContext, TemplateResult } from '@emonkak/ebit';
-import { component, keyedList } from '@emonkak/ebit/directives.js';
 import { RelativeTime } from '../primitives/RelativeTime.ts';
 import { SubscriptionDropdown } from './SubscriptionDropdown.ts';
 
@@ -30,30 +29,31 @@ export function SubscriptionView(
     subscription,
   }: SubscriptionViewProps,
   context: RenderContext,
-): TemplateResult {
-  // biome-ignore format:
-  const title = subscription.url ? context.html`
-    <a
-      class="link-soft"
-      href=${subscription.url}
-      rel="noreferrer"
-      target="_blank"
-    >
-      ${subscription.title}
-    </a>
-  ` : context.html`
-    <span>${subscription.title}</span>
-  `;
+): unknown {
+  const title = subscription.url
+    ? context.html`
+      <a
+        class="link-soft"
+        href=${subscription.url}
+        rel="noreferrer"
+        target="_blank"
+      >
+        ${subscription.title}
+      </a>
+    `
+    : context.html`
+      <span>${subscription.title}</span>
+    `;
 
-  const labels = keyedList(
-    subscription.labels,
-    (label) => label,
-    (label) => context.html`
+  const labels = repeat({
+    source: subscription.labels,
+    keySelector: (label) => label,
+    valueSelector: (label) => context.html`
       <span class="badge badge-small badge-default">
         ${label}
       </span>
     `,
-  );
+  });
 
   const icon =
     subscription.iconUrl !== ''

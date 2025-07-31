@@ -1,15 +1,14 @@
-import { describe, expect, test } from 'vitest';
-
 import {
   JSONSchemaValidator,
   type ValidationOptions,
   type ValidationResult,
 } from 'jsonschema';
 import {
+  draft202012,
   type JSONSchema,
   type JSONSchemaVocabulary,
-  draft202012,
 } from 'jsonschema/dialects/draft202012.ts';
+import { describe, expect, test } from 'vitest';
 
 export interface TestCase {
   description: string;

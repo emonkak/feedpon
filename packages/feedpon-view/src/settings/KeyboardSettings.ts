@@ -1,6 +1,6 @@
-import type { RenderContext, TemplateResult } from '@emonkak/ebit';
+import { component, type RenderContext, repeat } from 'barebind';
 import { bindActions } from 'feedpon-flux';
-import { getStoreHook } from 'feedpon-flux/ebit.ts';
+import { getStoreHook } from 'feedpon-flux/barebind.ts';
 import type { KeyMapping, State } from 'feedpon-messaging';
 import {
   commandTable,
@@ -8,10 +8,9 @@ import {
   resetKeyMappings,
   updateKeyMapping,
 } from 'feedpon-messaging/keyMappings';
-import * as Trie from 'feedpon-utils/Trie.ts';
 import createAscendingComparer from 'feedpon-utils/createAscendingComparer.ts';
+import * as Trie from 'feedpon-utils/Trie.ts';
 
-import { component, keyedList } from '@emonkak/ebit/directives.js';
 import { AlertDialog } from '../primitives/AlertDialog.ts';
 import { Dialog } from '../primitives/Dialog.ts';
 import { KeyMappingForm } from './KeyMappingForm.ts';
@@ -22,7 +21,7 @@ export interface KeyboardSettingsProps {}
 export function KeyboardSettings(
   _props: KeyboardSettingsProps,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   const {
     keyMappings,
     onDeleteKeyMapping,
@@ -51,22 +50,19 @@ export function KeyboardSettings(
   }, []);
 
   const handleReset = context.useCallback(() => {
-    AlertDialog.open(
-      {
-        confirmButton: ({ onConfirm }, context) => context.html`
+    AlertDialog.open({
+      confirmButton: ({ onConfirm }, context) => context.html`
           <button class="button button-negative" type="button" @click=${onConfirm}>Reset</button>
         `,
-        cancelButton: ({ onCancel }, context) => context.html`
+      cancelButton: ({ onCancel }, context) => context.html`
           <button class="button button-outline-default" type="button" @click=${onCancel}>Cancel</button>
         `,
-        onConfirm: () => {
-          onResetKeyMappings();
-        },
-        title: 'Reset all keymappings',
-        message: 'Are you sure you want to reset all key mappings?',
+      onConfirm: () => {
+        onResetKeyMappings();
       },
-      context,
-    );
+      title: 'Reset all keymappings',
+      message: 'Are you sure you want to reset all key mappings?',
+    });
   }, []);
 
   const handleUpdateKeyMapping = context.useCallback(
@@ -77,10 +73,10 @@ export function KeyboardSettings(
     [],
   );
 
-  const keyMappingRows = keyedList(
-    Trie.toArray(keyMappings).sort(createAscendingComparer(0)),
-    ([keys]) => keys.join(''),
-    ([keys, keyMapping]) =>
+  const keyMappingRows = repeat({
+    source: Trie.toArray(keyMappings).sort(createAscendingComparer(0)),
+    keySelector: ([keys]) => keys.join(''),
+    valueSelector: ([keys, keyMapping]) =>
       component(KeyMappingRow, {
         commandTable,
         keyMapping,
@@ -88,7 +84,7 @@ export function KeyboardSettings(
         onDelete: onDeleteKeyMapping,
         onUpdate: onUpdateKeyMapping,
       }),
-  );
+  });
 
   const keyMappingModal = component(Dialog, {
     open: isCreating,

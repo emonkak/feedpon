@@ -1,8 +1,8 @@
 import {
-  type LDRFullFeedData,
-  type WedataItem,
   getAutoPagerizeItems,
   getLDRFullFeedItems,
+  type LDRFullFeedData,
+  type WedataItem,
 } from 'feedpon-adapters/wedata';
 import { sendNotification } from '../notifications/actions.ts';
 import type { AsyncThunk, SiteinfoItem } from '../types.ts';

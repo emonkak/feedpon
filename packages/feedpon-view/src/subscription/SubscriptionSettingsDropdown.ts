@@ -1,13 +1,7 @@
+import { component, type RenderContext } from 'barebind';
+import { Atom } from 'barebind/extensions/signal';
 import type { Category, Feed, Subscription } from 'feedpon-messaging';
 
-import type { RenderContext, TemplateResult } from '@emonkak/ebit';
-import {
-  atom,
-  classMap,
-  component,
-  live,
-  optional,
-} from '@emonkak/ebit/directives.js';
 import { AlertDialog } from '../primitives/AlertDialog.ts';
 import { Dropdown } from '../primitives/Dropdown.ts';
 import type { MenuItem } from '../primitives/Menu.ts';
@@ -38,8 +32,8 @@ export function SubscriptionSettingsDropdown(
     subscription,
   }: SubscriptionSettingsDropdownProps,
   context: RenderContext,
-): TemplateResult {
-  const categoryLabel$ = context.useMemo(() => atom(''), []);
+): unknown {
+  const categoryLabel$ = context.use(Atom.untracked(''));
 
   const handleCreateCategory = context.useCallback(
     (event: Event) => {
@@ -64,35 +58,30 @@ export function SubscriptionSettingsDropdown(
   }, []);
 
   const handleUnsubscribe = context.useCallback(() => {
-    AlertDialog.open(
-      {
-        confirmButton: ({ onConfirm }, context) => context.html`
+    AlertDialog.open({
+      confirmButton: ({ onConfirm }, context) => context.html`
           <button class="button button-negative" type="button" @click=${onConfirm}>Unsubscribe</button>
         `,
-        cancelButton: ({ onCancel }, context) => context.html`
+      cancelButton: ({ onCancel }, context) => context.html`
           <button class="button button-outline-default" type="button" @click=${onCancel}>Cancel</button>
         `,
-        onConfirm: () => {
-          if (subscription !== null) {
-            onUnsubscribe(subscription);
-          }
-        },
-        title: `Unsubscribe "${feed.title}"`,
-        message: 'Are you sure you want to unsubscribe the feed?',
+      onConfirm: () => {
+        if (subscription !== null) {
+          onUnsubscribe(subscription);
+        }
       },
-      context,
-    );
+      title: `Unsubscribe "${feed.title}"`,
+      message: 'Are you sure you want to unsubscribe the feed?',
+    });
   }, [feed, onUnsubscribe]);
 
   const categoryMenuItems: MenuItem[] =
     subscription !== null
       ? categories.map((category) => {
           const isAdded = subscription.labels.includes(category.label);
-          const icon = optional(
-            isAdded
-              ? context.html`<i aria-hidden="true" class="icon icon-16 icon-checkmark" role="img"></i>`
-              : null,
-          );
+          const icon = isAdded
+            ? context.html`<i aria-hidden="true" class="icon icon-16 icon-checkmark" role="img"></i>`
+            : null;
           const handleAction = isAdded
             ? () => {
                 onRemoveFromCategory(subscription, category.label);
@@ -134,16 +123,18 @@ export function SubscriptionSettingsDropdown(
       >
         <i
           aria-hidden="true"
-          class=${classMap({
-            icon: true,
-            'icon-20': true,
-            [feed.isLoading
+          :classlist=${[
+            'icon',
+            'icon-20',
+            feed.isLoading
               ? 'icon-spinner'
               : subscription !== null
                 ? 'icon-settings'
-                : 'icon-plus-math']: true,
-            'animation-rotating': feed.isLoading,
-          })}
+                : 'icon-plus-math',
+            {
+              'animation-rotating': feed.isLoading,
+            },
+          ]}
           role="img"
         ></i>
       </button>
@@ -175,7 +166,7 @@ export function SubscriptionSettingsDropdown(
                     type="text"
                     class="form-control"
                     style="width: 12ch"
-                    .value=${categoryLabel$.map(live)}
+                    $value=${categoryLabel$}
                     @change=${handleChangeCategoryLabel}
                   >
                   <button type="submit" class="button button-positive">OK</button>

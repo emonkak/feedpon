@@ -1,4 +1,4 @@
-import { type Atom, atom } from '@emonkak/ebit/directives.js';
+import { Atom } from 'barebind/extensions/signal';
 
 import type { Action, State, Store } from '../store.ts';
 import getUUID from '../utils/getUUID.ts';
@@ -71,13 +71,13 @@ export class UIState implements State<UISeed> {
   readonly version$: Atom<number>;
 
   constructor(seed: UISeed = defaultSeed) {
-    this.keyboardShortcutsShown$ = atom(seed.keyboardShortcutsShown);
-    this.notifications$ = atom(seed.notifications);
-    this.osd$ = atom(seed.osd);
-    this.sidebarShown$ = atom(seed.sidebarShown);
-    this.theme$ = atom(seed.theme);
-    this.userStyle$ = atom(seed.userStyle);
-    this.version$ = atom(seed.version);
+    this.keyboardShortcutsShown$ = new Atom(seed.keyboardShortcutsShown);
+    this.notifications$ = new Atom(seed.notifications);
+    this.osd$ = new Atom(seed.osd);
+    this.sidebarShown$ = new Atom(seed.sidebarShown);
+    this.theme$ = new Atom(seed.theme);
+    this.userStyle$ = new Atom(seed.userStyle);
+    this.version$ = new Atom(seed.version);
   }
 
   closeOSD(): void {
@@ -94,7 +94,11 @@ export class UIState implements State<UISeed> {
     message,
     type,
     dismissAfter,
-  }: { message: string; type: NotificationType; dismissAfter: number }): void {
+  }: {
+    message: string;
+    type: NotificationType;
+    dismissAfter: number;
+  }): void {
     this.notifications$.value = [
       ...this.notifications$.value,
       {

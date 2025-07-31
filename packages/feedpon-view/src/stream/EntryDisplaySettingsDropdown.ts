@@ -1,5 +1,4 @@
-import type { RenderContext, TemplateResult } from '@emonkak/ebit';
-import { classMap, component, optional } from '@emonkak/ebit/directives.js';
+import { component, type RenderContext } from 'barebind';
 import type { Entry } from 'feedpon-messaging';
 
 import { AlertDialog } from '../primitives/AlertDialog.ts';
@@ -38,7 +37,7 @@ export function EntryDisplaySettingsDropdown(
     title,
   }: EntryDisplaySettingsDropdownProps,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   const [dropdownState, setDropdownState] = context.useState({
     aheadExpanded: false,
     behindExpanded: false,
@@ -105,21 +104,18 @@ export function EntryDisplaySettingsDropdown(
   }, [onToggleKeepUneread]);
 
   const handleMarkAllAsRead = context.useCallback(() => {
-    AlertDialog.open(
-      {
-        confirmButton: ({ onConfirm }, context) => context.html`
+    AlertDialog.open({
+      confirmButton: ({ onConfirm }, context) => context.html`
           <button class="button button-positive" type="button" @click=${onConfirm}>Mark all as read</button>
         `,
-        cancelButton: ({ onCancel }, context) => context.html`
+      cancelButton: ({ onCancel }, context) => context.html`
           <button class="button button-outline-default" type="button" @click=${onCancel}>Cancel</button>
         `,
-        onConfirm: onMarkStreamAsRead,
-        title: `Mark all as read in "${title}"`,
-        message:
-          'Are you sure you want to mark all entires in this stream as read?',
-      },
-      context,
-    );
+      onConfirm: onMarkStreamAsRead,
+      title: `Mark all as read in "${title}"`,
+      message:
+        'Are you sure you want to mark all entires in this stream as read?',
+    });
   }, [onMarkStreamAsRead, title]);
 
   const handleScrollToEntry = context.useCallback(
@@ -156,11 +152,10 @@ export function EntryDisplaySettingsDropdown(
             : index <= readEntryIndex
               ? 'icon icon-16 icon-dot u-text-positive'
               : null;
-      const icon = optional(
+      const icon =
         iconClass !== null
           ? context.html`<i aria-hidden="true" class=${iconClass} role="img"></i>`
-          : null,
-      );
+          : null;
       return {
         type: 'button',
         key: index.toString(),
@@ -199,14 +194,14 @@ export function EntryDisplaySettingsDropdown(
       >
         <i aria-hidden="true" class="icon icon-24 icon-checkmark" role="img"></i>
         <span
-          class=${classMap({
-            badge: true,
-            'badge-small': true,
-            'badge-pill': true,
-            'badge-overlap': true,
-            [keepUnread ? 'badge-default' : 'badge-negative']: true,
-          })}
-        >
+          :classlist=${[
+            'badge',
+            'badge-small',
+            'badge-pill',
+            'badge-overlap',
+            keepUnread ? 'badge-default' : 'badge-negative',
+          ]}
+          >
           ${totalReadEntries > 0 ? totalReadEntries : ''}
         </span>
       </button>
@@ -262,11 +257,11 @@ export function EntryDisplaySettingsDropdown(
         checked: keepUnread,
         children: context.html`
           <div class="MenuItem-icon">
-            <${optional(
+            <${
               keepUnread
                 ? context.html`<i aria-hidden="true" class="icon icon-16 icon-checkmark" role="img"></i>`
-                : null,
-            )}>
+                : null
+            }>
           </div>
           <div class="MenuItem-content">Keep unread</div>
         `,

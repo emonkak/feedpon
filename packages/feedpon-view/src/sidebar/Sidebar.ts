@@ -1,5 +1,7 @@
-import { RelativeURL, currentLocation } from '@emonkak/ebit/router.js';
+import { component, type RenderContext } from 'barebind';
+import { CurrentHistory, RelativeURL } from 'barebind/extensions/router';
 import { bindActions } from 'feedpon-flux';
+import { getStoreHook } from 'feedpon-flux/barebind.ts';
 import type { State, Subscription } from 'feedpon-messaging';
 import { logout } from 'feedpon-messaging/backend';
 import { createSortedCategoriesSelector } from 'feedpon-messaging/categories';
@@ -15,9 +17,6 @@ import {
 } from 'feedpon-messaging/subscriptions';
 import { fetchUser } from 'feedpon-messaging/user';
 
-import type { RenderContext, TemplateResult } from '@emonkak/ebit';
-import { classMap, component } from '@emonkak/ebit/directives.js';
-import { getStoreHook } from 'feedpon-flux/ebit.ts';
 import { AutoComplete } from '../primitives/AutoComplete.ts';
 import type { MenuItem } from '../primitives/Menu.ts';
 import { RelativeTime } from '../primitives/RelativeTime.ts';
@@ -27,11 +26,8 @@ import { SubscriptionTree } from './SubscriptionTree.ts';
 
 export interface SidebarProps {}
 
-export function Sidebar(
-  {}: SidebarProps,
-  context: RenderContext,
-): TemplateResult {
-  const [locationState, locationActions] = context.use(currentLocation);
+export function Sidebar({}: SidebarProps, context: RenderContext): unknown {
+  const [location, navigator] = context.use(CurrentHistory);
 
   const categoriesSelector = context.useMemo(
     createSortedCategoriesSelector,
@@ -108,25 +104,25 @@ export function Sidebar(
   }, [userIsLoaded]);
 
   const handleSearch = context.useCallback((query: string) => {
-    locationActions.navigate(
-      new RelativeURL('/search/' + encodeURIComponent(query)),
-    );
+    navigator.navigate(new RelativeURL('/search/' + encodeURIComponent(query)));
   }, []);
 
   const handleSelect = context.useCallback((path: string) => {
-    locationActions.navigate(new RelativeURL(path));
+    navigator.navigate(new RelativeURL(path));
   }, []);
 
   const handleManageSubscriptions = context.useCallback(() => {
-    locationActions.navigate(new RelativeURL('/categories'));
+    navigator.navigate(new RelativeURL('/categories'));
   }, []);
 
-  // biome-ignore format:
-  const lastUpdate = lastUpdatedAt > 0 ? context.html`
-    <span>
-      Updated <${component(RelativeTime, {time: lastUpdatedAt}) }>
-    </span>
-  ` : context.html`Not updated yet`;
+  const lastUpdate =
+    lastUpdatedAt > 0
+      ? context.html`
+        <span>
+          Updated <${component(RelativeTime, { time: lastUpdatedAt })}>
+        </span>
+      `
+      : context.html`Not updated yet`;
 
   return context.html`
     <nav class="Sidebar">
@@ -140,31 +136,37 @@ export function Sidebar(
       </div>
       <div class="SidebarSection">
         <a
-          class=${classMap({
-            SidebarItem: true,
-            'is-selected': locationState.url.pathname === '/',
-          })}
+          :classlist=${[
+            'SidebarItem',
+            {
+              'is-selected': location.url.pathname === '/',
+            },
+          ]}
           href='#/'
         >
           <span class="SidebarItem-label">Dashboard</span>
         </a>
         <a
-          class=${classMap({
-            SidebarItem: true,
-            'is-selected':
-              locationState.url.pathname === `/streams/${ALL_STREAM_ID}`,
-          })}
+          :classlist=${[
+            'SidebarItem',
+            {
+              'is-selected':
+                location.url.pathname === `/streams/${ALL_STREAM_ID}`,
+            },
+          ]}
           href=${`#/streams/${ALL_STREAM_ID}`}
         >
           <span class="SidebarItem-label">All</span>
           <span class="SidebarItem-unread">${totalUnreadCount}</span>
         </a>
         <a
-          class=${classMap({
-            SidebarItem: true,
-            'is-selected':
-              locationState.url.pathname === `/streams/${PINS_STREAM_ID}`,
-          })}
+          :classlist=${[
+            'SidebarItem',
+            {
+              'is-selected':
+                location.url.pathname === `/streams/${PINS_STREAM_ID}`,
+            },
+          ]}
           href=${`#/streams/${PINS_STREAM_ID}`}
         >
           <span class="SidebarItem-label">Pins</span>
@@ -180,14 +182,15 @@ export function Sidebar(
             @click=${onFetchSubscriptions}
           >
             <i
+              :classlist=${[
+                'icon',
+                'icon-16',
+                'icon-refresh',
+                {
+                  'animation-rotating': subscriptionsIsLoading,
+                },
+              ]}
               aria-hidden="true"
-              class=${classMap({
-                icon: true,
-                'icon-16': true,
-                'icon-width-32': true,
-                'icon-refresh': true,
-                'animation-rotating': subscriptionsIsLoading,
-              })}
               role="img"
             ></i>
           </button>
@@ -204,25 +207,29 @@ export function Sidebar(
         <${component(SubscriptionTree, {
           categories,
           groupedSubscriptions,
-          selectedPath: locationState.url.pathname,
+          selectedPath: location.url.pathname,
           onSelect: handleSelect,
         })}>
       </div>
       <div class="SidebarSection">
         <a
-          class=${classMap({
-            SidebarItem: true,
-            'is-selected': locationState.url.pathname.startsWith('/settings/'),
-          })}
+          :classlist=${[
+            'SidebarItem',
+            {
+              'is-selected': location.url.pathname.startsWith('/settings/'),
+            },
+          ]}
           href="#/settings/ui"
         >
           <span class="SidebarItem-label">Settings</span>
         </a>
         <a
-          class=${classMap({
-            SidebarItem: true,
-            'is-selected': locationState.url.pathname === '/about',
-          })}
+          :classlist=${[
+            'SidebarItem',
+            {
+              'is-selected': location.url.pathname === '/about',
+            },
+          ]}
           href="#/about"
         >
           <span class="SidebarItem-label">About</span>
@@ -269,16 +276,18 @@ function getFilteredItems(
       ),
     10,
   ).map((subscription) => {
-    // biome-ignore format:
-    const icon = subscription.iconUrl !== '' ? context.html`
-      <img
-        class="u-vertical-middle u-object-fit-cover"
-        alt=${subscription.title}
-        src=${subscription.iconUrl}
-        width="16"
-        height="16"
-      >
-    ` : context.html`<i class="icon icon-16 icon-file "></i>`;
+    const icon =
+      subscription.iconUrl !== ''
+        ? context.html`
+          <img
+            class="u-vertical-middle u-object-fit-cover"
+            alt=${subscription.title}
+            src=${subscription.iconUrl}
+            width="16"
+            height="16"
+          >
+        `
+        : context.html`<i class="icon icon-16 icon-file "></i>`;
 
     return {
       type: 'link',

@@ -1,6 +1,7 @@
-import testCases from 'json-schema-test-suite/tests/draft2020-12/exclusiveMaximum.json' assert {
+import testCases from 'json-schema-test-suite/tests/draft2020-12/exclusiveMaximum.json' with {
   type: 'json',
 };
+
 import { runTestCase } from '../testRunner.ts';
 
 for (const testCase of testCases) {

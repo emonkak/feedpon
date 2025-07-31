@@ -1,5 +1,4 @@
-import type { RenderContext, TemplateResult } from '@emonkak/ebit';
-import { component } from '@emonkak/ebit/directives.js';
+import { component, type RenderContext } from 'barebind';
 
 import { EntryShareButton } from './EntryShareButton.ts';
 
@@ -20,25 +19,27 @@ export function EntryActionList(
     url,
   }: EntryActionListProps,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   return context.html`
     <div class="button-toolbar u-flex u-flex-align-items-center u-flex-justify-content-center">
       <button
-        type="button"
-        class=${[
-          'button button-pill',
+        :classlist=${[
+          'button',
+          'button-pill',
           commentsIsShown ? 'button-default' : 'button-outline-default',
-        ].join(' ')}
+        ]}
+        type="button"
         title="Comments..."
         @click=${onToggleComments}
       >
         <i
-          class=${[
-            'icon icon-20',
+          :classlist=${[
+            'icon',
+            'icon-20',
             commentsIsLoading
               ? 'icon-spinner animation-rotating'
               : 'icon-comments',
-          ].join(' ')}
+          ]}
         ></i>
       </button>
       <${component(EntryShareButton, { url, title })}>

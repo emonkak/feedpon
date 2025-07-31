@@ -1,4 +1,4 @@
-import { SRCSET_ATTRS, URI_ATTRS, sanitizeElement } from './htmlSanitizer.ts';
+import { SRCSET_ATTRS, sanitizeElement, URI_ATTRS } from './htmlSanitizer.ts';
 import parseSrcset from './parseSrcset.ts';
 
 const MINIUM_RESPONSIVE_ELEMENT_WIDTH = 128;
@@ -101,7 +101,7 @@ function cleanElement(element: Element, baseUrl: string): Node | null {
 function qualifyUrl(urlString: string, baseUrlString: string): string {
   try {
     return new URL(urlString, baseUrlString).toString();
-  } catch (error) {
+  } catch {
     return urlString;
   }
 }

@@ -1,6 +1,4 @@
-import type { RenderContext, TemplateResult } from '@emonkak/ebit';
-import { ref } from '@emonkak/ebit/directives.js';
-
+import type { RenderContext } from 'barebind';
 import cleanNode from 'feedpon-utils/cleanNode.ts';
 import walkNode from 'feedpon-utils/walkNode.ts';
 
@@ -13,7 +11,7 @@ interface EmbeddedHTMLProps {
 export function EmbeddedHTML(
   { class: className, baseUrl, html }: EmbeddedHTMLProps,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   const containerRef = context.useRef<Element | null>(null);
 
   context.useLayoutEffect(() => {
@@ -27,5 +25,5 @@ export function EmbeddedHTML(
     containerRef.current?.replaceChildren(template.content);
   }, [baseUrl, html]);
 
-  return context.html`<div ref=${ref(containerRef)} class=${className}></div>`;
+  return context.html`<div :ref=${containerRef} class=${className}></div>`;
 }

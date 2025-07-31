@@ -1,6 +1,6 @@
-import type { RenderContext, TemplateResult } from '@emonkak/ebit';
+import type { RenderContext } from 'barebind';
 import { bindActions } from 'feedpon-flux';
-import { getStoreHook } from 'feedpon-flux/ebit.ts';
+import { getStoreHook } from 'feedpon-flux/barebind.ts';
 import { authenticate } from 'feedpon-messaging/backend';
 
 export interface AuthenticationPageProps {}
@@ -8,7 +8,7 @@ export interface AuthenticationPageProps {}
 export function AuthenticationPage(
   _props: AuthenticationPageProps,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   const { onAuthenticate } = context.use(
     getStoreHook({
       mapDispatchToProps: bindActions({

@@ -1,9 +1,8 @@
-import type { RenderContext, TemplateResult } from '@emonkak/ebit';
-import { component, nonKeyedList } from '@emonkak/ebit/directives.js';
+import { component, type RenderContext, repeat } from 'barebind';
 import type { Command, KeyMapping } from 'feedpon-messaging';
+
 import { AlertDialog } from '../primitives/AlertDialog.ts';
 import { Dialog } from '../primitives/Dialog.ts';
-
 import { KeyMappingForm } from './KeyMappingForm.ts';
 
 interface KeyMappingRowProps {
@@ -17,7 +16,7 @@ interface KeyMappingRowProps {
 export function KeyMappingRow(
   { commandTable, keyMapping, keys, onDelete, onUpdate }: KeyMappingRowProps,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   const [isEditing, setIsEditing] = context.useState(false);
 
   const handleStartEditing = context.useCallback(() => {
@@ -37,30 +36,27 @@ export function KeyMappingRow(
   );
 
   const handleDelete = context.useCallback(() => {
-    AlertDialog.open(
-      {
-        confirmButton: ({ onConfirm }, context) => context.html`
+    AlertDialog.open({
+      confirmButton: ({ onConfirm }, context) => context.html`
           <button class="button button-negative" type="button" @click=${onConfirm}>Delete</button>
         `,
-        cancelButton: ({ onCancel }, context) => context.html`
+      cancelButton: ({ onCancel }, context) => context.html`
           <button class="button button-outline-default" type="button" @click=${onCancel}>Cancel</button>
         `,
-        onConfirm: () => {
-          onDelete(keys.join(''));
-        },
-        title: `Delete "${keys.join('')}" mapping`,
-        message: 'Are you sure you want to delete this key mapping?',
+      onConfirm: () => {
+        onDelete(keys.join(''));
       },
-      context,
-    );
+      title: `Delete "${keys.join('')}" mapping`,
+      message: 'Are you sure you want to delete this key mapping?',
+    });
   }, [keys, onDelete]);
 
   const command = commandTable[keyMapping.commandId];
   const commandName = command ? command.name : `<${keyMapping.commandId}>`;
-  const keyStroke = nonKeyedList(
-    keys,
-    (key) => context.html`<kbd>${key}</kbd>`,
-  );
+  const keyStroke = repeat({
+    source: keys,
+    keySelector: (key) => context.html`<kbd>${key}</kbd>`,
+  });
 
   const keyMappingModal = component(Dialog, {
     open: isEditing,

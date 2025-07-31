@@ -1,4 +1,5 @@
-import type { RenderContext, TemplateResult } from '@emonkak/ebit';
+import type { RenderContext } from 'barebind';
+
 import { AlertDialog } from '../primitives/AlertDialog.ts';
 
 interface TrackingUrlPatternRowProps {
@@ -9,24 +10,21 @@ interface TrackingUrlPatternRowProps {
 export function TrackingUrlPatternRow(
   { onDelete, pattern }: TrackingUrlPatternRowProps,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   const handleDelete = context.useCallback(() => {
-    AlertDialog.open(
-      {
-        confirmButton: ({ onConfirm }, context) => context.html`
+    AlertDialog.open({
+      confirmButton: ({ onConfirm }, context) => context.html`
           <button class="button button-negative" type="button" @click=${onConfirm}>Delete</button>
         `,
-        cancelButton: ({ onCancel }, context) => context.html`
+      cancelButton: ({ onCancel }, context) => context.html`
           <button class="button button-outline-default" type="button" @click=${onCancel}>Cancel</button>
         `,
-        onConfirm: () => {
-          onDelete(pattern);
-        },
-        title: `Delete "${pattern}"`,
-        message: 'Are you sure you want to delete this pattern?',
+      onConfirm: () => {
+        onDelete(pattern);
       },
-      context,
-    );
+      title: `Delete "${pattern}"`,
+      message: 'Are you sure you want to delete this pattern?',
+    });
   }, [onDelete]);
 
   return context.html`

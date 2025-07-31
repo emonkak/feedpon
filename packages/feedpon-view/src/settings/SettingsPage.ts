@@ -1,8 +1,7 @@
-import type { RenderContext, TemplateResult } from '@emonkak/ebit';
-import { component } from '@emonkak/ebit/directives.js';
-import type { RelativeURL } from '@emonkak/ebit/router.js';
+import { component, type RenderContext } from 'barebind';
+import type { RelativeURL } from 'barebind/extensions/router';
 import { bindActions } from 'feedpon-flux';
-import { getStoreHook } from 'feedpon-flux/ebit.ts';
+import { getStoreHook } from 'feedpon-flux/barebind.ts';
 import { toggleSidebar } from 'feedpon-messaging/ui';
 
 import { MainLayout } from '../common/MainLayout.ts';
@@ -17,7 +16,7 @@ export interface SettingsProps {
 export function SettingsPage(
   { children, url }: SettingsProps,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   const { onToggleSidebar } = context.use(
     getStoreHook({
       mapDispatchToProps: bindActions({

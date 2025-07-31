@@ -1,4 +1,11 @@
+import {
+  component,
+  type ElementRef,
+  type RenderContext,
+  repeat,
+} from 'barebind';
 import { bindActions } from 'feedpon-flux';
+import { getStoreHook } from 'feedpon-flux/barebind.ts';
 import type { SiteinfoItem, State } from 'feedpon-messaging';
 import { updateSiteinfo } from 'feedpon-messaging/sharedSiteinfo';
 import {
@@ -8,15 +15,6 @@ import {
 } from 'feedpon-messaging/userSiteinfo';
 import tryMatch from 'feedpon-utils/tryMatch.ts';
 
-import type { RenderContext, TemplateResult } from '@emonkak/ebit';
-import {
-  type ElementRef,
-  component,
-  keyedList,
-  memo,
-  ref,
-} from '@emonkak/ebit/directives.js';
-import { getStoreHook } from 'feedpon-flux/ebit.ts';
 import { RelativeTime } from '../primitives/RelativeTime.ts';
 import {
   type BlankSpaces,
@@ -31,7 +29,7 @@ interface SiteinfoSettingsProps {}
 export function SiteinfoSettings(
   {}: SiteinfoSettingsProps,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   return context.html`
     <section>
       <h1 className="display-1">Siteinfo</h1>
@@ -46,7 +44,7 @@ export interface SharedSiteinfoSectionProps {}
 export function SharedSiteinfoSection(
   {}: SharedSiteinfoSectionProps,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   const { isLoading, items, lastUpdatedAt, onUpdateSiteinfo } = context.use(
     getStoreHook({
       mapStateToProps: (state: State) => ({
@@ -124,7 +122,7 @@ export interface UserSiteinfoSectionProps {}
 export function UserSiteinfoSection(
   {}: UserSiteinfoSectionProps,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   const { onDelete, onUpdate, onAdd, items } = context.use(
     getStoreHook({
       mapStateToProps: (state: State) => ({
@@ -140,16 +138,16 @@ export function UserSiteinfoSection(
     }),
   );
 
-  const rows = keyedList(
-    items,
-    (item) => item.id,
-    (item) =>
+  const rows = repeat({
+    source: items,
+    keySelector: (item) => item.id,
+    valueSelector: (item) =>
       component(UserSiteinfoRow, {
         item,
         onDelete,
         onUpdate,
       }),
-  );
+  });
 
   return context.html`
     <section class="section">
@@ -187,9 +185,9 @@ function renderSiteinfoList(
   blankSpaces: BlankSpaces,
   elementRef: ElementRef,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   return context.html`
-    <div class="u-responsive" ref=${ref(elementRef)}>
+    <div :ref=${elementRef} class="u-responsive">
       <ul class="list-group">
         <div style=${`height: ${blankSpaces.above}px`}></div>
         <${children}>
@@ -200,5 +198,5 @@ function renderSiteinfoList(
 }
 
 function renderSiteinfoItem(item: SiteinfoItem): unknown {
-  return memo(() => component(SharedSiteinfoItem, { item }), [item]);
+  return component(SharedSiteinfoItem, { item });
 }

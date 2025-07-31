@@ -1,11 +1,14 @@
 {
   "files": {
-    "ignore": [".wireit", "dist", "node_modules", "package.json"]
+    "includes": ["**", "!.wireit", "!dist"]
   },
   "css": {
     "formatter": {
       "enabled": true,
       "indentStyle": "space"
+    },
+    "linter": {
+      "enabled": false
     }
   },
   "javascript": {
@@ -18,9 +21,6 @@
   },
   "linter": {
     "rules": {
-      "a11y": {
-        "all": false
-      },
       "complexity": {
         "noBannedTypes": "off",
         "noThisInStatic": "off",

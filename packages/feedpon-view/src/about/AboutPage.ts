@@ -1,17 +1,16 @@
-import { type LocationActions, RelativeURL } from '@emonkak/ebit/router.js';
+import { component, type RenderContext, repeat } from 'barebind';
+import { type HistoryNavigator, RelativeURL } from 'barebind/extensions/router';
 import { bindActions } from 'feedpon-flux';
-import { getStoreHook } from 'feedpon-flux/ebit.ts';
+import { getStoreHook } from 'feedpon-flux/barebind.ts';
 import type { State } from 'feedpon-messaging';
 import { toggleSidebar } from 'feedpon-messaging/ui';
 
-import type { RenderContext, TemplateResult } from '@emonkak/ebit';
-import { component, nonKeyedList } from '@emonkak/ebit/directives.js';
 import { MainLayout } from '../common/MainLayout.ts';
 import { Navbar } from '../common/Navbar.ts';
 import { Dropdown } from '../primitives/Dropdown.ts';
 
 export interface AboutPageProps {
-  locationActions: LocationActions;
+  navigator: HistoryNavigator;
 }
 
 const USING_LIBRARIES = [
@@ -45,9 +44,9 @@ SOFTWARE.
 ];
 
 export function AboutPage(
-  { locationActions }: AboutPageProps,
+  { navigator }: AboutPageProps,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   const { onToggleSidebar, version } = context.use(
     getStoreHook({
       mapStateToProps: (state: State) => ({
@@ -60,7 +59,7 @@ export function AboutPage(
   );
 
   const handleGoKitchensink = context.useCallback(() => {
-    locationActions.navigate(new RelativeURL('/kitchensink'));
+    navigator.navigate(new RelativeURL('/kitchensink'));
   }, []);
 
   const header = component(Navbar, {
@@ -99,19 +98,19 @@ export function AboutPage(
     `,
   });
 
-  const usingLibraries = nonKeyedList(
-    USING_LIBRARIES,
-    ({ license, name, url }) => context.html`
-      <li>
-        <h2>
-          <a href=${url} target="_blank" rel="noreferrer">
-            ${name}
-          </a>
-        </h2>
-        <pre class="u-text-prewrap">${license}</pre>
-      </li>
-    `,
-  );
+  const usingLibraries = repeat({
+    source: USING_LIBRARIES,
+    valueSelector: ({ license, name, url }) => context.html`
+        <li>
+          <h2>
+            <a href=${url} target="_blank" rel="noreferrer">
+              ${name}
+            </a>
+          </h2>
+          <pre class="u-text-prewrap">${license}</pre>
+        </li>
+      `,
+  });
   const content = context.html`
     <section class="section u-text-center">
       <div class="container">

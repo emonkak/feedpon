@@ -1,9 +1,9 @@
-import type { RenderContext, TemplateResult } from '@emonkak/ebit';
+import type { RenderContext } from 'barebind';
 
 export function ExpandedEntryPlaceholder(
   _props: {},
   context: RenderContext,
-): TemplateResult {
+): unknown {
   return context.html`
     <article class="entry is-expanded">
       <div class="container">
@@ -56,7 +56,7 @@ export function ExpandedEntryPlaceholder(
 export function CollapsedEntryPlaceholder(
   _props: {},
   context: RenderContext,
-): TemplateResult {
+): unknown {
   return context.html`
     <article class="entry">
       <div class="container">

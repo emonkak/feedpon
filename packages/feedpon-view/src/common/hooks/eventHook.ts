@@ -1,10 +1,10 @@
-import type { Usable } from '@emonkak/ebit';
+import type { CustomHookFunction } from 'barebind';
 
 // Based on this implementation:
 // https://github.com/reactjs/rfcs/blob/useevent/text/0000-useevent.md
 export function createEventHook<THandler extends (...args: any[]) => any>(
   handler: THandler,
-): Usable<(...args: Parameters<THandler>) => ReturnType<THandler>> {
+): CustomHookFunction<(...args: Parameters<THandler>) => ReturnType<THandler>> {
   return (context) => {
     const handlerRef = context.useRef<THandler>(handler);
 

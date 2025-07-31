@@ -1,10 +1,10 @@
-import { type Component, component } from '@emonkak/ebit/directives.js';
+import { component } from 'barebind';
 import {
-  type LocationActions,
+  type HistoryNavigator,
   Router,
   route,
   wildcard,
-} from '@emonkak/ebit/router.js';
+} from 'barebind/extensions/router';
 import type { Store } from 'feedpon-messaging';
 
 import { AboutPage } from './about/AboutPage.ts';
@@ -22,50 +22,34 @@ import { UrlReplacementSettings } from './settings/UrlReplacementSettings.ts';
 import { StreamPage } from './stream/StreamPage.ts';
 
 export interface RouterState {
-  locationActions: LocationActions;
+  navigator: HistoryNavigator;
   store: Store;
 }
 
-export const router = new Router<Component<any, any, any>, RouterState>([
+export const router = new Router<unknown, RouterState>([
   route([''], () => component(DashboardPage, {})),
-  route(
-    ['about'],
-    (_args, _url, { locationActions }) =>
-      component(AboutPage, { locationActions }) as Component<any, any, any>,
+  route(['about'], (_args, _url, { navigator }) =>
+    component(AboutPage, { navigator }),
   ),
   route(
     ['categories'],
-    (_args, _url, { locationActions }) =>
-      component(CategoriesPage, { locationActions }) as Component<
-        any,
-        any,
-        any
-      >,
+    (_args, _url, { navigator }) => component(CategoriesPage, { navigator }),
     [
-      route(
-        [wildcard],
-        ([label], _url, { locationActions }) =>
-          component(CategoriesPage, { label, locationActions }) as Component<
-            any,
-            any,
-            any
-          >,
+      route([wildcard], ([label], _url, { navigator }) =>
+        component(CategoriesPage, { label, navigator }),
       ),
     ],
   ),
   route(['kitchensink'], () => component(KitchensinkPage, {})),
   route(
     ['search'],
-    (_args, _url, { locationActions }) =>
-      component(SearchPage, { locationActions }) as Component<any, any, any>,
+    (_args, _url, { navigator }) => component(SearchPage, { navigator }),
     [
-      route(
-        [wildcard],
-        ([query], _url, { locationActions }) =>
-          component(SearchPage, {
-            locationActions,
-            defaultQuery: query,
-          }) as Component<any, any, any>,
+      route([wildcard], ([query], _url, { navigator }) =>
+        component(SearchPage, {
+          navigator,
+          defaultQuery: query,
+        }),
       ),
     ],
   ),
@@ -107,9 +91,7 @@ export const router = new Router<Component<any, any, any>, RouterState>([
       }),
     ),
   ]),
-  route(
-    ['streams', wildcard],
-    ([streamId]) =>
-      component(StreamPage, { streamId }) as Component<any, any, any>,
+  route(['streams', wildcard], ([streamId]) =>
+    component(StreamPage, { streamId }),
   ),
 ]);

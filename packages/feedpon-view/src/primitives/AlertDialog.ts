@@ -1,20 +1,19 @@
 import {
+  AsyncRoot,
+  BrowserBackend,
+  component,
   type RenderContext,
-  type RootContext,
-  type TemplateResult,
-  createRoot,
-} from '@emonkak/ebit';
-import { component, ref } from '@emonkak/ebit/directives.js';
+} from 'barebind';
 
 export interface AlertDialogProps {
   cancelButton: (
     props: { onCancel: () => void },
     context: RenderContext,
-  ) => TemplateResult;
+  ) => unknown;
   confirmButton: (
     props: { onConfirm: () => void },
     context: RenderContext,
-  ) => TemplateResult;
+  ) => unknown;
   message: string;
   onCancel?: (dialog: HTMLDialogElement) => void;
   onConfirm?: (dialog: HTMLDialogElement) => void;
@@ -33,7 +32,7 @@ export function AlertDialog(
     title,
   }: AlertDialogProps,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   const dialogRef = context.useRef<HTMLDialogElement | null>(null);
 
   context.useLayoutEffect(() => {
@@ -84,11 +83,11 @@ export function AlertDialog(
 
   return context.html`
     <dialog
+      :ref=${dialogRef}
       aria-describedby=${ariaDescriptionId}
       aria-labelledby=${ariaLabelId}
       class="Modal"
       role="alertdialog"
-      ref=${ref(dialogRef)}
       @click=${handleClick}
       @close=${handleClose}
     >
@@ -102,10 +101,7 @@ export function AlertDialog(
   `;
 }
 
-AlertDialog.open = async (
-  props: AlertDialogProps,
-  context: RootContext<RenderContext>,
-): Promise<boolean> => {
+AlertDialog.open = async (props: AlertDialogProps): Promise<boolean> => {
   const { resolve, promise } = Promise.withResolvers<boolean>();
   const value = component(AlertDialog, {
     ...props,
@@ -121,7 +117,7 @@ AlertDialog.open = async (
       resolve(true);
     },
   });
-  const root = createRoot(value, document.body, context);
+  const root = AsyncRoot.create(value, document.body, new BrowserBackend());
   root.mount();
   try {
     return await promise;

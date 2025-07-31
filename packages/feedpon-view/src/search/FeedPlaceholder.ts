@@ -1,9 +1,6 @@
-import type { RenderContext, TemplateResult } from '@emonkak/ebit';
+import type { RenderContext } from 'barebind';
 
-export function FeedPlaceholder(
-  _props: {},
-  context: RenderContext,
-): TemplateResult {
+export function FeedPlaceholder(_props: {}, context: RenderContext): unknown {
   return context.html`
     <li class="list-group-item">
       <div class="link-strong">

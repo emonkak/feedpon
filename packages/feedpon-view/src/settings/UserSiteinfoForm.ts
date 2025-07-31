@@ -1,7 +1,7 @@
-import type { RenderContext, TemplateResult } from '@emonkak/ebit';
+import { component, type RenderContext } from 'barebind';
+import { Atom } from 'barebind/extensions/signal';
 import type { SiteinfoItem } from 'feedpon-messaging';
 
-import { Atom, component, live } from '@emonkak/ebit/directives.js';
 import { FormControl, type FormValidation } from '../primitives/FormControl.ts';
 
 interface UserSiteinfoFormProps {
@@ -22,19 +22,14 @@ const XPATH_VALIDATIONS: FormValidation<'input'>[] = [
 export function UserSiteinfoForm(
   { item, onSubmit }: UserSiteinfoFormProps,
   context: RenderContext,
-): TemplateResult {
-  const name$ = context.useMemo(() => new Atom(item?.name ?? ''), []);
-  const urlPattern$ = context.useMemo(
-    () => new Atom(item?.urlPattern ?? ''),
-    [],
+): unknown {
+  const name$ = context.use(Atom.untracked(item?.name ?? ''));
+  const urlPattern$ = context.use(Atom.untracked(item?.urlPattern ?? ''));
+  const contentExpression$ = context.use(
+    Atom.untracked(item?.contentExpression ?? ''),
   );
-  const contentExpression$ = context.useMemo(
-    () => new Atom(item?.contentExpression ?? ''),
-    [],
-  );
-  const nextLinkExpression$ = context.useMemo(
-    () => new Atom(item?.nextLinkExpression ?? ''),
-    [],
+  const nextLinkExpression$ = context.use(
+    Atom.untracked(item?.nextLinkExpression ?? ''),
   );
 
   const handleSubmit = context.useCallback(
@@ -88,7 +83,7 @@ export function UserSiteinfoForm(
               name: 'name',
               required: true,
               type: 'text',
-              '.value': name$.map(live),
+              $value: name$,
               '@input': handleNameInput,
             },
           })}>
@@ -105,7 +100,7 @@ export function UserSiteinfoForm(
               name: 'urlPattern',
               required: true,
               type: 'text',
-              '.value': urlPattern$.map(live),
+              $value: urlPattern$,
               '@input': handleUrlPatternInput,
             },
           })}>
@@ -125,7 +120,7 @@ export function UserSiteinfoForm(
               name: 'contentExpression',
               required: true,
               type: 'text',
-              '.value': contentExpression$.map(live),
+              $value: contentExpression$,
               '@input': handleContentExpressionInput,
             },
           })}>
@@ -144,7 +139,7 @@ export function UserSiteinfoForm(
               class: 'form-control',
               name: 'nextLinkExpression',
               type: 'text',
-              '.value': nextLinkExpression$.map(live),
+              $value: nextLinkExpression$,
               '@input': handleNextLinkInput,
             },
           })}>

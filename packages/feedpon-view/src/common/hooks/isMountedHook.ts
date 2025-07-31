@@ -1,6 +1,6 @@
-import type { Usable } from '@emonkak/ebit';
+import type { CustomHookFunction } from 'barebind';
 
-export const isMountedHook: Usable<() => boolean> = (context) => {
+export const isMountedHook: CustomHookFunction<() => boolean> = (context) => {
   const isMounted = context.useRef(false);
 
   context.useEffect(() => {

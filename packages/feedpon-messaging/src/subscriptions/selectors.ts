@@ -1,9 +1,8 @@
-import { createSelector } from 'reselect';
-
 import composeComparers from 'feedpon-utils/composeComparers.ts';
 import createAscendingComparer from 'feedpon-utils/createAscendingComparer.ts';
 import createDescendingComparer from 'feedpon-utils/createDescendingComparer.ts';
 import sequentialEqual from 'feedpon-utils/sequentialEqual.ts';
+import { createSelector } from 'reselect';
 import { UNCATEGORIZED } from '../categories/constants.ts';
 import type {
   GroupedSubscription,

@@ -1,16 +1,16 @@
-import type { RenderContext, TemplateResult } from '@emonkak/ebit';
-import { atom, live, nonKeyedList } from '@emonkak/ebit/directives.js';
+import { type RenderContext, repeat } from 'barebind';
+import { Atom } from 'barebind/extensions/signal';
 import { bindActions } from 'feedpon-flux';
-import { getStoreHook } from 'feedpon-flux/ebit.ts';
+import { getStoreHook } from 'feedpon-flux/barebind.ts';
 import type { State, ThemeKind } from 'feedpon-messaging';
-import { THEMES, changeCustomStyles, changeTheme } from 'feedpon-messaging/ui';
+import { changeCustomStyles, changeTheme, THEMES } from 'feedpon-messaging/ui';
 
 export interface UISettingsProps {}
 
 export function UISettings(
   {}: UISettingsProps,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   const {
     currentTheme,
     customStyles: initialCustomStyles,
@@ -29,7 +29,7 @@ export function UISettings(
     }),
   );
 
-  const customStyles$ = context.useMemo(() => atom(initialCustomStyles), []);
+  const customStyles$ = context.use(Atom.untracked(initialCustomStyles));
 
   const handleChangeCustomStyle = context.useCallback((event: Event) => {
     customStyles$.value = (event.currentTarget as HTMLTextAreaElement).value;
@@ -52,9 +52,9 @@ export function UISettings(
     [onChangeCustomStyles],
   );
 
-  const themeCheckboxes = nonKeyedList(
-    THEMES,
-    (theme) => context.html`
+  const themeCheckboxes = repeat({
+    source: THEMES,
+    valueSelector: (theme) => context.html`
       <label key={theme.value} class="form-check-label">
         <input
           checked=${theme.value === currentTheme}
@@ -68,7 +68,7 @@ export function UISettings(
         ${theme.label}
       </label>
     `,
-  );
+  });
 
   return context.html`
     <section class="section">
@@ -85,7 +85,7 @@ export function UISettings(
           <textarea
             class="form-control"
             rows="12"
-            .value=${customStyles$.map(live)}
+            $value=${customStyles$}
             @change=${handleChangeCustomStyle}
           ></textarea>
         </div>

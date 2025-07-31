@@ -9,6 +9,7 @@
   margin-bottom: calc(var(--vertical-rhythm) / 4);
   padding: calc(var(--vertical-rhythm) / 4) 0
     calc(var(--vertical-rhythm) / 4 - 1px);
+  gap: 0.5ch;
 }
 
 .SidebarItem {

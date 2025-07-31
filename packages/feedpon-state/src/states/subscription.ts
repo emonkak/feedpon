@@ -1,19 +1,14 @@
-import {
-  type Atom,
-  type Signal,
-  atom,
-  computed,
-} from '@emonkak/ebit/directives.js';
+import { Atom, Computed, type Signal } from 'barebind/extensions/signal';
 
-import { type FeedlyContext, acquireAuth } from '../api/feedly.ts';
+import { acquireAuth, type FeedlyContext } from '../api/feedly.ts';
 import type * as Feedly from '../api/feedlyTypes.d.ts';
 import type { AsyncAction, State, Store } from '../store.ts';
-import { ImmutableMap } from '../utils/ImmutableMap.ts';
 import {
   type Comparer,
   orderByAscending,
   orderByDescending,
 } from '../utils/comparer.ts';
+import { ImmutableMap } from '../utils/ImmutableMap.ts';
 
 export interface SubscriptionSeed {
   lastUpdated: number;
@@ -89,48 +84,40 @@ export class SubscriptionState implements State<SubscriptionSeed> {
   readonly version$: Atom<number>;
 
   constructor(seed: SubscriptionSeed = defaultSeed) {
-    this.lastUpdated$ = atom(seed.lastUpdated);
-    this.loading$ = atom(false);
-    this.order$ = atom(seed.order);
-    this.subscriptions$ = atom(
+    this.lastUpdated$ = new Atom(seed.lastUpdated);
+    this.loading$ = new Atom(false);
+    this.order$ = new Atom(seed.order);
+    this.subscriptions$ = new Atom(
       ImmutableMap.from(seed.subscriptions, (subscription) => [
         subscription.id,
         subscription,
       ]),
     );
-    this.unreadCounts$ = atom(
+    this.unreadCounts$ = new Atom(
       ImmutableMap.from(seed.unreadCounts, (unreadCount) => [
         unreadCount.id,
         unreadCount,
       ]),
     );
-    this.unreadOnly$ = atom(seed.unreadOnly);
-    this.version$ = atom(seed.version);
+    this.unreadOnly$ = new Atom(seed.unreadOnly);
+    this.version$ = new Atom(seed.version);
 
-    this.totalUnreadCount$ = computed(
-      (unreadCounts$) =>
-        unreadCounts$.value
-          .values()
-          .reduce((total, { count }) => total + count, 0),
+    this.totalUnreadCount$ = new Computed(
+      (unreadCounts) =>
+        unreadCounts.values().reduce((total, { count }) => total + count, 0),
       [this.unreadCounts$],
     );
 
-    const sortedSubscriptions$ = computed(
-      (subscriptions$, order$) =>
-        subscriptions$.value
-          .values()
-          .toArray()
-          .sort(getSubscriptionComparer(order$.value)),
+    const sortedSubscriptions$ = new Computed(
+      (subscriptions, order) =>
+        subscriptions.values().toArray().sort(getSubscriptionComparer(order)),
       [this.subscriptions$, this.order$],
     );
 
-    this.subscriptionTree$ = computed(
-      (subscriptions$, unreadCounts$, unreadOnly$) => {
-        const subscriptions = subscriptions$.value;
+    this.subscriptionTree$ = new Computed(
+      (subscriptions, unreadCounts, unreadOnly) => {
         const subscriptionGroups = new Map<string, SubscriptionGroup>();
-        const unreadCounts = unreadCounts$.value;
         const ungroupedItems: SubscriptionItem[] = [];
-        const unreadOnly = unreadOnly$.value;
 
         for (let i = 0, l = subscriptions.length; i < l; i++) {
           const subscription = subscriptions[i]!;
@@ -173,9 +160,9 @@ export class SubscriptionState implements State<SubscriptionSeed> {
       [sortedSubscriptions$, this.unreadCounts$, this.unreadOnly$],
     );
 
-    this.categories$ = computed(
-      (subscriptionTree$) =>
-        subscriptionTree$.value.subscriptionGroups.map(
+    this.categories$ = new Computed(
+      (subscriptionTree) =>
+        subscriptionTree.subscriptionGroups.map(
           (subscriptionGroup) => subscriptionGroup.category,
         ),
       [this.subscriptionTree$],
@@ -197,7 +184,10 @@ export class SubscriptionState implements State<SubscriptionSeed> {
   addSubscription({
     subscription,
     unreadCount,
-  }: { subscription: Subscription; unreadCount: UnreadCount }): void {
+  }: {
+    subscription: Subscription;
+    unreadCount: UnreadCount;
+  }): void {
     this.subscriptions$.value = this.subscriptions$.value.set(
       subscription.id,
       subscription,
@@ -220,7 +210,10 @@ export class SubscriptionState implements State<SubscriptionSeed> {
   moveSubscription({
     id,
     categories,
-  }: { id: string; categories: Category[] }): void {
+  }: {
+    id: string;
+    categories: Category[];
+  }): void {
     this.subscriptions$.value = this.subscriptions$.value.update(
       id,
       (subscription) => {
@@ -235,7 +228,10 @@ export class SubscriptionState implements State<SubscriptionSeed> {
   receiveSubscriptions({
     subscriptions,
     unreadCounts,
-  }: { subscriptions: Subscription[]; unreadCounts: UnreadCount[] }) {
+  }: {
+    subscriptions: Subscription[];
+    unreadCounts: UnreadCount[];
+  }) {
     this.loading$.value = false;
     this.lastUpdated$.value = Date.now();
     this.subscriptions$.value = ImmutableMap.from(

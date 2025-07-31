@@ -1,6 +1,7 @@
-import type { RenderContext, TemplateResult } from '@emonkak/ebit';
-import { Atom, component, keyedList, live } from '@emonkak/ebit/directives.js';
+import { component, type RenderContext, repeat } from 'barebind';
+import { Atom } from 'barebind/extensions/signal';
 import { bindActions } from 'feedpon-flux';
+import { getStoreHook } from 'feedpon-flux/barebind.ts';
 import type { State } from 'feedpon-messaging';
 import {
   addTrackingUrlPattern,
@@ -9,7 +10,6 @@ import {
   resetTrackingUrlPatterns,
 } from 'feedpon-messaging/trackingUrls';
 
-import { getStoreHook } from 'feedpon-flux/ebit.ts';
 import { AlertDialog } from '../primitives/AlertDialog.ts';
 import { TrackingUrlPatternForm } from './TrackingUrlPatternForm.ts';
 import { TrackingUrlPatternRow } from './TrackingUrlPatternRow.ts';
@@ -19,7 +19,7 @@ export interface TrackingUrlSettingsProps {}
 export function TrackingUrlSettings(
   _props: TrackingUrlSettingsProps,
   context: RenderContext,
-): TemplateResult {
+): unknown {
   const {
     cacheCapacity: initialCacheCapacity,
     onAddTrackingUrlPattern,
@@ -42,10 +42,7 @@ export function TrackingUrlSettings(
     }),
   );
 
-  const cacheCapacity$ = context.useMemo(
-    () => new Atom(initialCacheCapacity),
-    [],
-  );
+  const cacheCapacity$ = context.use(Atom.untracked(initialCacheCapacity));
 
   const handleChangeCacheCapacity = context.useCallback((event: Event) => {
     cacheCapacity$.value = (
@@ -54,22 +51,19 @@ export function TrackingUrlSettings(
   }, []);
 
   const handleReset = context.useCallback(() => {
-    AlertDialog.open(
-      {
-        confirmButton: ({ onConfirm }, context) => context.html`
+    AlertDialog.open({
+      confirmButton: ({ onConfirm }, context) => context.html`
           <button class="button button-negative" type="button" @click=${onConfirm}>Reset</button>
         `,
-        cancelButton: ({ onCancel }, context) => context.html`
+      cancelButton: ({ onCancel }, context) => context.html`
           <button class="button button-outline-default" type="button" @click=${onCancel}>Cancel</button>
         `,
-        onConfirm: () => {
-          onResetTrackingUrlPatterns();
-        },
-        title: 'Reset all tracking URLs',
-        message: 'Are you sure you want to reset all tracking URLs?',
+      onConfirm: () => {
+        onResetTrackingUrlPatterns();
       },
-      context,
-    );
+      title: 'Reset all tracking URLs',
+      message: 'Are you sure you want to reset all tracking URLs?',
+    });
   }, [onResetTrackingUrlPatterns]);
 
   const handleSubmitCacheCapacity = context.useCallback(
@@ -80,15 +74,15 @@ export function TrackingUrlSettings(
     [],
   );
 
-  const rows = keyedList(
-    patterns,
-    (pattern) => pattern,
-    (pattern) =>
+  const rows = repeat({
+    source: patterns,
+    keySelector: (pattern) => pattern,
+    valueSelector: (pattern) =>
       component(TrackingUrlPatternRow, {
         pattern,
         onDelete: onDeleteTrackingUrlPattern,
       }),
-  );
+  });
 
   return context.html`
     <section class="section">
@@ -107,7 +101,7 @@ export function TrackingUrlSettings(
                 min="1"
                 required
                 type="number"
-                .value=${cacheCapacity$.map(live)}
+                .value=${cacheCapacity$}
                 @change=${handleChangeCacheCapacity}
               >
               <button type="submit" class="button button-outline-positive">

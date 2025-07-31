@@ -1,4 +1,4 @@
-import { type Atom, atom } from '@emonkak/ebit/directives.js';
+import { Atom } from 'barebind/extensions/signal';
 
 import type { FeedlyContext } from '../api/feedly.ts';
 import type * as Feedly from '../api/feedlyTypes.d.ts';
@@ -103,14 +103,14 @@ export class StreamState implements State<StreamSeed> {
   readonly version$: Atom<number>;
 
   constructor(seed: StreamSeed = defaultSeed) {
-    this.currentSession$ = atom(seed.currentSession);
-    this.defaultSettings$ = atom(seed.defaultSettings);
-    this.lastSiteinfoUpdated$ = atom(seed.lastSiteinfoUpdated);
-    this.muteFilters$ = atom(seed.muteFilters);
-    this.pastSessions$ = atom(seed.pastSessions);
-    this.siteinfos$ = atom(seed.siteinfos);
-    this.urlTransforms$ = atom(seed.urlTransforms);
-    this.version$ = atom(seed.version);
+    this.currentSession$ = new Atom(seed.currentSession);
+    this.defaultSettings$ = new Atom(seed.defaultSettings);
+    this.lastSiteinfoUpdated$ = new Atom(seed.lastSiteinfoUpdated);
+    this.muteFilters$ = new Atom(seed.muteFilters);
+    this.pastSessions$ = new Atom(seed.pastSessions);
+    this.siteinfos$ = new Atom(seed.siteinfos);
+    this.urlTransforms$ = new Atom(seed.urlTransforms);
+    this.version$ = new Atom(seed.version);
   }
 
   toSnapshot(): StreamSeed {
