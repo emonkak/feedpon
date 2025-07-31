@@ -1,6 +1,6 @@
 import { type Atom, atom } from '@emonkak/ebit/directives.js';
 
-import type { FeedlyClient, FeedlyContext } from '../api/feedly.ts';
+import type { FeedlyContext } from '../api/feedly.ts';
 import type * as Feedly from '../api/feedlyTypes.d.ts';
 import type { WedataClient } from '../api/wedata.ts';
 import type * as Wedata from '../api/wedataTypes.d.ts';

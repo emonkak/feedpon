@@ -14,7 +14,6 @@ import {
   orderByAscending,
   orderByDescending,
 } from '../utils/comparer.ts';
-import request from '../utils/request.ts';
 
 export interface SubscriptionSeed {
   lastUpdated: number;
@@ -362,14 +361,17 @@ export function subscribeToFeed(
       topics: feed.topics,
     };
 
-    const unreadCounts = request(feedlyClient, 'GET', '/markers/counts', {
+    const unreadCounts = await feedlyClient.GET('/markers/counts', {
       id: feed.id,
     });
+    if (unreadCounts.error !== undefined) {
+      throw unreadCounts.error;
+    }
 
     subscriptionStore.dispatch({
       type: 'addSubscription',
       subscription,
-      unreadCount: unreadCounts.unreadCounts[0] ?? {
+      unreadCount: unreadCounts.data.unreadCounts[0] ?? {
         id: feed.id,
         count: 0,
         updated: Date.now(),

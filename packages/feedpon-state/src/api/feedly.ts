@@ -1,6 +1,5 @@
 import { type Atom, atom } from '@emonkak/ebit/directives.js';
 import createClient, { type Client } from 'openapi-fetch';
-import feedlyAPI from '../../openapi/feedly.json' assert { type: 'json' };
 
 import type { AsyncAction, State, Store } from '../store.ts';
 import type * as Feedly from './feedlyTypes.d.ts';
