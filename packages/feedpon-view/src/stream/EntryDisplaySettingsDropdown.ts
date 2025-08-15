@@ -194,11 +194,8 @@ export function EntryDisplaySettingsDropdown(
       >
         <i aria-hidden="true" class="icon icon-24 icon-checkmark" role="img"></i>
         <span
-          :classlist=${[
-            'badge',
-            'badge-small',
-            'badge-pill',
-            'badge-overlap',
+          :class=${[
+            'badge badge-small badge-pill badge-overlap',
             keepUnread ? 'badge-default' : 'badge-negative',
           ]}
           >

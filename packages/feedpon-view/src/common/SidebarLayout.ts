@@ -172,9 +172,9 @@ export function SidebarLayout(
     : {};
 
   return context.html`
-    <div :classlist=${['l-root', { 'is-swiping': isSwiping }]}>
+    <div :class=${{ _: 'l-root', 'is-swiping': isSwiping }}>
       <div
-        :classlist=${['l-sidebar', { 'is-opened': sidebarIsOpened }]}
+        :class=${{ _: 'l-sidebar', 'is-opened': sidebarIsOpened }}
         :style=${sidebarStyle}
         :ref=${sidebarRef}
         @transitionend=${handleTransitionEnd}
@@ -207,7 +207,7 @@ export function SidebarLayout(
           @ontouchend=${onTouchEnd}
         ></div>
       </div>
-      <div :classlist=${['l-backdrop', { 'is-shown': isLoading }]}>
+      <div :class=${{ _: 'l-backdrop', 'is-shown': isLoading }}>
         <${isLoading ? context.html`<i class="icon icon-48 icon-spinner animation-rotating"></i>` : null}>
       </div>
     </div>

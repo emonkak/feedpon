@@ -118,15 +118,13 @@ export function SubscriptionDropdown(
         @click=${onToggle}
       >
         <i
-          aria-hidden
-          :classlist=${[
-            'icon',
-            'icon-20',
-            'icon-width-32',
+          :class=${[
+            'icon icon-20 icon-width-32',
             subscription.isLoading
               ? 'icon-spinner animation-rotating'
               : 'icon-menu-2',
           ]}
+          aria-hidden
           role="img"
         ></i>
       </button>

@@ -119,7 +119,7 @@ export function EntryShareButton(
         onClose: popup.close,
         ownProps: {
           ':style': popup.style,
-          ':classlist': ['popup', 'is-pull-' + popup.pullDirection],
+          ':class': ['popup', 'is-pull-' + popup.pullDirection],
         },
       })}>
     </div>

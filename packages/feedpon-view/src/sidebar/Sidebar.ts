@@ -136,37 +136,31 @@ export function Sidebar({}: SidebarProps, context: RenderContext): unknown {
       </div>
       <div class="SidebarSection">
         <a
-          :classlist=${[
-            'SidebarItem',
-            {
-              'is-selected': location.url.pathname === '/',
-            },
-          ]}
+          :class=${{
+            _: 'SidebarItem',
+            'is-selected': location.url.pathname === '/',
+          }}
           href='#/'
         >
           <span class="SidebarItem-label">Dashboard</span>
         </a>
         <a
-          :classlist=${[
-            'SidebarItem',
-            {
-              'is-selected':
-                location.url.pathname === `/streams/${ALL_STREAM_ID}`,
-            },
-          ]}
+          :class=${{
+            _: 'SidebarItem',
+            'is-selected':
+              location.url.pathname === `/streams/${ALL_STREAM_ID}`,
+          }}
           href=${`#/streams/${ALL_STREAM_ID}`}
         >
           <span class="SidebarItem-label">All</span>
           <span class="SidebarItem-unread">${totalUnreadCount}</span>
         </a>
         <a
-          :classlist=${[
-            'SidebarItem',
-            {
-              'is-selected':
-                location.url.pathname === `/streams/${PINS_STREAM_ID}`,
-            },
-          ]}
+          :class=${{
+            _: 'SidebarItem',
+            'is-selected':
+              location.url.pathname === `/streams/${PINS_STREAM_ID}`,
+          }}
           href=${`#/streams/${PINS_STREAM_ID}`}
         >
           <span class="SidebarItem-label">Pins</span>
@@ -182,14 +176,10 @@ export function Sidebar({}: SidebarProps, context: RenderContext): unknown {
             @click=${onFetchSubscriptions}
           >
             <i
-              :classlist=${[
-                'icon',
-                'icon-16',
-                'icon-refresh',
-                {
-                  'animation-rotating': subscriptionsIsLoading,
-                },
-              ]}
+              :class=${{
+                _: 'icon icon-16 icon-refresh',
+                'animation-rotating': subscriptionsIsLoading,
+              }}
               aria-hidden="true"
               role="img"
             ></i>
@@ -213,23 +203,19 @@ export function Sidebar({}: SidebarProps, context: RenderContext): unknown {
       </div>
       <div class="SidebarSection">
         <a
-          :classlist=${[
-            'SidebarItem',
-            {
-              'is-selected': location.url.pathname.startsWith('/settings/'),
-            },
-          ]}
+          :class=${{
+            _: 'SidebarItem',
+            'is-selected': location.url.pathname.startsWith('/settings/'),
+          }}
           href="#/settings/ui"
         >
           <span class="SidebarItem-label">Settings</span>
         </a>
         <a
-          :classlist=${[
-            'SidebarItem',
-            {
-              'is-selected': location.url.pathname === '/about',
-            },
-          ]}
+          :class=${{
+            _: 'SidebarItem',
+            'is-selected': location.url.pathname === '/about',
+          }}
           href="#/about"
         >
           <span class="SidebarItem-label">About</span>

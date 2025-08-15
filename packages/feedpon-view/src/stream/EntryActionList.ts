@@ -23,9 +23,8 @@ export function EntryActionList(
   return context.html`
     <div class="button-toolbar u-flex u-flex-align-items-center u-flex-justify-content-center">
       <button
-        :classlist=${[
-          'button',
-          'button-pill',
+        :class=${[
+          'button button-pill',
           commentsIsShown ? 'button-default' : 'button-outline-default',
         ]}
         type="button"
@@ -33,9 +32,8 @@ export function EntryActionList(
         @click=${onToggleComments}
       >
         <i
-          :classlist=${[
-            'icon',
-            'icon-20',
+          :class=${[
+            'icon icon-20',
             commentsIsLoading
               ? 'icon-spinner animation-rotating'
               : 'icon-comments',

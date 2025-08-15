@@ -93,12 +93,10 @@ export function FormControl<TTagName extends FormControlElementTagName>(
     return context.dynamicHTML`
       <${new Literal(as)}
         :ref=${elementRef}
-        :classlist=${[
-          {
-            'is-valid': status === FormControlStatus.Valid,
-            'is-invalid': status === FormControlStatus.Invalid,
-          },
-        ]}
+        :class=${{
+          'is-valid': status === FormControlStatus.Valid,
+          'is-invalid': status === FormControlStatus.Invalid,
+        }}
         @change=${handleInput}
         ${ownProps}
       >
@@ -108,12 +106,10 @@ export function FormControl<TTagName extends FormControlElementTagName>(
       <${new Literal(as)}
         ${ownProps}
         :ref=${elementRef}
-        :classlist=${[
-          {
-            'is-valid': status === FormControlStatus.Valid,
-            'is-invalid': status === FormControlStatus.Invalid,
-          },
-        ]}
+        :class=${{
+          'is-valid': status === FormControlStatus.Valid,
+          'is-invalid': status === FormControlStatus.Invalid,
+        }}
         @input=${handleInput}
       ></${new Literal(as)}
     `;

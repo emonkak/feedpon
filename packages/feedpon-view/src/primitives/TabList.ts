@@ -51,12 +51,10 @@ export function TabItem(
   if (item.href !== undefined) {
     return context.html`
       <a
-        :classlist=${[
-          'Tab',
-          {
-            'is-selected': item.selected,
-          },
-        ]}
+        :class=${{
+          _: 'Tab',
+          'is-selected': item.selected,
+        }}
         aria-selected=${item.selected.toString()}
         data-key=${item.key}
         href=${item.href}
@@ -69,12 +67,10 @@ export function TabItem(
   } else {
     return context.html`
       <button
-        :classlist=${[
-          'Tab',
-          {
-            'is-selected': item.selected,
-          },
-        ]}
+        :class=${{
+          _: 'Tab',
+          'is-selected': item.selected,
+        }}
         aria-selected=${item.selected.toString()}
         data-key=${item.key}
         role="tab"

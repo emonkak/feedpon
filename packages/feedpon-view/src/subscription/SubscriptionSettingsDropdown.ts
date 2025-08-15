@@ -122,19 +122,16 @@ export function SubscriptionSettingsDropdown(
         @click=${onToggle}
       >
         <i
-          aria-hidden="true"
-          :classlist=${[
-            'icon',
-            'icon-20',
+          :class=${[
+            'icon icon-20',
             feed.isLoading
               ? 'icon-spinner'
               : subscription !== null
                 ? 'icon-settings'
                 : 'icon-plus-math',
-            {
-              'animation-rotating': feed.isLoading,
-            },
+            feed.isLoading ? 'animation-rotating' : null,
           ]}
+          aria-hidden="true"
           role="img"
         ></i>
       </button>

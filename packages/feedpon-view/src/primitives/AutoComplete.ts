@@ -115,12 +115,10 @@ export function AutoComplete<T>(
 
   return context.html`
     <div
-      :classlist=${[
-        'AutoComplete',
-        {
-          'is-open': open,
-        },
-      ]}
+      :class=${{
+        _: 'AutoComplete',
+        'is-open': open,
+      }}
       :ref=${autocompleteRef}
     >
       <form class="AutoComplete-form" @submit=${handleSubmit}>

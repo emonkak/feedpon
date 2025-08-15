@@ -248,7 +248,7 @@ function TreeNode<TKey, TValue>(
 
   return context.html`
     <div
-      :classlist=${['TreeItem', { 'is-selected': item.selected }]}
+      :class=${{ _: 'TreeItem', 'is-selected': item.selected }}
       :style=${{ '--level': state.level.toString() }}
       aria-labelledby=${ariaLabelId}
       aria-level=${state.level}

@@ -34,12 +34,10 @@ export function App({ getStore }: AppProps, context: RenderContext): unknown {
     return context.html`
       <div class="l-boot">
         <img
-          :classlist=${[
-            'u-margin-bottom-1',
-            {
-              'animation-blinking': !error,
-            },
-          ]}
+          :class=${{
+            _: 'u-margin-bottom-1',
+            'animation-blinking': !error,
+          }}
           src="./img/logo.svg"
           width="244"
           height="88"

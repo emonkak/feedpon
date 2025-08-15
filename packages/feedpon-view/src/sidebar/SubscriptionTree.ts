@@ -119,7 +119,7 @@ function renderItem(
   if (item.value.type === 'category') {
     const { unreadCount, category } = item.value;
     return context.html`
-      <div :classlist=${['StreamItem', { 'has-unread': unreadCount > 0 }]}>
+      <div :class=${{ _: 'StreamItem', 'has-unread': unreadCount > 0 }}>
         <div class="StreamItem-title">${category.label}</div>
         <div
           aria-label=${`${unreadCount} unread item(s) available`}
@@ -148,7 +148,7 @@ function renderItem(
         `
         : context.html`<i class="icon icon-16 icon-file"></i>`;
     return context.html`
-      <div :classlist=${['StreamItem', { 'has-unread': unreadCount > 0 }]}>
+      <div :class=${{ _: 'StreamItem', 'has-unread': unreadCount > 0 }}>
         <div class="StreamItem-icon"><${icon}></div>
         <div class="StreamItem-title">${subscription.title !== '' ? subscription.title : '<NO TITLE>'}</div>
         <div class="StreamItem-unread">${unreadCount > 0 ? unreadCount.toLocaleString() : ''}</div>

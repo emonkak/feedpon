@@ -34,24 +34,19 @@ export function NotificationView(
 
   return context.html`
     <div
-      :classlist=${[
-        'notification',
-        {
-          'notification-negative': notification.kind === 'negative',
-          'notification-positive': notification.kind === 'positive',
-        },
-      ]}
+      :class=${{
+        _: 'notification',
+        'notification-negative': notification.kind === 'negative',
+        'notification-positive': notification.kind === 'positive',
+      }}
     >
       <div class="notification-icon">
-        <i :classlist=${[
-          'icon',
-          'icon-24',
-          {
-            'icon-info': notification.kind === 'default',
-            'icon-checked': notification.kind === 'positive',
-            'icon-warning': notification.kind === 'negative',
-          },
-        ]}></i>
+        <i :class=${{
+          _: 'icon icon-24',
+          'icon-info': notification.kind === 'default',
+          'icon-checked': notification.kind === 'positive',
+          'icon-warning': notification.kind === 'negative',
+        }}></i>
       </div>
       <div class="notification-content">
         <span class="u-text-truncate" title=${notification.message}>

@@ -142,15 +142,13 @@ export function EntryItem(
 
   return context.html`
     <article
-      :classlist=${[
-        {
-          entry: true,
-          'is-active': isActive,
-          'is-expanded': isExpanded,
-          'is-marked-as-read': entry.markedAsRead,
-          'is-pinned': entry.isPinned,
-        },
-      ]}
+      :class=${{
+        _: 'entry',
+        'is-active': isActive,
+        'is-expanded': isExpanded,
+        'is-marked-as-read': entry.markedAsRead,
+        'is-pinned': entry.isPinned,
+      }}
       :ref=${elementRef}
       lang=${entry.language}
       @click=${handleExpand}
@@ -313,15 +311,11 @@ function renderBookmarks(entry: Entry, context: RenderContext): unknown {
   return context.html`
     <li class="list-inline-item">
       <a
-        :classlist=${[
-          'badge',
-          'badge-medium',
-          'link-soft',
-          {
-            'badge-negative': entry.bookmarkCount >= 10,
-            'u-text-negative': entry.bookmarkCount > 0,
-          },
-        ]}
+        :class=${{
+          _: 'badge badge-medium link-soft',
+          'badge-negative': entry.bookmarkCount >= 10,
+          'u-text-negative': entry.bookmarkCount > 0,
+        }}
         target="_blank"
         href=${'https://b.hatena.ne.jp/entry/' + encodeURIComponent(entry.url)}
         rel="noreferrer"
