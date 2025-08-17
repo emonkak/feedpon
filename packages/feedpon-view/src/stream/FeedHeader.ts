@@ -1,4 +1,4 @@
-import { component, type RenderContext } from 'barebind';
+import { createComponent, type RenderContext } from 'barebind';
 import type { Category, Feed, Subscription } from 'feedpon-messaging';
 import type { createCategory } from 'feedpon-messaging/categories';
 import type {
@@ -23,7 +23,7 @@ interface FeedHeaderProps {
   subscription: Subscription | null;
 }
 
-export function FeedHeader(
+export const FeedHeader = createComponent(function FeedHeader(
   {
     categories,
     feed,
@@ -36,13 +36,13 @@ export function FeedHeader(
     onUnsubscribe,
     subscription,
   }: FeedHeaderProps,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
   const feedLink = feed.url
-    ? context.html`<a target="_blank" class="link-strong" href=${feed.url} rel="noreferrer">${feed.title}</a>`
-    : context.html`<strong>${feed.title}</strong>`;
+    ? $.html`<a target="_blank" class="link-strong" href=${feed.url} rel="noreferrer">${feed.title}</a>`
+    : $.html`<strong>${feed.title}</strong>`;
 
-  return context.html`
+  return $.html`
     <header class="stream-header">
       <div class="container">
         <div class="u-flex u-flex-align-items-center u-flex-justify-content-between">
@@ -71,7 +71,7 @@ export function FeedHeader(
             </div>
           </div>
           <div class="u-flex-shrink-0">
-            <${component(SubscriptionSettingsDropdown, {
+            <${SubscriptionSettingsDropdown({
               categories,
               feed,
               onAddToCategory,
@@ -86,4 +86,4 @@ export function FeedHeader(
       </div>
     </header>
   `;
-}
+});

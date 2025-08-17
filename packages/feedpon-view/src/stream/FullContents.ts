@@ -1,4 +1,4 @@
-import { component, type RenderContext, repeat } from 'barebind';
+import { createComponent, type RenderContext, Repeat } from 'barebind';
 import type { FullContent } from 'feedpon-messaging';
 
 import { EmbeddedHTML } from '../primitives/EmbeddedHTML.ts';
@@ -10,12 +10,12 @@ interface FullContentsProps {
   onFetchNext: (event: Event) => void;
 }
 
-export function FullContents(
+export const FullContents = createComponent(function FullContents(
   { isLoading, isNotFound, items, onFetchNext }: FullContentsProps,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
   if (items.length === 0) {
-    return context.html`
+    return $.html`
       <div class="entry-content u-clearfix u-text-wrap">
         <div class="message message-positive">
           The full content of this entry could not be extracted.
@@ -24,13 +24,13 @@ export function FullContents(
     `;
   }
 
-  const pages = repeat({
+  const pages = Repeat({
     source: items,
-    valueSelector: (fullContent, index) => context.html`
+    valueSelector: (fullContent, index) => $.html`
       <section class="entry-page">
         <${
           index > 0
-            ? context.html`
+            ? $.html`
               <header class="entry-page-header">
                 <h2 class="entry-page-title">
                   <a
@@ -44,9 +44,9 @@ export function FullContents(
                 </h2>
               </header>
             `
-            : context.html``
+            : $.html``
         }>
-        <${component(EmbeddedHTML, {
+        <${EmbeddedHTML({
           baseUrl: fullContent.url,
           class: 'entry-page-content',
           html: fullContent.content,
@@ -58,7 +58,7 @@ export function FullContents(
   let nextPageButton: unknown = null;
 
   if (isNotFound) {
-    nextPageButton = context.html`
+    nextPageButton = $.html`
       <div class="message message-positive">
         The next page cannot be extracted.
       </div>
@@ -67,7 +67,7 @@ export function FullContents(
     const latestItem = items[items.length - 1];
     if (latestItem?.nextPageUrl) {
       nextPageButton = isLoading
-        ? context.html`
+        ? $.html`
           <button
             type="button"
             class="button button-block button-outline-positive"
@@ -76,7 +76,7 @@ export function FullContents(
             <i class="icon icon-20 icon-spinner animation-rotating"></i>
           </button>
         `
-        : context.html`
+        : $.html`
           <button
             type="button"
             class="button button-block button-outline-positive"
@@ -88,10 +88,10 @@ export function FullContents(
     }
   }
 
-  return context.html`
+  return $.html`
     <div class="entry-content u-clearfix u-text-wrap">
       <${pages}>
-      <${nextPageButton ?? context.html``}>
+      <${nextPageButton ?? $.html``}>
     </div>
   `;
-}
+});

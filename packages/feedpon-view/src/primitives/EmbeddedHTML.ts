@@ -1,4 +1,4 @@
-import type { RenderContext } from 'barebind';
+import { createComponent, type RenderContext } from 'barebind';
 import cleanNode from 'feedpon-utils/cleanNode.ts';
 import walkNode from 'feedpon-utils/walkNode.ts';
 
@@ -8,13 +8,13 @@ interface EmbeddedHTMLProps {
   html: string;
 }
 
-export function EmbeddedHTML(
+export const EmbeddedHTML = createComponent(function EmbeddedHTML(
   { class: className, baseUrl, html }: EmbeddedHTMLProps,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
-  const containerRef = context.useRef<Element | null>(null);
+  const containerRef = $.useRef<Element | null>(null);
 
-  context.useLayoutEffect(() => {
+  $.useLayoutEffect(() => {
     const template = document.createElement('template');
 
     if (html !== '') {
@@ -25,5 +25,5 @@ export function EmbeddedHTML(
     containerRef.current?.replaceChildren(template.content);
   }, [baseUrl, html]);
 
-  return context.html`<div :ref=${containerRef} class=${className}></div>`;
-}
+  return $.html`<div :ref=${containerRef} class=${className}></div>`;
+});

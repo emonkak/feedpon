@@ -1,6 +1,6 @@
-import { component, type RenderContext, repeat } from 'barebind';
-import { type HistoryNavigator, RelativeURL } from 'barebind/extensions/router';
-import { Atom } from 'barebind/extensions/signal';
+import { createComponent, type RenderContext, Repeat } from 'barebind';
+import { LocalAtom } from 'barebind/extras/hooks';
+import { type HistoryNavigator, RelativeURL } from 'barebind/extras/router';
 import { bindActions } from 'feedpon-flux';
 import { getStoreHook } from 'feedpon-flux/barebind.ts';
 import type { State } from 'feedpon-messaging';
@@ -26,11 +26,11 @@ export interface SearchPageProps {
   navigator: HistoryNavigator;
 }
 
-export function SearchPage(
+export const SearchPage = createComponent(function SearchPage(
   { defaultQuery = '', navigator }: SearchPageProps,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
-  const sortedCategoriesSelector = context.useMemo(
+  const sortedCategoriesSelector = $.useMemo(
     () => createSortedCategoriesSelector(),
     [],
   );
@@ -48,7 +48,7 @@ export function SearchPage(
     onToggleSidebar,
     onUnsubscribe,
     subscriptions,
-  } = context.use(
+  } = $.use(
     getStoreHook({
       mapStateToProps: (state: State) => ({
         activeQuery: state.search.query,
@@ -70,8 +70,8 @@ export function SearchPage(
     }),
   );
 
-  const previousActiveQuery = context.use(createPreviousHook(activeQuery));
-  const currentQuery$ = context.use(Atom.untracked(defaultQuery));
+  const previousActiveQuery = $.use(createPreviousHook(activeQuery));
+  const currentQuery$ = $.use(LocalAtom(defaultQuery));
 
   if (
     previousActiveQuery !== null &&
@@ -81,18 +81,18 @@ export function SearchPage(
     currentQuery$.value = activeQuery;
   }
 
-  context.useEffect(() => {
+  $.useEffect(() => {
     if (defaultQuery !== '') {
       onSearchFeeds(defaultQuery);
     }
   }, [defaultQuery]);
 
-  const handleChange = context.useCallback((event: Event) => {
+  const handleChange = $.useCallback((event: Event) => {
     const newValue = (event.currentTarget as HTMLInputElement).value;
     currentQuery$.value = newValue;
   }, []);
 
-  const handleSearch = context.useCallback((event: SubmitEvent) => {
+  const handleSearch = $.useCallback((event: SubmitEvent) => {
     event.preventDefault();
 
     if (currentQuery$.value !== '') {
@@ -103,9 +103,9 @@ export function SearchPage(
     }
   }, []);
 
-  const header = component(Navbar, {
+  const header = Navbar({
     onToggleSidebar,
-    children: context.html`<div class="navbar-title">Search</div>`,
+    children: $.html`<div class="navbar-title">Search</div>`,
   });
 
   let searchResult: unknown;
@@ -113,11 +113,11 @@ export function SearchPage(
   if (activeQuery === '' || activeQuery !== defaultQuery) {
     searchResult = null;
   } else if (isLoading) {
-    searchResult = context.html`
+    searchResult = $.html`
       <ol className="list-group">
-        <${repeat({
+        <${Repeat({
           source: new Array(10),
-          valueSelector: () => context.html`
+          valueSelector: () => $.html`
             <li class="list-group-item">
               <div class="link-strong">
                 <span class="placeholder placeholder-40 animation-shining"></span>
@@ -135,16 +135,16 @@ export function SearchPage(
       </ol>
     `;
   } else if (isLoaded && feeds.length === 0) {
-    searchResult = context.html`
+    searchResult = $.html`
       <p>Your search "<strong>${activeQuery}</strong>" did not match any feeds.</p>
     `;
   } else {
-    searchResult = context.html`
+    searchResult = $.html`
       <ol class="list-group">
-        <${repeat({
+        <${Repeat({
           source: feeds,
           valueSelector: (feed) =>
-            component(FeedView, {
+            FeedView({
               categories,
               feed,
               onAddToCategory,
@@ -159,7 +159,7 @@ export function SearchPage(
     `;
   }
 
-  const content = context.html`
+  const content = $.html`
     <div class="container u-margin-top-2 u-margin-bottom-4">
       <h1 class="display-1">Search for feeds to subscribe</h1>
       <form class="form" @submit=${handleSearch}>
@@ -180,8 +180,8 @@ export function SearchPage(
     </div>
   `;
 
-  return context.html`<${component(MainLayout, {
+  return MainLayout({
     header,
     content,
-  })}>`;
-}
+  });
+});

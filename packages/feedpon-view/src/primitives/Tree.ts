@@ -1,12 +1,18 @@
-import { component, memo, type RenderContext, repeat } from 'barebind';
+import {
+  type Bindable,
+  type Component,
+  createComponent,
+  type RenderContext,
+  Repeat,
+} from 'barebind';
 
-export interface TreeProps<TKey, TValue> {
+export interface TreeProps<TKey = unknown, TValue = unknown> {
   items: TreeItem<TKey, TValue>[];
   renderItem: (item: TreeItem<TKey, TValue>, context: RenderContext) => unknown;
   onSelect(item: TreeItem<TKey, TValue>): void;
 }
 
-export interface TreeItem<TKey, TValue> {
+export interface TreeItem<TKey = unknown, TValue = unknown> {
   children: TreeItem<TKey, TValue>[];
   defaultExpanded?: boolean;
   key: TKey;
@@ -26,19 +32,25 @@ interface UnmanagedState {
   userInteraction: boolean;
 }
 
-export function Tree<TKey, TValue>(
+export interface Tree extends Component<TreeProps> {
+  <TKey, TValue>(
+    props: TreeProps<TKey, TValue>,
+  ): Bindable<TreeProps<TKey, TValue>>;
+}
+
+export const Tree: Tree = createComponent(function Tree<TKey, TValue>(
   { items, renderItem, onSelect }: TreeProps<TKey, TValue>,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
-  const unmanagedStatesRef = context.useMemo(
+  const unmanagedStatesRef = $.useMemo(
     () => ({ current: new Map<TKey, UnmanagedState>() }),
     [],
   );
   const oldUnmanagedStates = unmanagedStatesRef.current;
   const newUnmanagedStates = new Map<TKey, UnmanagedState>();
 
-  const forceUpdate = context.useCallback(() => {
-    context.forceUpdate();
+  const forceUpdate = $.useCallback(() => {
+    $.forceUpdate();
   }, []);
 
   const aggregate = (
@@ -81,15 +93,15 @@ export function Tree<TKey, TValue>(
     return accumulator;
   };
 
-  const children = repeat({
+  const children = Repeat({
     source: items.reduce(
       (results, item) => aggregate(results, item, null),
       [] as ItemAggregation<TKey, TValue>[],
     ),
     keySelector: ({ item }) => item.key,
     valueSelector: ({ item, state, parent }) =>
-      component(TreeNode<TKey, TValue>, {
-        children: renderItem(item, context),
+      TreeNode({
+        children: renderItem(item, $),
         item,
         onSelect,
         onStateUpadte: forceUpdate,
@@ -100,14 +112,18 @@ export function Tree<TKey, TValue>(
 
   unmanagedStatesRef.current = newUnmanagedStates;
 
-  return context.html`
+  return $.html`
     <div class="Tree" role="tree">
       <${children}>
     </div>
   `;
+});
+
+interface TreeNode extends Component<TreeNodeProps> {
+  <T>(props: TreeNodeProps<T>): Bindable<TreeNodeProps<T>>;
 }
 
-interface TreeNodeProps<TKey, TValue> {
+interface TreeNodeProps<TKey = unknown, TValue = unknown> {
   children: unknown;
   item: TreeItem<TKey, TValue>;
   onSelect(item: TreeItem<TKey, TValue>): void;
@@ -116,115 +132,116 @@ interface TreeNodeProps<TKey, TValue> {
   state: UnmanagedState;
 }
 
-function TreeNode<TKey, TValue>(
-  {
-    children,
-    item,
-    onSelect,
-    onStateUpadte,
-    state,
-    parent,
-  }: TreeNodeProps<TKey, TValue>,
-  context: RenderContext,
-): unknown {
-  const handleClick = context.useCallback(
-    (event: MouseEvent) => {
-      event.preventDefault();
-      onSelect(item);
-    },
-    [onSelect, item.value],
-  );
+const TreeNode: TreeNode = createComponent(
+  function TreeNode<TKey, TValue>(
+    {
+      children,
+      item,
+      onSelect,
+      onStateUpadte,
+      state,
+      parent,
+    }: TreeNodeProps<TKey, TValue>,
+    $: RenderContext,
+  ): unknown {
+    const handleClick = $.useCallback(
+      (event: MouseEvent) => {
+        event.preventDefault();
+        onSelect(item);
+      },
+      [onSelect, item.value],
+    );
 
-  const handleKeyDown = context.useCallback(
-    (event: KeyboardEvent) => {
-      if (event.currentTarget !== event.target) {
-        return;
-      }
+    const handleKeyDown = $.useCallback(
+      (event: KeyboardEvent) => {
+        if (event.currentTarget !== event.target) {
+          return;
+        }
 
-      switch (event.key) {
-        case 'ArrowLeft':
-          event.preventDefault();
-          event.stopPropagation();
-          if (state.expanded) {
-            state.expanded = false;
-            state.userInteraction = true;
-            onStateUpadte();
-          } else if (parent?.state.expanded) {
+        switch (event.key) {
+          case 'ArrowLeft':
+            event.preventDefault();
+            event.stopPropagation();
+            if (state.expanded) {
+              state.expanded = false;
+              state.userInteraction = true;
+              onStateUpadte();
+            } else if (parent?.state.expanded) {
+              matchPrevious<HTMLElement>(
+                event.currentTarget as Element,
+                (element) =>
+                  element.matches(`.TreeItem[aria-level="${state.level - 1}"]`),
+              )?.focus();
+              parent.state.expanded = false;
+              parent.state.userInteraction = true;
+              onStateUpadte();
+            }
+            break;
+          case 'ArrowRight':
+            event.preventDefault();
+            event.stopPropagation();
+            if (item.children.length > 0 && !state.expanded) {
+              state.expanded = true;
+              state.userInteraction = true;
+              onStateUpadte();
+            }
+            break;
+          case 'ArrowDown':
+            event.preventDefault();
+            event.stopPropagation();
+            matchNext<HTMLElement>(event.currentTarget as Element, (element) =>
+              element.matches('.TreeItem'),
+            )?.focus();
+            break;
+          case 'ArrowUp':
+            event.preventDefault();
+            event.stopPropagation();
             matchPrevious<HTMLElement>(
               event.currentTarget as Element,
-              (element) =>
-                element.matches(`.TreeItem[aria-level="${state.level - 1}"]`),
+              (element) => element.matches('.TreeItem'),
             )?.focus();
-            parent.state.expanded = false;
-            parent.state.userInteraction = true;
-            onStateUpadte();
-          }
-          break;
-        case 'ArrowRight':
-          event.preventDefault();
-          event.stopPropagation();
-          if (item.children.length > 0 && !state.expanded) {
-            state.expanded = true;
-            state.userInteraction = true;
-            onStateUpadte();
-          }
-          break;
-        case 'ArrowDown':
-          event.preventDefault();
-          event.stopPropagation();
-          matchNext<HTMLElement>(event.currentTarget as Element, (element) =>
-            element.matches('.TreeItem'),
-          )?.focus();
-          break;
-        case 'ArrowUp':
-          event.preventDefault();
-          event.stopPropagation();
-          matchPrevious<HTMLElement>(
-            event.currentTarget as Element,
-            (element) => element.matches('.TreeItem'),
-          )?.focus();
-          break;
-        case 'Home':
-          event.preventDefault();
-          event.stopPropagation();
-          (event.currentTarget as Element).parentElement
-            ?.querySelector<HTMLElement>('.TreeItem')
-            ?.focus();
-          break;
-        case 'End':
-          event.preventDefault();
-          event.stopPropagation();
-          (event.currentTarget as Element).parentElement
-            ?.querySelector<HTMLElement>('.TreeItem:last-of-type')
-            ?.focus();
-          break;
-        case 'Enter':
-        case ' ':
-          event.stopPropagation();
-          event.preventDefault();
-          onSelect(item);
-          break;
-      }
-    },
-    [item.value, onSelect, onStateUpadte, parent?.state, state],
-  );
+            break;
+          case 'Home':
+            event.preventDefault();
+            event.stopPropagation();
+            (event.currentTarget as Element).parentElement
+              ?.querySelector<HTMLElement>('.TreeItem')
+              ?.focus();
+            break;
+          case 'End':
+            event.preventDefault();
+            event.stopPropagation();
+            (event.currentTarget as Element).parentElement
+              ?.querySelector<HTMLElement>('.TreeItem:last-of-type')
+              ?.focus();
+            break;
+          case 'Enter':
+          case ' ':
+            event.stopPropagation();
+            event.preventDefault();
+            onSelect(item);
+            break;
+        }
+      },
+      [item.value, onSelect, onStateUpadte, parent?.state, state],
+    );
 
-  const handleExpand = context.useCallback(
-    (event: MouseEvent) => {
-      event.preventDefault();
-      event.stopPropagation();
-      state.expanded = !state.expanded;
-      state.userInteraction = true;
-      onStateUpadte();
-    },
-    [onStateUpadte, state],
-  );
+    const handleExpand = $.useCallback(
+      (event: MouseEvent) => {
+        event.preventDefault();
+        event.stopPropagation();
+        state.expanded = !state.expanded;
+        state.userInteraction = true;
+        onStateUpadte();
+      },
+      [onStateUpadte, state],
+    );
 
-  const ariaLabelId = context.useId();
+    const ariaLabelId = $.useId();
 
-  const expandButton =
-    item.children.length > 0
-      ? context.html`
+    const expandButton =
+      item.children.length > 0
+        ? $.html`
         <button
           aria-expanded=${state.expanded.toString()}
           aria-label=${state.expanded ? 'Shrink item' : 'Expand item'}
@@ -244,9 +261,9 @@ function TreeNode<TKey, TValue>(
           ></i>
         </button>
       `
-      : null;
+        : null;
 
-  return context.html`
+    return $.html`
     <div
       :class=${{ _: 'TreeItem', 'is-selected': item.selected }}
       :style=${{ '--level': state.level.toString() }}
@@ -264,18 +281,20 @@ function TreeNode<TKey, TValue>(
       </div>
     </div>
   `;
-}
-
-memo(TreeNode, (nextProps, prevProps): boolean => {
-  return (
-    nextProps.item.children.length === prevProps.item.children.length &&
-    nextProps.item.selected === prevProps.item.selected &&
-    nextProps.item.value === prevProps.item.value &&
-    nextProps.onSelect === prevProps.onSelect &&
-    nextProps.state.expanded === prevProps.state.expanded &&
-    nextProps.state.level === prevProps.state.level
-  );
-});
+  },
+  {
+    shouldSkipUpdate: (nextProps, prevProps) => {
+      return (
+        nextProps.item.children.length === prevProps.item.children.length &&
+        nextProps.item.selected === prevProps.item.selected &&
+        nextProps.item.value === prevProps.item.value &&
+        nextProps.onSelect === prevProps.onSelect &&
+        nextProps.state.expanded === prevProps.state.expanded &&
+        nextProps.state.level === prevProps.state.level
+      );
+    },
+  },
+);
 
 function matchPrevious<T extends Element>(
   element: Element,

@@ -1,5 +1,5 @@
-import { component, type RenderContext } from 'barebind';
-import type { RelativeURL } from 'barebind/extensions/router';
+import { createComponent, type RenderContext } from 'barebind';
+import type { RelativeURL } from 'barebind/extras/router';
 import { bindActions } from 'feedpon-flux';
 import { getStoreHook } from 'feedpon-flux/barebind.ts';
 import { toggleSidebar } from 'feedpon-messaging/ui';
@@ -13,11 +13,11 @@ export interface SettingsProps {
   url: RelativeURL;
 }
 
-export function SettingsPage(
+export const SettingsPage = createComponent(function SettingsPage(
   { children, url }: SettingsProps,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
-  const { onToggleSidebar } = context.use(
+  const { onToggleSidebar } = $.use(
     getStoreHook({
       mapDispatchToProps: bindActions({
         onToggleSidebar: toggleSidebar,
@@ -25,20 +25,20 @@ export function SettingsPage(
     }),
   );
 
-  const header = component(Navbar, {
+  const header = Navbar({
     onToggleSidebar,
-    children: context.html`
+    children: $.html`
       <h1 class="navbar-title">Settings</h1>
     `,
   });
 
-  const tabList = component(TabList, {
+  const tabList = TabList({
     items: [
       {
         key: 'ui',
         href: '#/settings/ui',
         selected: url.pathname === '/settings/ui',
-        children: context.html`
+        children: $.html`
           <i class="u-inline-block u-md-none icon icon-20 icon-browser-window"></i>
           <span class="u-none u-md-inline">UI</span>
         `,
@@ -47,7 +47,7 @@ export function SettingsPage(
         key: 'stream',
         href: '#/settings/stream',
         selected: url.pathname === '/settings/stream',
-        children: context.html`
+        children: $.html`
           <i class="u-inline-block u-md-none icon icon-20 icon-news-feed"></i>
           <span class="u-none u-md-inline">Stream</span>
         `,
@@ -56,7 +56,7 @@ export function SettingsPage(
         key: 'tracking_url',
         href: '#/settings/tracking_url',
         selected: url.pathname === '/settings/tracking_url',
-        children: context.html`
+        children: $.html`
           <i class="u-inline-block u-md-none icon icon-20 icon-link"></i>
           <span class="u-none u-md-inline">Tracking URL</span>
         `,
@@ -65,7 +65,7 @@ export function SettingsPage(
         key: 'url_replacement',
         href: '#/settings/url_replacement',
         selected: url.pathname === '/settings/url_replacement',
-        children: context.html`
+        children: $.html`
           <i class="u-inline-block u-md-none icon icon-20 icon-replace"></i>
           <span class="u-none u-md-inline">URL Replacement</span>
         `,
@@ -74,7 +74,7 @@ export function SettingsPage(
         key: 'siteinfo',
         href: '#/settings/siteinfo',
         selected: url.pathname === '/settings/siteinfo',
-        children: context.html`
+        children: $.html`
           <i class="u-inline-block u-md-none icon icon-20 icon-database"></i>
           <span class="u-none u-md-inline">Siteinfo</span>
         `,
@@ -83,7 +83,7 @@ export function SettingsPage(
         key: 'keyboard',
         href: '#/settings/keyboard',
         selected: url.pathname === '/settings/keyboard',
-        children: context.html`
+        children: $.html`
           <i class="u-inline-block u-md-none icon icon-20 icon-keyboard"></i>
           <span class="u-none u-md-inline">Keyboard</span>
         `,
@@ -91,18 +91,15 @@ export function SettingsPage(
     ],
   });
 
-  const content = context.html`
+  const content = $.html`
     <div class="container">
       <${tabList}>
       <${children}>
     </div>
   `;
 
-  return MainLayout(
-    {
-      header,
-      content,
-    },
-    context,
-  );
-}
+  return MainLayout({
+    header,
+    content,
+  });
+});

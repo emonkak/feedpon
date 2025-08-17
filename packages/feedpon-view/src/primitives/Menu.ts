@@ -1,9 +1,9 @@
 import {
-  component,
-  memo,
+  createComponent,
   type RefObject,
   type RenderContext,
-  repeat,
+  Repeat,
+  shallowEqual,
 } from 'barebind';
 
 export interface MenuProps {
@@ -77,7 +77,7 @@ interface MenuSeparator {
 const FOCUSABLE_ELEMENT_SELECTOR =
   'a[href], button:not(:disabled), input:not(:disabled), textarea:not(:disabled), select:not(:disabled), details, [tabindex]:not([tabindex="-1"])';
 
-export function Menu(
+export const Menu = createComponent(function Menu(
   {
     autoFocus = true,
     items,
@@ -88,11 +88,11 @@ export function Menu(
     ref: exposedRef = { current: null },
     target,
   }: MenuProps,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
-  const menuRef = context.useRef<HTMLElement | null>(null);
+  const menuRef = $.useRef<HTMLElement | null>(null);
 
-  exposedRef.current = context.useMemo(
+  exposedRef.current = $.useMemo(
     () => ({
       focusFirst() {
         focusFirstItem(menuRef.current!);
@@ -110,7 +110,7 @@ export function Menu(
     [],
   );
 
-  const handleKeyDown = context.useCallback((event: KeyboardEvent) => {
+  const handleKeyDown = $.useCallback((event: KeyboardEvent) => {
     if (
       !(
         event.target === event.currentTarget ||
@@ -140,14 +140,14 @@ export function Menu(
     }
   }, []);
 
-  const handleToggle = context.useCallback(
+  const handleToggle = $.useCallback(
     (event: ToggleEvent) => {
       onToggle?.(event.newState === 'open');
     },
     [onToggle],
   );
 
-  context.useLayoutEffect(() => {
+  $.useLayoutEffect(() => {
     const menu = menuRef.current!;
 
     if (open) {
@@ -167,13 +167,13 @@ export function Menu(
     }
   }, [open]);
 
-  const children = repeat({
+  const children = Repeat({
     source: items,
     keySelector: (item) => item.key,
-    valueSelector: (item) => renderItem(item, onItemAction, context),
+    valueSelector: (item) => renderItem(item, onItemAction, $),
   });
 
-  return context.html`
+  return $.html`
     <div
       :ref=${menuRef}
       autofocus=${autoFocus}
@@ -187,126 +187,130 @@ export function Menu(
       <${children}>
     </div>
   `;
-}
+});
 
-function MenuButton(
-  {
-    item,
-    onItemAction,
-  }: {
-    item: MenuButton;
-    onItemAction?: ((event: Event, key: string) => void) | undefined;
-  },
-  context: RenderContext,
-): unknown {
-  const handleAction = context.useCallback(
-    (event: Event) => {
-      item.onAction?.(event, item.key);
-      onItemAction?.(event, item.key);
+const MenuButton = createComponent(
+  function MenuButton(
+    {
+      item,
+      onItemAction,
+    }: {
+      item: MenuButton;
+      onItemAction?: ((event: Event, key: string) => void) | undefined;
     },
-    [item.key, item.onAction, onItemAction],
-  );
+    $: RenderContext,
+  ): unknown {
+    const handleAction = $.useCallback(
+      (event: Event) => {
+        item.onAction?.(event, item.key);
+        onItemAction?.(event, item.key);
+      },
+      [item.key, item.onAction, onItemAction],
+    );
 
-  return context.html`
-    <button
-      aria-checked=${item.checked?.toString()}
-      class="MenuItem"
-      disabled=${item.disabled}
-      role=${typeof item.checked === 'boolean' ? 'menuitemcheckbox' : 'menuitem'}
-      type="button"
-      @click=${handleAction}
-    >
-      <${item.children}>
-    </button>
-  `;
-}
-
-memo(MenuButton);
-
-function MenuForm(
-  {
-    item,
-    onItemAction,
-  }: {
-    item: MenuForm;
-    onItemAction?: ((event: Event, key: string) => void) | undefined;
+    return $.html`
+      <button
+        aria-checked=${item.checked?.toString()}
+        class="MenuItem"
+        disabled=${item.disabled}
+        role=${typeof item.checked === 'boolean' ? 'menuitemcheckbox' : 'menuitem'}
+        type="button"
+        @click=${handleAction}
+      >
+        <${item.children}>
+      </button>
+    `;
   },
-  context: RenderContext,
-): unknown {
-  const handleAction = context.useCallback(
-    (event: Event) => {
-      item.onAction?.(event, item.key);
-      onItemAction?.(event, item.key);
-      event.preventDefault();
+  { shouldSkipUpdate: shallowEqual },
+);
+
+const MenuForm = createComponent(
+  function MenuForm(
+    {
+      item,
+      onItemAction,
+    }: {
+      item: MenuForm;
+      onItemAction?: ((event: Event, key: string) => void) | undefined;
     },
-    [item.key, item.onAction, onItemAction],
-  );
+    $: RenderContext,
+  ): unknown {
+    const handleAction = $.useCallback(
+      (event: Event) => {
+        item.onAction?.(event, item.key);
+        onItemAction?.(event, item.key);
+        event.preventDefault();
+      },
+      [item.key, item.onAction, onItemAction],
+    );
 
-  return context.html`
-    <form
-      aria-label=${item.ariaLabel}
-      class="MenuItem"
-      role="menuitem"
-      @submit=${handleAction}
-    >
-      <${item.children}>
-    </form>
-  `;
-}
-
-memo(MenuForm);
-
-function MenuGroup(
-  {
-    item,
-    onItemAction,
-  }: {
-    item: MenuGroup;
-    onItemAction?: ((event: Event, key: string) => void) | undefined;
+    return $.html`
+      <form
+        aria-label=${item.ariaLabel}
+        class="MenuItem"
+        role="menuitem"
+        @submit=${handleAction}
+      >
+        <${item.children}>
+      </form>
+    `;
   },
-  context: RenderContext,
-): unknown {
-  const ariaLabelId = context.useId();
+  { shouldSkipUpdate: shallowEqual },
+);
 
-  const children = repeat({
-    source: item.childItems,
-    keySelector: (item) => item.key,
-    valueSelector: (item) => renderItem(item, onItemAction, context),
-  });
-
-  return context.html`
-    <section
-      aria-labeledby=${ariaLabelId}
-      class="MenuGroup"
-      role="group"
-    >
-      <header class="MenuGroup-label" id=${ariaLabelId}>${item.label}</header>
-      <${children}>
-    </section>
-  `;
-}
-
-memo(MenuGroup);
-
-function MenuLink(
-  {
-    item,
-    onItemAction,
-  }: {
-    item: MenuLink;
-    onItemAction?: ((event: Event, key: string) => void) | undefined;
-  },
-  context: RenderContext,
-): unknown {
-  const handleAction = context.useCallback(
-    (event: Event) => {
-      item.onAction?.(event, item.key);
-      onItemAction?.(event, item.key);
+const MenuGroup = createComponent(
+  function MenuGroup(
+    {
+      item,
+      onItemAction,
+    }: {
+      item: MenuGroup;
+      onItemAction?: ((event: Event, key: string) => void) | undefined;
     },
-    [item.key, item.onAction, onItemAction],
-  );
+    $: RenderContext,
+  ): unknown {
+    const ariaLabelId = $.useId();
 
-  return context.html`
+    const children = Repeat({
+      source: item.childItems,
+      keySelector: (item) => item.key,
+      valueSelector: (item) => renderItem(item, onItemAction, $),
+    });
+
+    return $.html`
+      <section
+        aria-labeledby=${ariaLabelId}
+        class="MenuGroup"
+        role="group"
+      >
+        <header class="MenuGroup-label" id=${ariaLabelId}>${item.label}</header>
+        <${children}>
+      </section>
+    `;
+  },
+  { shouldSkipUpdate: shallowEqual },
+);
+
+const MenuLink = createComponent(
+  function MenuLink(
+    {
+      item,
+      onItemAction,
+    }: {
+      item: MenuLink;
+      onItemAction?: ((event: Event, key: string) => void) | undefined;
+    },
+    $: RenderContext,
+  ): unknown {
+    const handleAction = $.useCallback(
+      (event: Event) => {
+        item.onAction?.(event, item.key);
+        onItemAction?.(event, item.key);
+      },
+      [item.key, item.onAction, onItemAction],
+    );
+
+    return $.html`
     <a
       class="MenuItem"
       href=${item.href}
@@ -316,9 +320,9 @@ function MenuLink(
       <${item.children}>
     </a>
   `;
-}
-
-memo(MenuLink);
+  },
+  { shouldSkipUpdate: shallowEqual },
+);
 
 function activeElementIndex(children: ArrayLike<Element>) {
   const { activeElement } = document;
@@ -388,18 +392,18 @@ function getMenuPosition({ top, bottom, left, right }: DOMRect): MenuPosition {
 function renderItem(
   item: MenuItem,
   onItemAction: ((event: Event, key: string) => void) | undefined,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
   switch (item.type) {
     case 'button':
-      return component(MenuButton, { item, onItemAction });
+      return MenuButton({ item, onItemAction });
     case 'form':
-      return component(MenuForm, { item, onItemAction });
+      return MenuForm({ item, onItemAction });
     case 'group':
-      return component(MenuGroup, { item, onItemAction });
+      return MenuGroup({ item, onItemAction });
     case 'link':
-      return component(MenuLink, { item, onItemAction });
+      return MenuLink({ item, onItemAction });
     case 'separator':
-      return context.html`<hr class="MenuSeparator">`;
+      return $.html`<hr class="MenuSeparator">`;
   }
 }

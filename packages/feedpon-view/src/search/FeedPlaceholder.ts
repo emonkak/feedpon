@@ -1,7 +1,10 @@
-import type { RenderContext } from 'barebind';
+import { createComponent, type RenderContext } from 'barebind';
 
-export function FeedPlaceholder(_props: {}, context: RenderContext): unknown {
-  return context.html`
+export const FeedPlaceholder = createComponent(function FeedPlaceholder(
+  _props: {},
+  $: RenderContext,
+): unknown {
+  return $.html`
     <li class="list-group-item">
       <div class="link-strong">
         <span class="placeholder placeholder-40 animation-shining"></span>
@@ -15,4 +18,4 @@ export function FeedPlaceholder(_props: {}, context: RenderContext): unknown {
       </div>
     </li>
   `;
-}
+});

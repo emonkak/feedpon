@@ -1,4 +1,4 @@
-import type { RenderContext } from 'barebind';
+import { createComponent, type RenderContext } from 'barebind';
 
 interface StreamFooterProps {
   canMarkAllEntriesAsRead: boolean;
@@ -8,7 +8,7 @@ interface StreamFooterProps {
   onMarkAllEntiresAsRead: () => void;
 }
 
-export function StreamFooter(
+export const StreamFooter = createComponent(function StreamFooter(
   {
     canMarkAllEntriesAsRead,
     hasMoreEntries,
@@ -16,9 +16,9 @@ export function StreamFooter(
     onMarkAllEntiresAsRead,
     onLoadMoreEntries,
   }: StreamFooterProps,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
-  const handleLoadMoreEntries = context.useCallback(
+  const handleLoadMoreEntries = $.useCallback(
     (event: Event) => {
       event.preventDefault();
       onLoadMoreEntries();
@@ -28,14 +28,14 @@ export function StreamFooter(
 
   if (hasMoreEntries) {
     if (isLoading) {
-      return context.html`
+      return $.html`
         <footer class="stream-footer">
           <i class="icon icon-32 icon-spinner animation-rotating"></i>
         </footer>
       `;
     }
 
-    return context.html`
+    return $.html`
       <footer class="stream-footer">
         <a class="link-strong" href="#" @click=${handleLoadMoreEntries}>
           Load more entries...
@@ -44,7 +44,7 @@ export function StreamFooter(
     `;
   }
 
-  return context.html`
+  return $.html`
     <footer class="stream-footer">
       <p>No more entries here.</p>
       <p>
@@ -59,4 +59,4 @@ export function StreamFooter(
       </p>
     </footer>
   `;
-}
+});

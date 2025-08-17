@@ -1,9 +1,13 @@
-import { component, type RenderContext } from 'barebind';
+import {
+  type Bindable,
+  type Component,
+  createComponent,
+  type RenderContext,
+} from 'barebind';
 import debounce from 'feedpon-utils/debounce.ts';
-
 import { Menu, type MenuItem, type MenuRef } from './Menu.ts';
 
-interface AutoCompleteProps<T> {
+interface AutoCompleteProps<T = unknown> {
   debounceTime?: number;
   items: T[];
   onSubmit?: (query: string) => void;
@@ -15,7 +19,13 @@ interface AutoCompleteProps<T> {
   ) => MenuItem[];
 }
 
-export function AutoComplete<T>(
+export interface AutoComplete extends Component<AutoCompleteProps> {
+  <T>(props: AutoCompleteProps<T>): Bindable<AutoCompleteProps<T>>;
+}
+
+export const AutoComplete: AutoComplete = createComponent(function AutoComplete<
+  T,
+>(
   {
     debounceTime = 100,
     placeholder,
@@ -23,25 +33,25 @@ export function AutoComplete<T>(
     onSubmit,
     getFilteredItems,
   }: AutoCompleteProps<T>,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
-  const [open, setOpen] = context.useState(false);
-  const [query, setQuery] = context.useState('');
+  const [open, setOpen] = $.useState(false);
+  const [query, setQuery] = $.useState('');
 
-  const autocompleteRef = context.useRef<HTMLDivElement | null>(null);
-  const menuRef = context.useRef<MenuRef | null>(null);
-  const inputRef = context.useRef<HTMLInputElement | null>(null);
-  const triggerId = context.useId();
+  const autocompleteRef = $.useRef<HTMLDivElement | null>(null);
+  const menuRef = $.useRef<MenuRef | null>(null);
+  const inputRef = $.useRef<HTMLInputElement | null>(null);
+  const triggerId = $.useId();
 
-  const openDropdown = context.useCallback(() => {
+  const openDropdown = $.useCallback(() => {
     setOpen(true);
   }, []);
 
-  const closeDropdown = context.useCallback(() => {
+  const closeDropdown = $.useCallback(() => {
     setOpen(false);
   }, []);
 
-  const handleSubmit = context.useCallback(
+  const handleSubmit = $.useCallback(
     (event: SubmitEvent) => {
       event.preventDefault();
       onSubmit?.(inputRef.current!.value);
@@ -49,7 +59,7 @@ export function AutoComplete<T>(
     [onSubmit],
   );
 
-  const handleInput = context.useMemo(
+  const handleInput = $.useMemo(
     () =>
       debounce(() => {
         setOpen(true);
@@ -58,7 +68,7 @@ export function AutoComplete<T>(
     [debounceTime],
   );
 
-  const handleKeyDown = context.useCallback((event: KeyboardEvent) => {
+  const handleKeyDown = $.useCallback((event: KeyboardEvent) => {
     switch (event.key) {
       case 'ArrowUp':
         event.preventDefault();
@@ -88,11 +98,11 @@ export function AutoComplete<T>(
     }
   }, []);
 
-  const handleMenuToggle = context.useCallback((open: boolean) => {
+  const handleMenuToggle = $.useCallback((open: boolean) => {
     setOpen(open);
   }, []);
 
-  context.useLayoutEffect(() => {
+  $.useLayoutEffect(() => {
     const dissmissOnClickOutside = (event: MouseEvent) => {
       const container = autocompleteRef.current!;
       if (
@@ -108,12 +118,12 @@ export function AutoComplete<T>(
     };
   }, []);
 
-  const filteredItems = context.useMemo(
-    () => getFilteredItems(items, query, context),
+  const filteredItems = $.useMemo(
+    () => getFilteredItems(items, query, $),
     [items, query, getFilteredItems],
   );
 
-  return context.html`
+  return $.html`
     <div
       :class=${{
         _: 'AutoComplete',
@@ -134,7 +144,7 @@ export function AutoComplete<T>(
         >
       </form>
       <div class="AutoComplete-menu">
-        <${component(Menu, {
+        <${Menu({
           items: filteredItems,
           target: triggerId,
           autoFocus: false,
@@ -147,4 +157,4 @@ export function AutoComplete<T>(
       </div>
     </div>
   `;
-}
+});

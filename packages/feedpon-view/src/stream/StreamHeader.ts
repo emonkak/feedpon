@@ -1,4 +1,4 @@
-import { component, type RenderContext } from 'barebind';
+import { createComponent, type RenderContext } from 'barebind';
 import type {
   Entry,
   EntryOrderKind,
@@ -36,7 +36,7 @@ interface StreamNavbarProps {
   title: string;
 }
 
-export function StreamHeader(
+export const StreamHeader = createComponent(function StreamHeader(
   {
     activeEntryIndex,
     canMarkStreamAsRead,
@@ -60,12 +60,12 @@ export function StreamHeader(
     streamView,
     title,
   }: StreamNavbarProps,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
-  return context.html`<${component(Navbar, {
+  return Navbar({
     onToggleSidebar,
     progress: entries.length > 0 ? activeEntryIndex / entries.length : 0,
-    children: context.html`
+    children: $.html`
       <h1 class="navbar-title">
         <span class="stream-title u-text-truncate">${title}</span>
       </h1>
@@ -77,7 +77,7 @@ export function StreamHeader(
       >
         <i class="icon icon-24 icon-refresh"></i>
       </button>
-      <${component(EntryDisplaySettingsDropdown, {
+      <${EntryDisplaySettingsDropdown({
         activeEntryIndex,
         canMarkStreamAsRead,
         entries,
@@ -91,7 +91,7 @@ export function StreamHeader(
       })}>
       <${
         isExpanded
-          ? context.html`
+          ? $.html`
             <button type="button" class="navbar-action" @click=${onCloseEntry}>
               <i class="icon icon-24 icon-close"></i>
             </button>
@@ -100,7 +100,7 @@ export function StreamHeader(
       }>
       <${
         !isExpanded && fetchOptions
-          ? component(StreamFetchOptionsDropdown, {
+          ? StreamFetchOptionsDropdown({
               fetchOptions,
               isLoading,
               onChangeEntryOrder,
@@ -112,5 +112,5 @@ export function StreamHeader(
           : null
       }>
     `,
-  })}>`;
-}
+  });
+});

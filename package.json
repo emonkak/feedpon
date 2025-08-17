@@ -61,8 +61,8 @@
     "clean:tsc": {
       "command": "tsc --build --clean"
     },
-    "check": {
-      "command": "biome check .",
+    "lint": {
+      "command": "biome ci .",
       "files": [
         "packages/*/src/**/*.ts"
       ]
@@ -70,11 +70,11 @@
     "ci": {
       "dependencies": [
         "build",
-        "check"
+        "lint"
       ]
     },
     "format": {
-      "command": "biome format --write ."
+      "command": "biome check --fix"
     },
     "tsc": {
       "command": "tsc --build --pretty --incremental",

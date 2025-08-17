@@ -1,4 +1,4 @@
-import type { RenderContext } from 'barebind';
+import { createComponent, type RenderContext } from 'barebind';
 import { bindActions } from 'feedpon-flux';
 import { getStoreHook } from 'feedpon-flux/barebind.ts';
 import type { OSDMessage, State } from 'feedpon-messaging';
@@ -6,8 +6,11 @@ import { closeOSD } from 'feedpon-messaging/osd';
 
 export interface OSDProps {}
 
-export function OSD({}: OSDProps, context: RenderContext): unknown {
-  const { message, onCloseOSD } = context.use(
+export const OSD = createComponent(function OSD(
+  {}: OSDProps,
+  $: RenderContext,
+): unknown {
+  const { message, onCloseOSD } = $.use(
     getStoreHook({
       mapStateToProps: (state: State) => ({
         message: state.osd.message,
@@ -18,18 +21,18 @@ export function OSD({}: OSDProps, context: RenderContext): unknown {
     }),
   );
 
-  const messageInProgress = context.useRef<OSDMessage | null>(null);
+  const messageInProgress = $.useRef<OSDMessage | null>(null);
 
   if (message !== null) {
     messageInProgress.current = message;
   }
 
-  const handlePopMessage = context.useCallback(() => {
+  const handlePopMessage = $.useCallback(() => {
     messageInProgress.current = message;
-    context.forceUpdate();
+    $.forceUpdate();
   }, [message]);
 
-  context.useEffect(() => {
+  $.useEffect(() => {
     let timer: ReturnType<typeof setTimeout> | null = null;
     if (message !== null && message.closeAfter >= 0) {
       timer = setTimeout(() => {
@@ -45,13 +48,13 @@ export function OSD({}: OSDProps, context: RenderContext): unknown {
     };
   }, [onCloseOSD, message]);
 
-  const ariaLabelId = context.useId();
+  const ariaLabelId = $.useId();
 
   if (messageInProgress.current === null) {
-    return context.html``;
+    return $.html``;
   }
 
-  return context.html`
+  return $.html`
     <div
       aria-labelledby=${ariaLabelId}
       class="OSD"
@@ -65,4 +68,4 @@ export function OSD({}: OSDProps, context: RenderContext): unknown {
       </div>
     </div>
   `;
-}
+});

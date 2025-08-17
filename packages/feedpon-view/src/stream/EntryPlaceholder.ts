@@ -1,77 +1,75 @@
-import type { RenderContext } from 'barebind';
+import { createComponent, type RenderContext } from 'barebind';
 
-export function ExpandedEntryPlaceholder(
-  _props: {},
-  context: RenderContext,
-): unknown {
-  return context.html`
-    <article class="entry is-expanded">
-      <div class="container">
-        <header class="entry-header">
-          <h2 class="entry-title">
-            <span class="placeholder placeholder-80 animation-shining"></span>
-          </h2>
-          <div class="entry-metadata">
-            <span class="placeholder placeholder-60 animation-shining"></span>
+export const ExpandedEntryPlaceholder = createComponent(
+  function ExpandedEntryPlaceholder({}: {}, $: RenderContext): unknown {
+    return $.html`
+      <article class="entry is-expanded">
+        <div class="container">
+          <header class="entry-header">
+            <h2 class="entry-title">
+              <span class="placeholder placeholder-80 animation-shining"></span>
+            </h2>
+            <div class="entry-metadata">
+              <span class="placeholder placeholder-60 animation-shining"></span>
+            </div>
+          </header>
+          <div class="entry-content u-clearfix u-text-wrap">
+            <p>
+              <span class="placeholder placeholder-100 animation-shining"></span>
+              <span class="placeholder placeholder-100 animation-shining"></span>
+              <span class="placeholder placeholder-100 animation-shining"></span>
+              <span class="placeholder placeholder-60 animation-shining"></span>
+            </p>
+            <p>
+              <span class="placeholder placeholder-100 animation-shining"></span>
+              <span class="placeholder placeholder-100 animation-shining"></span>
+              <span class="placeholder placeholder-100 animation-shining"></span>
+              <span class="placeholder placeholder-100 animation-shining"></span>
+              <span class="placeholder placeholder-80 animation-shining"></span>
+            </p>
+            <p>
+              <span class="placeholder placeholder-100 animation-shining"></span>
+              <span class="placeholder placeholder-100 animation-shining"></span>
+              <span class="placeholder placeholder-40 animation-shining"></span>
+            </p>
           </div>
-        </header>
-        <div class="entry-content u-clearfix u-text-wrap">
-          <p>
-            <span class="placeholder placeholder-100 animation-shining"></span>
-            <span class="placeholder placeholder-100 animation-shining"></span>
-            <span class="placeholder placeholder-100 animation-shining"></span>
-            <span class="placeholder placeholder-60 animation-shining"></span>
-          </p>
-          <p>
-            <span class="placeholder placeholder-100 animation-shining"></span>
-            <span class="placeholder placeholder-100 animation-shining"></span>
-            <span class="placeholder placeholder-100 animation-shining"></span>
-            <span class="placeholder placeholder-100 animation-shining"></span>
-            <span class="placeholder placeholder-80 animation-shining"></span>
-          </p>
-          <p>
-            <span class="placeholder placeholder-100 animation-shining"></span>
-            <span class="placeholder placeholder-100 animation-shining"></span>
-            <span class="placeholder placeholder-40 animation-shining"></span>
-          </p>
+          <footer class="entry-footer">
+            <div class="button-toolbar u-text-center">
+              <span class="button button-pill button-outline-default">
+                <i class="icon icon-20 icon-comments"></i>
+              </span>
+              <span class="button button-pill button-outline-default">
+                <i class="icon icon-20 icon-share"></i>
+              </span>
+              <span class="button button-pill button-outline-default">
+                <i class="icon icon-20 icon-external-link"></i>
+              </span>
+            </div>
+          </footer>
         </div>
-        <footer class="entry-footer">
-          <div class="button-toolbar u-text-center">
-            <span class="button button-pill button-outline-default">
-              <i class="icon icon-20 icon-comments"></i>
-            </span>
-            <span class="button button-pill button-outline-default">
-              <i class="icon icon-20 icon-share"></i>
-            </span>
-            <span class="button button-pill button-outline-default">
-              <i class="icon icon-20 icon-external-link"></i>
-            </span>
-          </div>
-        </footer>
-      </div>
-    </article>
-  `;
-}
+      </article>
+    `;
+  },
+);
 
-export function CollapsedEntryPlaceholder(
-  _props: {},
-  context: RenderContext,
-): unknown {
-  return context.html`
-    <article class="entry">
-      <div class="container">
-        <header class="entry-header">
-          <h2 class="entry-title">
-            <span class="placeholder placeholder-80 animation-shining"></span>
-          </h2>
-          <div class="entry-metadata">
-            <span class="placeholder placeholder-60 animation-shining"></span>
+export const CollapsedEntryPlaceholder = createComponent(
+  function CollapsedEntryPlaceholder({}: {}, $: RenderContext): unknown {
+    return $.html`
+      <article class="entry">
+        <div class="container">
+          <header class="entry-header">
+            <h2 class="entry-title">
+              <span class="placeholder placeholder-80 animation-shining"></span>
+            </h2>
+            <div class="entry-metadata">
+              <span class="placeholder placeholder-60 animation-shining"></span>
+            </div>
+          </header>
+          <div class="entry-summary">
+            <span class="placeholder placeholder-100 animation-shining"></span>
           </div>
-        </header>
-        <div class="entry-summary">
-          <span class="placeholder placeholder-100 animation-shining"></span>
         </div>
-      </div>
-    </article>
-  `;
-}
+      </article>
+    `;
+  },
+);

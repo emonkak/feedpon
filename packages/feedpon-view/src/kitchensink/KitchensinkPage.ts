@@ -1,4 +1,4 @@
-import { component, type RenderContext } from 'barebind';
+import { createComponent, type RenderContext } from 'barebind';
 import { bindActions } from 'feedpon-flux';
 import { getStoreHook } from 'feedpon-flux/barebind.ts';
 import type { NotificationKind } from 'feedpon-messaging';
@@ -13,11 +13,11 @@ import { Dropdown } from '../primitives/Dropdown.ts';
 
 export interface KitchenSinkProps {}
 
-export function KitchensinkPage(
+export const KitchensinkPage = createComponent(function KitchensinkPage(
   {}: KitchenSinkProps,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
-  const { onSendNotification, onToggleSidebar } = context.use(
+  const { onSendNotification, onToggleSidebar } = $.use(
     getStoreHook({
       mapDispatchToProps: bindActions({
         onSendNotification: sendNotification,
@@ -25,19 +25,19 @@ export function KitchensinkPage(
       }),
     }),
   );
-  const [modalOpened, setModalOpened] = context.useState(false);
+  const [modalOpened, setModalOpened] = $.useState(false);
 
-  const binder = context.useMemo(() => new MemoBinder(), []);
+  const binder = $.useMemo(() => new MemoBinder(), []);
 
-  const handleOpenModal = context.useCallback(() => {
+  const handleOpenModal = $.useCallback(() => {
     setModalOpened(true);
   }, []);
 
-  const handleCloseModal = context.useCallback(() => {
+  const handleCloseModal = $.useCallback(() => {
     setModalOpened(false);
   }, []);
 
-  const handleSendNotification = context.useCallback(
+  const handleSendNotification = $.useCallback(
     (kind: NotificationKind) => {
       onSendNotification(
         'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
@@ -47,14 +47,14 @@ export function KitchensinkPage(
     [onSendNotification],
   );
 
-  const header = component(Navbar, {
+  const header = Navbar({
     onToggleSidebar,
-    children: context.html`
+    children: $.html`
       <h1 class="navbar-title">Kitchen sink</h1>
     `,
   });
 
-  const content = context.html`
+  const content = $.html`
     <div class="container">
       <h1>Heading</h1>
       <div>
@@ -346,7 +346,7 @@ export function KitchensinkPage(
       </div>
       <h2>Dropdown</h2>
       <div class="u-margin-bottom-2">
-        <${component(Dropdown, {
+        <${Dropdown({
           trigger: ({ id, onToggle, open }, context) => context.html`
             <button
               aria-expanded=${open.toString()}
@@ -361,19 +361,19 @@ export function KitchensinkPage(
           `,
           items: [
             {
-              children: context.html`
+              children: $.html`
                 <div class="MenuItem-content">First</div>
               `,
               type: 'button',
-              onAction: context.useCallback(() => alert('First'), []),
+              onAction: $.useCallback(() => alert('First'), []),
               key: 'first',
             },
             {
-              children: context.html`
+              children: $.html`
                 <div class="MenuItem-content">Second</div>
               `,
               type: 'button',
-              onAction: context.useCallback(() => alert('Second'), []),
+              onAction: $.useCallback(() => alert('Second'), []),
               key: 'second',
             },
             {
@@ -381,11 +381,11 @@ export function KitchensinkPage(
               type: 'separator',
             },
             {
-              children: context.html`
+              children: $.html`
                 <div class="MenuItem-content">Thrid</div>
               `,
               type: 'button',
-              onAction: context.useCallback(() => alert('Thrid'), []),
+              onAction: $.useCallback(() => alert('Thrid'), []),
               key: 'thrid',
             },
           ],
@@ -401,8 +401,8 @@ export function KitchensinkPage(
           Open modal
         </button>
       </p>
-      <${component(Dialog, {
-        children: context.html`
+      <${Dialog({
+        children: $.html`
           <button
             type="button"
             class="close u-pull-right"
@@ -680,8 +680,8 @@ export function KitchensinkPage(
     </div>
   `;
 
-  return context.html`<${component(MainLayout, {
+  return MainLayout({
     header,
     content,
-  })}>`;
-}
+  });
+});

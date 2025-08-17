@@ -11,6 +11,7 @@ const configs = [
     metafile: !isProduction,
     outfile: 'dist/index.js',
     dropLabels,
+    keepNames: true,
   },
   {
     entryPoints: ['packages/feedpon/src/background.ts'],

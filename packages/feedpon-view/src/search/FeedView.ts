@@ -1,4 +1,4 @@
-import { component, type RenderContext } from 'barebind';
+import { createComponent, type RenderContext } from 'barebind';
 import type { Category, Feed, Subscription } from 'feedpon-messaging';
 
 import { SubscriptionSettingsDropdown } from '../subscription/SubscriptionSettingsDropdown.ts';
@@ -17,7 +17,7 @@ interface FeedViewProps {
   subscription: Subscription | null;
 }
 
-export function FeedView(
+export const FeedView = createComponent(function FeedView(
   {
     categories,
     feed,
@@ -28,9 +28,9 @@ export function FeedView(
     onUnsubscribe,
     subscription,
   }: FeedViewProps,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
-  return context.html`
+  return $.html`
     <li class="list-group-item">
       <div class="u-flex u-flex-justify-content-between u-flex-align-items-center">
         <div class="u-flex-grow-1 u-margin-right-2">
@@ -45,7 +45,7 @@ export function FeedView(
           </div>
           <div class="u-text-muted">${feed.description}</div>
         </div>
-        <${component(SubscriptionSettingsDropdown, {
+        <${SubscriptionSettingsDropdown({
           categories,
           feed,
           onAddToCategory,
@@ -58,4 +58,4 @@ export function FeedView(
       </div>
     </li>
   `;
-}
+});

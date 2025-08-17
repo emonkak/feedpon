@@ -1,4 +1,4 @@
-import { RelativeURL } from 'barebind/extensions/router';
+import { RelativeURL } from 'barebind/extras/router';
 import * as CacheMap from 'feedpon-utils/CacheMap.ts';
 import { scrollBy as smoothScrollBy } from 'feedpon-utils/SmoothScroll.ts';
 

@@ -1,4 +1,4 @@
-import { component, type RenderContext, repeat } from 'barebind';
+import { createComponent, type RenderContext, Repeat } from 'barebind';
 import type { Comment } from 'feedpon-messaging';
 
 import { CommentView } from './CommentView.ts';
@@ -9,12 +9,12 @@ interface CommentPopoverProps {
   isLoading: boolean;
 }
 
-export function CommentPopover(
+export const CommentPopover = createComponent(function CommentPopover(
   { arrowOffset, comments, isLoading }: CommentPopoverProps,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
   if (isLoading) {
-    return context.html`
+    return $.html`
       <div class="popover popover-default is-pull-down">
         <div
           :style=${{ left: `calc(50% + ${arrowOffset}px)` }}
@@ -39,16 +39,16 @@ export function CommentPopover(
 
   const content =
     comments.length > 0
-      ? repeat({
+      ? Repeat({
           source: comments,
-          valueSelector: (comment) => component(CommentView, { comment }),
+          valueSelector: (comment) => CommentView({ comment }),
         })
-      : context.html`No comments yet in this entry.`;
+      : $.html`No comments yet in this entry.`;
 
-  return context.html`
+  return $.html`
     <div class="popover popover-default is-pull-down">
       <div class="popover-arrow" :style=${{ left: `calc(50% - ${arrowOffset}px)` }}></div>
       <div class="popover-content"><${content}></div>
     </div>
   `;
-}
+});

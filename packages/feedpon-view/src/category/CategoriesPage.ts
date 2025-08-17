@@ -1,5 +1,5 @@
-import { component, type ElementRef, type RenderContext } from 'barebind';
-import { type HistoryNavigator, RelativeURL } from 'barebind/extensions/router';
+import { createComponent, type ElementRef, type RenderContext } from 'barebind';
+import { type HistoryNavigator, RelativeURL } from 'barebind/extras/router';
 import { bindActions } from 'feedpon-flux';
 import { getStoreHook } from 'feedpon-flux/barebind.ts';
 import type { Category, State, Subscription } from 'feedpon-messaging';
@@ -37,15 +37,15 @@ export interface CategoriesPageProps {
   navigator: HistoryNavigator;
 }
 
-export function CategoriesPage(
+export const CategoriesPage = createComponent(function CategoriesPage(
   { label, navigator }: CategoriesPageProps,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
-  const categoriesSelector = context.useMemo(
+  const categoriesSelector = $.useMemo(
     () => createSortedCategoriesSelector(),
     [],
   );
-  const subscriptionsSelector = context.useMemo(
+  const subscriptionsSelector = $.useMemo(
     () => createAllSubscriptionsSelector(),
     [],
   );
@@ -61,7 +61,7 @@ export function CategoriesPage(
     onUpdateCategory,
     onUnsubscribe,
     subscriptions,
-  } = context.use(
+  } = $.use(
     getStoreHook({
       mapStateToProps: (state: State) => {
         return {
@@ -82,16 +82,16 @@ export function CategoriesPage(
       }),
     }),
   );
-  const [query, setQuery] = context.useState('');
-  const searchInputRef = context.useRef<HTMLInputElement | null>(null);
-  const uploadInputRef = context.useRef<HTMLInputElement | null>(null);
+  const [query, setQuery] = $.useState('');
+  const searchInputRef = $.useRef<HTMLInputElement | null>(null);
+  const uploadInputRef = $.useRef<HTMLInputElement | null>(null);
 
-  const activeCategory = context.useMemo(
+  const activeCategory = $.useMemo(
     () => categories.find((category) => category.label === label) ?? null,
     [categories, label],
   );
 
-  const selectedSubscriptions = context.useMemo(() => {
+  const selectedSubscriptions = $.useMemo(() => {
     return Object.values(subscriptions)
       .filter(
         label
@@ -101,14 +101,14 @@ export function CategoriesPage(
       .sort(createAscendingComparer<Subscription>('subscriptionId'));
   }, [subscriptions, label]);
 
-  const renderSubscriptionItem = context.useCallback(
+  const renderSubscriptionItem = $.useCallback(
     (
       { subscription }: { id: string | number; subscription: Subscription },
       _index: number,
       _ref: ElementRef,
       _context: RenderContext,
     ) =>
-      component(SubscriptionView, {
+      SubscriptionView({
         categories,
         onAddToCategory,
         onCreateCategory,
@@ -119,7 +119,7 @@ export function CategoriesPage(
     [categories],
   );
 
-  const handleChangeSearchQuery = context.useMemo(
+  const handleChangeSearchQuery = $.useMemo(
     () =>
       debounce((_event: Event) => {
         if (!searchInputRef.current) {
@@ -131,7 +131,7 @@ export function CategoriesPage(
     [],
   );
 
-  const handleChangeUploadFile = context.useCallback((event: Event) => {
+  const handleChangeUploadFile = $.useCallback((event: Event) => {
     const target = event.currentTarget as HTMLInputElement;
     if (!target.files) {
       return;
@@ -151,7 +151,7 @@ export function CategoriesPage(
     reader.readAsText(file);
   }, []);
 
-  const handleUpdateCategory = context.useCallback(
+  const handleUpdateCategory = $.useCallback(
     (category: Category, newLabel: string) => {
       onUpdateCategory(category, newLabel);
 
@@ -163,25 +163,22 @@ export function CategoriesPage(
     [],
   );
 
-  const handleImportOpml = context.useCallback(() => {
+  const handleImportOpml = $.useCallback(() => {
     uploadInputRef.current?.click();
   }, []);
 
-  const handleExportOpml = context.useCallback(() => {
+  const handleExportOpml = $.useCallback(() => {
     window.open(exportUrl, '_blank');
   }, [exportUrl]);
 
-  const handleSelectCategory = context.useCallback(
-    (_event: Event, key: string) => {
-      navigator.navigate(
-        new RelativeURL('/categories/' + encodeURIComponent(key)),
-        { replace: true },
-      );
-    },
-    [],
-  );
+  const handleSelectCategory = $.useCallback((_event: Event, key: string) => {
+    navigator.navigate(
+      new RelativeURL('/categories/' + encodeURIComponent(key)),
+      { replace: true },
+    );
+  }, []);
 
-  const filteredSubscriptions = context.useMemo(() => {
+  const filteredSubscriptions = $.useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
     if (normalizedQuery === '') {
       return selectedSubscriptions.map((subscription) => ({
@@ -207,7 +204,7 @@ export function CategoriesPage(
       }));
   }, [query, selectedSubscriptions]);
 
-  const dropdown = component(Dropdown, {
+  const dropdown = Dropdown({
     trigger: ({ id, onToggle, open }, context) => context.html`
           <button
             aria-expanded=${open.toString()}
@@ -228,7 +225,7 @@ export function CategoriesPage(
       {
         type: 'button',
         key: 'import_opml',
-        children: context.html`
+        children: $.html`
           <div class="MenuItem-content">Import OPML...</div>
         `,
         onAction: handleImportOpml,
@@ -236,7 +233,7 @@ export function CategoriesPage(
       {
         type: 'button',
         key: 'export_opml',
-        children: context.html`
+        children: $.html`
           <div class="MenuItem-content">Export OPML...</div>
         `,
         onAction: handleExportOpml,
@@ -244,9 +241,9 @@ export function CategoriesPage(
     ],
   });
 
-  const header = component(Navbar, {
+  const header = Navbar({
     onToggleSidebar,
-    children: context.html`
+    children: $.html`
       <h1 class="navbar-title">Organize subscriptions</h1>
       <${dropdown}>
       <input
@@ -258,17 +255,17 @@ export function CategoriesPage(
     `,
   });
 
-  const tabList = component(TabList, {
+  const tabList = TabList({
     items: [
       {
         key: UNCATEGORIZED,
-        children: context.html`Uncategorized`,
+        children: $.html`Uncategorized`,
         selected: label === UNCATEGORIZED,
       } as TabItem,
     ].concat(
       categories.map((category) => ({
         key: category.label,
-        children: context.html`${category.label}`,
+        children: $.html`${category.label}`,
         selected: label === category.label,
       })),
     ),
@@ -277,20 +274,20 @@ export function CategoriesPage(
 
   const description =
     selectedSubscriptions.length > 0
-      ? context.html`
+      ? $.html`
         <p>
           <strong>${selectedSubscriptions.length}</strong> subscriptions are
           available in this category.
         </p>
       `
-      : context.html`<p>There are no subscriptions in this category.</p>`;
+      : $.html`<p>There are no subscriptions in this category.</p>`;
 
-  const content = context.html`
+  const content = $.html`
     <div class="container">
       <${tabList}>
       <${
         activeCategory !== null
-          ? component(CategoryForm, {
+          ? CategoryForm({
               category: activeCategory,
               onCategoryUpdate: handleUpdateCategory,
               onCategoryDelete: onDeleteCategory,
@@ -308,31 +305,28 @@ export function CategoriesPage(
         >
       </p>
       <${description}>
-      <${component(
-        VirtualScrollList<{ id: string | number; subscription: Subscription }>,
-        {
-          assumedItemSize: 60,
-          items: filteredSubscriptions,
-          renderItem: renderSubscriptionItem,
-          renderList: renderSubscriptionList,
-        },
-      )}>
+      <${VirtualScrollList({
+        assumedItemSize: 60,
+        items: filteredSubscriptions,
+        renderItem: renderSubscriptionItem,
+        renderList: renderSubscriptionList,
+      })}>
     </div>
   `;
 
-  return context.html`<${component(MainLayout, {
+  return MainLayout({
     header,
     content,
-  })}>`;
-}
+  });
+});
 
 function renderSubscriptionList(
   children: unknown,
   blankSpaces: BlankSpaces,
   elementRef: ElementRef,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
-  return context.html`
+  return $.html`
     <ul class="list-group" :ref=${elementRef}>
       <li :style=${{ height: blankSpaces.above + 'px' }}></li>
       <${children}>

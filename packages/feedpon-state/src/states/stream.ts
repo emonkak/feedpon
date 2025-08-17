@@ -1,4 +1,4 @@
-import { Atom } from 'barebind/extensions/signal';
+import { Atom } from 'barebind/extras/signal';
 
 import type { FeedlyContext } from '../api/feedly.ts';
 import type * as Feedly from '../api/feedlyTypes.d.ts';

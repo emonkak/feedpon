@@ -1,4 +1,4 @@
-import { Atom } from 'barebind/extensions/signal';
+import { Atom } from 'barebind/extras/signal';
 
 import type { Action, State, Store } from '../store.ts';
 import type { StreamState } from './stream.ts';

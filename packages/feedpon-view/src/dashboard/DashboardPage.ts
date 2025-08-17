@@ -1,4 +1,4 @@
-import { component, type RenderContext, repeat } from 'barebind';
+import { createComponent, type RenderContext, Repeat } from 'barebind';
 import { bindActions } from 'feedpon-flux';
 import { getStoreHook } from 'feedpon-flux/barebind.ts';
 import type { State } from 'feedpon-messaging';
@@ -20,11 +20,11 @@ interface StreamHistory {
   fetchedAt: number;
 }
 
-export function DashboardPage(
+export const DashboardPage = createComponent(function DashboardPage(
   {}: DashboardProps,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
-  const { onToggleSidebar, categories, subscriptions, histories } = context.use(
+  const { onToggleSidebar, categories, subscriptions, histories } = $.use(
     getStoreHook({
       mapStateToProps: (state: State) => ({
         categories: state.categories,
@@ -37,7 +37,7 @@ export function DashboardPage(
     }),
   );
 
-  const categoryUnreadCounts = context.useMemo(
+  const categoryUnreadCounts = $.useMemo(
     () =>
       Object.values(subscriptions.items).reduce<{ [key: string]: number }>(
         (acc, subscription) => {
@@ -56,7 +56,7 @@ export function DashboardPage(
     [subscriptions.items],
   );
 
-  const streamHistories = context.useMemo(
+  const streamHistories = $.useMemo(
     () =>
       CacheMap.keys(histories.recentlyReadStreams)
         .reduce<StreamHistory[]>((acc, streamId) => {
@@ -95,31 +95,28 @@ export function DashboardPage(
     ],
   );
 
-  const header = context.html`
-    <${component(Navbar, {
-      onToggleSidebar,
-      children: context.html`
-        <h1 class="navbar-title">Dashboard</h1>
-      `,
-    })}>
-  `;
+  const header = Navbar({
+    onToggleSidebar,
+    children: $.html`
+      <h1 class="navbar-title">Dashboard</h1>
+    `,
+  });
 
   const streamHistoryList =
     streamHistories.length === 0
-      ? context.html`
+      ? $.html`
         <p>Recently read streams does not exist yet. Let's subscribe to feeds and read the stream.</p>
       `
-      : context.html`
+      : $.html`
     <ol class="list-group">
-      <${repeat({
+      <${Repeat({
         source: streamHistories,
         keySelector: (streamHistory) => streamHistory.streamId,
-        valueSelector: (streamHistory) =>
-          component(StreamHistoryView, { streamHistory }),
+        valueSelector: (streamHistory) => StreamHistoryView({ streamHistory }),
       })}>
     </ol>
   `;
-  const content = context.html`
+  const content = $.html`
     <div class="container">
       <section class="section">
         <h1 class="display-1">Recently read</h1>
@@ -128,23 +125,23 @@ export function DashboardPage(
     </div>
   `;
 
-  return context.html`<${component(MainLayout, {
+  return MainLayout({
     content,
     header,
-  })}>`;
-}
+  });
+});
 
 interface StreamHistoryViewProps {
   streamHistory: StreamHistory;
 }
 
-function StreamHistoryView(
+const StreamHistoryView = createComponent(function StreamHistoryView(
   { streamHistory }: StreamHistoryViewProps,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
   const icon =
     streamHistory.iconUrl !== ''
-      ? context.html`
+      ? $.html`
         <img
           class="u-vertical-middle u-object-fit-cover"
           alt=${streamHistory.title}
@@ -154,10 +151,10 @@ function StreamHistoryView(
         >
       `
       : streamHistory.type === 'subscription'
-        ? context.html`<i class="icon icon-16 icon-file"></i>`
-        : context.html`<i class="icon icon-16 icon-folder"></i>`;
+        ? $.html`<i class="icon icon-16 icon-file"></i>`
+        : $.html`<i class="icon icon-16 icon-folder"></i>`;
 
-  return context.html`
+  return $.html`
     <a
       class="list-group-item"
       href=${`#/streams/${encodeURIComponent(streamHistory.streamId)}`}
@@ -169,12 +166,12 @@ function StreamHistoryView(
         <div class="u-flex-grow-1 u-margin-right-2">
           <div>${streamHistory.title}</div>
           <div class="u-text-7 u-text-muted">
-            <${component(RelativeTime, { time: streamHistory.fetchedAt })}>
+            <${RelativeTime({ time: streamHistory.fetchedAt })}>
           </div>
         </div>
         <${
           streamHistory.unreadCount > 0
-            ? context.html`
+            ? $.html`
               <div class="u-flex-shrink-0">
                 <span class="badge badge-medium badge-positive">
                   ${streamHistory.unreadCount}
@@ -186,4 +183,4 @@ function StreamHistoryView(
       </div>
     </a>
   `;
-}
+});

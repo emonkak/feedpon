@@ -1,4 +1,4 @@
-import { component, type RenderContext } from 'barebind';
+import { createComponent, type RenderContext } from 'barebind';
 
 import { EntryShareButton } from './EntryShareButton.ts';
 
@@ -10,7 +10,7 @@ interface EntryActionListProps {
   url: string;
 }
 
-export function EntryActionList(
+export const EntryActionList = createComponent(function EntryActionList(
   {
     commentsIsLoading,
     commentsIsShown,
@@ -18,9 +18,9 @@ export function EntryActionList(
     title,
     url,
   }: EntryActionListProps,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
-  return context.html`
+  return $.html`
     <div class="button-toolbar u-flex u-flex-align-items-center u-flex-justify-content-center">
       <button
         :class=${[
@@ -40,7 +40,7 @@ export function EntryActionList(
           ]}
         ></i>
       </button>
-      <${component(EntryShareButton, { url, title })}>
+      <${EntryShareButton({ url, title })}>
       <a
         class="button button-pill button-outline-default"
         href=${url}
@@ -52,4 +52,4 @@ export function EntryActionList(
       </a>
     </div>
   `;
-}
+});

@@ -1,10 +1,13 @@
 import {
+  type Bindable,
+  type Component,
   type CustomHookFunction,
+  createComponent,
   type ElementRef,
   type RefCallback,
   type RefObject,
   type RenderContext,
-  repeat,
+  Repeat,
 } from 'barebind';
 import throttle from 'feedpon-utils/throttle.ts';
 
@@ -40,7 +43,9 @@ export interface VirtualScrollListRef {
   scrollTo(index: number): void;
 }
 
-export interface VirtualScrollListProps<TItem extends { id: PropertyKey }> {
+export interface VirtualScrollListProps<
+  TItem extends { id: PropertyKey } = any,
+> {
   assumedItemSize?: number;
   getScrollContainer?: () => Window | Element;
   getScreen?: () => DOMRectReadOnly;
@@ -67,178 +72,121 @@ export interface VirtualScrollListProps<TItem extends { id: PropertyKey }> {
   scrollThrottleTime?: number;
 }
 
-export function VirtualScrollList<TItem extends { id: PropertyKey }>(
-  {
-    assumedItemSize = 200,
-    getScrollContainer = () => window,
-    getScreen = () => new DOMRect(0, 0, window.innerWidth, window.innerHeight),
-    initialItemIndex = -1,
-    items,
-    offscreenRatio = 1.0,
-    onUpdateBlockSizes,
-    onUpdateDimensions,
-    ref = { current: null },
-    renderItem,
-    renderList,
-    scheduleUpdate = queueMicrotask,
-    scrollBy = (x, y) => window.scrollBy(x, y),
-    scrollThrottleTime = 100,
-  }: VirtualScrollListProps<TItem>,
-  context: RenderContext,
-): unknown {
-  const containerRef = context.useRef<Element | null>(null);
-  const scrollingItemIndexRef = context.useRef(initialItemIndex);
-  const blockSizesRef = context.useMemo(() => ({ current: new Map() }), []);
-  const isDirtyRef = context.useRef(false);
-  const blockPositionsRef = context.useMemo(
-    () => ({
-      current: computeBlockPositions(
-        items,
-        blockSizesRef.current,
-        assumedItemSize,
-      ),
-    }),
-    [],
-  );
-  const scopeRef = context.useMemo(
-    () => ({
-      current: getInitialScope(
-        items,
-        blockSizesRef.current,
-        assumedItemSize,
-        initialItemIndex,
-        getScreen(),
-      ),
-    }),
-    [],
-  );
+export interface VirtualScrollList extends Component<VirtualScrollListProps> {
+  <TItem extends { id: PropertyKey }>(
+    props: VirtualScrollListProps<TItem>,
+  ): Bindable<VirtualScrollListProps<TItem>>;
+}
 
-  const oldItems = context.use(createPreviousHook(items)) ?? [];
-  if (items !== oldItems) {
-    const newSlice = items.slice(scopeRef.current.start, scopeRef.current.end);
-    const oldSlice = oldItems.slice(
-      scopeRef.current.start,
-      scopeRef.current.end,
-    );
-
-    if (areItemsIdentical(newSlice, oldSlice)) {
-      if (items.length < scopeRef.current.end) {
-        scopeRef.current = {
-          start: Math.min(items.length - 1, scopeRef.current.start),
-          end: items.length,
-        };
-      }
-    } else {
-      scrollingItemIndexRef.current = initialItemIndex;
-      scopeRef.current = getInitialScope(
-        items,
-        blockSizesRef.current,
-        assumedItemSize,
-        initialItemIndex,
-        getScreen(),
-      );
-    }
-
-    blockPositionsRef.current = computeBlockPositions(
+export const VirtualScrollList: VirtualScrollList = createComponent(
+  function VirtualScrollList<TItem extends { id: PropertyKey }>(
+    {
+      assumedItemSize = 200,
+      getScrollContainer = () => window,
+      getScreen = () =>
+        new DOMRect(0, 0, window.innerWidth, window.innerHeight),
+      initialItemIndex = -1,
       items,
-      blockSizesRef.current,
-      assumedItemSize,
+      offscreenRatio = 1.0,
+      onUpdateBlockSizes,
+      onUpdateDimensions,
+      ref = { current: null },
+      renderItem,
+      renderList,
+      scheduleUpdate = queueMicrotask,
+      scrollBy = (x, y) => window.scrollBy(x, y),
+      scrollThrottleTime = 100,
+    }: VirtualScrollListProps<TItem>,
+    $: RenderContext,
+  ): unknown {
+    const containerRef = $.useRef<Element | null>(null);
+    const scrollingItemIndexRef = $.useRef(initialItemIndex);
+    const blockSizesRef = $.useMemo(() => ({ current: new Map() }), []);
+    const isDirtyRef = $.useRef(false);
+    const blockPositionsRef = $.useMemo(
+      () => ({
+        current: computeBlockPositions(
+          items,
+          blockSizesRef.current,
+          assumedItemSize,
+        ),
+      }),
+      [],
     );
-  }
+    const scopeRef = $.useMemo(
+      () => ({
+        current: getInitialScope(
+          items,
+          blockSizesRef.current,
+          assumedItemSize,
+          initialItemIndex,
+          getScreen(),
+        ),
+      }),
+      [],
+    );
 
-  ref.current = {
-    scrollTo(index: number): void {
-      scopeRef.current = getInitialScope(
-        items,
-        blockSizesRef.current,
-        assumedItemSize,
-        index,
-        getScreen(),
+    const oldItems = $.use(createPreviousHook(items)) ?? [];
+    if (items !== oldItems) {
+      const newSlice = items.slice(
+        scopeRef.current.start,
+        scopeRef.current.end,
+      );
+      const oldSlice = oldItems.slice(
+        scopeRef.current.start,
+        scopeRef.current.end,
       );
 
-      scrollingItemIndexRef.current = index;
-
-      // Force update even if the scope has not changed.
-      context.forceUpdate();
-    },
-  };
-
-  const isMounted = context.use(isMountedHook);
-
-  const updateDimensions = context.useCallback(() => {
-    if (!isMounted()) {
-      requestAnimationFrame(updateDimensions);
-      return;
-    }
-
-    const screen = containerRef.current
-      ? translateRect(getScreen(), containerRef.current.getBoundingClientRect())
-      : getScreen();
-
-    const newScope = getCurrentScope(
-      blockPositionsRef.current,
-      screen,
-      offscreenRatio,
-    );
-
-    if (!areScopesEqual(scopeRef.current, newScope)) {
-      scopeRef.current = newScope;
-      context.forceUpdate();
-    }
-
-    onUpdateDimensions?.({
-      blockPositions: blockPositionsRef.current,
-      blockSizes: blockSizesRef.current,
-      scope: newScope,
-      screen,
-    });
-
-    isDirtyRef.current = false;
-  }, [onUpdateDimensions]);
-
-  context.useEffect(() => {
-    const scrollContainer = getScrollContainer();
-
-    const callback = throttle(() => {
-      if (!isDirtyRef.current) {
-        scheduleUpdate(updateDimensions);
-        isDirtyRef.current = true;
+      if (areItemsIdentical(newSlice, oldSlice)) {
+        if (items.length < scopeRef.current.end) {
+          scopeRef.current = {
+            start: Math.min(items.length - 1, scopeRef.current.start),
+            end: items.length,
+          };
+        }
+      } else {
+        scrollingItemIndexRef.current = initialItemIndex;
+        scopeRef.current = getInitialScope(
+          items,
+          blockSizesRef.current,
+          assumedItemSize,
+          initialItemIndex,
+          getScreen(),
+        );
       }
-    }, scrollThrottleTime);
 
-    scrollContainer.addEventListener('scroll', callback, {
-      passive: true,
-    });
-
-    return () => {
-      scrollContainer.removeEventListener('scroll', callback);
-    };
-  }, [
-    getScrollContainer,
-    scheduleUpdate,
-    scrollThrottleTime,
-    updateDimensions,
-  ]);
-
-  context.useEffect(() => {
-    let shouldUpdate = false;
-
-    const newSlice = items.slice(scopeRef.current.start, scopeRef.current.end);
-    const oldSlice = oldItems.slice(
-      scopeRef.current.start,
-      scopeRef.current.end,
-    );
-
-    if (!areItemsIdentical(newSlice, oldSlice)) {
       blockPositionsRef.current = computeBlockPositions(
         items,
         blockSizesRef.current,
         assumedItemSize,
       );
-      shouldUpdate = true;
     }
 
-    if (scrollingItemIndexRef.current >= 0) {
+    ref.current = {
+      scrollTo(index: number): void {
+        scopeRef.current = getInitialScope(
+          items,
+          blockSizesRef.current,
+          assumedItemSize,
+          index,
+          getScreen(),
+        );
+
+        scrollingItemIndexRef.current = index;
+
+        // Force update even if the scope has not changed.
+        $.forceUpdate();
+      },
+    };
+
+    const isMounted = $.use(isMountedHook);
+
+    const updateDimensions = $.useCallback(() => {
+      if (!isMounted()) {
+        requestAnimationFrame(updateDimensions);
+        return;
+      }
+
       const screen = containerRef.current
         ? translateRect(
             getScreen(),
@@ -246,102 +194,177 @@ export function VirtualScrollList<TItem extends { id: PropertyKey }>(
           )
         : getScreen();
 
-      const scrollOffset = getScrollOffset(
+      const newScope = getCurrentScope(
         blockPositionsRef.current,
-        scrollingItemIndexRef.current,
         screen,
+        offscreenRatio,
       );
 
-      if (scrollOffset !== 0) {
-        scrollBy(0, scrollOffset);
+      if (!areScopesEqual(scopeRef.current, newScope)) {
+        scopeRef.current = newScope;
+        $.forceUpdate();
       }
 
-      scrollingItemIndexRef.current = -1;
-      shouldUpdate = true;
-    }
+      onUpdateDimensions?.({
+        blockPositions: blockPositionsRef.current,
+        blockSizes: blockSizesRef.current,
+        scope: newScope,
+        screen,
+      });
 
-    if (shouldUpdate) {
-      if (!isDirtyRef.current) {
-        scheduleUpdate(updateDimensions);
-        isDirtyRef.current = true;
-      }
-    }
-  }, [items, scrollingItemIndexRef.current, scopeRef.current]);
+      isDirtyRef.current = false;
+    }, [onUpdateDimensions]);
 
-  const elementToIdMap = context.useMemo(
-    () => new WeakMap<Element, TItem['id']>(),
-    [],
-  );
+    $.useEffect(() => {
+      const scrollContainer = getScrollContainer();
 
-  const handleResizeObserverEntries = context.use(
-    createEventHook((entries: ResizeObserverEntry[]) => {
-      const blockSizes = blockSizesRef.current;
-      let hasChanged = false;
-
-      for (let i = 0, l = entries.length; i < l; i++) {
-        const entry = entries[i]!;
-        if (!entry.target.isConnected) {
-          continue;
+      const callback = throttle(() => {
+        if (!isDirtyRef.current) {
+          scheduleUpdate(updateDimensions);
+          isDirtyRef.current = true;
         }
-        const id = elementToIdMap.get(entry.target);
-        if (id !== undefined) {
-          const oldBlockSize = blockSizes.get(id);
-          const newBlockSize = entry.borderBoxSize[0]!.blockSize;
-          if (oldBlockSize !== newBlockSize) {
-            blockSizes.set(id, newBlockSize);
-            hasChanged = true;
+      }, scrollThrottleTime);
+
+      scrollContainer.addEventListener('scroll', callback, {
+        passive: true,
+      });
+
+      return () => {
+        scrollContainer.removeEventListener('scroll', callback);
+      };
+    }, [
+      getScrollContainer,
+      scheduleUpdate,
+      scrollThrottleTime,
+      updateDimensions,
+    ]);
+
+    $.useEffect(() => {
+      let shouldUpdate = false;
+
+      const newSlice = items.slice(
+        scopeRef.current.start,
+        scopeRef.current.end,
+      );
+      const oldSlice = oldItems.slice(
+        scopeRef.current.start,
+        scopeRef.current.end,
+      );
+
+      if (!areItemsIdentical(newSlice, oldSlice)) {
+        blockPositionsRef.current = computeBlockPositions(
+          items,
+          blockSizesRef.current,
+          assumedItemSize,
+        );
+        shouldUpdate = true;
+      }
+
+      if (scrollingItemIndexRef.current >= 0) {
+        const screen = containerRef.current
+          ? translateRect(
+              getScreen(),
+              containerRef.current.getBoundingClientRect(),
+            )
+          : getScreen();
+
+        const scrollOffset = getScrollOffset(
+          blockPositionsRef.current,
+          scrollingItemIndexRef.current,
+          screen,
+        );
+
+        if (scrollOffset !== 0) {
+          scrollBy(0, scrollOffset);
+        }
+
+        scrollingItemIndexRef.current = -1;
+        shouldUpdate = true;
+      }
+
+      if (shouldUpdate) {
+        if (!isDirtyRef.current) {
+          scheduleUpdate(updateDimensions);
+          isDirtyRef.current = true;
+        }
+      }
+    }, [items, scrollingItemIndexRef.current, scopeRef.current]);
+
+    const elementToIdMap = $.useMemo(
+      () => new WeakMap<Element, TItem['id']>(),
+      [],
+    );
+
+    const handleResizeObserverEntries = $.use(
+      createEventHook((entries: ResizeObserverEntry[]) => {
+        const blockSizes = blockSizesRef.current;
+        let hasChanged = false;
+
+        for (let i = 0, l = entries.length; i < l; i++) {
+          const entry = entries[i]!;
+          if (!entry.target.isConnected) {
+            continue;
+          }
+          const id = elementToIdMap.get(entry.target);
+          if (id !== undefined) {
+            const oldBlockSize = blockSizes.get(id);
+            const newBlockSize = entry.borderBoxSize[0]!.blockSize;
+            if (oldBlockSize !== newBlockSize) {
+              blockSizes.set(id, newBlockSize);
+              hasChanged = true;
+            }
           }
         }
-      }
 
-      if (!hasChanged) {
-        return;
-      }
+        if (!hasChanged) {
+          return;
+        }
 
-      blockPositionsRef.current = computeBlockPositions(
-        items,
-        blockSizesRef.current,
-        assumedItemSize,
-      );
-      if (!isDirtyRef.current) {
-        scheduleUpdate(updateDimensions);
-        isDirtyRef.current = true;
-      }
-      onUpdateBlockSizes?.(blockSizesRef.current);
-    }),
-  );
-  const resizeObserver = context.use(
-    createResizeObserverHook(handleResizeObserverEntries),
-  );
-
-  const children = context.useMemo(
-    () =>
-      repeat({
-        source: items.slice(scopeRef.current.start, scopeRef.current.end),
-        keySelector: (item) => item.id,
-        valueSelector: (item, index) => {
-          const id = item.id;
-          const ref: RefCallback<Element> = (element) => {
-            elementToIdMap.set(element, id);
-            resizeObserver.observe(element);
-            return () => {
-              elementToIdMap.delete(element);
-              resizeObserver.unobserve(element);
-            };
-          };
-          return renderItem(item, index + scopeRef.current.start, ref, context);
-        },
+        blockPositionsRef.current = computeBlockPositions(
+          items,
+          blockSizesRef.current,
+          assumedItemSize,
+        );
+        if (!isDirtyRef.current) {
+          scheduleUpdate(updateDimensions);
+          isDirtyRef.current = true;
+        }
+        onUpdateBlockSizes?.(blockSizesRef.current);
       }),
-    [items, scopeRef.current],
-  );
+    );
+    const resizeObserver = $.use(
+      createResizeObserverHook(handleResizeObserverEntries),
+    );
 
-  const blankSpaces = getBlankSpaces(
-    blockPositionsRef.current,
-    scopeRef.current,
-  );
+    const children = $.useMemo(
+      () =>
+        Repeat({
+          source: items.slice(scopeRef.current.start, scopeRef.current.end),
+          keySelector: (item) => item.id,
+          valueSelector: (item, index) => {
+            const id = item.id;
+            const ref: RefCallback<Element> = (element) => {
+              elementToIdMap.set(element, id);
+              resizeObserver.observe(element);
+              return () => {
+                elementToIdMap.delete(element);
+                resizeObserver.unobserve(element);
+              };
+            };
+            return renderItem(item, index + scopeRef.current.start, ref, $);
+          },
+        }),
+      [items, scopeRef.current],
+    );
 
-  return renderList(children, blankSpaces, containerRef, context);
-}
+    const blankSpaces = getBlankSpaces(
+      blockPositionsRef.current,
+      scopeRef.current,
+    );
+
+    return renderList(children, blankSpaces, containerRef, $);
+  },
+);
 
 function areItemsIdentical<T extends { id: PropertyKey }>(
   first: readonly T[],

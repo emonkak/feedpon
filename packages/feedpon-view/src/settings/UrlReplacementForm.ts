@@ -1,7 +1,6 @@
-import { component, type RenderContext } from 'barebind';
-import { Atom } from 'barebind/extensions/signal';
+import { createComponent, type RenderContext } from 'barebind';
+import { LocalAtom } from 'barebind/extras/hooks';
 import type { UrlReplacement } from 'feedpon-messaging';
-
 import { FormControl, type FormValidation } from '../primitives/FormControl.ts';
 
 interface UrlReplacementFormProps {
@@ -9,32 +8,32 @@ interface UrlReplacementFormProps {
   onSubmit: (item: UrlReplacement) => void;
 }
 
-const patternValidations: FormValidation<'input'>[] = [
+const patternValidations: FormValidation[] = [
   (element) =>
     isValidPattern(element.value) ? null : 'Invalid regular expression.',
 ];
 
-export function UrlReplacementForm(
+export const UrlReplacementForm = createComponent(function UrlReplacementForm(
   { item, onSubmit }: UrlReplacementFormProps,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
-  const pattern$ = context.use(Atom.untracked(item?.pattern ?? ''));
-  const replacement$ = context.use(Atom.untracked(item?.replacement ?? ''));
-  const flags$ = context.use(Atom.untracked(item?.flags ?? ''));
+  const pattern$ = $.use(LocalAtom(item?.pattern ?? ''));
+  const replacement$ = $.use(LocalAtom(item?.replacement ?? ''));
+  const flags$ = $.use(LocalAtom(item?.flags ?? ''));
 
-  const handleChangePattern = context.useCallback((event: Event) => {
+  const handleChangePattern = $.useCallback((event: Event) => {
     pattern$.value = (event.currentTarget as HTMLInputElement).value;
   }, []);
 
-  const handleChangeReplacement = context.useCallback((event: Event) => {
+  const handleChangeReplacement = $.useCallback((event: Event) => {
     replacement$.value = (event.currentTarget as HTMLInputElement).value;
   }, []);
 
-  const handleChangeFlags = context.useCallback((event: Event) => {
+  const handleChangeFlags = $.useCallback((event: Event) => {
     flags$.value = (event.currentTarget as HTMLInputElement).value;
   }, []);
 
-  const handleSubmit = context.useCallback(
+  const handleSubmit = $.useCallback(
     (event: SubmitEvent) => {
       event.preventDefault();
 
@@ -53,13 +52,13 @@ export function UrlReplacementForm(
     [onSubmit],
   );
 
-  return context.html`
+  return $.html`
     <form class="form" @submit=${handleSubmit}>
       <div class="form-legend">${item !== undefined ? 'Edit rule' : 'New rule'}</div>
       <div class="form-group">
         <label>
           <span class="form-group-heading form-required">Pattern</span>
-          <${component(FormControl<'input'>, {
+          <${FormControl({
             as: 'input',
             validations: patternValidations,
             ownProps: {
@@ -87,7 +86,7 @@ export function UrlReplacementForm(
       <div class="form-group">
         <label>
           <span class="form-group-heading">Flags</span>
-          <${component(FormControl<'input'>, {
+          <${FormControl({
             as: 'input',
             ownProps: {
               class: 'form-control',
@@ -106,7 +105,7 @@ export function UrlReplacementForm(
       </div>
     </form>
   `;
-}
+});
 
 function isValidPattern(pattern: string): boolean {
   try {

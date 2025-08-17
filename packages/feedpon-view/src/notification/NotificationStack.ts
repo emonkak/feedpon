@@ -1,4 +1,4 @@
-import { component, type RenderContext, repeat } from 'barebind';
+import { createComponent, type RenderContext, Repeat } from 'barebind';
 import { bindActions } from 'feedpon-flux';
 import { getStoreHook } from 'feedpon-flux/barebind.ts';
 import type { State } from 'feedpon-messaging';
@@ -8,11 +8,11 @@ import { NotificationView } from './NotificationView.ts';
 
 export interface NotificationStackProps {}
 
-export function NotificationStack(
+export const NotificationStack = createComponent(function NotificationStack(
   {}: NotificationStackProps,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
-  const { notifications, onDismissNotification } = context.use(
+  const { notifications, onDismissNotification } = $.use(
     getStoreHook({
       mapStateToProps: (state: State) => ({
         notifications: state.notifications.items,
@@ -23,17 +23,17 @@ export function NotificationStack(
     }),
   );
 
-  return context.html`
+  return $.html`
     <div class="notification-list">
-      <${repeat({
+      <${Repeat({
         source: notifications,
         keySelector: (notification) => notification.id,
         valueSelector: (notification) =>
-          component(NotificationView, {
+          NotificationView({
             notification,
             onDismiss: onDismissNotification,
           }),
       })}>
     </div>
   `;
-}
+});

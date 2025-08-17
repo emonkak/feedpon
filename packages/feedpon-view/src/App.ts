@@ -1,5 +1,5 @@
-import { component, type RenderContext } from 'barebind';
-import { HashHistory, ScrollRestration } from 'barebind/extensions/router';
+import { createComponent, type RenderContext } from 'barebind';
+import { HashHistory, ScrollRestration } from 'barebind/extras/router';
 import type { Store } from 'feedpon-flux';
 import { setStoreHook } from 'feedpon-flux/barebind.ts';
 
@@ -9,16 +9,17 @@ export interface AppProps {
   getStore: () => Promise<Store<unknown, unknown>>;
 }
 
-export function App({ getStore }: AppProps, context: RenderContext): unknown {
-  const [store, setStore] = context.useState<Store<unknown, unknown> | null>(
-    null,
-  );
-  const [error, setError] = context.useState<NonNullable<unknown> | null>(null);
+export const App = createComponent(function App(
+  { getStore }: AppProps,
+  $: RenderContext,
+): unknown {
+  const [store, setStore] = $.useState<Store<unknown, unknown> | null>(null);
+  const [error, setError] = $.useState<NonNullable<unknown> | null>(null);
 
-  context.use(HashHistory);
-  context.use(ScrollRestration);
+  $.use(HashHistory);
+  $.use(ScrollRestration);
 
-  context.useEffect(() => {
+  $.useEffect(() => {
     getStore().then(
       (store) => {
         setStore(store);
@@ -31,7 +32,7 @@ export function App({ getStore }: AppProps, context: RenderContext): unknown {
   }, [getStore]);
 
   if (store === null) {
-    return context.html`
+    return $.html`
       <div class="l-boot">
         <img
           :class=${{
@@ -44,7 +45,7 @@ export function App({ getStore }: AppProps, context: RenderContext): unknown {
         >
         <${
           error !== null
-            ? context.html`
+            ? $.html`
               <div class="u-text-negative u-text-center">
                 <p class="u-text-4">${error.toString()}</p>
               </div>
@@ -55,7 +56,7 @@ export function App({ getStore }: AppProps, context: RenderContext): unknown {
     `;
   }
 
-  context.use(setStoreHook(store));
+  $.use(setStoreHook(store));
 
-  return context.html`<${component(Dispatcher, {})}>`;
-}
+  return Dispatcher({});
+});

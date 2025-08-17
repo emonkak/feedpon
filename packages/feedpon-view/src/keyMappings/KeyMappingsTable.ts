@@ -1,4 +1,4 @@
-import { type RenderContext, repeat } from 'barebind';
+import { createComponent, type RenderContext, Repeat } from 'barebind';
 import type { Command, KeyMapping } from 'feedpon-messaging';
 import * as Trie from 'feedpon-utils/Trie.ts';
 
@@ -7,22 +7,22 @@ interface KeyMappingsTableProps {
   keyMappings: Trie.Trie<KeyMapping>;
 }
 
-export function KeyMappingsTable(
+export const KeyMappingsTable = createComponent(function KeyMappingsTable(
   { commandTable, keyMappings }: KeyMappingsTableProps,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
-  const rows = repeat({
+  const rows = Repeat({
     source: Trie.toArray(keyMappings),
     valueSelector: ([keys, keyMapping]) => {
       const name =
         commandTable[keyMapping.commandId]?.name ?? `<${keyMapping.commandId}>`;
 
-      return context.html`
+      return $.html`
         <tr>
           <td>
-            <${repeat({
+            <${Repeat({
               source: keys,
-              valueSelector: (key) => context.html`<kbd>${key}</kbd>`,
+              valueSelector: (key) => $.html`<kbd>${key}</kbd>`,
             })}>
           </td>
           <td>${name}</td>
@@ -31,7 +31,7 @@ export function KeyMappingsTable(
     },
   });
 
-  return context.html`
+  return $.html`
     <table class="table">
       <thead>
         <tr>
@@ -42,4 +42,4 @@ export function KeyMappingsTable(
       <tbody><${rows}></tbody>
     </table>
   `;
-}
+});

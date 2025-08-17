@@ -1,4 +1,4 @@
-import type { HistoryNavigator } from 'barebind/extensions/router';
+import type { HistoryNavigator } from 'barebind/extras/router';
 import type { Store as FluxStore } from 'feedpon-flux';
 import type { CacheMap } from 'feedpon-utils/CacheMap.ts';
 import type { Trie } from 'feedpon-utils/Trie.ts';

@@ -7,7 +7,7 @@ settings:
 catalogs:
   default:
     barebind:
-      specifier: github:emonkak/barebind#46adde63235ef77d59c93eabfaa757e9e2b9e49b
+      specifier: github:emonkak/barebind
       version: 0.1.0
 
 importers:
@@ -37,7 +37,7 @@ importers:
         version: 0.1.4
       barebind:
         specifier: 'catalog:'
-        version: https://codeload.github.com/emonkak/barebind/tar.gz/46adde63235ef77d59c93eabfaa757e9e2b9e49b
+        version: https://codeload.github.com/emonkak/barebind/tar.gz/b207117284cba15a126813c7eca2bdd084b62b96
       feedpon-adapters:
         specifier: workspace:^
         version: link:../feedpon-adapters
@@ -60,7 +60,7 @@ importers:
     dependencies:
       barebind:
         specifier: 'catalog:'
-        version: https://codeload.github.com/emonkak/barebind/tar.gz/46adde63235ef77d59c93eabfaa757e9e2b9e49b
+        version: https://codeload.github.com/emonkak/barebind/tar.gz/b207117284cba15a126813c7eca2bdd084b62b96
       feedpon-utils:
         specifier: workspace:^
         version: link:../feedpon-utils
@@ -75,7 +75,7 @@ importers:
         version: 0.1.4
       barebind:
         specifier: 'catalog:'
-        version: https://codeload.github.com/emonkak/barebind/tar.gz/46adde63235ef77d59c93eabfaa757e9e2b9e49b
+        version: https://codeload.github.com/emonkak/barebind/tar.gz/b207117284cba15a126813c7eca2bdd084b62b96
       feedpon-adapters:
         specifier: workspace:^
         version: link:../feedpon-adapters
@@ -93,7 +93,7 @@ importers:
     dependencies:
       barebind:
         specifier: 'catalog:'
-        version: https://codeload.github.com/emonkak/barebind/tar.gz/46adde63235ef77d59c93eabfaa757e9e2b9e49b
+        version: https://codeload.github.com/emonkak/barebind/tar.gz/b207117284cba15a126813c7eca2bdd084b62b96
       openapi-fetch:
         specifier: ^0.14.0
         version: 0.14.0
@@ -120,7 +120,7 @@ importers:
         version: 0.1.4
       barebind:
         specifier: 'catalog:'
-        version: https://codeload.github.com/emonkak/barebind/tar.gz/46adde63235ef77d59c93eabfaa757e9e2b9e49b
+        version: https://codeload.github.com/emonkak/barebind/tar.gz/b207117284cba15a126813c7eca2bdd084b62b96
       feedpon-adapters:
         specifier: workspace:^
         version: link:../feedpon-adapters
@@ -588,11 +588,11 @@ packages:
     resolution: {integrity: sha512-vjtV3hiLqYDNRoiAv0zC4QaGAMPomEoq83PRmYIofPswwZurCeWR5LByXm7SyoL0Zh5+2z0+HC7jG8gSZJUh0w==}
     engines: {node: '>= 16'}
 
-  barebind@https://codeload.github.com/emonkak/barebind/tar.gz/46adde63235ef77d59c93eabfaa757e9e2b9e49b:
-    resolution: {tarball: https://codeload.github.com/emonkak/barebind/tar.gz/46adde63235ef77d59c93eabfaa757e9e2b9e49b}
+  barebind@https://codeload.github.com/emonkak/barebind/tar.gz/b207117284cba15a126813c7eca2bdd084b62b96:
+    resolution: {tarball: https://codeload.github.com/emonkak/barebind/tar.gz/b207117284cba15a126813c7eca2bdd084b62b96}
     version: 0.1.0
 
-  binary-extensions@2.3.0:
+  binary-extras@2.3.0:
     resolution: {integrity: sha512-Ceh+7ox5qe7LJuLHoY0feh3pHuUDHAcRUeyL2VYghZwfpkNIy/+8Ocg0a3UuSoYzavmylwuLWQOf3hl0jjMMIw==}
     engines: {node: '>=8'}
 
@@ -1320,11 +1320,11 @@ snapshots:
 
   balanced-match@3.0.1: {}
 
-  barebind@https://codeload.github.com/emonkak/barebind/tar.gz/46adde63235ef77d59c93eabfaa757e9e2b9e49b:
+  barebind@https://codeload.github.com/emonkak/barebind/tar.gz/b207117284cba15a126813c7eca2bdd084b62b96:
     dependencies:
       navigation-api-types: 0.6.1
 
-  binary-extensions@2.3.0: {}
+  binary-extras@2.3.0: {}
 
   brace-expansion@2.0.2:
     dependencies:
@@ -1455,7 +1455,7 @@ snapshots:
 
   is-binary-path@2.1.0:
     dependencies:
-      binary-extensions: 2.3.0
+      binary-extras: 2.3.0
 
   is-extglob@2.1.1: {}
 

@@ -1,41 +1,41 @@
-import { component, type RenderContext } from 'barebind';
-import { Atom } from 'barebind/extensions/signal';
-
+import { createComponent, type RenderContext } from 'barebind';
+import { LocalAtom } from 'barebind/extras/hooks';
 import { FormControl, type FormValidation } from '../primitives/FormControl.ts';
 
 interface TrackingUrlPatternFormProps {
   onAdd: (pattern: string) => void;
 }
 
-const patternValidations: FormValidation<'input'>[] = [
+const patternValidations: FormValidation[] = [
   (element) =>
     isValidPattern(element.value) ? null : 'Invalid regular expression.',
 ];
 
-export function TrackingUrlPatternForm(
-  { onAdd }: TrackingUrlPatternFormProps,
-  context: RenderContext,
-): unknown {
-  const pattern$ = context.use(Atom.untracked(''));
+export const TrackingUrlPatternForm = createComponent(
+  function TrackingUrlPatternForm(
+    { onAdd }: TrackingUrlPatternFormProps,
+    $: RenderContext,
+  ): unknown {
+    const pattern$ = $.use(LocalAtom(''));
 
-  const handleChange = context.useCallback((event: Event) => {
-    pattern$.value = (event.currentTarget as HTMLInputElement).value;
-  }, []);
+    const handleChange = $.useCallback((event: Event) => {
+      pattern$.value = (event.currentTarget as HTMLInputElement).value;
+    }, []);
 
-  const handleSubmit = context.useCallback(
-    (event: Event) => {
-      event.preventDefault();
-      onAdd(pattern$.value);
-      pattern$.value = '';
-    },
-    [onAdd],
-  );
+    const handleSubmit = $.useCallback(
+      (event: Event) => {
+        event.preventDefault();
+        onAdd(pattern$.value);
+        pattern$.value = '';
+      },
+      [onAdd],
+    );
 
-  return context.html`
+    return $.html`
     <form class="form" @submit=${handleSubmit}>
       <div class="form-legend">New tracking URL pattern</div>
       <div class="input-group">
-        <${component(FormControl<'input'>, {
+        <${FormControl({
           as: 'input',
           validations: patternValidations,
           ownProps: {
@@ -56,7 +56,8 @@ export function TrackingUrlPatternForm(
       </span>
     </form>
   `;
-}
+  },
+);
 
 function isValidPattern(pattern: string): boolean {
   try {

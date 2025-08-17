@@ -1,4 +1,4 @@
-import type { RenderContext } from 'barebind';
+import { createComponent, type RenderContext } from 'barebind';
 
 const MILLIS_PER_SECOND = 1000;
 const MILLIS_PER_MINITE = 60 * 1000;
@@ -13,18 +13,18 @@ interface RelativeTimeProps {
   time: number;
 }
 
-export function RelativeTime(
+export const RelativeTime = createComponent(function RelativeTime(
   {
     class: className,
     locales = 'en',
     time,
     updateInterval = MILLIS_PER_MINITE,
   }: RelativeTimeProps,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
-  const [now, setNow] = context.useState(() => new Date());
+  const [now, setNow] = $.useState(() => new Date());
 
-  context.useEffect(() => {
+  $.useEffect(() => {
     const timer = setInterval(() => {
       setNow(new Date());
     }, updateInterval);
@@ -34,7 +34,7 @@ export function RelativeTime(
     };
   }, [updateInterval]);
 
-  const formatter = context.useMemo(
+  const formatter = $.useMemo(
     () => new Intl.RelativeTimeFormat(locales),
     [locales],
   );
@@ -43,7 +43,7 @@ export function RelativeTime(
   const relativeTimeString =
     unit === 'second' && amount <= 0 ? 'now' : formatter.format(amount, unit);
 
-  return context.html`
+  return $.html`
     <time
       class=${className}
       datetime=${date.toISOString()}
@@ -52,7 +52,7 @@ export function RelativeTime(
       ${relativeTimeString}
     </time>
   `;
-}
+});
 
 function toRelativeTime(
   date: Date,

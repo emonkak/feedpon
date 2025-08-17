@@ -1,5 +1,5 @@
-import type { RenderContext } from 'barebind';
-import { Atom } from 'barebind/extensions/signal';
+import { createComponent, type RenderContext } from 'barebind';
+import { LocalAtom } from 'barebind/extras/hooks';
 import { bindActions } from 'feedpon-flux';
 import { getStoreHook } from 'feedpon-flux/barebind.ts';
 import type { State, StreamViewKind } from 'feedpon-messaging';
@@ -10,14 +10,13 @@ import {
   changeStreamHistoryOptions,
   clearStreamCaches,
 } from 'feedpon-messaging/streams';
-
-import { AlertDialog } from '../primitives/AlertDialog.ts';
+import { openAlertDialog } from '../primitives/AlertDialog.ts';
 
 export interface StreamSettingsProps {}
 
-export function StreamSettings(
+export const StreamSettings = createComponent(function StreamSettings(
   {}: StreamSettingsProps,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
   const {
     cacheCapacity: initialCacheCapacity,
@@ -29,7 +28,7 @@ export function StreamSettings(
     onChangeStreamCacheCapacity,
     onClearStreamCaches,
     streamView: initialStreamView,
-  } = context.use(
+  } = $.use(
     getStoreHook({
       mapStateToProps: (state: State) => ({
         cacheCapacity: state.streams.items.capacity,
@@ -47,26 +46,24 @@ export function StreamSettings(
     }),
   );
 
-  const [fetchOptions, setFetchOptions] = context.useState(initialFetchOptions);
-  const cacheCapacity$ = context.use(Atom.untracked(initialCacheCapacity));
-  const numStreamHistories$ = context.use(
-    Atom.untracked(initialNumStreamHistories),
-  );
-  const streamView$ = context.use(Atom.untracked(initialStreamView));
+  const [fetchOptions, setFetchOptions] = $.useState(initialFetchOptions);
+  const cacheCapacity$ = $.use(LocalAtom(initialCacheCapacity));
+  const numStreamHistories$ = $.use(LocalAtom(initialNumStreamHistories));
+  const streamView$ = $.use(LocalAtom(initialStreamView));
 
-  const handleChangeNumStreamHistories = context.useCallback((event: Event) => {
+  const handleChangeNumStreamHistories = $.useCallback((event: Event) => {
     numStreamHistories$.value = (
       event.currentTarget as HTMLInputElement
     ).valueAsNumber;
   }, []);
 
-  const handleChangeCacheCapacity = context.useCallback((event: Event) => {
+  const handleChangeCacheCapacity = $.useCallback((event: Event) => {
     cacheCapacity$.value = (
       event.currentTarget as HTMLInputElement
     ).valueAsNumber;
   }, []);
 
-  const handleChangeFetchOptions = context.useCallback((event: Event) => {
+  const handleChangeFetchOptions = $.useCallback((event: Event) => {
     const target = event.currentTarget as HTMLInputElement;
     const name = target.name;
     const value = target.type === 'checkbox' ? target.checked : target.value;
@@ -77,12 +74,12 @@ export function StreamSettings(
     }));
   }, []);
 
-  const handleChangeStreamView = context.useCallback((event: Event) => {
+  const handleChangeStreamView = $.useCallback((event: Event) => {
     streamView$.value = (event.currentTarget as HTMLInputElement)
       .value as StreamViewKind;
   }, []);
 
-  const handleSubmitFetchOptions = context.useCallback(
+  const handleSubmitFetchOptions = $.useCallback(
     (event: SubmitEvent) => {
       event.preventDefault();
       onChangeDefaultStreamFetchOptions(fetchOptions);
@@ -90,7 +87,7 @@ export function StreamSettings(
     [onChangeDefaultStreamFetchOptions],
   );
 
-  const handleSubmitStreamView = context.useCallback(
+  const handleSubmitStreamView = $.useCallback(
     (event: SubmitEvent) => {
       event.preventDefault();
       onChangeDefaultStreamView(streamView$.value);
@@ -98,7 +95,7 @@ export function StreamSettings(
     [onChangeDefaultStreamView],
   );
 
-  const handleSubmitHistoryOptions = context.useCallback(
+  const handleSubmitHistoryOptions = $.useCallback(
     (event: SubmitEvent) => {
       event.preventDefault();
       onChangeStreamHistoryOptions(numStreamHistories$.value);
@@ -106,7 +103,7 @@ export function StreamSettings(
     [onChangeStreamHistoryOptions],
   );
 
-  const handleSubmitCacheCapacity = context.useCallback(
+  const handleSubmitCacheCapacity = $.useCallback(
     (event: SubmitEvent) => {
       event.preventDefault();
       onChangeStreamCacheCapacity(cacheCapacity$.value);
@@ -114,8 +111,8 @@ export function StreamSettings(
     [onChangeStreamCacheCapacity],
   );
 
-  const handleClearStreamCaches = context.useCallback(() => {
-    AlertDialog.open({
+  const handleClearStreamCaches = $.useCallback(() => {
+    openAlertDialog({
       confirmButton: ({ onConfirm }, context) => context.html`
           <button class="button button-negative" type="button" @click=${onConfirm}>Clear</button>
         `,
@@ -130,7 +127,7 @@ export function StreamSettings(
     });
   }, [onClearStreamCaches]);
 
-  return context.html`
+  return $.html`
     <section class="section">
       <h1 class="display-1">Stream</h1>
       <form class="form" @submit=${handleSubmitFetchOptions}>
@@ -287,4 +284,4 @@ export function StreamSettings(
       </form>
     </section>
   `;
-}
+});

@@ -1,5 +1,5 @@
-import { component, type RenderContext, repeat } from 'barebind';
-import { Atom } from 'barebind/extensions/signal';
+import { createComponent, type RenderContext, Repeat } from 'barebind';
+import { LocalAtom } from 'barebind/extras/hooks';
 import { bindActions } from 'feedpon-flux';
 import { getStoreHook } from 'feedpon-flux/barebind.ts';
 import type { State } from 'feedpon-messaging';
@@ -9,16 +9,15 @@ import {
   deleteTrackingUrlPattern,
   resetTrackingUrlPatterns,
 } from 'feedpon-messaging/trackingUrls';
-
-import { AlertDialog } from '../primitives/AlertDialog.ts';
+import { openAlertDialog } from '../primitives/AlertDialog.ts';
 import { TrackingUrlPatternForm } from './TrackingUrlPatternForm.ts';
 import { TrackingUrlPatternRow } from './TrackingUrlPatternRow.ts';
 
 export interface TrackingUrlSettingsProps {}
 
-export function TrackingUrlSettings(
+export const TrackingUrlSettings = createComponent(function TrackingUrlSettings(
   _props: TrackingUrlSettingsProps,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
   const {
     cacheCapacity: initialCacheCapacity,
@@ -27,7 +26,7 @@ export function TrackingUrlSettings(
     onDeleteTrackingUrlPattern,
     onResetTrackingUrlPatterns,
     patterns,
-  } = context.use(
+  } = $.use(
     getStoreHook({
       mapStateToProps: (state: State) => ({
         cacheCapacity: state.trackingUrls.items.capacity,
@@ -42,17 +41,17 @@ export function TrackingUrlSettings(
     }),
   );
 
-  const cacheCapacity$ = context.use(Atom.untracked(initialCacheCapacity));
+  const cacheCapacity$ = $.use(LocalAtom(initialCacheCapacity));
 
-  const handleChangeCacheCapacity = context.useCallback((event: Event) => {
+  const handleChangeCacheCapacity = $.useCallback((event: Event) => {
     cacheCapacity$.value = (
       event.currentTarget as HTMLInputElement
     ).valueAsNumber;
   }, []);
 
-  const handleReset = context.useCallback(() => {
-    AlertDialog.open({
-      confirmButton: ({ onConfirm }, context) => context.html`
+  const handleReset = $.useCallback(() => {
+    openAlertDialog({
+      confirmButton: ({ onConfirm }, $) => $.html`
           <button class="button button-negative" type="button" @click=${onConfirm}>Reset</button>
         `,
       cancelButton: ({ onCancel }, context) => context.html`
@@ -66,25 +65,22 @@ export function TrackingUrlSettings(
     });
   }, [onResetTrackingUrlPatterns]);
 
-  const handleSubmitCacheCapacity = context.useCallback(
-    (event: SubmitEvent) => {
-      event.preventDefault();
-      onChangeTrakingUrlCacheCapacity(cacheCapacity$.value);
-    },
-    [],
-  );
+  const handleSubmitCacheCapacity = $.useCallback((event: SubmitEvent) => {
+    event.preventDefault();
+    onChangeTrakingUrlCacheCapacity(cacheCapacity$.value);
+  }, []);
 
-  const rows = repeat({
+  const rows = Repeat({
     source: patterns,
     keySelector: (pattern) => pattern,
     valueSelector: (pattern) =>
-      component(TrackingUrlPatternRow, {
+      TrackingUrlPatternRow({
         pattern,
         onDelete: onDeleteTrackingUrlPattern,
       }),
   });
 
-  return context.html`
+  return $.html`
     <section class="section">
       <h1 class="display-1">Tracking URL</h1>
       <p>
@@ -111,7 +107,7 @@ export function TrackingUrlSettings(
           </label>
         </div>
       </form>
-      <${component(TrackingUrlPatternForm, { onAdd: onAddTrackingUrlPattern })}>
+      <${TrackingUrlPatternForm({ onAdd: onAddTrackingUrlPattern })}>
       <h2 class="display-2">Available patterns</h2>
       <div class="u-responsive">
         <table class="table">
@@ -135,4 +131,4 @@ export function TrackingUrlSettings(
       </div>
     </section>
   `;
-}
+});

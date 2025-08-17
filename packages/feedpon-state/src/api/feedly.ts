@@ -1,4 +1,4 @@
-import { Atom } from 'barebind/extensions/signal';
+import { Atom } from 'barebind/extras/signal';
 import createClient, { type Client } from 'openapi-fetch';
 
 import type { AsyncAction, State, Store } from '../store.ts';

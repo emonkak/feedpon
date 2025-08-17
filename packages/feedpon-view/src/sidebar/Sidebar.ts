@@ -1,5 +1,5 @@
-import { component, type RenderContext } from 'barebind';
-import { CurrentHistory, RelativeURL } from 'barebind/extensions/router';
+import { createComponent, type RenderContext } from 'barebind';
+import { CurrentHistory, RelativeURL } from 'barebind/extras/router';
 import { bindActions } from 'feedpon-flux';
 import { getStoreHook } from 'feedpon-flux/barebind.ts';
 import type { State, Subscription } from 'feedpon-messaging';
@@ -26,26 +26,26 @@ import { SubscriptionTree } from './SubscriptionTree.ts';
 
 export interface SidebarProps {}
 
-export function Sidebar({}: SidebarProps, context: RenderContext): unknown {
-  const [location, navigator] = context.use(CurrentHistory);
+export const Sidebar = createComponent(function Sidebar(
+  {}: SidebarProps,
+  $: RenderContext,
+): unknown {
+  const [location, navigator] = $.use(CurrentHistory);
 
-  const categoriesSelector = context.useMemo(
-    createSortedCategoriesSelector,
-    [],
-  );
-  const allSubscriptionsSelector = context.useMemo(
+  const categoriesSelector = $.useMemo(createSortedCategoriesSelector, []);
+  const allSubscriptionsSelector = $.useMemo(
     createAllSubscriptionsSelector,
     [],
   );
-  const visibleSubscriptionsSelector = context.useMemo(
+  const visibleSubscriptionsSelector = $.useMemo(
     () => createVisibleSubscriptionsSelector(allSubscriptionsSelector),
     [],
   );
-  const groupedSubscriptionsSelector = context.useMemo(
+  const groupedSubscriptionsSelector = $.useMemo(
     () => createGroupedSubscriptionsSelector(visibleSubscriptionsSelector),
     [],
   );
-  const totalUnreadCountSelector = context.useMemo(
+  const totalUnreadCountSelector = $.useMemo(
     () => createTotalUnreadCountSelector(visibleSubscriptionsSelector),
     [],
   );
@@ -66,7 +66,7 @@ export function Sidebar({}: SidebarProps, context: RenderContext): unknown {
     totalUnreadCount,
     userIsLoaded,
     userIsLoading,
-  } = context.use(
+  } = $.use(
     getStoreHook({
       mapStateToProps: (state: State) => ({
         categories: categoriesSelector(state),
@@ -91,43 +91,41 @@ export function Sidebar({}: SidebarProps, context: RenderContext): unknown {
     }),
   );
 
-  context.useEffect(() => {
+  $.useEffect(() => {
     if (lastUpdatedAt === 0) {
       onFetchSubscriptions();
     }
   }, [lastUpdatedAt]);
 
-  context.useEffect(() => {
+  $.useEffect(() => {
     if (!userIsLoaded) {
       onFetchUser();
     }
   }, [userIsLoaded]);
 
-  const handleSearch = context.useCallback((query: string) => {
+  const handleSearch = $.useCallback((query: string) => {
     navigator.navigate(new RelativeURL('/search/' + encodeURIComponent(query)));
   }, []);
 
-  const handleSelect = context.useCallback((path: string) => {
+  const handleSelect = $.useCallback((path: string) => {
     navigator.navigate(new RelativeURL(path));
   }, []);
 
-  const handleManageSubscriptions = context.useCallback(() => {
+  const handleManageSubscriptions = $.useCallback(() => {
     navigator.navigate(new RelativeURL('/categories'));
   }, []);
 
   const lastUpdate =
     lastUpdatedAt > 0
-      ? context.html`
-        <span>
-          Updated <${component(RelativeTime, { time: lastUpdatedAt })}>
-        </span>
+      ? $.html`
+        <span>Updated <${RelativeTime({ time: lastUpdatedAt })}></span>
       `
-      : context.html`Not updated yet`;
+      : $.html`Not updated yet`;
 
-  return context.html`
+  return $.html`
     <nav class="Sidebar">
       <div class="SidebarSection">
-        <${component(AutoComplete<Subscription>, {
+        <${AutoComplete({
           items: subscriptions,
           onSubmit: handleSearch,
           placeholder: 'Search for feeds ...',
@@ -185,7 +183,7 @@ export function Sidebar({}: SidebarProps, context: RenderContext): unknown {
             ></i>
           </button>
           <strong class="u-flex-grow-1 u-text-7"><${lastUpdate}></strong>
-          <${component(SubscriptionDisplayDropdown, {
+          <${SubscriptionDisplayDropdown({
             isLoading: subscriptionsIsLoading,
             onChangeSubscriptionOrder,
             onChangeOnlyUnread,
@@ -194,7 +192,7 @@ export function Sidebar({}: SidebarProps, context: RenderContext): unknown {
             subscriptionOrder,
           })}>
         </header>
-        <${component(SubscriptionTree, {
+        <${SubscriptionTree({
           categories,
           groupedSubscriptions,
           selectedPath: location.url.pathname,
@@ -230,7 +228,7 @@ export function Sidebar({}: SidebarProps, context: RenderContext): unknown {
         </a>
       </div>
       <div class="SidebarSection">
-        <${component(ProfileDropdown, {
+        <${ProfileDropdown({
           isLoading: userIsLoading,
           profile,
           onRefresh: onFetchUser,
@@ -239,12 +237,12 @@ export function Sidebar({}: SidebarProps, context: RenderContext): unknown {
       </div>
     </nav>
   `;
-}
+});
 
 function getFilteredItems(
   subscriptions: Subscription[],
   query: string,
-  context: RenderContext,
+  $: RenderContext,
 ): MenuItem[] {
   const normalizedQuery = query.trim().toLowerCase();
   if (normalizedQuery === '') {
@@ -264,7 +262,7 @@ function getFilteredItems(
   ).map((subscription) => {
     const icon =
       subscription.iconUrl !== ''
-        ? context.html`
+        ? $.html`
           <img
             class="u-vertical-middle u-object-fit-cover"
             alt=${subscription.title}
@@ -273,12 +271,12 @@ function getFilteredItems(
             height="16"
           >
         `
-        : context.html`<i class="icon icon-16 icon-file "></i>`;
+        : $.html`<i class="icon icon-16 icon-file "></i>`;
 
     return {
       type: 'link',
       key: 'subscription:' + subscription.subscriptionId,
-      children: context.html`
+      children: $.html`
         <div class="MenuItem-icon"><${icon}></div>
         <div class="MenuItem-content">${subscription.title}</div>
       `,
@@ -296,7 +294,7 @@ function getFilteredItems(
         type: 'link',
         key: 'search_by_query',
         href: '#/search/' + encodeURIComponent(query),
-        children: context.html`
+        children: $.html`
           <div class="MenuItem-content">Search for "${query}"...</div>
         `,
       },

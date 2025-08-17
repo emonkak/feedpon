@@ -1,15 +1,15 @@
-import type { RenderContext } from 'barebind';
+import { createComponent, type RenderContext } from 'barebind';
 import { bindActions } from 'feedpon-flux';
 import { getStoreHook } from 'feedpon-flux/barebind.ts';
 import { authenticate } from 'feedpon-messaging/backend';
 
 export interface AuthenticationPageProps {}
 
-export function AuthenticationPage(
+export const AuthenticationPage = createComponent(function AuthenticationPage(
   _props: AuthenticationPageProps,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
-  const { onAuthenticate } = context.use(
+  const { onAuthenticate } = $.use(
     getStoreHook({
       mapDispatchToProps: bindActions({
         onAuthenticate: authenticate,
@@ -17,7 +17,7 @@ export function AuthenticationPage(
     }),
   );
 
-  return context.html`
+  return $.html`
     <div class="authentication">
       <div class="container">
         <div class="u-text-center u-margin-bottom-2">
@@ -59,4 +59,4 @@ export function AuthenticationPage(
       </div>
     </div>
   `;
-}
+});

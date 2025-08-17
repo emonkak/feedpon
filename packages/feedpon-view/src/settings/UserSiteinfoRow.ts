@@ -1,11 +1,11 @@
-import { component, type RenderContext } from 'barebind';
+import { createComponent, type RenderContext } from 'barebind';
 import type { SiteinfoItem } from 'feedpon-messaging';
 import type {
   deleteUserSiteinfoItem,
   updateUserSiteinfoItem,
 } from 'feedpon-messaging/userSiteinfo';
 
-import { AlertDialog } from '../primitives/AlertDialog.ts';
+import { openAlertDialog } from '../primitives/AlertDialog.ts';
 import { Dialog } from '../primitives/Dialog.ts';
 import { UserSiteinfoForm } from './UserSiteinfoForm.ts';
 
@@ -15,22 +15,22 @@ interface UserSiteinfoRowProps {
   onUpdate: typeof updateUserSiteinfoItem;
 }
 
-export function UserSiteinfoRow(
+export const UserSiteinfoRow = createComponent(function UserSiteinfoRow(
   { item, onDelete, onUpdate }: UserSiteinfoRowProps,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
-  const [isEditing, setIsEditing] = context.useState(false);
+  const [isEditing, setIsEditing] = $.useState(false);
 
-  const handleStartEditing = context.useCallback(() => {
+  const handleStartEditing = $.useCallback(() => {
     setIsEditing(true);
   }, []);
 
-  const handleCancelEditing = context.useCallback(() => {
+  const handleCancelEditing = $.useCallback(() => {
     setIsEditing(false);
   }, []);
 
-  const handleDelete = context.useCallback(() => {
-    AlertDialog.open({
+  const handleDelete = $.useCallback(() => {
+    openAlertDialog({
       confirmButton: ({ onConfirm }, context) => context.html`
           <button class="button button-negative" type="button" @click=${onConfirm}>Delete</button>
         `,
@@ -45,7 +45,7 @@ export function UserSiteinfoRow(
     });
   }, [item, onDelete]);
 
-  const handleSubmit = context.useCallback(
+  const handleSubmit = $.useCallback(
     (item: SiteinfoItem) => {
       onUpdate(item);
       setIsEditing(false);
@@ -53,18 +53,16 @@ export function UserSiteinfoRow(
     [item, onUpdate],
   );
 
-  const editDialog = component(Dialog, {
-    children: context.html`
-      <${component(UserSiteinfoForm, {
-        item,
-        onSubmit: handleSubmit,
-      })}>
-    `,
+  const editDialog = Dialog({
+    children: UserSiteinfoForm({
+      item,
+      onSubmit: handleSubmit,
+    }),
     onClose: handleCancelEditing,
     open: isEditing,
   });
 
-  return context.html`
+  return $.html`
     <tr>
       <td>${item.name}</td>
       <td>
@@ -91,4 +89,4 @@ export function UserSiteinfoRow(
       </td>
     </tr>
   `;
-}
+});

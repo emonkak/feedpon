@@ -1,8 +1,11 @@
-import { component, type RenderContext, repeat } from 'barebind';
-import { Atom } from 'barebind/extensions/signal';
+import { createComponent, type RenderContext, Repeat } from 'barebind';
+import { LocalAtom } from 'barebind/extras/hooks';
 import type { Command, KeyMapping } from 'feedpon-messaging';
-
-import { FormControl } from '../primitives/FormControl.ts';
+import {
+  FormControl,
+  type FormControlElement,
+  type FormValidation,
+} from '../primitives/FormControl.ts';
 
 interface KeyMappingFormProps {
   commandTable: { [commandId: string]: Command<any> };
@@ -12,8 +15,8 @@ interface KeyMappingFormProps {
   onSubmit: (keyStroke: string, keyMapping: KeyMapping) => void;
 }
 
-const JSON_VALIDATIONS = [
-  (element: HTMLTextAreaElement) => {
+const JSON_VALIDATIONS: FormValidation[] = [
+  (element: FormControlElement) => {
     if (!isValidJson(element.value)) {
       return 'Invalid JSON representation.';
     }
@@ -21,7 +24,7 @@ const JSON_VALIDATIONS = [
   },
 ];
 
-export function KeyMappingForm(
+export const KeyMappingForm = createComponent(function KeyMappingForm(
   {
     commandTable,
     keyMapping = null,
@@ -29,15 +32,13 @@ export function KeyMappingForm(
     onCancel,
     onSubmit,
   }: KeyMappingFormProps,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
-  const commandId$ = context.use(Atom.untracked(keyMapping?.commandId ?? ''));
-  const keyStroke$ = context.use(Atom.untracked(keyStroke));
-  const paramsJson$ = context.use(
-    Atom.untracked(toPrettyJson(keyMapping?.params ?? {})),
-  );
+  const commandId$ = $.use(LocalAtom(keyMapping?.commandId ?? ''));
+  const keyStroke$ = $.use(LocalAtom(keyStroke));
+  const paramsJson$ = $.use(LocalAtom(toPrettyJson(keyMapping?.params ?? {})));
 
-  const handleChangeCommand = context.useCallback(
+  const handleChangeCommand = $.useCallback(
     (event: Event) => {
       const commandId = (event.currentTarget as HTMLSelectElement).value;
       const selectedCommand = commandTable[commandId];
@@ -53,15 +54,15 @@ export function KeyMappingForm(
     [commandTable],
   );
 
-  const handleChangeKeyStroke = context.useCallback((event: Event) => {
+  const handleChangeKeyStroke = $.useCallback((event: Event) => {
     keyStroke$.value = (event.currentTarget as HTMLInputElement).value;
   }, []);
 
-  const handleChangeParamsJson = context.useCallback((event: Event) => {
+  const handleChangeParamsJson = $.useCallback((event: Event) => {
     paramsJson$.value = (event.currentTarget as HTMLTextAreaElement).value;
   }, []);
 
-  const handleSubmit = context.useCallback(
+  const handleSubmit = $.useCallback(
     (event: SubmitEvent) => {
       event.preventDefault();
 
@@ -79,10 +80,10 @@ export function KeyMappingForm(
     [keyMapping],
   );
 
-  const commandOptions = repeat({
+  const commandOptions = Repeat({
     source: Object.keys(commandTable),
     keySelector: (key) => key,
-    valueSelector: (key) => context.html`
+    valueSelector: (key) => $.html`
       <option key=${key} value=${key}>
         ${commandTable[key]!.name}
       </option>
@@ -91,7 +92,7 @@ export function KeyMappingForm(
 
   const selectedCommand = commandTable[commandId$.value];
 
-  return context.html`
+  return $.html`
     <form class="form" @submit=${handleSubmit}>
       <div class="form-legend">${keyMapping !== null ? 'Edit key mapping' : 'New key mapping'}</div>
       <div class="form-group">
@@ -119,7 +120,7 @@ export function KeyMappingForm(
           </select>
           <${
             selectedCommand !== undefined
-              ? context.html`<div class="u-text-muted">${selectedCommand.description}</div>`
+              ? $.html`<div class="u-text-muted">${selectedCommand.description}</div>`
               : null
           }>
         </label>
@@ -127,7 +128,7 @@ export function KeyMappingForm(
       <div class="form-group">
         <label>
           <div class="form-group-heading">Command parameters(JSON)</div>
-          <${component(FormControl<'textarea'>, {
+          <${FormControl({
             validations: JSON_VALIDATIONS,
             as: 'textarea',
             ownProps: {
@@ -156,7 +157,7 @@ export function KeyMappingForm(
       </div>
     </form>
   `;
-}
+});
 
 function isValidJson(json: string): boolean {
   try {

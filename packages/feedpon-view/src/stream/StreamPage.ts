@@ -1,4 +1,4 @@
-import { component, type RenderContext } from 'barebind';
+import { createComponent, type RenderContext } from 'barebind';
 import { bindActions } from 'feedpon-flux';
 import { getStoreHook } from 'feedpon-flux/barebind.ts';
 import type { EntryOrderKind, State, StreamViewKind } from 'feedpon-messaging';
@@ -54,9 +54,9 @@ export interface StreamPageProps {
   streamId: string;
 }
 
-export function StreamPage(
+export const StreamPage = createComponent(function StreamPage(
   { streamId }: StreamPageProps,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
   const {
     categories,
@@ -92,7 +92,7 @@ export function StreamPage(
     onUnsubscribe,
     streams,
     subscriptions,
-  } = context.use(
+  } = $.use(
     getStoreHook({
       mapStateToProps: (state: State) => {
         return {
@@ -135,8 +135,8 @@ export function StreamPage(
       }),
     }),
   );
-  const isMounted = context.use(isMountedHook);
-  const virtualListRef = context.useRef<VirtualScrollListRef | null>(null);
+  const isMounted = $.use(isMountedHook);
+  const virtualListRef = $.useRef<VirtualScrollListRef | null>(null);
 
   const stream = CacheMap.get(streams.items, streamId) ?? {
     activeEntryIndex: -1,
@@ -164,11 +164,11 @@ export function StreamPage(
     !stream ||
     !streams.isLoaded ||
     subscriptions.lastUpdatedAt > stream.fetchedAt;
-  const sortedCategories = context.useMemo(
+  const sortedCategories = $.useMemo(
     () => getSortedCategories(categories.items),
     [categories.items],
   );
-  const readEntries = context.useMemo(
+  const readEntries = $.useMemo(
     () =>
       stream.entries
         .slice(0, stream.readEntryIndex + 1)
@@ -176,7 +176,7 @@ export function StreamPage(
     [stream.entries],
   );
 
-  context.useEffect(() => {
+  $.useEffect(() => {
     onSelectStream(streamId);
 
     if (!keepUnread && readEntries.length > 0) {
@@ -188,7 +188,7 @@ export function StreamPage(
     }
   }, [streamId]);
 
-  context.useEffect(() => {
+  $.useEffect(() => {
     if (stream.expandedEntryIndex > -1) {
       virtualListRef.current?.scrollTo(stream.expandedEntryIndex);
     } else if (stream.activeEntryIndex > -1) {
@@ -196,7 +196,7 @@ export function StreamPage(
     }
   }, [stream.expandedEntryIndex]);
 
-  context.useEffect(() => {
+  $.useEffect(() => {
     if (!isMounted()) {
       return;
     }
@@ -205,7 +205,7 @@ export function StreamPage(
     }
   }, [isLoading]);
 
-  context.useEffect(() => {
+  $.useEffect(() => {
     if (!isMounted()) {
       return;
     }
@@ -214,7 +214,7 @@ export function StreamPage(
     }
   }, [streamId]);
 
-  context.useEffect(() => {
+  $.useEffect(() => {
     return () => {
       onUnselectStream();
 
@@ -224,13 +224,13 @@ export function StreamPage(
     };
   }, []);
 
-  const handleChangeActiveEnetry = context.use(
+  const handleChangeActiveEnetry = $.use(
     createEventHook((nextActiveEntryIndex: number) => {
       onChangeActiveEntry(stream.streamId, nextActiveEntryIndex);
     }),
   );
 
-  const handleChangeEntryOrder = context.use(
+  const handleChangeEntryOrder = $.use(
     createEventHook((entryOrder: EntryOrderKind) => {
       window.scrollTo(0, 0);
 
@@ -241,13 +241,13 @@ export function StreamPage(
     }),
   );
 
-  const handleChangeExpandedEntry = context.use(
+  const handleChangeExpandedEntry = $.use(
     createEventHook((index: number) => {
       onChangeExpandedEntry(stream.streamId, index);
     }),
   );
 
-  const handleChangeNumberOfEntries = context.use(
+  const handleChangeNumberOfEntries = $.use(
     createEventHook((numEntries: number) => {
       window.scrollTo(0, 0);
 
@@ -258,13 +258,13 @@ export function StreamPage(
     }),
   );
 
-  const handleChangeStreamView = context.use(
+  const handleChangeStreamView = $.use(
     createEventHook((streamView: StreamViewKind) => {
       onChangeStreamView(stream.streamId, streamView);
     }),
   );
 
-  const handleClearReadEntries = context.use(
+  const handleClearReadEntries = $.use(
     createEventHook(() => {
       window.scrollTo(0, 0);
 
@@ -272,13 +272,13 @@ export function StreamPage(
     }),
   );
 
-  const handleCloseEntry = context.use(
+  const handleCloseEntry = $.use(
     createEventHook(() => {
       onChangeExpandedEntry(stream.streamId, -1);
     }),
   );
 
-  const handleLoadMoreEntries = context.use(
+  const handleLoadMoreEntries = $.use(
     createEventHook(() => {
       if (stream.continuation) {
         onFetchMoreEntries(
@@ -290,7 +290,7 @@ export function StreamPage(
     }),
   );
 
-  const handleMarkAllEntriesAsRead = context.use(
+  const handleMarkAllEntriesAsRead = $.use(
     createEventHook(() => {
       const unreadEntries = stream.entries.filter(
         (entry) => !entry.markedAsRead,
@@ -302,7 +302,7 @@ export function StreamPage(
     }),
   );
 
-  const handleMarkStreamAsRead = context.use(
+  const handleMarkStreamAsRead = $.use(
     createEventHook(() => {
       if (stream.streamId === ALL_STREAM_ID) {
         onMarkAllAsRead();
@@ -314,7 +314,7 @@ export function StreamPage(
     }),
   );
 
-  const handleReloadEntries = context.use(
+  const handleReloadEntries = $.use(
     createEventHook(() => {
       window.scrollTo(0, 0);
 
@@ -322,13 +322,13 @@ export function StreamPage(
     }),
   );
 
-  const handleScrollToEntry = context.use(
+  const handleScrollToEntry = $.use(
     createEventHook((index: number) => {
       virtualListRef.current?.scrollTo(index);
     }),
   );
 
-  const handleToggleOnlyUnread = context.use(
+  const handleToggleOnlyUnread = $.use(
     createEventHook(() => {
       window.scrollTo(0, 0);
 
@@ -339,13 +339,13 @@ export function StreamPage(
     }),
   );
 
-  const handleToggleUnreadKeeping = context.use(
+  const handleToggleUnreadKeeping = $.use(
     createEventHook(() => {
       onChangeUnreadKeeping(!keepUnread);
     }),
   );
 
-  const header = component(StreamHeader, {
+  const header = StreamHeader({
     activeEntryIndex: stream.activeEntryIndex,
     canMarkStreamAsRead: canMarkStreamAsRead,
     entries: stream.entries,
@@ -370,7 +370,7 @@ export function StreamPage(
     title: stream.title,
   });
 
-  const footer = component(StreamFooter, {
+  const footer = StreamFooter({
     canMarkAllEntriesAsRead: canMarkAllEntriesAsRead,
     hasMoreEntries: stream.continuation !== null,
     isLoading: isLoading,
@@ -381,7 +381,7 @@ export function StreamPage(
   let entryHeader: unknown;
 
   if (stream.feed) {
-    entryHeader = component(FeedHeader, {
+    entryHeader = FeedHeader({
       categories: sortedCategories,
       feed: stream.feed,
       hasMoreEntries: !!stream.continuation,
@@ -394,7 +394,7 @@ export function StreamPage(
       subscription: streamSubscription,
     });
   } else if (streamCategory) {
-    entryHeader = component(CategoryHeader, {
+    entryHeader = CategoryHeader({
       category: streamCategory,
       hasMoreEntries: !!stream.continuation,
       numEntries: stream.entries.length,
@@ -403,9 +403,9 @@ export function StreamPage(
     entryHeader = null;
   }
 
-  const content = context.html`
+  const content = $.html`
     <${entryHeader}>
-    <${component(EntryList, {
+    <${EntryList({
       activeEntryIndex: stream.activeEntryIndex,
       entries: stream.entries,
       expandedEntryIndex: stream.expandedEntryIndex,
@@ -428,9 +428,9 @@ export function StreamPage(
     })}>
   `;
 
-  return context.html`<${component(MainLayout, {
+  return MainLayout({
     header,
     footer,
     content,
-  })}>`;
-}
+  });
+});

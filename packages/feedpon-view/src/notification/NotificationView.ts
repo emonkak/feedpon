@@ -1,4 +1,4 @@
-import type { RenderContext } from 'barebind';
+import { createComponent, type RenderContext } from 'barebind';
 import type { Notification } from 'feedpon-messaging';
 
 interface NotificationViewProps {
@@ -6,11 +6,11 @@ interface NotificationViewProps {
   onDismiss: (id: number) => void;
 }
 
-export function NotificationView(
+export const NotificationView = createComponent(function NotificationView(
   { notification, onDismiss }: NotificationViewProps,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
-  const handleClose = context.useCallback(
+  const handleClose = $.useCallback(
     (event: MouseEvent) => {
       event.preventDefault();
       onDismiss(notification.id);
@@ -18,7 +18,7 @@ export function NotificationView(
     [onDismiss],
   );
 
-  context.useEffect(() => {
+  $.useEffect(() => {
     if (notification.dismissAfter <= 0) {
       return;
     }
@@ -32,7 +32,7 @@ export function NotificationView(
     };
   }, [notification]);
 
-  return context.html`
+  return $.html`
     <div
       :class=${{
         _: 'notification',
@@ -62,4 +62,4 @@ export function NotificationView(
       </a>
     </div>
   `;
-}
+});

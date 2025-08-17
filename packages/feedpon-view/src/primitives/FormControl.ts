@@ -1,8 +1,8 @@
-import { Literal, type RenderContext } from 'barebind';
+import { createComponent, Literal, type RenderContext } from 'barebind';
 
-export interface FormControlProps<TTagName extends FormControlElementTagName> {
-  as: TTagName;
-  validations?: FormValidation<TTagName>[];
+export interface FormControlProps {
+  as: FormControlElementTagName;
+  validations?: FormValidation[];
   ownProps?: Record<string, any>;
 }
 
@@ -22,9 +22,7 @@ export interface FormControlElement extends HTMLElement {
   setCustomValidity(error: string): void;
 }
 
-export type FormValidation<TTagName extends FormControlElementTagName> = (
-  element: HTMLElementTagNameMap[TTagName],
-) => string | null;
+export type FormValidation = (element: FormControlElement) => string | null;
 
 enum FormControlStatus {
   Empty,
@@ -32,31 +30,12 @@ enum FormControlStatus {
   Invalid,
 }
 
-const VOID_ELEMENTS = [
-  'area',
-  'base',
-  'br',
-  'col',
-  'embed',
-  'hr',
-  'img',
-  'input',
-  'link',
-  'meta',
-  'param',
-  'source',
-  'track',
-  'wbr',
-];
-
-export function FormControl<TTagName extends FormControlElementTagName>(
-  { as, validations = [], ownProps = {} }: FormControlProps<TTagName>,
-  context: RenderContext,
+export const FormControl = createComponent(function FormControl(
+  { as, validations = [], ownProps = {} }: FormControlProps,
+  $: RenderContext,
 ): unknown {
-  const [status, setStatus] = context.useState(FormControlStatus.Empty);
-  const elementRef = context.useRef<HTMLElementTagNameMap[TTagName] | null>(
-    null,
-  );
+  const [status, setStatus] = $.useState(FormControlStatus.Empty);
+  const elementRef = $.useRef<FormControlElement | null>(null);
 
   const runValidations = () => {
     const element = elementRef.current!;
@@ -81,16 +60,16 @@ export function FormControl<TTagName extends FormControlElementTagName>(
     }
   };
 
-  const handleInput = context.useCallback(() => {
+  const handleInput = $.useCallback(() => {
     runValidations();
   }, [validations]);
 
-  context.useEffect(() => {
+  $.useEffect(() => {
     runValidations();
   });
 
-  if (isVoidElement(as)) {
-    return context.dynamicHTML`
+  if (as.toLowerCase() === 'input') {
+    return $.dynamicHTML`
       <${new Literal(as)}
         :ref=${elementRef}
         :class=${{
@@ -102,7 +81,7 @@ export function FormControl<TTagName extends FormControlElementTagName>(
       >
     `;
   } else {
-    return context.dynamicHTML`
+    return $.dynamicHTML`
       <${new Literal(as)}
         ${ownProps}
         :ref=${elementRef}
@@ -114,8 +93,4 @@ export function FormControl<TTagName extends FormControlElementTagName>(
       ></${new Literal(as)}
     `;
   }
-}
-
-function isVoidElement(tagName: string): boolean {
-  return VOID_ELEMENTS.includes(tagName);
-}
+});

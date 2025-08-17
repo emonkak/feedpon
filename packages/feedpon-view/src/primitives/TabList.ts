@@ -1,4 +1,9 @@
-import { component, memo, type RenderContext, repeat } from 'barebind';
+import {
+  createComponent,
+  type RenderContext,
+  Repeat,
+  shallowEqual,
+} from 'barebind';
 
 export interface TabListProps {
   items: TabItem[];
@@ -13,43 +18,44 @@ export interface TabItem {
   selected: boolean;
 }
 
-export function TabList(
+export const TabList = createComponent(function TabList(
   { items, onTabSelect }: TabListProps,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
-  const tabs = repeat({
+  const tabs = Repeat({
     source: items,
     keySelector: (item) => item.key,
-    valueSelector: (item) => component(TabItem, { item, onTabSelect }),
+    valueSelector: (item) => TabItem({ item, onTabSelect }),
   });
 
-  return context.html`
+  return $.html`
     <div class="TabList" role="tablist">
       <${tabs}>
     </div>
   `;
-}
+});
 
-export function TabItem(
-  {
-    item,
-    onTabSelect,
-  }: {
-    item: TabItem;
-    onTabSelect: ((event: Event, key: string) => void) | undefined;
-  },
-  context: RenderContext,
-): unknown {
-  const handleTabSelect = context.useCallback(
-    (event: Event) => {
-      item.onSelect?.(event);
-      onTabSelect?.(event, item.key);
+export const TabItem = createComponent(
+  function TabItem(
+    {
+      item,
+      onTabSelect,
+    }: {
+      item: TabItem;
+      onTabSelect: ((event: Event, key: string) => void) | undefined;
     },
-    [onTabSelect, item.onSelect, item.key],
-  );
+    $: RenderContext,
+  ): unknown {
+    const handleTabSelect = $.useCallback(
+      (event: Event) => {
+        item.onSelect?.(event);
+        onTabSelect?.(event, item.key);
+      },
+      [onTabSelect, item.onSelect, item.key],
+    );
 
-  if (item.href !== undefined) {
-    return context.html`
+    if (item.href !== undefined) {
+      return $.html`
       <a
         :class=${{
           _: 'Tab',
@@ -64,8 +70,8 @@ export function TabItem(
         <${item.children}>
       </button>
     `;
-  } else {
-    return context.html`
+    } else {
+      return $.html`
       <button
         :class=${{
           _: 'Tab',
@@ -80,7 +86,7 @@ export function TabItem(
         <${item.children}>
       </button>
     `;
-  }
-}
-
-memo(TabItem);
+    }
+  },
+  { shouldSkipUpdate: shallowEqual },
+);

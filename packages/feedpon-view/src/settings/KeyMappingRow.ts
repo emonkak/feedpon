@@ -1,7 +1,7 @@
-import { component, type RenderContext, repeat } from 'barebind';
+import { createComponent, type RenderContext, Repeat } from 'barebind';
 import type { Command, KeyMapping } from 'feedpon-messaging';
 
-import { AlertDialog } from '../primitives/AlertDialog.ts';
+import { openAlertDialog } from '../primitives/AlertDialog.ts';
 import { Dialog } from '../primitives/Dialog.ts';
 import { KeyMappingForm } from './KeyMappingForm.ts';
 
@@ -13,21 +13,21 @@ interface KeyMappingRowProps {
   onUpdate: (keyStroke: string, keyMapping: KeyMapping) => void;
 }
 
-export function KeyMappingRow(
+export const KeyMappingRow = createComponent(function KeyMappingRow(
   { commandTable, keyMapping, keys, onDelete, onUpdate }: KeyMappingRowProps,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
-  const [isEditing, setIsEditing] = context.useState(false);
+  const [isEditing, setIsEditing] = $.useState(false);
 
-  const handleStartEditing = context.useCallback(() => {
+  const handleStartEditing = $.useCallback(() => {
     setIsEditing(true);
   }, []);
 
-  const handleEndEditing = context.useCallback(() => {
+  const handleEndEditing = $.useCallback(() => {
     setIsEditing(false);
   }, []);
 
-  const handleSubmit = context.useCallback(
+  const handleSubmit = $.useCallback(
     (keyStroke: string, keyMapping: KeyMapping) => {
       onUpdate(keyStroke, keyMapping);
       setIsEditing(false);
@@ -35,12 +35,12 @@ export function KeyMappingRow(
     [onUpdate],
   );
 
-  const handleDelete = context.useCallback(() => {
-    AlertDialog.open({
-      confirmButton: ({ onConfirm }, context) => context.html`
+  const handleDelete = $.useCallback(() => {
+    openAlertDialog({
+      confirmButton: ({ onConfirm }, $) => $.html`
           <button class="button button-negative" type="button" @click=${onConfirm}>Delete</button>
         `,
-      cancelButton: ({ onCancel }, context) => context.html`
+      cancelButton: ({ onCancel }, $) => $.html`
           <button class="button button-outline-default" type="button" @click=${onCancel}>Cancel</button>
         `,
       onConfirm: () => {
@@ -53,15 +53,15 @@ export function KeyMappingRow(
 
   const command = commandTable[keyMapping.commandId];
   const commandName = command ? command.name : `<${keyMapping.commandId}>`;
-  const keyStroke = repeat({
+  const keyStroke = Repeat({
     source: keys,
-    keySelector: (key) => context.html`<kbd>${key}</kbd>`,
+    keySelector: (key) => $.html`<kbd>${key}</kbd>`,
   });
 
-  const keyMappingModal = component(Dialog, {
+  const keyMappingModal = Dialog({
     open: isEditing,
-    children: context.html`
-      <${component(KeyMappingForm, {
+    children: $.html`
+      <${KeyMappingForm({
         keyStroke: keys.join(''),
         keyMapping,
         commandTable,
@@ -72,7 +72,7 @@ export function KeyMappingRow(
     onClose: handleEndEditing,
   });
 
-  return context.html`
+  return $.html`
     <tr>
       <td><${keyStroke}></td>
       <td>${commandName}</td>
@@ -97,4 +97,4 @@ export function KeyMappingRow(
       </td>
     </tr>
   `;
-}
+});

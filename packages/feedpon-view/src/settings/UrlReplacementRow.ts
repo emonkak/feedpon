@@ -1,7 +1,7 @@
-import { component, type RenderContext } from 'barebind';
+import { createComponent, type RenderContext } from 'barebind';
 import type { UrlReplacement } from 'feedpon-messaging';
 
-import { AlertDialog } from '../primitives/AlertDialog.ts';
+import { openAlertDialog } from '../primitives/AlertDialog.ts';
 import { Dialog } from '../primitives/Dialog.ts';
 import { UrlReplacementForm } from './UrlReplacementForm.ts';
 
@@ -12,22 +12,22 @@ interface UrlReplacementRowProps {
   onUpdate: (index: number, item: UrlReplacement) => void;
 }
 
-export function UrlReplacementRow(
+export const UrlReplacementRow = createComponent(function UrlReplacementRow(
   { index, item, onDelete, onUpdate }: UrlReplacementRowProps,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
-  const [isEditing, setIsEditing] = context.useState(false);
+  const [isEditing, setIsEditing] = $.useState(false);
 
-  const handleStartEditing = context.useCallback(() => {
+  const handleStartEditing = $.useCallback(() => {
     setIsEditing(true);
   }, []);
 
-  const handleCancelEditing = context.useCallback(() => {
+  const handleCancelEditing = $.useCallback(() => {
     setIsEditing(false);
   }, []);
 
-  const handleDelete = context.useCallback(() => {
-    AlertDialog.open({
+  const handleDelete = $.useCallback(() => {
+    openAlertDialog({
       confirmButton: ({ onConfirm }, context) => context.html`
           <button class="button button-negative" type="button" @click=${onConfirm}>Delete</button>
         `,
@@ -42,12 +42,12 @@ export function UrlReplacementRow(
     });
   }, [onDelete]);
 
-  const handleUpdate = context.useCallback((item: UrlReplacement) => {
+  const handleUpdate = $.useCallback((item: UrlReplacement) => {
     onUpdate(index, item);
     setIsEditing(false);
   }, []);
 
-  return context.html`
+  return $.html`
     <tr>
       <td class="u-text-nowrap">${index + 1}</td>
       <td class="u-text-nowrap">
@@ -76,17 +76,15 @@ export function UrlReplacementRow(
             <i class="icon icon-16 icon-trash"></i>
           </button>
         </div>
-        <${component(Dialog, {
+        <${Dialog({
           open: isEditing,
-          children: context.html`
-            <${component(UrlReplacementForm, {
-              item,
-              onSubmit: handleUpdate,
-            })}>
-          `,
+          children: UrlReplacementForm({
+            item,
+            onSubmit: handleUpdate,
+          }),
           onClose: handleCancelEditing,
         })}>
       </td>
     </tr>
   `;
-}
+});

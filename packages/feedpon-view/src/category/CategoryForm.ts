@@ -1,8 +1,7 @@
-import type { RenderContext } from 'barebind';
-import { Atom } from 'barebind/extensions/signal';
+import { createComponent, type RenderContext } from 'barebind';
+import { LocalAtom } from 'barebind/extras/hooks';
 import type { Category } from 'feedpon-messaging';
-
-import { AlertDialog } from '../primitives/AlertDialog.ts';
+import { openAlertDialog } from '../primitives/AlertDialog.ts';
 
 interface CategoryFormProps {
   category: Category;
@@ -10,16 +9,14 @@ interface CategoryFormProps {
   onCategoryUpdate: (category: Category, newLabel: string) => void;
 }
 
-export function CategoryForm(
+export const CategoryForm = createComponent(function CategoryForm(
   { category, onCategoryDelete, onCategoryUpdate }: CategoryFormProps,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
-  const currentLabel$ = context.use(Atom.untracked(category.label));
+  const currentLabel$ = $.use(LocalAtom(category.label));
 
-  context.use(currentLabel$);
-
-  const handleDelete = context.useCallback(() => {
-    AlertDialog.open({
+  const handleDelete = $.useCallback(() => {
+    openAlertDialog({
       confirmButton: ({ onConfirm }, context) => context.html`
           <button class="button button-negative" type="button" @click=${onConfirm}>Delete</button>
         `,
@@ -34,8 +31,8 @@ export function CategoryForm(
     });
   }, [category, onCategoryDelete]);
 
-  const handleUpdate = context.useCallback(() => {
-    AlertDialog.open({
+  const handleUpdate = $.useCallback(() => {
+    openAlertDialog({
       confirmButton: ({ onConfirm }, context) => context.html`
           <button class="button button-negative" type="button" @click=${onConfirm}>Delete</button>
         `,
@@ -50,11 +47,11 @@ export function CategoryForm(
     });
   }, [category, onCategoryUpdate]);
 
-  const handleChangeLabel = context.useCallback((event: Event) => {
+  const handleChangeLabel = $.useCallback((event: Event) => {
     currentLabel$.value = (event.currentTarget as HTMLInputElement).value;
   }, []);
 
-  return context.html`
+  return $.html`
     <div class="form">
       <div class="form-legend">Edit Category</div>
       <div class="input-group">
@@ -88,4 +85,4 @@ export function CategoryForm(
       </div>
     </div>
   `;
-}
+});

@@ -1,5 +1,5 @@
 import {
-  component,
+  createComponent,
   type ElementRef,
   type HookContext,
   type RefObject,
@@ -51,7 +51,7 @@ interface RenderingItem {
   sameOrigin: boolean;
 }
 
-export function EntryList(
+export const EntryList = createComponent(function EntryList(
   {
     activeEntryIndex,
     entries,
@@ -72,11 +72,11 @@ export function EntryList(
     streamView,
     ref,
   }: EntryListProps,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
-  const getHeaderHeight = context.use(getHeaderHeightHook);
+  const getHeaderHeight = $.use(getHeaderHeightHook);
 
-  const handleUpdateDimensions = context.use(
+  const handleUpdateDimensions = $.use(
     createEventHook((dimensions: Dimensions) => {
       const newActiveEntryIndex = getActiveIndex(dimensions, getHeaderHeight());
 
@@ -86,7 +86,7 @@ export function EntryList(
     }),
   );
 
-  const items = context.useMemo(
+  const items = $.useMemo(
     () =>
       entries.map((entry, index) => {
         const isActive = activeEntryIndex === index;
@@ -105,17 +105,17 @@ export function EntryList(
     [entries, activeEntryIndex, expandedEntryIndex, sameOrigin, streamView],
   );
 
-  const scrollBy = context.useCallback((x: number, y: number) => {
+  const scrollBy = $.useCallback((x: number, y: number) => {
     window.scrollBy(x, y - getHeaderHeight());
   }, []);
 
-  const renderItem = context.useCallback(
+  const renderItem = $.useCallback(
     (
       { entry, isActive, isExpanded, sameOrigin }: RenderingItem,
       index: number,
       ref: ElementRef,
     ) => {
-      return component(EntryItem, {
+      return EntryItem({
         entry,
         index,
         isActive,
@@ -147,34 +147,34 @@ export function EntryList(
 
   if (isLoading && !isLoaded) {
     if (streamView === 'expanded') {
-      return context.html`
+      return $.html`
         <div class="entry-list">
-          <${component(ExpandedEntryPlaceholder, {})}>
-          <${component(ExpandedEntryPlaceholder, {})}>
-          <${component(ExpandedEntryPlaceholder, {})}>
-          <${component(ExpandedEntryPlaceholder, {})}>
-          <${component(ExpandedEntryPlaceholder, {})}>
+          <${ExpandedEntryPlaceholder({})}>
+          <${ExpandedEntryPlaceholder({})}>
+          <${ExpandedEntryPlaceholder({})}>
+          <${ExpandedEntryPlaceholder({})}>
+          <${ExpandedEntryPlaceholder({})}>
         </div>
       `;
     } else {
-      return context.html`
+      return $.html`
         <div class="entry-list">
-          <${component(CollapsedEntryPlaceholder, {})}>
-          <${component(CollapsedEntryPlaceholder, {})}>
-          <${component(CollapsedEntryPlaceholder, {})}>
-          <${component(CollapsedEntryPlaceholder, {})}>
-          <${component(CollapsedEntryPlaceholder, {})}>
-          <${component(CollapsedEntryPlaceholder, {})}>
-          <${component(CollapsedEntryPlaceholder, {})}>
-          <${component(CollapsedEntryPlaceholder, {})}>
-          <${component(CollapsedEntryPlaceholder, {})}>
-          <${component(CollapsedEntryPlaceholder, {})}>
+          <${CollapsedEntryPlaceholder({})}>
+          <${CollapsedEntryPlaceholder({})}>
+          <${CollapsedEntryPlaceholder({})}>
+          <${CollapsedEntryPlaceholder({})}>
+          <${CollapsedEntryPlaceholder({})}>
+          <${CollapsedEntryPlaceholder({})}>
+          <${CollapsedEntryPlaceholder({})}>
+          <${CollapsedEntryPlaceholder({})}>
+          <${CollapsedEntryPlaceholder({})}>
+          <${CollapsedEntryPlaceholder({})}>
         </div>
       `;
     }
   }
 
-  return context.html`<${component(VirtualScrollList<RenderingItem>, {
+  return VirtualScrollList({
     assumedItemSize: streamView === 'expanded' ? 800 : 100,
     initialItemIndex:
       expandedEntryIndex >= 0 ? expandedEntryIndex : activeEntryIndex,
@@ -185,8 +185,8 @@ export function EntryList(
     renderList,
     scheduleUpdate,
     scrollBy,
-  })}>`;
-}
+  });
+});
 
 function getActiveIndex(dimensions: Dimensions, scrollPadding: number): number {
   const { blockPositions } = dimensions;
@@ -253,9 +253,9 @@ function renderList(
   children: unknown,
   blankSpaces: BlankSpaces,
   elementRef: ElementRef,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
-  return context.html`
+  return $.html`
     <div :ref=${elementRef} class="entry-list">
       <div :style=${{ height: blankSpaces.above + 'px', overflowAnchor: 'none' }}></div>
       <${children}>

@@ -1,4 +1,4 @@
-import { component, type RenderContext } from 'barebind';
+import { createComponent, type RenderContext } from 'barebind';
 import { getStoreHook } from 'feedpon-flux/barebind.ts';
 import type { State } from 'feedpon-messaging';
 
@@ -9,11 +9,11 @@ export interface SingleLayoutProps {
   child?: unknown;
 }
 
-export function SingleLayout(
+export const SingleLayout = createComponent(function SingleLayout(
   { child }: SingleLayoutProps,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
-  const { isLoading } = context.use(
+  const { isLoading } = $.use(
     getStoreHook({
       mapStateToProps: (state: State) => ({
         isLoading: state.backend.isLoading,
@@ -21,22 +21,22 @@ export function SingleLayout(
     }),
   );
 
-  return context.html`
+  return $.html`
     <div class="l-main">
       <div class="l-notifications">
-        <${component(NotificationStack, {})}>
+        <${NotificationStack({})}>
       </div>
       <div class="l-osd">
-        <${component(OSD, {})}>
+        <${OSD({})}>
       </div>
       <${child}>
     </div>
     <div class="l-backdrop">
       <${
         isLoading
-          ? context.html`<i class="icon icon-48 icon-spinner animation-rotating"></i>`
+          ? $.html`<i class="icon icon-48 icon-spinner animation-rotating"></i>`
           : null
       }>
     </div>
   `;
-}
+});

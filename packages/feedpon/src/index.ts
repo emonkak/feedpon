@@ -1,8 +1,8 @@
-import { AsyncRoot, BrowserBackend, component } from 'barebind';
+import { AsyncRoot, BrowserBackend } from 'barebind';
 import {
   ConsoleReporter,
   PerformanceProfiler,
-} from 'barebind/extensions/profiler';
+} from 'barebind/extras/profiler';
 import { prepareSelectors } from 'feedpon-messaging';
 import { App } from 'feedpon-view';
 import prepareStore from './prepareStore.js';
@@ -23,7 +23,7 @@ function main() {
 
   const container = document.getElementById('app')!;
   const root = AsyncRoot.create(
-    component(App, { getStore }),
+    App({ getStore }),
     container,
     new BrowserBackend(),
   );

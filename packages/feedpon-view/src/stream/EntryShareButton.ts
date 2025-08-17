@@ -1,4 +1,4 @@
-import { component, type RenderContext } from 'barebind';
+import { createComponent, type RenderContext } from 'barebind';
 
 import { createPopupHook } from '../common/hooks/popupHook.ts';
 import { Dialog } from '../primitives/Dialog.ts';
@@ -8,13 +8,13 @@ interface EntryShareButtonProps {
   title: string;
 }
 
-export function EntryShareButton(
+export const EntryShareButton = createComponent(function EntryShareButton(
   { url, title }: EntryShareButtonProps,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
-  const popup = context.use(createPopupHook(false, ['up', 'down']));
+  const popup = $.use(createPopupHook(false, ['up', 'down']));
 
-  const handleTogglePopup = context.useCallback(
+  const handleTogglePopup = $.useCallback(
     (event: Event) => {
       if (popup.opened) {
         popup.close();
@@ -25,7 +25,7 @@ export function EntryShareButton(
     [popup.opened],
   );
 
-  const popover = context.html`
+  const popover = $.html`
     <div
       class=${[
         'popover',
@@ -102,7 +102,7 @@ export function EntryShareButton(
     </div>
   `;
 
-  return context.html`
+  return $.html`
     <div class="button-group">
       <button
         type="button"
@@ -112,7 +112,7 @@ export function EntryShareButton(
       >
         <i class="icon icon-20 icon-share"></i>
       </button>
-      <${component(Dialog, {
+      <${Dialog({
         open: popup.opened,
         children: popover,
         modal: false,
@@ -124,4 +124,4 @@ export function EntryShareButton(
       })}>
     </div>
   `;
-}
+});

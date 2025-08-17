@@ -1,9 +1,11 @@
 import {
-  component,
+  createComponent,
   type ElementRef,
   type RenderContext,
-  repeat,
+  Repeat,
 } from 'barebind';
+import { DeferredValue } from 'barebind/extras/hooks';
+
 import { bindActions } from 'feedpon-flux';
 import { getStoreHook } from 'feedpon-flux/barebind.ts';
 import type { SiteinfoItem, State } from 'feedpon-messaging';
@@ -14,7 +16,6 @@ import {
   updateUserSiteinfoItem,
 } from 'feedpon-messaging/userSiteinfo';
 import tryMatch from 'feedpon-utils/tryMatch.ts';
-
 import { RelativeTime } from '../primitives/RelativeTime.ts';
 import {
   type BlankSpaces,
@@ -26,63 +27,65 @@ import { UserSiteinfoRow } from './UserSiteinfoRow.ts';
 
 interface SiteinfoSettingsProps {}
 
-export function SiteinfoSettings(
+export const SiteinfoSettings = createComponent(function SiteinfoSettings(
   {}: SiteinfoSettingsProps,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
-  return context.html`
+  return $.html`
     <section>
       <h1 className="display-1">Siteinfo</h1>
       <p>Siteinfo is used for extracting the full content.</p>
-      <${component(UserSiteinfoSection, {})}>
-      <${component(SharedSiteinfoSection, {})}>
+      <${UserSiteinfoSection({})}>
+      <${SharedSiteinfoSection({})}>
     </section>
   `;
-}
+});
+
 export interface SharedSiteinfoSectionProps {}
 
-export function SharedSiteinfoSection(
-  {}: SharedSiteinfoSectionProps,
-  context: RenderContext,
-): unknown {
-  const { isLoading, items, lastUpdatedAt, onUpdateSiteinfo } = context.use(
-    getStoreHook({
-      mapStateToProps: (state: State) => ({
-        isLoading: state.sharedSiteinfo.isLoading,
-        items: state.sharedSiteinfo.items,
-        lastUpdatedAt: state.sharedSiteinfo.lastUpdatedAt,
+export const SharedSiteinfoSection = createComponent(
+  function SharedSiteinfoSection(
+    {}: SharedSiteinfoSectionProps,
+    $: RenderContext,
+  ): unknown {
+    const { isLoading, items, lastUpdatedAt, onUpdateSiteinfo } = $.use(
+      getStoreHook({
+        mapStateToProps: (state: State) => ({
+          isLoading: state.sharedSiteinfo.isLoading,
+          items: state.sharedSiteinfo.items,
+          lastUpdatedAt: state.sharedSiteinfo.lastUpdatedAt,
+        }),
+        mapDispatchToProps: bindActions({
+          onUpdateSiteinfo: updateSiteinfo,
+        }),
       }),
-      mapDispatchToProps: bindActions({
-        onUpdateSiteinfo: updateSiteinfo,
-      }),
-    }),
-  );
+    );
 
-  const [testUrl, setTestUrl] = context.useState('');
-  const defferedTestUrl = context.useDeferredValue(testUrl);
+    const [testUrl, setTestUrl] = $.useState('');
+    const defferedTestUrl = $.use(DeferredValue(testUrl));
 
-  const matchedItems = context.useMemo(
-    () =>
-      defferedTestUrl !== ''
-        ? items.filter((item) => tryMatch(item.urlPattern, defferedTestUrl))
-        : items,
-    [defferedTestUrl],
-  );
+    const matchedItems = $.useMemo(
+      () =>
+        defferedTestUrl !== ''
+          ? items.filter((item) => tryMatch(item.urlPattern, defferedTestUrl))
+          : items,
+      [defferedTestUrl],
+    );
 
-  const handleChangeTestUrl = context.useCallback((event: Event) => {
-    setTestUrl((event.currentTarget as HTMLInputElement).value);
-  }, []);
+    const handleChangeTestUrl = $.useCallback((event: Event) => {
+      setTestUrl((event.currentTarget as HTMLInputElement).value);
+    }, []);
 
-  const lastUpdate =
-    lastUpdatedAt > 0
-      ? context.html`
+    const lastUpdate =
+      lastUpdatedAt > 0
+        ? $.html`
       <p>
-        <strong>${matchedItems.length}</strong> items are available. Last update was <strong><${component(RelativeTime, { time: lastUpdatedAt })}></strong>.
+        <strong>${matchedItems.length}</strong> items are available. Last update was <strong><${RelativeTime({ time: lastUpdatedAt })}></strong>.
       </p>
     `
-      : context.html`<p>Not update yet.</p>`;
+        : $.html`<p>Not update yet.</p>`;
 
-  return context.html`
+    return $.html`
     <section class="section">
       <h2 class="display-2">Shared siteinfo</h2>
       <p>
@@ -107,7 +110,7 @@ export function SharedSiteinfoSection(
           Update
         </button>
       </p>
-      <${component(VirtualScrollList<SiteinfoItem>, {
+      <${VirtualScrollList({
         assumedItemSize: 24 * 7,
         items: matchedItems,
         renderItem: renderSiteinfoItem,
@@ -115,15 +118,16 @@ export function SharedSiteinfoSection(
       })}>
     </section>
   `;
-}
+  },
+);
 
 export interface UserSiteinfoSectionProps {}
 
-export function UserSiteinfoSection(
+export const UserSiteinfoSection = createComponent(function UserSiteinfoSection(
   {}: UserSiteinfoSectionProps,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
-  const { onDelete, onUpdate, onAdd, items } = context.use(
+  const { onDelete, onUpdate, onAdd, items } = $.use(
     getStoreHook({
       mapStateToProps: (state: State) => ({
         isLoading: state.sharedSiteinfo.isLoading,
@@ -138,23 +142,23 @@ export function UserSiteinfoSection(
     }),
   );
 
-  const rows = repeat({
+  const rows = Repeat({
     source: items,
     keySelector: (item) => item.id,
     valueSelector: (item) =>
-      component(UserSiteinfoRow, {
+      UserSiteinfoRow({
         item,
         onDelete,
         onUpdate,
       }),
   });
 
-  return context.html`
+  return $.html`
     <section class="section">
       <h2 class="display-2">User siteinfo</h2>
       <p>This siteinfo is for user only.</p>
       <div class="well">
-        <${component(UserSiteinfoForm, {
+        <${UserSiteinfoForm({
           onSubmit: onAdd,
         })}>
       </div>
@@ -178,15 +182,15 @@ export function UserSiteinfoSection(
       </div>
     </section>
   `;
-}
+});
 
 function renderSiteinfoList(
   children: unknown,
   blankSpaces: BlankSpaces,
   elementRef: ElementRef,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
-  return context.html`
+  return $.html`
     <div :ref=${elementRef} class="u-responsive">
       <ul class="list-group">
         <div style=${`height: ${blankSpaces.above}px`}></div>
@@ -198,5 +202,5 @@ function renderSiteinfoList(
 }
 
 function renderSiteinfoItem(item: SiteinfoItem): unknown {
-  return component(SharedSiteinfoItem, { item });
+  return SharedSiteinfoItem({ item });
 }

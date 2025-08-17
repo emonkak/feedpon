@@ -1,4 +1,4 @@
-import { component, type RenderContext } from 'barebind';
+import { createComponent, type RenderContext } from 'barebind';
 
 import { Menu, type MenuItem } from './Menu.ts';
 
@@ -14,18 +14,18 @@ export interface TriggerProps {
   open: boolean;
 }
 
-export function Dropdown(
+export const Dropdown = createComponent(function Dropdown(
   { items, trigger, onToggle }: DropdownProps,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
-  const [open, setOpen] = context.useState(false);
+  const [open, setOpen] = $.useState(false);
 
-  const closeDropdown = context.useCallback(() => {
+  const closeDropdown = $.useCallback(() => {
     setOpen(false);
     onToggle?.(false);
   }, []);
 
-  const toggleDropdown = context.useCallback(() => {
+  const toggleDropdown = $.useCallback(() => {
     setOpen((open) => {
       const newOpen = !open;
       onToggle?.(newOpen);
@@ -33,25 +33,25 @@ export function Dropdown(
     });
   }, []);
 
-  const handleItemAction = context.useCallback((event: Event) => {
+  const handleItemAction = $.useCallback((event: Event) => {
     if (!event.defaultPrevented) {
       closeDropdown();
     }
   }, []);
 
-  const handleToggle = context.useCallback((open: boolean) => {
+  const handleToggle = $.useCallback((open: boolean) => {
     setOpen(open);
     onToggle?.(open);
   }, []);
 
-  const triggerId = context.useId();
+  const triggerId = $.useId();
 
-  return context.html`
+  return $.html`
     <div
       class="Dropdown"
     >
-      <${trigger({ id: triggerId, onToggle: toggleDropdown, open }, context)}>
-      <${component(Menu, {
+      <${trigger({ id: triggerId, onToggle: toggleDropdown, open }, $)}>
+      <${Menu({
         target: triggerId,
         items,
         onItemAction: handleItemAction,
@@ -60,4 +60,4 @@ export function Dropdown(
       })}>
     </div>
   `;
-}
+});

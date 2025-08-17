@@ -1,4 +1,4 @@
-import { Atom, Computed, type Signal } from 'barebind/extensions/signal';
+import { Atom, Computed, type Signal } from 'barebind/extras/signal';
 
 import { acquireAuth, type FeedlyContext } from '../api/feedly.ts';
 import type * as Feedly from '../api/feedlyTypes.d.ts';

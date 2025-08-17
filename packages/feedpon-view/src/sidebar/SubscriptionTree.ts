@@ -1,4 +1,4 @@
-import { component, type RenderContext } from 'barebind';
+import { createComponent, type RenderContext } from 'barebind';
 import type {
   Category,
   GroupedSubscription,
@@ -26,16 +26,16 @@ type StreamItem =
       unreadCount: number;
     };
 
-export function SubscriptionTree(
+export const SubscriptionTree = createComponent(function SubscriptionTree(
   {
     categories,
     groupedSubscriptions,
     onSelect,
     selectedPath,
   }: SubscriptionTreeProps,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
-  const items = context.useMemo(() => {
+  const items = $.useMemo(() => {
     const items: TreeItem<string, StreamItem>[] = [];
 
     for (let i = 0, l = categories.length; i < l; i++) {
@@ -94,7 +94,7 @@ export function SubscriptionTree(
     return items;
   }, [categories, groupedSubscriptions, selectedPath]);
 
-  const handleSelect = context.useCallback(
+  const handleSelect = $.useCallback(
     (item: TreeItem<string, StreamItem>) => {
       const streamId =
         item.value.type === 'category'
@@ -105,20 +105,20 @@ export function SubscriptionTree(
     [onSelect],
   );
 
-  return context.html`<${component(Tree<string, StreamItem>, {
+  return Tree({
     items,
     onSelect: handleSelect,
     renderItem,
-  })}>`;
-}
+  });
+});
 
 function renderItem(
   item: TreeItem<string, StreamItem>,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
   if (item.value.type === 'category') {
     const { unreadCount, category } = item.value;
-    return context.html`
+    return $.html`
       <div :class=${{ _: 'StreamItem', 'has-unread': unreadCount > 0 }}>
         <div class="StreamItem-title">${category.label}</div>
         <div
@@ -137,7 +137,7 @@ function renderItem(
     );
     const icon =
       subscription.iconUrl !== ''
-        ? context.html`
+        ? $.html`
           <img
             alt=${subscription.title}
             class="u-vertical-middle u-object-fit-cover"
@@ -146,8 +146,8 @@ function renderItem(
             width="16"
           >
         `
-        : context.html`<i class="icon icon-16 icon-file"></i>`;
-    return context.html`
+        : $.html`<i class="icon icon-16 icon-file"></i>`;
+    return $.html`
       <div :class=${{ _: 'StreamItem', 'has-unread': unreadCount > 0 }}>
         <div class="StreamItem-icon"><${icon}></div>
         <div class="StreamItem-title">${subscription.title !== '' ? subscription.title : '<NO TITLE>'}</div>

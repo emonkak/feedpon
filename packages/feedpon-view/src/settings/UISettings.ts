@@ -1,5 +1,5 @@
-import { type RenderContext, repeat } from 'barebind';
-import { Atom } from 'barebind/extensions/signal';
+import { createComponent, type RenderContext, Repeat } from 'barebind';
+import { LocalAtom } from 'barebind/extras/hooks';
 import { bindActions } from 'feedpon-flux';
 import { getStoreHook } from 'feedpon-flux/barebind.ts';
 import type { State, ThemeKind } from 'feedpon-messaging';
@@ -7,16 +7,16 @@ import { changeCustomStyles, changeTheme, THEMES } from 'feedpon-messaging/ui';
 
 export interface UISettingsProps {}
 
-export function UISettings(
+export const UISettings = createComponent(function UISettings(
   {}: UISettingsProps,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
   const {
     currentTheme,
     customStyles: initialCustomStyles,
     onChangeCustomStyles,
     onChangeTheme,
-  } = context.use(
+  } = $.use(
     getStoreHook({
       mapStateToProps: (state: State) => ({
         currentTheme: state.ui.theme,
@@ -29,13 +29,13 @@ export function UISettings(
     }),
   );
 
-  const customStyles$ = context.use(Atom.untracked(initialCustomStyles));
+  const customStyles$ = $.use(LocalAtom(initialCustomStyles));
 
-  const handleChangeCustomStyle = context.useCallback((event: Event) => {
+  const handleChangeCustomStyle = $.useCallback((event: Event) => {
     customStyles$.value = (event.currentTarget as HTMLTextAreaElement).value;
   }, []);
 
-  const handleChangeTheme = context.useCallback(
+  const handleChangeTheme = $.useCallback(
     (event: Event) => {
       const newTheme = (event.currentTarget as HTMLInputElement)
         .value as ThemeKind;
@@ -44,7 +44,7 @@ export function UISettings(
     [onChangeTheme],
   );
 
-  const handleSubmitCustomStyle = context.useCallback(
+  const handleSubmitCustomStyle = $.useCallback(
     (event: SubmitEvent) => {
       event.preventDefault();
       onChangeCustomStyles(customStyles$.value);
@@ -52,9 +52,9 @@ export function UISettings(
     [onChangeCustomStyles],
   );
 
-  const themeCheckboxes = repeat({
+  const themeCheckboxes = Repeat({
     source: THEMES,
-    valueSelector: (theme) => context.html`
+    valueSelector: (theme) => $.html`
       <label key={theme.value} class="form-check-label">
         <input
           checked=${theme.value === currentTheme}
@@ -70,7 +70,7 @@ export function UISettings(
     `,
   });
 
-  return context.html`
+  return $.html`
     <section class="section">
       <h1 class="display-1">UI</h1>
       <div class="form">
@@ -97,4 +97,4 @@ export function UISettings(
       </form>
     </section>
   `;
-}
+});

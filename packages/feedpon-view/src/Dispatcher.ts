@@ -1,9 +1,9 @@
 import {
   type CustomHookFunction,
-  component,
+  createComponent,
   type RenderContext,
 } from 'barebind';
-import { CurrentHistory } from 'barebind/extensions/router';
+import { CurrentHistory } from 'barebind/extras/router';
 import { getStoreHook } from 'feedpon-flux/barebind.ts';
 import type { State, Store, ThemeKind } from 'feedpon-messaging';
 import { THEMES } from 'feedpon-messaging/ui';
@@ -15,11 +15,11 @@ import { router } from './router.ts';
 
 export interface DispatcherProps {}
 
-export function Dispatcher(
+export const Dispatcher = createComponent(function Dispatcher(
   _props: DispatcherProps,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
-  const { store, customStyles, isAuthenticated, theme } = context.use(
+  const { store, customStyles, isAuthenticated, theme } = $.use(
     getStoreHook({
       mapStateToProps: (state: State) => ({
         customStyles: state.ui.customStyles,
@@ -29,23 +29,23 @@ export function Dispatcher(
       mapStoreToProps: (store) => ({ store: store as Store }),
     }),
   );
-  const [location, navigator] = context.use(CurrentHistory);
+  const [location, navigator] = $.use(CurrentHistory);
 
-  context.use(styleHook(customStyles));
-  context.use(themeHook(theme));
+  $.use(styleHook(customStyles));
+  $.use(themeHook(theme));
 
   if (!isAuthenticated) {
-    return context.html`<${component(SingleLayout, {
-      child: component(AuthenticationPage, {}),
-    })}>`;
+    return SingleLayout({
+      child: AuthenticationPage({}),
+    });
   }
 
   const child = router.handle(location.url, { navigator, store });
 
-  return context.html`<${component(SidebarLayout, {
+  return SidebarLayout({
     child,
-  })}>`;
-}
+  });
+});
 
 function styleHook(rule: string): CustomHookFunction<void> {
   return (context) => {

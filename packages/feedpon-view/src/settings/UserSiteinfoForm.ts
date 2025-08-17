@@ -1,7 +1,6 @@
-import { component, type RenderContext } from 'barebind';
-import { Atom } from 'barebind/extensions/signal';
+import { createComponent, type RenderContext } from 'barebind';
+import { LocalAtom } from 'barebind/extras/hooks';
 import type { SiteinfoItem } from 'feedpon-messaging';
-
 import { FormControl, type FormValidation } from '../primitives/FormControl.ts';
 
 interface UserSiteinfoFormProps {
@@ -9,30 +8,26 @@ interface UserSiteinfoFormProps {
   onSubmit: (item: SiteinfoItem) => void;
 }
 
-const PATTERN_VALIDATIONS: FormValidation<'input'>[] = [
+const PATTERN_VALIDATIONS: FormValidation[] = [
   (element) =>
     isValidPattern(element.value) ? null : 'Invalid regular expression.',
 ];
 
-const XPATH_VALIDATIONS: FormValidation<'input'>[] = [
+const XPATH_VALIDATIONS: FormValidation[] = [
   (element) =>
     isValidXPath(element.value) ? null : 'Invalid XPath expression.',
 ];
 
-export function UserSiteinfoForm(
+export const UserSiteinfoForm = createComponent(function UserSiteinfoForm(
   { item, onSubmit }: UserSiteinfoFormProps,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
-  const name$ = context.use(Atom.untracked(item?.name ?? ''));
-  const urlPattern$ = context.use(Atom.untracked(item?.urlPattern ?? ''));
-  const contentExpression$ = context.use(
-    Atom.untracked(item?.contentExpression ?? ''),
-  );
-  const nextLinkExpression$ = context.use(
-    Atom.untracked(item?.nextLinkExpression ?? ''),
-  );
+  const name$ = $.use(LocalAtom(item?.name ?? ''));
+  const urlPattern$ = $.use(LocalAtom(item?.urlPattern ?? ''));
+  const contentExpression$ = $.use(LocalAtom(item?.contentExpression ?? ''));
+  const nextLinkExpression$ = $.use(LocalAtom(item?.nextLinkExpression ?? ''));
 
-  const handleSubmit = context.useCallback(
+  const handleSubmit = $.useCallback(
     (event: SubmitEvent) => {
       event.preventDefault();
 
@@ -54,29 +49,29 @@ export function UserSiteinfoForm(
     [onSubmit, item],
   );
 
-  const handleNameInput = context.useCallback((event: Event) => {
+  const handleNameInput = $.useCallback((event: Event) => {
     name$.value = (event.currentTarget as HTMLInputElement).value;
   }, []);
 
-  const handleUrlPatternInput = context.useCallback((event: Event) => {
+  const handleUrlPatternInput = $.useCallback((event: Event) => {
     urlPattern$.value = (event.currentTarget as HTMLInputElement).value;
   }, []);
 
-  const handleContentExpressionInput = context.useCallback((event: Event) => {
+  const handleContentExpressionInput = $.useCallback((event: Event) => {
     contentExpression$.value = (event.currentTarget as HTMLInputElement).value;
   }, []);
 
-  const handleNextLinkInput = context.useCallback((event: Event) => {
+  const handleNextLinkInput = $.useCallback((event: Event) => {
     nextLinkExpression$.value = (event.currentTarget as HTMLInputElement).value;
   }, []);
 
-  return context.html`
+  return $.html`
     <form class="form" @submit=${handleSubmit}>
       <div class="form-legend">${item !== undefined ? 'Edit siteinfo' : 'New siteinfo'}</div>
       <div class="form-group">
         <label>
           <span class="form-group-heading form-required">Name</span>
-          <${component(FormControl<'input'>, {
+          <${FormControl({
             as: 'input',
             ownProps: {
               class: 'form-control',
@@ -92,7 +87,7 @@ export function UserSiteinfoForm(
       <div class="form-group">
         <label>
           <span class="form-group-heading form-required">URL pattern</span>
-          <${component(FormControl<'input'>, {
+          <${FormControl({
             as: 'input',
             validations: PATTERN_VALIDATIONS,
             ownProps: {
@@ -112,7 +107,7 @@ export function UserSiteinfoForm(
           <span class="form-group-heading form-required">
             Content expression
           </span>
-          <${component(FormControl<'input'>, {
+          <${FormControl({
             as: 'input',
             validations: PATTERN_VALIDATIONS,
             ownProps: {
@@ -132,7 +127,7 @@ export function UserSiteinfoForm(
       <div class="form-group">
         <label>
           <span class="form-group-heading">Next link expression</span>
-          <${component(FormControl<'input'>, {
+          <${FormControl({
             as: 'input',
             validations: XPATH_VALIDATIONS,
             ownProps: {
@@ -155,7 +150,7 @@ export function UserSiteinfoForm(
       </div>
     </form>
   `;
-}
+});
 
 function isValidXPath(expression: string): boolean {
   try {

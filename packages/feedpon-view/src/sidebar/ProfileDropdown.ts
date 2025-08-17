@@ -1,7 +1,7 @@
-import { component, type RenderContext } from 'barebind';
+import { createComponent, type RenderContext } from 'barebind';
 import type { Profile } from 'feedpon-messaging';
 
-import { AlertDialog } from '../primitives/AlertDialog.ts';
+import { openAlertDialog } from '../primitives/AlertDialog.ts';
 import { Dropdown } from '../primitives/Dropdown.ts';
 
 interface ProfileDropdownProps {
@@ -11,16 +11,16 @@ interface ProfileDropdownProps {
   profile: Profile;
 }
 
-export function ProfileDropdown(
+export const ProfileDropdown = createComponent(function ProfileDropdown(
   { isLoading, onLogout, onRefresh, profile }: ProfileDropdownProps,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
-  const handleRefresh = context.useCallback(() => {
+  const handleRefresh = $.useCallback(() => {
     onRefresh();
   }, [onRefresh]);
 
-  const handleLogout = context.useCallback(() => {
-    AlertDialog.open({
+  const handleLogout = $.useCallback(() => {
+    openAlertDialog({
       confirmButton: ({ onConfirm }, context) => context.html`
           <button class="button button-negative" type="button" @click=${onConfirm}>Logout</button>
         `,
@@ -37,7 +37,7 @@ export function ProfileDropdown(
 
   const profileIcon =
     profile.picture !== ''
-      ? context.html`
+      ? $.html`
         <img
           class="u-flex-shrink-0 u-rounded-circle"
           height="40"
@@ -45,14 +45,14 @@ export function ProfileDropdown(
           src=${profile.picture}
         >
       `
-      : context.html`
+      : $.html`
     <span class="u-flex-shrink-0">
       <i class="icon icon-40 icon-contacts"></i>
     </span>
   `;
 
-  const dropdown = component(Dropdown, {
-    trigger: ({ id, onToggle, open }) => context.html`
+  return Dropdown({
+    trigger: ({ id, onToggle, open }) => $.html`
       <button
         aria-expanded=${open.toString()}
         aria-label="Toggle profile dropdown"
@@ -79,7 +79,7 @@ export function ProfileDropdown(
       {
         type: 'button',
         key: 'refresh',
-        children: context.html`
+        children: $.html`
           <div class="MenuItem-content">Refresh</div>
         `,
         onAction: handleRefresh,
@@ -87,13 +87,11 @@ export function ProfileDropdown(
       {
         type: 'button',
         key: 'logout',
-        children: context.html`
+        children: $.html`
           <div class="MenuItem-content">Logout...</div>
         `,
         onAction: handleLogout,
       },
     ],
   });
-
-  return context.html`<${dropdown}>`;
-}
+});

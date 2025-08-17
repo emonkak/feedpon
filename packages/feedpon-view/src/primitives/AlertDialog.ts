@@ -1,7 +1,7 @@
 import {
   AsyncRoot,
   BrowserBackend,
-  component,
+  createComponent,
   type RenderContext,
 } from 'barebind';
 
@@ -21,7 +21,7 @@ export interface AlertDialogProps {
   title: string;
 }
 
-export function AlertDialog(
+export const AlertDialog = createComponent(function AlertDialog(
   {
     cancelButton,
     confirmButton,
@@ -31,11 +31,11 @@ export function AlertDialog(
     open = false,
     title,
   }: AlertDialogProps,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
-  const dialogRef = context.useRef<HTMLDialogElement | null>(null);
+  const dialogRef = $.useRef<HTMLDialogElement | null>(null);
 
-  context.useLayoutEffect(() => {
+  $.useLayoutEffect(() => {
     const dialog = dialogRef.current!;
     if (open) {
       dialog.showModal();
@@ -44,15 +44,15 @@ export function AlertDialog(
     }
   }, [open]);
 
-  const handleConfirm = context.useCallback(() => {
+  const handleConfirm = $.useCallback(() => {
     dialogRef.current!.close('confirmed');
   }, []);
 
-  const handleCancel = context.useCallback(() => {
+  const handleCancel = $.useCallback(() => {
     dialogRef.current!.close();
   }, []);
 
-  const handleClick = context.useCallback((event: MouseEvent) => {
+  const handleClick = $.useCallback((event: MouseEvent) => {
     const { top, bottom, left, right } = (
       event.currentTarget as HTMLDialogElement
     ).getBoundingClientRect();
@@ -66,7 +66,7 @@ export function AlertDialog(
     }
   }, []);
 
-  const handleClose = context.useCallback(
+  const handleClose = $.useCallback(
     async (event: Event) => {
       const dialog = event.currentTarget as HTMLDialogElement;
       if (dialog.returnValue === 'confirmed') {
@@ -78,10 +78,10 @@ export function AlertDialog(
     [onCancel, onConfirm],
   );
 
-  const ariaDescriptionId = context.useId();
-  const ariaLabelId = context.useId();
+  const ariaDescriptionId = $.useId();
+  const ariaLabelId = $.useId();
 
-  return context.html`
+  return $.html`
     <dialog
       :ref=${dialogRef}
       aria-describedby=${ariaDescriptionId}
@@ -94,16 +94,18 @@ export function AlertDialog(
       <h1 class="Modal-title" id=${ariaLabelId}>${title}</h1>
       <p id=${ariaDescriptionId}>${message}</p>
       <div class="button-toolbar">
-        <${confirmButton({ onConfirm: handleConfirm }, context)}>
-        <${cancelButton({ onCancel: handleCancel }, context)}>
+        <${confirmButton({ onConfirm: handleConfirm }, $)}>
+        <${cancelButton({ onCancel: handleCancel }, $)}>
       </div>
     </dialog>
   `;
-}
+});
 
-AlertDialog.open = async (props: AlertDialogProps): Promise<boolean> => {
+export async function openAlertDialog(
+  props: AlertDialogProps,
+): Promise<boolean> {
   const { resolve, promise } = Promise.withResolvers<boolean>();
-  const value = component(AlertDialog, {
+  const value = AlertDialog({
     ...props,
     open: props.open ?? true,
     onCancel: async (dialog) => {
@@ -124,7 +126,7 @@ AlertDialog.open = async (props: AlertDialogProps): Promise<boolean> => {
   } finally {
     root.unmount();
   }
-};
+}
 
 async function waitForTransition(element: HTMLElement): Promise<unknown> {
   return Promise.allSettled(

@@ -1,4 +1,4 @@
-import type { RenderContext } from 'barebind';
+import { createComponent, type RenderContext } from 'barebind';
 
 interface EntryNavProps {
   fullContentsIsLoading: boolean;
@@ -10,7 +10,7 @@ interface EntryNavProps {
   url: string;
 }
 
-export function EntryNav(
+export const EntryNav = createComponent(function EntryNav(
   {
     fullContentsIsLoading,
     fullContentsIsShown,
@@ -19,9 +19,9 @@ export function EntryNav(
     onToggleFullContent,
     onTogglePin,
   }: EntryNavProps,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
-  return context.html`
+  return $.html`
     <nav class="entry-nav">
       <div class="button-toolbar">
         <button
@@ -67,4 +67,4 @@ export function EntryNav(
       </div>
     </nav>
   `;
-}
+});

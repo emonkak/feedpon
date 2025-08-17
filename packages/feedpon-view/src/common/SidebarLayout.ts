@@ -1,5 +1,5 @@
-import { component, type RenderContext } from 'barebind';
-import { CurrentHistory } from 'barebind/extensions/router';
+import { createComponent, type RenderContext } from 'barebind';
+import { CurrentHistory } from 'barebind/extras/router';
 import { bindActions, type Dispatch } from 'feedpon-flux';
 import { getStoreHook } from 'feedpon-flux/barebind.ts';
 import type {
@@ -24,9 +24,9 @@ export interface SidebarLayoutProps {
   child: unknown;
 }
 
-export function SidebarLayout(
+export const SidebarLayout = createComponent(function SidebarLayout(
   { child }: SidebarLayoutProps,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
   const {
     dispatch,
@@ -37,7 +37,7 @@ export function SidebarLayout(
     onCloseSidebar,
     onOpenSidebar,
     sidebarIsOpened,
-  } = context.use(
+  } = $.use(
     getStoreHook({
       mapStateToProps: (state: State) => ({
         isLoading: state.backend.isLoading || state.subscriptions.isImporting,
@@ -56,21 +56,21 @@ export function SidebarLayout(
       }),
     }),
   );
-  const [locationState, navigator] = context.use(CurrentHistory);
-  const sidebarWidthRef = context.useRef(0);
+  const [locationState, navigator] = $.use(CurrentHistory);
+  const sidebarWidthRef = $.useRef(0);
 
   const { onTouchStart, onTouchEnd, onTouchMove, isSwiping, coordinates } =
-    context.use(swipeableHook);
+    $.use(swipeableHook);
 
-  const handleTransitionEnd = context.useCallback(() => {
+  const handleTransitionEnd = $.useCallback(() => {
     if (!sidebarIsOpened) {
       updateSidebarStatus(false);
     }
   }, [sidebarIsOpened]);
 
-  const helpTitleId = context.useId();
+  const helpTitleId = $.useId();
 
-  const handleKeyMapping = context.useCallback((keyMapping: KeyMapping) => {
+  const handleKeyMapping = $.useCallback((keyMapping: KeyMapping) => {
     const command = (commandTable as { [key: string]: Command<any> })[
       keyMapping.commandId
     ];
@@ -83,9 +83,9 @@ export function SidebarLayout(
     }
   }, []);
 
-  context.use(keyMappingsHook(keyMappings, handleKeyMapping));
+  $.use(keyMappingsHook(keyMappings, handleKeyMapping));
 
-  context.useEffect(() => {
+  $.useEffect(() => {
     if (locationState.url.pathname.indexOf('/streams/') !== 0) {
       scrollTo(0, 0);
     }
@@ -95,7 +95,7 @@ export function SidebarLayout(
     }
   }, [locationState]);
 
-  context.useEffect(() => {
+  $.useEffect(() => {
     if (sidebarIsOpened) {
       document.documentElement.classList.add('sidebar-is-opened');
     } else {
@@ -107,7 +107,7 @@ export function SidebarLayout(
     };
   }, [sidebarIsOpened]);
 
-  context.useEffect(() => {
+  $.useEffect(() => {
     if (isSwiping) {
       updateSwipingStatus(true);
     } else {
@@ -171,7 +171,7 @@ export function SidebarLayout(
       }
     : {};
 
-  return context.html`
+  return $.html`
     <div :class=${{ _: 'l-root', 'is-swiping': isSwiping }}>
       <div
         :class=${{ _: 'l-sidebar', 'is-opened': sidebarIsOpened }}
@@ -179,17 +179,17 @@ export function SidebarLayout(
         :ref=${sidebarRef}
         @transitionend=${handleTransitionEnd}
       >
-        <${component(Sidebar, {
+        <${Sidebar({
           navigator: navigator,
           url: locationState.url,
         })}>
       </div>
       <div :style=${mainStyle} class="l-main">
         <div class="l-notifications">
-          <${component(NotificationStack, {})}>
+          <${NotificationStack({})}>
         </div>
         <div class="l-osd">
-          <${component(OSD, {})}>
+          <${OSD({})}>
         </div>
         <${child}>
         <div
@@ -208,13 +208,13 @@ export function SidebarLayout(
         ></div>
       </div>
       <div :class=${{ _: 'l-backdrop', 'is-shown': isLoading }}>
-        <${isLoading ? context.html`<i class="icon icon-48 icon-spinner animation-rotating"></i>` : null}>
+        <${isLoading ? $.html`<i class="icon icon-48 icon-spinner animation-rotating"></i>` : null}>
       </div>
     </div>
-    <${component(Dialog, {
-      children: context.html`
+    <${Dialog({
+      children: $.html`
         <h1 class="Modal-title" id=${helpTitleId}>Available Key Mappings</h1>
-        <${component(KeyMappingsTable, {
+        <${KeyMappingsTable({
           commandTable,
           keyMappings,
         })}>
@@ -224,7 +224,7 @@ export function SidebarLayout(
       ownProps: { 'aria-labelledby': helpTitleId },
     })}>
   `;
-}
+});
 
 function clamp(n: number, min: number, max: number): number {
   return Math.min(Math.max(n, min), max);

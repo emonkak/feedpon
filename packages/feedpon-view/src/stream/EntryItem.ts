@@ -1,4 +1,4 @@
-import { component, type ElementRef, type RenderContext } from 'barebind';
+import { createComponent, type ElementRef, type RenderContext } from 'barebind';
 import type { Entry } from 'feedpon-messaging';
 
 import { EmbeddedHTML } from '../primitives/EmbeddedHTML.ts';
@@ -40,7 +40,7 @@ interface CollapsedEntryContentProps {
   sameOrigin: boolean;
 }
 
-export function EntryItem(
+export const EntryItem = createComponent(function EntryItem(
   {
     entry,
     index,
@@ -58,9 +58,9 @@ export function EntryItem(
     onUnpin,
     sameOrigin,
   }: EntryItemProps,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
-  const handleExpand = context.useCallback(
+  const handleExpand = $.useCallback(
     (event: Event) => {
       if (isExpanded) {
         return;
@@ -80,7 +80,7 @@ export function EntryItem(
     [isExpanded, onExpand],
   );
 
-  const handleFetchNextFullContent = context.useCallback(() => {
+  const handleFetchNextFullContent = $.useCallback(() => {
     if (!entry.fullContents.isLoaded) {
       return;
     }
@@ -93,7 +93,7 @@ export function EntryItem(
     }
   }, [entry, onFetchFullContent]);
 
-  const handleToggleComments = context.useCallback(
+  const handleToggleComments = $.useCallback(
     (_event: Event) => {
       if (entry.comments.isLoaded) {
         if (entry.comments.isShown) {
@@ -108,7 +108,7 @@ export function EntryItem(
     [entry, onHideComments, onShowComments, onFetchComments],
   );
 
-  const handleToggleFullContent = context.useCallback(
+  const handleToggleFullContent = $.useCallback(
     (_event: Event) => {
       if (entry.fullContents.isLoading) {
         return;
@@ -127,7 +127,7 @@ export function EntryItem(
     [entry, onFetchFullContent, onHideFullContents, onShowFullContents],
   );
 
-  const handleTogglePin = context.useCallback(
+  const handleTogglePin = $.useCallback(
     (_event: Event) => {
       if (!entry.isPinning) {
         if (entry.isPinned) {
@@ -140,7 +140,7 @@ export function EntryItem(
     [entry, onUnpin, onPin],
   );
 
-  return context.html`
+  return $.html`
     <article
       :class=${{
         _: 'entry',
@@ -155,7 +155,7 @@ export function EntryItem(
     >
       <${
         isExpanded
-          ? component(ExpandedEntryContent, {
+          ? ExpandedEntryContent({
               entry: entry,
               onFetchNextFullContent: handleFetchNextFullContent,
               onToggleComments: handleToggleComments,
@@ -163,16 +163,16 @@ export function EntryItem(
               onTogglePin: handleTogglePin,
               sameOrigin: sameOrigin,
             })
-          : component(CollapsedEntryContent, {
+          : CollapsedEntryContent({
               entry,
               sameOrigin,
             })
       }>
     </article>
   `;
-}
+});
 
-function ExpandedEntryContent(
+const ExpandedEntryContent = createComponent(function ExpandedEntryContent(
   {
     entry,
     onFetchNextFullContent,
@@ -181,26 +181,26 @@ function ExpandedEntryContent(
     onTogglePin,
     sameOrigin,
   }: ExpandedEntryContentProps,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
   const content =
     entry.fullContents.isShown && entry.fullContents.isLoaded
-      ? component(FullContents, {
+      ? FullContents({
           isLoading: entry.fullContents.isLoading,
           isNotFound: entry.fullContents.isNotFound,
           items: entry.fullContents.items,
           onFetchNext: onFetchNextFullContent,
         })
-      : component(EmbeddedHTML, {
+      : EmbeddedHTML({
           baseUrl: entry.url,
           class: 'entry-content u-clearfix u-text-wrap',
           html: entry.content,
         });
 
-  return context.html`
+  return $.html`
     <div class="container">
       <header class="entry-header">
-        <${component(EntryNav, {
+        <${EntryNav({
           fullContentsIsLoading: entry.fullContents.isLoading,
           fullContentsIsShown: entry.fullContents.isShown,
           isPinned: entry.isPinned,
@@ -218,20 +218,20 @@ function ExpandedEntryContent(
           >
             ${entry.title || 'No Title'}
           </a>
-          <${renderReadMarker(entry, context)}>
+          <${renderReadMarker(entry, $)}>
         </h2>
         <div class="entry-metadata">
           <ul class="list-inline list-inline-dotted">
-            <${renderBookmarks(entry, context)}>
-            <${renderOrign(entry, sameOrigin, context)}>
-            <${renderAuthor(entry, context)}>
-            <${renderPublishedAt(entry, context)}>
+            <${renderBookmarks(entry, $)}>
+            <${renderOrign(entry, sameOrigin, $)}>
+            <${renderAuthor(entry, $)}>
+            <${renderPublishedAt(entry, $)}>
           </ul>
         </div>
       </header>
       <${content}>
       <footer class="entry-footer">
-        <${component(EntryActionList, {
+        <${EntryActionList({
           commentsIsLoading: entry.comments.isLoading,
           commentsIsShown: entry.comments.isShown,
           onToggleComments,
@@ -240,7 +240,7 @@ function ExpandedEntryContent(
         })}>
         <${
           entry.comments.isShown
-            ? component(CommentPopover, {
+            ? CommentPopover({
                 arrowOffset: -44,
                 isLoading: entry.comments.isLoading,
                 comments: entry.comments.items,
@@ -250,13 +250,13 @@ function ExpandedEntryContent(
       </footer>
     </div>
   `;
-}
+});
 
-function CollapsedEntryContent(
+const CollapsedEntryContent = createComponent(function CollapsedEntryContent(
   { entry, sameOrigin }: CollapsedEntryContentProps,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
-  return context.html`
+  return $.html`
     <div class="container">
       <div class="u-flex">
         <div class="u-flex-grow-1 u-flex-truncate">
@@ -270,14 +270,14 @@ function CollapsedEntryContent(
               >
                 ${entry.title || 'No Title'}
               </a>
-              <${renderReadMarker(entry, context)}>
+              <${renderReadMarker(entry, $)}>
             </h2>
             <div class="entry-metadata">
               <ul class="list-inline list-inline-dotted">
-                <${renderBookmarks(entry, context)}>
-                <${renderOrign(entry, sameOrigin, context)}>
-                <${renderAuthor(entry, context)}>
-                <${renderPublishedAt(entry, context)}>
+                <${renderBookmarks(entry, $)}>
+                <${renderOrign(entry, sameOrigin, $)}>
+                <${renderAuthor(entry, $)}>
+                <${renderPublishedAt(entry, $)}>
               </ul>
             </div>
           </header>
@@ -286,29 +286,29 @@ function CollapsedEntryContent(
         <div class="entry-visual">
           <${
             entry.visual
-              ? context.html`<img width=${entry.visual.width} height=${entry.visual.height} src=${entry.visual.url}>`
+              ? $.html`<img width=${entry.visual.width} height=${entry.visual.height} src=${entry.visual.url}>`
               : null
           }>
         </div>
       </div>
     </div>
   `;
-}
+});
 
-function renderAuthor(entry: Entry, context: RenderContext): unknown {
+function renderAuthor(entry: Entry, $: RenderContext): unknown {
   if (!entry.author) {
-    return context.html``;
+    return $.html``;
   }
 
-  return context.html`
+  return $.html`
     <li class="list-inline-item">
       <span>by ${entry.author}</span>
     </li>
   `;
 }
 
-function renderBookmarks(entry: Entry, context: RenderContext): unknown {
-  return context.html`
+function renderBookmarks(entry: Entry, $: RenderContext): unknown {
+  return $.html`
     <li class="list-inline-item">
       <a
         :class=${{
@@ -329,13 +329,13 @@ function renderBookmarks(entry: Entry, context: RenderContext): unknown {
 function renderOrign(
   entry: Entry,
   sameOrigin: boolean,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
   if (sameOrigin || !entry.origin) {
-    return context.html``;
+    return $.html``;
   }
 
-  return context.html`
+  return $.html`
     <li class="list-inline-item">
       <a
         class="link-strong"
@@ -349,20 +349,20 @@ function renderOrign(
   `;
 }
 
-function renderPublishedAt(entry: Entry, context: RenderContext): unknown {
+function renderPublishedAt(entry: Entry, $: RenderContext): unknown {
   if (!entry.publishedAt) {
-    return context.html``;
+    return $.html``;
   }
 
-  return context.html`
+  return $.html`
     <li class="list-inline-item">
-      <${component(RelativeTime, { time: entry.publishedAt })}>
+      <${RelativeTime({ time: entry.publishedAt })}>
     </li>
   `;
 }
 
-function renderReadMarker(entry: Entry, context: RenderContext): unknown {
+function renderReadMarker(entry: Entry, $: RenderContext): unknown {
   return entry.markedAsRead
-    ? context.html`<span class="badge badge-small badge-default">READ</span>`
-    : context.html``;
+    ? $.html`<span class="badge badge-small badge-default">READ</span>`
+    : $.html``;
 }

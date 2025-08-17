@@ -1,4 +1,4 @@
-import type { RenderContext } from 'barebind';
+import { createComponent, type RenderContext } from 'barebind';
 
 interface MainLayoutProps {
   content: unknown;
@@ -6,11 +6,11 @@ interface MainLayoutProps {
   header: unknown;
 }
 
-export function MainLayout(
+export const MainLayout = createComponent(function MainLayout(
   { content, footer, header }: MainLayoutProps,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
-  footer ??= context.html`
+  footer ??= $.html`
     <footer class="u-margin-top-4 u-margin-bottom-4">
       <div class="u-text-center">
         <small>Copyright &copy; 2017 Shota Nozaki</small>
@@ -40,9 +40,9 @@ export function MainLayout(
     </footer>
   `;
 
-  return context.html`
+  return $.html`
     <div class="l-header"><${header}></div>
     <div class="l-content"><${content}></div>
     <div class="l-footer"><${footer}></div>
   `;
-}
+});

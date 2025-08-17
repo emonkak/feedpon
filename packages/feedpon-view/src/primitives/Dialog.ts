@@ -1,7 +1,7 @@
 import {
   AsyncRoot,
   BrowserBackend,
-  component,
+  createComponent,
   type RenderContext,
 } from 'barebind';
 
@@ -13,13 +13,13 @@ export interface DialogProps {
   ownProps?: { [key: string]: unknown };
 }
 
-export function Dialog(
+export const Dialog = createComponent(function Dialog(
   { ownProps = {}, children, modal = true, onClose, open }: DialogProps,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
-  const dialogRef = context.useRef<HTMLDialogElement | null>(null);
+  const dialogRef = $.useRef<HTMLDialogElement | null>(null);
 
-  context.useLayoutEffect(() => {
+  $.useLayoutEffect(() => {
     const dialog = dialogRef.current!;
     if (open) {
       if (modal) {
@@ -32,7 +32,7 @@ export function Dialog(
     }
   }, [open, modal]);
 
-  context.useLayoutEffect(() => {
+  $.useLayoutEffect(() => {
     const dissmissOnClickOutside = (event: MouseEvent) => {
       const dialog = dialogRef.current!;
       if (
@@ -49,7 +49,7 @@ export function Dialog(
     };
   }, []);
 
-  const handleClick = context.useCallback((event: MouseEvent) => {
+  const handleClick = $.useCallback((event: MouseEvent) => {
     const { top, bottom, left, right } = (
       event.currentTarget as HTMLDialogElement
     ).getBoundingClientRect();
@@ -63,14 +63,14 @@ export function Dialog(
     }
   }, []);
 
-  const handleClose = context.useCallback(
+  const handleClose = $.useCallback(
     (event: Event) => {
       onClose?.(event.currentTarget as HTMLDialogElement);
     },
     [onClose],
   );
 
-  return context.html`
+  return $.html`
     <dialog
       :ref=${dialogRef}
       class=${modal ? 'Modal' : null}
@@ -81,11 +81,11 @@ export function Dialog(
       <${children}>
     </dialog>
   `;
-}
+});
 
-Dialog.open = async (props: DialogProps): Promise<void> => {
+export async function openDialog(props: DialogProps): Promise<void> {
   const { resolve, promise } = Promise.withResolvers<void>();
-  const value = component(Dialog, {
+  const value = Dialog({
     ...props,
     onClose: async (dialog) => {
       props.onClose?.(dialog);
@@ -100,7 +100,7 @@ Dialog.open = async (props: DialogProps): Promise<void> => {
   } finally {
     root.unmount();
   }
-};
+}
 
 async function waitForTransition(element: HTMLElement): Promise<unknown> {
   return Promise.allSettled(

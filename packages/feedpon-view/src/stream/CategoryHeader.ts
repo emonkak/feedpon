@@ -1,4 +1,4 @@
-import type { RenderContext } from 'barebind';
+import { createComponent, type RenderContext } from 'barebind';
 import type { Category } from 'feedpon-messaging';
 
 interface CategoryHeaderProps {
@@ -7,11 +7,11 @@ interface CategoryHeaderProps {
   numEntries: number;
 }
 
-export function CategoryHeader(
+export const CategoryHeader = createComponent(function CategoryHeader(
   { category, hasMoreEntries, numEntries }: CategoryHeaderProps,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
-  return context.html`
+  return $.html`
     <header class="stream-header">
       <div class="container">
         <div class="u-flex u-flex-align-items-center u-flex-justify-content-between">
@@ -38,4 +38,4 @@ export function CategoryHeader(
       </div>
     </header>
   `;
-}
+});

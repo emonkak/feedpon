@@ -1,4 +1,4 @@
-import { component, type RenderContext, repeat } from 'barebind';
+import { createComponent, type RenderContext, Repeat } from 'barebind';
 import { bindActions } from 'feedpon-flux';
 import { getStoreHook } from 'feedpon-flux/barebind.ts';
 import type { KeyMapping, State } from 'feedpon-messaging';
@@ -11,23 +11,23 @@ import {
 import createAscendingComparer from 'feedpon-utils/createAscendingComparer.ts';
 import * as Trie from 'feedpon-utils/Trie.ts';
 
-import { AlertDialog } from '../primitives/AlertDialog.ts';
+import { openAlertDialog } from '../primitives/AlertDialog.ts';
 import { Dialog } from '../primitives/Dialog.ts';
 import { KeyMappingForm } from './KeyMappingForm.ts';
 import { KeyMappingRow } from './KeyMappingRow.ts';
 
 export interface KeyboardSettingsProps {}
 
-export function KeyboardSettings(
+export const KeyboardSettings = createComponent(function KeyboardSettings(
   _props: KeyboardSettingsProps,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
   const {
     keyMappings,
     onDeleteKeyMapping,
     onResetKeyMappings,
     onUpdateKeyMapping,
-  } = context.use(
+  } = $.use(
     getStoreHook({
       mapStateToProps: (state: State) => ({
         keyMappings: state.keyMappings.items,
@@ -39,18 +39,18 @@ export function KeyboardSettings(
       }),
     }),
   );
-  const [isCreating, setIsCreating] = context.useState(false);
+  const [isCreating, setIsCreating] = $.useState(false);
 
-  const handleStartCreating = context.useCallback(() => {
+  const handleStartCreating = $.useCallback(() => {
     setIsCreating(true);
   }, []);
 
-  const handleEndCreating = context.useCallback(() => {
+  const handleEndCreating = $.useCallback(() => {
     setIsCreating(false);
   }, []);
 
-  const handleReset = context.useCallback(() => {
-    AlertDialog.open({
+  const handleReset = $.useCallback(() => {
+    openAlertDialog({
       confirmButton: ({ onConfirm }, context) => context.html`
           <button class="button button-negative" type="button" @click=${onConfirm}>Reset</button>
         `,
@@ -65,7 +65,7 @@ export function KeyboardSettings(
     });
   }, []);
 
-  const handleUpdateKeyMapping = context.useCallback(
+  const handleUpdateKeyMapping = $.useCallback(
     (keyStroke: string, mapping: KeyMapping) => {
       onUpdateKeyMapping(keyStroke, mapping);
       setIsCreating(false);
@@ -73,11 +73,11 @@ export function KeyboardSettings(
     [],
   );
 
-  const keyMappingRows = repeat({
+  const keyMappingRows = Repeat({
     source: Trie.toArray(keyMappings).sort(createAscendingComparer(0)),
     keySelector: ([keys]) => keys.join(''),
     valueSelector: ([keys, keyMapping]) =>
-      component(KeyMappingRow, {
+      KeyMappingRow({
         commandTable,
         keyMapping,
         keys,
@@ -86,19 +86,17 @@ export function KeyboardSettings(
       }),
   });
 
-  const keyMappingModal = component(Dialog, {
+  const keyMappingModal = Dialog({
     open: isCreating,
-    children: context.html`
-      <${component(KeyMappingForm, {
-        commandTable,
-        onCancel: handleEndCreating,
-        onSubmit: handleUpdateKeyMapping,
-      })}>
-    `,
+    children: KeyMappingForm({
+      commandTable,
+      onCancel: handleEndCreating,
+      onSubmit: handleUpdateKeyMapping,
+    }),
     onClose: handleEndCreating,
   });
 
-  return context.html`
+  return $.html`
     <section class="section">
       <h1 class="display-1">Key mappings</h1>
       <div class="u-responsive">
@@ -134,4 +132,4 @@ export function KeyboardSettings(
       <${keyMappingModal}>
     </section>
   `;
-}
+});

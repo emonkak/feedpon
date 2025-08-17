@@ -1,5 +1,5 @@
-import { component, type RenderContext, repeat } from 'barebind';
-import { type HistoryNavigator, RelativeURL } from 'barebind/extensions/router';
+import { createComponent, type RenderContext, Repeat } from 'barebind';
+import { type HistoryNavigator, RelativeURL } from 'barebind/extras/router';
 import { bindActions } from 'feedpon-flux';
 import { getStoreHook } from 'feedpon-flux/barebind.ts';
 import type { State } from 'feedpon-messaging';
@@ -43,11 +43,11 @@ SOFTWARE.
   },
 ];
 
-export function AboutPage(
+export const AboutPage = createComponent(function AboutPage(
   { navigator }: AboutPageProps,
-  context: RenderContext,
+  $: RenderContext,
 ): unknown {
-  const { onToggleSidebar, version } = context.use(
+  const { onToggleSidebar, version } = $.use(
     getStoreHook({
       mapStateToProps: (state: State) => ({
         version: state.version,
@@ -58,15 +58,15 @@ export function AboutPage(
     }),
   );
 
-  const handleGoKitchensink = context.useCallback(() => {
+  const handleGoKitchensink = $.useCallback(() => {
     navigator.navigate(new RelativeURL('/kitchensink'));
   }, []);
 
-  const header = component(Navbar, {
+  const header = Navbar({
     onToggleSidebar,
-    children: context.html`
+    children: $.html`
       <h1 class="navbar-title">About</h1>
-      <${component(Dropdown, {
+      <${Dropdown({
         trigger: ({ id, onToggle, open }, context) => context.html`
           <button
             aria-label="Open menu"
@@ -88,7 +88,7 @@ export function AboutPage(
           {
             type: 'button',
             key: 'go_kitchensink',
-            children: context.html`
+            children: $.html`
               <div class="MenuItem-content">Go kitchensink...</div>
             `,
             onAction: handleGoKitchensink,
@@ -98,9 +98,9 @@ export function AboutPage(
     `,
   });
 
-  const usingLibraries = repeat({
+  const usingLibraries = Repeat({
     source: USING_LIBRARIES,
-    valueSelector: ({ license, name, url }) => context.html`
+    valueSelector: ({ license, name, url }) => $.html`
         <li>
           <h2>
             <a href=${url} target="_blank" rel="noreferrer">
@@ -111,7 +111,7 @@ export function AboutPage(
         </li>
       `,
   });
-  const content = context.html`
+  const content = $.html`
     <section class="section u-text-center">
       <div class="container">
         <a
@@ -134,8 +134,8 @@ export function AboutPage(
     </section>
   `;
 
-  return context.html`<${component(MainLayout, {
+  return MainLayout({
     header,
     content,
-  })}>`;
-}
+  });
+});

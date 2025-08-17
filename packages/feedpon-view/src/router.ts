@@ -1,10 +1,9 @@
-import { component } from 'barebind';
 import {
   type HistoryNavigator,
   Router,
   route,
   wildcard,
-} from 'barebind/extensions/router';
+} from 'barebind/extras/router';
 import type { Store } from 'feedpon-messaging';
 
 import { AboutPage } from './about/AboutPage.ts';
@@ -27,71 +26,63 @@ export interface RouterState {
 }
 
 export const router = new Router<unknown, RouterState>([
-  route([''], () => component(DashboardPage, {})),
-  route(['about'], (_args, _url, { navigator }) =>
-    component(AboutPage, { navigator }),
-  ),
+  route([''], () => DashboardPage({})),
+  route(['about'], (_args, _url, { navigator }) => AboutPage({ navigator })),
   route(
     ['categories'],
-    (_args, _url, { navigator }) => component(CategoriesPage, { navigator }),
+    (_args, _url, { navigator }) => CategoriesPage({ navigator }),
     [
       route([wildcard], ([label], _url, { navigator }) =>
-        component(CategoriesPage, { label, navigator }),
+        CategoriesPage({ label, navigator }),
       ),
     ],
   ),
-  route(['kitchensink'], () => component(KitchensinkPage, {})),
-  route(
-    ['search'],
-    (_args, _url, { navigator }) => component(SearchPage, { navigator }),
-    [
-      route([wildcard], ([query], _url, { navigator }) =>
-        component(SearchPage, {
-          navigator,
-          defaultQuery: query,
-        }),
-      ),
-    ],
-  ),
-  route(['settings'], null, [
-    route(['keyboard'], (_args, url) =>
-      component(SettingsPage, {
-        url,
-        children: component(KeyboardSettings, {}),
-      }),
-    ),
-    route(['siteinfo'], (_args, url) =>
-      component(SettingsPage, {
-        url,
-        children: component(SiteinfoSettings, {}),
-      }),
-    ),
-    route(['stream'], (_args, url) =>
-      component(SettingsPage, {
-        url,
-        children: component(StreamSettings, {}),
-      }),
-    ),
-    route(['tracking_url'], (_args, url) =>
-      component(SettingsPage, {
-        url,
-        children: component(TrackingUrlSettings, {}),
-      }),
-    ),
-    route(['ui'], (_args, url) =>
-      component(SettingsPage, {
-        url,
-        children: component(UISettings, {}),
-      }),
-    ),
-    route(['url_replacement'], (_args, url) =>
-      component(SettingsPage, {
-        url,
-        children: component(UrlReplacementSettings, {}),
+  route(['kitchensink'], () => KitchensinkPage({})),
+  route(['search'], (_args, _url, { navigator }) => SearchPage({ navigator }), [
+    route([wildcard], ([query], _url, { navigator }) =>
+      SearchPage({
+        navigator,
+        defaultQuery: query,
       }),
     ),
   ]),
-  route(['streams', wildcard], ([streamId]) =>
-    component(StreamPage, { streamId }),
-  ),
+  route(['settings'], null, [
+    route(['keyboard'], (_args, url) =>
+      SettingsPage({
+        url,
+        children: KeyboardSettings({}),
+      }),
+    ),
+    route(['siteinfo'], (_args, url) =>
+      SettingsPage({
+        url,
+        children: SiteinfoSettings({}),
+      }),
+    ),
+    route(['stream'], (_args, url) =>
+      SettingsPage({
+        url,
+        children: StreamSettings({}),
+      }),
+    ),
+    route(['tracking_url'], (_args, url) =>
+      SettingsPage({
+        url,
+        children: TrackingUrlSettings({}),
+      }),
+    ),
+    route(['ui'], (_args, url) =>
+      SettingsPage({
+        url,
+        children: UISettings({}),
+      }),
+    ),
+    route(['url_replacement'], (_args, url) =>
+      SettingsPage({
+        url,
+        children: UrlReplacementSettings({}),
+      }),
+    ),
+  ]),
+  route(['streams', wildcard], ([streamId]) => StreamPage({ streamId })),
 ]);
