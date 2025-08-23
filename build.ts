@@ -1,23 +1,27 @@
 import * as fs from 'node:fs/promises';
 import * as esbuild from 'esbuild';
+import { minifyTemplates } from 'esbuild-plugin-minify-templates';
 
 const isProduction = process.env.NODE_ENV === 'production';
-const dropLabels = isProduction ? ['DEBUG'] : [];
-
 const configs = [
   {
-    entryPoints: ['packages/feedpon/src/index.ts'],
     bundle: true,
-    metafile: !isProduction,
+    entryPoints: ['assets/css/index.css'],
     outfile: 'dist/index.js',
-    dropLabels,
-    keepNames: true,
   },
   {
-    entryPoints: ['packages/feedpon/src/background.ts'],
     bundle: true,
+    dropLabels: isProduction ? ['DEBUG'] : [],
+    entryPoints: ['packages/feedpon/src/index.ts'],
+    keepNames: true,
+    metafile: !isProduction,
+    outfile: 'dist/index.js',
+    plugins: [minifyTemplates()],
+  },
+  {
+    bundle: true,
+    entryPoints: ['packages/feedpon/src/background.ts'],
     outfile: 'dist/background.js',
-    dropLabels,
   },
 ];
 

@@ -112,19 +112,22 @@ export const StreamSettings = createComponent(function StreamSettings(
   );
 
   const handleClearStreamCaches = $.useCallback(() => {
-    openAlertDialog({
-      confirmButton: ({ onConfirm }, context) => context.html`
+    openAlertDialog(
+      {
+        confirmButton: ({ onConfirm }, context) => context.html`
           <button class="button button-negative" type="button" @click=${onConfirm}>Clear</button>
         `,
-      cancelButton: ({ onCancel }, context) => context.html`
+        cancelButton: ({ onCancel }, context) => context.html`
           <button class="button button-outline-default" type="button" @click=${onCancel}>Cancel</button>
         `,
-      onConfirm: () => {
-        onClearStreamCaches();
+        onConfirm: () => {
+          onClearStreamCaches();
+        },
+        title: 'Clear stream caches',
+        message: 'Are you sure you want to clear stream caches?',
       },
-      title: 'Clear stream caches',
-      message: 'Are you sure you want to clear stream caches?',
-    });
+      $,
+    );
   }, [onClearStreamCaches]);
 
   return $.html`

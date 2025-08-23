@@ -61,8 +61,9 @@ export const SubscriptionDropdown = createComponent(
     }, []);
 
     const handleUnsubscribe = $.useCallback(() => {
-      openAlertDialog({
-        confirmButton: ({ onConfirm }, context) => context.html`
+      openAlertDialog(
+        {
+          confirmButton: ({ onConfirm }, context) => context.html`
           <button
             class="button button-negative"
             type="button"
@@ -71,7 +72,7 @@ export const SubscriptionDropdown = createComponent(
             Logout
           </button>
         `,
-        cancelButton: ({ onCancel }, context) => context.html`
+          cancelButton: ({ onCancel }, context) => context.html`
           <button
             class="button button-outline-default"
             type="button"
@@ -80,12 +81,14 @@ export const SubscriptionDropdown = createComponent(
             Cancel
           </button>
         `,
-        onConfirm: () => {
-          onUnsubscribe(subscription);
+          onConfirm: () => {
+            onUnsubscribe(subscription);
+          },
+          title: `Unsubscribe "${subscription.title}"`,
+          message: 'Are you sure you want to unsubscribe the feed?',
         },
-        title: `Unsubscribe "${subscription.title}"`,
-        message: 'Are you sure you want to unsubscribe the feed?',
-      });
+        $,
+      );
     }, []);
 
     const categoryMenuItems = categories.map((category) => {

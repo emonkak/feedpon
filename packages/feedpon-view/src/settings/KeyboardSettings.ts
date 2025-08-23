@@ -50,19 +50,22 @@ export const KeyboardSettings = createComponent(function KeyboardSettings(
   }, []);
 
   const handleReset = $.useCallback(() => {
-    openAlertDialog({
-      confirmButton: ({ onConfirm }, context) => context.html`
+    openAlertDialog(
+      {
+        confirmButton: ({ onConfirm }, context) => context.html`
           <button class="button button-negative" type="button" @click=${onConfirm}>Reset</button>
         `,
-      cancelButton: ({ onCancel }, context) => context.html`
+        cancelButton: ({ onCancel }, context) => context.html`
           <button class="button button-outline-default" type="button" @click=${onCancel}>Cancel</button>
         `,
-      onConfirm: () => {
-        onResetKeyMappings();
+        onConfirm: () => {
+          onResetKeyMappings();
+        },
+        title: 'Reset all keymappings',
+        message: 'Are you sure you want to reset all key mappings?',
       },
-      title: 'Reset all keymappings',
-      message: 'Are you sure you want to reset all key mappings?',
-    });
+      $,
+    );
   }, []);
 
   const handleUpdateKeyMapping = $.useCallback(

@@ -105,18 +105,21 @@ export const EntryDisplaySettingsDropdown = createComponent(
     }, [onToggleKeepUneread]);
 
     const handleMarkAllAsRead = $.useCallback(() => {
-      openAlertDialog({
-        confirmButton: ({ onConfirm }, $) => $.html`
+      openAlertDialog(
+        {
+          confirmButton: ({ onConfirm }, $) => $.html`
           <button class="button button-positive" type="button" @click=${onConfirm}>Mark all as read</button>
         `,
-        cancelButton: ({ onCancel }, $) => $.html`
+          cancelButton: ({ onCancel }, $) => $.html`
           <button class="button button-outline-default" type="button" @click=${onCancel}>Cancel</button>
         `,
-        onConfirm: onMarkStreamAsRead,
-        title: `Mark all as read in "${title}"`,
-        message:
-          'Are you sure you want to mark all entires in this stream as read?',
-      });
+          onConfirm: onMarkStreamAsRead,
+          title: `Mark all as read in "${title}"`,
+          message:
+            'Are you sure you want to mark all entires in this stream as read?',
+        },
+        $,
+      );
     }, [onMarkStreamAsRead, title]);
 
     const handleScrollToEntry = $.useCallback((_event: Event, key: string) => {

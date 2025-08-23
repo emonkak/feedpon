@@ -1,9 +1,4 @@
-import {
-  AsyncRoot,
-  BrowserBackend,
-  createComponent,
-  type RenderContext,
-} from 'barebind';
+import { createComponent, type RenderContext, Root } from 'barebind';
 
 export interface AlertDialogProps {
   cancelButton: (
@@ -103,6 +98,7 @@ export const AlertDialog = createComponent(function AlertDialog(
 
 export async function openAlertDialog(
   props: AlertDialogProps,
+  context: RenderContext,
 ): Promise<boolean> {
   const { resolve, promise } = Promise.withResolvers<boolean>();
   const value = AlertDialog({
@@ -119,7 +115,7 @@ export async function openAlertDialog(
       resolve(true);
     },
   });
-  const root = AsyncRoot.create(value, document.body, new BrowserBackend());
+  const root = Root.create(value, document.body, context.getSessionContext());
   root.mount();
   try {
     return await promise;

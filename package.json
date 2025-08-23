@@ -1,5 +1,5 @@
 {
-  "private": true,
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "https://github.com/emonkak/feedpon.git"
@@ -13,8 +13,10 @@
     "test": "vitest"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.2.0",
+    "@biomejs/biome": "^2.2.2",
     "esbuild": "^0.25.9",
+    "esbuild-plugin-minify-templates": "github:emonkak/barebind#path:tools/esbuild-plugin-minify-templates",
+    "tsx": "^4.20.5",
     "typescript": "^5.9.2",
     "vitest": "^3.2.4",
     "wireit": "^0.14.12"
@@ -25,28 +27,26 @@
   "wireit": {
     "build": {
       "dependencies": [
-        "build:css",
-        "build:js",
+        "bundle",
         "./packages/feedpon-state:build"
       ]
     },
-    "build:css": {
-      "command": "esbuild --bundle --outfile=dist/index.css assets/css/index.css",
+    "bundle": {
+      "command": "node --import tsx build.ts",
       "files": [
-        "assets/css/*"
+        "assets/css/*",
+        "packages/*/src/**/*",
+        "packages/*/tsconfig.json",
+        "tsconfig.base.json",
+        "tsconfig.json"
       ],
       "output": [
-        "dist/index.css"
-      ]
-    },
-    "build:js": {
-      "command": "node build.mjs",
-      "output": [
-        "dist/index.js",
-        "dist/background.js"
+        "dist/background.js",
+        "dist/index.css",
+        "dist/index.js"
       ],
       "dependencies": [
-        "tsc"
+        "typecheck"
       ]
     },
     "clean": {
@@ -76,11 +76,11 @@
     "format": {
       "command": "biome check --fix"
     },
-    "tsc": {
+    "typecheck": {
       "command": "tsc --build --pretty --incremental",
       "clean": "if-file-deleted",
       "files": [
-        "packages/*/src/**/*.ts",
+        "packages/*/src/**/*",
         "packages/*/tsconfig.json",
         "tsconfig.base.json",
         "tsconfig.json"

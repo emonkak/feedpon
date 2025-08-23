@@ -1,4 +1,4 @@
-import type { HookContext } from 'barebind';
+import type { RenderContext } from 'barebind';
 
 export interface SwipeableProps {
   coordinates: Coordinates;
@@ -19,7 +19,7 @@ interface TouchEventListenerObject {
   handleEvent(event: TouchEvent): void;
 }
 
-export function swipeableHook(context: HookContext): SwipeableProps {
+export function swipeableHook(context: RenderContext): SwipeableProps {
   const [isSwiping, setIsSwping] = context.useState(false);
   const [coordinates, setCoordinates] = context.useState<Coordinates>(() => ({
     initialX: 0,

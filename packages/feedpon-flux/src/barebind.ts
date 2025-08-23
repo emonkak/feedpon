@@ -34,7 +34,7 @@ export function getStoreHook<
   TDispatchProps
 >): CustomHookFunction<TStateProps & TStoreProps & TDispatchProps> {
   return (context) => {
-    const store = context.getContextValue(storeTag) as Store<
+    const store = context.getSharedContext(storeTag) as Store<
       TState,
       TEvent
     > | null;
@@ -82,6 +82,6 @@ export function setStoreHook<TState, TEvent>(
   store: Store<TState, TEvent>,
 ): CustomHookFunction<void> {
   return (context) => {
-    context.setContextValue(storeTag, store);
+    context.setSharedContext(storeTag, store);
   };
 }

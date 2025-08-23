@@ -20,19 +20,22 @@ export const ProfileDropdown = createComponent(function ProfileDropdown(
   }, [onRefresh]);
 
   const handleLogout = $.useCallback(() => {
-    openAlertDialog({
-      confirmButton: ({ onConfirm }, context) => context.html`
+    openAlertDialog(
+      {
+        confirmButton: ({ onConfirm }, context) => context.html`
           <button class="button button-negative" type="button" @click=${onConfirm}>Logout</button>
         `,
-      cancelButton: ({ onCancel }, context) => context.html`
+        cancelButton: ({ onCancel }, context) => context.html`
           <button class="button button-outline-default" type="button" @click=${onCancel}>Cancel</button>
         `,
-      onConfirm: () => {
-        onLogout();
+        onConfirm: () => {
+          onLogout();
+        },
+        title: `Logout ${profile.userName}...`,
+        message: 'Are you sure you want to logout of the current session?',
       },
-      title: `Logout ${profile.userName}...`,
-      message: 'Are you sure you want to logout of the current session?',
-    });
+      $,
+    );
   }, [onLogout, profile]);
 
   const profileIcon =

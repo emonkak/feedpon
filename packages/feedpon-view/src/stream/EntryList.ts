@@ -1,7 +1,6 @@
 import {
   createComponent,
   type ElementRef,
-  type HookContext,
   type RefObject,
   type RenderContext,
 } from 'barebind';
@@ -236,7 +235,7 @@ function getActiveIndex(dimensions: Dimensions, scrollPadding: number): number {
   return activeIndex;
 }
 
-function getHeaderHeightHook(context: HookContext): () => number {
+function getHeaderHeightHook(context: RenderContext): () => number {
   const headerHeightRef = context.useRef(0);
 
   context.useLayoutEffect(() => {

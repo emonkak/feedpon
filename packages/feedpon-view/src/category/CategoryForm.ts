@@ -16,35 +16,41 @@ export const CategoryForm = createComponent(function CategoryForm(
   const currentLabel$ = $.use(LocalAtom(category.label));
 
   const handleDelete = $.useCallback(() => {
-    openAlertDialog({
-      confirmButton: ({ onConfirm }, context) => context.html`
+    openAlertDialog(
+      {
+        confirmButton: ({ onConfirm }, context) => context.html`
           <button class="button button-negative" type="button" @click=${onConfirm}>Delete</button>
         `,
-      cancelButton: ({ onCancel }, context) => context.html`
+        cancelButton: ({ onCancel }, context) => context.html`
           <button class="button button-outline-default" type="button" @click=${onCancel}>Cancel</button>
         `,
-      onConfirm: () => {
-        onCategoryDelete(category.categoryId, category.label);
+        onConfirm: () => {
+          onCategoryDelete(category.categoryId, category.label);
+        },
+        title: `Delete "${category.label}"`,
+        message: 'Are you sure you want to delete this category?',
       },
-      title: `Delete "${category.label}"`,
-      message: 'Are you sure you want to delete this category?',
-    });
+      $,
+    );
   }, [category, onCategoryDelete]);
 
   const handleUpdate = $.useCallback(() => {
-    openAlertDialog({
-      confirmButton: ({ onConfirm }, context) => context.html`
+    openAlertDialog(
+      {
+        confirmButton: ({ onConfirm }, context) => context.html`
           <button class="button button-negative" type="button" @click=${onConfirm}>Delete</button>
         `,
-      cancelButton: ({ onCancel }, context) => context.html`
+        cancelButton: ({ onCancel }, context) => context.html`
           <button class="button button-outline-default" type="button" @click=${onCancel}>Cancel</button>
         `,
-      onConfirm: () => {
-        onCategoryUpdate(category, currentLabel$.value);
+        onConfirm: () => {
+          onCategoryUpdate(category, currentLabel$.value);
+        },
+        title: `Rename "${category.label}" to "${currentLabel$.value}"`,
+        message: 'Are you sure you want to change the label of this category?',
       },
-      title: `Rename "${category.label}" to "${currentLabel$.value}"`,
-      message: 'Are you sure you want to change the label of this category?',
-    });
+      $,
+    );
   }, [category, onCategoryUpdate]);
 
   const handleChangeLabel = $.useCallback((event: Event) => {

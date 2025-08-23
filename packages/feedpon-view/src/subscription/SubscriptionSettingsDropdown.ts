@@ -58,21 +58,24 @@ export const SubscriptionSettingsDropdown = createComponent(
     }, []);
 
     const handleUnsubscribe = $.useCallback(() => {
-      openAlertDialog({
-        confirmButton: ({ onConfirm }, $) => $.html`
+      openAlertDialog(
+        {
+          confirmButton: ({ onConfirm }, $) => $.html`
           <button class="button button-negative" type="button" @click=${onConfirm}>Unsubscribe</button>
         `,
-        cancelButton: ({ onCancel }, $) => $.html`
+          cancelButton: ({ onCancel }, $) => $.html`
           <button class="button button-outline-default" type="button" @click=${onCancel}>Cancel</button>
         `,
-        onConfirm: () => {
-          if (subscription !== null) {
-            onUnsubscribe(subscription);
-          }
+          onConfirm: () => {
+            if (subscription !== null) {
+              onUnsubscribe(subscription);
+            }
+          },
+          title: `Unsubscribe "${feed.title}"`,
+          message: 'Are you sure you want to unsubscribe the feed?',
         },
-        title: `Unsubscribe "${feed.title}"`,
-        message: 'Are you sure you want to unsubscribe the feed?',
-      });
+        $,
+      );
     }, [feed, onUnsubscribe]);
 
     const categoryMenuItems: MenuItem[] =

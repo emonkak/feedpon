@@ -27,19 +27,22 @@ export const UrlReplacementRow = createComponent(function UrlReplacementRow(
   }, []);
 
   const handleDelete = $.useCallback(() => {
-    openAlertDialog({
-      confirmButton: ({ onConfirm }, context) => context.html`
+    openAlertDialog(
+      {
+        confirmButton: ({ onConfirm }, context) => context.html`
           <button class="button button-negative" type="button" @click=${onConfirm}>Delete</button>
         `,
-      cancelButton: ({ onCancel }, context) => context.html`
+        cancelButton: ({ onCancel }, context) => context.html`
           <button class="button button-outline-default" type="button" @click=${onCancel}>Cancel</button>
         `,
-      onConfirm: () => {
-        onDelete(index);
+        onConfirm: () => {
+          onDelete(index);
+        },
+        title: `Delete #${index + 1}`,
+        message: 'Are you sure you want to delete the pattern?',
       },
-      title: `Delete #${index + 1}`,
-      message: 'Are you sure you want to delete the pattern?',
-    });
+      $,
+    );
   }, [onDelete]);
 
   const handleUpdate = $.useCallback((item: UrlReplacement) => {

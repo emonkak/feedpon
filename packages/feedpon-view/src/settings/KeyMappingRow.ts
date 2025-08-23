@@ -36,19 +36,22 @@ export const KeyMappingRow = createComponent(function KeyMappingRow(
   );
 
   const handleDelete = $.useCallback(() => {
-    openAlertDialog({
-      confirmButton: ({ onConfirm }, $) => $.html`
+    openAlertDialog(
+      {
+        confirmButton: ({ onConfirm }, $) => $.html`
           <button class="button button-negative" type="button" @click=${onConfirm}>Delete</button>
         `,
-      cancelButton: ({ onCancel }, $) => $.html`
+        cancelButton: ({ onCancel }, $) => $.html`
           <button class="button button-outline-default" type="button" @click=${onCancel}>Cancel</button>
         `,
-      onConfirm: () => {
-        onDelete(keys.join(''));
+        onConfirm: () => {
+          onDelete(keys.join(''));
+        },
+        title: `Delete "${keys.join('')}" mapping`,
+        message: 'Are you sure you want to delete this key mapping?',
       },
-      title: `Delete "${keys.join('')}" mapping`,
-      message: 'Are you sure you want to delete this key mapping?',
-    });
+      $,
+    );
   }, [keys, onDelete]);
 
   const command = commandTable[keyMapping.commandId];

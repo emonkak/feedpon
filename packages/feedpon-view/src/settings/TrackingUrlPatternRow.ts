@@ -13,19 +13,22 @@ export const TrackingUrlPatternRow = createComponent(
     $: RenderContext,
   ): unknown {
     const handleDelete = $.useCallback(() => {
-      openAlertDialog({
-        confirmButton: ({ onConfirm }, $) => $.html`
+      openAlertDialog(
+        {
+          confirmButton: ({ onConfirm }, $) => $.html`
           <button class="button button-negative" type="button" @click=${onConfirm}>Delete</button>
         `,
-        cancelButton: ({ onCancel }, $) => $.html`
+          cancelButton: ({ onCancel }, $) => $.html`
           <button class="button button-outline-default" type="button" @click=${onCancel}>Cancel</button>
         `,
-        onConfirm: () => {
-          onDelete(pattern);
+          onConfirm: () => {
+            onDelete(pattern);
+          },
+          title: `Delete "${pattern}"`,
+          message: 'Are you sure you want to delete this pattern?',
         },
-        title: `Delete "${pattern}"`,
-        message: 'Are you sure you want to delete this pattern?',
-      });
+        $,
+      );
     }, [onDelete]);
 
     return $.html`

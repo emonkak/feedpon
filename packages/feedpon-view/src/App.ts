@@ -16,8 +16,8 @@ export const App = createComponent(function App(
   const [store, setStore] = $.useState<Store<unknown, unknown> | null>(null);
   const [error, setError] = $.useState<NonNullable<unknown> | null>(null);
 
-  $.use(HashHistory);
-  $.use(ScrollRestration);
+  $.use(HashHistory());
+  $.use(ScrollRestration());
 
   $.useEffect(() => {
     getStore().then(

@@ -1,9 +1,4 @@
-import {
-  AsyncRoot,
-  BrowserBackend,
-  createComponent,
-  type RenderContext,
-} from 'barebind';
+import { createComponent, type RenderContext, Root } from 'barebind';
 
 export interface DialogProps {
   children: unknown;
@@ -83,7 +78,10 @@ export const Dialog = createComponent(function Dialog(
   `;
 });
 
-export async function openDialog(props: DialogProps): Promise<void> {
+export async function openDialog(
+  props: DialogProps,
+  context: RenderContext,
+): Promise<void> {
   const { resolve, promise } = Promise.withResolvers<void>();
   const value = Dialog({
     ...props,
@@ -93,7 +91,7 @@ export async function openDialog(props: DialogProps): Promise<void> {
       resolve();
     },
   });
-  const root = AsyncRoot.create(value, document.body, new BrowserBackend());
+  const root = Root.create(value, document.body, context.getSessionContext());
   root.mount();
   try {
     return await promise;
