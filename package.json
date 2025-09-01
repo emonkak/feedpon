@@ -14,6 +14,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.2.2",
+    "@types/node": "^24.3.0",
     "esbuild": "^0.25.9",
     "esbuild-plugin-minify-templates": "github:emonkak/barebind#path:tools/esbuild-plugin-minify-templates",
     "tsx": "^4.20.5",
@@ -35,6 +36,7 @@
       "command": "node --import tsx build.ts",
       "files": [
         "assets/css/*",
+        "build.ts",
         "packages/*/src/**/*",
         "packages/*/tsconfig.json",
         "tsconfig.base.json",
