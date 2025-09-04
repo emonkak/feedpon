@@ -6,7 +6,7 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
-    "@types/chrome": "^0.1.4",
+    "@types/chrome": "^0.1.12",
     "barebind": "catalog:",
     "feedpon-adapters": "workspace:^",
     "feedpon-flux": "workspace:^",

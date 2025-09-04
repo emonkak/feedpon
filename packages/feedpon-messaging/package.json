@@ -22,9 +22,9 @@
     "./userSiteinfo": "./src/userSiteinfo/index.ts"
   },
   "dependencies": {
-    "barebind": "catalog:",
     "@mozilla/readability": "^0.6.0",
-    "@types/chrome": "^0.1.4",
+    "@types/chrome": "^0.1.12",
+    "barebind": "catalog:",
     "feedpon-adapters": "workspace:^",
     "feedpon-flux": "workspace:^",
     "feedpon-utils": "workspace:^",

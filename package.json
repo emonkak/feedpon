@@ -13,8 +13,8 @@
     "test": "vitest"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.2.2",
-    "@types/node": "^24.3.0",
+    "@biomejs/biome": "^2.2.4",
+    "@types/node": "^24.5.1",
     "esbuild": "^0.25.9",
     "esbuild-plugin-minify-templates": "github:emonkak/barebind#path:tools/esbuild-plugin-minify-templates",
     "tsx": "^4.20.5",

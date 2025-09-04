@@ -1,11 +1,11 @@
-import type { CustomHookFunction, StyleProperties } from 'barebind';
+import type { CustomHookFunction, StyleProps } from 'barebind';
 
 export interface Popup {
   close: () => void;
   open: (target: Element) => void;
   opened: boolean;
   pullDirection: PullDirection;
-  style: StyleProperties;
+  style: StyleProps;
 }
 
 export type PullDirection = 'left' | 'right' | 'up' | 'down';
@@ -14,7 +14,7 @@ export type PullDirections = [PullDirection, ...PullDirection[]];
 
 interface PopupState {
   opened: boolean;
-  style: StyleProperties;
+  style: StyleProps;
   pullDirection: PullDirection;
 }
 
@@ -87,8 +87,8 @@ function getAdaptedPullDirection(
 function getPopupStyle(
   targetRect: DOMRect,
   pullDirection: PullDirection,
-): StyleProperties {
-  const style: StyleProperties = {};
+): StyleProps {
+  const style: StyleProps = {};
 
   switch (pullDirection) {
     case 'down':
