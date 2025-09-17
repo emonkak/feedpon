@@ -25,7 +25,7 @@ importers:
         version: 0.25.9
       esbuild-plugin-minify-templates:
         specifier: github:emonkak/barebind#path:tools/esbuild-plugin-minify-templates
-        version: https://codeload.github.com/emonkak/barebind/tar.gz/e5a95ea3bb8777c0dbb20dfea0a89e3d02721e78#path:tools/esbuild-plugin-minify-templates
+        version: https://codeload.github.com/emonkak/barebind/tar.gz/519ad68916b76d123e227ec0e1a10d4c4f9c9c7d#path:tools/esbuild-plugin-minify-templates
       tsx:
         specifier: ^4.20.5
         version: 4.20.5
@@ -46,7 +46,7 @@ importers:
         version: 0.1.12
       barebind:
         specifier: 'catalog:'
-        version: https://codeload.github.com/emonkak/barebind/tar.gz/e5a95ea3bb8777c0dbb20dfea0a89e3d02721e78
+        version: https://codeload.github.com/emonkak/barebind/tar.gz/519ad68916b76d123e227ec0e1a10d4c4f9c9c7d
       feedpon-adapters:
         specifier: workspace:^
         version: link:../feedpon-adapters
@@ -69,7 +69,7 @@ importers:
     dependencies:
       barebind:
         specifier: 'catalog:'
-        version: https://codeload.github.com/emonkak/barebind/tar.gz/e5a95ea3bb8777c0dbb20dfea0a89e3d02721e78
+        version: https://codeload.github.com/emonkak/barebind/tar.gz/519ad68916b76d123e227ec0e1a10d4c4f9c9c7d
       feedpon-utils:
         specifier: workspace:^
         version: link:../feedpon-utils
@@ -84,7 +84,7 @@ importers:
         version: 0.1.12
       barebind:
         specifier: 'catalog:'
-        version: https://codeload.github.com/emonkak/barebind/tar.gz/e5a95ea3bb8777c0dbb20dfea0a89e3d02721e78
+        version: https://codeload.github.com/emonkak/barebind/tar.gz/519ad68916b76d123e227ec0e1a10d4c4f9c9c7d
       feedpon-adapters:
         specifier: workspace:^
         version: link:../feedpon-adapters
@@ -102,7 +102,7 @@ importers:
     dependencies:
       barebind:
         specifier: 'catalog:'
-        version: https://codeload.github.com/emonkak/barebind/tar.gz/e5a95ea3bb8777c0dbb20dfea0a89e3d02721e78
+        version: https://codeload.github.com/emonkak/barebind/tar.gz/519ad68916b76d123e227ec0e1a10d4c4f9c9c7d
       openapi-fetch:
         specifier: ^0.14.0
         version: 0.14.0
@@ -129,7 +129,7 @@ importers:
         version: 0.1.12
       barebind:
         specifier: 'catalog:'
-        version: https://codeload.github.com/emonkak/barebind/tar.gz/e5a95ea3bb8777c0dbb20dfea0a89e3d02721e78
+        version: https://codeload.github.com/emonkak/barebind/tar.gz/519ad68916b76d123e227ec0e1a10d4c4f9c9c7d
       feedpon-adapters:
         specifier: workspace:^
         version: link:../feedpon-adapters
@@ -142,29 +142,6 @@ importers:
       feedpon-utils:
         specifier: workspace:^
         version: link:../feedpon-utils
-
-  packages/jsonschema:
-    dependencies:
-      ajv:
-        specifier: ^8.17.1
-        version: 8.17.1
-    devDependencies:
-      json-schema-test-suite:
-        specifier: github:json-schema-org/JSON-Schema-Test-Suite
-        version: https://codeload.github.com/json-schema-org/JSON-Schema-Test-Suite/tar.gz/15e4505bf689de5d30c29d50782bb48fa465c93f
-      vitest:
-        specifier: ^3.2.4
-        version: 3.2.4(@types/node@24.5.1)(tsx@4.20.5)
-
-  packages/openapi-client:
-    dependencies:
-      jsonschema:
-        specifier: workspace:^
-        version: link:../jsonschema
-    devDependencies:
-      vitest:
-        specifier: ^3.2.4
-        version: 3.2.4(@types/node@24.5.1)(tsx@4.20.5)
 
 packages:
 
@@ -589,9 +566,6 @@ packages:
     resolution: {integrity: sha512-MnA+YT8fwfJPgBx3m60MNqakm30XOkyIoH1y6huTQvC0PwZG7ki8NacLBcrPbNoo8vEZy7Jpuk7+jMO+CUovTQ==}
     engines: {node: '>= 14'}
 
-  ajv@8.17.1:
-    resolution: {integrity: sha512-B/gBuNg5SiMTrPkC+A2+cW0RszwxYmn6VYxB/inlBStS5nx6xHIt/ehKRhIMhqusl7a8LjQoZnjCs5vhwxOQ1g==}
-
   ansi-colors@4.1.3:
     resolution: {integrity: sha512-/6w/C21Pm1A7aZitlI5Ni/2J6FFQN8i1Cvz3kHABAAbw93v/NlvKdVOqz7CCWz/3iv/JplRSEEZ83XION15ovw==}
     engines: {node: '>=6'}
@@ -618,8 +592,8 @@ packages:
     resolution: {integrity: sha512-vjtV3hiLqYDNRoiAv0zC4QaGAMPomEoq83PRmYIofPswwZurCeWR5LByXm7SyoL0Zh5+2z0+HC7jG8gSZJUh0w==}
     engines: {node: '>= 16'}
 
-  barebind@https://codeload.github.com/emonkak/barebind/tar.gz/e5a95ea3bb8777c0dbb20dfea0a89e3d02721e78:
-    resolution: {tarball: https://codeload.github.com/emonkak/barebind/tar.gz/e5a95ea3bb8777c0dbb20dfea0a89e3d02721e78}
+  barebind@https://codeload.github.com/emonkak/barebind/tar.gz/519ad68916b76d123e227ec0e1a10d4c4f9c9c7d:
+    resolution: {tarball: https://codeload.github.com/emonkak/barebind/tar.gz/519ad68916b76d123e227ec0e1a10d4c4f9c9c7d}
     version: 0.1.0
 
   binary-extensions@2.3.0:
@@ -675,8 +649,8 @@ packages:
   es-module-lexer@1.7.0:
     resolution: {integrity: sha512-jEQoCwk8hyb2AZziIOLhDqpm5+2ww5uIE6lkO/6jcOCusfk6LhMHpXXfBLXTZ7Ydyt0j4VoUQv6uGNYbdW+kBA==}
 
-  esbuild-plugin-minify-templates@https://codeload.github.com/emonkak/barebind/tar.gz/e5a95ea3bb8777c0dbb20dfea0a89e3d02721e78#path:tools/esbuild-plugin-minify-templates:
-    resolution: {path: tools/esbuild-plugin-minify-templates, tarball: https://codeload.github.com/emonkak/barebind/tar.gz/e5a95ea3bb8777c0dbb20dfea0a89e3d02721e78}
+  esbuild-plugin-minify-templates@https://codeload.github.com/emonkak/barebind/tar.gz/519ad68916b76d123e227ec0e1a10d4c4f9c9c7d#path:tools/esbuild-plugin-minify-templates:
+    resolution: {path: tools/esbuild-plugin-minify-templates, tarball: https://codeload.github.com/emonkak/barebind/tar.gz/519ad68916b76d123e227ec0e1a10d4c4f9c9c7d}
     version: 0.0.0
 
   esbuild@0.25.9:
@@ -697,9 +671,6 @@ packages:
   fast-glob@3.3.3:
     resolution: {integrity: sha512-7MptL8U0cqcFdzIzwOTHoilX9x5BrNqye7Z/LuC7kCMRio1EMSyqRK3BEAUD7sXRq4iT4AzTVuZdhgQ2TCvYLg==}
     engines: {node: '>=8.6.0'}
-
-  fast-uri@3.1.0:
-    resolution: {integrity: sha512-iPeeDKJSWf4IEOasVVrknXpaBV0IApz/gp7S2bb7Z4Lljbl2MGJRqInZiUrQwV16cpzw/D3S5j5Julj/gT52AA==}
 
   fastq@1.19.1:
     resolution: {integrity: sha512-GwLTyxkCXjXbxqIhTsMI2Nui8huMPtnxg7krajPJAjnEG/iiOS7i+zCtWGZR9G0NBKbXKh6X9m9UIsYX/N6vvQ==}
@@ -769,10 +740,6 @@ packages:
   js-yaml@4.1.0:
     resolution: {integrity: sha512-wpxZs9NoxZaJESJGIZTyDEaYpl0FKSA+FB9aJiyemKhMwkxQg63h4T1KJgUGHpTqPDNRcmmYLugrRjJlBtWvRA==}
     hasBin: true
-
-  json-schema-test-suite@https://codeload.github.com/json-schema-org/JSON-Schema-Test-Suite/tar.gz/15e4505bf689de5d30c29d50782bb48fa465c93f:
-    resolution: {tarball: https://codeload.github.com/json-schema-org/JSON-Schema-Test-Suite/tar.gz/15e4505bf689de5d30c29d50782bb48fa465c93f}
-    version: 0.1.0
 
   json-schema-to-ts@3.1.1:
     resolution: {integrity: sha512-+DWg8jCJG2TEnpy7kOm/7/AxaYoaRbjVB4LFZLySZlWn8exGs3A4OLJR966cVvU26N7X9TWxl+Jsw7dzAqKT6g==}
@@ -1359,13 +1326,6 @@ snapshots:
 
   agent-base@7.1.4: {}
 
-  ajv@8.17.1:
-    dependencies:
-      fast-deep-equal: 3.1.3
-      fast-uri: 3.1.0
-      json-schema-traverse: 1.0.0
-      require-from-string: 2.0.2
-
   ansi-colors@4.1.3: {}
 
   anymatch@3.1.3:
@@ -1383,7 +1343,7 @@ snapshots:
 
   balanced-match@3.0.1: {}
 
-  barebind@https://codeload.github.com/emonkak/barebind/tar.gz/e5a95ea3bb8777c0dbb20dfea0a89e3d02721e78:
+  barebind@https://codeload.github.com/emonkak/barebind/tar.gz/519ad68916b76d123e227ec0e1a10d4c4f9c9c7d:
     dependencies:
       navigation-api-types: 0.6.1
 
@@ -1439,7 +1399,7 @@ snapshots:
 
   es-module-lexer@1.7.0: {}
 
-  esbuild-plugin-minify-templates@https://codeload.github.com/emonkak/barebind/tar.gz/e5a95ea3bb8777c0dbb20dfea0a89e3d02721e78#path:tools/esbuild-plugin-minify-templates:
+  esbuild-plugin-minify-templates@https://codeload.github.com/emonkak/barebind/tar.gz/519ad68916b76d123e227ec0e1a10d4c4f9c9c7d#path:tools/esbuild-plugin-minify-templates:
     dependencies:
       '@types/node': 24.5.1
       acorn: 8.15.0
@@ -1491,8 +1451,6 @@ snapshots:
       glob-parent: 5.1.2
       merge2: 1.4.1
       micromatch: 4.0.8
-
-  fast-uri@3.1.0: {}
 
   fastq@1.19.1:
     dependencies:
@@ -1549,8 +1507,6 @@ snapshots:
   js-yaml@4.1.0:
     dependencies:
       argparse: 2.0.1
-
-  json-schema-test-suite@https://codeload.github.com/json-schema-org/JSON-Schema-Test-Suite/tar.gz/15e4505bf689de5d30c29d50782bb48fa465c93f: {}
 
   json-schema-to-ts@3.1.1:
     dependencies:
