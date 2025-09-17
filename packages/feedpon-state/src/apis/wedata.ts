@@ -1,10 +1,10 @@
 import { type UpFetch, up } from 'up-fetch';
 import * as v from 'valibot';
 
-export const Item = v.object({
+export const WedataItem = v.object({
   resource_url: v.pipe(v.string(), v.url()),
   database_resource_url: v.pipe(v.string(), v.url()),
-  data: v.any(),
+  data: v.unknown(),
   created_by: v.string(),
   name: v.string(),
   created_at: v.pipe(v.string(), v.isoDateTime()),
@@ -24,11 +24,13 @@ export class WedataClient {
     }));
   }
 
-  async getDatabaseItems(name: string): Promise<v.InferOutput<typeof Item>[]> {
+  async getDatabaseItems(
+    name: string,
+  ): Promise<v.InferOutput<typeof WedataItem>[]> {
     return this._upfetch(
       `/database/${encodeURIComponent(name)}/itesm_all.json`,
       {
-        schema: v.array(Item),
+        schema: v.array(WedataItem),
       },
     );
   }

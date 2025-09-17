@@ -1,39 +1,16 @@
-import { Atom } from 'barebind/extras/signal';
+import type { Reactive } from 'barebind/extras/reactive';
+import type * as v from 'valibot';
+import type { FeedlyClient, SearchResult } from '../apis/feedly.ts';
 
-import type { FeedlyContext } from '../api/feedly.ts';
-import type * as Feedly from '../api/feedlyTypes.d.ts';
-import type { State, Store } from '../store.ts';
+export type SearchAction<T> = (context: SearchContext) => T;
 
-export interface SearchSeed {
-  results: SearchResult[];
-  version: number;
+export interface SearchContext {
+  feedlyClient: FeedlyClient;
+  state$: Reactive<{ searchState: SearchState }>;
 }
 
-export type SearchResult = Feedly.components['schemas']['SearchResult'];
+export type SearchResult = v.InferOutput<typeof SearchResult>;
 
-export interface SearchContext extends FeedlyContext {
-  searchStore: Store<SearchState>;
-}
-
-const defaultSeed: SearchSeed = {
-  results: [],
-  version: 1,
-};
-
-export class SearchState implements State<SearchSeed> {
-  readonly results$: Atom<SearchResult[]>;
-
-  readonly version$: Atom<number>;
-
-  constructor(seed: SearchSeed = defaultSeed) {
-    this.results$ = new Atom(seed.results);
-    this.version$ = new Atom(seed.version);
-  }
-
-  toSnapshot(): SearchSeed {
-    return {
-      results: this.results$.value,
-      version: this.version$.value,
-    };
-  }
+export class SearchState {
+  results: SearchResult[] = [];
 }

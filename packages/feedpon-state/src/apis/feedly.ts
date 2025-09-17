@@ -1,4 +1,3 @@
-import { Atom } from 'barebind/extras/signal';
 import { type UpFetch, up } from 'up-fetch';
 import * as v from 'valibot';
 
@@ -160,7 +159,7 @@ export const Entry = v.object({
   canonicalUrl: v.optional(v.pipe(v.string(), v.url())),
 });
 
-export const Profile = v.object({
+export const UserProfile = v.object({
   // The unique, immutable user id.
   id: v.string(),
   // The email address extracted from the OAuth profile. Not always available,
@@ -334,22 +333,20 @@ const RefreshTokenResponse = v.object({
   plan: v.picklist(['standard', 'pro', 'business']),
 });
 
-interface UpdateCategoryRequest {
+export interface UpdateCategoryRequest {
   label: string;
 }
 
-type UpdateMarkersRequest =
+export type UpdateMarkersRequest =
   | {
       action: 'markAsRead' | 'keepUnread' | 'markAsSaved' | 'markAsUnsaved';
       type: 'entries';
       entryIds: string[];
-      lastReadEntryId?: string;
-      asOf?: number;
     }
   | {
       action: 'markAsRead' | 'undoMarkAsRead';
       type: 'feeds';
-      feedIds: string;
+      feedIds: string[];
       lastReadEntryId?: string;
       asOf?: number;
     }
@@ -368,24 +365,24 @@ type UpdateMarkersRequest =
       asOf?: number;
     };
 
-interface GetUnreadCountsRequest {
+export interface GetUnreadCountsRequest {
   // Let's the server know if this is a background auto-refresh or not. In case
   // of very high load on the service, the server can deny access to background
   // requests and give priority to user facing operations.
-  autorefresh: boolean;
+  autorefresh?: boolean;
   // Timestamp used as a lower time limit, instead of the default 30 days.
-  newerThan: number;
+  newerThan?: number;
   // A user or system category can be passed to restrict the unread count
   // response to feeds in this category.
-  streamId: string;
+  streamId?: string;
 }
 
-const GetUnreadCountsResponse = v.object({
+export const GetUnreadCountsResponse = v.object({
   unreadCounts: v.array(UnreadCount),
   updated: v.number(),
 });
 
-const GetLatestReadOperationsResponse = v.object({
+export const GetLatestReadOperationsResponse = v.object({
   // Feeds that were marked as read in the time period. For each feed, the
   // timestamp of the read marker will be returned.
   feeds: v.optional(v.array(Marker)),
@@ -397,11 +394,11 @@ const GetLatestReadOperationsResponse = v.object({
   updated: v.optional(v.number()),
 });
 
-const GetLatestTaggedEntryIdsResponse = v.object({
+export const GetLatestTaggedEntryIdsResponse = v.object({
   taggedEntries: v.record(v.string(), v.array(v.string())),
 });
 
-interface UpdateProfileRequest {
+export interface UpdateProfileRequest {
   id: string;
   email: string;
   givenName: string;
@@ -414,7 +411,7 @@ interface UpdateProfileRequest {
   wave: string;
 }
 
-const UpdateProfileResponse = v.object({
+export const UpdateProfileResponse = v.object({
   email: v.optional(v.string()),
   givenName: v.optional(v.string()),
   familyName: v.optional(v.string()),
@@ -426,7 +423,7 @@ const UpdateProfileResponse = v.object({
   wave: v.optional(v.string()),
 });
 
-interface SearchFeedsRequest {
+export interface SearchFeedsRequest {
   // Search query. Can be a feed url, a site title, a site url or a #topic.
   query: string;
   // Number of results.
@@ -435,7 +432,7 @@ interface SearchFeedsRequest {
   locale?: string;
 }
 
-const SearchFeedsResponse = v.object({
+export const SearchFeedsResponse = v.object({
   // An auto-completion guess of the keyword the user is trying to search for.
   hint: v.string(),
   // A list of other keywords the user might be interested in searching.
@@ -446,7 +443,7 @@ const SearchFeedsResponse = v.object({
   results: v.array(SearchResult),
 });
 
-interface SearchStreamContentsRequest {
+export interface SearchStreamContentsRequest {
   // Search query.
   query: string;
   // Number of entries to return. Note: if the user isn't pro, only 2 articles
@@ -475,7 +472,7 @@ interface SearchStreamContentsRequest {
   locale?: string;
 }
 
-interface GetStreamContentsRequest {
+export interface GetStreamContentsRequest {
   // Number of entries to return.
   count?: number;
   // "newest", "oldest", or "engagement" (sort by popularity).
@@ -491,10 +488,10 @@ interface GetStreamContentsRequest {
   continuation?: string;
 }
 
-interface GetEntryIdsRequest {
+export interface GetEntryIdsRequest {
   // Number of entry ids to return. default is 20. max is 10,000 for feeds or categories, and 2,500 for tags.
   count?: number;
-  // "newest", "oldest", or `engagement` (sort by popularity). default is "newest".
+  // "newest", "oldest", or "engagement" (sort by popularity). default is "newest".
   ranked?: 'newest' | 'oldest' | 'engagement';
   // if true, only unread articles will be returned; default is false. Reminder:
   // entries older than 31 days are automatically marked as read. This flag
@@ -507,57 +504,51 @@ interface GetEntryIdsRequest {
   continuation?: string;
 }
 
-const GetEntryIdsResponse = v.object({
+export const GetEntryIdsResponse = v.object({
   // A list of IDs which can be used with the entries API to retrieve the content.
   ids: v.array(v.string()),
   // The continuation id to pass to the next stream call, for pagination.
   continuation: v.optional(v.string()),
 });
 
-interface SubscribeToFeedRequest {
+export interface SubscribeToFeedRequest {
   id: string;
   title?: string;
   categories?: v.InferOutput<typeof Category>[];
 }
 
-interface UpdateSubscriptionRequest {
+export interface UpdateSubscriptionRequest {
   id: string;
   title?: string;
   categories?: v.InferOutput<typeof Category>[];
 }
 
-type UpdateMultipleSubscriptionsRequest = UpdateSubscriptionRequest[];
+export type UpdateMultipleSubscriptionsRequest = UpdateSubscriptionRequest[];
 
-interface UpdateTagRequest {
+export interface UpdateTagRequest {
   label: string;
 }
 
-interface TagEntryRequest {
+export interface TagEntryRequest {
   entryId: string;
 }
 
-interface TagMultipleEntriesRequest {
+export interface TagMultipleEntriesRequest {
   entryIds: string[];
 }
 
-interface FeedlyAuthState {
+export type FeedlyAuthCode = string;
+
+export interface FeedlyClientOptions {
+  fetch?: typeof fetch;
+}
+
+export interface FeedlyCredential {
   id: string;
   accessToken: string;
   refreshToken: string;
   expiresIn: number;
   timestamp: number;
-}
-
-export type FeedlyAuthCode = string;
-
-export interface FeedlyAuthenticator {
-  authenticate(url: URL): Promise<FeedlyAuthCode>;
-}
-
-export interface FeedlyClientOptions {
-  authState?: Atom<FeedlyAuthState | null>;
-  environment?: FeedlyEnvironment;
-  fetch?: typeof fetch;
 }
 
 export interface FeedlyEnvironment {
@@ -568,89 +559,57 @@ export interface FeedlyEnvironment {
   scope: string;
 }
 
+export const PRODUCTION_ENVIRONMENT: FeedlyEnvironment = {
+  baseUrl: 'https://cloud.feedly.com',
+  clientId: 'feedly',
+  clientSecret: '0XP4XQ07VVMDWBKUHTJM4WUQ',
+  redirectUrl: 'https://feedly.com/feedly.html',
+  scope: 'https://cloud.feedly.com/subscriptions',
+};
+
 export class FeedlyClient {
-  private readonly _authenticator: FeedlyAuthenticator;
-
-  private readonly _authState: Atom<FeedlyAuthState | null>;
-
   private readonly _environment: FeedlyEnvironment;
 
   private readonly _upfetch: UpFetch;
 
   constructor(
-    authenticator: FeedlyAuthenticator,
     environment: FeedlyEnvironment,
     options: FeedlyClientOptions = {},
   ) {
-    this._authenticator = authenticator;
     this._environment = environment;
-    this._authState = options.authState ?? new Atom(null);
-    this._upfetch = up(options.fetch ?? fetch, async (input) => ({
+    this._upfetch = up(options.fetch ?? fetch, () => ({
       baseUrl: environment.baseUrl,
-      headers: {
-        authorization:
-          input === 'string' && input.startsWith('/auth/token')
-            ? undefined
-            : `OAuth ${(await this.acquireAuth()).accessToken}`,
-      },
     }));
   }
 
-  async acquireAuth(): Promise<FeedlyAuthState> {
-    let authState = this._authState.value;
+  getAuthUrl(): URL {
+    const { baseUrl, clientId, redirectUrl, scope } = this._environment;
+    const url = new URL('/v3/auth/auth', baseUrl);
+    const { searchParams } = url;
 
-    if (authState !== null) {
-      const now = Date.now();
-      const skew = 1000 * 60;
-      const expiredAt = authState.timestamp + authState.expiresIn;
+    searchParams.set('client_id', clientId);
+    searchParams.set('redirect_uri', redirectUrl);
+    searchParams.set('response_type', 'code');
+    searchParams.set('scope', scope);
 
-      if (now + skew >= expiredAt) {
-        const tokens = await this.refreshToken({
-          client_id: this._environment.clientId,
-          client_secret: this._environment.clientSecret,
-          refresh_token: authState.refreshToken,
-          grant_type: 'refresh_token',
-        });
-        authState = {
-          id: tokens.id,
-          accessToken: tokens.access_token,
-          refreshToken: authState.refreshToken,
-          expiresIn: tokens.expires_in,
-          timestamp: Date.now(),
-        };
-        this._authState.value = authState;
-      }
-    } else {
-      const url = makeAuthUrl(this._environment);
-      const code = await this._authenticator.authenticate(url);
-      const tokens = await this.exchangeToken({
-        code,
-        client_id: this._environment.clientId,
-        client_secret: this._environment.clientSecret,
-        redirect_uri: this._environment.redirectUrl,
-        grant_type: 'authorization_code',
-      });
-      authState = {
-        id: tokens.id,
-        accessToken: tokens.access_token,
-        refreshToken: tokens.refresh_token,
-        expiresIn: tokens.expires_in,
-        timestamp: Date.now(),
-      };
-      this._authState.value = authState;
-    }
-
-    return authState;
+    return url;
   }
 
   /**
    * Exchanging an auth code for a refresh token and an access token.
    */
-  async exchangeToken(
-    body: ExchangeTokenRequest,
+  async exchangeCode(
+    code: FeedlyAuthCode,
   ): Promise<v.InferOutput<typeof ExchangeTokenResponse>> {
+    const { clientId, clientSecret, redirectUrl } = this._environment;
     return this._upfetch('/auth/token', {
-      body,
+      body: {
+        code,
+        client_id: clientId,
+        client_secret: clientSecret,
+        redirect_uri: redirectUrl,
+        grant_type: 'authorization_code',
+      } satisfies ExchangeTokenRequest,
       method: 'POST',
       schema: ExchangeTokenResponse,
     });
@@ -660,10 +619,16 @@ export class FeedlyClient {
    * Refreshing an access token.
    */
   async refreshToken(
-    body: RefreshTokenRequest,
+    refreshToken: string,
   ): Promise<v.InferOutput<typeof RefreshTokenResponse>> {
+    const { clientId, clientSecret } = this._environment;
     return this._upfetch('/auth/token', {
-      body,
+      body: {
+        client_id: clientId,
+        client_secret: clientSecret,
+        refresh_token: refreshToken,
+        grant_type: 'refresh_token',
+      } satisfies RefreshTokenRequest,
       method: 'POST',
       schema: RefreshTokenResponse,
     });
@@ -672,17 +637,21 @@ export class FeedlyClient {
   /**
    * Logout.
    */
-  async logout(): Promise<void> {
+  async logout(accessToken: string): Promise<void> {
     return this._upfetch('/auth/logout', {
       method: 'POST',
+      headers: createAuthHeaders(accessToken),
     });
   }
 
   /**
    * Get the list of all categories.
    */
-  async getAllCategories(): Promise<v.InferOutput<typeof Category>[]> {
+  async getAllCategories(
+    accessToken: string,
+  ): Promise<v.InferOutput<typeof Category>[]> {
     return this._upfetch('/categories', {
+      headers: createAuthHeaders(accessToken),
       method: 'GET',
       schema: v.array(Category),
     });
@@ -692,21 +661,24 @@ export class FeedlyClient {
    * Change the label of an existing category.
    */
   async updateCategory(
+    accessToken: string,
     categoryId: string,
     body: UpdateCategoryRequest,
   ): Promise<v.InferOutput<typeof Category>> {
     return this._upfetch(`/categories/${encodeURIComponent(categoryId)}`, {
+      body,
+      headers: createAuthHeaders(accessToken),
       method: 'POST',
       schema: Category,
-      body,
     });
   }
 
   /**
    * Delete a category.
    */
-  async deleteCategory(categoryId: string): Promise<void> {
+  async deleteCategory(accessToken: string, categoryId: string): Promise<void> {
     return this._upfetch(`/categories/${encodeURIComponent(categoryId)}`, {
+      headers: createAuthHeaders(accessToken),
       method: 'DELETE',
     });
   }
@@ -714,8 +686,12 @@ export class FeedlyClient {
   /**
    * Get the metadata about a specific feed
    */
-  async getFeed(feedId: string): Promise<v.InferOutput<typeof Feed>> {
+  async getFeed(
+    accessToken: string,
+    feedId: string,
+  ): Promise<v.InferOutput<typeof Feed>> {
     return this._upfetch(`/feeds/${encodeURIComponent(feedId)}`, {
+      headers: createAuthHeaders(accessToken),
       method: 'GET',
       schema: Feed,
     });
@@ -725,11 +701,13 @@ export class FeedlyClient {
    * Get the metadata about a specific feed
    */
   async getMultipleFeeds(
+    accessToken: string,
     body: string[],
   ): Promise<v.InferOutput<typeof Feed>[]> {
-    return this._upfetch(`/feeds/.mget`, {
-      method: 'GET',
+    return this._upfetch('/feeds/.mget', {
       body,
+      headers: createAuthHeaders(accessToken),
+      method: 'GET',
       schema: v.array(Feed),
     });
   }
@@ -737,10 +715,14 @@ export class FeedlyClient {
   /**
    * Mark one or multiple articles as read or saved.
    */
-  async updateMarkers(body: UpdateMarkersRequest): Promise<void> {
-    return this._upfetch(`/markers`, {
-      method: 'GET',
+  async updateMarkers(
+    accessToken: string,
+    body: UpdateMarkersRequest,
+  ): Promise<void> {
+    return this._upfetch('/markers', {
       body,
+      headers: createAuthHeaders(accessToken),
+      method: 'GET',
     });
   }
 
@@ -748,9 +730,11 @@ export class FeedlyClient {
    * Get the list of unread counts
    */
   async getUnreadCounts(
-    params: GetUnreadCountsRequest,
+    accessToken: string,
+    params: GetUnreadCountsRequest = {},
   ): Promise<v.InferOutput<typeof GetUnreadCountsResponse>> {
-    return this._upfetch(`/markers/counts`, {
+    return this._upfetch('/markers/counts', {
+      headers: createAuthHeaders(accessToken),
       method: 'GET',
       params,
       schema: GetUnreadCountsResponse,
@@ -760,10 +744,11 @@ export class FeedlyClient {
   /**
    * Get the latest read operations (to sync local cache).
    */
-  async getLatestReadOperations(): Promise<
-    v.InferOutput<typeof GetLatestReadOperationsResponse>
-  > {
-    return this._upfetch(`/markers/read`, {
+  async getLatestReadOperations(
+    accessToken: string,
+  ): Promise<v.InferOutput<typeof GetLatestReadOperationsResponse>> {
+    return this._upfetch('/markers/read', {
+      headers: createAuthHeaders(accessToken),
       method: 'GET',
       schema: GetLatestReadOperationsResponse,
     });
@@ -772,10 +757,11 @@ export class FeedlyClient {
   /**
    * Get the latest tagged entry ids.
    */
-  async getLatestTaggedEntryIds(): Promise<
-    v.InferOutput<typeof GetLatestTaggedEntryIdsResponse>
-  > {
-    return this._upfetch(`/markers/tags`, {
+  async getLatestTaggedEntryIds(
+    accessToken: string,
+  ): Promise<v.InferOutput<typeof GetLatestTaggedEntryIdsResponse>> {
+    return this._upfetch('/markers/tags', {
+      headers: createAuthHeaders(accessToken),
       method: 'GET',
       schema: GetLatestTaggedEntryIdsResponse,
     });
@@ -784,8 +770,9 @@ export class FeedlyClient {
   /**
    * Export the user's subscriptions as an OPML file.
    */
-  async exportOPML(): Promise<string> {
-    return this._upfetch(`/opml`, {
+  async exportOPML(accessToken: string): Promise<string> {
+    return this._upfetch('/opml', {
+      headers: createAuthHeaders(accessToken),
       method: 'GET',
       parseResponse: (response) => response.text(),
     });
@@ -794,10 +781,13 @@ export class FeedlyClient {
   /**
    * Import an OPML.
    */
-  async importOPML(body: string): Promise<void> {
-    return this._upfetch(`/opml`, {
-      body,
-      headers: { 'content-type': 'text/xml' },
+  async importOPML(accessToken: string, opmlString: string): Promise<void> {
+    return this._upfetch('/opml', {
+      body: opmlString,
+      headers: {
+        ...createAuthHeaders(accessToken),
+        'content-type': 'text/xml',
+      },
       method: 'POST',
       serializeBody: (body) => body,
     });
@@ -806,10 +796,13 @@ export class FeedlyClient {
   /**
    * Get the profile of the user.
    */
-  async getProfile(): Promise<v.InferOutput<typeof Profile>> {
-    return this._upfetch(`/profile`, {
+  async getUserProfile(
+    accessToken: string,
+  ): Promise<v.InferOutput<typeof UserProfile>> {
+    return this._upfetch('/profile', {
+      headers: createAuthHeaders(accessToken),
       method: 'GET',
-      schema: Profile,
+      schema: UserProfile,
     });
   }
 
@@ -817,11 +810,13 @@ export class FeedlyClient {
    * Update the profile of the user.
    */
   async updateProfile(
+    accessToken: string,
     body: UpdateProfileRequest,
   ): Promise<v.InferOutput<typeof UpdateProfileResponse>> {
-    return this._upfetch(`/profile`, {
-      method: 'POST',
+    return this._upfetch('/profile', {
       body,
+      headers: createAuthHeaders(accessToken),
+      method: 'POST',
       schema: UpdateProfileResponse,
     });
   }
@@ -830,9 +825,11 @@ export class FeedlyClient {
    * Find feeds based on title, url or #topic.
    */
   async searchFeeds(
+    accessToken: string,
     params: SearchFeedsRequest,
   ): Promise<v.InferOutput<typeof SearchFeedsResponse>> {
-    return this._upfetch(`/search`, {
+    return this._upfetch('/search', {
+      headers: createAuthHeaders(accessToken),
       method: 'GET',
       params,
       schema: SearchFeedsResponse,
@@ -843,10 +840,12 @@ export class FeedlyClient {
    * Search the content of a stream.
    */
   async searchStreamContents(
+    accessToken: string,
     streamId: string,
     params: SearchStreamContentsRequest,
   ): Promise<v.InferOutput<typeof Stream>[]> {
     return this._upfetch(`/search/${encodeURIComponent(streamId)}/contents`, {
+      headers: createAuthHeaders(accessToken),
       method: 'GET',
       params,
       schema: v.array(Stream),
@@ -857,10 +856,12 @@ export class FeedlyClient {
    * Get the content of a stream.
    */
   async getStreamContents(
+    accessToken: string,
     streamId: string,
     params: GetStreamContentsRequest = {},
   ): Promise<v.InferOutput<typeof Stream>> {
     return this._upfetch(`/streams/${encodeURIComponent(streamId)}/contents`, {
+      headers: createAuthHeaders(accessToken),
       method: 'GET',
       params,
       schema: Stream,
@@ -871,10 +872,12 @@ export class FeedlyClient {
    * Get a list of entry ids for a specific stream.
    */
   async getEntryIds(
+    accessToken: string,
     streamId: string,
-    params: GetEntryIdsRequest,
+    params: GetEntryIdsRequest = {},
   ): Promise<v.InferOutput<typeof GetEntryIdsResponse>> {
     return this._upfetch(`/streams/${encodeURIComponent(streamId)}/ids`, {
+      headers: createAuthHeaders(accessToken),
       method: 'GET',
       params,
       schema: GetEntryIdsResponse,
@@ -884,8 +887,11 @@ export class FeedlyClient {
   /**
    * Get the user’s subscriptions.
    */
-  async getSubscriptions(): Promise<v.InferOutput<typeof Subscription>[]> {
+  async getSubscriptions(
+    accessToken: string,
+  ): Promise<v.InferOutput<typeof Subscription>[]> {
     return this._upfetch('/subscriptions', {
+      headers: createAuthHeaders(accessToken),
       method: 'GET',
       schema: v.array(Subscription),
     });
@@ -894,20 +900,28 @@ export class FeedlyClient {
   /**
    * Subscribe to a feed.
    */
-  async SubscrieToFeed(body: SubscribeToFeedRequest): Promise<void> {
+  async subscrieToFeed(
+    accessToken: string,
+    body: SubscribeToFeedRequest,
+  ): Promise<void> {
     return this._upfetch('/subscriptions', {
-      method: 'POST',
       body,
+      headers: createAuthHeaders(accessToken),
+      method: 'POST',
     });
   }
 
   /**
    * Update an existing subscription
    */
-  async updateSubscription(body: UpdateSubscriptionRequest): Promise<void> {
+  async updateSubscription(
+    accessToken: string,
+    body: UpdateSubscriptionRequest,
+  ): Promise<void> {
     return this._upfetch('/subscriptions', {
-      method: 'POST',
       body,
+      headers: createAuthHeaders(accessToken),
+      method: 'POST',
     });
   }
 
@@ -915,19 +929,25 @@ export class FeedlyClient {
    * Update multiple subscriptions.
    */
   async updateMultipleSubscriptions(
+    accessToken: string,
     body: UpdateMultipleSubscriptionsRequest,
   ): Promise<void> {
     return this._upfetch('/subscriptions/.mput', {
-      method: 'POST',
       body,
+      headers: createAuthHeaders(accessToken),
+      method: 'POST',
     });
   }
 
   /**
    * Unsubscribe from a feed.
    */
-  async unsubscribeFromFeed(feedId: string): Promise<void> {
+  async unsubscribeFromFeed(
+    accessToken: string,
+    feedId: string,
+  ): Promise<void> {
     return this._upfetch(`/subscriptions/${encodeURIComponent(feedId)}`, {
+      headers: createAuthHeaders(accessToken),
       method: 'DELETE',
     });
   }
@@ -935,9 +955,13 @@ export class FeedlyClient {
   /**
    * Unsubscribe from multiple feeds.
    */
-  async unsubscribeFromMultipleFeeds(body: string[]): Promise<void> {
+  async unsubscribeFromMultipleFeeds(
+    accessToken: string,
+    feedIds: string[],
+  ): Promise<void> {
     return this._upfetch('/subscriptions/.mdelete', {
-      body,
+      body: feedIds,
+      headers: createAuthHeaders(accessToken),
       method: 'DELETE',
     });
   }
@@ -945,9 +969,10 @@ export class FeedlyClient {
   /**
    * Get the list of tags created by the user.
    */
-  async getTags(): Promise<v.InferOutput<typeof Tag>[]> {
+  async getTags(accessToken: string): Promise<v.InferOutput<typeof Tag>[]> {
     return this._upfetch('/tags', {
       method: 'GET',
+      headers: createAuthHeaders(accessToken),
       schema: v.array(Tag),
     });
   }
@@ -955,10 +980,15 @@ export class FeedlyClient {
   /**
    * Tag an existing entry.
    */
-  async tagEntry(tagIds: string[], body: TagEntryRequest): Promise<void> {
+  async tagEntry(
+    accessToken: string,
+    tagIds: string[],
+    body: TagEntryRequest,
+  ): Promise<void> {
     return this._upfetch(`/tags/${tagIds.map(encodeURIComponent).join(',')}`, {
-      method: 'PUT',
       body,
+      headers: createAuthHeaders(accessToken),
+      method: 'PUT',
     });
   }
 
@@ -966,22 +996,29 @@ export class FeedlyClient {
    * Tag multiple entries.
    */
   async tagMultipleEntries(
+    accessToken: string,
     tagIds: string[],
     body: TagMultipleEntriesRequest,
   ): Promise<void> {
     return this._upfetch(`/tags/${tagIds.map(encodeURIComponent).join(',')}`, {
-      method: 'PUT',
       body,
+      headers: createAuthHeaders(accessToken),
+      method: 'PUT',
     });
   }
 
   /**
    * Change a tag label.
    */
-  async updateTag(tagId: string, body: UpdateTagRequest): Promise<void> {
+  async updateTag(
+    accessToken: string,
+    tagId: string,
+    body: UpdateTagRequest,
+  ): Promise<void> {
     return this._upfetch(`/tags/${encodeURIComponent(tagId)}`, {
-      method: 'POST',
       body,
+      headers: createAuthHeaders(accessToken),
+      method: 'POST',
     });
   }
 
@@ -989,12 +1026,14 @@ export class FeedlyClient {
    * Untag multiple entries.
    */
   async untagMultipleEntries(
+    accessToken: string,
     tagIds: string[],
     entryIds: string[],
   ): Promise<void> {
     return this._upfetch(
       `/tags/${tagIds.map(encodeURIComponent).join(',')}/${entryIds.map(encodeURIComponent).join(',')}`,
       {
+        headers: createAuthHeaders(accessToken),
         method: 'DELETE',
       },
     );
@@ -1003,21 +1042,16 @@ export class FeedlyClient {
   /**
    * Delete tags.
    */
-  async deleteTags(tagIds: string[]): Promise<void> {
+  async deleteTags(accessToken: string, tagIds: string[]): Promise<void> {
     return this._upfetch(`/tags/${tagIds.map(encodeURIComponent).join(',')}`, {
+      headers: createAuthHeaders(accessToken),
       method: 'DELETE',
     });
   }
 }
 
-function makeAuthUrl(environment: FeedlyEnvironment): URL {
-  const url = new URL('/v3/auth/auth', environment.baseUrl);
-  const { searchParams } = url;
-
-  searchParams.set('client_id', environment.clientId);
-  searchParams.set('redirect_uri', environment.redirectUrl);
-  searchParams.set('response_type', 'code');
-  searchParams.set('scope', environment.scope);
-
-  return url;
+function createAuthHeaders(accessToken: string): HeadersInit {
+  return {
+    authorization: `OAuth ${accessToken}`,
+  };
 }

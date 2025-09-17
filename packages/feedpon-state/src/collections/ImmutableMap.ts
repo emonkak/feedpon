@@ -149,9 +149,27 @@ export class ImmutableMap<TKey, TValue> implements Iterable<[TKey, TValue]> {
     return new ImmutableMap(newTree, newSize);
   }
 
-  update(key: TKey, f: (value: TValue) => TValue): ImmutableMap<TKey, TValue> {
+  update(
+    key: TKey,
+    updateFn: (value: TValue) => TValue,
+  ): ImmutableMap<TKey, TValue> {
+    const newTree = update(this._tree, key, updateFn);
+    return new ImmutableMap(newTree, this._size);
+  }
+
+  updateOrInsert(
+    key: TKey,
+    updateFn: (value: TValue) => TValue,
+    defaultFn: () => TValue,
+  ): ImmutableMap<TKey, TValue> {
     const oldTreeRef = { value: null };
-    const newTree = update(this._tree, key, f, oldTreeRef);
+    const newTree = updateOrInsert(
+      this._tree,
+      key,
+      updateFn,
+      defaultFn,
+      oldTreeRef,
+    );
     const newSize = oldTreeRef.value === null ? this._size + 1 : this._size;
     return new ImmutableMap(newTree, newSize);
   }
@@ -505,13 +523,28 @@ function update<TKey, TValue>(
   tree: ImmutableMap.Tree<TKey, TValue>,
   key: TKey,
   updateFn: (value: TValue) => TValue,
+): ImmutableMap.Tree<TKey, TValue> {
+  return blacken(
+    replace(tree, key, (tree) => {
+      return tree === null
+        ? null
+        : branch(tree.color, key, updateFn(tree.value), tree.left, tree.right);
+    }),
+  );
+}
+
+function updateOrInsert<TKey, TValue>(
+  tree: ImmutableMap.Tree<TKey, TValue>,
+  key: TKey,
+  updateFn: (value: TValue) => TValue,
+  defaultFn: () => TValue,
   oldTreeRef: Ref<ImmutableMap.Branch<TKey, TValue>>,
 ): ImmutableMap.Tree<TKey, TValue> {
   return blacken(
     replace(tree, key, (tree) => {
       oldTreeRef.value = tree;
       return tree === null
-        ? null
+        ? singleton(RED, key, defaultFn())
         : branch(tree.color, key, updateFn(tree.value), tree.left, tree.right);
     }),
   );

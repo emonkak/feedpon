@@ -1,45 +1,35 @@
-import { Atom, Computed, type Signal } from 'barebind/extras/signal';
+import type { Reactive } from 'barebind/extras/reactive';
+import type * as v from 'valibot';
 
-import { acquireAuth, type FeedlyContext } from '../api/feedly.ts';
-import type * as Feedly from '../api/feedlyTypes.d.ts';
-import type { AsyncAction, State, Store } from '../store.ts';
+import type {
+  Category,
+  Feed,
+  Subscription,
+  UnreadCount,
+} from '../apis/feedly.ts';
+import { ImmutableMap } from '../collections/ImmutableMap.ts';
 import {
   type Comparer,
   orderByAscending,
   orderByDescending,
-} from '../utils/comparer.ts';
-import { ImmutableMap } from '../utils/ImmutableMap.ts';
+} from '../utils/compare.ts';
+import { type AuthContext, type AuthState, acquireCredential } from './auth.ts';
 
-export interface SubscriptionSeed {
-  lastUpdated: number;
-  loading: boolean;
-  order: SubscriptionOrder;
-  subscriptions: Subscription[];
-  unreadCounts: UnreadCount[];
-  unreadOnly: boolean;
-  version: number;
-}
+export type Category = v.InferOutput<typeof Category>;
 
-export type Category = Feedly.components['schemas']['Category'];
+export type Feed = v.InferOutput<typeof Feed>;
 
-export type Feed = Feedly.components['schemas']['Feed'];
+export type Subscription = v.InferOutput<typeof Subscription>;
 
-export type Subscription = Feedly.components['schemas']['Subscription'];
+export type SubscriptionAction<TResult> = (
+  context: SubscriptionContext,
+) => TResult;
 
-export type SubscriptionOrder = 'id' | 'title' | 'newest' | 'oldest';
-
-export type UnreadCount = Feedly.components['schemas']['UnreadCount'];
-
-export type ReadCount = UnreadCount;
-
-export interface SubscriptionTree {
-  subscriptionGroups: SubscriptionGroup[];
-  ungroupedItems: SubscriptionItem[];
-}
-
-export interface SubscriptionItem {
-  subscription: Subscription;
-  unreadCount: number;
+export interface SubscriptionContext extends AuthContext {
+  state$: Reactive<{
+    authState: AuthState;
+    subscriptionState: SubscriptionState;
+  }>;
 }
 
 export interface SubscriptionGroup {
@@ -48,349 +38,356 @@ export interface SubscriptionGroup {
   unreadCount: number;
 }
 
-export interface SubscriptionContext extends FeedlyContext {
-  subscriptionStore: Store<SubscriptionState>;
+export interface SubscriptionItem {
+  subscription: Subscription;
+  unreadCount: number;
 }
 
-const defaultSeed: SubscriptionSeed = {
-  lastUpdated: -1,
-  loading: false,
-  order: 'id',
-  subscriptions: [],
-  unreadCounts: [],
-  unreadOnly: true,
-  version: 1,
-};
+export type SubscriptionOrder = 'id' | 'title' | 'newest' | 'oldest';
 
-export class SubscriptionState implements State<SubscriptionSeed> {
-  readonly categories$: Signal<Category[]>;
+export interface SubscriptionTree {
+  subscriptionGroups: SubscriptionGroup[];
+  ungroupedItems: SubscriptionItem[];
+}
 
-  readonly lastUpdated$: Atom<number>;
+export type UnreadCount = v.InferOutput<typeof UnreadCount>;
 
-  readonly loading$: Atom<boolean>;
+export class SubscriptionState {
+  categories: ImmutableMap<Category['id'], Category> = ImmutableMap.empty();
+  lastUpdated: number = -1;
+  loading: boolean = false;
+  onlyUnread: boolean = true;
+  opmlImporting: boolean = false;
+  order: SubscriptionOrder = 'id';
+  subscriptions: ImmutableMap<Subscription['id'], Subscription> =
+    ImmutableMap.empty();
+  unreadCounts: ImmutableMap<UnreadCount['id'], UnreadCount> =
+    ImmutableMap.empty();
 
-  readonly order$: Atom<SubscriptionOrder>;
+  get totalUnreadCount(): number {
+    return this.unreadCounts
+      .values()
+      .reduce((totalCount, { count }) => totalCount + count, 0);
+  }
 
-  readonly subscriptions$: Atom<ImmutableMap<Subscription['id'], Subscription>>;
+  get sortedSubscriptions(): Subscription[] {
+    return this.subscriptions
+      .values()
+      .toArray()
+      .sort(getSubscriptionComparer(this.order));
+  }
 
-  readonly subscriptionTree$: Signal<SubscriptionTree>;
+  get subscriptionTree(): SubscriptionTree {
+    const sortedSubscriptions = this.sortedSubscriptions;
+    const subscriptionGroups = new Map<string, SubscriptionGroup>();
+    const ungroupedItems: SubscriptionItem[] = [];
 
-  readonly totalUnreadCount$: Signal<number>;
+    for (let i = 0, l = sortedSubscriptions.length; i < l; i++) {
+      const subscription = sortedSubscriptions[i]!;
+      const unreadCount = this.unreadCounts.get(subscription.id)?.count ?? 0;
 
-  readonly unreadCounts$: Atom<ImmutableMap<UnreadCount['id'], UnreadCount>>;
+      if (this.onlyUnread && unreadCount === 0) {
+        continue;
+      }
 
-  readonly unreadOnly$: Atom<boolean>;
+      const item = { subscription, unreadCount };
 
-  readonly version$: Atom<number>;
+      if (subscription.categories.length > 0) {
+        for (let j = 0, m = subscription.categories.length; j < m; j++) {
+          const category = subscription.categories[i]!;
+          const group = subscriptionGroups.get(category.id);
 
-  constructor(seed: SubscriptionSeed = defaultSeed) {
-    this.lastUpdated$ = new Atom(seed.lastUpdated);
-    this.loading$ = new Atom(false);
-    this.order$ = new Atom(seed.order);
-    this.subscriptions$ = new Atom(
-      ImmutableMap.from(seed.subscriptions, (subscription) => [
-        subscription.id,
-        subscription,
-      ]),
-    );
-    this.unreadCounts$ = new Atom(
-      ImmutableMap.from(seed.unreadCounts, (unreadCount) => [
-        unreadCount.id,
-        unreadCount,
-      ]),
-    );
-    this.unreadOnly$ = new Atom(seed.unreadOnly);
-    this.version$ = new Atom(seed.version);
-
-    this.totalUnreadCount$ = new Computed(
-      (unreadCounts) =>
-        unreadCounts.values().reduce((total, { count }) => total + count, 0),
-      [this.unreadCounts$],
-    );
-
-    const sortedSubscriptions$ = new Computed(
-      (subscriptions, order) =>
-        subscriptions.values().toArray().sort(getSubscriptionComparer(order)),
-      [this.subscriptions$, this.order$],
-    );
-
-    this.subscriptionTree$ = new Computed(
-      (subscriptions, unreadCounts, unreadOnly) => {
-        const subscriptionGroups = new Map<string, SubscriptionGroup>();
-        const ungroupedItems: SubscriptionItem[] = [];
-
-        for (let i = 0, l = subscriptions.length; i < l; i++) {
-          const subscription = subscriptions[i]!;
-          const unreadCount = unreadCounts.get(subscription.id)?.count ?? 0;
-
-          if (unreadOnly && unreadCount === 0) {
-            continue;
-          }
-
-          const item = { subscription, unreadCount };
-
-          if (subscription.categories.length > 0) {
-            for (let j = 0, m = subscription.categories.length; j < m; j++) {
-              const category = subscription.categories[i]!;
-              const group = subscriptionGroups.get(category.id);
-
-              if (group !== undefined) {
-                group.items.push(item);
-                group.unreadCount += unreadCount;
-              } else {
-                subscriptionGroups.set(category.id, {
-                  category,
-                  items: [item],
-                  unreadCount,
-                });
-              }
-            }
+          if (group !== undefined) {
+            group.items.push(item);
+            group.unreadCount += unreadCount;
           } else {
-            ungroupedItems.push(item);
+            subscriptionGroups.set(category.id, {
+              category,
+              items: [item],
+              unreadCount,
+            });
           }
         }
+      } else {
+        ungroupedItems.push(item);
+      }
+    }
 
-        return {
-          subscriptionGroups: Array.from(subscriptionGroups.values()).sort(
-            orderByAscending(({ category }) => category.label),
-          ),
-          ungroupedItems,
-        };
-      },
-      [sortedSubscriptions$, this.unreadCounts$, this.unreadOnly$],
-    );
-
-    this.categories$ = new Computed(
-      (subscriptionTree) =>
-        subscriptionTree.subscriptionGroups.map(
-          (subscriptionGroup) => subscriptionGroup.category,
-        ),
-      [this.subscriptionTree$],
-    );
-  }
-
-  toSnapshot(): SubscriptionSeed {
     return {
-      lastUpdated: this.lastUpdated$.value,
-      loading: this.loading$.value,
-      unreadCounts: Array.from(this.unreadCounts$.value.values()),
-      order: this.order$.value,
-      subscriptions: Array.from(this.subscriptions$.value.values()),
-      unreadOnly: this.unreadOnly$.value,
-      version: this.version$.value,
+      subscriptionGroups: Array.from(subscriptionGroups.values()).sort(
+        orderByAscending(({ category }) => category.label),
+      ),
+      ungroupedItems,
     };
-  }
-
-  addSubscription({
-    subscription,
-    unreadCount,
-  }: {
-    subscription: Subscription;
-    unreadCount: UnreadCount;
-  }): void {
-    this.subscriptions$.value = this.subscriptions$.value.set(
-      subscription.id,
-      subscription,
-    );
-    this.unreadCounts$.value = this.unreadCounts$.value.set(
-      unreadCount.id,
-      unreadCount,
-    );
-  }
-
-  removeSubscription({ id }: { id: string }): void {
-    this.subscriptions$.value = this.subscriptions$.value.delete(id);
-    this.unreadCounts$.value = this.unreadCounts$.value.delete(id);
-  }
-
-  failSubscriptions(): void {
-    this.loading$.value = false;
-  }
-
-  moveSubscription({
-    id,
-    categories,
-  }: {
-    id: string;
-    categories: Category[];
-  }): void {
-    this.subscriptions$.value = this.subscriptions$.value.update(
-      id,
-      (subscription) => {
-        return {
-          ...subscription,
-          categories,
-        };
-      },
-    );
-  }
-
-  receiveSubscriptions({
-    subscriptions,
-    unreadCounts,
-  }: {
-    subscriptions: Subscription[];
-    unreadCounts: UnreadCount[];
-  }) {
-    this.loading$.value = false;
-    this.lastUpdated$.value = Date.now();
-    this.subscriptions$.value = ImmutableMap.from(
-      subscriptions,
-      (subscription) => [subscription.id, subscription],
-    );
-    this.unreadCounts$.value = ImmutableMap.from(
-      unreadCounts,
-      (unreadCount) => [unreadCount.id, unreadCount],
-    );
-  }
-
-  requestSubscriptions(): void {
-    this.loading$.value = true;
-  }
-
-  setOrder({ newOrder }: { newOrder: SubscriptionOrder }): void {
-    this.order$.value = newOrder;
-  }
-
-  setUnreadOnly({ newUnreadOnly }: { newUnreadOnly: boolean }): void {
-    this.unreadOnly$.value = newUnreadOnly;
   }
 }
 
-export function moveSubscription(
-  id: string,
-  labels: string[],
-): AsyncAction<SubscriptionContext> {
-  return async ({
-    authStore,
-    feedlyClient,
-    subscriptionStore,
-    authenticator,
-  }) => {
-    const auth = await acquireAuth()({
-      authStore,
-      feedlyClient,
-      authenticator,
-    });
+export function createCategory(
+  label: string,
+): SubscriptionAction<Promise<void>> {
+  return (context) => {
+    const { state$ } = context;
+    const subscriptionState$ = state$.get('subscriptionState');
 
-    const categories = labels.map((label) => ({
-      id: `user/${auth.id}/category/${label}`,
-      label,
-    }));
+    return subscriptionState$.mutate(async (state) => {
+      const credential = await acquireCredential(context);
+      const category = toCategory(credential.id, label);
 
-    await feedlyClient.POST('/subscriptions', {
-      body: {
-        id,
-        categories,
-      },
-    });
-
-    subscriptionStore.dispatch({
-      type: 'moveSubscription',
-      id,
-      categories,
+      state.categories = state.categories.set(category.id, category);
     });
   };
 }
 
-export function reloadSubscriptions(): AsyncAction<SubscriptionContext> {
-  return async ({ feedlyClient, subscriptionStore }) => {
-    subscriptionStore.dispatch({
-      type: 'requestSubscriptions',
-    });
+export function deleteCategory(id: string): SubscriptionAction<void> {
+  return ({ state$ }) => {
+    const subscriptionState$ = state$.get('subscriptionState');
+    const categories$ = subscriptionState$.get('categories');
+    const subscriptions$ = subscriptionState$.get('subscriptions');
 
-    try {
-      const [{ data: subscriptions }, { data: unreadCounts }] =
-        await Promise.all([
-          await feedlyClient.GET('/subscriptions'),
-          await feedlyClient.GET('/markers/counts'),
+    categories$.value = categories$.value
+      .values()
+      .reduce(
+        (categories, category) =>
+          category.id === id ? categories.delete(category.id) : categories,
+        categories$.value,
+      );
+
+    subscriptions$.value = ImmutableMap.from(
+      subscriptions$.value.values(),
+      (subscription) => [
+        subscription.id,
+        {
+          ...subscription,
+          categories: subscription.categories.filter(
+            (category) => category.id !== id,
+          ),
+        },
+      ],
+    );
+  };
+}
+
+export function importOpml(
+  opmlString: string,
+): SubscriptionAction<Promise<void>> {
+  return (context) => {
+    const { feedlyClient, state$ } = context;
+    const subscriptionState$ = state$.get('subscriptionState');
+
+    return subscriptionState$.mutate(async (state) => {
+      state.opmlImporting = true;
+
+      try {
+        const credential = await acquireCredential(context);
+
+        await feedlyClient.importOPML(credential.accessToken, opmlString);
+      } finally {
+        state.opmlImporting = false;
+      }
+    });
+  };
+}
+
+export function moveSubscription(
+  subscriptionId: string,
+  labels: string[],
+): SubscriptionAction<Promise<void>> {
+  return (context) => {
+    const { feedlyClient, state$ } = context;
+    const subscriptionState$ = state$.get('subscriptionState');
+
+    return subscriptionState$.mutate(async (state) => {
+      const credential = await acquireCredential(context);
+      const categories = labels.map((label) =>
+        toCategory(credential.id, label),
+      );
+
+      await feedlyClient.updateSubscription(credential.accessToken, {
+        id: subscriptionId,
+        categories,
+      });
+
+      state.subscriptions = state.subscriptions.update(
+        subscriptionId,
+        (subscription) => {
+          return {
+            ...subscription,
+            categories,
+          };
+        },
+      );
+    });
+  };
+}
+
+export function reloadSubscriptions(): SubscriptionAction<Promise<void>> {
+  return (context) => {
+    const { feedlyClient, state$ } = context;
+    const subscriptionState$ = state$.get('subscriptionState');
+
+    return subscriptionState$.mutate(async (state) => {
+      state.loading = true;
+
+      try {
+        const credential = await acquireCredential(context);
+        const [subscriptions, { unreadCounts }] = await Promise.all([
+          await feedlyClient.getSubscriptions(credential.accessToken),
+          await feedlyClient.getUnreadCounts(credential.accessToken),
         ]);
 
-      subscriptionStore.dispatch({
-        type: 'receiveSubscriptions',
-        subscriptions: subscriptions!,
-        unreadCounts: unreadCounts!.unreadCounts,
-      });
-    } catch (e) {
-      subscriptionStore.dispatch({
-        type: 'failSubscriptions',
-      });
-      throw e;
-    }
+        state.categories = ImmutableMap.from(
+          Iterator.from(subscriptions).flatMap(
+            (subscription) => subscription.categories,
+          ),
+          (category) => [category.id, category],
+        );
+
+        state.subscriptions = ImmutableMap.from(
+          subscriptions,
+          (subscription) => [subscription.id, subscription],
+        );
+
+        state.unreadCounts = ImmutableMap.from(unreadCounts, (unreadCount) => [
+          unreadCount.id,
+          unreadCount,
+        ]);
+
+        state.lastUpdated = Date.now();
+      } finally {
+        state.loading = false;
+      }
+    });
+  };
+}
+
+export function sortSubscriptions(
+  order: SubscriptionOrder,
+): SubscriptionAction<void> {
+  return ({ state$ }) => {
+    const subscriptionState$ = state$.get('subscriptionState');
+
+    subscriptionState$.mutate((state) => {
+      state.order = order;
+    });
   };
 }
 
 export function subscribeToFeed(
   feed: Feed,
   labels: string[],
-): AsyncAction<SubscriptionContext> {
-  return async ({
-    authStore,
-    feedlyClient,
-    subscriptionStore,
-    authenticator,
-  }) => {
-    const auth = await acquireAuth()({
-      authStore,
-      feedlyClient,
-      authenticator,
-    });
+): SubscriptionAction<Promise<void>> {
+  return (context) => {
+    const { feedlyClient, state$ } = context;
+    const subscriptionState$ = state$.get('subscriptionState');
 
-    const categories = labels.map((label) => ({
-      id: `user/${auth.id}/category/${label}`,
-      label,
-    }));
+    return subscriptionState$.mutate(async (state) => {
+      const credential = await acquireCredential(context);
+      const categories = labels.map((label) =>
+        toCategory(credential.id, label),
+      );
 
-    await feedlyClient.POST('/subscriptions', {
-      body: {
+      await feedlyClient.subscrieToFeed(credential.accessToken, {
         id: feed.id,
         categories,
-      },
-    });
+      });
 
-    const subscription: Subscription = {
-      id: feed.id,
-      title: feed.title,
-      categories,
-      website: feed.website,
-      velocity: feed.velocity,
-      topics: feed.topics,
-    };
+      const { unreadCounts } = await feedlyClient.getUnreadCounts(
+        credential.accessToken,
+        {
+          streamId: feed.id,
+        },
+      );
 
-    const unreadCounts = await feedlyClient.GET('/markers/counts', {
-      id: feed.id,
-    });
-    if (unreadCounts.error !== undefined) {
-      throw unreadCounts.error;
-    }
-
-    subscriptionStore.dispatch({
-      type: 'addSubscription',
-      subscription,
-      unreadCount: unreadCounts.data.unreadCounts[0] ?? {
+      const subscription: Subscription = {
         id: feed.id,
-        count: 0,
-        updated: Date.now(),
-      },
+        title: feed.title,
+        categories,
+        website: feed.website,
+        velocity: feed.velocity,
+        topics: feed.topics,
+      };
+
+      state.subscriptions = state.subscriptions.set(
+        subscription.id,
+        subscription,
+      );
+
+      if (unreadCounts.length > 0) {
+        state.unreadCounts = state.unreadCounts.set(
+          unreadCounts[0]!.id,
+          unreadCounts[0]!,
+        );
+      }
+    });
+  };
+}
+
+export function toggleOnlyUnread(
+  onlyUnread: boolean,
+): SubscriptionAction<void> {
+  return ({ state$ }) => {
+    const subscriptionState$ = state$.get('subscriptionState');
+
+    subscriptionState$.mutate((state) => {
+      state.onlyUnread = onlyUnread;
     });
   };
 }
 
 export function unsubscribeFromFeed(
   feed: Feed,
-): AsyncAction<SubscriptionContext> {
-  return async ({ feedlyClient, subscriptionStore }) => {
-    await feedlyClient.DELETE('/subscriptions/{feedId}', {
-      params: {
-        path: {
-          feedId: feed.id,
-        },
-      },
-    });
+): SubscriptionAction<Promise<void>> {
+  return (context) => {
+    const { state$, feedlyClient } = context;
+    const subscriptionState$ = state$.get('subscriptionState');
 
-    subscriptionStore.dispatch({
-      type: 'removeSubscription',
-      id: feed.id,
+    return subscriptionState$.mutate(async (state) => {
+      const credential = await acquireCredential(context);
+
+      await feedlyClient.unsubscribeFromFeed(credential.accessToken, feed.id);
+
+      state.subscriptions = state.subscriptions.delete(feed.id);
+      state.unreadCounts = state.unreadCounts.delete(feed.id);
+    });
+  };
+}
+
+export function updateCategory(
+  id: string,
+  newLabel: string,
+): SubscriptionAction<void> {
+  return (context) => {
+    const { state$ } = context;
+    const subscriptionState$ = state$.get('subscriptionState');
+
+    return subscriptionState$.mutate(async (state) => {
+      const credential = await acquireCredential(context);
+      const newCategory = toCategory(credential.id, newLabel);
+
+      state.categories = state.categories
+        .values()
+        .reduce(
+          (categories, oldCategory) =>
+            oldCategory.id === id
+              ? categories
+                  .set(newCategory.id, newCategory)
+                  .delete(oldCategory.id)
+              : categories,
+          state.categories,
+        );
+
+      state.subscriptions = ImmutableMap.from(
+        state.subscriptions.values(),
+        (subscription) => [
+          subscription.id,
+          {
+            ...subscription,
+            categories: subscription.categories.map((category) =>
+              category.id === id ? newCategory : category,
+            ),
+          },
+        ],
+      );
     });
   };
 }
@@ -408,4 +405,8 @@ function getSubscriptionComparer(
     case 'oldest':
       return orderByAscending((subscription) => subscription.updated);
   }
+}
+
+function toCategory(userId: string, label: string): Category {
+  return { id: `user/${userId}/category/${label}`, label };
 }

@@ -22,7 +22,7 @@ interface GetMultipleBookmarkCountsRequest {
   url: string[];
 }
 
-const GetMultipleBookmarkCountsResponse = v.map(v.string(), v.number());
+const GetMultipleBookmarkCountsResponse = v.record(v.string(), v.number());
 
 interface GetBookmarkEntryRequest {
   uri: string;

@@ -1,152 +1,145 @@
-import { Atom } from 'barebind/extras/signal';
+import type { Reactive } from 'barebind/extras/reactive';
 
-import type { Action, State, Store } from '../store.ts';
-import getUUID from '../utils/getUUID.ts';
+export type Command<TContext, TResult> = (context: TContext) => TResult;
 
-export interface UISeed {
-  keyboardShortcutsShown: boolean;
-  notifications: Notification[];
-  osd: string | null;
-  sidebarShown: boolean;
-  theme: Theme;
-  userStyle: string;
-  version: number;
+export interface CommandHandler<TContext> {
+  scrollDown: Command<TContext, void>;
+  scrollUp: Command<TContext, void>;
 }
 
-export interface StreamOptions {
-  entries: number;
-  order: EntryOrder;
-  unreadOnly: boolean;
+export type CommandId = keyof CommandHandler<unknown>;
+
+export interface KeyStroke {
+  key: string;
+  modifiers: Modifier[];
 }
 
-export type EntryOrder = 'newest' | 'oldest';
-
-export interface UIContext {
-  uiStore: Store<UIState>;
+export interface KeyboardShortcut {
+  keyStorokes: KeyStroke[];
+  commandId: CommandId;
 }
 
-export interface History {
-  streamId: string;
-  timestamp: number;
-}
-
-export type Theme = 'light' | 'dark';
+export type Modifier = 'A' | 'C' | 'M' | 'S';
 
 export interface Notification {
   id: string;
   type: NotificationType;
-  dismissAfter: number;
   message: string;
+  dismissAfter: number;
 }
 
-export type NotificationType =
-  | 'informational'
-  | 'success'
-  | 'warning'
-  | 'error';
+export type NotificationType = 'info' | 'success' | 'warning' | 'error';
 
-const defaultSeed: UISeed = {
-  keyboardShortcutsShown: false,
-  notifications: [],
-  osd: null,
-  sidebarShown: true,
-  theme: 'light',
-  userStyle: '',
-  version: 1,
-};
+export type Theme = 'system' | 'light' | 'dark';
 
-export class UIState implements State<UISeed> {
-  readonly keyboardShortcutsShown$: Atom<boolean>;
+export type UIAction<TResult> = (context: UIContext) => TResult;
 
-  readonly notifications$: Atom<Notification[]>;
+export interface UIContext {
+  commandHandler: CommandHandler<this>;
+  state$: Reactive<{ uiState: UIState }>;
+}
 
-  readonly osd$: Atom<string | null>;
+export class UIState {
+  authenticating: boolean = false;
+  keyboardShortcuts: KeyboardShortcut[] = [
+    { keyStorokes: [{ key: ' ', modifiers: [] }], commandId: 'scrollDown' },
+    { keyStorokes: [{ key: ' ', modifiers: ['S'] }], commandId: 'scrollUp' },
+  ];
+  keyboardShortcutsShown: boolean = false;
+  notifications: Notification[] = [];
+  osd: string | null = null;
+  scrollBehavior: ScrollBehavior = 'smooth';
+  scrollDistanceRatio: number = 0.5;
+  sidebarShown: boolean = true;
+  theme: Theme = 'light';
+  userStyle: string = '';
+}
 
-  readonly sidebarShown$: Atom<boolean>;
+export function closeOSD(): UIAction<void> {
+  return ({ state$ }) => {
+    const uiState$ = state$.get('uiState');
 
-  readonly theme$: Atom<Theme>;
+    uiState$.mutate((state) => {
+      state.osd = null;
+    });
+  };
+}
 
-  readonly userStyle$: Atom<string>;
+export function dismissNotification(id: string): UIAction<void> {
+  return ({ state$ }) => {
+    state$.get('uiState').mutate((state) => {
+      state.notifications = state.notifications.filter(
+        (notification) => notification.id !== id,
+      );
+    });
+  };
+}
 
-  readonly version$: Atom<number>;
+export function sendNotification(
+  type: NotificationType,
+  message: string,
+  dismissAfter: number = -1,
+): UIAction<void> {
+  return ({ state$ }) => {
+    const uiState$ = state$.get('uiState');
 
-  constructor(seed: UISeed = defaultSeed) {
-    this.keyboardShortcutsShown$ = new Atom(seed.keyboardShortcutsShown);
-    this.notifications$ = new Atom(seed.notifications);
-    this.osd$ = new Atom(seed.osd);
-    this.sidebarShown$ = new Atom(seed.sidebarShown);
-    this.theme$ = new Atom(seed.theme);
-    this.userStyle$ = new Atom(seed.userStyle);
-    this.version$ = new Atom(seed.version);
-  }
-
-  closeOSD(): void {
-    this.osd$.value = null;
-  }
-
-  dismissNotification({ id }: { id: string }): void {
-    this.notifications$.value = this.notifications$.value.filter(
-      (notification) => notification.id !== id,
-    );
-  }
-
-  sendNotification({
-    message,
-    type,
-    dismissAfter,
-  }: {
-    message: string;
-    type: NotificationType;
-    dismissAfter: number;
-  }): void {
-    this.notifications$.value = [
-      ...this.notifications$.value,
-      {
-        id: getUUID(),
-        message,
+    uiState$.mutate((state) => {
+      state.notifications = state.notifications.concat({
+        id: crypto.randomUUID(),
         type,
+        message,
         dismissAfter,
-      },
-    ];
-  }
-
-  setTheme({ theme }: { theme: Theme }): void {
-    this.theme$.value = theme;
-  }
-
-  setUserStyle({ userStyle }: { userStyle: string }): void {
-    this.userStyle$.value = userStyle;
-  }
-
-  showOSD({ message }: { message: string }): void {
-    this.osd$.value = message;
-  }
-
-  toSnapshot(): UISeed {
-    return {
-      keyboardShortcutsShown: this.keyboardShortcutsShown$.value,
-      notifications: this.notifications$.value,
-      osd: this.osd$.value,
-      sidebarShown: this.sidebarShown$.value,
-      theme: this.theme$.value,
-      userStyle: this.userStyle$.value,
-      version: this.version$.value,
-    };
-  }
-
-  toggleKeyboardShortcuts(): void {
-    this.keyboardShortcutsShown$.value = !this.keyboardShortcutsShown$.value;
-  }
-
-  toggleSidebar(): void {
-    this.sidebarShown$.value = !this.sidebarShown$.value;
-  }
+      });
+    });
+  };
 }
 
-export function toggleSidebar(): Action<UIContext> {
-  return ({ uiStore }) => {
-    uiStore.dispatch({
-      type: 'toggleSidebar',
+export function setTheme(theme: Theme): UIAction<void> {
+  return ({ state$ }) => {
+    const uiState$ = state$.get('uiState');
+
+    uiState$.mutate((state) => {
+      state.theme = theme;
+    });
+  };
+}
+
+export function setUserStyle(userStyle: string): UIAction<void> {
+  return ({ state$ }) => {
+    const uiState$ = state$.get('uiState');
+
+    uiState$.mutate((state) => {
+      state.userStyle = userStyle;
+    });
+  };
+}
+
+export function showOSD(message: string): UIAction<void> {
+  return ({ state$ }) => {
+    const uiState$ = state$.get('uiState');
+
+    uiState$.mutate((state) => {
+      state.osd = message;
+    });
+  };
+}
+
+export function toggleKeyboardShortcuts(): UIAction<void> {
+  return ({ state$ }) => {
+    const uiState$ = state$.get('uiState');
+
+    uiState$.mutate((state) => {
+      state.keyboardShortcutsShown = !state.keyboardShortcutsShown;
+    });
+  };
+}
+
+export function toggleSidebar(): UIAction<void> {
+  return ({ state$ }) => {
+    const uiState$ = state$.get('uiState');
+
+    uiState$.mutate((state) => {
+      state.sidebarShown = !state.sidebarShown;
     });
   };
 }
