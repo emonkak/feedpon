@@ -1,15 +1,15 @@
 export type Comparer<T> = (v1: T, v2: T) => number;
 
-export function composeComparers<TValue>(
-  comparer: Comparer<TValue>,
-  ...restComparers: Comparer<TValue>[]
-): (v1: TValue, v2: TValue) => number {
+export function composeComparers<T>(
+  firstComparer: Comparer<T>,
+  ...restComparers: Comparer<T>[]
+): Comparer<T> {
   return restComparers.reduce(
-    (composedComparer, nextComparer) => (v1, v2) => {
-      const ordering = composedComparer(v1, v2);
+    (comparer, nextComparer) => (v1, v2) => {
+      const ordering = comparer(v1, v2);
       return ordering !== 0 ? ordering : nextComparer(v1, v2);
     },
-    comparer,
+    firstComparer,
   );
 }
 

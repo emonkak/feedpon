@@ -1,6 +1,10 @@
 const RED = Symbol('Red');
 const BLACK = Symbol('Black');
 
+interface Ref<T> {
+  value: T | null;
+}
+
 /**
  * @internal
  */
@@ -20,19 +24,18 @@ export namespace ImmutableMap {
   export type Color = typeof RED | typeof BLACK;
 }
 
-interface Ref<T> {
-  value: T | null;
-}
-
 export class ImmutableMap<TKey, TValue> implements Iterable<[TKey, TValue]> {
-  static readonly #EMPTY: ImmutableMap<any, any> = new ImmutableMap(null, 0);
+  private static readonly _EMPTY: ImmutableMap<any, any> = new ImmutableMap(
+    null,
+    0,
+  );
 
-  readonly #tree: ImmutableMap.Tree<TKey, TValue>;
+  private readonly _tree: ImmutableMap.Tree<TKey, TValue>;
 
-  readonly #size: number;
+  private readonly _size: number;
 
   static empty<TKey, TValue>(): ImmutableMap<TKey, TValue> {
-    return ImmutableMap.#EMPTY;
+    return ImmutableMap._EMPTY;
   }
 
   static from<TKey, TValue>(
@@ -81,19 +84,19 @@ export class ImmutableMap<TKey, TValue> implements Iterable<[TKey, TValue]> {
   }
 
   private constructor(tree: ImmutableMap.Tree<TKey, TValue>, size: number) {
-    this.#tree = tree;
-    this.#size = size;
+    this._tree = tree;
+    this._size = size;
   }
 
   get size(): number {
-    return this.#size;
+    return this._size;
   }
 
   /**
    * @internal
    */
   get tree(): ImmutableMap.Tree<TKey, TValue> {
-    return this.#tree;
+    return this._tree;
   }
 
   [Symbol.iterator](): Generator<[TKey, TValue]> {
@@ -101,24 +104,24 @@ export class ImmutableMap<TKey, TValue> implements Iterable<[TKey, TValue]> {
   }
 
   *entries(): Generator<[TKey, TValue]> {
-    if (this.#tree !== null) {
-      for (const tree of iterate(this.#tree)) {
+    if (this._tree !== null) {
+      for (const tree of iterate(this._tree)) {
         yield [tree.key, tree.value];
       }
     }
   }
 
   *keys(): Generator<TKey> {
-    if (this.#tree !== null) {
-      for (const tree of iterate(this.#tree)) {
+    if (this._tree !== null) {
+      for (const tree of iterate(this._tree)) {
         yield tree.key;
       }
     }
   }
 
   *values(): Generator<TValue> {
-    if (this.#tree !== null) {
-      for (const tree of iterate(this.#tree)) {
+    if (this._tree !== null) {
+      for (const tree of iterate(this._tree)) {
         yield tree.value;
       }
     }
@@ -126,30 +129,30 @@ export class ImmutableMap<TKey, TValue> implements Iterable<[TKey, TValue]> {
 
   delete(key: TKey): ImmutableMap<TKey, TValue> {
     const oldTreeRef = { value: null };
-    const newTree = deleteFrom(this.#tree, key, oldTreeRef);
-    const newSize = oldTreeRef.value !== null ? this.#size - 1 : this.#size;
+    const newTree = deleteFrom(this._tree, key, oldTreeRef);
+    const newSize = oldTreeRef.value !== null ? this._size - 1 : this._size;
     return new ImmutableMap(newTree, newSize);
   }
 
   get(key: TKey): TValue | undefined {
-    return search(this.#tree, key)?.value;
+    return search(this._tree, key)?.value;
   }
 
   has(key: TKey): boolean {
-    return search(this.#tree, key) !== undefined;
+    return search(this._tree, key) !== undefined;
   }
 
   set(key: TKey, value: TValue): ImmutableMap<TKey, TValue> {
     const oldTreeRef = { value: null };
-    const newTree = insert(this.#tree, key, value, oldTreeRef);
-    const newSize = oldTreeRef.value === null ? this.#size + 1 : this.#size;
+    const newTree = insert(this._tree, key, value, oldTreeRef);
+    const newSize = oldTreeRef.value === null ? this._size + 1 : this._size;
     return new ImmutableMap(newTree, newSize);
   }
 
   update(key: TKey, f: (value: TValue) => TValue): ImmutableMap<TKey, TValue> {
     const oldTreeRef = { value: null };
-    const newTree = update(this.#tree, key, f, oldTreeRef);
-    const newSize = oldTreeRef.value === null ? this.#size + 1 : this.#size;
+    const newTree = update(this._tree, key, f, oldTreeRef);
+    const newSize = oldTreeRef.value === null ? this._size + 1 : this._size;
     return new ImmutableMap(newTree, newSize);
   }
 }
