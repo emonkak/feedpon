@@ -9,14 +9,14 @@ interface Ref<T> {
  * @internal
  */
 export namespace ImmutableMap {
-  export type Tree<TKey, TValue> = Branch<TKey, TValue> | Leaf;
+  export type Node<TKey, TValue> = Branch<TKey, TValue> | Leaf;
 
   export interface Branch<TKey, TValue> {
     readonly color: Color;
     readonly key: TKey;
     readonly value: TValue;
-    readonly left: Tree<TKey, TValue>;
-    readonly right: Tree<TKey, TValue>;
+    readonly left: Node<TKey, TValue>;
+    readonly right: Node<TKey, TValue>;
   }
 
   export type Leaf = null;
@@ -30,7 +30,7 @@ export class ImmutableMap<TKey, TValue> implements Iterable<[TKey, TValue]> {
     0,
   );
 
-  private readonly _tree: ImmutableMap.Tree<TKey, TValue>;
+  private readonly _root: ImmutableMap.Node<TKey, TValue>;
 
   private readonly _size: number;
 
@@ -49,31 +49,31 @@ export class ImmutableMap<TKey, TValue> implements Iterable<[TKey, TValue]> {
     source: Iterable<[TKey, TValue]> | Iterable<TItem>,
     selector?: (item: TItem) => [TKey, TValue],
   ): ImmutableMap<TKey, TValue> {
-    let tree = null;
+    let node = null;
     let size = 0;
     if (selector !== undefined) {
       for (const item of source as Iterable<TItem>) {
         const [key, value] = selector(item);
-        const oldTreeRef = {
+        const oldNodeRef = {
           value: null,
         };
-        tree = insert(tree, key, value, oldTreeRef);
-        if (oldTreeRef.value === null) {
+        node = insert(node, key, value, oldNodeRef);
+        if (oldNodeRef.value === null) {
           size++;
         }
       }
     } else {
       for (const [key, value] of source as Iterable<[TKey, TValue]>) {
-        const oldTreeRef = {
+        const oldNodeRef = {
           value: null,
         };
-        tree = insert(tree, key, value, oldTreeRef);
-        if (oldTreeRef.value === null) {
+        node = insert(node, key, value, oldNodeRef);
+        if (oldNodeRef.value === null) {
           size++;
         }
       }
     }
-    return new ImmutableMap(tree, size);
+    return new ImmutableMap(node, size);
   }
 
   static singleton<TKey, TValue>(
@@ -83,8 +83,8 @@ export class ImmutableMap<TKey, TValue> implements Iterable<[TKey, TValue]> {
     return new ImmutableMap(singleton(BLACK, key, value), 1);
   }
 
-  private constructor(tree: ImmutableMap.Tree<TKey, TValue>, size: number) {
-    this._tree = tree;
+  private constructor(node: ImmutableMap.Node<TKey, TValue>, size: number) {
+    this._root = node;
     this._size = size;
   }
 
@@ -104,57 +104,57 @@ export class ImmutableMap<TKey, TValue> implements Iterable<[TKey, TValue]> {
   }
 
   *entries(): Generator<[TKey, TValue]> {
-    if (this._tree !== null) {
-      for (const tree of iterate(this._tree)) {
-        yield [tree.key, tree.value];
+    if (this._root !== null) {
+      for (const node of iterate(this._root)) {
+        yield [node.key, node.value];
       }
     }
   }
 
   *keys(): Generator<TKey> {
-    if (this._tree !== null) {
-      for (const tree of iterate(this._tree)) {
-        yield tree.key;
+    if (this._root !== null) {
+      for (const node of iterate(this._root)) {
+        yield node.key;
       }
     }
   }
 
   *values(): Generator<TValue> {
-    if (this._tree !== null) {
-      for (const tree of iterate(this._tree)) {
-        yield tree.value;
+    if (this._root !== null) {
+      for (const node of iterate(this._root)) {
+        yield node.value;
       }
     }
   }
 
   delete(key: TKey): ImmutableMap<TKey, TValue> {
-    const oldTreeRef = { value: null };
-    const newTree = deleteFrom(this._tree, key, oldTreeRef);
-    const newSize = oldTreeRef.value !== null ? this._size - 1 : this._size;
-    return new ImmutableMap(newTree, newSize);
+    const oldNodeRef = { value: null };
+    const newRoot = deleteFrom(this._root, key, oldNodeRef);
+    const newSize = oldNodeRef.value !== null ? this._size - 1 : this._size;
+    return new ImmutableMap(newRoot, newSize);
   }
 
   get(key: TKey): TValue | undefined {
-    return search(this._tree, key)?.value;
+    return search(this._root, key)?.value;
   }
 
   has(key: TKey): boolean {
-    return search(this._tree, key) !== undefined;
+    return search(this._root, key) !== undefined;
   }
 
   set(key: TKey, value: TValue): ImmutableMap<TKey, TValue> {
-    const oldTreeRef = { value: null };
-    const newTree = insert(this._tree, key, value, oldTreeRef);
-    const newSize = oldTreeRef.value === null ? this._size + 1 : this._size;
-    return new ImmutableMap(newTree, newSize);
+    const oldNodeRef = { value: null };
+    const newRoot = insert(this._root, key, value, oldNodeRef);
+    const newSize = oldNodeRef.value === null ? this._size + 1 : this._size;
+    return new ImmutableMap(newRoot, newSize);
   }
 
   update(
     key: TKey,
     updateFn: (value: TValue) => TValue,
   ): ImmutableMap<TKey, TValue> {
-    const newTree = update(this._tree, key, updateFn);
-    return new ImmutableMap(newTree, this._size);
+    const newRoot = update(this._root, key, updateFn);
+    return new ImmutableMap(newRoot, this._size);
   }
 
   updateOrInsert(
@@ -162,16 +162,16 @@ export class ImmutableMap<TKey, TValue> implements Iterable<[TKey, TValue]> {
     updateFn: (value: TValue) => TValue,
     defaultFn: () => TValue,
   ): ImmutableMap<TKey, TValue> {
-    const oldTreeRef = { value: null };
-    const newTree = updateOrInsert(
-      this._tree,
+    const oldNodeRef = { value: null };
+    const newRoot = updateOrInsert(
+      this._root,
       key,
       updateFn,
       defaultFn,
-      oldTreeRef,
+      oldNodeRef,
     );
-    const newSize = oldTreeRef.value === null ? this._size + 1 : this._size;
-    return new ImmutableMap(newTree, newSize);
+    const newSize = oldNodeRef.value === null ? this._size + 1 : this._size;
+    return new ImmutableMap(newRoot, newSize);
   }
 }
 
@@ -182,82 +182,82 @@ export function inspectTree<TKey, TValue>({
 }
 
 function balanceLeft<TKey, TValue>(
-  tree: ImmutableMap.Branch<TKey, TValue>,
+  node: ImmutableMap.Branch<TKey, TValue>,
 ): ImmutableMap.Branch<TKey, TValue> {
-  if (tree.left?.color === RED && tree.left.left?.color === RED) {
+  if (node.left?.color === RED && node.left.left?.color === RED) {
     return branch(
       RED,
-      tree.left.key,
-      tree.left.value,
+      node.left.key,
+      node.left.value,
       branch(
         BLACK,
-        tree.left.left.key,
-        tree.left.left.value,
-        tree.left.left.left,
-        tree.left.left.right,
+        node.left.left.key,
+        node.left.left.value,
+        node.left.left.left,
+        node.left.left.right,
       ),
-      branch(BLACK, tree.key, tree.value, tree.left.right, tree.right),
+      branch(BLACK, node.key, node.value, node.left.right, node.right),
     );
-  } else if (tree.left?.color === RED && tree.left.right?.color === RED) {
+  } else if (node.left?.color === RED && node.left.right?.color === RED) {
     return branch(
       RED,
-      tree.left.right.key,
-      tree.left.right.value,
+      node.left.right.key,
+      node.left.right.value,
       branch(
         BLACK,
-        tree.left.key,
-        tree.left.value,
-        tree.left.left,
-        tree.left.right.left,
+        node.left.key,
+        node.left.value,
+        node.left.left,
+        node.left.right.left,
       ),
-      branch(BLACK, tree.key, tree.value, tree.left.right.right, tree.right),
+      branch(BLACK, node.key, node.value, node.left.right.right, node.right),
     );
   } else {
-    return tree;
+    return node;
   }
 }
 
 function balanceRight<TKey, TValue>(
-  tree: ImmutableMap.Branch<TKey, TValue>,
+  node: ImmutableMap.Branch<TKey, TValue>,
 ): ImmutableMap.Branch<TKey, TValue> {
-  if (tree.right?.color === RED && tree.right.left?.color === RED) {
+  if (node.right?.color === RED && node.right.left?.color === RED) {
     return branch(
       RED,
-      tree.right.left.key,
-      tree.right.left.value,
-      branch(BLACK, tree.key, tree.value, tree.left, tree.right.left.left),
+      node.right.left.key,
+      node.right.left.value,
+      branch(BLACK, node.key, node.value, node.left, node.right.left.left),
       branch(
         BLACK,
-        tree.right.key,
-        tree.right.value,
-        tree.right.left.right,
-        tree.right.right,
+        node.right.key,
+        node.right.value,
+        node.right.left.right,
+        node.right.right,
       ),
     );
-  } else if (tree.right?.color === RED && tree.right.right?.color === RED) {
+  } else if (node.right?.color === RED && node.right.right?.color === RED) {
     return branch(
       RED,
-      tree.right.key,
-      tree.right.value,
-      branch(BLACK, tree.key, tree.value, tree.left, tree.right.left),
+      node.right.key,
+      node.right.value,
+      branch(BLACK, node.key, node.value, node.left, node.right.left),
       branch(
         BLACK,
-        tree.right.right.key,
-        tree.right.right.value,
-        tree.right.right.left,
-        tree.right.right.right,
+        node.right.right.key,
+        node.right.right.value,
+        node.right.right.left,
+        node.right.right.right,
       ),
     );
   } else {
-    return tree;
+    return node;
   }
 }
 
 function blacken<TKey, TValue>(
-  tree: ImmutableMap.Tree<TKey, TValue>,
-): ImmutableMap.Tree<TKey, TValue> {
-  return tree !== null
-    ? branch(BLACK, tree.key, tree.value, tree.left, tree.right)
+  node: ImmutableMap.Node<TKey, TValue>,
+): ImmutableMap.Node<TKey, TValue> {
+  return node !== null
+    ? branch(BLACK, node.key, node.value, node.left, node.right)
     : null;
 }
 
@@ -265,8 +265,8 @@ function branch<TKey, TValue>(
   color: ImmutableMap.Color,
   key: TKey,
   value: TValue,
-  left: ImmutableMap.Tree<TKey, TValue>,
-  right: ImmutableMap.Tree<TKey, TValue>,
+  left: ImmutableMap.Node<TKey, TValue>,
+  right: ImmutableMap.Node<TKey, TValue>,
 ): ImmutableMap.Branch<TKey, TValue> {
   return {
     color,
@@ -278,68 +278,68 @@ function branch<TKey, TValue>(
 }
 
 function deleteFrom<TKey, TValue>(
-  tree: ImmutableMap.Tree<TKey, TValue>,
+  node: ImmutableMap.Node<TKey, TValue>,
   key: TKey,
-  oldTreeRef: Ref<ImmutableMap.Branch<TKey, TValue>>,
-): ImmutableMap.Tree<TKey, TValue> {
-  if (tree === null) {
+  oldNodeRef: Ref<ImmutableMap.Branch<TKey, TValue>>,
+): ImmutableMap.Node<TKey, TValue> {
+  if (node === null) {
     return null;
-  } else if (key < tree.key) {
+  } else if (key < node.key) {
     return equalizeLeft(
       branch(
-        tree.color,
-        tree.key,
-        tree.value,
-        deleteFrom(tree.left, key, oldTreeRef),
-        tree.right,
+        node.color,
+        node.key,
+        node.value,
+        deleteFrom(node.left, key, oldNodeRef),
+        node.right,
       ),
     );
-  } else if (key > tree.key) {
+  } else if (key > node.key) {
     return equalizeRight(
       branch(
-        tree.color,
-        tree.key,
-        tree.value,
-        tree.left,
-        deleteFrom(tree.right, key, oldTreeRef),
+        node.color,
+        node.key,
+        node.value,
+        node.left,
+        deleteFrom(node.right, key, oldNodeRef),
       ),
     );
-  } else if (tree.right !== null) {
-    const minTree: Ref<ImmutableMap.Branch<TKey, TValue>> = { value: null };
-    const newTree = deleteMin(tree.right, minTree);
-    oldTreeRef.value = tree;
+  } else if (node.right !== null) {
+    const minNode: Ref<ImmutableMap.Branch<TKey, TValue>> = { value: null };
+    const newNode = deleteMin(node.right, minNode);
+    oldNodeRef.value = node;
     return equalizeRight(
       branch(
-        tree.color,
-        minTree.value!.key,
-        minTree.value!.value,
-        tree.left,
-        newTree,
+        node.color,
+        minNode.value!.key,
+        minNode.value!.value,
+        node.left,
+        newNode,
       ),
     );
   } else {
-    oldTreeRef.value = tree;
-    return blacken(tree.left);
+    oldNodeRef.value = node;
+    return blacken(node.left);
   }
 }
 
 function deleteMin<TKey, TValue>(
-  tree: ImmutableMap.Branch<TKey, TValue>,
-  oldTreeRef: Ref<ImmutableMap.Branch<TKey, TValue>>,
-): ImmutableMap.Tree<TKey, TValue> {
-  if (tree.left !== null) {
+  node: ImmutableMap.Branch<TKey, TValue>,
+  oldNodeRef: Ref<ImmutableMap.Branch<TKey, TValue>>,
+): ImmutableMap.Node<TKey, TValue> {
+  if (node.left !== null) {
     return equalizeLeft(
       branch(
-        tree.color,
-        tree.key,
-        tree.value,
-        deleteMin(tree.left, oldTreeRef),
-        tree.right,
+        node.color,
+        node.key,
+        node.value,
+        deleteMin(node.left, oldNodeRef),
+        node.right,
       ),
     );
   } else {
-    oldTreeRef.value = tree;
-    return blacken(tree.right);
+    oldNodeRef.value = node;
+    return blacken(node.right);
   }
 }
 
@@ -366,141 +366,141 @@ function* drawBranch<TKey, TValue>(
 }
 
 function equalizeLeft<TKey, TValue>(
-  tree: ImmutableMap.Branch<TKey, TValue>,
+  node: ImmutableMap.Branch<TKey, TValue>,
 ): ImmutableMap.Branch<TKey, TValue> {
-  if (tree.right?.color === BLACK) {
+  if (node.right?.color === BLACK) {
     return balanceLeft(
       branch(
-        tree.color,
-        tree.key,
-        tree.value,
-        tree.left,
+        node.color,
+        node.key,
+        node.value,
+        node.left,
         branch(
           RED,
-          tree.right.key,
-          tree.right.value,
-          tree.right.left,
-          tree.right.right,
+          node.right.key,
+          node.right.value,
+          node.right.left,
+          node.right.right,
         ),
       ),
     );
-  } else if (tree.right?.color === RED) {
+  } else if (node.right?.color === RED) {
     return branch(
       BLACK,
-      tree.key,
-      tree.value,
+      node.key,
+      node.value,
       equalizeLeft(
-        branch(RED, tree.key, tree.value, tree.left, tree.right.left),
+        branch(RED, node.key, node.value, node.left, node.right.left),
       ),
-      tree.right.right,
+      node.right.right,
     );
   } else {
-    return tree;
+    return node;
   }
 }
 
 function equalizeRight<TKey, TValue>(
-  tree: ImmutableMap.Branch<TKey, TValue>,
+  node: ImmutableMap.Branch<TKey, TValue>,
 ): ImmutableMap.Branch<TKey, TValue> {
-  if (tree.left?.color === BLACK) {
+  if (node.left?.color === BLACK) {
     return balanceRight(
       branch(
-        tree.color,
-        tree.key,
-        tree.value,
+        node.color,
+        node.key,
+        node.value,
         branch(
           RED,
-          tree.left.key,
-          tree.left.value,
-          tree.left.left,
-          tree.left.right,
+          node.left.key,
+          node.left.value,
+          node.left.left,
+          node.left.right,
         ),
-        tree.right,
+        node.right,
       ),
     );
-  } else if (tree.left?.color === RED) {
+  } else if (node.left?.color === RED) {
     return branch(
       BLACK,
-      tree.key,
-      tree.value,
+      node.key,
+      node.value,
       equalizeRight(
-        branch(RED, tree.key, tree.value, tree.left.right, tree.right),
+        branch(RED, node.key, node.value, node.left.right, node.right),
       ),
-      tree.left.right,
+      node.left.right,
     );
   } else {
-    return tree;
+    return node;
   }
 }
 
 function insert<TKey, TValue>(
-  tree: ImmutableMap.Tree<TKey, TValue>,
+  node: ImmutableMap.Node<TKey, TValue>,
   key: TKey,
   value: TValue,
-  oldTreeRef: Ref<ImmutableMap.Branch<TKey, TValue>>,
-): ImmutableMap.Tree<TKey, TValue> {
+  oldNodeRef: Ref<ImmutableMap.Branch<TKey, TValue>>,
+): ImmutableMap.Node<TKey, TValue> {
   return blacken(
-    replace(tree, key, (tree) => {
-      oldTreeRef.value = tree;
-      return tree === null
+    replace(node, key, (node) => {
+      oldNodeRef.value = node;
+      return node === null
         ? singleton(RED, key, value)
-        : branch(tree.color, key, value, tree.left, tree.right);
+        : branch(node.color, key, value, node.left, node.right);
     }),
   );
 }
 
 function* iterate<TKey, TValue>(
-  tree: ImmutableMap.Branch<TKey, TValue>,
+  node: ImmutableMap.Branch<TKey, TValue>,
 ): Generator<ImmutableMap.Branch<TKey, TValue>> {
-  if (tree.left !== null) {
-    yield* iterate(tree.left);
+  if (node.left !== null) {
+    yield* iterate(node.left);
   }
-  yield tree;
-  if (tree.right !== null) {
-    yield* iterate(tree.right);
+  yield node;
+  if (node.right !== null) {
+    yield* iterate(node.right);
   }
 }
 
 function replace<TKey, TValue>(
-  tree: ImmutableMap.Tree<TKey, TValue>,
+  node: ImmutableMap.Node<TKey, TValue>,
   key: TKey,
   updateFn: (
-    tree: ImmutableMap.Tree<TKey, TValue>,
-  ) => ImmutableMap.Tree<TKey, TValue>,
-): ImmutableMap.Tree<TKey, TValue> {
-  if (tree === null) {
+    node: ImmutableMap.Node<TKey, TValue>,
+  ) => ImmutableMap.Node<TKey, TValue>,
+): ImmutableMap.Node<TKey, TValue> {
+  if (node === null) {
     return updateFn(null);
-  } else if (key < tree.key) {
+  } else if (key < node.key) {
     return balanceLeft(
       branch(
-        tree.color,
-        tree.key,
-        tree.value,
-        replace(tree.left, key, updateFn),
-        tree.right,
+        node.color,
+        node.key,
+        node.value,
+        replace(node.left, key, updateFn),
+        node.right,
       ),
     );
-  } else if (key > tree.key) {
+  } else if (key > node.key) {
     return balanceRight(
       branch(
-        tree.color,
-        tree.key,
-        tree.value,
-        tree.left,
-        replace(tree.right, key, updateFn),
+        node.color,
+        node.key,
+        node.value,
+        node.left,
+        replace(node.right, key, updateFn),
       ),
     );
   } else {
-    return updateFn(tree);
+    return updateFn(node);
   }
 }
 
 function search<TKey, TValue>(
-  tree: ImmutableMap.Tree<TKey, TValue>,
+  node: ImmutableMap.Node<TKey, TValue>,
   key: TKey,
 ): ImmutableMap.Branch<TKey, TValue> | undefined {
   for (
-    let current = tree;
+    let current = node;
     current !== null;
     current = key < current.key ? current.left : current.right
   ) {
@@ -520,32 +520,32 @@ function singleton<TKey, TValue>(
 }
 
 function update<TKey, TValue>(
-  tree: ImmutableMap.Tree<TKey, TValue>,
+  node: ImmutableMap.Node<TKey, TValue>,
   key: TKey,
   updateFn: (value: TValue) => TValue,
-): ImmutableMap.Tree<TKey, TValue> {
+): ImmutableMap.Node<TKey, TValue> {
   return blacken(
-    replace(tree, key, (tree) => {
-      return tree === null
+    replace(node, key, (node) => {
+      return node === null
         ? null
-        : branch(tree.color, key, updateFn(tree.value), tree.left, tree.right);
+        : branch(node.color, key, updateFn(node.value), node.left, node.right);
     }),
   );
 }
 
 function updateOrInsert<TKey, TValue>(
-  tree: ImmutableMap.Tree<TKey, TValue>,
+  node: ImmutableMap.Node<TKey, TValue>,
   key: TKey,
   updateFn: (value: TValue) => TValue,
   defaultFn: () => TValue,
-  oldTreeRef: Ref<ImmutableMap.Branch<TKey, TValue>>,
-): ImmutableMap.Tree<TKey, TValue> {
+  oldNodeRef: Ref<ImmutableMap.Branch<TKey, TValue>>,
+): ImmutableMap.Node<TKey, TValue> {
   return blacken(
-    replace(tree, key, (tree) => {
-      oldTreeRef.value = tree;
-      return tree === null
+    replace(node, key, (node) => {
+      oldNodeRef.value = node;
+      return node === null
         ? singleton(RED, key, defaultFn())
-        : branch(tree.color, key, updateFn(tree.value), tree.left, tree.right);
+        : branch(node.color, key, updateFn(node.value), node.left, node.right);
     }),
   );
 }
