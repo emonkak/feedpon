@@ -6,10 +6,10 @@ import { sendNotification } from 'feedpon-messaging/notifications';
 import { toggleSidebar } from 'feedpon-messaging/ui';
 import { MemoBinder } from 'feedpon-utils/MemoBinder.ts';
 
-import { MainLayout } from '../common/MainLayout.ts';
-import { Navbar } from '../common/Navbar.ts';
+import { MainLayout } from '../layout/MainLayout.ts';
 import { Dialog } from '../primitives/Dialog.ts';
 import { Dropdown } from '../primitives/Dropdown.ts';
+import { Navbar } from '../primitives/Navbar.ts';
 
 export interface KitchenSinkProps {}
 

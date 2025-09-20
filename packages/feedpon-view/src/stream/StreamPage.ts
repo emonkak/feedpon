@@ -40,9 +40,10 @@ import {
   unselectStream,
 } from 'feedpon-messaging/ui';
 import * as CacheMap from 'feedpon-utils/CacheMap.ts';
-import { createEventHook } from '../common/hooks/eventHook.ts';
-import { isMountedHook } from '../common/hooks/isMountedHook.ts';
-import { MainLayout } from '../common/MainLayout.ts';
+
+import { MainLayout } from '../layout/MainLayout.ts';
+import { createEventHook } from '../primitives/hooks/eventHook.ts';
+import { isMountedHook } from '../primitives/hooks/isMountedHook.ts';
 import type { VirtualScrollListRef } from '../primitives/VirtualScrollList.ts';
 import { CategoryHeader } from './CategoryHeader.ts';
 import { EntryList } from './EntryList.ts';

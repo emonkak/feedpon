@@ -7,7 +7,7 @@ import {
 import type { Entry, StreamViewKind } from 'feedpon-messaging';
 import * as SmoothScroll from 'feedpon-utils/SmoothScroll.ts';
 
-import { createEventHook } from '../common/hooks/eventHook.ts';
+import { createEventHook } from '../primitives/hooks/eventHook.ts';
 import {
   type BlankSpaces,
   type Dimensions,

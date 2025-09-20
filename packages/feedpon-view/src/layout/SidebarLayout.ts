@@ -12,12 +12,12 @@ import type {
 import { commandTable } from 'feedpon-messaging/keyMappings';
 import { closeHelp, closeSidebar, openSidebar } from 'feedpon-messaging/ui';
 
-import { keyMappingsHook } from '../common/hooks/keyMappingsHook.ts';
-import { swipeableHook } from '../common/hooks/swipeableHook.ts';
 import { KeyMappingsTable } from '../keyMappings/KeyMappingsTable.ts';
 import { NotificationStack } from '../notification/NotificationStack.ts';
 import { OSD } from '../osd/OSD.ts';
 import { Dialog } from '../primitives/Dialog.ts';
+import { keyMappingsHook } from '../primitives/hooks/keyMappingsHook.ts';
+import { swipeableHook } from '../primitives/hooks/swipeableHook.ts';
 import { Sidebar } from '../sidebar/Sidebar.ts';
 
 export interface SidebarLayoutProps {

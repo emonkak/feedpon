@@ -5,8 +5,8 @@ import type { State } from 'feedpon-messaging';
 import { toggleSidebar } from 'feedpon-messaging/ui';
 import * as CacheMap from 'feedpon-utils/CacheMap.ts';
 
-import { MainLayout } from '../common/MainLayout.ts';
-import { Navbar } from '../common/Navbar.ts';
+import { MainLayout } from '../layout/MainLayout.ts';
+import { Navbar } from '../primitives/Navbar.ts';
 import { RelativeTime } from '../primitives/RelativeTime.ts';
 
 export interface DashboardProps {}

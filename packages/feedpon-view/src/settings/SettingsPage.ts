@@ -4,8 +4,8 @@ import { bindActions } from 'feedpon-flux';
 import { getStoreHook } from 'feedpon-flux/barebind.ts';
 import { toggleSidebar } from 'feedpon-messaging/ui';
 
-import { MainLayout } from '../common/MainLayout.ts';
-import { Navbar } from '../common/Navbar.ts';
+import { MainLayout } from '../layout/MainLayout.ts';
+import { Navbar } from '../primitives/Navbar.ts';
 import { TabList } from '../primitives/TabList.ts';
 
 export interface SettingsProps {

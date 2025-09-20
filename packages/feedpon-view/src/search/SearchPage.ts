@@ -16,9 +16,9 @@ import {
   unsubscribe,
 } from 'feedpon-messaging/subscriptions';
 import { toggleSidebar } from 'feedpon-messaging/ui';
-import { createPreviousHook } from '../common/hooks/previousHook.ts';
-import { MainLayout } from '../common/MainLayout.ts';
-import { Navbar } from '../common/Navbar.ts';
+import { MainLayout } from '../layout/MainLayout.ts';
+import { createPreviousHook } from '../primitives/hooks/previousHook.ts';
+import { Navbar } from '../primitives/Navbar.ts';
 import { FeedView } from './FeedView.ts';
 
 export interface SearchPageProps {

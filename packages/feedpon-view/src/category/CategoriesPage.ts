@@ -21,9 +21,9 @@ import { toggleSidebar } from 'feedpon-messaging/ui';
 import createAscendingComparer from 'feedpon-utils/createAscendingComparer.ts';
 import debounce from 'feedpon-utils/debounce.ts';
 
-import { MainLayout } from '../common/MainLayout.ts';
-import { Navbar } from '../common/Navbar.ts';
+import { MainLayout } from '../layout/MainLayout.ts';
 import { Dropdown } from '../primitives/Dropdown.ts';
+import { Navbar } from '../primitives/Navbar.ts';
 import { type TabItem, TabList } from '../primitives/TabList.ts';
 import {
   type BlankSpaces,

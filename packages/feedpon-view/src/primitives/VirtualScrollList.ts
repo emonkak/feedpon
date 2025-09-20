@@ -11,9 +11,9 @@ import {
 } from 'barebind';
 import throttle from 'feedpon-utils/throttle.ts';
 
-import { createEventHook } from '../common/hooks/eventHook.ts';
-import { isMountedHook } from '../common/hooks/isMountedHook.ts';
-import { createPreviousHook } from '../common/hooks/previousHook.ts';
+import { createEventHook } from '../primitives/hooks/eventHook.ts';
+import { isMountedHook } from '../primitives/hooks/isMountedHook.ts';
+import { createPreviousHook } from '../primitives/hooks/previousHook.ts';
 
 export interface BlankSpaces {
   above: number;

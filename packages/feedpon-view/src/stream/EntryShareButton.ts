@@ -1,7 +1,7 @@
 import { createComponent, type RenderContext } from 'barebind';
 
-import { createPopupHook } from '../common/hooks/popupHook.ts';
 import { Dialog } from '../primitives/Dialog.ts';
+import { createPopupHook } from '../primitives/hooks/popupHook.ts';
 
 interface EntryShareButtonProps {
   url: string;

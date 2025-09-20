@@ -5,9 +5,9 @@ import { getStoreHook } from 'feedpon-flux/barebind.ts';
 import type { State } from 'feedpon-messaging';
 import { toggleSidebar } from 'feedpon-messaging/ui';
 
-import { MainLayout } from '../common/MainLayout.ts';
-import { Navbar } from '../common/Navbar.ts';
+import { MainLayout } from '../layout/MainLayout.ts';
 import { Dropdown } from '../primitives/Dropdown.ts';
+import { Navbar } from '../primitives/Navbar.ts';
 
 export interface AboutPageProps {
   navigator: HistoryNavigator;
