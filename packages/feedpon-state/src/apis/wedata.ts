@@ -1,7 +1,7 @@
 import { type UpFetch, up } from 'up-fetch';
 import * as v from 'valibot';
 
-export const WedataItem = v.object({
+export const DatabaseItem = v.object({
   resource_url: v.pipe(v.string(), v.url()),
   database_resource_url: v.pipe(v.string(), v.url()),
   data: v.unknown(),
@@ -9,6 +9,17 @@ export const WedataItem = v.object({
   name: v.string(),
   created_at: v.pipe(v.string(), v.isoDateTime()),
   updated_at: v.pipe(v.string(), v.isoDateTime()),
+});
+
+export const AutoPagerizeItem = v.object({
+  ...DatabaseItem.entries,
+  data: v.object({
+    url: v.string(),
+    nextLink: v.string(),
+    pageElement: v.string(),
+    exampleUrl: v.optional(v.string()),
+    insertBefore: v.optional(v.string()),
+  }),
 });
 
 export interface WedataClientOptions {
@@ -24,14 +35,11 @@ export class WedataClient {
     }));
   }
 
-  async getDatabaseItems(
-    name: string,
-  ): Promise<v.InferOutput<typeof WedataItem>[]> {
-    return this._upfetch(
-      `/database/${encodeURIComponent(name)}/itesm_all.json`,
-      {
-        schema: v.array(WedataItem),
-      },
-    );
+  async getAutoPagerizeItems(): Promise<
+    v.InferOutput<typeof AutoPagerizeItem>[]
+  > {
+    return this._upfetch(`/database/AutoPagerize/itesm_all.json`, {
+      schema: v.array(AutoPagerizeItem),
+    });
   }
 }

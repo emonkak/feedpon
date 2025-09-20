@@ -537,7 +537,17 @@ export interface TagMultipleEntriesRequest {
   entryIds: string[];
 }
 
+export interface UntagEntryRequest {
+  entryId: string;
+}
+
 export type FeedlyAuthCode = string;
+
+export interface FeedlyAuthenticator {
+  acquireLock(): Promise<void>;
+  releaseLock(): void;
+  authenticate(url: URL): Promise<FeedlyAuthCode>;
+}
 
 export interface FeedlyClientOptions {
   fetch?: typeof fetch;
@@ -722,7 +732,7 @@ export class FeedlyClient {
     return this._upfetch('/markers', {
       body,
       headers: createAuthHeaders(accessToken),
-      method: 'GET',
+      method: 'POST',
     });
   }
 
@@ -985,7 +995,7 @@ export class FeedlyClient {
     tagIds: string[],
     body: TagEntryRequest,
   ): Promise<void> {
-    return this._upfetch(`/tags/${tagIds.map(encodeURIComponent).join(',')}`, {
+    return this._upfetch(`/tags/${encodeURIComponent(tagIds.join(','))}`, {
       body,
       headers: createAuthHeaders(accessToken),
       method: 'PUT',
@@ -1000,7 +1010,7 @@ export class FeedlyClient {
     tagIds: string[],
     body: TagMultipleEntriesRequest,
   ): Promise<void> {
-    return this._upfetch(`/tags/${tagIds.map(encodeURIComponent).join(',')}`, {
+    return this._upfetch(`/tags/${encodeURIComponent(tagIds.join(','))}`, {
       body,
       headers: createAuthHeaders(accessToken),
       method: 'PUT',
@@ -1023,6 +1033,21 @@ export class FeedlyClient {
   }
 
   /**
+   * Untag an existing entry.
+   */
+  async untagEntry(
+    accessToken: string,
+    tagIds: string[],
+    body: UntagEntryRequest,
+  ): Promise<void> {
+    return this._upfetch(`/tags/${encodeURIComponent(tagIds.join(','))}`, {
+      body,
+      headers: createAuthHeaders(accessToken),
+      method: 'DELETE',
+    });
+  }
+
+  /**
    * Untag multiple entries.
    */
   async untagMultipleEntries(
@@ -1031,7 +1056,7 @@ export class FeedlyClient {
     entryIds: string[],
   ): Promise<void> {
     return this._upfetch(
-      `/tags/${tagIds.map(encodeURIComponent).join(',')}/${entryIds.map(encodeURIComponent).join(',')}`,
+      `/tags/${encodeURIComponent(tagIds.join(','))}/${encodeURIComponent(entryIds.join(','))}`,
       {
         headers: createAuthHeaders(accessToken),
         method: 'DELETE',
@@ -1043,7 +1068,7 @@ export class FeedlyClient {
    * Delete tags.
    */
   async deleteTags(accessToken: string, tagIds: string[]): Promise<void> {
-    return this._upfetch(`/tags/${tagIds.map(encodeURIComponent).join(',')}`, {
+    return this._upfetch(`/tags/${encodeURIComponent(tagIds.join(','))}`, {
       headers: createAuthHeaders(accessToken),
       method: 'DELETE',
     });

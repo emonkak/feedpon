@@ -4,9 +4,12 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
-    "./states/*.ts": "./src/states/*.ts"
+    "./actions/*": "./src/actions/*.ts",
+    "./apis/*": "./src/apis/*.ts",
+    "./persistenet/*": "./src/persistenet/*.ts"
   },
   "dependencies": {
+    "@mozilla/readability": "catalog:",
     "barebind": "catalog:",
     "up-fetch": "catalog:",
     "valibot": "catalog:"

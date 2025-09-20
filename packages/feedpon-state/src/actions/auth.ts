@@ -1,44 +1,13 @@
-import type { Reactive } from 'barebind/extras/reactive';
-import type * as v from 'valibot';
+import type { AppAction } from '../action.ts';
+import type { FeedlyCredential } from '../apis/feedly.ts';
 
-import type {
-  FeedlyAuthCode,
-  FeedlyClient,
-  FeedlyCredential,
-  UserProfile,
-} from '../apis/feedly.ts';
-
-export type AuthAction<T> = (context: AuthContext) => T;
-
-export interface AuthContext {
-  authenticator: Authenticator;
-  feedlyClient: FeedlyClient;
-  state$: Reactive<{ authState: AuthState }>;
-}
-
-export class AuthState {
-  authenticating: boolean = false;
-  credential: FeedlyCredential | null = null;
-  userProfile: UserProfile | null = null;
-}
-
-export interface Authenticator {
-  acquireLock(): Promise<void>;
-  releaseLock(): void;
-  authenticate(url: URL): Promise<FeedlyAuthCode>;
-}
-
-export type UserProfile = v.InferOutput<typeof UserProfile>;
-
-export const acquireCredential: AuthAction<Promise<FeedlyCredential>> = ({
-  authenticator,
+export const acquireCredential: AppAction<Promise<FeedlyCredential>> = ({
+  feedlyAuthenticator,
   feedlyClient,
   state$,
 }) => {
-  const authState$ = state$.get('authState');
-
-  return authState$.mutate(async (state) => {
-    await authenticator.acquireLock();
+  return state$.mutate(async (state) => {
+    await feedlyAuthenticator.acquireLock();
 
     try {
       if (state.credential !== null) {
@@ -62,7 +31,7 @@ export const acquireCredential: AuthAction<Promise<FeedlyCredential>> = ({
 
         try {
           const authUrl = feedlyClient.getAuthUrl();
-          const code = await authenticator.authenticate(authUrl);
+          const code = await feedlyAuthenticator.authenticate(authUrl);
           const tokens = await feedlyClient.exchangeCode(code);
           state.credential = {
             id: tokens.id,
@@ -78,18 +47,16 @@ export const acquireCredential: AuthAction<Promise<FeedlyCredential>> = ({
 
       return state.credential;
     } finally {
-      authenticator.releaseLock();
+      feedlyAuthenticator.releaseLock();
     }
   });
 };
 
-export const reloadUserProfile: AuthAction<void> = ({
+export const reloadUserProfile: AppAction<void> = ({
   feedlyClient,
   state$,
 }) => {
-  const authState$ = state$.get('authState');
-
-  return authState$.mutate(async (state) => {
+  return state$.mutate(async (state) => {
     if (state.credential !== null) {
       state.userProfile = await feedlyClient.getUserProfile(
         state.credential.accessToken,
@@ -98,13 +65,8 @@ export const reloadUserProfile: AuthAction<void> = ({
   });
 };
 
-export const revokeCredential: AuthAction<void> = ({
-  feedlyClient,
-  state$,
-}) => {
-  const authState$ = state$.get('authState');
-
-  return authState$.mutate(async (state) => {
+export const revokeCredential: AppAction<void> = ({ feedlyClient, state$ }) => {
+  return state$.mutate(async (state) => {
     if (state.credential !== null) {
       await feedlyClient.logout(state.credential.accessToken);
 

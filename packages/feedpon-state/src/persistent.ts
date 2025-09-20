@@ -1,6 +1,5 @@
 import type { Difference } from 'barebind/extras/reactive';
-import type { Stream } from '../states/stream.ts';
-import type { Feed } from '../states/subscription.ts';
+import type { Feed, Stream } from './state.ts';
 
 export interface PersistentStore {
   addFeed(feed: Feed): Promise<void>;

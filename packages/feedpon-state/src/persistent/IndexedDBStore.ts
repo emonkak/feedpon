@@ -1,6 +1,5 @@
-import type { Stream } from '../states/stream.ts';
-import type { Feed } from '../states/subscription.ts';
-import type { Patch, PersistentStore } from './types.ts';
+import type { Patch, PersistentStore } from '../persistent.ts';
+import type { Feed, Stream } from '../state.ts';
 
 const DB_NAME = 'feedpon';
 const DB_VERSION = 1;
@@ -168,7 +167,7 @@ function iterateCursor(
 function prepareDatabase(): Promise<IDBDatabase> {
   const request = indexedDB.open(DB_NAME, DB_VERSION);
 
-  request.onupgradeneeded = (_event) => {
+  request.addEventListener('upgradeneeded', () => {
     const database = request.result;
 
     database.createObjectStore(PATCHES_STORE, {
@@ -182,7 +181,7 @@ function prepareDatabase(): Promise<IDBDatabase> {
     database.createObjectStore(STREAMS_STORE, {
       keyPath: 'id',
     });
-  };
+  });
 
   return waitForRequest(request);
 }

@@ -92,13 +92,6 @@ export class ImmutableMap<TKey, TValue> implements Iterable<[TKey, TValue]> {
     return this._size;
   }
 
-  /**
-   * @internal
-   */
-  get tree(): ImmutableMap.Tree<TKey, TValue> {
-    return this._tree;
-  }
-
   [Symbol.iterator](): Generator<[TKey, TValue]> {
     return this.entries();
   }
@@ -173,12 +166,6 @@ export class ImmutableMap<TKey, TValue> implements Iterable<[TKey, TValue]> {
     const newSize = oldNodeRef.value === null ? this._size + 1 : this._size;
     return new ImmutableMap(newRoot, newSize);
   }
-}
-
-export function inspectTree<TKey, TValue>({
-  tree,
-}: ImmutableMap<TKey, TValue>): string {
-  return tree === null ? '<empty>' : [...drawBranch(tree, '', '')].join('\n');
 }
 
 function balanceLeft<TKey, TValue>(
@@ -340,28 +327,6 @@ function deleteMin<TKey, TValue>(
   } else {
     oldNodeRef.value = node;
     return blacken(node.right);
-  }
-}
-
-function* drawBranch<TKey, TValue>(
-  tree: ImmutableMap.Branch<TKey, TValue>,
-  parentBorder: string,
-  childBorder: string,
-): Generator<string> {
-  yield parentBorder +
-    (tree.color === RED ? '🔴' : '⚫') +
-    String(tree.key) +
-    ':' +
-    String(tree.value);
-  if (tree.left !== null) {
-    for (const child of drawBranch(tree.left, '+- ', '|  ')) {
-      yield childBorder + child;
-    }
-  }
-  if (tree.right !== null) {
-    for (const child of drawBranch(tree.right, '`- ', '   ')) {
-      yield childBorder + child;
-    }
   }
 }
 
