@@ -1,8 +1,7 @@
 import { createComponent, type RenderContext } from 'barebind';
 import type { RelativeURL } from 'barebind/extras/router';
-import { bindActions } from 'feedpon-flux';
-import { getStoreHook } from 'feedpon-flux/barebind.ts';
-import { toggleSidebar } from 'feedpon-messaging/ui';
+import * as uiActions from 'feedpon-store/actions/ui';
+import { BindActionCreators } from 'feedpon-store/hooks/BindActionCreators';
 
 import { MainLayout } from '../layout/MainLayout.ts';
 import { Navbar } from '../primitives/Navbar.ts';
@@ -17,16 +16,10 @@ export const SettingsPage = createComponent(function SettingsPage(
   { children, url }: SettingsProps,
   $: RenderContext,
 ): unknown {
-  const { onToggleSidebar } = $.use(
-    getStoreHook({
-      mapDispatchToProps: bindActions({
-        onToggleSidebar: toggleSidebar,
-      }),
-    }),
-  );
+  const { toggleSidebar } = $.use(BindActionCreators(uiActions));
 
   const header = Navbar({
-    onToggleSidebar,
+    onSidebarToggle: toggleSidebar,
     children: $.html`
       <h1 class="navbar-title">Settings</h1>
     `,
@@ -50,42 +43,6 @@ export const SettingsPage = createComponent(function SettingsPage(
         children: $.html`
           <i class="u-inline-block u-md-none icon icon-20 icon-news-feed"></i>
           <span class="u-none u-md-inline">Stream</span>
-        `,
-      },
-      {
-        key: 'tracking_url',
-        href: '#/settings/tracking_url',
-        selected: url.pathname === '/settings/tracking_url',
-        children: $.html`
-          <i class="u-inline-block u-md-none icon icon-20 icon-link"></i>
-          <span class="u-none u-md-inline">Tracking URL</span>
-        `,
-      },
-      {
-        key: 'url_replacement',
-        href: '#/settings/url_replacement',
-        selected: url.pathname === '/settings/url_replacement',
-        children: $.html`
-          <i class="u-inline-block u-md-none icon icon-20 icon-replace"></i>
-          <span class="u-none u-md-inline">URL Replacement</span>
-        `,
-      },
-      {
-        key: 'siteinfo',
-        href: '#/settings/siteinfo',
-        selected: url.pathname === '/settings/siteinfo',
-        children: $.html`
-          <i class="u-inline-block u-md-none icon icon-20 icon-database"></i>
-          <span class="u-none u-md-inline">Siteinfo</span>
-        `,
-      },
-      {
-        key: 'keyboard',
-        href: '#/settings/keyboard',
-        selected: url.pathname === '/settings/keyboard',
-        children: $.html`
-          <i class="u-inline-block u-md-none icon icon-20 icon-keyboard"></i>
-          <span class="u-none u-md-inline">Keyboard</span>
         `,
       },
     ],

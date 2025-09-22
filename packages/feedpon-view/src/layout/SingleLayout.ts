@@ -1,9 +1,8 @@
 import { createComponent, type RenderContext } from 'barebind';
-import { getStoreHook } from 'feedpon-flux/barebind.ts';
-import type { State } from 'feedpon-messaging';
+import { AppStore } from 'feedpon-store';
 
 import { NotificationStack } from '../notification/NotificationStack.ts';
-import { OSD } from '../osd/OSD.ts';
+import { OsdStack } from '../osd/OsdStack.ts';
 
 export interface SingleLayoutProps {
   child?: unknown;
@@ -13,13 +12,8 @@ export const SingleLayout = createComponent(function SingleLayout(
   { child }: SingleLayoutProps,
   $: RenderContext,
 ): unknown {
-  const { isLoading } = $.use(
-    getStoreHook({
-      mapStateToProps: (state: State) => ({
-        isLoading: state.backend.isLoading,
-      }),
-    }),
-  );
+  const { state$ } = $.use(AppStore);
+  const authenticating = $.use(state$.get('authenticating'));
 
   return $.html`
     <div class="l-main">
@@ -27,13 +21,13 @@ export const SingleLayout = createComponent(function SingleLayout(
         <${NotificationStack({})}>
       </div>
       <div class="l-osd">
-        <${OSD({})}>
+        <${OsdStack({})}>
       </div>
       <${child}>
     </div>
     <div class="l-backdrop">
       <${
-        isLoading
+        authenticating
           ? $.html`<i class="icon icon-48 icon-spinner animation-rotating"></i>`
           : null
       }>

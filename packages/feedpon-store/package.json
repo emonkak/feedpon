@@ -1,0 +1,21 @@
+{
+  "name": "feedpon-store",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./actions/*": "./src/actions/*.ts",
+    "./apis/*": "./src/apis/*.ts",
+    "./collections/*": "./src/collections/*.ts",
+    "./hooks/*": "./src/hooks/*.ts",
+    "./persistent/*": "./src/persistent/*.ts",
+    "./state": "./src/state.ts"
+  },
+  "dependencies": {
+    "@mozilla/readability": "catalog:",
+    "barebind": "catalog:",
+    "up-fetch": "catalog:",
+    "valibot": "catalog:"
+  },
+  "sideEffects": false
+}

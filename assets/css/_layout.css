@@ -131,8 +131,9 @@
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  width: 100vw;
+  max-width: 768px;
   height: 100vh;
+  margin-inline: auto;
 }
 
 .l-root.is-swiping > .l-sidebar,

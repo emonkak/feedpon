@@ -4,85 +4,61 @@ import {
   route,
   wildcard,
 } from 'barebind/extras/router';
-import type { Store } from 'feedpon-messaging';
-
+import type { AppStore } from 'feedpon-store';
 import { AboutPage } from './about/AboutPage.ts';
 import { CategoriesPage } from './category/CategoriesPage.ts';
 import { DashboardPage } from './dashboard/DashboardPage.ts';
 import { KitchensinkPage } from './kitchensink/KitchensinkPage.ts';
 import { SearchPage } from './search/SearchPage.ts';
-import { KeyboardSettings } from './settings/KeyboardSettings.ts';
+import { AppearanceSettings } from './settings/AppearanceSettings.ts';
 import { SettingsPage } from './settings/SettingsPage.ts';
-import { SiteinfoSettings } from './settings/SiteinfoSettings.ts';
 import { StreamSettings } from './settings/StreamSettings.ts';
-import { TrackingUrlSettings } from './settings/TrackingUrlSettings.ts';
-import { UISettings } from './settings/UISettings.ts';
-import { UrlReplacementSettings } from './settings/UrlReplacementSettings.ts';
 import { StreamPage } from './stream/StreamPage.ts';
 
 export interface RouterState {
   navigator: HistoryNavigator;
-  store: Store;
+  store: AppStore;
 }
 
 export const router = new Router<unknown, RouterState>([
-  route([''], () => DashboardPage({})),
-  route(['about'], (_args, _url, { navigator }) => AboutPage({ navigator })),
+  route([''], (_args, _url, { store }) => DashboardPage({ store })),
+  route(['about'], (_args, _url, { navigator, store }) =>
+    AboutPage({ navigator, store }),
+  ),
   route(
     ['categories'],
-    (_args, _url, { navigator }) => CategoriesPage({ navigator }),
+    (_args, _url, { navigator, store }) => CategoriesPage({ navigator, store }),
     [
-      route([wildcard], ([label], _url, { navigator }) =>
-        CategoriesPage({ label, navigator }),
+      route([wildcard], ([label], _url, { navigator, store }) =>
+        CategoriesPage({ label, navigator, store }),
       ),
     ],
   ),
   route(['kitchensink'], () => KitchensinkPage({})),
-  route(['search'], (_args, _url, { navigator }) => SearchPage({ navigator }), [
-    route([wildcard], ([query], _url, { navigator }) =>
-      SearchPage({
-        navigator,
-        defaultQuery: query,
-      }),
-    ),
-  ]),
+  route(
+    ['search'],
+    (_args, _url, { navigator, store }) => SearchPage({ navigator, store }),
+    [
+      route([wildcard], ([query], _url, { navigator, store }) =>
+        SearchPage({ navigator, query, store }),
+      ),
+    ],
+  ),
   route(['settings'], null, [
-    route(['keyboard'], (_args, url) =>
+    route(['appearance'], (_args, url, { store }) =>
       SettingsPage({
         url,
-        children: KeyboardSettings({}),
+        children: AppearanceSettings({ store }),
       }),
     ),
-    route(['siteinfo'], (_args, url) =>
+    route(['stream'], (_args, url, { store }) =>
       SettingsPage({
         url,
-        children: SiteinfoSettings({}),
-      }),
-    ),
-    route(['stream'], (_args, url) =>
-      SettingsPage({
-        url,
-        children: StreamSettings({}),
-      }),
-    ),
-    route(['tracking_url'], (_args, url) =>
-      SettingsPage({
-        url,
-        children: TrackingUrlSettings({}),
-      }),
-    ),
-    route(['ui'], (_args, url) =>
-      SettingsPage({
-        url,
-        children: UISettings({}),
-      }),
-    ),
-    route(['url_replacement'], (_args, url) =>
-      SettingsPage({
-        url,
-        children: UrlReplacementSettings({}),
+        children: StreamSettings({ store }),
       }),
     ),
   ]),
-  route(['streams', wildcard], ([streamId]) => StreamPage({ streamId })),
+  route(['streams', wildcard], ([streamId], _url, { store }) =>
+    StreamPage({ store, streamId }),
+  ),
 ]);

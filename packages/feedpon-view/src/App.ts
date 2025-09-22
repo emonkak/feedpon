@@ -1,26 +1,26 @@
 import { createComponent, type RenderContext } from 'barebind';
 import { HashHistory, ScrollRestration } from 'barebind/extras/router';
-import type { Store } from 'feedpon-flux';
-import { setStoreHook } from 'feedpon-flux/barebind.ts';
+import type { AppContext, AppStore } from 'feedpon-store';
 
 import { Dispatcher } from './Dispatcher.ts';
 
 export interface AppProps {
-  getStore: () => Promise<Store<unknown, unknown>>;
+  context: AppContext;
+  prepareStore: (context: AppContext) => Promise<AppStore>;
 }
 
 export const App = createComponent(function App(
-  { getStore }: AppProps,
+  { context, prepareStore }: AppProps,
   $: RenderContext,
 ): unknown {
-  const [store, setStore] = $.useState<Store<unknown, unknown> | null>(null);
+  const [store, setStore] = $.useState<AppStore | null>(null);
   const [error, setError] = $.useState<NonNullable<unknown> | null>(null);
 
   $.use(HashHistory());
   $.use(ScrollRestration());
 
   $.useEffect(() => {
-    getStore().then(
+    prepareStore(context).then(
       (store) => {
         setStore(store);
       },
@@ -29,14 +29,14 @@ export const App = createComponent(function App(
         setError(error);
       },
     );
-  }, [getStore]);
+  }, [context, prepareStore]);
 
   if (store === null) {
     return $.html`
       <div class="l-boot">
         <img
           :class=${{
-            _: 'u-margin-bottom-1',
+            'u-margin-bottom-1': true,
             'animation-blinking': !error,
           }}
           src="./img/logo.svg"
@@ -56,7 +56,7 @@ export const App = createComponent(function App(
     `;
   }
 
-  $.use(setStoreHook(store));
+  $.use(store);
 
   return Dispatcher({});
 });

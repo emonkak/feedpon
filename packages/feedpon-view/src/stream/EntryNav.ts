@@ -1,67 +1,49 @@
 import { createComponent, type RenderContext } from 'barebind';
 
+import type { Entry } from 'feedpon-store/state';
+
 interface EntryNavProps {
-  fullContentsIsLoading: boolean;
-  fullContentsIsShown: boolean;
-  isPinned: boolean;
-  isPinning: boolean;
-  onToggleFullContent: (event: Event) => void;
-  onTogglePin: (event: Event) => void;
-  url: string;
+  entry: Entry;
+  isFullContentsLoading: boolean;
+  isFullContentsShown: boolean;
+  onFullContentsToggle: (entryId: string, shown: boolean) => void;
 }
 
 export const EntryNav = createComponent(function EntryNav(
   {
-    fullContentsIsLoading,
-    fullContentsIsShown,
-    isPinned,
-    isPinning,
-    onToggleFullContent,
-    onTogglePin,
+    entry,
+    isFullContentsLoading,
+    isFullContentsShown,
+    onFullContentsToggle,
   }: EntryNavProps,
   $: RenderContext,
 ): unknown {
+  const handleFullContentsToggle = () => {
+    onFullContentsToggle(entry.id, !isFullContentsShown);
+  };
+
   return $.html`
     <nav class="entry-nav">
       <div class="button-toolbar">
         <button
           type="button"
-          class=${[
-            'button',
-            'button-pill',
-            isPinned ? 'button-default' : 'button-outline-default',
-          ].join(' ')}
-          title="Pin"
-          @click=${onTogglePin}
-          disabled=${isPinning}
-        >
-          <i
-            class=${[
-              'icon',
-              'icon-20',
-              isPinning ? 'icon-spinner animation-rotating' : 'icon-pin-3',
-            ].join(' ')}
-          ></i>
-        </button>
-        <button
-          type="button"
-          class=${[
-            'button',
-            'button-pill',
-            fullContentsIsShown ? 'button-default' : 'button-outline-default',
-          ].join(' ')}
           title="Fetch full content"
-          @click=${onToggleFullContent}
-          disabled=${fullContentsIsLoading}
+          disabled=${isFullContentsLoading}
+          :class=${[
+            'button',
+            'button-pill',
+            isFullContentsShown ? 'button-default' : 'button-outline-default',
+          ]}
+          @click=${handleFullContentsToggle}
         >
           <i
-            class=${[
+            :class=${[
               'icon',
               'icon-20',
-              fullContentsIsLoading
+              isFullContentsLoading
                 ? 'icon-spinner animation-rotating'
                 : 'icon-page-overview',
-            ].join(' ')}
+            ]}
           ></i>
         </button>
       </div>

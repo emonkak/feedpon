@@ -1,30 +1,17 @@
 import { createComponent, type ElementRef, type RenderContext } from 'barebind';
 import { type HistoryNavigator, RelativeURL } from 'barebind/extras/router';
-import { bindActions } from 'feedpon-flux';
-import { getStoreHook } from 'feedpon-flux/barebind.ts';
-import type { Category, State, Subscription } from 'feedpon-messaging';
-import {
-  createCategory,
-  createSortedCategoriesSelector,
-  deleteCategory,
-  UNCATEGORIZED,
-  updateCategory,
-} from 'feedpon-messaging/categories';
-import {
-  addToCategory,
-  createAllSubscriptionsSelector,
-  importOpml,
-  removeFromCategory,
-  unsubscribe,
-} from 'feedpon-messaging/subscriptions';
-import { toggleSidebar } from 'feedpon-messaging/ui';
-import createAscendingComparer from 'feedpon-utils/createAscendingComparer.ts';
-import debounce from 'feedpon-utils/debounce.ts';
+
+import type { AppStore } from 'feedpon-store';
+import * as subscriptionActions from 'feedpon-store/actions/subscription';
+import * as uiActions from 'feedpon-store/actions/ui';
+import { BindActionCreators } from 'feedpon-store/hooks/BindActionCreators';
+import type { Subscription } from 'feedpon-store/state';
 
 import { MainLayout } from '../layout/MainLayout.ts';
 import { Dropdown } from '../primitives/Dropdown.ts';
 import { Navbar } from '../primitives/Navbar.ts';
 import { type TabItem, TabList } from '../primitives/TabList.ts';
+import { debounce } from '../primitives/utils/debounce.ts';
 import {
   type BlankSpaces,
   VirtualScrollList,
@@ -35,70 +22,45 @@ import { CategoryForm } from './CategoryForm.ts';
 export interface CategoriesPageProps {
   label?: string;
   navigator: HistoryNavigator;
+  store: AppStore;
 }
 
 export const CategoriesPage = createComponent(function CategoriesPage(
-  { label, navigator }: CategoriesPageProps,
+  { label, navigator, store }: CategoriesPageProps,
   $: RenderContext,
 ): unknown {
-  const categoriesSelector = $.useMemo(
-    () => createSortedCategoriesSelector(),
-    [],
-  );
-  const subscriptionsSelector = $.useMemo(
-    () => createAllSubscriptionsSelector(),
-    [],
-  );
+  const { state$ } = store;
+  const categories = $.use(state$.get('sortedCategories'));
+  const subscriptions = $.use(state$.get('sortedSubscriptions'));
+  const { toggleSidebar } = $.use(BindActionCreators(uiActions));
   const {
-    categories,
-    exportUrl,
-    onAddToCategory,
-    onCreateCategory,
-    onDeleteCategory,
-    onImportOpml,
-    onRemoveFromCategory,
-    onToggleSidebar,
-    onUpdateCategory,
-    onUnsubscribe,
-    subscriptions,
-  } = $.use(
-    getStoreHook({
-      mapStateToProps: (state: State) => {
-        return {
-          categories: categoriesSelector(state),
-          exportUrl: state.backend.exportUrl,
-          subscriptions: subscriptionsSelector(state),
-        };
-      },
-      mapDispatchToProps: bindActions({
-        onAddToCategory: addToCategory,
-        onCreateCategory: createCategory,
-        onDeleteCategory: deleteCategory,
-        onImportOpml: importOpml,
-        onRemoveFromCategory: removeFromCategory,
-        onToggleSidebar: toggleSidebar,
-        onUnsubscribe: unsubscribe,
-        onUpdateCategory: updateCategory,
-      }),
-    }),
-  );
+    createCategory,
+    deleteCategory,
+    deleteSubscription,
+    exportOpml,
+    importOpml,
+    updateCategory,
+    updateSubscription,
+  } = $.use(BindActionCreators(subscriptionActions));
   const [query, setQuery] = $.useState('');
   const searchInputRef = $.useRef<HTMLInputElement | null>(null);
   const uploadInputRef = $.useRef<HTMLInputElement | null>(null);
 
   const activeCategory = $.useMemo(
-    () => categories.find((category) => category.label === label) ?? null,
+    () =>
+      label !== undefined
+        ? (categories.find((category) => category.label === label) ?? null)
+        : null,
     [categories, label],
   );
 
   const selectedSubscriptions = $.useMemo(() => {
-    return Object.values(subscriptions)
-      .filter(
-        label
-          ? (subscription) => subscription.labels.includes(label)
-          : (subscription) => subscription.labels.length === 0,
-      )
-      .sort(createAscendingComparer<Subscription>('subscriptionId'));
+    return Object.values(subscriptions).filter(
+      label !== undefined
+        ? (subscription) =>
+            subscription.categories.some((category) => category.label === label)
+        : (subscription) => subscription.categories.length === 0,
+    );
   }, [subscriptions, label]);
 
   const renderSubscriptionItem = $.useCallback(
@@ -110,10 +72,9 @@ export const CategoriesPage = createComponent(function CategoriesPage(
     ) =>
       SubscriptionView({
         categories,
-        onAddToCategory,
-        onCreateCategory,
-        onRemoveFromCategory,
-        onUnsubscribe,
+        onCategoryCreate: createCategory,
+        onSubscriptionDelete: deleteSubscription,
+        onSubscriptionUpdate: updateSubscription,
         subscription,
       }),
     [categories],
@@ -145,15 +106,21 @@ export const CategoriesPage = createComponent(function CategoriesPage(
     const reader = new FileReader();
 
     reader.onload = (_event) => {
-      onImportOpml(reader.result as string);
+      importOpml(reader.result as string);
     };
 
     reader.readAsText(file);
   }, []);
 
-  const handleUpdateCategory = $.useCallback(
-    (category: Category, newLabel: string) => {
-      onUpdateCategory(category, newLabel);
+  const handleCategoryDelete = $.useCallback(async (categoryId: string) => {
+    await deleteCategory(categoryId);
+
+    navigator.navigate(new RelativeURL('/categories/'), { replace: true });
+  }, []);
+
+  const handleCategoryUpdate = $.useCallback(
+    async (categoryId: string, newLabel: string) => {
+      await updateCategory(categoryId, newLabel);
 
       navigator.navigate(
         new RelativeURL('/categories/' + encodeURIComponent(newLabel)),
@@ -167,10 +134,6 @@ export const CategoriesPage = createComponent(function CategoriesPage(
     uploadInputRef.current?.click();
   }, []);
 
-  const handleExportOpml = $.useCallback(() => {
-    window.open(exportUrl, '_blank');
-  }, [exportUrl]);
-
   const handleSelectCategory = $.useCallback((_event: Event, key: string) => {
     navigator.navigate(
       new RelativeURL('/categories/' + encodeURIComponent(key)),
@@ -182,7 +145,7 @@ export const CategoriesPage = createComponent(function CategoriesPage(
     const normalizedQuery = query.trim().toLowerCase();
     if (normalizedQuery === '') {
       return selectedSubscriptions.map((subscription) => ({
-        id: subscription.subscriptionId,
+        id: subscription.id,
         subscription,
       }));
     }
@@ -194,25 +157,25 @@ export const CategoriesPage = createComponent(function CategoriesPage(
         const input = (
           subscription.title +
           ' ' +
-          subscription.url
+          subscription.website
         ).toLowerCase();
         return tokens.every((query) => input.includes(query));
       })
       .map((subscription) => ({
-        id: subscription.subscriptionId,
+        id: subscription.id,
         subscription,
       }));
   }, [query, selectedSubscriptions]);
 
   const dropdown = Dropdown({
-    trigger: ({ id, onToggle, open }, context) => context.html`
+    trigger: ({ id, onMenuToggle, open }, context) => context.html`
           <button
             aria-expanded=${open.toString()}
             aria-label="Toggle menu"
             class="navbar-action"
             id=${id}
             type="button"
-            @click=${onToggle}
+            @click=${onMenuToggle}
           >
             <i
               aria-hidden
@@ -236,13 +199,13 @@ export const CategoriesPage = createComponent(function CategoriesPage(
         children: $.html`
           <div class="MenuItem-content">Export OPML...</div>
         `,
-        onAction: handleExportOpml,
+        onAction: exportOpml,
       },
     ],
   });
 
   const header = Navbar({
-    onToggleSidebar,
+    onSidebarToggle: toggleSidebar,
     children: $.html`
       <h1 class="navbar-title">Organize subscriptions</h1>
       <${dropdown}>
@@ -258,14 +221,14 @@ export const CategoriesPage = createComponent(function CategoriesPage(
   const tabList = TabList({
     items: [
       {
-        key: UNCATEGORIZED,
-        children: $.html`Uncategorized`,
-        selected: label === UNCATEGORIZED,
+        key: '',
+        children: $.text`Uncategorized`,
+        selected: label === undefined,
       } as TabItem,
     ].concat(
       categories.map((category) => ({
-        key: category.label,
-        children: $.html`${category.label}`,
+        key: category.label ?? '',
+        children: $.text`${category.label}`,
         selected: label === category.label,
       })),
     ),
@@ -289,8 +252,8 @@ export const CategoriesPage = createComponent(function CategoriesPage(
         activeCategory !== null
           ? CategoryForm({
               category: activeCategory,
-              onCategoryUpdate: handleUpdateCategory,
-              onCategoryDelete: onDeleteCategory,
+              onCategoryUpdate: handleCategoryUpdate,
+              onCategoryDelete: handleCategoryDelete,
             })
           : null
       }>

@@ -1,119 +1,62 @@
 import { createComponent, type RenderContext, Repeat } from 'barebind';
 import { LocalAtom } from 'barebind/extras/hooks';
-import { type HistoryNavigator, RelativeURL } from 'barebind/extras/router';
-import { bindActions } from 'feedpon-flux';
-import { getStoreHook } from 'feedpon-flux/barebind.ts';
-import type { State } from 'feedpon-messaging';
-import {
-  createCategory,
-  createSortedCategoriesSelector,
-} from 'feedpon-messaging/categories';
-import { searchFeeds } from 'feedpon-messaging/search';
-import {
-  addToCategory,
-  removeFromCategory,
-  subscribe,
-  unsubscribe,
-} from 'feedpon-messaging/subscriptions';
-import { toggleSidebar } from 'feedpon-messaging/ui';
+import type { HistoryNavigator } from 'barebind/extras/router';
+import type { AppStore } from 'feedpon-store';
+import * as searchActions from 'feedpon-store/actions/search';
+import * as subscriptionActions from 'feedpon-store/actions/subscription';
+import * as uiActions from 'feedpon-store/actions/ui';
+import { BindActionCreators } from 'feedpon-store/hooks/BindActionCreators';
+
 import { MainLayout } from '../layout/MainLayout.ts';
-import { createPreviousHook } from '../primitives/hooks/previousHook.ts';
 import { Navbar } from '../primitives/Navbar.ts';
-import { FeedView } from './FeedView.ts';
+import { SearchResultView } from './SearchResultView.ts';
 
 export interface SearchPageProps {
-  defaultQuery?: string;
   navigator: HistoryNavigator;
+  store: AppStore;
+  query?: string;
 }
 
 export const SearchPage = createComponent(function SearchPage(
-  { defaultQuery = '', navigator }: SearchPageProps,
+  { store, query }: SearchPageProps,
   $: RenderContext,
 ): unknown {
-  const sortedCategoriesSelector = $.useMemo(
-    () => createSortedCategoriesSelector(),
-    [],
-  );
+  const { state$ } = store;
+  const categories = $.use(state$.get('sortedCategories'));
+  const searchQuery = $.use(state$.get('searchQuery'));
+  const searchResults = $.use(state$.get('searchResults'));
+  const searching = $.use(state$.get('searching'));
+  const subscriptions = $.use(state$.get('subscriptions'));
+
+  const query$ = $.use(LocalAtom(query ?? searchQuery));
+
+  const { searchFeeds } = $.use(BindActionCreators(searchActions));
   const {
-    activeQuery,
-    categories,
-    feeds,
-    isLoaded,
-    isLoading,
-    onAddToCategory,
-    onCreateCategory,
-    onRemoveFromCategory,
-    onSearchFeeds,
-    onSubscribe,
-    onToggleSidebar,
-    onUnsubscribe,
-    subscriptions,
-  } = $.use(
-    getStoreHook({
-      mapStateToProps: (state: State) => ({
-        activeQuery: state.search.query,
-        categories: sortedCategoriesSelector(state),
-        feeds: state.search.feeds,
-        isLoaded: state.search.isLoaded,
-        isLoading: state.search.isLoading,
-        subscriptions: state.subscriptions.items,
-      }),
-      mapDispatchToProps: bindActions({
-        onAddToCategory: addToCategory,
-        onCreateCategory: createCategory,
-        onRemoveFromCategory: removeFromCategory,
-        onSearchFeeds: searchFeeds,
-        onSubscribe: subscribe,
-        onToggleSidebar: toggleSidebar,
-        onUnsubscribe: unsubscribe,
-      }),
-    }),
-  );
-
-  const previousActiveQuery = $.use(createPreviousHook(activeQuery));
-  const currentQuery$ = $.use(LocalAtom(defaultQuery));
-
-  if (
-    previousActiveQuery !== null &&
-    activeQuery !== previousActiveQuery &&
-    activeQuery !== currentQuery$.value
-  ) {
-    currentQuery$.value = activeQuery;
-  }
-
-  $.useEffect(() => {
-    if (defaultQuery !== '') {
-      onSearchFeeds(defaultQuery);
-    }
-  }, [defaultQuery]);
+    createSubscription,
+    createCategory,
+    updateSubscription,
+    deleteSubscription,
+  } = $.use(BindActionCreators(subscriptionActions));
+  const { toggleSidebar } = $.use(BindActionCreators(uiActions));
 
   const handleChange = $.useCallback((event: Event) => {
-    const newValue = (event.currentTarget as HTMLInputElement).value;
-    currentQuery$.value = newValue;
+    query$.value = (event.currentTarget as HTMLInputElement).value;
   }, []);
 
   const handleSearch = $.useCallback((event: SubmitEvent) => {
     event.preventDefault();
-
-    if (currentQuery$.value !== '') {
-      navigator.navigate(
-        new RelativeURL('/search/' + encodeURIComponent(currentQuery$.value)),
-        { replace: true },
-      );
-    }
+    searchFeeds(query$.value);
   }, []);
 
   const header = Navbar({
-    onToggleSidebar,
+    onSidebarToggle: toggleSidebar,
     children: $.html`<div class="navbar-title">Search</div>`,
   });
 
-  let searchResult: unknown;
+  let searchResultList: unknown;
 
-  if (activeQuery === '' || activeQuery !== defaultQuery) {
-    searchResult = null;
-  } else if (isLoading) {
-    searchResult = $.html`
+  if (searching) {
+    searchResultList = $.html`
       <ol className="list-group">
         <${Repeat({
           source: new Array(10),
@@ -134,29 +77,31 @@ export const SearchPage = createComponent(function SearchPage(
         })}>
       </ol>
     `;
-  } else if (isLoaded && feeds.length === 0) {
-    searchResult = $.html`
-      <p>Your search "<strong>${activeQuery}</strong>" did not match any feeds.</p>
-    `;
+  } else if (searchResults !== null) {
+    searchResultList =
+      searchResults.length > 0
+        ? $.html`
+          <ol class="list-group">
+            <${Repeat({
+              source: searchResults,
+              valueSelector: (searchResult) =>
+                SearchResultView({
+                  categories,
+                  onCategoryCreate: createCategory,
+                  onSubscriptionCreate: createSubscription,
+                  onSubscriptionDelete: deleteSubscription,
+                  onSubscriptionUpdate: updateSubscription,
+                  searchResult,
+                  subscription: subscriptions.get(searchResult.feedId) ?? null,
+                }),
+            })}>
+          </ol>
+        `
+        : $.html`
+          <p>Your search "<strong>${searchQuery}</strong>" did not match any feeds.</p>
+        `;
   } else {
-    searchResult = $.html`
-      <ol class="list-group">
-        <${Repeat({
-          source: feeds,
-          valueSelector: (feed) =>
-            FeedView({
-              categories,
-              feed,
-              onAddToCategory,
-              onCreateCategory,
-              onRemoveFromCategory,
-              onSubscribe,
-              onUnsubscribe,
-              subscription: subscriptions[feed.streamId] ?? null,
-            }),
-        })}>
-      </ol>
-    `;
+    searchResultList = null;
   }
 
   const content = $.html`
@@ -168,7 +113,7 @@ export const SearchPage = createComponent(function SearchPage(
             class="form-control"
             placeholder="Search by title, URL, or topic"
             type="search"
-            .value=${currentQuery$}
+            $value=${query$}
             @change=${handleChange}
           >
           <button type="submit" class="button button-positive">
@@ -176,7 +121,7 @@ export const SearchPage = createComponent(function SearchPage(
           </button>
         </div>
       </form>
-      <${searchResult}>
+      <${searchResultList}>
     </div>
   `;
 

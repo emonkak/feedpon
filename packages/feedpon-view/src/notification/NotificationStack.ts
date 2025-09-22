@@ -1,9 +1,7 @@
 import { createComponent, type RenderContext, Repeat } from 'barebind';
-import { bindActions } from 'feedpon-flux';
-import { getStoreHook } from 'feedpon-flux/barebind.ts';
-import type { State } from 'feedpon-messaging';
-import { dismissNotification } from 'feedpon-messaging/notifications';
-
+import { AppStore } from 'feedpon-store';
+import * as uiActions from 'feedpon-store/actions/ui';
+import { BindActionCreators } from 'feedpon-store/hooks/BindActionCreators';
 import { NotificationView } from './NotificationView.ts';
 
 export interface NotificationStackProps {}
@@ -12,16 +10,9 @@ export const NotificationStack = createComponent(function NotificationStack(
   {}: NotificationStackProps,
   $: RenderContext,
 ): unknown {
-  const { notifications, onDismissNotification } = $.use(
-    getStoreHook({
-      mapStateToProps: (state: State) => ({
-        notifications: state.notifications.items,
-      }),
-      mapDispatchToProps: bindActions({
-        onDismissNotification: dismissNotification,
-      }),
-    }),
-  );
+  const { state$ } = $.use(AppStore);
+  const notifications = $.use(state$.get('notifications'));
+  const { dismissNotification } = $.use(BindActionCreators(uiActions));
 
   return $.html`
     <div class="notification-list">
@@ -31,7 +22,7 @@ export const NotificationStack = createComponent(function NotificationStack(
         valueSelector: (notification) =>
           NotificationView({
             notification,
-            onDismiss: onDismissNotification,
+            dismissNotification,
           }),
       })}>
     </div>

@@ -4,9 +4,8 @@ import {
   type RenderContext,
 } from 'barebind';
 import { CurrentHistory } from 'barebind/extras/router';
-import { getStoreHook } from 'feedpon-flux/barebind.ts';
-import type { State, Store, ThemeKind } from 'feedpon-messaging';
-import { THEMES } from 'feedpon-messaging/ui';
+import { AppStore } from 'feedpon-store';
+import type { Theme } from 'feedpon-store/state';
 
 import { AuthenticationPage } from './authentication/AuthenticationPage.ts';
 import { SidebarLayout } from './layout/SidebarLayout.ts';
@@ -19,22 +18,18 @@ export const Dispatcher = createComponent(function Dispatcher(
   _props: DispatcherProps,
   $: RenderContext,
 ): unknown {
-  const { store, customStyles, isAuthenticated, theme } = $.use(
-    getStoreHook({
-      mapStateToProps: (state: State) => ({
-        customStyles: state.ui.customStyles,
-        isAuthenticated: !!state.backend.token,
-        theme: state.ui.theme,
-      }),
-      mapStoreToProps: (store) => ({ store: store as Store }),
-    }),
-  );
-  const [location, navigator] = $.use(CurrentHistory);
+  const store = $.use(AppStore);
+  const { state$ } = store;
+  const userStyle = $.use(state$.get('userStyle'));
+  const credential = $.use(state$.get('credential'));
+  const theme = $.use(state$.get('theme'));
 
-  $.use(styleHook(customStyles));
-  $.use(themeHook(theme));
+  const { location, navigator } = $.use(CurrentHistory);
 
-  if (!isAuthenticated) {
+  $.use(UserStyle(userStyle));
+  $.use(Theme(theme));
+
+  if (credential === null) {
     return SingleLayout({
       child: AuthenticationPage({}),
     });
@@ -47,7 +42,7 @@ export const Dispatcher = createComponent(function Dispatcher(
   });
 });
 
-function styleHook(rule: string): CustomHookFunction<void> {
+function UserStyle(rule: string): CustomHookFunction<void> {
   return (context) => {
     context.useInsertionEffect(() => {
       const style = document.createElement('style');
@@ -65,19 +60,13 @@ function styleHook(rule: string): CustomHookFunction<void> {
   };
 }
 
-function themeHook(theme: ThemeKind): CustomHookFunction<void> {
+function Theme(theme: Theme): CustomHookFunction<void> {
   return (context) => {
     context.useLayoutEffect(() => {
-      for (const THEME of THEMES) {
-        if (THEME.value !== theme) {
-          document.body.classList.remove(THEME.value);
-        }
-      }
-
-      document.body.classList.add(theme);
+      document.body.dataset['theme'] = theme;
 
       return () => {
-        document.body.classList.remove(theme);
+        document.body.dataset['theme'] = undefined;
       };
     }, [theme]);
   };

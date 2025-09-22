@@ -1,33 +1,30 @@
 import { createComponent, type RenderContext } from 'barebind';
 
 interface StreamFooterProps {
-  canMarkAllEntriesAsRead: boolean;
+  canMarkAsRead: boolean;
   hasMoreEntries: boolean;
-  isLoading: boolean;
-  onLoadMoreEntries: () => void;
-  onMarkAllEntiresAsRead: () => void;
+  isStreamLoading: boolean;
+  onStreamLoadMoreEntries: () => void;
+  onStreamMarkAsRead: () => void;
 }
 
 export const StreamFooter = createComponent(function StreamFooter(
   {
-    canMarkAllEntriesAsRead,
+    canMarkAsRead,
     hasMoreEntries,
-    isLoading,
-    onMarkAllEntiresAsRead,
-    onLoadMoreEntries,
+    isStreamLoading,
+    onStreamLoadMoreEntries,
+    onStreamMarkAsRead,
   }: StreamFooterProps,
   $: RenderContext,
 ): unknown {
-  const handleLoadMoreEntries = $.useCallback(
-    (event: Event) => {
-      event.preventDefault();
-      onLoadMoreEntries();
-    },
-    [onLoadMoreEntries],
-  );
+  const handleStreamFetch = (event: Event) => {
+    event.preventDefault();
+    onStreamLoadMoreEntries();
+  };
 
   if (hasMoreEntries) {
-    if (isLoading) {
+    if (isStreamLoading) {
       return $.html`
         <footer class="stream-footer">
           <i class="icon icon-32 icon-spinner animation-rotating"></i>
@@ -37,7 +34,7 @@ export const StreamFooter = createComponent(function StreamFooter(
 
     return $.html`
       <footer class="stream-footer">
-        <a class="link-strong" href="#" @click=${handleLoadMoreEntries}>
+        <a class="link-strong" href="#" @click=${handleStreamFetch}>
           Load more entries...
         </a>
       </footer>
@@ -51,8 +48,8 @@ export const StreamFooter = createComponent(function StreamFooter(
         <button
           type="button"
           class="button button-positive"
-          disabled=${!canMarkAllEntriesAsRead}
-          @click=${onMarkAllEntiresAsRead}
+          disabled=${!canMarkAsRead}
+          @click=${onStreamMarkAsRead}
         >
           Mark all entries as read
         </button>

@@ -1,16 +1,15 @@
 import { createComponent, type RenderContext, Repeat } from 'barebind';
 import { type HistoryNavigator, RelativeURL } from 'barebind/extras/router';
-import { bindActions } from 'feedpon-flux';
-import { getStoreHook } from 'feedpon-flux/barebind.ts';
-import type { State } from 'feedpon-messaging';
-import { toggleSidebar } from 'feedpon-messaging/ui';
-
+import type { AppStore } from 'feedpon-store';
+import * as uiActions from 'feedpon-store/actions/ui';
+import { BindActionCreators } from 'feedpon-store/hooks/BindActionCreators';
 import { MainLayout } from '../layout/MainLayout.ts';
 import { Dropdown } from '../primitives/Dropdown.ts';
 import { Navbar } from '../primitives/Navbar.ts';
 
 export interface AboutPageProps {
   navigator: HistoryNavigator;
+  store: AppStore;
 }
 
 const USING_LIBRARIES = [
@@ -44,30 +43,23 @@ SOFTWARE.
 ];
 
 export const AboutPage = createComponent(function AboutPage(
-  { navigator }: AboutPageProps,
+  { store, navigator }: AboutPageProps,
   $: RenderContext,
 ): unknown {
-  const { onToggleSidebar, version } = $.use(
-    getStoreHook({
-      mapStateToProps: (state: State) => ({
-        version: state.version,
-      }),
-      mapDispatchToProps: bindActions({
-        onToggleSidebar: toggleSidebar,
-      }),
-    }),
-  );
+  const { state$ } = store;
+  const { toggleSidebar } = $.use(BindActionCreators(uiActions));
+  const version = $.use(state$.get('version'));
 
   const handleGoKitchensink = $.useCallback(() => {
     navigator.navigate(new RelativeURL('/kitchensink'));
   }, []);
 
   const header = Navbar({
-    onToggleSidebar,
+    onSidebarToggle: toggleSidebar,
     children: $.html`
       <h1 class="navbar-title">About</h1>
       <${Dropdown({
-        trigger: ({ id, onToggle, open }, context) => context.html`
+        trigger: ({ id, onMenuToggle, open }, context) => context.html`
           <button
             aria-label="Open menu"
             aria-expanded=${open.toString()}
@@ -75,7 +67,7 @@ export const AboutPage = createComponent(function AboutPage(
             class="navbar-action"
             id=${id}
             type="button"
-            @click=${onToggle}
+            @click=${onMenuToggle}
           >
             <i
               aria-hidden

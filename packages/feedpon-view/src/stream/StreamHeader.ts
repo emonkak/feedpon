@@ -1,113 +1,85 @@
 import { createComponent, type RenderContext } from 'barebind';
-import type {
-  Entry,
-  EntryOrderKind,
-  Feed,
-  StreamFetchOptions,
-  StreamViewKind,
-} from 'feedpon-messaging';
+import type { Session, SessionSettings, Stream } from 'feedpon-store/state';
 
 import { Navbar } from '../primitives/Navbar.ts';
-import { EntryDisplaySettingsDropdown } from './EntryDisplaySettingsDropdown.ts';
-import { StreamFetchOptionsDropdown } from './StreamFetchOptionsDropdown.ts';
+import { SessionSettingsDropdown } from './SessionSettingsDropdown.ts';
+import { StreamDropdown } from './StreamDropdown.ts';
 
 interface StreamNavbarProps {
-  activeEntryIndex: number;
-  canMarkStreamAsRead: boolean;
-  entries: Entry[];
-  feed: Feed | null;
-  fetchOptions: StreamFetchOptions | null;
-  isExpanded: boolean;
-  isLoading: boolean;
-  keepUnread: boolean;
-  onChangeEntryOrder: (order: EntryOrderKind) => void;
-  onChangeNumberOfEntries: (numEntries: number) => void;
-  onChangeStreamView: (streamView: StreamViewKind) => void;
-  onClearReadPosition: () => void;
-  onCloseEntry: () => void;
-  onMarkStreamAsRead: () => void;
-  onReloadEntries: () => void;
-  onScrollToEntry: (index: number) => void;
-  onToggleOnlyUnread: () => void;
-  onToggleSidebar: () => void;
-  onToggleKeepUneread: () => void;
-  readEntryIndex: number;
-  streamView: StreamViewKind;
-  title: string;
+  isStreamLoading: boolean;
+  isStreamUpdating: boolean;
+  onEntrySelect: (index: number) => void;
+  onEntryShrink: () => void;
+  onSessionSettingsUpdate: (
+    newSessionSettings: SessionSettings,
+    oldSessionSettings: SessionSettings,
+  ) => void;
+  onSidebarToggle: () => void;
+  onStreamMarkAsRead: () => Promise<void>;
+  onStreamReload: () => Promise<void>;
+  session: Session | null;
+  stream: Stream | null;
 }
 
 export const StreamHeader = createComponent(function StreamHeader(
   {
-    activeEntryIndex,
-    canMarkStreamAsRead,
-    entries,
-    fetchOptions,
-    isExpanded,
-    isLoading,
-    keepUnread,
-    onChangeEntryOrder,
-    onChangeNumberOfEntries,
-    onChangeStreamView,
-    onClearReadPosition,
-    onCloseEntry,
-    onMarkStreamAsRead,
-    onReloadEntries,
-    onScrollToEntry,
-    onToggleOnlyUnread,
-    onToggleSidebar,
-    onToggleKeepUneread,
-    readEntryIndex,
-    streamView,
-    title,
+    isStreamLoading,
+    isStreamUpdating,
+    onEntrySelect,
+    onEntryShrink,
+    onSessionSettingsUpdate,
+    onSidebarToggle,
+    onStreamReload,
+    onStreamMarkAsRead,
+    session,
+    stream,
   }: StreamNavbarProps,
   $: RenderContext,
 ): unknown {
   return Navbar({
-    onToggleSidebar,
-    progress: entries.length > 0 ? activeEntryIndex / entries.length : 0,
+    onSidebarToggle,
+    progress:
+      stream !== null && session !== null && stream.items.length > 0
+        ? session.focusIndex / stream.items.length
+        : 0,
     children: $.html`
       <h1 class="navbar-title">
-        <span class="stream-title u-text-truncate">${title}</span>
+        <span class="stream-title u-text-truncate">${stream?.title ?? ''}</span>
       </h1>
       <button
         type="button"
-        disabled=${isLoading}
+        disabled=${isStreamLoading}
         class="navbar-action"
-        @click=${onReloadEntries}
+        @click=${onStreamReload}
       >
         <i class="icon icon-24 icon-refresh"></i>
       </button>
-      <${EntryDisplaySettingsDropdown({
-        activeEntryIndex,
-        canMarkStreamAsRead,
-        entries,
-        keepUnread,
-        onClearReadPosition,
-        onMarkStreamAsRead,
-        onScrollToEntry,
-        onToggleKeepUneread,
-        readEntryIndex,
-        title,
-      })}>
       <${
-        isExpanded
+        session !== null && stream !== null
+          ? StreamDropdown({
+              isStreamUpdating,
+              onEntrySelect,
+              onStreamMarkAsRead,
+              session,
+              stream,
+            })
+          : null
+      }>
+      <${
+        session !== null && session.expandedIndex >= 0
           ? $.html`
-            <button type="button" class="navbar-action" @click=${onCloseEntry}>
+            <button type="button" class="navbar-action" @click=${onEntryShrink}>
               <i class="icon icon-24 icon-close"></i>
             </button>
           `
           : null
       }>
       <${
-        !isExpanded && fetchOptions
-          ? StreamFetchOptionsDropdown({
-              fetchOptions,
-              isLoading,
-              onChangeEntryOrder,
-              onChangeNumberOfEntries,
-              onChangeStreamView,
-              onToggleOnlyUnread,
-              streamView,
+        session !== null && session.expandedIndex < 0
+          ? SessionSettingsDropdown({
+              disabled: isStreamLoading,
+              sessionSettings: session.settings,
+              onSessionSettingsUpdate,
             })
           : null
       }>

@@ -4,8 +4,9 @@ import {
   createComponent,
   type RenderContext,
 } from 'barebind';
-import debounce from 'feedpon-utils/debounce.ts';
+
 import { Menu, type MenuItem, type MenuRef } from './Menu.ts';
+import { debounce } from './utils/debounce.ts';
 
 interface AutoCompleteProps<T = unknown> {
   debounceTime?: number;
@@ -126,7 +127,7 @@ export const AutoComplete: AutoComplete = createComponent(function AutoComplete<
   return $.html`
     <div
       :class=${{
-        _: 'AutoComplete',
+        AutoComplete: true,
         'is-open': open,
       }}
       :ref=${autocompleteRef}
@@ -150,7 +151,7 @@ export const AutoComplete: AutoComplete = createComponent(function AutoComplete<
           autoFocus: false,
           manual: true,
           onItemAction: closeDropdown,
-          onToggle: handleMenuToggle,
+          onMenuToggle: handleMenuToggle,
           open: open,
           ref: menuRef,
         })}>

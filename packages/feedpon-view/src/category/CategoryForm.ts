@@ -1,19 +1,26 @@
 import { createComponent, type RenderContext } from 'barebind';
 import { LocalAtom } from 'barebind/extras/hooks';
-import type { Category } from 'feedpon-messaging';
+import type { Category } from 'feedpon-store/state';
+
 import { openAlertDialog } from '../primitives/AlertDialog.ts';
 
 interface CategoryFormProps {
   category: Category;
-  onCategoryDelete: (categoryId: string | number, label: string) => void;
-  onCategoryUpdate: (category: Category, newLabel: string) => void;
+  onCategoryDelete: (categoryId: string) => Promise<void>;
+  onCategoryUpdate: (
+    categoryId: string,
+    newLabel: string,
+    oldLabel: string,
+  ) => Promise<void>;
 }
 
 export const CategoryForm = createComponent(function CategoryForm(
   { category, onCategoryDelete, onCategoryUpdate }: CategoryFormProps,
   $: RenderContext,
 ): unknown {
-  const currentLabel$ = $.use(LocalAtom(category.label));
+  const [isLoading, setIsLoading] = $.useState(false);
+
+  const newLabel$ = $.use(LocalAtom(category.label ?? ''));
 
   const handleDelete = $.useCallback(() => {
     openAlertDialog(
@@ -24,8 +31,13 @@ export const CategoryForm = createComponent(function CategoryForm(
         cancelButton: ({ onCancel }, context) => context.html`
           <button class="button button-outline-default" type="button" @click=${onCancel}>Cancel</button>
         `,
-        onConfirm: () => {
-          onCategoryDelete(category.categoryId, category.label);
+        onConfirm: async () => {
+          setIsLoading(true);
+          try {
+            await onCategoryDelete(category.id);
+          } finally {
+            setIsLoading(false);
+          }
         },
         title: `Delete "${category.label}"`,
         message: 'Are you sure you want to delete this category?',
@@ -43,10 +55,19 @@ export const CategoryForm = createComponent(function CategoryForm(
         cancelButton: ({ onCancel }, context) => context.html`
           <button class="button button-outline-default" type="button" @click=${onCancel}>Cancel</button>
         `,
-        onConfirm: () => {
-          onCategoryUpdate(category, currentLabel$.value);
+        onConfirm: async () => {
+          setIsLoading(true);
+          try {
+            await onCategoryUpdate(
+              category.id,
+              newLabel$.value,
+              category.label ?? '',
+            );
+          } finally {
+            setIsLoading(false);
+          }
         },
-        title: `Rename "${category.label}" to "${currentLabel$.value}"`,
+        title: `Rename "${category.label}" to "${newLabel$.value}"`,
         message: 'Are you sure you want to change the label of this category?',
       },
       $,
@@ -54,7 +75,7 @@ export const CategoryForm = createComponent(function CategoryForm(
   }, [category, onCategoryUpdate]);
 
   const handleChangeLabel = $.useCallback((event: Event) => {
-    currentLabel$.value = (event.currentTarget as HTMLInputElement).value;
+    newLabel$.value = (event.currentTarget as HTMLInputElement).value;
   }, []);
 
   return $.html`
@@ -65,16 +86,16 @@ export const CategoryForm = createComponent(function CategoryForm(
           class="form-control"
           required
           type="text"
-          $value=${currentLabel$}
+          $value=${newLabel$}
           @input=${handleChangeLabel}
         >
         <button
           type="button"
           class="button button-positive"
           disabled=${
-            category.isLoading ||
-            currentLabel$.value === '' ||
-            currentLabel$.value === category.label
+            isLoading ||
+            newLabel$.value === '' ||
+            newLabel$.value === category.label
           }
           @click=${handleUpdate}
         >
@@ -82,7 +103,7 @@ export const CategoryForm = createComponent(function CategoryForm(
         </button>
         <button
           class="button button-negative"
-          disabled=${category.isLoading}
+          disabled=${isLoading}
           type="button"
           @click=${handleDelete}
         >

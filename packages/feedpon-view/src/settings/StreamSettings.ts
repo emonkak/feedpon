@@ -1,117 +1,81 @@
-import { createComponent, type RenderContext } from 'barebind';
-import { LocalAtom } from 'barebind/extras/hooks';
-import { bindActions } from 'feedpon-flux';
-import { getStoreHook } from 'feedpon-flux/barebind.ts';
-import type { State, StreamViewKind } from 'feedpon-messaging';
-import {
-  changeDefaultStreamFetchOptions,
-  changeDefaultStreamView,
-  changeStreamCacheCapacity,
-  changeStreamHistoryOptions,
-  clearStreamCaches,
-} from 'feedpon-messaging/streams';
+import { createComponent, type RenderContext, Repeat } from 'barebind';
+import { LocalAtom, LocalComputed } from 'barebind/extras/hooks';
+import type { AppStore } from 'feedpon-store';
+import * as streamActions from 'feedpon-store/actions/stream';
+import { BindActionCreators } from 'feedpon-store/hooks/BindActionCreators';
+import type { StreamLayout, EntriesOrdering } from 'feedpon-store/state';
 import { openAlertDialog } from '../primitives/AlertDialog.ts';
 
-export interface StreamSettingsProps {}
+export interface StreamSettingsProps {
+  store: AppStore;
+}
 
 export const StreamSettings = createComponent(function StreamSettings(
-  {}: StreamSettingsProps,
+  { store }: StreamSettingsProps,
   $: RenderContext,
 ): unknown {
-  const {
-    cacheCapacity: initialCacheCapacity,
-    fetchOptions: initialFetchOptions,
-    numStreamHistories: initialNumStreamHistories,
-    onChangeDefaultStreamFetchOptions,
-    onChangeDefaultStreamView,
-    onChangeStreamHistoryOptions,
-    onChangeStreamCacheCapacity,
-    onClearStreamCaches,
-    streamView: initialStreamView,
-  } = $.use(
-    getStoreHook({
-      mapStateToProps: (state: State) => ({
-        cacheCapacity: state.streams.items.capacity,
-        fetchOptions: state.streams.defaultFetchOptions,
-        numStreamHistories: state.histories.recentlyReadStreams.capacity,
-        streamView: state.streams.defaultStreamView,
+  const { state$ } = store;
+  const currentDefaultSessionSettings = $.use(
+    state$.get('defaultSessionSettings'),
+  );
+  const currentStreamSettings = $.use(state$.get('streamSettings'));
+
+  const count$ = $.use(LocalAtom(currentDefaultSessionSettings.count));
+  const ranked$ = $.use(LocalAtom(currentDefaultSessionSettings.ranked));
+  const layout$ = $.use(LocalAtom(currentDefaultSessionSettings.layout));
+  const unreadOnly$ = $.use(
+    LocalAtom(currentDefaultSessionSettings.unreadOnly),
+  );
+  const maxSessions$ = $.use(LocalAtom(currentStreamSettings.maxSessions));
+
+  const defaultSessionSettings$ = $.use(
+    LocalComputed(
+      (count, ranked, layout, unreadOnly) => ({
+        count,
+        ranked,
+        layout,
+        unreadOnly,
       }),
-      mapDispatchToProps: bindActions({
-        onChangeDefaultStreamFetchOptions: changeDefaultStreamFetchOptions,
-        onChangeDefaultStreamView: changeDefaultStreamView,
-        onChangeStreamCacheCapacity: changeStreamCacheCapacity,
-        onChangeStreamHistoryOptions: changeStreamHistoryOptions,
-        onClearStreamCaches: clearStreamCaches,
+      [count$, ranked$, layout$, unreadOnly$],
+    ),
+  );
+  const streamSettings$ = $.use(
+    LocalComputed(
+      (maxSessions) => ({
+        maxSessions,
       }),
-    }),
+      [maxSessions$],
+    ),
   );
 
-  const [fetchOptions, setFetchOptions] = $.useState(initialFetchOptions);
-  const cacheCapacity$ = $.use(LocalAtom(initialCacheCapacity));
-  const numStreamHistories$ = $.use(LocalAtom(initialNumStreamHistories));
-  const streamView$ = $.use(LocalAtom(initialStreamView));
+  const { updateDefaultSessionSettings, updateStreamSettings, clearSessions } =
+    $.use(BindActionCreators(streamActions));
 
-  const handleChangeNumStreamHistories = $.useCallback((event: Event) => {
-    numStreamHistories$.value = (
+  const handleCountChange = (event: Event) => {
+    count$.value = (event.currentTarget as HTMLInputElement).valueAsNumber;
+  };
+
+  const handleRankedChange = (event: Event) => {
+    ranked$.value = (event.currentTarget as HTMLInputElement)
+      .value as EntriesOrdering;
+  };
+
+  const handleLayoutChange = (event: Event) => {
+    layout$.value = (event.currentTarget as HTMLInputElement)
+      .value as StreamLayout;
+  };
+
+  const handleUnreadOnlyChange = (event: Event) => {
+    unreadOnly$.value = (event.currentTarget as HTMLInputElement).checked;
+  };
+
+  const handleMaxSessionsChange = (event: Event) => {
+    maxSessions$.value = (
       event.currentTarget as HTMLInputElement
     ).valueAsNumber;
-  }, []);
+  };
 
-  const handleChangeCacheCapacity = $.useCallback((event: Event) => {
-    cacheCapacity$.value = (
-      event.currentTarget as HTMLInputElement
-    ).valueAsNumber;
-  }, []);
-
-  const handleChangeFetchOptions = $.useCallback((event: Event) => {
-    const target = event.currentTarget as HTMLInputElement;
-    const name = target.name;
-    const value = target.type === 'checkbox' ? target.checked : target.value;
-
-    setFetchOptions((fetchOptions) => ({
-      ...fetchOptions,
-      [name]: value,
-    }));
-  }, []);
-
-  const handleChangeStreamView = $.useCallback((event: Event) => {
-    streamView$.value = (event.currentTarget as HTMLInputElement)
-      .value as StreamViewKind;
-  }, []);
-
-  const handleSubmitFetchOptions = $.useCallback(
-    (event: SubmitEvent) => {
-      event.preventDefault();
-      onChangeDefaultStreamFetchOptions(fetchOptions);
-    },
-    [onChangeDefaultStreamFetchOptions],
-  );
-
-  const handleSubmitStreamView = $.useCallback(
-    (event: SubmitEvent) => {
-      event.preventDefault();
-      onChangeDefaultStreamView(streamView$.value);
-    },
-    [onChangeDefaultStreamView],
-  );
-
-  const handleSubmitHistoryOptions = $.useCallback(
-    (event: SubmitEvent) => {
-      event.preventDefault();
-      onChangeStreamHistoryOptions(numStreamHistories$.value);
-    },
-    [onChangeStreamHistoryOptions],
-  );
-
-  const handleSubmitCacheCapacity = $.useCallback(
-    (event: SubmitEvent) => {
-      event.preventDefault();
-      onChangeStreamCacheCapacity(cacheCapacity$.value);
-    },
-    [onChangeStreamCacheCapacity],
-  );
-
-  const handleClearStreamCaches = $.useCallback(() => {
+  const handleSessionsClear = () => {
     openAlertDialog(
       {
         confirmButton: ({ onConfirm }, context) => context.html`
@@ -121,74 +85,97 @@ export const StreamSettings = createComponent(function StreamSettings(
           <button class="button button-outline-default" type="button" @click=${onCancel}>Cancel</button>
         `,
         onConfirm: () => {
-          onClearStreamCaches();
+          clearSessions();
         },
         title: 'Clear stream caches',
         message: 'Are you sure you want to clear stream caches?',
       },
       $,
     );
-  }, [onClearStreamCaches]);
+  };
+
+  const handleDefaultSessionSettingsUpdate = (event: SubmitEvent) => {
+    event.preventDefault();
+    updateDefaultSessionSettings(defaultSessionSettings$.value);
+  };
+
+  const handleStreamSettingsUpdate = (event: SubmitEvent) => {
+    event.preventDefault();
+    updateStreamSettings(streamSettings$.value);
+  };
 
   return $.html`
     <section class="section">
-      <h1 class="display-1">Stream</h1>
-      <form class="form" @submit=${handleSubmitFetchOptions}>
-        <div class="form-legend">Fetch options</div>
+      <h1 class="display-1">Stream Settings</h1>
+      <form class="form" @submit=${handleDefaultSessionSettingsUpdate}>
+        <div class="form-legend">Default Session Settings</div>
         <div class="form-group">
           <label>
             <div class="form-group-heading">
-              Default fetch number of entries
+              Number of entries to load at once
             </div>
             <input
               class="form-control"
               max="1000"
               min="1"
-              name="numEntries"
               required
               type="number"
-              value=${fetchOptions.numEntries}
-              @change=${handleChangeFetchOptions}
+              $value=${count$}
+              @change=${handleCountChange}
             >
           </label>
         </div>
         <div class="form-group">
+          <div class="form-group-heading">Entries Ordering</div>
+          <${Repeat({
+            source: [
+              'engagement',
+              'newest',
+              'oldest',
+            ] satisfies EntriesOrdering[],
+            valueSelector: (value) => $.html`
+              <label class="form-check-label">
+                <input
+                  checked=${ranked$.value === value}
+                  class="form-check"
+                  required
+                  type="radio"
+                  value=${value}
+                  @change=${handleRankedChange}
+                >
+                ${value.charAt(0).toUpperCase() + value.slice(1)}
+              </label>
+            `,
+          })}>
+        </div>
+        <div class="form-group">
+          <div class="form-group-heading">Entries Layout</div>
+          <${Repeat({
+            source: ['full', 'compact'] satisfies StreamLayout[],
+            valueSelector: (value) => $.html`
+              <label class="form-check-label">
+                <input
+                  checked=${layout$.value === value}
+                  class="form-check"
+                  required
+                  type="radio"
+                  value=${value}
+                  @change=${handleLayoutChange}
+                >
+                ${value.charAt(0).toUpperCase() + value.slice(1)}
+              </label>
+            `,
+          })}>
+        </div>
+        <div class="form-group">
           <label class="form-check-label">
             <input
-              checked=${fetchOptions.onlyUnread}
+              checked=${unreadOnly$.value}
               class="form-check"
-              name="onlyUnread"
               type="checkbox"
-              @change=${handleChangeFetchOptions}
+              @change=${handleUnreadOnlyChange}
             >
-            Display only unread entries on default
-          </label>
-        </div>
-        <div class="form-group">
-          <div class="form-group-heading">Default entry order</div>
-          <label class="form-check-label">
-            <input
-              checked=${fetchOptions.entryOrder === 'newest'}
-              class="form-check"
-              name="entryOrder"
-              required
-              type="radio"
-              value="newest"
-              @change=${handleChangeFetchOptions}
-            >
-            Newest
-          </label>
-          <label class="form-check-label">
-            <input
-              checked=${fetchOptions.entryOrder === 'oldest'}
-              class="form-check"
-              name="entryOrder"
-              required
-              type="radio"
-              value="oldest"
-              @change=${handleChangeFetchOptions}
-            >
-            Oldest
+            Fetch only unread entries
           </label>
         </div>
         <div class="form-group">
@@ -197,92 +184,38 @@ export const StreamSettings = createComponent(function StreamSettings(
           </button>
         </div>
       </form>
-      <form class="form" @submit=${handleSubmitStreamView}>
-        <div class="form-legend">Default stream view</div>
-        <div class="form-group">
-          <label class="form-check-label">
-            <input
-              checked=${streamView$.map((value) => value === 'expanded')}
-              class="form-check"
-              name="defaultStreamView"
-              required
-              type="radio"
-              value="expanded"
-              @change=${handleChangeStreamView}
-            >
-            Expanded
-          </label>
-          <label class="form-check-label">
-            <input
-              checked=${streamView$.map((value) => value === 'collapsible')}
-              class="form-check"
-              name="defaultStreamView"
-              required
-              type="radio"
-              value="collapsible"
-              @change=${handleChangeStreamView}
-            >
-            Collapsible
-          </label>
-        </div>
-        <div class="form-group">
-          <button type="submit" class="button button-outline-positive">
-            Save
-          </button>
-        </div>
-      </form>
-      <form class="form" @submit=${handleSubmitCacheCapacity}>
-        <div class="form-legend">Cache options</div>
-        <div class="form-group">
-          <label>
-            <div class="form-group-heading">Cache capacity</div>
-            <div class="input-group">
-              <input
-                class="form-control"
-                min="1"
-                required
-                type="number"
-                $value=${cacheCapacity$}
-                @change=${handleChangeCacheCapacity}
-              >
-              <button type="submit" class="button button-outline-positive">
-                Save
-              </button>
-            </div>
-          </label>
-        </div>
-        <div class="form-group">
-          <button
-            type="button"
-            class="button button-outline-negative"
-            @click=${handleClearStreamCaches}
-          >
-            Clear stream caches...
-          </button>
-        </div>
-      </form>
-      <form class="form" @submit=${handleSubmitHistoryOptions}>
-        <div class="form-legend">History options</div>
+      <form class="form" @submit=${handleStreamSettingsUpdate}>
+        <div class="form-legend">Stream Settings</div>
         <div class="form-group">
           <label>
             <div class="form-group-heading">
-              Number of stream histories to display
+              Maximum number of past sessions to remember
             </div>
-            <div class="input-group">
-              <input
-                class="form-control"
-                min="1"
-                name="numStreamHistories"
-                required
-                type="number"
-                $value=${numStreamHistories$}
-                @change=${handleChangeNumStreamHistories}
-              >
-              <button type="submit" class="button button-outline-positive">
-                Save
-              </button>
-            </div>
+            <input
+              class="form-control"
+              min="0"
+              required
+              type="number"
+              $value=${maxSessions$}
+              @change=${handleMaxSessionsChange}
+            >
           </label>
+        </div>
+        <div class="form-group">
+          <button type="submit" class="button button-outline-positive">
+            Save
+          </button>
+        </div>
+      </form>
+      <form class="form" @submit=${handleSessionsClear}>
+        <div class="form-legend">Session Operations</div>
+        <div class="form-group">
+          <button
+            type="submit"
+            class="button button-outline-negative"
+          >
+            Clear sessions...
+          </button>
         </div>
       </form>
     </section>

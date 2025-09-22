@@ -5,7 +5,7 @@
       "!.wireit",
       "!dist",
       "!packages/*/.wireit",
-      "!packages/feedpon-state/src/api"
+      "!packages/feedpon-store/src/api"
     ]
   },
   "css": {

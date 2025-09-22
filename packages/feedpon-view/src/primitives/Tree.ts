@@ -8,7 +8,7 @@ import {
 
 export interface TreeProps<TKey = unknown, TValue = unknown> {
   items: TreeItem<TKey, TValue>[];
-  renderItem: (item: TreeItem<TKey, TValue>, context: RenderContext) => unknown;
+  renderItem: (value: TValue, key: TKey, context: RenderContext) => unknown;
   onSelect(item: TreeItem<TKey, TValue>): void;
 }
 
@@ -101,7 +101,7 @@ export const Tree: Tree = createComponent(function Tree<TKey, TValue>(
     keySelector: ({ item }) => item.key,
     valueSelector: ({ item, state, parent }) =>
       TreeNode({
-        children: renderItem(item, $),
+        children: renderItem(item.value, item.key, $),
         item,
         onSelect,
         onStateUpadte: forceUpdate,
@@ -132,116 +132,112 @@ interface TreeNodeProps<TKey = unknown, TValue = unknown> {
   state: UnmanagedState;
 }
 
-const TreeNode: TreeNode = createComponent(
-  function TreeNode<TKey, TValue>(
-    {
-      children,
-      item,
-      onSelect,
-      onStateUpadte,
-      state,
-      parent,
-    }: TreeNodeProps<TKey, TValue>,
-    $: RenderContext,
-  ): unknown {
-    const handleClick = $.useCallback(
-      (event: MouseEvent) => {
-        event.preventDefault();
-        onSelect(item);
-      },
-      [onSelect, item.value],
-    );
+const TreeNode: TreeNode = createComponent(function TreeNode<TKey, TValue>(
+  {
+    children,
+    item,
+    onSelect,
+    onStateUpadte,
+    state,
+    parent,
+  }: TreeNodeProps<TKey, TValue>,
+  $: RenderContext,
+): unknown {
+  const handleClick = $.useCallback(
+    (event: MouseEvent) => {
+      event.preventDefault();
+      onSelect(item);
+    },
+    [onSelect, item.value],
+  );
 
-    const handleKeyDown = $.useCallback(
-      (event: KeyboardEvent) => {
-        if (event.currentTarget !== event.target) {
-          return;
-        }
+  const handleKeyDown = $.useCallback(
+    (event: KeyboardEvent) => {
+      if (event.currentTarget !== event.target) {
+        return;
+      }
 
-        switch (event.key) {
-          case 'ArrowLeft':
-            event.preventDefault();
-            event.stopPropagation();
-            if (state.expanded) {
-              state.expanded = false;
-              state.userInteraction = true;
-              onStateUpadte();
-            } else if (parent?.state.expanded) {
-              matchPrevious<HTMLElement>(
-                event.currentTarget as Element,
-                (element) =>
-                  element.matches(`.TreeItem[aria-level="${state.level - 1}"]`),
-              )?.focus();
-              parent.state.expanded = false;
-              parent.state.userInteraction = true;
-              onStateUpadte();
-            }
-            break;
-          case 'ArrowRight':
-            event.preventDefault();
-            event.stopPropagation();
-            if (item.children.length > 0 && !state.expanded) {
-              state.expanded = true;
-              state.userInteraction = true;
-              onStateUpadte();
-            }
-            break;
-          case 'ArrowDown':
-            event.preventDefault();
-            event.stopPropagation();
-            matchNext<HTMLElement>(event.currentTarget as Element, (element) =>
-              element.matches('.TreeItem'),
-            )?.focus();
-            break;
-          case 'ArrowUp':
-            event.preventDefault();
-            event.stopPropagation();
+      switch (event.key) {
+        case 'ArrowLeft':
+          event.preventDefault();
+          event.stopPropagation();
+          if (state.expanded) {
+            state.expanded = false;
+            state.userInteraction = true;
+            onStateUpadte();
+          } else if (parent?.state.expanded) {
             matchPrevious<HTMLElement>(
               event.currentTarget as Element,
-              (element) => element.matches('.TreeItem'),
+              (element) =>
+                element.matches(`.TreeItem[aria-level="${state.level - 1}"]`),
             )?.focus();
-            break;
-          case 'Home':
-            event.preventDefault();
-            event.stopPropagation();
-            (event.currentTarget as Element).parentElement
-              ?.querySelector<HTMLElement>('.TreeItem')
-              ?.focus();
-            break;
-          case 'End':
-            event.preventDefault();
-            event.stopPropagation();
-            (event.currentTarget as Element).parentElement
-              ?.querySelector<HTMLElement>('.TreeItem:last-of-type')
-              ?.focus();
-            break;
-          case 'Enter':
-          case ' ':
-            event.stopPropagation();
-            event.preventDefault();
-            onSelect(item);
-            break;
-        }
-      },
-      [item.value, onSelect, onStateUpadte, parent?.state, state],
-    );
+            parent.state.expanded = false;
+            parent.state.userInteraction = true;
+            onStateUpadte();
+          }
+          break;
+        case 'ArrowRight':
+          event.preventDefault();
+          event.stopPropagation();
+          if (item.children.length > 0 && !state.expanded) {
+            state.expanded = true;
+            state.userInteraction = true;
+            onStateUpadte();
+          }
+          break;
+        case 'ArrowDown':
+          event.preventDefault();
+          event.stopPropagation();
+          matchNext<HTMLElement>(event.currentTarget as Element, (element) =>
+            element.matches('.TreeItem'),
+          )?.focus();
+          break;
+        case 'ArrowUp':
+          event.preventDefault();
+          event.stopPropagation();
+          matchPrevious<HTMLElement>(
+            event.currentTarget as Element,
+            (element) => element.matches('.TreeItem'),
+          )?.focus();
+          break;
+        case 'Home':
+          event.preventDefault();
+          event.stopPropagation();
+          (event.currentTarget as Element).parentElement
+            ?.querySelector<HTMLElement>('.TreeItem')
+            ?.focus();
+          break;
+        case 'End':
+          event.preventDefault();
+          event.stopPropagation();
+          (event.currentTarget as Element).parentElement
+            ?.querySelector<HTMLElement>('.TreeItem:last-of-type')
+            ?.focus();
+          break;
+        case 'Enter':
+        case ' ':
+          event.stopPropagation();
+          event.preventDefault();
+          onSelect(item);
+          break;
+      }
+    },
+    [item.value, onSelect, onStateUpadte, parent?.state, state],
+  );
 
-    const handleExpand = $.useCallback(
-      (event: MouseEvent) => {
-        event.preventDefault();
-        event.stopPropagation();
-        state.expanded = !state.expanded;
-        state.userInteraction = true;
-        onStateUpadte();
-      },
-      [onStateUpadte, state],
-    );
+  const handleExpand = (event: MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    state.expanded = !state.expanded;
+    state.userInteraction = true;
+    onStateUpadte();
+  };
 
-    const ariaLabelId = $.useId();
+  const ariaLabelId = $.useId();
 
-    const expandButton =
-      item.children.length > 0
-        ? $.html`
+  const expandButton =
+    item.children.length > 0
+      ? $.html`
         <button
           aria-expanded=${state.expanded.toString()}
           aria-label=${state.expanded ? 'Shrink item' : 'Expand item'}
@@ -261,11 +257,11 @@ const TreeNode: TreeNode = createComponent(
           ></i>
         </button>
       `
-        : null;
+      : null;
 
-    return $.html`
+  return $.html`
     <div
-      :class=${{ _: 'TreeItem', 'is-selected': item.selected }}
+      :class=${{ TreeItem: true, 'is-selected': item.selected }}
       :style=${{ '--level': state.level.toString() }}
       aria-labelledby=${ariaLabelId}
       aria-level=${state.level}
@@ -281,20 +277,7 @@ const TreeNode: TreeNode = createComponent(
       </div>
     </div>
   `;
-  },
-  {
-    shouldSkipUpdate: (nextProps, prevProps) => {
-      return (
-        nextProps.item.children.length === prevProps.item.children.length &&
-        nextProps.item.selected === prevProps.item.selected &&
-        nextProps.item.value === prevProps.item.value &&
-        nextProps.onSelect === prevProps.onSelect &&
-        nextProps.state.expanded === prevProps.state.expanded &&
-        nextProps.state.level === prevProps.state.level
-      );
-    },
-  },
-);
+});
 
 function matchPrevious<T extends Element>(
   element: Element,

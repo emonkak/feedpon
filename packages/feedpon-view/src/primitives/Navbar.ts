@@ -2,21 +2,25 @@ import { createComponent, type RenderContext } from 'barebind';
 
 interface NavbarProps {
   children: unknown;
+  onSidebarToggle: (shown?: boolean) => void;
   progress?: number;
-  onToggleSidebar?: () => void;
 }
 
 export const Navbar = createComponent(function Navbar(
-  { children, onToggleSidebar, progress }: NavbarProps,
+  { children, onSidebarToggle, progress }: NavbarProps,
   $: RenderContext,
 ): unknown {
+  const handleSidebarToggle = () => {
+    onSidebarToggle();
+  };
+
   return $.html`
     <nav class="navbar">
       <div class="navbar-container">
         <button
           type="button"
           class="navbar-action"
-          @click=${onToggleSidebar}
+          @click=${handleSidebarToggle}
         >
           <i class="icon icon-24 icon-menu"></i>
         </button>

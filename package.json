@@ -27,12 +27,6 @@
   ],
   "wireit": {
     "build": {
-      "dependencies": [
-        "bundle",
-        "./packages/feedpon-state:build"
-      ]
-    },
-    "bundle": {
       "command": "node --import tsx build.ts",
       "files": [
         "assets/css/*",
@@ -44,8 +38,8 @@
       ],
       "output": [
         "dist/background.js",
-        "dist/index.css",
-        "dist/index.js"
+        "dist/main.css",
+        "dist/main.js"
       ],
       "dependencies": [
         "typecheck"
@@ -63,12 +57,6 @@
     "clean:tsc": {
       "command": "tsc --build --clean"
     },
-    "lint": {
-      "command": "biome ci .",
-      "files": [
-        "packages/*/src/**/*.ts"
-      ]
-    },
     "ci": {
       "dependencies": [
         "build",
@@ -77,6 +65,12 @@
     },
     "format": {
       "command": "biome check --fix"
+    },
+    "lint": {
+      "command": "biome ci .",
+      "files": [
+        "packages/*/src/**/*.ts"
+      ]
     },
     "typecheck": {
       "command": "tsc --build --pretty --incremental",

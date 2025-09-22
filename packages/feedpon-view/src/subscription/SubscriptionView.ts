@@ -1,56 +1,56 @@
 import { createComponent, type RenderContext, Repeat } from 'barebind';
-import type { Category, Subscription } from 'feedpon-messaging';
-import type { createCategory } from 'feedpon-messaging/categories';
-import type {
-  addToCategory,
-  removeFromCategory,
-  unsubscribe,
-} from 'feedpon-messaging/subscriptions';
-
+import {
+  type Category,
+  getFeedUrl,
+  type Subscription,
+} from 'feedpon-store/state';
 import { RelativeTime } from '../primitives/RelativeTime.ts';
 import { SubscriptionDropdown } from './SubscriptionDropdown.ts';
 
 interface SubscriptionViewProps {
   categories: Category[];
-  onAddToCategory: typeof addToCategory;
-  onCreateCategory: typeof createCategory;
-  onRemoveFromCategory: typeof removeFromCategory;
-  onUnsubscribe: typeof unsubscribe;
+  onCategoryCreate: (label: string) => Promise<void>;
+  onSubscriptionDelete: (subscriptionId: string) => Promise<void>;
+  onSubscriptionUpdate: (
+    subscriptionId: string,
+    labels: string[],
+  ) => Promise<void>;
   subscription: Subscription;
 }
 
 export const SubscriptionView = createComponent(function SubscriptionView(
   {
     categories,
-    onAddToCategory,
-    onCreateCategory,
-    onRemoveFromCategory,
-    onUnsubscribe,
+    onCategoryCreate,
+    onSubscriptionUpdate,
+    onSubscriptionDelete,
     subscription,
   }: SubscriptionViewProps,
   $: RenderContext,
 ): unknown {
-  const title = subscription.url
-    ? $.html`
+  const feedUrl = getFeedUrl(subscription.id);
+  const title =
+    subscription.website !== undefined
+      ? $.html`
       <a
         class="link-soft"
-        href=${subscription.url}
+        href=${subscription.website}
         rel="noreferrer"
         target="_blank"
       >
         ${subscription.title}
       </a>
     `
-    : $.html`
+      : $.html`
       <span>${subscription.title}</span>
     `;
 
   const labels = Repeat({
-    source: subscription.labels,
-    keySelector: (label) => label,
-    valueSelector: (label) => $.html`
+    source: subscription.categories,
+    keySelector: (category) => category.label,
+    valueSelector: (category) => $.html`
       <span class="badge badge-small badge-default">
-        ${label}
+        ${category.label}
       </span>
     `,
   });
@@ -80,24 +80,23 @@ export const SubscriptionView = createComponent(function SubscriptionView(
             <${labels}>
           </div>
           <div class="u-text-7 u-text-wrap">
-            <a target="_blank" href={subscription.feedUrl} rel="noreferrer">
-              ${subscription.feedUrl}
+            <a target="_blank" href=${feedUrl} rel="noreferrer">
+              ${feedUrl}
             </a>
           </div>
         </div>
         <div class="u-margin-right-2 u-text-right u-md-none">
           <${RelativeTime({
             class: 'u-text-7 u-text-muted',
-            time: subscription.updatedAt,
+            time: subscription.updated ?? 0,
           })}>
         </div>
         <div class="u-flex-shrink-0">
           <${SubscriptionDropdown({
             categories,
-            onAddToCategory,
-            onCreateCategory,
-            onRemoveFromCategory,
-            onUnsubscribe,
+            onCategoryCreate,
+            onSubscriptionDelete,
+            onSubscriptionUpdate,
             subscription,
           })}>
         </div>

@@ -56,36 +56,36 @@ export const TabItem = createComponent(
 
     if (item.href !== undefined) {
       return $.html`
-      <a
-        :class=${{
-          _: 'Tab',
-          'is-selected': item.selected,
-        }}
-        aria-selected=${item.selected.toString()}
-        data-key=${item.key}
-        href=${item.href}
-        role="tab"
-        @click=${handleTabSelect}
-      >
-        <${item.children}>
-      </button>
-    `;
+        <a
+          :class=${{
+            Tab: true,
+            'is-selected': item.selected,
+          }}
+          aria-selected=${item.selected.toString()}
+          data-key=${item.key}
+          href=${item.href}
+          role="tab"
+          @click=${handleTabSelect}
+        >
+          <${item.children}>
+        </button>
+      `;
     } else {
       return $.html`
-      <button
-        :class=${{
-          _: 'Tab',
-          'is-selected': item.selected,
-        }}
-        aria-selected=${item.selected.toString()}
-        data-key=${item.key}
-        role="tab"
-        type="button"
-        @click=${handleTabSelect}
-      >
-        <${item.children}>
-      </button>
-    `;
+        <button
+          :class=${{
+            Tab: true,
+            'is-selected': item.selected,
+          }}
+          aria-selected=${item.selected.toString()}
+          data-key=${item.key}
+          role="tab"
+          type="button"
+          @click=${handleTabSelect}
+        >
+          <${item.children}>
+        </button>
+      `;
     }
   },
   { shouldSkipUpdate: shallowEqual },

@@ -4,31 +4,31 @@ import { Menu, type MenuItem } from './Menu.ts';
 
 export interface DropdownProps {
   items: MenuItem[];
-  onToggle?: (open: boolean) => void;
+  onMenuToggle?: (open: boolean) => void;
   trigger: (props: TriggerProps, context: RenderContext) => unknown;
 }
 
 export interface TriggerProps {
   id: string;
-  onToggle: () => void;
+  onMenuToggle: () => void;
   open: boolean;
 }
 
 export const Dropdown = createComponent(function Dropdown(
-  { items, trigger, onToggle }: DropdownProps,
+  { items, trigger, onMenuToggle }: DropdownProps,
   $: RenderContext,
 ): unknown {
   const [open, setOpen] = $.useState(false);
 
   const closeDropdown = $.useCallback(() => {
     setOpen(false);
-    onToggle?.(false);
+    onMenuToggle?.(false);
   }, []);
 
   const toggleDropdown = $.useCallback(() => {
     setOpen((open) => {
       const newOpen = !open;
-      onToggle?.(newOpen);
+      onMenuToggle?.(newOpen);
       return newOpen;
     });
   }, []);
@@ -39,9 +39,9 @@ export const Dropdown = createComponent(function Dropdown(
     }
   }, []);
 
-  const handleToggle = $.useCallback((open: boolean) => {
+  const handleMenuToggle = $.useCallback((open: boolean) => {
     setOpen(open);
-    onToggle?.(open);
+    onMenuToggle?.(open);
   }, []);
 
   const triggerId = $.useId();
@@ -50,12 +50,12 @@ export const Dropdown = createComponent(function Dropdown(
     <div
       class="Dropdown"
     >
-      <${trigger({ id: triggerId, onToggle: toggleDropdown, open }, $)}>
+      <${trigger({ id: triggerId, onMenuToggle: toggleDropdown, open }, $)}>
       <${Menu({
         target: triggerId,
         items,
         onItemAction: handleItemAction,
-        onToggle: handleToggle,
+        onMenuToggle: handleMenuToggle,
         open: open,
       })}>
     </div>

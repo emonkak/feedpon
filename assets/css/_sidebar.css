@@ -38,10 +38,10 @@
 }
 
 @media not all and (min-width: 768px) {
-  .sidebar-is-swiping,
-  .sidebar-is-swiping > body,
-  .sidebar-is-opened,
-  .sidebar-is-opened > body {
+  .is-sidebar-swiping,
+  .is-sidebar-swiping > body,
+  .is-sidebar-opened,
+  .is-sidebar-opened > body {
     overflow: hidden;
   }
 }

@@ -1,25 +1,22 @@
 import { createComponent, type RenderContext } from 'barebind';
-import type { Category, Feed, Subscription } from 'feedpon-messaging';
-import type { createCategory } from 'feedpon-messaging/categories';
-import type {
-  addToCategory,
-  removeFromCategory,
-  subscribe,
-  unsubscribe,
-} from 'feedpon-messaging/subscriptions';
-
+import {
+  type Category,
+  type Feed,
+  getFeedUrl,
+  type Subscription,
+} from 'feedpon-store/state';
 import { SubscriptionSettingsDropdown } from '../subscription/SubscriptionSettingsDropdown.ts';
 
 interface FeedHeaderProps {
   categories: Category[];
   feed: Feed;
-  hasMoreEntries: boolean;
-  numEntries: number;
-  onAddToCategory: typeof addToCategory;
-  onCreateCategory: typeof createCategory;
-  onRemoveFromCategory: typeof removeFromCategory;
-  onSubscribe: typeof subscribe;
-  onUnsubscribe: typeof unsubscribe;
+  onCategoryCreate: (label: string) => Promise<void>;
+  onSubscriptionCreate: (feed: Feed, labels: string[]) => Promise<void>;
+  onSubscriptionDelete: (subscriptionId: string) => Promise<void>;
+  onSubscriptionUpdate: (
+    subscriptionId: string,
+    labels: string[],
+  ) => Promise<void>;
   subscription: Subscription | null;
 }
 
@@ -27,20 +24,19 @@ export const FeedHeader = createComponent(function FeedHeader(
   {
     categories,
     feed,
-    hasMoreEntries,
-    numEntries,
-    onAddToCategory,
-    onCreateCategory,
-    onRemoveFromCategory,
-    onSubscribe,
-    onUnsubscribe,
+    onCategoryCreate,
+    onSubscriptionCreate,
+    onSubscriptionDelete,
+    onSubscriptionUpdate,
     subscription,
   }: FeedHeaderProps,
   $: RenderContext,
 ): unknown {
-  const feedLink = feed.url
-    ? $.html`<a target="_blank" class="link-strong" href=${feed.url} rel="noreferrer">${feed.title}</a>`
-    : $.html`<strong>${feed.title}</strong>`;
+  const feedUrl = getFeedUrl(feed.id);
+  const feedLink =
+    feed.website !== undefined
+      ? $.html`<a target="_blank" class="link-strong" href=${feed.website} rel="noreferrer">${feed.title}</a>`
+      : $.html`<strong>${feed.title}</strong>`;
 
   return $.html`
     <header class="stream-header">
@@ -55,16 +51,13 @@ export const FeedHeader = createComponent(function FeedHeader(
               <a
                 class="u-text-wrap"
                 target="_blank"
-                href=${feed.feedUrl}
+                href=${feed.id}
                 rel="noreferrer"
               >
-                ${feed.feedUrl}
+                ${feedUrl}
               </a>
             </div>
             <div class="list-inline list-inline-dotted">
-              <div class="list-inline-item u-text-muted">
-                <span class="u-text-4">${numEntries}${hasMoreEntries ? '+' : ''}</span> entries
-              </div>
               <div class="list-inline-item u-text-muted">
                 <span class="u-text-4">${feed.subscribers}</span> subscribers
               </div>
@@ -74,11 +67,10 @@ export const FeedHeader = createComponent(function FeedHeader(
             <${SubscriptionSettingsDropdown({
               categories,
               feed,
-              onAddToCategory,
-              onCreateCategory,
-              onRemoveFromCategory,
-              onSubscribe,
-              onUnsubscribe,
+              onCategoryCreate,
+              onSubscriptionCreate,
+              onSubscriptionDelete,
+              onSubscriptionUpdate,
               subscription,
             })}>
           </div>

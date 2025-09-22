@@ -1,52 +1,57 @@
 import { createComponent, type RenderContext } from 'barebind';
+import { type Entry, getEntryUrl } from 'feedpon-store/state';
 
 import { EntryShareButton } from './EntryShareButton.ts';
 
 interface EntryActionListProps {
-  commentsIsLoading: boolean;
-  commentsIsShown: boolean;
-  onToggleComments: (event: Event) => void;
-  title: string;
-  url: string;
+  entry: Entry;
+  isHatenaBookmarkEntryLoading: boolean;
+  isHatenaBookmarkEntryShown: boolean;
+  onHatenaBookmarkEntryToggle: (entryId: string, shown: boolean) => void;
 }
 
 export const EntryActionList = createComponent(function EntryActionList(
   {
-    commentsIsLoading,
-    commentsIsShown,
-    onToggleComments,
-    title,
-    url,
+    isHatenaBookmarkEntryLoading,
+    isHatenaBookmarkEntryShown,
+    onHatenaBookmarkEntryToggle,
+    entry,
   }: EntryActionListProps,
   $: RenderContext,
 ): unknown {
+  const handleHatenaBookmarkEntryToggle = () => {
+    onHatenaBookmarkEntryToggle(entry.id, !isHatenaBookmarkEntryShown);
+  };
+
   return $.html`
     <div class="button-toolbar u-flex u-flex-align-items-center u-flex-justify-content-center">
       <button
-        :class=${[
-          'button button-pill',
-          commentsIsShown ? 'button-default' : 'button-outline-default',
-        ]}
         type="button"
         title="Comments..."
-        @click=${onToggleComments}
+        :class=${[
+          'button button-pill',
+          isHatenaBookmarkEntryShown
+            ? 'button-default'
+            : 'button-outline-default',
+        ]}
+        @click=${handleHatenaBookmarkEntryToggle}
       >
         <i
           :class=${[
             'icon icon-20',
-            commentsIsLoading
+            isHatenaBookmarkEntryLoading
               ? 'icon-spinner animation-rotating'
               : 'icon-comments',
           ]}
         ></i>
       </button>
-      <${EntryShareButton({ url, title })}>
+      <${EntryShareButton({ entry })}>
       <a
         class="button button-pill button-outline-default"
-        href=${url}
+        href=${getEntryUrl(entry)}
+        rel="noreferrer"
         target="_blank"
         title="Visit website"
-        rel="noreferrer"
       >
         <i class="icon icon-20 icon-external-link"></i>
       </a>

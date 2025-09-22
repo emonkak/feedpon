@@ -1,31 +1,31 @@
 import { createComponent, type RenderContext } from 'barebind';
-import type { Notification } from 'feedpon-messaging';
+import type { Notification } from 'feedpon-store/state';
 
 interface NotificationViewProps {
   notification: Notification;
-  onDismiss: (id: number) => void;
+  dismissNotification: (id: string) => void;
 }
 
 export const NotificationView = createComponent(function NotificationView(
-  { notification, onDismiss }: NotificationViewProps,
+  { notification, dismissNotification }: NotificationViewProps,
   $: RenderContext,
 ): unknown {
   const handleClose = $.useCallback(
     (event: MouseEvent) => {
       event.preventDefault();
-      onDismiss(notification.id);
+      dismissNotification(notification.id);
     },
-    [onDismiss],
+    [dismissNotification],
   );
 
   $.useEffect(() => {
-    if (notification.dismissAfter <= 0) {
+    if (notification.timeout <= 0) {
       return;
     }
 
     const timer = setTimeout(() => {
-      onDismiss(notification.id);
-    }, notification.dismissAfter);
+      dismissNotification(notification.id);
+    }, notification.timeout);
 
     return () => {
       clearTimeout(timer);
@@ -35,17 +35,17 @@ export const NotificationView = createComponent(function NotificationView(
   return $.html`
     <div
       :class=${{
-        _: 'notification',
-        'notification-negative': notification.kind === 'negative',
-        'notification-positive': notification.kind === 'positive',
+        notification: true,
+        'notification-negative': notification.type === 'negative',
+        'notification-positive': notification.type === 'positive',
       }}
     >
       <div class="notification-icon">
         <i :class=${{
-          _: 'icon icon-24',
-          'icon-info': notification.kind === 'default',
-          'icon-checked': notification.kind === 'positive',
-          'icon-warning': notification.kind === 'negative',
+          'icon icon-24': true,
+          'icon-info': notification.type === 'info',
+          'icon-checked': notification.type === 'positive',
+          'icon-warning': notification.type === 'negative',
         }}></i>
       </div>
       <div class="notification-content">

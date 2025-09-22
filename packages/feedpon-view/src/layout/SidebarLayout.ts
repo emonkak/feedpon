@@ -1,22 +1,15 @@
 import { createComponent, type RenderContext } from 'barebind';
 import { CurrentHistory } from 'barebind/extras/router';
-import { bindActions, type Dispatch } from 'feedpon-flux';
-import { getStoreHook } from 'feedpon-flux/barebind.ts';
-import type {
-  Command,
-  Event,
-  KeyMapping,
-  State,
-  Thunk,
-} from 'feedpon-messaging';
-import { commandTable } from 'feedpon-messaging/keyMappings';
-import { closeHelp, closeSidebar, openSidebar } from 'feedpon-messaging/ui';
-
-import { KeyMappingsTable } from '../keyMappings/KeyMappingsTable.ts';
+import { AppStore } from 'feedpon-store';
+import * as uiActions from 'feedpon-store/actions/ui';
+import { BindActionCreators } from 'feedpon-store/hooks/BindActionCreators';
+import { KeyboardShortcutHandler } from 'feedpon-store/hooks/KeyboardShortcutHandler';
+import type { CommandId } from 'feedpon-store/state';
+import { AppCommandHandler } from '../CommandHandler.ts';
+import { KeyboardShortcutTable } from '../keyboard/KeyboardShortcutTable.ts';
 import { NotificationStack } from '../notification/NotificationStack.ts';
-import { OSD } from '../osd/OSD.ts';
+import { OsdStack } from '../osd/OsdStack.ts';
 import { Dialog } from '../primitives/Dialog.ts';
-import { keyMappingsHook } from '../primitives/hooks/keyMappingsHook.ts';
 import { swipeableHook } from '../primitives/hooks/swipeableHook.ts';
 import { Sidebar } from '../sidebar/Sidebar.ts';
 
@@ -28,103 +21,86 @@ export const SidebarLayout = createComponent(function SidebarLayout(
   { child }: SidebarLayoutProps,
   $: RenderContext,
 ): unknown {
-  const {
-    dispatch,
-    helpIsOpened,
-    isLoading,
-    keyMappings,
-    onCloseHelp,
-    onCloseSidebar,
-    onOpenSidebar,
-    sidebarIsOpened,
-  } = $.use(
-    getStoreHook({
-      mapStateToProps: (state: State) => ({
-        isLoading: state.backend.isLoading || state.subscriptions.isImporting,
-        keyMappings: state.keyMappings.items,
-        sidebarIsOpened: state.ui.sidebarIsOpened,
-        helpIsOpened: state.ui.helpIsOpened,
-      }),
-      mapStoreToProps: (store) => ({ store }),
-      mapDispatchToProps: (dispatch: Dispatch<Event | Thunk<Event>>) => ({
-        ...bindActions({
-          onCloseSidebar: closeSidebar,
-          onOpenSidebar: openSidebar,
-          onCloseHelp: closeHelp,
-        })(dispatch as any),
-        dispatch,
-      }),
-    }),
+  const store = $.use(AppStore);
+  const authenticating = $.use(store.state$.get('authenticating'));
+  const keyboardShortcuts = $.use(store.state$.get('keyboardShortcuts'));
+  const keyboardShortcutsOpened = $.use(
+    store.state$.get('keyboardShortcutsOpened'),
   );
-  const [locationState, navigator] = $.use(CurrentHistory);
+  const opmlImporting = $.use(store.state$.get('opmlImporting'));
+  const sidebarOpened = $.use(store.state$.get('sidebarOpened'));
+
+  const isLoading = authenticating || opmlImporting;
+
+  const { toggleKeyboardShortcuts, toggleSidebar } = $.use(
+    BindActionCreators(uiActions),
+  );
+
+  const { location, navigator } = $.use(CurrentHistory);
+
   const sidebarWidthRef = $.useRef(0);
 
   const { onTouchStart, onTouchEnd, onTouchMove, isSwiping, coordinates } =
     $.use(swipeableHook);
 
   const handleTransitionEnd = $.useCallback(() => {
-    if (!sidebarIsOpened) {
-      updateSidebarStatus(false);
+    if (!sidebarOpened) {
+      toggleSidebar(false);
     }
-  }, [sidebarIsOpened]);
+  }, [sidebarOpened]);
 
   const helpTitleId = $.useId();
 
-  const handleKeyMapping = $.useCallback((keyMapping: KeyMapping) => {
-    const command = (commandTable as { [key: string]: Command<any> })[
-      keyMapping.commandId
-    ];
+  const handleCommandInvoke = $.useMemo(() => {
+    const commandHandler = new AppCommandHandler(navigator);
 
-    if (command !== undefined) {
-      const params = { ...command.defaultParams, ...keyMapping.params };
-      const event = command.action(params, { navigator });
-
-      dispatch(event);
-    }
+    return (commandId: CommandId) => {
+      const action = commandHandler[commandId].bind(commandHandler);
+      store.dispatchAction(action);
+    };
   }, []);
 
-  $.use(keyMappingsHook(keyMappings, handleKeyMapping));
+  $.use(KeyboardShortcutHandler(keyboardShortcuts, handleCommandInvoke));
 
   $.useEffect(() => {
-    if (locationState.url.pathname.indexOf('/streams/') !== 0) {
+    if (location.url.pathname.indexOf('/streams/') !== 0) {
       scrollTo(0, 0);
     }
 
-    if (sidebarIsOpened && isMobileLayout()) {
-      onCloseSidebar();
+    if (sidebarOpened && isMobileLayout()) {
+      toggleSidebar(false);
     }
-  }, [locationState]);
+  }, [location]);
 
   $.useEffect(() => {
-    if (sidebarIsOpened) {
-      document.documentElement.classList.add('sidebar-is-opened');
-    } else {
-      document.documentElement.classList.remove('sidebar-is-opened');
-    }
+    document.documentElement.classList.toggle(
+      'is-sidebar-opened',
+      sidebarOpened,
+    );
 
     return () => {
-      document.documentElement.classList.remove('sidebar-is-opened');
+      document.documentElement.classList.remove('is-sidebar-opened');
     };
-  }, [sidebarIsOpened]);
+  }, [sidebarOpened]);
 
   $.useEffect(() => {
     if (isSwiping) {
-      updateSwipingStatus(true);
+      document.documentElement.classList.add('is-sidebar-swiping');
     } else {
       const { initialX, destX } = coordinates;
       const tolerance = sidebarWidthRef.current / 2;
 
-      if (sidebarIsOpened) {
+      if (sidebarOpened) {
         if (initialX > destX && initialX - destX > tolerance) {
-          onCloseSidebar();
+          toggleSidebar(false);
         }
       } else {
         if (initialX < destX && destX - initialX > tolerance) {
-          onOpenSidebar();
+          toggleSidebar(true);
         }
       }
 
-      updateSwipingStatus(false);
+      document.documentElement.classList.remove('is-sidebar-swiping');
     }
   }, [isSwiping]);
 
@@ -132,7 +108,7 @@ export const SidebarLayout = createComponent(function SidebarLayout(
     sidebarWidthRef.current = node.getBoundingClientRect().width;
   };
 
-  const swipeDistance = sidebarIsOpened
+  const swipeDistance = sidebarOpened
     ? clamp(
         coordinates.destX - coordinates.initialX,
         -sidebarWidthRef.current,
@@ -148,7 +124,7 @@ export const SidebarLayout = createComponent(function SidebarLayout(
   const sidebarStyle = isSwiping
     ? {
         left:
-          (sidebarIsOpened
+          (sidebarOpened
             ? swipeDistance
             : swipeDistance - sidebarWidthRef.current) + ' px',
       }
@@ -156,32 +132,29 @@ export const SidebarLayout = createComponent(function SidebarLayout(
   const mainStyle = isSwiping
     ? {
         paddingLeft:
-          (sidebarIsOpened
+          (sidebarOpened
             ? swipeDistance + sidebarWidthRef.current
             : swipeDistance) + ' px',
       }
     : {};
   const overlayStyle = isSwiping
     ? {
-        opacity: (sidebarIsOpened
-          ? 1 - swipeProgress
-          : swipeProgress
-        ).toString(),
+        opacity: (sidebarOpened ? 1 - swipeProgress : swipeProgress).toString(),
         visibility: 'visible',
       }
     : {};
 
   return $.html`
-    <div :class=${{ _: 'l-root', 'is-swiping': isSwiping }}>
+    <div :class=${{ 'l-root': true, 'is-swiping': isSwiping }}>
       <div
-        :class=${{ _: 'l-sidebar', 'is-opened': sidebarIsOpened }}
+        :class=${{ 'l-sidebar': true, 'is-opened': sidebarOpened }}
         :style=${sidebarStyle}
         :ref=${sidebarRef}
         @transitionend=${handleTransitionEnd}
       >
         <${Sidebar({
           navigator: navigator,
-          url: locationState.url,
+          url: location.url,
         })}>
       </div>
       <div :style=${mainStyle} class="l-main">
@@ -189,13 +162,15 @@ export const SidebarLayout = createComponent(function SidebarLayout(
           <${NotificationStack({})}>
         </div>
         <div class="l-osd">
-          <${OSD({})}>
+          <${OsdStack({})}>
         </div>
         <${child}>
         <div
           :style=${overlayStyle}
           class="l-overlay"
-          @click=${onCloseSidebar}
+          @click=${() => {
+            toggleSidebar(false);
+          }}
           @touchstart=${onTouchStart}
           @touchmove=${onTouchMove}
           @touchend=${onTouchEnd}
@@ -207,20 +182,19 @@ export const SidebarLayout = createComponent(function SidebarLayout(
           @ontouchend=${onTouchEnd}
         ></div>
       </div>
-      <div :class=${{ _: 'l-backdrop', 'is-shown': isLoading }}>
+      <div :class=${{ 'l-backdrop': true, 'is-shown': isLoading }}>
         <${isLoading ? $.html`<i class="icon icon-48 icon-spinner animation-rotating"></i>` : null}>
       </div>
     </div>
     <${Dialog({
       children: $.html`
-        <h1 class="Modal-title" id=${helpTitleId}>Available Key Mappings</h1>
-        <${KeyMappingsTable({
-          commandTable,
-          keyMappings,
+        <h1 class="Modal-title" id=${helpTitleId}>Keyboard Shortcuts</h1>
+        <${KeyboardShortcutTable({
+          keyboardShortcuts,
         })}>
       `,
-      onClose: onCloseHelp,
-      open: helpIsOpened,
+      onClose: () => toggleKeyboardShortcuts(false),
+      open: keyboardShortcutsOpened,
       ownProps: { 'aria-labelledby': helpTitleId },
     })}>
   `;
@@ -232,20 +206,4 @@ function clamp(n: number, min: number, max: number): number {
 
 function isMobileLayout() {
   return matchMedia('(max-width: 768px)').matches;
-}
-
-function updateSidebarStatus(isOpened: boolean): void {
-  if (isOpened) {
-    document.documentElement.classList.add('sidebar-is-opened');
-  } else {
-    document.documentElement.classList.remove('sidebar-is-opened');
-  }
-}
-
-function updateSwipingStatus(isSwiping: boolean): void {
-  if (isSwiping) {
-    document.documentElement.classList.add('sidebar-is-swiping');
-  } else {
-    document.documentElement.classList.remove('sidebar-is-swiping');
-  }
 }

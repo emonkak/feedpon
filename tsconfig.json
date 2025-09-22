@@ -5,16 +5,7 @@
       "path": "packages/feedpon"
     },
     {
-      "path": "packages/feedpon-adapters"
-    },
-    {
-      "path": "packages/feedpon-messaging"
-    },
-    {
-      "path": "packages/feedpon-state"
-    },
-    {
-      "path": "packages/feedpon-utils"
+      "path": "packages/feedpon-store"
     },
     {
       "path": "packages/feedpon-view"

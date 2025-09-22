@@ -6,17 +6,17 @@ const isProduction = process.env.NODE_ENV === 'production';
 const configs: esbuild.BuildOptions[] = [
   {
     bundle: true,
-    entryPoints: ['assets/css/index.css'],
+    entryPoints: ['assets/css/main.css'],
     logLevel: 'info',
-    outfile: 'dist/index.css',
+    outfile: 'dist/main.css',
   },
   {
     bundle: true,
     dropLabels: isProduction ? ['DEBUG'] : [],
-    entryPoints: ['packages/feedpon/src/index.ts'],
+    entryPoints: ['packages/feedpon/src/main.ts'],
     logLevel: 'info',
     metafile: true,
-    outfile: 'dist/index.js',
+    outfile: 'dist/main.js',
     plugins: [minifyTemplates()],
   },
   {

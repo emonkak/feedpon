@@ -1,6 +1,7 @@
 import { createComponent, type RenderContext } from 'barebind';
-import cleanNode from 'feedpon-utils/cleanNode.ts';
-import walkNode from 'feedpon-utils/walkNode.ts';
+
+import cleanNode from './utils/cleanNode.ts';
+import walkNode from './utils/walkNode.ts';
 
 interface EmbeddedHTMLProps {
   class?: string;

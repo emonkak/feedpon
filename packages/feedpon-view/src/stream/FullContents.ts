@@ -1,31 +1,20 @@
 import { createComponent, type RenderContext, Repeat } from 'barebind';
-import type { FullContent } from 'feedpon-messaging';
+import type { FullContent } from 'feedpon-store/state';
 
 import { EmbeddedHTML } from '../primitives/EmbeddedHTML.ts';
 
 interface FullContentsProps {
+  fullContents: FullContent[];
   isLoading: boolean;
-  isNotFound: boolean;
-  items: FullContent[];
-  onFetchNext: (event: Event) => void;
+  onFullContentsFetch: () => void;
 }
 
 export const FullContents = createComponent(function FullContents(
-  { isLoading, isNotFound, items, onFetchNext }: FullContentsProps,
+  { isLoading, fullContents, onFullContentsFetch }: FullContentsProps,
   $: RenderContext,
 ): unknown {
-  if (items.length === 0) {
-    return $.html`
-      <div class="entry-content u-clearfix u-text-wrap">
-        <div class="message message-positive">
-          The full content of this entry could not be extracted.
-        </div>
-      </div>
-    `;
-  }
-
-  const pages = Repeat({
-    source: items,
+  const fullContentList = Repeat({
+    source: fullContents,
     valueSelector: (fullContent, index) => $.html`
       <section class="entry-page">
         <${
@@ -46,52 +35,45 @@ export const FullContents = createComponent(function FullContents(
             `
             : $.html``
         }>
-        <${EmbeddedHTML({
-          baseUrl: fullContent.url,
-          class: 'entry-page-content',
-          html: fullContent.content,
-        })}>
+        <${
+          fullContent.content !== ''
+            ? EmbeddedHTML({
+                baseUrl: fullContent.url,
+                class: 'entry-page-content',
+                html: fullContent.content,
+              })
+            : $.html`
+              <div class="message message-positive">
+                Could not extract the full content from this page.
+              </div>
+            `
+        }>
       </section>
     `,
   });
 
-  let nextPageButton: unknown = null;
-
-  if (isNotFound) {
-    nextPageButton = $.html`
-      <div class="message message-positive">
-        The next page cannot be extracted.
-      </div>
-    `;
-  } else {
-    const latestItem = items[items.length - 1];
-    if (latestItem?.nextPageUrl) {
-      nextPageButton = isLoading
-        ? $.html`
+  const nextButton =
+    fullContents.at(-1)?.nextUrl != null
+      ? $.html`
           <button
-            type="button"
             class="button button-block button-outline-positive"
-            disabled
+            disabled=${isLoading}
+            type="button"
+            @click=${onFullContentsFetch}
           >
-            <i class="icon icon-20 icon-spinner animation-rotating"></i>
+            ${
+              isLoading
+                ? $.html`<i class="icon icon-20 icon-spinner animation-rotating"></i>`
+                : $.html`Next page`
+            }
           </button>
         `
-        : $.html`
-          <button
-            type="button"
-            class="button button-block button-outline-positive"
-            @click=${onFetchNext}
-          >
-            Next page
-          </button>
-        `;
-    }
-  }
+      : null;
 
   return $.html`
     <div class="entry-content u-clearfix u-text-wrap">
-      <${pages}>
-      <${nextPageButton ?? $.html``}>
+      <${fullContentList}>
+      <${nextButton}>
     </div>
   `;
 });

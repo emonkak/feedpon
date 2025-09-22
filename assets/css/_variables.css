@@ -21,7 +21,7 @@
   --type-scale-9: calc(1 / var(--type-scale-4));
 }
 
-.theme-light {
+:root[data-theme="light"] {
   --x-light-color: #ffffff;
   --light-color: #f7f9fc;
   --medium-light-color: #e8edf2;
@@ -63,7 +63,7 @@
   --transparent-color: hsl(from var(--x-light-color) h s l / 90%);
 }
 
-.theme-dark {
+:root[data-theme="dark"] {
   --x-light-color: #ddd;
   --light-color: #888;
   --medium-light-color: #3a3a3a;

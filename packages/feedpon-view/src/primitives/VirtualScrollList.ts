@@ -9,11 +9,10 @@ import {
   type RenderContext,
   Repeat,
 } from 'barebind';
-import throttle from 'feedpon-utils/throttle.ts';
-
 import { createEventHook } from '../primitives/hooks/eventHook.ts';
 import { isMountedHook } from '../primitives/hooks/isMountedHook.ts';
 import { createPreviousHook } from '../primitives/hooks/previousHook.ts';
+import { throttle } from './utils/throttle.ts';
 
 export interface BlankSpaces {
   above: number;
@@ -138,7 +137,7 @@ export const VirtualScrollList: VirtualScrollList = createComponent(
       );
 
       if (areItemsIdentical(newSlice, oldSlice)) {
-        if (items.length < scopeRef.current.end) {
+        if (items.length > scopeRef.current.end) {
           scopeRef.current = {
             start: Math.min(items.length - 1, scopeRef.current.start),
             end: items.length,
@@ -354,7 +353,7 @@ export const VirtualScrollList: VirtualScrollList = createComponent(
             return renderItem(item, index + scopeRef.current.start, ref, $);
           },
         }),
-      [items, scopeRef.current],
+      [items, renderItem, scopeRef.current],
     );
 
     const blankSpaces = getBlankSpaces(

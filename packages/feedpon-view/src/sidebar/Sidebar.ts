@@ -1,28 +1,17 @@
 import { createComponent, type RenderContext } from 'barebind';
 import { CurrentHistory, RelativeURL } from 'barebind/extras/router';
-import { bindActions } from 'feedpon-flux';
-import { getStoreHook } from 'feedpon-flux/barebind.ts';
-import type { State, Subscription } from 'feedpon-messaging';
-import { logout } from 'feedpon-messaging/backend';
-import { createSortedCategoriesSelector } from 'feedpon-messaging/categories';
-import { ALL_STREAM_ID, PINS_STREAM_ID } from 'feedpon-messaging/streams';
-import {
-  changeOnlyUnread,
-  changeSubscriptionOrder,
-  createAllSubscriptionsSelector,
-  createGroupedSubscriptionsSelector,
-  createTotalUnreadCountSelector,
-  createVisibleSubscriptionsSelector,
-  fetchSubscriptions,
-} from 'feedpon-messaging/subscriptions';
-import { fetchUser } from 'feedpon-messaging/user';
-
+import { AppStore } from 'feedpon-store';
+import * as authActions from 'feedpon-store/actions/auth';
+import * as profileActions from 'feedpon-store/actions/profile';
+import * as subscriptionActions from 'feedpon-store/actions/subscription';
+import { BindActionCreators } from 'feedpon-store/hooks/BindActionCreators';
+import { getFeedUrl, type Subscription } from 'feedpon-store/state';
 import { AutoComplete } from '../primitives/AutoComplete.ts';
 import type { MenuItem } from '../primitives/Menu.ts';
 import { RelativeTime } from '../primitives/RelativeTime.ts';
 import { ProfileDropdown } from './ProfileDropdown.ts';
-import { SubscriptionDisplayDropdown } from './SubscriptionDisplayDropdown.ts';
-import { SubscriptionTree } from './SubscriptionTree.ts';
+import { SubscriptionsSettingsDropdown } from './SubscriptionsSettingsDropdown.ts';
+import { SubscriptionsTree } from './SubscriptionsTree.ts';
 
 export interface SidebarProps {}
 
@@ -30,95 +19,59 @@ export const Sidebar = createComponent(function Sidebar(
   {}: SidebarProps,
   $: RenderContext,
 ): unknown {
-  const [location, navigator] = $.use(CurrentHistory);
+  const { state$ } = $.use(AppStore);
+  const allCategory = $.use(state$.get('allCategory'));
+  const pinTag = $.use(state$.get('pinTag'));
+  const profile = $.use(state$.get('profile'));
+  const profileLoading = $.use(state$.get('profileLoading'));
+  const selectedStreamId = $.use(
+    state$.get('session').map((session) => session?.id ?? null),
+  );
+  const subscriptions = $.use(state$.get('sortedSubscriptions'));
+  const subscriptionsLoading = $.use(state$.get('subscriptionsLoading'));
+  const subscriptionsSettings = $.use(state$.get('subscriptionsSettings'));
+  const subscriptionsTree = $.use(state$.get('subscriptionsTree'));
+  const subscriptionsUpdated = $.use(state$.get('subscriptionsUpdated'));
+  const totalUnreadCount = $.use(state$.get('totalUnreadCount'));
 
-  const categoriesSelector = $.useMemo(createSortedCategoriesSelector, []);
-  const allSubscriptionsSelector = $.useMemo(
-    createAllSubscriptionsSelector,
-    [],
+  const { updateSubscriptionsSettings, reloadSubscriptions } = $.use(
+    BindActionCreators(subscriptionActions),
   );
-  const visibleSubscriptionsSelector = $.useMemo(
-    () => createVisibleSubscriptionsSelector(allSubscriptionsSelector),
-    [],
-  );
-  const groupedSubscriptionsSelector = $.useMemo(
-    () => createGroupedSubscriptionsSelector(visibleSubscriptionsSelector),
-    [],
-  );
-  const totalUnreadCountSelector = $.useMemo(
-    () => createTotalUnreadCountSelector(visibleSubscriptionsSelector),
-    [],
-  );
-  const {
-    categories,
-    groupedSubscriptions,
-    lastUpdatedAt,
-    onChangeOnlyUnread,
-    onChangeSubscriptionOrder,
-    onFetchSubscriptions,
-    onFetchUser,
-    onLogout,
-    onlyUnread,
-    profile,
-    subscriptionOrder,
-    subscriptions,
-    subscriptionsIsLoading,
-    totalUnreadCount,
-    userIsLoaded,
-    userIsLoading,
-  } = $.use(
-    getStoreHook({
-      mapStateToProps: (state: State) => ({
-        categories: categoriesSelector(state),
-        groupedSubscriptions: groupedSubscriptionsSelector(state),
-        lastUpdatedAt: state.subscriptions.lastUpdatedAt,
-        onlyUnread: state.subscriptions.onlyUnread,
-        profile: state.user.profile,
-        subscriptions: allSubscriptionsSelector(state),
-        subscriptionsIsLoading: state.subscriptions.isLoading,
-        subscriptionOrder: state.subscriptions.order,
-        totalUnreadCount: totalUnreadCountSelector(state),
-        userIsLoaded: state.user.isLoaded,
-        userIsLoading: state.user.isLoading,
-      }),
-      mapDispatchToProps: bindActions({
-        onChangeSubscriptionOrder: changeSubscriptionOrder,
-        onChangeOnlyUnread: changeOnlyUnread,
-        onFetchSubscriptions: fetchSubscriptions,
-        onFetchUser: fetchUser,
-        onLogout: logout,
-      }),
-    }),
-  );
+  const { revokeCredential } = $.use(BindActionCreators(authActions));
+  const { reloadProfile } = $.use(BindActionCreators(profileActions));
+
+  const { location, navigator } = $.use(CurrentHistory);
 
   $.useEffect(() => {
-    if (lastUpdatedAt === 0) {
-      onFetchSubscriptions();
+    if (subscriptionsUpdated < 0) {
+      reloadSubscriptions();
     }
-  }, [lastUpdatedAt]);
+  }, [subscriptionsUpdated]);
 
   $.useEffect(() => {
-    if (!userIsLoaded) {
-      onFetchUser();
+    if (profile === null) {
+      reloadProfile();
     }
-  }, [userIsLoaded]);
+  }, [profile]);
 
-  const handleSearch = $.useCallback((query: string) => {
+  const handleSearch = (query: string) => {
     navigator.navigate(new RelativeURL('/search/' + encodeURIComponent(query)));
-  }, []);
+  };
 
-  const handleSelect = $.useCallback((path: string) => {
-    navigator.navigate(new RelativeURL(path));
-  }, []);
+  const handleStreamSelect = (streamId: string) => {
+    navigator.navigate(
+      new RelativeURL('/streams/' + encodeURIComponent(streamId)),
+    );
+  };
 
-  const handleManageSubscriptions = $.useCallback(() => {
+  const handleSubscriptionsOrganize = () => {
     navigator.navigate(new RelativeURL('/categories'));
-  }, []);
+  };
 
   const lastUpdate =
-    lastUpdatedAt > 0
+    subscriptionsUpdated >= 0
       ? $.html`
-        <span>Updated <${RelativeTime({ time: lastUpdatedAt })}></span>
+        <span>Updated <${RelativeTime({ time: subscriptionsUpdated })}></span>
       `
       : $.html`Not updated yet`;
 
@@ -135,74 +88,86 @@ export const Sidebar = createComponent(function Sidebar(
       <div class="SidebarSection">
         <a
           :class=${{
-            _: 'SidebarItem',
+            SidebarItem: true,
             'is-selected': location.url.pathname === '/',
           }}
           href='#/'
         >
           <span class="SidebarItem-label">Dashboard</span>
         </a>
-        <a
-          :class=${{
-            _: 'SidebarItem',
-            'is-selected':
-              location.url.pathname === `/streams/${ALL_STREAM_ID}`,
-          }}
-          href=${`#/streams/${ALL_STREAM_ID}`}
-        >
-          <span class="SidebarItem-label">All</span>
-          <span class="SidebarItem-unread">${totalUnreadCount}</span>
-        </a>
-        <a
-          :class=${{
-            _: 'SidebarItem',
-            'is-selected':
-              location.url.pathname === `/streams/${PINS_STREAM_ID}`,
-          }}
-          href=${`#/streams/${PINS_STREAM_ID}`}
-        >
-          <span class="SidebarItem-label">Pins</span>
-        </a>
+        <${
+          allCategory !== null
+            ? $.html`
+              <a
+                :class=${{
+                  SidebarItem: true,
+                  'is-selected':
+                    location.url.pathname ===
+                    `/streams/${encodeURIComponent(allCategory.id)}`,
+                }}
+                href=${`#/streams/${allCategory?.id}`}
+              >
+                <span class="SidebarItem-label">All</span>
+                <span class="SidebarItem-unread">${totalUnreadCount}</span>
+              </a>
+            `
+            : null
+        }>
+        <${
+          pinTag !== null
+            ? $.html`
+              <a
+                :class=${{
+                  SidebarItem: true,
+                  'is-selected':
+                    location.url.pathname ===
+                    `/streams/${encodeURIComponent(pinTag.id)}`,
+                }}
+                href=${`#/streams/${pinTag.id}`}
+              >
+                <span class="SidebarItem-label">Pins</span>
+              </a>
+            `
+            : null
+        }>
       </div>
       <div class="SidebarSection">
         <header class="SidebarHeader">
           <button
             aria-label="Reload subscriptions"
             class="link-soft u-flex-shrink-0"
-            disabled=${subscriptionsIsLoading}
+            disabled=${subscriptionsLoading}
             type="button"
-            @click=${onFetchSubscriptions}
+            @click=${reloadSubscriptions}
           >
             <i
               :class=${{
-                _: 'icon icon-16 icon-refresh',
-                'animation-rotating': subscriptionsIsLoading,
+                'icon icon-16 icon-refresh': true,
+                'animation-rotating': subscriptionsLoading,
               }}
               aria-hidden="true"
               role="img"
             ></i>
           </button>
           <strong class="u-flex-grow-1 u-text-7"><${lastUpdate}></strong>
-          <${SubscriptionDisplayDropdown({
-            isLoading: subscriptionsIsLoading,
-            onChangeSubscriptionOrder,
-            onChangeOnlyUnread,
-            onManageSubscriptions: handleManageSubscriptions,
-            onlyUnread,
-            subscriptionOrder,
+          <${SubscriptionsSettingsDropdown({
+            disabled: subscriptionsLoading,
+            onSubscriptionsOrganize: handleSubscriptionsOrganize,
+            onSubscriptionsSettingsUpdate: updateSubscriptionsSettings,
+            subscriptionsSettings,
           })}>
         </header>
-        <${SubscriptionTree({
-          categories,
-          groupedSubscriptions,
-          selectedPath: location.url.pathname,
-          onSelect: handleSelect,
+        <${SubscriptionsTree({
+          ungroupedItems: subscriptionsTree.ungroupedItems,
+          subscriptionGroups: subscriptionsTree.subscriptionGroups,
+          selectedStreamId,
+          onStreamSelect: handleStreamSelect,
         })}>
       </div>
       <div class="SidebarSection">
         <a
           :class=${{
-            _: 'SidebarItem',
+            SidebarItem: true,
             'is-selected': location.url.pathname.startsWith('/settings/'),
           }}
           href="#/settings/ui"
@@ -211,7 +176,7 @@ export const Sidebar = createComponent(function Sidebar(
         </a>
         <a
           :class=${{
-            _: 'SidebarItem',
+            SidebarItem: true,
             'is-selected': location.url.pathname === '/about',
           }}
           href="#/about"
@@ -227,14 +192,20 @@ export const Sidebar = createComponent(function Sidebar(
           New Subscription
         </a>
       </div>
-      <div class="SidebarSection">
-        <${ProfileDropdown({
-          isLoading: userIsLoading,
-          profile,
-          onRefresh: onFetchUser,
-          onLogout,
-        })}>
-      </div>
+      <${
+        profile !== null
+          ? $.html`
+            <div class="SidebarSection">
+              <${ProfileDropdown({
+                isLoading: profileLoading,
+                onLogout: revokeCredential,
+                onReload: reloadProfile,
+                profile,
+              })}>
+            </div>
+          `
+          : null
+      }>
     </nav>
   `;
 });
@@ -255,8 +226,8 @@ function getFilteredItems(
     (subscription) =>
       queryWords.every(
         (queryWord) =>
-          subscription.title.toLowerCase().includes(queryWord) ||
-          subscription.url.toLowerCase().includes(queryWord),
+          (subscription.title ?? '').toLowerCase().includes(queryWord) ||
+          getFeedUrl(subscription.id).toLowerCase().includes(queryWord),
       ),
     10,
   ).map((subscription) => {
@@ -275,12 +246,12 @@ function getFilteredItems(
 
     return {
       type: 'link',
-      key: 'subscription:' + subscription.subscriptionId,
+      key: subscription.id,
       children: $.html`
         <div class="MenuItem-icon"><${icon}></div>
         <div class="MenuItem-content">${subscription.title}</div>
       `,
-      href: '#/streams/' + encodeURIComponent(subscription.streamId),
+      href: '#/streams/' + encodeURIComponent(subscription.id),
     } as MenuItem;
   });
 

@@ -1,7 +1,6 @@
 import { createComponent, type RenderContext } from 'barebind';
-import { bindActions } from 'feedpon-flux';
-import { getStoreHook } from 'feedpon-flux/barebind.ts';
-import { authenticate } from 'feedpon-messaging/backend';
+import * as autoActions from 'feedpon-store/actions/auth';
+import { BindActionCreators } from 'feedpon-store/hooks/BindActionCreators';
 
 export interface AuthenticationPageProps {}
 
@@ -9,13 +8,7 @@ export const AuthenticationPage = createComponent(function AuthenticationPage(
   _props: AuthenticationPageProps,
   $: RenderContext,
 ): unknown {
-  const { onAuthenticate } = $.use(
-    getStoreHook({
-      mapDispatchToProps: bindActions({
-        onAuthenticate: authenticate,
-      }),
-    }),
-  );
+  const { acquireCredential } = $.use(BindActionCreators(autoActions));
 
   return $.html`
     <div class="authentication">
@@ -52,7 +45,7 @@ export const AuthenticationPage = createComponent(function AuthenticationPage(
         <button
           type="button"
           class="button button-positive button-block button-large"
-          @click=${onAuthenticate}
+          @click=${acquireCredential}
         >
           Authenticate...
         </button>

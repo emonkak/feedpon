@@ -11,7 +11,7 @@ export interface MenuProps {
   items: MenuItem[];
   manual?: boolean;
   onItemAction?: (event: Event, key: string) => void;
-  onToggle?: (open: boolean) => void;
+  onMenuToggle?: (open: boolean) => void;
   open?: boolean;
   ref?: RefObject<MenuRef | null>;
   target: string;
@@ -83,7 +83,7 @@ export const Menu = createComponent(function Menu(
     items,
     manual = false,
     onItemAction,
-    onToggle,
+    onMenuToggle,
     open = false,
     ref: exposedRef = { current: null },
     target,
@@ -142,9 +142,9 @@ export const Menu = createComponent(function Menu(
 
   const handleToggle = $.useCallback(
     (event: ToggleEvent) => {
-      onToggle?.(event.newState === 'open');
+      onMenuToggle?.(event.newState === 'open');
     },
-    [onToggle],
+    [onMenuToggle],
   );
 
   $.useLayoutEffect(() => {
@@ -361,8 +361,9 @@ function focusLastItem(element: HTMLElement): void {
 function focusNextItem(element: HTMLElement): void {
   const children = getItemChildren(element);
   if (children.length > 0) {
-    const activeIndex = activeElementIndex(children);
-    const nextIndex = activeIndex < children.length - 1 ? activeIndex + 1 : 0;
+    const selectedIndex = activeElementIndex(children);
+    const nextIndex =
+      selectedIndex < children.length - 1 ? selectedIndex + 1 : 0;
     focusChild(children[nextIndex]!);
   }
 }
@@ -370,9 +371,9 @@ function focusNextItem(element: HTMLElement): void {
 function focusPreviousItem(element: HTMLElement): void {
   const children = getItemChildren(element);
   if (children.length > 0) {
-    const activeIndex = activeElementIndex(children);
+    const selectedIndex = activeElementIndex(children);
     const previousIndex =
-      activeIndex > 0 ? activeIndex - 1 : children.length - 1;
+      selectedIndex > 0 ? selectedIndex - 1 : children.length - 1;
     focusChild(children[previousIndex]!);
   }
 }

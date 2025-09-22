@@ -1,5 +1,5 @@
 import { createComponent, type RenderContext } from 'barebind';
-import type { Profile } from 'feedpon-messaging';
+import type { Profile } from 'feedpon-store/state';
 
 import { openAlertDialog } from '../primitives/AlertDialog.ts';
 import { Dropdown } from '../primitives/Dropdown.ts';
@@ -7,18 +7,14 @@ import { Dropdown } from '../primitives/Dropdown.ts';
 interface ProfileDropdownProps {
   isLoading: boolean;
   onLogout: () => void;
-  onRefresh: () => void;
+  onReload: () => void;
   profile: Profile;
 }
 
 export const ProfileDropdown = createComponent(function ProfileDropdown(
-  { isLoading, onLogout, onRefresh, profile }: ProfileDropdownProps,
+  { isLoading, onLogout, onReload, profile }: ProfileDropdownProps,
   $: RenderContext,
 ): unknown {
-  const handleRefresh = $.useCallback(() => {
-    onRefresh();
-  }, [onRefresh]);
-
   const handleLogout = $.useCallback(() => {
     openAlertDialog(
       {
@@ -31,7 +27,7 @@ export const ProfileDropdown = createComponent(function ProfileDropdown(
         onConfirm: () => {
           onLogout();
         },
-        title: `Logout ${profile.userName}...`,
+        title: `Logout ${profile.client}...`,
         message: 'Are you sure you want to logout of the current session?',
       },
       $,
@@ -55,7 +51,7 @@ export const ProfileDropdown = createComponent(function ProfileDropdown(
   `;
 
   return Dropdown({
-    trigger: ({ id, onToggle, open }) => $.html`
+    trigger: ({ id, onMenuToggle, open }) => $.html`
       <button
         aria-expanded=${open.toString()}
         aria-label="Toggle profile dropdown"
@@ -63,16 +59,16 @@ export const ProfileDropdown = createComponent(function ProfileDropdown(
         disabled=${isLoading}
         id=${id}
         type="button"
-        @click=${onToggle}
+        @click=${onMenuToggle}
       >
         <div class="u-flex u-flex-align-items-center DropdownArrow">
           <${profileIcon}>
           <span class="u-flex-grow-1 u-margin-left-1 u-text-left">
             <div class="u-text-wrap u-text-7">
-              <strong>${profile.userName}</strong>
+              <strong>${profile?.fullName ?? 'Anonymous'}</strong>
             </div>
             <div class="u-text-wrap u-text-7">
-              via <strong>${profile.source}</strong>
+              via <strong>${profile.client}</strong>
             </div>
           </span>
         </div>
@@ -81,11 +77,11 @@ export const ProfileDropdown = createComponent(function ProfileDropdown(
     items: [
       {
         type: 'button',
-        key: 'refresh',
+        key: 'reload',
         children: $.html`
-          <div class="MenuItem-content">Refresh</div>
+          <div class="MenuItem-content">Reload</div>
         `,
-        onAction: handleRefresh,
+        onAction: onReload,
       },
       {
         type: 'button',

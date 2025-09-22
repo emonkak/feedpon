@@ -8,9 +8,6 @@
   "dependencies": {
     "@types/chrome": "^0.1.12",
     "barebind": "catalog:",
-    "feedpon-adapters": "workspace:^",
-    "feedpon-flux": "workspace:^",
-    "feedpon-messaging": "workspace:^",
-    "feedpon-utils": "workspace:^"
+    "feedpon-store": "workspace:^"
   }
 }

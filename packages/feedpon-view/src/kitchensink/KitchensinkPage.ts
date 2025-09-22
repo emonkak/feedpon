@@ -1,11 +1,7 @@
 import { createComponent, type RenderContext } from 'barebind';
-import { bindActions } from 'feedpon-flux';
-import { getStoreHook } from 'feedpon-flux/barebind.ts';
-import type { NotificationKind } from 'feedpon-messaging';
-import { sendNotification } from 'feedpon-messaging/notifications';
-import { toggleSidebar } from 'feedpon-messaging/ui';
-import { MemoBinder } from 'feedpon-utils/MemoBinder.ts';
-
+import { sendNotification, toggleSidebar } from 'feedpon-store/actions/ui';
+import { BindActionCreators } from 'feedpon-store/hooks/BindActionCreators';
+import type { NotificationType } from 'feedpon-store/state';
 import { MainLayout } from '../layout/MainLayout.ts';
 import { Dialog } from '../primitives/Dialog.ts';
 import { Dropdown } from '../primitives/Dropdown.ts';
@@ -17,17 +13,13 @@ export const KitchensinkPage = createComponent(function KitchensinkPage(
   {}: KitchenSinkProps,
   $: RenderContext,
 ): unknown {
-  const { onSendNotification, onToggleSidebar } = $.use(
-    getStoreHook({
-      mapDispatchToProps: bindActions({
-        onSendNotification: sendNotification,
-        onToggleSidebar: toggleSidebar,
-      }),
+  const { onNotificationSend, onSidebarToggle } = $.use(
+    BindActionCreators({
+      onNotificationSend: sendNotification,
+      onSidebarToggle: toggleSidebar,
     }),
   );
   const [modalOpened, setModalOpened] = $.useState(false);
-
-  const binder = $.useMemo(() => new MemoBinder(), []);
 
   const handleOpenModal = $.useCallback(() => {
     setModalOpened(true);
@@ -38,17 +30,17 @@ export const KitchensinkPage = createComponent(function KitchensinkPage(
   }, []);
 
   const handleSendNotification = $.useCallback(
-    (kind: NotificationKind) => {
-      onSendNotification(
+    (type: NotificationType) => {
+      onNotificationSend(
+        type,
         'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-        kind,
       );
     },
-    [onSendNotification],
+    [onNotificationSend],
   );
 
   const header = Navbar({
-    onToggleSidebar,
+    onSidebarToggle,
     children: $.html`
       <h1 class="navbar-title">Kitchen sink</h1>
     `,
@@ -101,42 +93,42 @@ export const KitchensinkPage = createComponent(function KitchensinkPage(
         <button
           type="button"
           class="button button-default"
-          @click=${binder.bind(handleSendNotification, 'default')}
+          @click=${handleSendNotification.bind(null, 'info')}
         >
           Default
         </button>
         <button
           type="button"
           class="button button-positive"
-          @click=${binder.bind(handleSendNotification, 'positive')}
+          @click=${handleSendNotification.bind(null, 'positive')}
         >
           Positive
         </button>
         <button
           type="button"
           class="button button-negative"
-          @click=${binder.bind(handleSendNotification, 'negative')}
+          @click=${handleSendNotification.bind(null, 'negative')}
         >
           Negative
         </button>
         <button
           type="button"
           class="button button-outline-default"
-          @click=${binder.bind(handleSendNotification, 'default')}
+          @click=${handleSendNotification.bind(null, 'info')}
         >
           Default
         </button>
         <button
           type="button"
           class="button button-outline-positive"
-          @click=${binder.bind(handleSendNotification, 'positive')}
+          @click=${handleSendNotification.bind(null, 'positive')}
         >
           Positive
         </button>
         <button
           type="button"
           class="button button-outline-negative"
-          @click=${binder.bind(handleSendNotification, 'negative')}
+          @click=${handleSendNotification.bind(null, 'negative')}
         >
           Negative
         </button>
@@ -347,14 +339,14 @@ export const KitchensinkPage = createComponent(function KitchensinkPage(
       <h2>Dropdown</h2>
       <div class="u-margin-bottom-2">
         <${Dropdown({
-          trigger: ({ id, onToggle, open }, context) => context.html`
+          trigger: ({ id, onMenuToggle, open }, context) => context.html`
             <button
               aria-expanded=${open.toString()}
               aria-haspopup="listbox"
               id=${id}
               type="button"
               class="button button-outline-default DropdownArrow"
-              @click=${onToggle}
+              @click=${onMenuToggle}
             >
               Open Dropdown
             </button>

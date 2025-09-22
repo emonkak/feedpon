@@ -1,14 +1,12 @@
 import { createComponent, type RenderContext } from 'barebind';
-import type { Category } from 'feedpon-messaging';
+import type { Category } from 'feedpon-store/state';
 
 interface CategoryHeaderProps {
   category: Category;
-  hasMoreEntries: boolean;
-  numEntries: number;
 }
 
 export const CategoryHeader = createComponent(function CategoryHeader(
-  { category, hasMoreEntries, numEntries }: CategoryHeaderProps,
+  { category }: CategoryHeaderProps,
   $: RenderContext,
 ): unknown {
   return $.html`
@@ -18,11 +16,6 @@ export const CategoryHeader = createComponent(function CategoryHeader(
           <div class="u-margin-right-2 u-flex-grow-1">
             <div>
               <strong>${category.label}</strong>
-            </div>
-            <div class="list-inline list-inline-dotted">
-              <div class="list-inline-item u-text-muted">
-                <span class="u-text-4">${numEntries}${hasMoreEntries ? '+' : ''}</span> entries
-              </div>
             </div>
           </div>
           <div class="u-flex-shrink-0">

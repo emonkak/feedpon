@@ -1,29 +1,29 @@
 import { createComponent, type RenderContext } from 'barebind';
+import { type Entry, getEntryUrl } from 'feedpon-store/state';
 
 import { Dialog } from '../primitives/Dialog.ts';
 import { createPopupHook } from '../primitives/hooks/popupHook.ts';
 
 interface EntryShareButtonProps {
-  url: string;
-  title: string;
+  entry: Entry;
 }
 
 export const EntryShareButton = createComponent(function EntryShareButton(
-  { url, title }: EntryShareButtonProps,
+  { entry }: EntryShareButtonProps,
   $: RenderContext,
 ): unknown {
   const popup = $.use(createPopupHook(false, ['up', 'down']));
 
-  const handleTogglePopup = $.useCallback(
-    (event: Event) => {
-      if (popup.opened) {
-        popup.close();
-      } else {
-        popup.open(event.currentTarget as Element);
-      }
-    },
-    [popup.opened],
-  );
+  const handleTogglePopup = (event: Event) => {
+    if (popup.opened) {
+      popup.close();
+    } else {
+      popup.open(event.currentTarget as Element);
+    }
+  };
+
+  const url = getEntryUrl(entry);
+  const title = entry.title ?? '';
 
   const popover = $.html`
     <div

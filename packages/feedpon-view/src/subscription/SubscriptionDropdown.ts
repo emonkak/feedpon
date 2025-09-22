@@ -1,19 +1,18 @@
 import { createComponent, type RenderContext } from 'barebind';
-import type { Category, Subscription } from 'feedpon-messaging';
-
+import { LocalAtom } from 'barebind/extras/hooks';
+import type { Category, Subscription } from 'feedpon-store/state';
 import { openAlertDialog } from '../primitives/AlertDialog.ts';
 import { Dropdown } from '../primitives/Dropdown.ts';
 import type { MenuItem } from '../primitives/Menu.ts';
 
 interface SubscriptionDropdownProps {
   categories: Category[];
-  onAddToCategory: (subscription: Subscription, label: string) => void;
-  onCreateCategory: (
-    label: string,
-    callback: (category: Category) => void,
-  ) => void;
-  onRemoveFromCategory: (subscription: Subscription, label: string) => void;
-  onUnsubscribe: (subscription: Subscription) => void;
+  onCategoryCreate: (label: string) => Promise<void>;
+  onSubscriptionDelete: (subscriptionId: string) => Promise<void>;
+  onSubscriptionUpdate: (
+    subscriptionId: string,
+    labels: string[],
+  ) => Promise<void>;
   subscription: Subscription;
 }
 
@@ -21,68 +20,88 @@ export const SubscriptionDropdown = createComponent(
   function SubscriptionDropdown(
     {
       categories,
-      onAddToCategory,
-      onCreateCategory,
-      onRemoveFromCategory,
-      onUnsubscribe,
+      onCategoryCreate,
+      onSubscriptionDelete,
+      onSubscriptionUpdate,
       subscription,
     }: SubscriptionDropdownProps,
     $: RenderContext,
   ): unknown {
-    const [categoryLabel, setCategoryLabel] = $.useState('');
+    const newLabel$ = $.use(LocalAtom(''));
 
-    const handleCreateCategory = $.useCallback(
-      (event: Event) => {
+    const handleCategoryCreate = $.useCallback(
+      async (event: Event) => {
         event.preventDefault();
-        onCreateCategory(categoryLabel, () => {
-          onAddToCategory(subscription, categoryLabel);
-        });
-        setCategoryLabel('');
+        const newLabel = newLabel$.value;
+        newLabel$.value = '';
+        await onCategoryCreate(newLabel);
+        await onSubscriptionUpdate(
+          subscription.id,
+          subscription.categories
+            .map((category) => category.label)
+            .filter((label) => label !== undefined && label !== newLabel)
+            .concat(newLabel) as string[],
+        );
       },
-      [onCreateCategory],
-    );
-
-    const handleRemoveFromCategory = $.useCallback(
-      (_event: Event, key: string) => {
-        onRemoveFromCategory(subscription, key);
-      },
-      [subscription, onRemoveFromCategory],
+      [subscription, onCategoryCreate, onSubscriptionUpdate],
     );
 
     const handleAddToCategory = $.useCallback(
-      (_event: Event, key: string) => {
-        onAddToCategory(subscription, key);
+      async (event: Event, key: string) => {
+        event.preventDefault();
+        await onSubscriptionUpdate(
+          subscription.id,
+          subscription.categories
+            .map((category) => category.label)
+            .filter((label) => label !== undefined)
+            .concat(key) as string[],
+        );
       },
-      [subscription, onAddToCategory],
+      [subscription, onSubscriptionUpdate],
     );
 
-    const handleChangeCategoryLabel = $.useCallback((event: Event) => {
-      setCategoryLabel((event.currentTarget as HTMLInputElement).value);
+    const removeFromCategory = $.useCallback(
+      (event: Event, key: string) => {
+        event.preventDefault();
+        onSubscriptionUpdate(
+          subscription.id,
+          subscription.categories
+            .map((category) => category.label)
+            .filter(
+              (label) => label !== undefined && label !== key,
+            ) as string[],
+        );
+      },
+      [subscription, onSubscriptionUpdate],
+    );
+
+    const handleNewCategoryLabelChange = $.useCallback((event: Event) => {
+      newLabel$.value = (event.currentTarget as HTMLInputElement).value;
     }, []);
 
     const handleUnsubscribe = $.useCallback(() => {
       openAlertDialog(
         {
           confirmButton: ({ onConfirm }, context) => context.html`
-          <button
-            class="button button-negative"
-            type="button"
-            @click=${onConfirm}
-          >
-            Logout
-          </button>
-        `,
+            <button
+              class="button button-negative"
+              type="button"
+              @click=${onConfirm}
+            >
+              Logout
+            </button>
+          `,
           cancelButton: ({ onCancel }, context) => context.html`
-          <button
-            class="button button-outline-default"
-            type="button"
-            @click=${onCancel}
-          >
-            Cancel
-          </button>
-        `,
+            <button
+              class="button button-outline-default"
+              type="button"
+              @click=${onCancel}
+            >
+              Cancel
+            </button>
+          `,
           onConfirm: () => {
-            onUnsubscribe(subscription);
+            onSubscriptionDelete(subscription.id);
           },
           title: `Unsubscribe "${subscription.title}"`,
           message: 'Are you sure you want to unsubscribe the feed?',
@@ -92,13 +111,13 @@ export const SubscriptionDropdown = createComponent(
     }, []);
 
     const categoryMenuItems = categories.map((category) => {
-      const isAdded = subscription.labels.includes(category.label);
+      const isAdded = subscription.categories.some(
+        (category) => category.label === category.label,
+      );
       const icon = isAdded
         ? $.html`<i aria-hidden class="icon icon-16 icon-checkmark" role="img"></i></div>`
         : null;
-      const handleAction = isAdded
-        ? handleRemoveFromCategory
-        : handleAddToCategory;
+      const handleAction = isAdded ? removeFromCategory : handleAddToCategory;
 
       return {
         type: 'button',
@@ -113,22 +132,16 @@ export const SubscriptionDropdown = createComponent(
     });
 
     return Dropdown({
-      trigger: ({ id, onToggle, open }, context) => context.html`
+      trigger: ({ id, onMenuToggle, open }, context) => context.html`
         <button
           aria-expanded=${open.toString()}
           type="button"
           class="link-soft u-margin-left-2"
-          disabled=${subscription.isLoading}
           id=${id}
-          @click=${onToggle}
+          @click=${onMenuToggle}
         >
           <i
-            :class=${[
-              'icon icon-20 icon-width-32',
-              subscription.isLoading
-                ? 'icon-spinner animation-rotating'
-                : 'icon-menu-2',
-            ]}
+            class="icon icon-20 icon-width-32 icon-menu-2"
             aria-hidden
             role="img"
           ></i>
@@ -161,21 +174,19 @@ export const SubscriptionDropdown = createComponent(
                     type="text"
                     class="form-control"
                     style="width: 12rem"
-                    value=${categoryLabel}
-                    disabled=${subscription.isLoading}
-                    @change=${handleChangeCategoryLabel}
+                    $value=${newLabel$}
+                    @change=${handleNewCategoryLabelChange}
                   >
                   <button
                     type="submit"
                     class="button button-positive"
-                    disabled=${subscription.isLoading}
                   >
                     OK
                   </button>
                 </div>
               </div>
             `,
-              onAction: handleCreateCategory,
+              onAction: handleCategoryCreate,
             },
           ],
         },
