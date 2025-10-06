@@ -138,7 +138,9 @@ const FullEntryView = createComponent(function FullEntryView(
     <div class="container">
       <header class="entry-header">
         <${EntryNav({
-          isFullContentsLoading: entry.fullContentsLoading ?? false,
+          isFullContentsLoading:
+            (entry.fullContentsShown && entry.fullContents === undefined) ||
+            (entry.fullContentsLoading ?? false),
           isFullContentsShown: entry.fullContentsShown ?? false,
           onFullContentsToggle,
           entry: entry,
