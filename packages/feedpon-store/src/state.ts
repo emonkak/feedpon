@@ -86,6 +86,7 @@ export type HatenaBookmarkBookmark = v.InferOutput<
 export type HatenaBookmarkEntry = v.InferOutput<typeof HatenaBookmarkEntry>;
 
 export interface KeyboardSettings {
+  openLinksInBackground: boolean;
   scrollDistanceRatio: number;
   scrollDuration: number;
 }
@@ -225,6 +226,7 @@ export class AppState {
   };
   feed: Feed | null = null;
   keyboardSettings: KeyboardSettings = {
+    openLinksInBackground: true,
     scrollDistanceRatio: 0.5,
     scrollDuration: (1000 / 60) * 10,
   };

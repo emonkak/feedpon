@@ -73,7 +73,7 @@ export class AppCommandHandler implements CommandHandler<AppContext> {
   openArticle(context: AppContext): void {
     const { state$ } = context;
 
-    state$.mutate(({ stream, session }) => {
+    state$.mutate(({ keyboardSettings, session, stream }) => {
       if (stream === null || session === null) {
         return;
       }
@@ -85,21 +85,33 @@ export class AppCommandHandler implements CommandHandler<AppContext> {
 
       showOsd('Open Original Article')(context);
 
-      window.open(getEntryUrl(focusEntry), '_blank');
+      chrome.tabs.getCurrent((tab) => {
+        chrome.tabs.create({
+          active: !keyboardSettings.openLinksInBackground,
+          openerTabId: tab?.id,
+          url: getEntryUrl(focusEntry),
+        });
+      });
     });
   }
 
   openWebsite(context: AppContext): void {
     const { state$ } = context;
 
-    state$.mutate(({ feed }) => {
+    state$.mutate(({ feed, keyboardSettings }) => {
       if (feed === null || feed.website === null) {
         return;
       }
 
       showOsd('Open Feed Website')(context);
 
-      window.open(feed.website, '_blank');
+      chrome.tabs.getCurrent((tab) => {
+        chrome.tabs.create({
+          active: !keyboardSettings.openLinksInBackground,
+          openerTabId: tab?.id,
+          url: feed.website,
+        });
+      });
     });
   }
 
