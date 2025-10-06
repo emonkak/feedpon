@@ -197,7 +197,7 @@ export const Profile = v.object({
   // The client application used to create this account.
   client: v.string(),
   // The client name/version used to create this account.
-  source: v.string(),
+  source: v.optional(v.string()),
   created: v.optional(v.number()),
 });
 
