@@ -121,7 +121,7 @@ export class AppCommandHandler implements CommandHandler<AppContext> {
     state$.mutate(({ keyboardSettings }) => {
       const { scrollDistanceRatio, scrollDuration } = keyboardSettings;
       const dx = 0;
-      const dy = document.documentElement.clientHeight / scrollDistanceRatio;
+      const dy = document.documentElement.clientHeight * scrollDistanceRatio;
 
       if (scrollDuration > 0) {
         smoothScrollBy(window, dx, dy, scrollDuration)(context);
@@ -137,7 +137,7 @@ export class AppCommandHandler implements CommandHandler<AppContext> {
     state$.mutate(({ keyboardSettings }) => {
       const { scrollDistanceRatio, scrollDuration } = keyboardSettings;
       const dx = 0;
-      const dy = -document.documentElement.clientHeight / scrollDistanceRatio;
+      const dy = -document.documentElement.clientHeight * scrollDistanceRatio;
 
       if (scrollDuration > 0) {
         smoothScrollBy(window, dx, dy, scrollDuration)(context);
