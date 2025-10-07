@@ -32,7 +32,7 @@ export const Origin = v.object({
   // The feed id
   streamId: v.string(),
   // The feed title
-  title: v.string(),
+  title: v.optional(v.string()),
   // The feed's website.
   htmlUrl: v.pipe(v.string(), v.url()),
 });
