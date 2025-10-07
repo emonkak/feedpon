@@ -21,12 +21,18 @@ interface ImageCandidate {
 
 export function absolutifyUrls(document: Document, baseUrl: string) {
   for (const el of document.querySelectorAll('base')) {
+    if (!(el instanceof HTMLElement)) {
+      continue;
+    }
     el.remove();
   }
 
   for (const el of document.querySelectorAll(
     'a, area, link',
   ) as NodeListOf<HTMLElementHavingHref>) {
+    if (!(el instanceof HTMLElement)) {
+      continue;
+    }
     if (el.hasAttribute('href')) {
       el.href = new URL(el.href, baseUrl).href;
     }
@@ -37,6 +43,9 @@ export function absolutifyUrls(document: Document, baseUrl: string) {
   for (const el of document.querySelectorAll(
     'audio, embed, iframe, input, script, source, track, video',
   ) as NodeListOf<HTMLElementHavingSrc>) {
+    if (!(el instanceof HTMLElement)) {
+      continue;
+    }
     if (el.hasAttribute('src')) {
       el.src = new URL(el.src, baseUrl).href;
     }
@@ -45,10 +54,12 @@ export function absolutifyUrls(document: Document, baseUrl: string) {
   for (const el of document.querySelectorAll(
     'img, source',
   ) as NodeListOf<HTMLElementHavingSrcset>) {
+    if (!(el instanceof HTMLElement)) {
+      continue;
+    }
     if (el.hasAttribute('src')) {
       el.src = new URL(el.src, baseUrl).href;
     }
-
     if (el.hasAttribute('srcset')) {
       el.srcset = parseSrcset(el.srcset)
         .map(
