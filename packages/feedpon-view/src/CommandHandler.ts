@@ -343,8 +343,6 @@ export class AppCommandHandler implements CommandHandler<AppContext> {
         return;
       }
 
-      console.log(focusEntry, session.focusIndex);
-
       showOsd(
         focusEntry.fullContentsShown
           ? 'Hide Full Contents'
@@ -367,8 +365,6 @@ export class AppCommandHandler implements CommandHandler<AppContext> {
       if (focusEntry === undefined) {
         return;
       }
-
-      console.log(focusEntry, session.focusIndex);
 
       showOsd(
         focusEntry.hatenaBookmarkEntryShown
