@@ -333,7 +333,7 @@ export class AppState {
   keyboardShortcutsOpened: boolean = false;
   muteFilters: MuteFilter[] = [];
   notifications: Notification[] = [];
-  notificationSettings: NotificationSettings = { timeout: 5 };
+  notificationSettings: NotificationSettings = { timeout: 3000 };
   opmlImporting: boolean = false;
   osd: Osd | null = null;
   pastSessions: Session[] = [];

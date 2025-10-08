@@ -266,6 +266,11 @@ export function markStreamAsRead(): AppAction<Promise<void>> {
       } finally {
         state.streamUpdating = false;
       }
+
+      sendNotification(
+        'info',
+        `${stream.items.length} entries are marked as read.`,
+      )(context);
     });
   };
 }
