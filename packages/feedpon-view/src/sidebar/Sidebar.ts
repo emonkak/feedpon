@@ -20,12 +20,21 @@ export const Sidebar = createComponent(function Sidebar(
   $: RenderContext,
 ): unknown {
   const { state$ } = $.use(AppStore);
+  const { location, navigator } = $.use(CurrentHistory);
+
   const allCategory = $.use(state$.get('allCategory'));
   const pinTag = $.use(state$.get('pinTag'));
   const profile = $.use(state$.get('profile'));
   const profileLoading = $.use(state$.get('profileLoading'));
   const selectedStreamId = $.use(
-    state$.get('session').map((session) => session?.id ?? null),
+    state$
+      .get('session')
+      .map((session) =>
+        session !== null &&
+        decodeURIComponent(location.url.pathname).endsWith(session.id)
+          ? session.id
+          : null,
+      ),
   );
   const subscriptions = $.use(state$.get('sortedSubscriptions'));
   const subscriptionsLoading = $.use(state$.get('subscriptionsLoading'));
@@ -39,8 +48,6 @@ export const Sidebar = createComponent(function Sidebar(
   );
   const { revokeCredential } = $.use(BindActionCreators(authActions));
   const { reloadProfile } = $.use(BindActionCreators(profileActions));
-
-  const { location, navigator } = $.use(CurrentHistory);
 
   $.useEffect(() => {
     if (subscriptionsUpdated < 0) {

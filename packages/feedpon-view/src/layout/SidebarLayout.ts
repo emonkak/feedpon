@@ -56,7 +56,7 @@ export const SidebarLayout = createComponent(function SidebarLayout(
 
     return (commandId: CommandId) => {
       const action = commandHandler[commandId].bind(commandHandler);
-      store.dispatchAction(action);
+      store.dispatchAction<any>(action);
     };
   }, []);
 
@@ -152,10 +152,7 @@ export const SidebarLayout = createComponent(function SidebarLayout(
         :ref=${sidebarRef}
         @transitionend=${handleTransitionEnd}
       >
-        <${Sidebar({
-          navigator: navigator,
-          url: location.url,
-        })}>
+        <${Sidebar({})}>
       </div>
       <div :style=${mainStyle} class="l-main">
         <div class="l-notifications">
