@@ -240,10 +240,19 @@ export function markStreamAsRead(): AppAction<Promise<void>> {
         return;
       }
 
+      const latestItem =
+        session.settings.ranked === 'newest'
+          ? stream.items[0]
+          : stream.items.at(-1);
+
+      if (latestItem === undefined) {
+        return;
+      }
+
       state.streamUpdating = true;
 
       try {
-        await updateMarkers(context, session.id);
+        await updateMarker(context, session.id, latestItem?.id);
 
         state.session = {
           ...session,
@@ -671,7 +680,7 @@ function tryTestPattern(pattern: string, str: string): boolean {
   }
 }
 
-async function updateMarkers(
+async function updateMarker(
   context: AppContext,
   id: string,
   lastReadEntryId?: string,
@@ -682,7 +691,7 @@ async function updateMarkers(
 
   switch (parsedId.type) {
     case 'category':
-      await feedlyClient.updateMarkers(credential.accessToken, {
+      await feedlyClient.updateMarker(credential.accessToken, {
         action: 'markAsRead',
         type: 'categories',
         categoryIds: [id],
@@ -690,7 +699,7 @@ async function updateMarkers(
       });
       break;
     case 'feed':
-      await feedlyClient.updateMarkers(credential.accessToken, {
+      await feedlyClient.updateMarker(credential.accessToken, {
         action: 'markAsRead',
         type: 'feeds',
         feedIds: [id],
@@ -698,7 +707,7 @@ async function updateMarkers(
       });
       break;
     case 'tag':
-      await feedlyClient.updateMarkers(credential.accessToken, {
+      await feedlyClient.updateMarker(credential.accessToken, {
         action: 'markAsRead',
         type: 'tags',
         tagIds: [id],

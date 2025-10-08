@@ -337,7 +337,7 @@ export interface UpdateCategoryRequest {
   label: string;
 }
 
-export type UpdateMarkersRequest =
+export type UpdateMarkerRequest =
   | {
       action: 'markAsRead' | 'keepUnread' | 'markAsSaved' | 'markAsUnsaved';
       type: 'entries';
@@ -734,9 +734,9 @@ export class FeedlyClient {
   /**
    * Mark one or multiple articles as read or saved.
    */
-  async updateMarkers(
+  async updateMarker(
     accessToken: string,
-    body: UpdateMarkersRequest,
+    body: UpdateMarkerRequest,
   ): Promise<void> {
     return this._upfetch('/v3/markers', {
       body,
