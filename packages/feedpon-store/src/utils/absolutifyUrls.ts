@@ -34,7 +34,7 @@ export function absolutifyUrls(document: Document, baseUrl: string) {
       continue;
     }
     if (el.hasAttribute('href')) {
-      el.href = new URL(el.href, baseUrl).href;
+      el.href = toAbsoluteUrl(el.href, baseUrl);
     }
     el.target = '_blank';
     el.referrerPolicy = 'no-referrer';
@@ -47,7 +47,7 @@ export function absolutifyUrls(document: Document, baseUrl: string) {
       continue;
     }
     if (el.hasAttribute('src')) {
-      el.src = new URL(el.src, baseUrl).href;
+      el.src = toAbsoluteUrl(el.src, baseUrl);
     }
   }
 
@@ -58,13 +58,13 @@ export function absolutifyUrls(document: Document, baseUrl: string) {
       continue;
     }
     if (el.hasAttribute('src')) {
-      el.src = new URL(el.src, baseUrl).href;
+      el.src = toAbsoluteUrl(el.src, baseUrl);
     }
     if (el.hasAttribute('srcset')) {
       el.srcset = parseSrcset(el.srcset)
         .map(
           ({ url, descriptor }) =>
-            new URL(url, baseUrl).href + ' ' + descriptor,
+            toAbsoluteUrl(url, baseUrl) + ' ' + descriptor,
         )
         .join(',');
     }
@@ -87,4 +87,12 @@ function parseSrcset(input: string): ImageCandidate[] {
       const [url, descriptor] = component.split(SRCSET_SPACES_PATTERN, 2);
       return { url, descriptor } as ImageCandidate;
     });
+}
+
+function toAbsoluteUrl(url: string, baseUrl: string): string {
+  try {
+    return new URL(url, baseUrl).href;
+  } catch {
+    return url;
+  }
 }

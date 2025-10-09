@@ -99,6 +99,7 @@ export function fetchFullContents(entryId: string): AppAction<Promise<void>> {
 
           entry.fullContents = (entry.fullContents ?? []).concat(fullContent);
         } finally {
+          entry.fullContents ??= [];
           entry.fullContentsLoading = false;
         }
       }) ?? Promise.resolve()
