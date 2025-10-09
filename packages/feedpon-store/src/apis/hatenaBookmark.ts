@@ -4,7 +4,7 @@ import * as v from 'valibot';
 export const Bookmark = v.object({
   user: v.string(),
   tags: v.array(v.string()),
-  timestamp: v.pipe(v.string(), v.isoDateTime()),
+  timestamp: v.string(),
   comment: v.string(),
 });
 
@@ -14,7 +14,7 @@ export const Entry = v.object({
   url: v.pipe(v.string(), v.url()),
   entry_url: v.pipe(v.string(), v.url()),
   screenshot: v.pipe(v.string(), v.url()),
-  eid: v.number(),
+  eid: v.string(),
   bookmarks: v.optional(v.array(Bookmark)),
 });
 

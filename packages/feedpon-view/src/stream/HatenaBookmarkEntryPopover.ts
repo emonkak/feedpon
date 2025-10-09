@@ -13,8 +13,15 @@ export const HatenaBookmarkEntryPopover = createComponent(
     { arrowOffset, hatenaBookmarkEntry }: HatenaBookmarkEntryPopoverProps,
     $: RenderContext,
   ): unknown {
+    const bookmarks =
+      hatenaBookmarkEntry != null
+        ? (hatenaBookmarkEntry?.bookmarks?.filter(
+            (bookmark) => bookmark.comment !== '',
+          ) ?? [])
+        : null;
+
     const content =
-      hatenaBookmarkEntry === undefined
+      bookmarks === null
         ? $.html`
           <div class="comment">
             <span class="comment-user">
@@ -28,10 +35,9 @@ export const HatenaBookmarkEntryPopover = createComponent(
             </span>
           </div>
         `
-        : hatenaBookmarkEntry?.bookmarks !== undefined &&
-            hatenaBookmarkEntry.bookmarks.length > 0
+        : bookmarks.length > 0
           ? Repeat({
-              source: hatenaBookmarkEntry.bookmarks,
+              source: bookmarks,
               valueSelector: (bookmark) =>
                 HatenaBookmarkBookmarkView({ bookmark }),
             })
