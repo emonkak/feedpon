@@ -269,7 +269,7 @@ function renderBookmarks(entry: Entry, $: RenderContext): unknown {
 
 function renderOrign(entry: Entry, $: RenderContext): unknown {
   const parsedId = parseStreamId(entry.originId);
-  if (parsedId.type !== 'feed') {
+  if (parsedId.type === 'feed') {
     return null;
   }
 
@@ -277,9 +277,7 @@ function renderOrign(entry: Entry, $: RenderContext): unknown {
     <li class="list-inline-item">
       <a
         class="link-strong"
-        href=${parsedId.url}
-        target="_blank"
-        rel="noreferrer"
+        href=${`#/streams/${encodeURIComponent(entry.origin.streamId)}`}
       >
         ${entry.origin.title}
       </a>
