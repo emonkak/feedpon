@@ -193,6 +193,8 @@ export function reloadSubscriptions(): AppAction<Promise<void>> {
           (subscription) => [subscription.id, subscription],
         );
 
+        state.readCounts = ImmutableMap.empty();
+
         state.unreadCounts = ImmutableMap.from(unreadcounts, (unreadCount) => [
           unreadCount.id,
           unreadCount.count,
