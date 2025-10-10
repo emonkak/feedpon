@@ -1,26 +1,22 @@
 import { type UpFetch, up } from 'up-fetch';
-import * as v from 'valibot';
 
-export const DatabaseItem = v.object({
-  resource_url: v.pipe(v.string(), v.url()),
-  database_resource_url: v.pipe(v.string(), v.url()),
-  data: v.unknown(),
-  created_by: v.string(),
-  name: v.string(),
-  created_at: v.pipe(v.string(), v.isoDateTime()),
-  updated_at: v.pipe(v.string(), v.isoDateTime()),
-});
+export interface DatabaseItem<T> {
+  resource_url: string;
+  database_resource_url: string;
+  data: T;
+  created_by: string;
+  name: string;
+  created_at: string;
+  updated_at: string;
+}
 
-export const AutoPagerizeItem = v.object({
-  ...DatabaseItem.entries,
-  data: v.object({
-    url: v.string(),
-    nextLink: v.string(),
-    pageElement: v.string(),
-    exampleUrl: v.optional(v.string()),
-    insertBefore: v.optional(v.string()),
-  }),
-});
+export interface AutoPagerizeData {
+  url: string;
+  nextLink: string;
+  pageElement: string;
+  exampleUrl?: string;
+  insertBefore?: string;
+}
 
 export interface WedataClientOptions {
   fetch?: typeof fetch;
@@ -35,11 +31,7 @@ export class WedataClient {
     }));
   }
 
-  async getAutoPagerizeItems(): Promise<
-    v.InferOutput<typeof AutoPagerizeItem>[]
-  > {
-    return this._upfetch(`/database/AutoPagerize/itesm_all.json`, {
-      schema: v.array(AutoPagerizeItem),
-    });
+  async getAutoPagerizeItems(): Promise<DatabaseItem<AutoPagerizeData>[]> {
+    return this._upfetch('/databases/AutoPagerize/items_all.json');
   }
 }

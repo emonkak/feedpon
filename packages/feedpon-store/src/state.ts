@@ -17,7 +17,7 @@ import type {
   Bookmark as HatenaBookmarkBookmark,
   Entry as HatenaBookmarkEntry,
 } from './apis/hatenaBookmark.ts';
-import type { AutoPagerizeItem } from './apis/wedata.ts';
+import type { AutoPagerizeData, DatabaseItem } from './apis/wedata.ts';
 import { ImmutableMap } from './collections/ImmutableMap.ts';
 import {
   type Comparer,
@@ -144,7 +144,7 @@ export type ParsedStreamId =
 
 export type SearchResult = v.InferOutput<typeof SearchResult>;
 
-export interface Siteinfo extends v.InferOutput<typeof AutoPagerizeItem> {}
+export type Siteinfo = DatabaseItem<AutoPagerizeData>;
 
 export interface Stream extends v.InferOutput<typeof Stream> {
   items: Entry[];
