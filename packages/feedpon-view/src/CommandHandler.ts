@@ -2,6 +2,7 @@ import type { HistoryNavigator } from 'barebind/extras/router/history';
 import type { AppContext } from 'feedpon-store';
 import {
   expandEntry,
+  fetchHatenaBookmarkCounts,
   fetchStream,
   markStreamAsRead,
   shrinkEntry,
@@ -115,10 +116,11 @@ export class AppCommandHandler implements CommandHandler<AppContext> {
     });
   }
 
-  reloadStream(context: AppContext): Promise<void> {
+  async reloadStream(context: AppContext): Promise<void> {
     showOsd('Reload Current Stream')(context);
 
-    return fetchStream()(context);
+    await fetchStream()(context);
+    await fetchHatenaBookmarkCounts()(context);
   }
 
   reloadSubscriptions(context: AppContext): Promise<void> {
@@ -210,6 +212,7 @@ export class AppCommandHandler implements CommandHandler<AppContext> {
           !streamLoading
         ) {
           await fetchStream(stream.continuation)(context);
+          await fetchHatenaBookmarkCounts()(context);
         }
       },
     );

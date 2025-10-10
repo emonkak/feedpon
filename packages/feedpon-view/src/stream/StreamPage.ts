@@ -64,7 +64,7 @@ export const StreamPage = createComponent(function StreamPage(
       startSession(streamId);
     } else {
       if (stream === null) {
-        fetchStream();
+        fetchStream().then(() => fetchHatenaBookmarkCounts());
       } else if (session.focusIndex >= 0) {
         virtualScrollListRef.current?.scrollTo(session.focusIndex);
       } else {
@@ -110,6 +110,7 @@ export const StreamPage = createComponent(function StreamPage(
       newSessionSettings.unreadOnly !== oldSessionSettings.unreadOnly
     ) {
       await fetchStream();
+      await fetchHatenaBookmarkCounts();
     }
   };
 
