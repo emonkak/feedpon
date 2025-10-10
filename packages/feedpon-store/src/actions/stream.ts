@@ -576,7 +576,7 @@ function extractFullContentBySiteinfos(
       null,
     );
 
-    if (pageResult === null || pageResult.singleNodeValue === null) {
+    if (!(pageResult?.singleNodeValue instanceof Element)) {
       continue;
     }
 
@@ -589,14 +589,13 @@ function extractFullContentBySiteinfos(
       null,
     );
     const nextUrl =
-      nextLinkResult?.stringValue !== undefined &&
-      nextLinkResult.stringValue !== url
-        ? nextLinkResult.stringValue
+      nextLinkResult?.singleNodeValue instanceof Element
+        ? nextLinkResult.singleNodeValue.getAttribute('href')
         : null;
 
     return {
       url: document.baseURI,
-      content: serializeNode(pageResult.singleNodeValue),
+      content: pageResult.singleNodeValue.outerHTML,
       nextUrl,
     };
   }
@@ -630,12 +629,6 @@ function mergeStreams(oldStream: Stream, newStream: Stream): Stream {
     ...newStream,
     items: oldStream.items.concat(newStream.items),
   };
-}
-
-function serializeNode(node: Node): string {
-  return node instanceof Element
-    ? node.outerHTML
-    : new XMLSerializer().serializeToString(node);
 }
 
 function* splitStrings(

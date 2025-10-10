@@ -61,11 +61,11 @@ export const FullContents = createComponent(function FullContents(
             type="button"
             @click=${onFullContentsFetch}
           >
-            ${
+            <${
               isLoading
                 ? $.html`<i class="icon icon-20 icon-spinner animation-rotating"></i>`
                 : $.html`Next page`
-            }
+            }>
           </button>
         `
       : null;

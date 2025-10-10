@@ -34,39 +34,36 @@ export function absolutifyUrls(document: Document, baseUrl: string) {
       continue;
     }
     if (el.hasAttribute('href')) {
-      el.href = toAbsoluteUrl(el.href, baseUrl);
+      el.setAttribute('href', toAbsoluteUrl(el.getAttribute('href')!, baseUrl));
+      el.target = '_blank';
+      el.referrerPolicy = 'no-referrer';
     }
-    el.target = '_blank';
-    el.referrerPolicy = 'no-referrer';
   }
 
   for (const el of document.querySelectorAll(
     'audio, embed, iframe, input, script, source, track, video',
   ) as NodeListOf<HTMLElementHavingSrc>) {
-    if (!(el instanceof HTMLElement)) {
-      continue;
-    }
     if (el.hasAttribute('src')) {
-      el.src = toAbsoluteUrl(el.src, baseUrl);
+      el.setAttribute('src', toAbsoluteUrl(el.getAttribute('src')!, baseUrl));
     }
   }
 
   for (const el of document.querySelectorAll(
     'img, source',
   ) as NodeListOf<HTMLElementHavingSrcset>) {
-    if (!(el instanceof HTMLElement)) {
-      continue;
-    }
     if (el.hasAttribute('src')) {
-      el.src = toAbsoluteUrl(el.src, baseUrl);
+      el.setAttribute('src', toAbsoluteUrl(el.getAttribute('src')!, baseUrl));
     }
     if (el.hasAttribute('srcset')) {
-      el.srcset = parseSrcset(el.srcset)
-        .map(
-          ({ url, descriptor }) =>
-            toAbsoluteUrl(url, baseUrl) + ' ' + descriptor,
-        )
-        .join(',');
+      el.setAttribute(
+        'srcset',
+        parseSrcset(el.getAttribute('srcset')!)
+          .map(
+            ({ url, descriptor }) =>
+              toAbsoluteUrl(url, baseUrl) + ' ' + descriptor,
+          )
+          .join(','),
+      );
     }
   }
 
