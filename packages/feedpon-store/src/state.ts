@@ -363,7 +363,7 @@ export class AppState {
   subscriptionsUpdated: number = -1;
   theme: Theme = 'light';
   unreadCounts: ImmutableMap<UnreadCount['id'], number> = ImmutableMap.empty();
-  urlFilter: URLFilter[] = [
+  urlFilters: URLFilter[] = [
     {
       pattern: '[?&]utm_(?:source|medium|term|content|campaign)=[^&]*',
       replacement: '',

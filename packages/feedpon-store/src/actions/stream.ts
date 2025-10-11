@@ -13,6 +13,7 @@ import {
   type Stream,
   type StreamLayout,
   type StreamSettings,
+  type URLFilter,
 } from '../state.ts';
 import { absolutifyUrls } from '../utils/absolutifyUrls.ts';
 import { decodeResponse } from '../utils/decodeResponse.ts';
@@ -171,7 +172,7 @@ export function fetchStream(continuation?: string): AppAction<Promise<void>> {
     const { feedlyClient, state$ } = context;
 
     return state$.mutate(async (state) => {
-      const { feed: oldFeed, session, stream: oldStream } = state;
+      const { feed: oldFeed, session, stream: oldStream, urlFilters } = state;
 
       if (session === null) {
         return;
@@ -194,6 +195,10 @@ export function fetchStream(continuation?: string): AppAction<Promise<void>> {
           session.id,
           { ...session.settings, continuation },
         );
+
+        if (urlFilters.length > 0) {
+          applyUrlFilters(newStream.items, urlFilters);
+        }
 
         if (oldStream !== null && continuation !== undefined) {
           newStream = mergeStreams(oldStream, newStream);
@@ -541,6 +546,32 @@ export function updateStreamSettings(
   };
 }
 
+function applyUrlFilters(items: Entry[], filters: URLFilter[]): void {
+  for (const filter of filters) {
+    const pattern = tryConstructRegExp(filter.pattern, filter.flags);
+    if (pattern === null) {
+      continue;
+    }
+    for (const item of items) {
+      if (item.canonicalUrl !== undefined) {
+        item.canonicalUrl = item.canonicalUrl.replace(
+          pattern,
+          filter.replacement,
+        );
+      }
+      if (item.alternate !== undefined) {
+        for (const link of item.alternate) {
+          link.href = link.href.replace(pattern, filter.replacement);
+        }
+      }
+      item.origin.htmlUrl = item.origin.htmlUrl.replace(
+        pattern,
+        filter.replacement,
+      );
+    }
+  }
+}
+
 function extractFullContentByReadability(
   document: Document,
 ): FullContent | null {
@@ -653,6 +684,14 @@ function* splitStrings(
 
   if (chunk.length > 0) {
     yield chunk;
+  }
+}
+
+function tryConstructRegExp(pattern: string, flags: string): RegExp | null {
+  try {
+    return new RegExp(pattern, flags);
+  } catch {
+    return null;
   }
 }
 
