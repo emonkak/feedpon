@@ -51,7 +51,7 @@ export const FeedHeader = createComponent(function FeedHeader(
               <a
                 class="u-text-wrap"
                 target="_blank"
-                href=${feed.id}
+                href=${feedUrl}
                 rel="noreferrer"
               >
                 ${feedUrl}
