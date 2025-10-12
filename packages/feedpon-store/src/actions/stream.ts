@@ -200,14 +200,24 @@ export function fetchStream(continuation?: string): AppAction<Promise<void>> {
           applyUrlFilters(newStream.items, urlFilters);
         }
 
-        if (oldStream !== null && continuation !== undefined) {
+        if (
+          oldStream !== null &&
+          oldStream.id === session.id &&
+          continuation !== undefined
+        ) {
           newStream = mergeStreams(oldStream, newStream);
-        }
 
-        if (newStream.title !== undefined) {
           state.session = {
             ...session,
-            title: newStream.title,
+            updated: Date.now(),
+          };
+        } else {
+          state.session = {
+            ...session,
+            expandedIndex: -1,
+            focusIndex: -1,
+            readIndex: -1,
+            title: newStream.title ?? session.title,
             updated: Date.now(),
           };
         }
