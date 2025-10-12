@@ -264,10 +264,15 @@ export function markStreamAsRead(): AppAction<Promise<void>> {
           ...session,
           readIndex: stream.items.length - 1,
         };
-        state.readCounts = readCounts.updateOrInsert(
-          stream.id,
-          (count) => count + stream.items.length,
-          () => stream.items.length,
+
+        state.readCounts = stream.items.reduce(
+          (readCounts, item) =>
+            readCounts.updateOrInsert(
+              item.origin.streamId,
+              (count) => count + 1,
+              () => 1,
+            ),
+          readCounts,
         );
       } finally {
         state.streamUpdating = false;
