@@ -23,7 +23,7 @@ export const StreamPage = createComponent(function StreamPage(
   $: RenderContext,
 ): unknown {
   const { state$ } = store;
-  const categories = $.use(state$.get('sortedCategories'));
+  const categories = $.use(state$.get('unsortedCategories'));
   const category = $.use(state$.get('categories')).get(streamId) ?? null;
   const feed = $.use(state$.get('feed'));
   const readCount = $.use(state$.get('readCounts')).get(streamId) ?? 0;

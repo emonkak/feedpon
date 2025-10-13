@@ -36,7 +36,7 @@ export const Sidebar = createComponent(function Sidebar(
           : null,
       ),
   );
-  const subscriptions = $.use(state$.get('sortedSubscriptions'));
+  const subscriptions = $.use(state$.get('unsortedSubscriptions'));
   const subscriptionsLoading = $.use(state$.get('subscriptionsLoading'));
   const subscriptionsSettings = $.use(state$.get('subscriptionsSettings'));
   const subscriptionsTree = $.use(state$.get('subscriptionsTree'));

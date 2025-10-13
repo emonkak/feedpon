@@ -226,21 +226,21 @@ export class AppCommandHandler implements CommandHandler<AppContext> {
         return;
       }
 
-      for (const {
-        subscriptionItems,
-      } of subscriptionsTree.subscriptionGroups) {
-        const currentIndex = subscriptionItems.findIndex(
-          ({ subscription }) => subscription.id === session.id,
-        );
-        const nextIndex = currentIndex + 1;
-        const nextSubscription = subscriptionItems[nextIndex]?.subscription;
+      const visibleSubscriptions = subscriptionsTree.subscriptionGroups.flatMap(
+        ({ subscriptionItems }) =>
+          subscriptionItems.map(({ subscription }) => subscription),
+      );
+      const currentIndex = visibleSubscriptions.findIndex(
+        (subscription) => subscription.id === session.id,
+      );
+      const nextIndex = currentIndex + 1;
+      const nextSubscription = visibleSubscriptions[nextIndex];
 
-        if (nextSubscription !== undefined) {
-          this._navigator.navigate(
-            '/streams/' + encodeURIComponent(nextSubscription.id),
-          );
-          return;
-        }
+      if (nextSubscription !== undefined) {
+        this._navigator.navigate(
+          '/streams/' + encodeURIComponent(nextSubscription.id),
+        );
+        return;
       }
     });
   }
@@ -301,22 +301,21 @@ export class AppCommandHandler implements CommandHandler<AppContext> {
         return;
       }
 
-      for (const {
-        subscriptionItems,
-      } of subscriptionsTree.subscriptionGroups) {
-        const currentIndex = subscriptionItems.findIndex(
-          ({ subscription }) => subscription.id === session.id,
-        );
-        const previousIndex = currentIndex - 1;
-        const previousSubscription =
-          subscriptionItems[previousIndex]?.subscription;
+      const visibleSubscriptions = subscriptionsTree.subscriptionGroups.flatMap(
+        ({ subscriptionItems }) =>
+          subscriptionItems.map(({ subscription }) => subscription),
+      );
+      const currentIndex = visibleSubscriptions.findIndex(
+        (subscription) => subscription.id === session.id,
+      );
+      const previousIndex = currentIndex - 1;
+      const previousSubscription = visibleSubscriptions[previousIndex];
 
-        if (previousSubscription !== undefined) {
-          this._navigator.navigate(
-            '/streams/' + encodeURIComponent(previousSubscription.id),
-          );
-          return;
-        }
+      if (previousSubscription !== undefined) {
+        this._navigator.navigate(
+          '/streams/' + encodeURIComponent(previousSubscription.id),
+        );
+        return;
       }
     });
   }

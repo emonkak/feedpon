@@ -22,7 +22,7 @@ export const SearchPage = createComponent(function SearchPage(
   $: RenderContext,
 ): unknown {
   const { state$ } = store;
-  const categories = $.use(state$.get('sortedCategories'));
+  const categories = $.use(state$.get('unsortedCategories'));
   const searchQuery = $.use(state$.get('searchQuery'));
   const searchResults = $.use(state$.get('searchResults'));
   const searching = $.use(state$.get('searching'));

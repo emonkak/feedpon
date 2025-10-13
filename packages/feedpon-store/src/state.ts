@@ -390,28 +390,10 @@ export class AppState {
       : null;
   }
 
-  get totalUnreadCount(): number {
-    const unreadCount = this.unreadCounts
-      .values()
-      .reduce((totalCount, count) => totalCount + count, 0);
-    const readCount = this.readCounts
-      .values()
-      .reduce((totalCount, count) => totalCount + count, 0);
-    return Math.max(unreadCount - readCount, 0);
-  }
-
-  get sortedCategories(): Category[] {
-    return this.categories.values().toArray();
-  }
-
-  get sortedSubscriptions(): Subscription[] {
-    return this.subscriptions.values().toArray();
-  }
-
   get subscriptionsTree(): SubscriptionsTree {
     const { readCounts, subscriptions, subscriptionsSettings, unreadCounts } =
       this;
-    const { ordering, onlyUnread } = subscriptionsSettings;
+    const { onlyUnread, ordering } = subscriptionsSettings;
     const sortedSubscriptions = subscriptions
       .values()
       .toArray()
@@ -460,6 +442,24 @@ export class AppState {
         .sort(orderByAscending(({ category }) => category.label)),
       ungroupedItems,
     };
+  }
+
+  get totalUnreadCount(): number {
+    const unreadCount = this.unreadCounts
+      .values()
+      .reduce((totalCount, count) => totalCount + count, 0);
+    const readCount = this.readCounts
+      .values()
+      .reduce((totalCount, count) => totalCount + count, 0);
+    return Math.max(unreadCount - readCount, 0);
+  }
+
+  get unsortedCategories(): Category[] {
+    return this.categories.values().toArray();
+  }
+
+  get unsortedSubscriptions(): Subscription[] {
+    return this.subscriptions.values().toArray();
   }
 }
 

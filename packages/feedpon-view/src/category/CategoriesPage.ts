@@ -30,8 +30,8 @@ export const CategoriesPage = createComponent(function CategoriesPage(
   $: RenderContext,
 ): unknown {
   const { state$ } = store;
-  const categories = $.use(state$.get('sortedCategories'));
-  const subscriptions = $.use(state$.get('sortedSubscriptions'));
+  const categories = $.use(state$.get('unsortedCategories'));
+  const subscriptions = $.use(state$.get('unsortedSubscriptions'));
   const { toggleSidebar } = $.use(BindActionCreators(uiActions));
   const {
     createCategory,
