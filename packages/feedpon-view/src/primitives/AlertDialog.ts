@@ -47,20 +47,6 @@ export const AlertDialog = createComponent(function AlertDialog(
     dialogRef.current!.close();
   }, []);
 
-  const handleClick = $.useCallback((event: MouseEvent) => {
-    const { top, bottom, left, right } = (
-      event.currentTarget as HTMLDialogElement
-    ).getBoundingClientRect();
-    const isInDialog =
-      top <= event.clientY &&
-      bottom >= event.clientY &&
-      left <= event.clientX &&
-      right >= event.clientX;
-    if (!isInDialog) {
-      dialogRef.current!.close();
-    }
-  }, []);
-
   const handleClose = $.useCallback(
     async (event: Event) => {
       const dialog = event.currentTarget as HTMLDialogElement;
@@ -82,8 +68,8 @@ export const AlertDialog = createComponent(function AlertDialog(
       aria-describedby=${ariaDescriptionId}
       aria-labelledby=${ariaLabelId}
       class="Modal"
+      closedby="any"
       role="alertdialog"
-      @click=${handleClick}
       @close=${handleClose}
     >
       <h1 class="Modal-title" id=${ariaLabelId}>${title}</h1>

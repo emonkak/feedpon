@@ -27,37 +27,6 @@ export const Dialog = createComponent(function Dialog(
     }
   }, [open, modal]);
 
-  $.useLayoutEffect(() => {
-    const dissmissOnClickOutside = (event: MouseEvent) => {
-      const dialog = dialogRef.current!;
-      if (
-        !event.defaultPrevented &&
-        dialog.open &&
-        !dialog.contains(event.target as Element)
-      ) {
-        dialog.close();
-      }
-    };
-    window.addEventListener('click', dissmissOnClickOutside);
-    return () => {
-      window.removeEventListener('click', dissmissOnClickOutside);
-    };
-  }, []);
-
-  const handleClick = $.useCallback((event: MouseEvent) => {
-    const { top, bottom, left, right } = (
-      event.currentTarget as HTMLDialogElement
-    ).getBoundingClientRect();
-    const isInDialog =
-      top <= event.clientY &&
-      bottom >= event.clientY &&
-      left <= event.clientX &&
-      right >= event.clientX;
-    if (!isInDialog) {
-      dialogRef.current!.close();
-    }
-  }, []);
-
   const handleClose = $.useCallback(
     (event: Event) => {
       onClose?.(event.currentTarget as HTMLDialogElement);
@@ -69,7 +38,7 @@ export const Dialog = createComponent(function Dialog(
     <dialog
       :ref=${dialogRef}
       class=${modal ? 'Modal' : null}
-      @click=${handleClick}
+      closedby="any"
       @close=${handleClose}
       ${ownProps}
     >
@@ -78,7 +47,7 @@ export const Dialog = createComponent(function Dialog(
   `;
 });
 
-export async function openDialog(
+export function openDialog(
   props: DialogProps,
   context: RenderContext,
 ): Promise<void> {
@@ -94,7 +63,7 @@ export async function openDialog(
   const root = Root.create(value, document.body, context.getSessionContext());
   root.mount();
   try {
-    return await promise;
+    return promise;
   } finally {
     root.unmount();
   }
