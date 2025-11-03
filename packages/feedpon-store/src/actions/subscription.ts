@@ -74,10 +74,10 @@ export function deleteCategory(categoryId: string): AppAction<Promise<void>> {
 
     return state$.mutate(async (state) => {
       const credential = await acquireCredential()(context);
-      const previousCategories = state.categories;
-      const previousSubscriptions = state.subscriptions;
+      const latestCategories = state.categories;
+      const latestSubscriptions = state.subscriptions;
 
-      state.categories = previousCategories
+      state.categories = latestCategories
         .values()
         .reduce(
           (categories, category) =>
@@ -88,7 +88,7 @@ export function deleteCategory(categoryId: string): AppAction<Promise<void>> {
         );
 
       state.subscriptions = ImmutableMap.from(
-        previousSubscriptions.values(),
+        latestSubscriptions.values(),
         (subscription) => [
           subscription.id,
           {
@@ -103,8 +103,8 @@ export function deleteCategory(categoryId: string): AppAction<Promise<void>> {
       try {
         await feedlyClient.deleteCategory(credential.accessToken, categoryId);
       } catch (error) {
-        state.categories = previousCategories;
-        state.subscriptions = previousSubscriptions;
+        state.categories = latestCategories;
+        state.subscriptions = latestSubscriptions;
         throw error;
       }
     });
@@ -119,11 +119,11 @@ export function deleteSubscription(
 
     return state$.mutate(async (state) => {
       const credential = await acquireCredential()(context);
-      const previousSubscriptions = state.subscriptions;
-      const previousUnreadCounts = state.unreadCounts;
+      const latestSubscriptions = state.subscriptions;
+      const latestUnreadCounts = state.unreadCounts;
 
-      state.subscriptions = previousSubscriptions.delete(subscriptionId);
-      state.unreadCounts = previousUnreadCounts.delete(subscriptionId);
+      state.subscriptions = latestSubscriptions.delete(subscriptionId);
+      state.unreadCounts = latestUnreadCounts.delete(subscriptionId);
 
       try {
         await feedlyClient.unsubscribeFromFeed(
@@ -131,8 +131,8 @@ export function deleteSubscription(
           subscriptionId,
         );
       } catch (error) {
-        state.subscriptions = previousSubscriptions;
-        state.unreadCounts = previousUnreadCounts;
+        state.subscriptions = latestSubscriptions;
+        state.unreadCounts = latestUnreadCounts;
         throw error;
       }
     });
@@ -217,11 +217,11 @@ export function updateCategory(
 
     return state$.mutate(async (state) => {
       const credential = await acquireCredential()(context);
-      const previousCategories = state.categories;
-      const previousSubscriptions = state.subscriptions;
+      const latestsCategories = state.categories;
+      const latestSubscriptions = state.subscriptions;
       const newCategory = toCategory(credential.id, newLabel);
 
-      state.categories = previousCategories
+      state.categories = latestsCategories
         .values()
         .reduce(
           (categories, oldCategory) =>
@@ -234,7 +234,7 @@ export function updateCategory(
         );
 
       state.subscriptions = ImmutableMap.from(
-        previousSubscriptions.values(),
+        latestSubscriptions.values(),
         (subscription) => [
           subscription.id,
           {
@@ -251,8 +251,8 @@ export function updateCategory(
           label: newLabel,
         });
       } catch (error) {
-        state.categories = previousCategories;
-        state.subscriptions = previousSubscriptions;
+        state.categories = latestsCategories;
+        state.subscriptions = latestSubscriptions;
         throw error;
       }
     });
