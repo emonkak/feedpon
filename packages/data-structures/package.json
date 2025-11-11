@@ -1,0 +1,7 @@
+{
+  "name": "data-structures",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  }
+}

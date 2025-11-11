@@ -1,3 +1,4 @@
+import { ImmutableMap } from 'data-structures';
 import type * as v from 'valibot';
 
 import type {
@@ -18,7 +19,6 @@ import type {
   Entry as HatenaBookmarkEntry,
 } from './apis/hatenaBookmark.ts';
 import type { AutoPagerizeData, DatabaseItem } from './apis/wedata.ts';
-import { ImmutableMap } from './collections/ImmutableMap.ts';
 import {
   type Comparer,
   orderByAscending,

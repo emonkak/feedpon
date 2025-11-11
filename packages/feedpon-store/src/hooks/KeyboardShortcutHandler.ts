@@ -1,5 +1,6 @@
 import type { CustomHookFunction } from 'barebind';
-import { ImmutableTrie } from '../collections/ImmutableTrie.ts';
+import { ImmutableTrie } from 'data-structures';
+
 import {
   type CommandId,
   type KeyboardShortcut,
@@ -27,11 +28,10 @@ export function KeyboardShortcutHandler(
     const { timeout = 1000 } = options;
 
     const handleKeyDown = context.useMemo(() => {
-      const keyboardShortcutTree = ImmutableTrie.from(
-        Iterator.from(keyboardShortcuts).map(({ keyStorokes, commandId }) => [
-          keyStorokes.map(toKeyNotion),
-          commandId,
-        ]),
+      const keyboardShortcutTree = Iterator.from(keyboardShortcuts).reduce(
+        (keyboardShortcutTree, { keyStorokes, commandId }) =>
+          keyboardShortcutTree.insert(keyStorokes.map(toKeyNotion), commandId),
+        ImmutableTrie.empty<string, CommandId>(),
       );
       let pendingKeys: string[] = [];
       let timer: ReturnType<typeof setTimeout> | null = null;
@@ -50,13 +50,13 @@ export function KeyboardShortcutHandler(
         const currentKeys = pendingKeys.concat(currentKey);
         const keyboardShortcutNode = keyboardShortcutTree.find(currentKeys);
 
-        if (keyboardShortcutNode === null) {
+        if (keyboardShortcutNode === undefined) {
           pendingKeys = [];
           return;
         }
 
         const commandId = keyboardShortcutNode.value;
-        const hasNextShortcut = keyboardShortcutNode.children.size > 0;
+        const hasNextShortcut = !keyboardShortcutNode.children.isEmpty();
 
         if (commandId !== undefined) {
           event.preventDefault();

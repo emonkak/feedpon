@@ -4,10 +4,10 @@ import {
   type RenderContext,
 } from 'barebind';
 import type { Difference, Reactive } from 'barebind/extras/reactive';
+import { ImmutableMap } from 'data-structures';
 
 import type { AppAction, AppContext } from './action.ts';
 import { sendNotification } from './actions/ui.ts';
-import { ImmutableMap } from './collections/ImmutableMap.ts';
 import type { Patch } from './persistent.ts';
 import type { AppState } from './state.ts';
 import { isPromiseLike } from './utils/isPromiseLike.ts';
@@ -96,7 +96,10 @@ function toDifference(statePatch: Patch): Difference {
     case 'ImmutableMap':
       return {
         path: statePatch.path,
-        value: ImmutableMap.from(statePatch.value as [unknown, unknown][]),
+        value: (statePatch.value as [unknown, unknown][]).reduce(
+          (entries, entry) => entries.set(entry[0], entry[1]),
+          ImmutableMap.empty(),
+        ),
       };
     default:
       return statePatch;
@@ -107,7 +110,7 @@ function toPatch(difference: Difference, version: number): Patch {
   if (difference.value instanceof ImmutableMap) {
     return {
       path: difference.path,
-      value: Array.from(difference.value),
+      value: Array.from(difference.value.entries()),
       type: 'ImmutableMap',
       version,
     };

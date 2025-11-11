@@ -1,10 +1,12 @@
+import { ImmutableMap } from 'data-structures';
+
 import type { AppAction } from '../action.ts';
-import { ImmutableMap } from '../collections/ImmutableMap.ts';
 import type {
   Category,
   Feed,
   Subscription,
   SubscriptionsSettings,
+  UnreadCount,
 } from '../state.ts';
 import { acquireCredential } from './auth.ts';
 
@@ -87,17 +89,15 @@ export function deleteCategory(categoryId: string): AppAction<Promise<void>> {
           state.categories,
         );
 
-      state.subscriptions = ImmutableMap.from(
-        latestSubscriptions.values(),
-        (subscription) => [
-          subscription.id,
-          {
+      state.subscriptions = latestSubscriptions.values().reduce(
+        (subscriptions, subscription) =>
+          subscriptions.set(subscription.id, {
             ...subscription,
             categories: subscription.categories.filter(
               (category) => category.id !== categoryId,
             ),
-          },
-        ],
+          }),
+        ImmutableMap.empty<Subscription['id'], Subscription>(),
       );
 
       try {
@@ -181,24 +181,26 @@ export function reloadSubscriptions(): AppAction<Promise<void>> {
           await feedlyClient.getUnreadCounts(credential.accessToken),
         ]);
 
-        state.categories = ImmutableMap.from(
-          Iterator.from(subscriptions).flatMap(
-            (subscription) => subscription.categories,
-          ),
-          (category) => [category.id, category],
-        );
+        state.categories = Iterator.from(subscriptions)
+          .flatMap((subscription) => subscription.categories)
+          .reduce(
+            (categories, category) => categories.set(category.id, category),
+            ImmutableMap.empty<Category['id'], Category>(),
+          );
 
-        state.subscriptions = ImmutableMap.from(
-          subscriptions,
-          (subscription) => [subscription.id, subscription],
+        state.subscriptions = subscriptions.reduce(
+          (subscriptions, subscription) =>
+            subscriptions.set(subscription.id, subscription),
+          ImmutableMap.empty<Subscription['id'], Subscription>(),
         );
 
         state.readCounts = ImmutableMap.empty();
 
-        state.unreadCounts = ImmutableMap.from(unreadcounts, (unreadCount) => [
-          unreadCount.id,
-          unreadCount.count,
-        ]);
+        state.unreadCounts = unreadcounts.reduce(
+          (unreadCounts, unreadCount) =>
+            unreadCounts.set(unreadCount.id, unreadCount.count),
+          ImmutableMap.empty<UnreadCount['id'], UnreadCount['count']>(),
+        );
 
         state.subscriptionsUpdated = Date.now();
       } finally {
@@ -226,24 +228,20 @@ export function updateCategory(
         .reduce(
           (categories, oldCategory) =>
             oldCategory.id === categoryId
-              ? categories
-                  .set(newCategory.id, newCategory)
-                  .delete(oldCategory.id)
+              ? categories.set(categoryId, newCategory)
               : categories,
           state.categories,
         );
 
-      state.subscriptions = ImmutableMap.from(
-        latestSubscriptions.values(),
-        (subscription) => [
-          subscription.id,
-          {
+      state.subscriptions = latestSubscriptions.values().reduce(
+        (subscriptions, subscription) =>
+          subscriptions.set(subscription.id, {
             ...subscription,
             categories: subscription.categories.map((category) =>
               category.id === categoryId ? newCategory : category,
             ),
-          },
-        ],
+          }),
+        ImmutableMap.empty<Subscription['id'], Subscription>(),
       );
 
       try {
