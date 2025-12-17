@@ -31,15 +31,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: calc(var(--vertical-rhythm) * 2);
+  width: calc(var(--leading) * 2);
 }
 
 .notification-content {
   flex: 1;
   display: flex;
   align-items: center;
-  margin: calc(var(--vertical-rhythm) / 2) 0
-    calc(var(--vertical-rhythm) / 2 - 1px);
+  margin: calc(var(--leading) / 2) 0 calc(var(--leading) / 2 - 1px);
   min-width: 0;
 }
 

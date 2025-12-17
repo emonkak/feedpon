@@ -4,7 +4,7 @@
   left: calc(var(--sidebar-width) * -1);
   width: var(--sidebar-width);
   height: 100vh;
-  padding: calc(var(--vertical-rhythm) / 2) 1rem;
+  padding: calc(var(--leading) / 2) 1rem;
   z-index: 300;
   box-sizing: border-box;
   overflow-x: hidden;
@@ -45,7 +45,7 @@
 }
 
 .l-content {
-  padding-top: calc(var(--vertical-rhythm) * 2);
+  padding-top: calc(var(--leading) * 2);
   background-color: var(--x-light-color);
   box-shadow: 0 -1px var(--medium-dark-color) inset;
 }

@@ -16,7 +16,7 @@ body {
     Meiryo, sans-serif;
   font-size: 16px;
   font-weight: normal;
-  line-height: var(--vertical-rhythm);
+  line-height: var(--leading);
   touch-action: manipulation;
 }
 
@@ -33,10 +33,10 @@ h4,
 h5,
 h6 {
   --floor: calc((var(--scale, 1) - 0.25) / 0.25 - 0.5);
-  margin: 0 0 calc(var(--vertical-rhythm) / 2);
+  margin: 0 0 calc(var(--leading) / 2);
   font-size: calc(1rem * var(--scale, 1));
   font-weight: bold;
-  line-height: calc(var(--vertical-rhythm) * max(var(--floor) * 0.25, 1));
+  line-height: calc(var(--leading) * max(var(--floor) * 0.25, 1));
 }
 
 h1 {
@@ -136,7 +136,7 @@ hr {
 }
 
 hr:not[class] {
-  margin: calc(var(--vertical-rhythm) + 6px) auto;
+  margin: calc(var(--leading) + 6px) auto;
   width: 72px;
   height: 12px;
   background-color: var(--medium-light-color);
@@ -152,7 +152,7 @@ p,
 pre,
 table,
 ul {
-  margin: 0 0 var(--vertical-rhythm);
+  margin: 0 0 var(--leading);
 }
 
 dd {
@@ -161,7 +161,7 @@ dd {
 
 pre {
   background-color: var(--light-color);
-  padding: calc(var(--vertical-rhythm) / 2 - 1px) calc(1.5rem - 1px);
+  padding: calc(var(--leading) / 2 - 1px) calc(1.5rem - 1px);
   overflow: auto;
   border-radius: 4px;
   border: 1px solid var(--medium-dark-color);
@@ -215,7 +215,7 @@ th {
 
 td,
 th {
-  padding: calc(var(--vertical-rhythm) / 4) 1rem;
+  padding: calc(var(--leading) / 4) 1rem;
   text-align: left;
   vertical-align: middle;
 }
@@ -231,7 +231,7 @@ caption {
   caption-side: bottom;
   color: var(--dark-color);
   text-align: center;
-  margin: calc(var(--vertical-rhythm) / 2) 0;
+  margin: calc(var(--leading) / 2) 0;
 }
 
 a {

@@ -4,12 +4,12 @@
   box-shadow: 0 1px 2px var(--shadow-color);
   box-sizing: border-box;
   inline-size: 100%;
-  margin-block: var(--vertical-rhythm);
+  margin-block: var(--leading);
   margin-inline: auto;
-  max-block-size: calc(100% - var(--vertical-rhythm) * 2);
+  max-block-size: calc(100% - var(--leading) * 2);
   max-inline-size: 640px;
   opacity: 0;
-  padding-block: var(--vertical-rhythm);
+  padding-block: var(--leading);
   padding-inline: 1.5rem;
   transform: scale(1.15);
   transition:

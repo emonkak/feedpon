@@ -2,7 +2,7 @@
   display: inline-block;
   position: relative;
   box-sizing: border-box;
-  padding: calc(var(--vertical-rhythm) / 4 - 1px) calc(1rem - 1px);
+  padding: calc(var(--leading) / 4 - 1px) calc(1rem - 1px);
   border: 1px solid transparent;
   border-radius: 4px;
   text-align: center;
@@ -29,7 +29,7 @@
 }
 
 .button-large {
-  padding: calc(var(--vertical-rhythm) / 2 - 1px) calc(1.25rem - 1px);
+  padding: calc(var(--leading) / 2 - 1px) calc(1.25rem - 1px);
   font-size: calc(1rem * var(--scale-4));
 }
 

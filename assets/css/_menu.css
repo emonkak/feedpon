@@ -8,7 +8,7 @@
   margin: 0;
   opacity: 0;
   overflow-block: auto;
-  padding-block: calc(var(--vertical-rhythm) / 4 - 1px);
+  padding-block: calc(var(--leading) / 4 - 1px);
   padding-inline: 0;
   transition-behavior: allow-discrete;
   transition-duration: 0.2s;
@@ -68,7 +68,7 @@
   width: 100%;
 
   &:where(a, button) {
-    padding-block: calc(var(--vertical-rhythm) / 4);
+    padding-block: calc(var(--leading) / 4);
   }
 
   &:where(a, button):not(:disabled):hover,
@@ -114,8 +114,7 @@
 
 .MenuSeparator {
   height: 1px;
-  margin-block: calc(var(--vertical-rhythm) / 4)
-    calc(var(--vertical-rhythm) / 4 - 1px);
+  margin-block: calc(var(--leading) / 4) calc(var(--leading) / 4 - 1px);
   overflow: hidden;
   background-color: var(--medium-dark-color);
 }

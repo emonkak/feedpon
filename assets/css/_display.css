@@ -5,10 +5,10 @@
 .display-5,
 .display-6 {
   --floor: calc((var(--scale, 1) - 0.25) / 0.25 - 0.5);
-  margin: 0 0 calc(var(--vertical-rhythm) / 2);
+  margin: 0 0 calc(var(--leading) / 2);
   font-size: calc(1rem * var(--scale, 1));
   font-weight: 300;
-  line-height: calc(var(--vertical-rhythm) * max(var(--floor) * 0.25, 1));
+  line-height: calc(var(--leading) * max(var(--floor) * 0.25, 1));
 }
 
 .display-1 {

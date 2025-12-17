@@ -1,9 +1,9 @@
 .comment {
-  padding: calc(var(--vertical-rhythm) / 4) 0;
+  padding: calc(var(--leading) / 4) 0;
 }
 
 .comment + .comment {
-  padding-top: calc(var(--vertical-rhythm) / 4 - 1px);
+  padding-top: calc(var(--leading) / 4 - 1px);
   border-top: 1px solid var(--medium-dark-color);
 }
 

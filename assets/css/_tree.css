@@ -24,8 +24,8 @@
 
 .TreeItem-content {
   grid-area: content;
-  padding-block: calc(var(--vertical-rhythm) / 4);
-  padding-inline: 0 calc(var(--vertical-rhythm) / 4);
+  padding-block: calc(var(--leading) / 4);
+  padding-inline: 0 calc(var(--leading) / 4);
 }
 
 .tree {
@@ -47,7 +47,7 @@
   display: flex;
   align-items: stretch;
   border-radius: 4px;
-  margin: calc(var(--vertical-rhythm) / 4) 0;
+  margin: calc(var(--leading) / 4) 0;
 }
 
 .tree-node:hover {
@@ -82,8 +82,8 @@ a.tree-node-label {
   display: flex;
   align-items: center;
   flex: 1;
-  padding: calc(var(--vertical-rhythm) / 4) 0.5rem;
-  min-height: var(--vertical-rhythm);
+  padding: calc(var(--leading) / 4) 0.5rem;
+  min-height: var(--leading);
 }
 
 .tree-node-icon + .tree-node-label {

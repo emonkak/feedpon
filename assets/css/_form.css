@@ -1,16 +1,16 @@
 .form {
-  margin: 0 0 var(--vertical-rhythm);
+  margin: 0 0 var(--leading);
 }
 
 .form-legend {
-  margin: 0 0 calc(var(--vertical-rhythm) / 2 - 1px);
+  margin: 0 0 calc(var(--leading) / 2 - 1px);
   border-bottom: 1px solid var(--medium-dark-color);
   color: var(--dark-color);
   font-weight: bold;
 }
 
 .form-group {
-  margin-bottom: calc(var(--vertical-rhythm) / 2);
+  margin-bottom: calc(var(--leading) / 2);
 }
 
 .form-group-heading {
@@ -32,7 +32,7 @@ input.form-control {
   position: relative;
   box-sizing: border-box;
   width: 100%;
-  padding: calc(var(--vertical-rhythm) / 4 - 1px) calc(0.5rem - 1px);
+  padding: calc(var(--leading) / 4 - 1px) calc(0.5rem - 1px);
   background-color: var(--x-light-color);
   border: 1px solid var(--medium-dark-color);
   border-radius: 4px;
@@ -47,7 +47,7 @@ input.form-control {
 }
 
 select.form-control:not([size]):not([multiple]) {
-  height: calc(var(--vertical-rhythm) * 1.5);
+  height: calc(var(--leading) * 1.5);
 }
 
 .form-control.is-valid {
@@ -150,8 +150,7 @@ input.input-search-box {
   display: block;
   box-sizing: border-box;
   width: 100%;
-  padding: calc(var(--vertical-rhythm) / 4) 0.5rem
-    calc(var(--vertical-rhythm) / 4 - 2px);
+  padding: calc(var(--leading) / 4) 0.5rem calc(var(--leading) / 4 - 2px);
   background-color: transparent;
   border: 0;
   border-bottom: 2px solid var(--x-dark-color);

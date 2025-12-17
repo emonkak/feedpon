@@ -1,8 +1,8 @@
 .message {
   border-radius: 4px;
   border: 1px solid transparent;
-  padding: calc(var(--vertical-rhythm) / 2 - 1px) calc(1.5rem - 1px);
-  margin: 0 0 var(--vertical-rhythm);
+  padding: calc(var(--leading) / 2 - 1px) calc(1.5rem - 1px);
+  margin: 0 0 var(--leading);
 }
 
 .message > p:last-child {

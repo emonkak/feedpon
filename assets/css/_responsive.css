@@ -1,5 +1,5 @@
 .responsive-container {
-  margin: 0 auto var(--vertical-rhythm);
+  margin: 0 auto var(--leading);
 }
 
 .responsive-wrapper {

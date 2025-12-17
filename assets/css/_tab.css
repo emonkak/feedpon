@@ -1,7 +1,7 @@
 .TabList {
   display: flex;
   justify-content: center;
-  margin: var(--vertical-rhythm) 0;
+  margin: var(--leading) 0;
   flex-wrap: wrap;
 }
 
@@ -10,8 +10,8 @@
   align-items: center;
   border: 1px solid var(--medium-dark-color);
   display: flex;
-  margin-block: calc(var(--vertical-rhythm) / 4);
-  padding-block: calc(var(--vertical-rhythm) / 4);
+  margin-block: calc(var(--leading) / 4);
+  padding-block: calc(var(--leading) / 4);
   padding-inline: 1.5ch;
   color: inherit;
 

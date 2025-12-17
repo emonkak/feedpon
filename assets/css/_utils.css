@@ -2,31 +2,31 @@
   margin-top: 0;
 }
 .u-margin-top-1 {
-  margin-top: calc(var(--vertical-rhythm) * 0.5);
+  margin-top: calc(var(--leading) * 0.5);
 }
 .u-margin-top-2 {
-  margin-top: calc(var(--vertical-rhythm) * 1);
+  margin-top: calc(var(--leading) * 1);
 }
 .u-margin-top-3 {
-  margin-top: calc(var(--vertical-rhythm) * 1.5);
+  margin-top: calc(var(--leading) * 1.5);
 }
 .u-margin-top-4 {
-  margin-top: calc(var(--vertical-rhythm) * 2);
+  margin-top: calc(var(--leading) * 2);
 }
 .u-margin-bottom-0 {
   margin-bottom: 0;
 }
 .u-margin-bottom-1 {
-  margin-bottom: calc(var(--vertical-rhythm) * 0.5);
+  margin-bottom: calc(var(--leading) * 0.5);
 }
 .u-margin-bottom-2 {
-  margin-bottom: calc(var(--vertical-rhythm) * 1);
+  margin-bottom: calc(var(--leading) * 1);
 }
 .u-margin-bottom-3 {
-  margin-bottom: calc(var(--vertical-rhythm) * 1.5);
+  margin-bottom: calc(var(--leading) * 1.5);
 }
 .u-margin-bottom-4 {
-  margin-bottom: calc(var(--vertical-rhythm) * 2);
+  margin-bottom: calc(var(--leading) * 2);
 }
 .u-margin-left-0 {
   margin-left: 0;
@@ -121,7 +121,7 @@
 .u-text-9 {
   --floor: calc((var(--scale, 1) - 0.25) / 0.25 - 0.5);
   font-size: calc(1rem * var(--scale, 1));
-  line-height: calc(var(--vertical-rhythm) * max(var(--floor) * 0.25, 1));
+  line-height: calc(var(--leading) * max(var(--floor) * 0.25, 1));
 }
 
 .u-text-1 {

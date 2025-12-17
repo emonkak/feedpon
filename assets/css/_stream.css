@@ -11,8 +11,7 @@ a.stream-title:hover {
 
 .stream-header {
   position: relative;
-  padding: calc(var(--vertical-rhythm) / 2) 0
-    calc(var(--vertical-rhythm) / 2 - 1px);
+  padding: calc(var(--leading) / 2) 0 calc(var(--leading) / 2 - 1px);
   border-bottom: 1px solid var(--medium-dark-color);
   background-color: var(--light-color);
   z-index: 20;
@@ -29,7 +28,7 @@ a.stream-title:hover {
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: calc(100vh - var(--vertical-rhythm) * 2);
+  height: calc(100vh - var(--leading) * 2);
   text-align: center;
   overflow-anchor: none;
 }

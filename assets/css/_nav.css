@@ -1,16 +1,15 @@
 .nav {
   display: flex;
   justify-content: center;
-  margin: var(--vertical-rhythm) 0;
+  margin: var(--leading) 0;
   flex-wrap: wrap;
 }
 
 .nav-item {
   position: relative;
-  margin: calc(var(--vertical-rhythm) / 4) 0 calc(var(--vertical-rhythm) / 4)
-    -1px;
-  padding: calc(var(--vertical-rhythm) / 4 - 1px) 1.5rem;
-  min-height: var(--vertical-rhythm);
+  margin: calc(var(--leading) / 4) 0 calc(var(--leading) / 4) -1px;
+  padding: calc(var(--leading) / 4 - 1px) 1.5rem;
+  min-height: var(--leading);
   border: 1px solid var(--medium-dark-color);
 }
 

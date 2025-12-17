@@ -1,11 +1,11 @@
 .OSD {
   background-color: var(--backdrop-background-color);
   inline-size: fit-content;
-  border-radius: var(--vertical-rhythm);
+  border-radius: var(--leading);
   color: var(--backdrop-color);
-  margin: var(--vertical-rhythm) auto;
+  margin: var(--leading) auto;
   opacity: 0;
-  padding: calc(var(--vertical-rhythm) / 2) 1.5rem;
+  padding: calc(var(--leading) / 2) 1.5rem;
   transform: scale(1.15);
   transition-behavior: allow-discrete;
   transition-duration: 0.2s;

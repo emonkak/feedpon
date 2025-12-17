@@ -1,14 +1,13 @@
 .SidebarSection {
-  margin-bottom: calc(var(--vertical-rhythm) / 2);
+  margin-bottom: calc(var(--leading) / 2);
 }
 
 .SidebarHeader {
   align-items: stretch;
   border-bottom: 1px solid var(--x-dark-color);
   display: flex;
-  margin-bottom: calc(var(--vertical-rhythm) / 4);
-  padding: calc(var(--vertical-rhythm) / 4) 0
-    calc(var(--vertical-rhythm) / 4 - 1px);
+  margin-bottom: calc(var(--leading) / 4);
+  padding: calc(var(--leading) / 4) 0 calc(var(--leading) / 4 - 1px);
   gap: 0.5ch;
 }
 
@@ -16,7 +15,7 @@
   border-radius: 4px;
   color: inherit;
   display: flex;
-  padding: calc(var(--vertical-rhythm) / 4);
+  padding: calc(var(--leading) / 4);
 
   &:hover {
     background-color: var(--medium-light-color);

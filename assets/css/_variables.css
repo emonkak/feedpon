@@ -5,7 +5,7 @@
 }
 
 :root {
-  --vertical-rhythm: calc(1rem * (26 / 16));
+  --leading: 1.625rem;
   --sidebar-width: calc(1rem * (304 / 16));
   --container-width: 704px;
 
