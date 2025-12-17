@@ -96,7 +96,7 @@ a.tree-node-label {
 }
 
 .tree-node-secondary-text {
-  font-size: calc(1rem * var(--type-scale-7));
+  font-size: calc(1rem * var(--scale-7));
   white-space: nowrap;
 }
 

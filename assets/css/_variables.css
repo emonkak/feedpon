@@ -9,16 +9,16 @@
   --sidebar-width: calc(1rem * (304 / 16));
   --container-width: 704px;
 
-  --type-scale-base: 1.125;
-  --type-scale-1: calc(var(--type-scale-base) * var(--type-scale-2));
-  --type-scale-2: calc(var(--type-scale-base) * var(--type-scale-3));
-  --type-scale-3: calc(var(--type-scale-base) * var(--type-scale-4));
-  --type-scale-4: calc(var(--type-scale-base) * var(--type-scale-5));
-  --type-scale-5: calc(var(--type-scale-base) * var(--type-scale-6));
-  --type-scale-6: var(--type-scale-base);
-  --type-scale-7: calc(1 / var(--type-scale-6));
-  --type-scale-8: calc(1 / var(--type-scale-5));
-  --type-scale-9: calc(1 / var(--type-scale-4));
+  --scale-base: 1.125;
+  --scale-1: calc(var(--scale-base) * var(--scale-2));
+  --scale-2: calc(var(--scale-base) * var(--scale-3));
+  --scale-3: calc(var(--scale-base) * var(--scale-4));
+  --scale-4: calc(var(--scale-base) * var(--scale-5));
+  --scale-5: calc(var(--scale-base) * var(--scale-6));
+  --scale-6: var(--scale-base);
+  --scale-7: calc(1 / var(--scale-6));
+  --scale-8: calc(1 / var(--scale-5));
+  --scale-9: calc(1 / var(--scale-4));
 }
 
 :root[data-theme="light"] {

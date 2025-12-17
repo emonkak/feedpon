@@ -53,5 +53,5 @@
 }
 
 .Modal-title {
-  --type-scale: var(--type-scale-6);
+  --scale: var(--scale-6);
 }

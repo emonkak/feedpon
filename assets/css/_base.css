@@ -32,35 +32,35 @@ h3,
 h4,
 h5,
 h6 {
-  --floor: calc((var(--type-scale, 1) - 0.25) / 0.25 - 0.5);
+  --floor: calc((var(--scale, 1) - 0.25) / 0.25 - 0.5);
   margin: 0 0 calc(var(--vertical-rhythm) / 2);
-  font-size: calc(1rem * var(--type-scale, 1));
+  font-size: calc(1rem * var(--scale, 1));
   font-weight: bold;
   line-height: calc(var(--vertical-rhythm) * max(var(--floor) * 0.25, 1));
 }
 
 h1 {
-  --type-scale: var(--type-scale-1);
+  --scale: var(--scale-1);
 }
 
 h2 {
-  --type-scale: var(--type-scale-2);
+  --scale: var(--scale-2);
 }
 
 h3 {
-  --type-scale: var(--type-scale-3);
+  --scale: var(--scale-3);
 }
 
 h4 {
-  --type-scale: var(--type-scale-4);
+  --scale: var(--scale-4);
 }
 
 h5 {
-  --type-scale: var(--type-scale-5);
+  --scale: var(--scale-5);
 }
 
 h6 {
-  --type-scale: var(--type-scale-6);
+  --scale: var(--scale-6);
 }
 
 pre,
@@ -69,7 +69,7 @@ var,
 samp,
 kbd {
   font-family: Consolas, Menlo, Monaco, monospace;
-  font-size: calc(1rem * var(--type-scale-7));
+  font-size: calc(1rem * var(--scale-7));
   font-style: normal;
 }
 
@@ -249,7 +249,7 @@ em {
 }
 
 small {
-  font-size: calc(1rem * var(--type-scale-7));
+  font-size: calc(1rem * var(--scale-7));
 }
 
 strong {

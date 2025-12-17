@@ -119,45 +119,45 @@
 .u-text-7,
 .u-text-8,
 .u-text-9 {
-  --floor: calc((var(--type-scale, 1) - 0.25) / 0.25 - 0.5);
-  font-size: calc(1rem * var(--type-scale, 1));
+  --floor: calc((var(--scale, 1) - 0.25) / 0.25 - 0.5);
+  font-size: calc(1rem * var(--scale, 1));
   line-height: calc(var(--vertical-rhythm) * max(var(--floor) * 0.25, 1));
 }
 
 .u-text-1 {
-  --type-scale: var(--type-scale-1);
+  --scale: var(--scale-1);
 }
 
 .u-text-2 {
-  --type-scale: var(--type-scale-2);
+  --scale: var(--scale-2);
 }
 
 .u-text-3 {
-  --type-scale: var(--type-scale-3);
+  --scale: var(--scale-3);
 }
 
 .u-text-4 {
-  --type-scale: var(--type-scale-4);
+  --scale: var(--scale-4);
 }
 
 .u-text-5 {
-  --type-scale: var(--type-scale-5);
+  --scale: var(--scale-5);
 }
 
 .u-text-6 {
-  --type-scale: var(--type-scale-6);
+  --scale: var(--scale-6);
 }
 
 .u-text-7 {
-  --type-scale: var(--type-scale-7);
+  --scale: var(--scale-7);
 }
 
 .u-text-8 {
-  --type-scale: var(--type-scale-8);
+  --scale: var(--scale-8);
 }
 
 .u-text-9 {
-  --type-scale: var(--type-scale-9);
+  --scale: var(--scale-9);
 }
 
 .u-text-muted {

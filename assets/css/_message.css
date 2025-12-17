@@ -26,6 +26,6 @@
 
 .message-title {
   margin: 0;
-  font-size: calc(1rem * var(--type-scale-5));
+  font-size: calc(1rem * var(--scale-5));
   font-weight: bold;
 }

@@ -64,5 +64,5 @@ a.stream-title:hover {
 }
 
 .StreamItem-unread {
-  font-size: calc(1rem * var(--type-scale-7));
+  font-size: calc(1rem * var(--scale-7));
 }

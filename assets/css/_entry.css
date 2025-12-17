@@ -29,7 +29,7 @@
 }
 
 .entry.is-expanded .entry-title {
-  --type-scale: var(--type-scale-5);
+  --scale: var(--scale-5);
 }
 
 .entry-nav {
@@ -40,7 +40,7 @@
 }
 
 .entry-title {
-  --type-scale: 1;
+  --scale: 1;
   margin: 0;
 }
 
