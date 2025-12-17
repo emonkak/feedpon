@@ -53,7 +53,8 @@
         "noConfusingLabels": "off",
         "noConfusingVoidType": "off",
         "noEmptyInterface": "off",
-        "noExplicitAny": "off"
+        "noExplicitAny": "off",
+        "noExtraNonNullAssertion": "off"
       }
     }
   }

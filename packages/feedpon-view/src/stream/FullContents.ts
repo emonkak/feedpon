@@ -38,9 +38,9 @@ export const FullContents = createComponent(function FullContents(
         <${
           fullContent.content !== ''
             ? EmbeddedHTML({
-                baseUrl: fullContent.url,
+                origin: fullContent.url,
                 class: 'entry-page-content',
-                html: fullContent.content,
+                srcdoc: fullContent.content,
               })
             : $.html`
               <div class="message message-positive">
