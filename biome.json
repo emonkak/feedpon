@@ -3,6 +3,7 @@
     "includes": [
       "**",
       "!.wireit",
+      "!coverage",
       "!dist",
       "!packages/*/.wireit",
       "!packages/feedpon-store/src/api"
