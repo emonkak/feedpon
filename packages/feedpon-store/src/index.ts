@@ -41,7 +41,7 @@ import {
   type Comparer,
   orderByAscending,
   orderByDescending,
-} from './utils/compare.ts';
+} from './utils/comparing.ts';
 import { stripTags } from './utils/stripTags.ts';
 
 const STREAM_ID_PATTERN =
