@@ -76,12 +76,14 @@ export class ImmutableMap<K, V> {
     return new ImmutableMap(update(this._root, key, updateFn));
   }
 
-  upsert(
+  updateOrInsert(
     key: K,
     updateFn: (value: V) => V,
     defaultFn: () => V,
   ): ImmutableMap<K, V> {
-    return new ImmutableMap(upsert(this._root, key, updateFn, defaultFn));
+    return new ImmutableMap(
+      updateOrInsert(this._root, key, updateFn, defaultFn),
+    );
   }
 
   *values(): Generator<V> {
@@ -376,7 +378,7 @@ function update<K, V>(
   return go(tree);
 }
 
-function upsert<K, V>(
+function updateOrInsert<K, V>(
   tree: ImmutableMap.Tree<K, V>,
   key: K,
   updateFn: (value: V) => V,

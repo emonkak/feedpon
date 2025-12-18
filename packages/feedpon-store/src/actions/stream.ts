@@ -297,7 +297,7 @@ export function markStreamAsRead(): AppAction<Promise<void>> {
 
         state.readCounts = stream.items.reduce(
           (readCounts, item) =>
-            readCounts.upsert(
+            readCounts.updateOrInsert(
               item.origin.streamId,
               (count) => count + 1,
               () => 1,

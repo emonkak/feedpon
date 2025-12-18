@@ -90,7 +90,7 @@ function insert<K, V>(
 ): ImmutableTrie.Node<K, V> {
   if (path.length > 0) {
     return {
-      children: node.children.upsert(
+      children: node.children.updateOrInsert(
         path[0]!,
         (child) => insert(child, path.slice(1), value),
         () => insert(NIL, path.slice(1), value),

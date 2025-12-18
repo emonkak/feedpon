@@ -117,12 +117,12 @@ describe('ImmutableMap', () => {
     });
   });
 
-  describe('upsert()', () => {
-    test('create a valid red-black tree by upsert', () => {
+  describe('updateOrInsert()', () => {
+    test('create a valid red-black tree by updateOrInsert', () => {
       fc.assert(
         fc.property(largeRedBlackTree(), fc.maxSafeInteger(), (tree, x) => {
           assertRedBlackTree(
-            new ImmutableMap(tree).upsert(
+            new ImmutableMap(tree).updateOrInsert(
               x,
               (v) => v + 1,
               () => 0,
@@ -138,7 +138,7 @@ describe('ImmutableMap', () => {
         .filter(([tree, x]) => new ImmutableMap(tree).has(x));
       fc.assert(
         fc.property(arbitrary, ([tree, x]) => {
-          const xs = new ImmutableMap(tree).upsert(
+          const xs = new ImmutableMap(tree).updateOrInsert(
             x,
             (v) => v + 1,
             () => 0,
@@ -155,7 +155,7 @@ describe('ImmutableMap', () => {
         .filter(([tree, x]) => !new ImmutableMap(tree).has(x));
       fc.assert(
         fc.property(arbitrary, ([tree, x]) => {
-          const xs = new ImmutableMap(tree).upsert(
+          const xs = new ImmutableMap(tree).updateOrInsert(
             x,
             (v) => v + 1,
             () => 0,
