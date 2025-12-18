@@ -1,16 +1,7 @@
-/**
- * @internal
- */
 export const RED = Symbol('Red');
 
-/**
- * @internal
- */
 export const BLACK = Symbol('Black');
 
-/**
- * @internal
- */
 export namespace ImmutableMap {
   export type Tree<K, V> = Node<K, V> | Nil;
 
