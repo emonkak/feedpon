@@ -63,7 +63,7 @@ function UserStyle(rule: string): CustomHookFunction<void> {
 
 function Theme(theme: Theme): CustomHookFunction<void> {
   return (context) => {
-    context.useLayoutEffect(() => {
+    context.useInsertionEffect(() => {
       document.body.dataset['theme'] = theme;
 
       return () => {
