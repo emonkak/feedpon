@@ -71,7 +71,7 @@ const SAFE_ELEMENTS = new Set([
   'ins',
   'del',
 
-  // 4.8 Embedded content (excluding "math" and "svg")
+  // 4.8 Embedded content
   'picture',
   'source',
   'img',
@@ -83,6 +83,8 @@ const SAFE_ELEMENTS = new Set([
   'track',
   'map',
   'area',
+  'math',
+  'svg',
 
   // 4.9 Tabular data
   'table',
@@ -314,13 +316,13 @@ function parseHTML(srcdoc: string, origin: string): DocumentFragment {
         resolveSrcset(el, origin);
         break;
 
+      case 'math':
+        currentNode = walker.nextSibling();
+        continue;
+
       case 'svg':
         currentNode = walker.nextSibling();
         el.replaceWith(embedSVG(el));
-        continue;
-
-      case 'math':
-        currentNode = walker.nextSibling();
         continue;
     }
 
