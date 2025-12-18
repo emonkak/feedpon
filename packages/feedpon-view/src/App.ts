@@ -54,7 +54,5 @@ export const App = createComponent(function App(
     `;
   }
 
-  $.use(store);
-
-  return Dispatcher({});
+  return Dispatcher({ store });
 });

@@ -4,20 +4,21 @@ import {
   type RenderContext,
 } from 'barebind';
 import { CurrentHistory } from 'barebind/extras/router';
-import { AppStore, type Theme } from 'feedpon-store';
+import type { AppStore, Theme } from 'feedpon-store';
 
 import { AuthenticationPage } from './authentication/AuthenticationPage.ts';
 import { SidebarLayout } from './layout/SidebarLayout.ts';
 import { SingleLayout } from './layout/SingleLayout.ts';
 import { router } from './router.ts';
 
-export interface DispatcherProps {}
+export interface DispatcherProps {
+  store: AppStore;
+}
 
 export const Dispatcher = createComponent(function Dispatcher(
-  _props: DispatcherProps,
+  { store }: DispatcherProps,
   $: RenderContext,
 ): unknown {
-  const store = $.use(AppStore);
   const { state$ } = store;
   const userStyle = $.use(state$.get('userStyle'));
   const credential = $.use(state$.get('credential'));
@@ -25,6 +26,7 @@ export const Dispatcher = createComponent(function Dispatcher(
 
   const { location, navigator } = $.use(CurrentHistory);
 
+  $.use(store);
   $.use(UserStyle(userStyle));
   $.use(Theme(theme));
 
