@@ -11,7 +11,6 @@ import { sendNotification } from './actions/ui.ts';
 import type { Patch } from './persistent.ts';
 import type { AppState } from './state.ts';
 import { isPromiseLike } from './utils/isPromiseLike.ts';
-import { requestPersistentCallback } from './utils/requestPersistentCallback.ts';
 
 export class AppStore implements CustomHookObject<void> {
   private readonly _context: AppContext;
@@ -88,6 +87,14 @@ export class AppStore implements CustomHookObject<void> {
         state$.applyDifference(difference);
       }
     }
+  }
+}
+
+function requestPersistentCallback(callback: () => void): void {
+  if (typeof requestIdleCallback === 'function') {
+    requestIdleCallback(callback);
+  } else {
+    setTimeout(callback, 10);
   }
 }
 
