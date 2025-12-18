@@ -1,7 +1,7 @@
 import type { Difference } from 'barebind/extras/reactive';
 import type { Feed, Stream } from './state.ts';
 
-export interface PersistentStore {
+export interface StateRepository {
   addFeed(feed: Feed): Promise<void>;
   addPatches(patches: Patch[]): Promise<void>;
   addStream(stream: Stream): Promise<void>;

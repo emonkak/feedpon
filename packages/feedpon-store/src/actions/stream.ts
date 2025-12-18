@@ -25,15 +25,15 @@ const MAX_URL_LENGTH = 2048;
 const STREAM_LAYOUTS: StreamLayout[] = ['full', 'compact'];
 
 export function clearSessions(): AppAction<Promise<void>> {
-  return ({ state$, persistentStore }) => {
+  return ({ state$, stateRepository }) => {
     return state$.mutate(async (state) => {
       state.session = null;
       state.pastSessions = [];
       state.feed = null;
       state.stream = null;
 
-      await persistentStore.deleteAllFeeds();
-      await persistentStore.deleteAllStreams();
+      await stateRepository.deleteAllFeeds();
+      await stateRepository.deleteAllStreams();
     });
   };
 }
@@ -297,7 +297,7 @@ export function markStreamAsRead(): AppAction<Promise<void>> {
 }
 
 export function quitSession(): AppAction<Promise<void>> {
-  return ({ state$, persistentStore }) => {
+  return ({ state$, stateRepository }) => {
     return state$.mutate(async (state) => {
       const { feed, pastSessions, session, stream, streamSettings } = state;
 
@@ -312,19 +312,19 @@ export function quitSession(): AppAction<Promise<void>> {
       const sweptSessions = pastSessions.slice(0, sweepCount);
 
       for (const sweptSession of sweptSessions) {
-        await persistentStore.deleteStream(sweptSession.id);
+        await stateRepository.deleteStream(sweptSession.id);
 
         if (isFeedId(sweptSession.id)) {
-          await persistentStore.deleteFeed(sweptSession.id);
+          await stateRepository.deleteFeed(sweptSession.id);
         }
       }
 
       if (stream !== null) {
-        await persistentStore.addStream(stream);
+        await stateRepository.addStream(stream);
       }
 
       if (feed !== null) {
-        await persistentStore.addFeed(feed);
+        await stateRepository.addFeed(feed);
       }
 
       state.feed = null;
@@ -351,7 +351,7 @@ export function shrinkEntry(): AppAction<void> {
 }
 
 export function startSession(streamId: string): AppAction<Promise<void>> {
-  return ({ state$, persistentStore }) => {
+  return ({ state$, stateRepository }) => {
     return state$.mutate(async (state) => {
       const {
         defaultSessionSettings,
@@ -397,25 +397,25 @@ export function startSession(streamId: string): AppAction<Promise<void>> {
       const sweptSessions = pastSessions.slice(0, sweepCount);
 
       for (const sweptSession of sweptSessions) {
-        await persistentStore.deleteStream(sweptSession.id);
+        await stateRepository.deleteStream(sweptSession.id);
 
         if (isFeedId(sweptSession.id)) {
-          await persistentStore.deleteFeed(sweptSession.id);
+          await stateRepository.deleteFeed(sweptSession.id);
         }
       }
 
       if (stream !== null) {
-        await persistentStore.addStream(stream);
+        await stateRepository.addStream(stream);
       }
 
       if (feed !== null) {
-        await persistentStore.addFeed(feed);
+        await stateRepository.addFeed(feed);
       }
 
       const newFeed = isFeedId(streamId)
-        ? await persistentStore.findFeed(streamId)
+        ? await stateRepository.findFeed(streamId)
         : null;
-      const newStream = await persistentStore.findStream(streamId);
+      const newStream = await stateRepository.findStream(streamId);
 
       state.feed = newFeed;
       state.stream = newStream;

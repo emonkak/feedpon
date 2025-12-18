@@ -22,7 +22,7 @@ const context: AppContext = {
     redirectUrl: 'https://feedly.com/feedly.html',
   }),
   hatenaBookmarkClient: new HatenaBookmarkClient(),
-  persistentStore: new IndexedDBStore(),
+  stateRepository: new IndexedDBStore(),
   smoothScroll: new SmoothScroll(),
   state$: Reactive.from(new AppState()),
   wedataClient: new WedataClient(),

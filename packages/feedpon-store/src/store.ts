@@ -40,7 +40,7 @@ export class AppStore implements CustomHookObject<void> {
   }
 
   dispatchAction<TResult>(action: AppAction<TResult>): TResult {
-    const { persistentStore, state$ } = this._context;
+    const { stateRepository, state$ } = this._context;
     const { version } = state$.value;
     const flushPendingDifferences = () => {
       if (this._pendingActions > 0) {
@@ -50,7 +50,7 @@ export class AppStore implements CustomHookObject<void> {
         .collectDifferences()
         .map((difference) => toPatch(difference, version));
       if (patches.length > 0) {
-        persistentStore.addPatches(patches);
+        stateRepository.addPatches(patches);
       }
     };
     const result = action(this._context);
@@ -76,9 +76,9 @@ export class AppStore implements CustomHookObject<void> {
   }
 
   async restoreState(): Promise<void> {
-    const { persistentStore, state$ } = this._context;
+    const { stateRepository, state$ } = this._context;
     const { version } = state$.value;
-    const patches = await persistentStore.findPatches();
+    const patches = await stateRepository.findPatches();
 
     for (let i = 0, l = patches.length; i < l; i++) {
       const patch = patches[i]!;
