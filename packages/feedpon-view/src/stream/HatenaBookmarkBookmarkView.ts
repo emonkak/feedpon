@@ -1,5 +1,5 @@
 import { createComponent, type RenderContext } from 'barebind';
-import type { HatenaBookmarkBookmark } from 'feedpon-store/state';
+import type { HatenaBookmarkBookmark } from 'feedpon-store';
 
 interface HatenaBookmarkBookmarkViewProps {
   bookmark: HatenaBookmarkBookmark;

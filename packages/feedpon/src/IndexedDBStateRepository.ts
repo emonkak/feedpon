@@ -1,5 +1,5 @@
-import type { Patch, StateRepository } from 'feedpon-store';
-import type { Feed, Stream } from 'feedpon-store/state';
+import type { AppStateRepository, Feed, Stream } from 'feedpon-store';
+import type { Patch } from 'state-management/middlewares/PersistenceMiddleware';
 
 const DB_NAME = 'feedpon';
 const DB_VERSION = 2;
@@ -8,7 +8,7 @@ const FEEDS_STORE = 'feeds';
 const PATCHES_STORE = 'patches';
 const STREAMS_STORE = 'streams';
 
-export class IndexedDBStore implements StateRepository {
+export class IndexedDBStateRepository implements AppStateRepository {
   private _database: IDBDatabase | null = null;
 
   addFeed(feed: Feed): Promise<void> {

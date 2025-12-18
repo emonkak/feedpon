@@ -1,6 +1,6 @@
 import { createComponent, type RenderContext } from 'barebind';
 import { LocalAtom } from 'barebind/extras/hooks';
-import type { Category } from 'feedpon-store/state';
+import type { Category } from 'feedpon-store';
 
 import { openAlertDialog } from '../primitives/AlertDialog.ts';
 

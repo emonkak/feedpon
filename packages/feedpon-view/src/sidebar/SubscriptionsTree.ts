@@ -4,7 +4,7 @@ import type {
   Subscription,
   SubscriptionGroup,
   SubscriptionItem,
-} from 'feedpon-store/state';
+} from 'feedpon-store';
 
 import { Tree, type TreeItem } from '../primitives/Tree.ts';
 

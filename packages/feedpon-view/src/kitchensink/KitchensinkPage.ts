@@ -1,7 +1,7 @@
 import { createComponent, type RenderContext } from 'barebind';
+import { AppStore, type NotificationType } from 'feedpon-store';
 import { sendNotification, toggleSidebar } from 'feedpon-store/actions/ui';
-import { BindActionCreators } from 'feedpon-store/hooks/BindActionCreators';
-import type { NotificationType } from 'feedpon-store/state';
+import { BindActionCreators } from 'state-management';
 import { MainLayout } from '../layout/MainLayout.ts';
 import { Dialog } from '../primitives/Dialog.ts';
 import { Dropdown } from '../primitives/Dropdown.ts';
@@ -14,7 +14,7 @@ export const KitchensinkPage = createComponent(function KitchensinkPage(
   $: RenderContext,
 ): unknown {
   const { onNotificationSend, onSidebarToggle } = $.use(
-    BindActionCreators({
+    BindActionCreators(AppStore, {
       onNotificationSend: sendNotification,
       onSidebarToggle: toggleSidebar,
     }),

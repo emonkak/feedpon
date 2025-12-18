@@ -1,10 +1,10 @@
 import { createComponent, type RenderContext } from 'barebind';
 import { CurrentHistory } from 'barebind/extras/router';
+import type { CommandId } from 'feedpon-store';
 import { AppStore } from 'feedpon-store';
 import * as uiActions from 'feedpon-store/actions/ui';
-import { BindActionCreators } from 'feedpon-store/hooks/BindActionCreators';
-import { KeyboardShortcutHandler } from 'feedpon-store/hooks/KeyboardShortcutHandler';
-import type { CommandId } from 'feedpon-store/state';
+import { BindActionCreators } from 'state-management';
+
 import { AppCommandHandler } from '../CommandHandler.ts';
 import { KeyboardShortcutTable } from '../keyboard/KeyboardShortcutTable.ts';
 import { NotificationStack } from '../notification/NotificationStack.ts';
@@ -12,6 +12,7 @@ import { OsdStack } from '../osd/OsdStack.ts';
 import { Dialog } from '../primitives/Dialog.ts';
 import { swipeableHook } from '../primitives/hooks/swipeableHook.ts';
 import { Sidebar } from '../sidebar/Sidebar.ts';
+import { KeyboardShortcutHandler } from './hooks/KeyboardShortcutHandler.ts';
 
 export interface SidebarLayoutProps {
   child: unknown;
@@ -33,7 +34,7 @@ export const SidebarLayout = createComponent(function SidebarLayout(
   const isLoading = authenticating || opmlImporting;
 
   const { toggleKeyboardShortcuts, toggleSidebar } = $.use(
-    BindActionCreators(uiActions),
+    BindActionCreators(AppStore, uiActions),
   );
 
   const { location, navigator } = $.use(CurrentHistory);
@@ -55,8 +56,8 @@ export const SidebarLayout = createComponent(function SidebarLayout(
     const commandHandler = new AppCommandHandler(navigator);
 
     return (commandId: CommandId) => {
-      const action = commandHandler[commandId].bind(commandHandler);
-      store.dispatchAction<any>(action);
+      const action = commandHandler[commandId]();
+      store.dispatchAction(action);
     };
   }, []);
 

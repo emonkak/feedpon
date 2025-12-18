@@ -1,5 +1,5 @@
 import { createComponent, type RenderContext } from 'barebind';
-import type { Category } from 'feedpon-store/state';
+import type { Category } from 'feedpon-store';
 
 interface CategoryHeaderProps {
   category: Category;

@@ -2,9 +2,6 @@
   "files": [],
   "references": [
     {
-      "path": "packages/data-structures"
-    },
-    {
       "path": "packages/feedpon"
     },
     {
@@ -12,6 +9,9 @@
     },
     {
       "path": "packages/feedpon-view"
+    },
+    {
+      "path": "packages/state-management"
     }
   ]
 }

@@ -1,8 +1,8 @@
 import { createComponent, type RenderContext } from 'barebind';
+import type { Osd } from 'feedpon-store';
 import { AppStore } from 'feedpon-store';
 import * as uiActions from 'feedpon-store/actions/ui';
-import { BindActionCreators } from 'feedpon-store/hooks/BindActionCreators';
-import type { Osd } from 'feedpon-store/state';
+import { BindActionCreators } from 'state-management';
 
 export interface OsdStackProps {}
 
@@ -13,7 +13,7 @@ export const OsdStack = createComponent(function OsdStack(
   const { state$ } = $.use(AppStore);
   const osd = $.use(state$.get('osd'));
   const [osdInProgress, setOsdInProgress] = $.useState<Osd | null>(null);
-  const { dismissOsd } = $.use(BindActionCreators(uiActions));
+  const { dismissOsd } = $.use(BindActionCreators(AppStore, uiActions));
 
   $.useLayoutEffect(() => {
     setOsdInProgress(osd);

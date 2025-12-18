@@ -1,47 +1,41 @@
-import {
-  $customHook,
-  type CustomHookObject,
-  type RenderContext,
-} from 'barebind';
 import type { Difference, Reactive } from 'barebind/extras/reactive';
-import { ImmutableMap } from 'data-structures';
 
-import type { AppAction, AppContext } from './action.ts';
-import { sendNotification } from './actions/ui.ts';
-import type { Patch } from './persistent.ts';
-import type { AppState } from './state.ts';
-import { isPromiseLike } from './utils/isPromiseLike.ts';
+import { ImmutableMap } from '../collections/ImmutableMap.ts';
+import type { Action, Dispatcher, Middleware } from '../Store.ts';
 
-export class AppStore implements CustomHookObject<void> {
-  private readonly _context: AppContext;
+export interface Patch extends Difference {
+  type?: string;
+  version: number;
+}
 
+export interface PatchRepository {
+  addPatches(patches: Patch[]): Promise<void>;
+  findPatches(): Promise<Patch[]>;
+}
+
+export interface PersistentContext {
+  stateRepository: PatchRepository;
+}
+
+export interface PersistentState {
+  version: number;
+}
+
+export class PersistentMiddleware<
+  TState extends PersistentState,
+  TContext extends PersistentContext,
+> implements Middleware<TState, TContext>
+{
   private _pendingActions: number = 0;
 
-  static [$customHook](context: RenderContext): AppStore {
-    const value = context.getSharedContext(AppStore);
-
-    if (!(value instanceof AppStore)) {
-      throw new Error('AppStore is not registered in this context.');
-    }
-
-    return value;
-  }
-
-  constructor(context: AppContext) {
-    this._context = context;
-  }
-
-  [$customHook](context: RenderContext): void {
-    context.setSharedContext(this.constructor, this);
-  }
-
-  get state$(): Reactive<AppState> {
-    return this._context.state$;
-  }
-
-  dispatchAction<TResult>(action: AppAction<TResult>): TResult {
-    const { stateRepository, state$ } = this._context;
+  handleAction<TResult>(
+    action: Action<TState, TContext, TResult>,
+    state$: Reactive<TState>,
+    context: TContext,
+    dispatch: Dispatcher<TState, TContext>,
+  ): TResult {
     const { version } = state$.value;
+    const { stateRepository } = context;
     const flushPendingDifferences = () => {
       if (this._pendingActions > 0) {
         return;
@@ -53,18 +47,14 @@ export class AppStore implements CustomHookObject<void> {
         stateRepository.addPatches(patches);
       }
     };
-    const result = action(this._context);
-    if (isPromiseLike(result)) {
+    const result = dispatch(action);
+    if (result instanceof Promise) {
       result.then(
         () => {
           requestPersistentCallback(flushPendingDifferences);
           this._pendingActions--;
         },
-        (error) => {
-          const message =
-            error instanceof Error ? error.message : JSON.stringify(error);
-          console.error(error);
-          this.dispatchAction(sendNotification('negative', message, -1));
+        () => {
           this._pendingActions--;
         },
       );
@@ -74,9 +64,14 @@ export class AppStore implements CustomHookObject<void> {
     }
     return result;
   }
+}
 
-  async restoreState(): Promise<void> {
-    const { stateRepository, state$ } = this._context;
+export function restoreState<
+  TState extends PersistentState,
+  TContext extends PersistentContext,
+>(): Action<TState, TContext, Promise<void>> {
+  return async (state$, context) => {
+    const { stateRepository } = context;
     const { version } = state$.value;
     const patches = await stateRepository.findPatches();
 
@@ -87,7 +82,7 @@ export class AppStore implements CustomHookObject<void> {
         state$.applyDifference(difference);
       }
     }
-  }
+  };
 }
 
 function requestPersistentCallback(callback: () => void): void {

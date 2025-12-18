@@ -4,11 +4,7 @@ import {
   Repeat,
   shallowEqual,
 } from 'barebind';
-import {
-  type KeyboardShortcut,
-  type KeyStroke,
-  Modifier,
-} from 'feedpon-store/state';
+import { type KeyboardShortcut, type KeyStroke, Modifier } from 'feedpon-store';
 
 interface KeyboardShortcutTableProps {
   keyboardShortcuts: KeyboardShortcut[];

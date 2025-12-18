@@ -2,10 +2,10 @@ import { createComponent, type RenderContext } from 'barebind';
 import { LocalAtom, LocalComputed } from 'barebind/extras/hooks';
 import type { Computed } from 'barebind/extras/signal';
 import type {
-  StreamLayout,
   EntriesOrdering,
   SessionSettings,
-} from 'feedpon-store/state';
+  StreamLayout,
+} from 'feedpon-store';
 import { Dropdown } from '../primitives/Dropdown.ts';
 import type { MenuItem } from '../primitives/Menu.ts';
 

@@ -1,21 +1,18 @@
-import { ImmutableMap } from 'data-structures';
-
-import type { AppAction } from '../action.ts';
+import { ImmutableMap } from 'state-management/collections/ImmutableMap';
 import type {
+  AppAction,
   Category,
   Feed,
   Subscription,
   SubscriptionsSettings,
   UnreadCount,
-} from '../state.ts';
+} from '../index.ts';
 import { acquireCredential } from './auth.ts';
 
 export function createCategory(label: string): AppAction<Promise<void>> {
-  return (context) => {
-    const { state$ } = context;
-
+  return (state$, _context, dispatch) => {
     return state$.mutate(async (state) => {
-      const credential = await acquireCredential()(context);
+      const credential = await dispatch(acquireCredential());
       const category = toCategory(credential.id, label);
 
       state.categories = state.categories.set(category.id, category);
@@ -27,11 +24,9 @@ export function createSubscription(
   feed: Feed,
   labels: string[],
 ): AppAction<Promise<void>> {
-  return (context) => {
-    const { feedlyClient, state$ } = context;
-
+  return (state$, { feedlyClient }, dispatch) => {
     return state$.mutate(async (state) => {
-      const credential = await acquireCredential()(context);
+      const credential = await dispatch(acquireCredential());
       const categories = labels.map((label) =>
         toCategory(credential.id, label),
       );
@@ -71,11 +66,11 @@ export function createSubscription(
 }
 
 export function deleteCategory(categoryId: string): AppAction<Promise<void>> {
-  return (context) => {
-    const { feedlyClient, state$ } = context;
+  return (state$, context, dispatch) => {
+    const { feedlyClient } = context;
 
     return state$.mutate(async (state) => {
-      const credential = await acquireCredential()(context);
+      const credential = await dispatch(acquireCredential());
       const latestCategories = state.categories;
       const latestSubscriptions = state.subscriptions;
 
@@ -114,11 +109,11 @@ export function deleteCategory(categoryId: string): AppAction<Promise<void>> {
 export function deleteSubscription(
   subscriptionId: string,
 ): AppAction<Promise<void>> {
-  return (context) => {
-    const { state$, feedlyClient } = context;
+  return (state$, context, dispatch) => {
+    const { feedlyClient } = context;
 
     return state$.mutate(async (state) => {
-      const credential = await acquireCredential()(context);
+      const credential = await dispatch(acquireCredential());
       const latestSubscriptions = state.subscriptions;
       const latestUnreadCounts = state.unreadCounts;
 
@@ -140,9 +135,8 @@ export function deleteSubscription(
 }
 
 export function exportOpml(): AppAction<Promise<URL>> {
-  return async (context) => {
-    const { feedlyClient } = context;
-    const credential = await acquireCredential()(context);
+  return async (_state$, { feedlyClient }, dispatch) => {
+    const credential = await dispatch(acquireCredential());
     const url = new URL('v3/opml', feedlyClient.baseUrl);
     url.searchParams.append('feedlyToken', credential.accessToken);
     return url;
@@ -150,15 +144,12 @@ export function exportOpml(): AppAction<Promise<URL>> {
 }
 
 export function importOpml(opmlString: string): AppAction<Promise<void>> {
-  return (context) => {
-    const { feedlyClient, state$ } = context;
-
+  return (state$, { feedlyClient }, dispatch) => {
     return state$.mutate(async (state) => {
       state.opmlImporting = true;
 
       try {
-        const credential = await acquireCredential()(context);
-
+        const credential = await dispatch(acquireCredential());
         await feedlyClient.importOPML(credential.accessToken, opmlString);
       } finally {
         state.opmlImporting = false;
@@ -168,14 +159,12 @@ export function importOpml(opmlString: string): AppAction<Promise<void>> {
 }
 
 export function reloadSubscriptions(): AppAction<Promise<void>> {
-  return (context) => {
-    const { feedlyClient, state$ } = context;
-
+  return (state$, { feedlyClient }, dispatch) => {
     return state$.mutate(async (state) => {
       state.subscriptionsLoading = true;
 
       try {
-        const credential = await acquireCredential()(context);
+        const credential = await dispatch(acquireCredential());
         const [subscriptions, { unreadcounts }] = await Promise.all([
           await feedlyClient.getSubscriptions(credential.accessToken),
           await feedlyClient.getUnreadCounts(credential.accessToken),
@@ -214,11 +203,9 @@ export function updateCategory(
   categoryId: string,
   newLabel: string,
 ): AppAction<Promise<void>> {
-  return (context) => {
-    const { feedlyClient, state$ } = context;
-
+  return (state$, { feedlyClient }, dispatch) => {
     return state$.mutate(async (state) => {
-      const credential = await acquireCredential()(context);
+      const credential = await dispatch(acquireCredential());
       const latestsCategories = state.categories;
       const latestSubscriptions = state.subscriptions;
       const newCategory = toCategory(credential.id, newLabel);
@@ -261,11 +248,9 @@ export function updateSubscription(
   subscriptionId: string,
   newLabels: string[],
 ): AppAction<Promise<void>> {
-  return (context) => {
-    const { feedlyClient, state$ } = context;
-
+  return (state$, { feedlyClient }, dispatch) => {
     return state$.mutate(async (state) => {
-      const credential = await acquireCredential()(context);
+      const credential = await dispatch(acquireCredential());
       const previousSubscriptions = state.subscriptions;
       const newCategories = newLabels.map((label) =>
         toCategory(credential.id, label),
@@ -297,7 +282,7 @@ export function updateSubscription(
 export function updateSubscriptionsSettings(
   subscriptionsSettings: SubscriptionsSettings,
 ): AppAction<void> {
-  return ({ state$ }) => {
+  return (state$) => {
     state$.mutate((state) => {
       state.subscriptionsSettings = subscriptionsSettings;
     });

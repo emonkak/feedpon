@@ -1,8 +1,8 @@
 import { createComponent, type RenderContext } from 'barebind';
 import type { RelativeURL } from 'barebind/extras/router';
+import { AppStore } from 'feedpon-store';
 import * as uiActions from 'feedpon-store/actions/ui';
-import { BindActionCreators } from 'feedpon-store/hooks/BindActionCreators';
-
+import { BindActionCreators } from 'state-management';
 import { MainLayout } from '../layout/MainLayout.ts';
 import { Navbar } from '../primitives/Navbar.ts';
 import { TabList } from '../primitives/TabList.ts';
@@ -16,7 +16,7 @@ export const SettingsPage = createComponent(function SettingsPage(
   { children, url }: SettingsProps,
   $: RenderContext,
 ): unknown {
-  const { toggleSidebar } = $.use(BindActionCreators(uiActions));
+  const { toggleSidebar } = $.use(BindActionCreators(AppStore, uiActions));
 
   const header = Navbar({
     onSidebarToggle: toggleSidebar,

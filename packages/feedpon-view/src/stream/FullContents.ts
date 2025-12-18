@@ -1,5 +1,5 @@
 import { createComponent, type RenderContext, Repeat } from 'barebind';
-import type { FullContent } from 'feedpon-store/state';
+import type { FullContent } from 'feedpon-store';
 
 import { EmbeddedHTML } from '../primitives/EmbeddedHTML.ts';
 

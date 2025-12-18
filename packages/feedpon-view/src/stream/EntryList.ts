@@ -5,8 +5,7 @@ import {
   type RenderContext,
 } from 'barebind';
 import { EventCallback } from 'barebind/extras/hooks';
-import type { Scrollable } from 'feedpon-store';
-import type { Entry, Session, Stream } from 'feedpon-store/state';
+import type { Entry, ScrollTarget, Session, Stream } from 'feedpon-store';
 
 import {
   type BlankSpaces,
@@ -27,7 +26,7 @@ export interface EntryListProps {
   ref: RefObject<VirtualScrollListRef | null>;
   session: Session;
   stream: Stream | null;
-  waitForScroll: (scrollable: Scrollable) => Promise<void>;
+  waitForScroll: (target: ScrollTarget) => Promise<void>;
 }
 
 export const EntryList = createComponent(function EntryList(

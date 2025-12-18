@@ -4,7 +4,7 @@ import {
   type Feed,
   getFeedUrl,
   type Subscription,
-} from 'feedpon-store/state';
+} from 'feedpon-store';
 import { SubscriptionSettingsDropdown } from '../subscription/SubscriptionSettingsDropdown.ts';
 
 interface FeedHeaderProps {

@@ -1,7 +1,7 @@
 import { createComponent, type RenderContext, Repeat } from 'barebind';
 import { AppStore } from 'feedpon-store';
 import * as uiActions from 'feedpon-store/actions/ui';
-import { BindActionCreators } from 'feedpon-store/hooks/BindActionCreators';
+import { BindActionCreators } from 'state-management';
 import { NotificationView } from './NotificationView.ts';
 
 export interface NotificationStackProps {}
@@ -12,7 +12,9 @@ export const NotificationStack = createComponent(function NotificationStack(
 ): unknown {
   const { state$ } = $.use(AppStore);
   const notifications = $.use(state$.get('notifications'));
-  const { dismissNotification } = $.use(BindActionCreators(uiActions));
+  const { dismissNotification } = $.use(
+    BindActionCreators(AppStore, uiActions),
+  );
 
   return $.html`
     <div class="notification-list">

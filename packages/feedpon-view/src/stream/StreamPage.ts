@@ -1,10 +1,10 @@
 import { createComponent, type RenderContext } from 'barebind';
-import type { AppStore } from 'feedpon-store';
+import type { SessionSettings } from 'feedpon-store';
+import { AppStore } from 'feedpon-store';
 import * as streamActions from 'feedpon-store/actions/stream';
 import * as subscriptionActions from 'feedpon-store/actions/subscription';
 import * as uiActions from 'feedpon-store/actions/ui';
-import { BindActionCreators } from 'feedpon-store/hooks/BindActionCreators';
-import type { SessionSettings } from 'feedpon-store/state';
+import { BindActionCreators } from 'state-management';
 import { MainLayout } from '../layout/MainLayout.ts';
 import type { VirtualScrollListRef } from '../primitives/VirtualScrollList.ts';
 import { CategoryHeader } from './CategoryHeader.ts';
@@ -48,14 +48,16 @@ export const StreamPage = createComponent(function StreamPage(
     toggleFullContents,
     toggleHatenaBookmarkEntry,
     updateSessionSettings,
-  } = $.use(BindActionCreators(streamActions));
-  const { waitForScroll, toggleSidebar } = $.use(BindActionCreators(uiActions));
+  } = $.use(BindActionCreators(AppStore, streamActions));
+  const { waitForScroll, toggleSidebar } = $.use(
+    BindActionCreators(AppStore, uiActions),
+  );
   const {
     createCategory,
     createSubscription,
     deleteSubscription,
     updateSubscription,
-  } = $.use(BindActionCreators(subscriptionActions));
+  } = $.use(BindActionCreators(AppStore, subscriptionActions));
 
   const virtualScrollListRef = $.useRef<VirtualScrollListRef | null>(null);
 

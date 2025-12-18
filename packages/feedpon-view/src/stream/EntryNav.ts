@@ -1,6 +1,6 @@
 import { createComponent, type RenderContext } from 'barebind';
 
-import type { Entry } from 'feedpon-store/state';
+import type { Entry } from 'feedpon-store';
 
 interface EntryNavProps {
   entry: Entry;

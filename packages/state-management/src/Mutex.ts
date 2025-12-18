@@ -1,11 +1,11 @@
 import { LinkedList } from 'barebind/collections/linked-list';
 
-export class Lock {
+export class Mutex {
   private _queue: LinkedList<() => void> = new LinkedList();
 
   private _locked: boolean = false;
 
-  async acquire(): Promise<void> {
+  async lock(): Promise<void> {
     if (!this._locked) {
       this._locked = true;
       return;
@@ -16,7 +16,7 @@ export class Lock {
     });
   }
 
-  release(): void {
+  unlock(): void {
     const node = this._queue.popFront();
     if (node !== null) {
       const resolve = node.value;

@@ -1,8 +1,7 @@
-import type { AppAction } from '../action.ts';
-import type { Theme } from '../state.ts';
+import type { AppAction, Theme } from '../index.ts';
 
 export function updateTheme(theme: Theme): AppAction<void> {
-  return ({ state$ }) => {
+  return (state$) => {
     state$.mutate((state) => {
       state.theme = theme;
     });
@@ -10,7 +9,7 @@ export function updateTheme(theme: Theme): AppAction<void> {
 }
 
 export function updateUserStyle(userStyle: string): AppAction<void> {
-  return ({ state$ }) => {
+  return (state$) => {
     state$.mutate((state) => {
       state.userStyle = userStyle;
     });

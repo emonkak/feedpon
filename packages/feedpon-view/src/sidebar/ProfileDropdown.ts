@@ -1,5 +1,5 @@
 import { createComponent, type RenderContext } from 'barebind';
-import type { Profile } from 'feedpon-store/state';
+import type { Profile } from 'feedpon-store';
 
 import { openAlertDialog } from '../primitives/AlertDialog.ts';
 import { Dropdown } from '../primitives/Dropdown.ts';

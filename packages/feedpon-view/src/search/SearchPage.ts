@@ -1,11 +1,11 @@
 import { createComponent, type RenderContext, Repeat } from 'barebind';
 import { LocalAtom } from 'barebind/extras/hooks';
 import type { HistoryNavigator } from 'barebind/extras/router';
-import type { AppStore } from 'feedpon-store';
+import { AppStore } from 'feedpon-store';
 import * as searchActions from 'feedpon-store/actions/search';
 import * as subscriptionActions from 'feedpon-store/actions/subscription';
 import * as uiActions from 'feedpon-store/actions/ui';
-import { BindActionCreators } from 'feedpon-store/hooks/BindActionCreators';
+import { BindActionCreators } from 'state-management';
 
 import { MainLayout } from '../layout/MainLayout.ts';
 import { Navbar } from '../primitives/Navbar.ts';
@@ -30,14 +30,14 @@ export const SearchPage = createComponent(function SearchPage(
 
   const query$ = $.use(LocalAtom(query ?? searchQuery));
 
-  const { searchFeeds } = $.use(BindActionCreators(searchActions));
+  const { searchFeeds } = $.use(BindActionCreators(AppStore, searchActions));
   const {
     createSubscription,
     createCategory,
     updateSubscription,
     deleteSubscription,
-  } = $.use(BindActionCreators(subscriptionActions));
-  const { toggleSidebar } = $.use(BindActionCreators(uiActions));
+  } = $.use(BindActionCreators(AppStore, subscriptionActions));
+  const { toggleSidebar } = $.use(BindActionCreators(AppStore, uiActions));
 
   const handleChange = $.useCallback((event: Event) => {
     query$.value = (event.currentTarget as HTMLInputElement).value;

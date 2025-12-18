@@ -5,16 +5,12 @@
   "exports": {
     ".": "./src/index.ts",
     "./actions/*": "./src/actions/*.ts",
-    "./apis/*": "./src/apis/*.ts",
-    "./collections/*": "./src/collections/*.ts",
-    "./hooks/*": "./src/hooks/*.ts",
-    "./persistent/*": "./src/persistent/*.ts",
-    "./state": "./src/state.ts"
+    "./apis/*": "./src/apis/*.ts"
   },
   "dependencies": {
     "@mozilla/readability": "catalog:",
     "barebind": "catalog:",
-    "data-structures": "workspace:^",
+    "state-management": "workspace:^",
     "up-fetch": "catalog:",
     "valibot": "catalog:"
   },

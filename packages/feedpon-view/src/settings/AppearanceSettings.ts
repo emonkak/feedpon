@@ -1,9 +1,9 @@
 import { createComponent, type RenderContext, Repeat } from 'barebind';
 import { LocalAtom } from 'barebind/extras/hooks';
-import type { AppStore } from 'feedpon-store';
+import type { Theme } from 'feedpon-store';
+import { AppStore } from 'feedpon-store';
 import * as appearanceActions from 'feedpon-store/actions/appearance';
-import { BindActionCreators } from 'feedpon-store/hooks/BindActionCreators';
-import type { Theme } from 'feedpon-store/state';
+import { BindActionCreators } from 'state-management';
 
 export interface AppearanceSettingsProps {
   store: AppStore;
@@ -20,7 +20,7 @@ export const AppearanceSettings = createComponent(function AppearanceSettings(
   const userStyle$ = $.use(LocalAtom(currentUserStyle));
 
   const { updateTheme, updateUserStyle } = $.use(
-    BindActionCreators(appearanceActions),
+    BindActionCreators(AppStore, appearanceActions),
   );
 
   const handleUserStyleChange = (event: Event) => {

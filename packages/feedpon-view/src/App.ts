@@ -1,16 +1,14 @@
 import { createComponent, type RenderContext } from 'barebind';
 import { HashHistory, ScrollRestration } from 'barebind/extras/router';
-import type { AppContext, AppStore } from 'feedpon-store';
-
+import type { AppStore } from 'feedpon-store';
 import { Dispatcher } from './Dispatcher.ts';
 
 export interface AppProps {
-  context: AppContext;
-  prepareStore: (context: AppContext) => Promise<AppStore>;
+  prepareStore: () => Promise<AppStore>;
 }
 
 export const App = createComponent(function App(
-  { context, prepareStore }: AppProps,
+  { prepareStore }: AppProps,
   $: RenderContext,
 ): unknown {
   const [store, setStore] = $.useState<AppStore | null>(null);
@@ -20,7 +18,7 @@ export const App = createComponent(function App(
   $.use(ScrollRestration());
 
   $.useEffect(() => {
-    prepareStore(context).then(
+    prepareStore().then(
       (store) => {
         setStore(store);
       },
@@ -29,7 +27,7 @@ export const App = createComponent(function App(
         setError(error);
       },
     );
-  }, [context, prepareStore]);
+  }, [prepareStore]);
 
   if (store === null) {
     return $.html`

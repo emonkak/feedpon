@@ -1,11 +1,9 @@
 import { createComponent, type ElementRef, type RenderContext } from 'barebind';
 import { type HistoryNavigator, RelativeURL } from 'barebind/extras/router';
-
-import type { AppStore } from 'feedpon-store';
+import { AppStore, type Subscription } from 'feedpon-store';
 import * as subscriptionActions from 'feedpon-store/actions/subscription';
 import * as uiActions from 'feedpon-store/actions/ui';
-import { BindActionCreators } from 'feedpon-store/hooks/BindActionCreators';
-import type { Subscription } from 'feedpon-store/state';
+import { BindActionCreators } from 'state-management';
 
 import { MainLayout } from '../layout/MainLayout.ts';
 import { Dropdown } from '../primitives/Dropdown.ts';
@@ -32,7 +30,7 @@ export const CategoriesPage = createComponent(function CategoriesPage(
   const { state$ } = store;
   const categories = $.use(state$.get('unsortedCategories'));
   const subscriptions = $.use(state$.get('unsortedSubscriptions'));
-  const { toggleSidebar } = $.use(BindActionCreators(uiActions));
+  const { toggleSidebar } = $.use(BindActionCreators(AppStore, uiActions));
   const {
     createCategory,
     deleteCategory,
@@ -41,7 +39,7 @@ export const CategoriesPage = createComponent(function CategoriesPage(
     importOpml,
     updateCategory,
     updateSubscription,
-  } = $.use(BindActionCreators(subscriptionActions));
+  } = $.use(BindActionCreators(AppStore, subscriptionActions));
   const [query, setQuery] = $.useState('');
   const searchInputRef = $.useRef<HTMLInputElement | null>(null);
   const uploadInputRef = $.useRef<HTMLInputElement | null>(null);

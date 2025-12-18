@@ -1,15 +1,13 @@
-import type { AppAction } from '../action.ts';
+import type { AppAction } from '../index.ts';
 import { acquireCredential } from './auth.ts';
 
 export function searchFeeds(query: string): AppAction<Promise<void>> {
-  return (context) => {
-    const { state$, feedlyClient } = context;
-
+  return (state$, { feedlyClient }, dispatch) => {
     return state$.mutate(async (state) => {
       state.searching = true;
 
       try {
-        const credential = await acquireCredential()(context);
+        const credential = await dispatch(acquireCredential());
 
         state.searchResults = (
           await feedlyClient.searchFeeds(credential.accessToken, {

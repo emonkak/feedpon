@@ -1,12 +1,10 @@
-import type { AppAction } from '../action.ts';
+import type { AppAction } from '../index.ts';
 import { acquireCredential } from './auth.ts';
 
 export function reloadProfile(): AppAction<void> {
-  return (context) => {
-    const { feedlyClient, state$ } = context;
-
+  return (state$, { feedlyClient }, dispatch) => {
     return state$.mutate(async (state) => {
-      const credential = await acquireCredential()(context);
+      const credential = await dispatch(acquireCredential());
 
       state.profileLoading = true;
 

@@ -2,7 +2,7 @@ import { createComponent, type RenderContext } from 'barebind';
 import type {
   SubscriptionsOrdering,
   SubscriptionsSettings,
-} from 'feedpon-store/state';
+} from 'feedpon-store';
 
 import { Dropdown } from '../primitives/Dropdown.ts';
 import type { MenuItem } from '../primitives/Menu.ts';

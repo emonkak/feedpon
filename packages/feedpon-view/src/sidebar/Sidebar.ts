@@ -1,11 +1,10 @@
 import { createComponent, type RenderContext } from 'barebind';
 import { CurrentHistory, RelativeURL } from 'barebind/extras/router';
-import { AppStore } from 'feedpon-store';
+import { AppStore, getFeedUrl, type Subscription } from 'feedpon-store';
 import * as authActions from 'feedpon-store/actions/auth';
 import * as profileActions from 'feedpon-store/actions/profile';
 import * as subscriptionActions from 'feedpon-store/actions/subscription';
-import { BindActionCreators } from 'feedpon-store/hooks/BindActionCreators';
-import { getFeedUrl, type Subscription } from 'feedpon-store/state';
+import { BindActionCreators } from 'state-management';
 import { AutoComplete } from '../primitives/AutoComplete.ts';
 import type { MenuItem } from '../primitives/Menu.ts';
 import { RelativeTime } from '../primitives/RelativeTime.ts';
@@ -44,10 +43,10 @@ export const Sidebar = createComponent(function Sidebar(
   const totalUnreadCount = $.use(state$.get('totalUnreadCount'));
 
   const { updateSubscriptionsSettings, reloadSubscriptions } = $.use(
-    BindActionCreators(subscriptionActions),
+    BindActionCreators(AppStore, subscriptionActions),
   );
-  const { revokeCredential } = $.use(BindActionCreators(authActions));
-  const { reloadProfile } = $.use(BindActionCreators(profileActions));
+  const { revokeCredential } = $.use(BindActionCreators(AppStore, authActions));
+  const { reloadProfile } = $.use(BindActionCreators(AppStore, profileActions));
 
   $.useEffect(() => {
     if (subscriptionsUpdated < 0) {

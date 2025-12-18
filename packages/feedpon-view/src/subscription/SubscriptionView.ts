@@ -1,9 +1,5 @@
 import { createComponent, type RenderContext, Repeat } from 'barebind';
-import {
-  type Category,
-  getFeedUrl,
-  type Subscription,
-} from 'feedpon-store/state';
+import { type Category, getFeedUrl, type Subscription } from 'feedpon-store';
 import { RelativeTime } from '../primitives/RelativeTime.ts';
 import { SubscriptionDropdown } from './SubscriptionDropdown.ts';
 

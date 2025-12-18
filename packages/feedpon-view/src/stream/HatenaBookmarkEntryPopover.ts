@@ -1,5 +1,5 @@
 import { createComponent, type RenderContext, Repeat } from 'barebind';
-import type { HatenaBookmarkEntry } from 'feedpon-store/state';
+import type { HatenaBookmarkEntry } from 'feedpon-store';
 
 import { HatenaBookmarkBookmarkView } from './HatenaBookmarkBookmarkView.ts';
 

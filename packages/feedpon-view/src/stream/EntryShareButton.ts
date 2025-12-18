@@ -1,5 +1,5 @@
 import { createComponent, type RenderContext } from 'barebind';
-import { type Entry, getEntryUrl } from 'feedpon-store/state';
+import { type Entry, getEntryUrl } from 'feedpon-store';
 
 import { Dialog } from '../primitives/Dialog.ts';
 import { createPopupHook } from '../primitives/hooks/popupHook.ts';

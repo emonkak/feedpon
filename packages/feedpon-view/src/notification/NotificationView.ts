@@ -1,5 +1,5 @@
 import { createComponent, type RenderContext } from 'barebind';
-import type { Notification } from 'feedpon-store/state';
+import type { Notification } from 'feedpon-store';
 
 interface NotificationViewProps {
   notification: Notification;

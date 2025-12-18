@@ -1,9 +1,9 @@
 import { createComponent, type RenderContext, Repeat } from 'barebind';
 import { LocalAtom, LocalComputed } from 'barebind/extras/hooks';
-import type { AppStore } from 'feedpon-store';
+import type { EntriesOrdering, StreamLayout } from 'feedpon-store';
+import { AppStore } from 'feedpon-store';
 import * as streamActions from 'feedpon-store/actions/stream';
-import { BindActionCreators } from 'feedpon-store/hooks/BindActionCreators';
-import type { StreamLayout, EntriesOrdering } from 'feedpon-store/state';
+import { BindActionCreators } from 'state-management';
 import { openAlertDialog } from '../primitives/AlertDialog.ts';
 
 export interface StreamSettingsProps {
@@ -49,7 +49,7 @@ export const StreamSettings = createComponent(function StreamSettings(
   );
 
   const { updateDefaultSessionSettings, updateStreamSettings, clearSessions } =
-    $.use(BindActionCreators(streamActions));
+    $.use(BindActionCreators(AppStore, streamActions));
 
   const handleCountChange = (event: Event) => {
     count$.value = (event.currentTarget as HTMLInputElement).valueAsNumber;

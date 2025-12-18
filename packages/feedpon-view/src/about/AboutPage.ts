@@ -1,8 +1,8 @@
 import { createComponent, type RenderContext, Repeat } from 'barebind';
 import { type HistoryNavigator, RelativeURL } from 'barebind/extras/router';
-import type { AppStore } from 'feedpon-store';
+import { AppStore } from 'feedpon-store';
 import * as uiActions from 'feedpon-store/actions/ui';
-import { BindActionCreators } from 'feedpon-store/hooks/BindActionCreators';
+import { BindActionCreators } from 'state-management';
 import { MainLayout } from '../layout/MainLayout.ts';
 import { Dropdown } from '../primitives/Dropdown.ts';
 import { Navbar } from '../primitives/Navbar.ts';
@@ -47,7 +47,7 @@ export const AboutPage = createComponent(function AboutPage(
   $: RenderContext,
 ): unknown {
   const { state$ } = store;
-  const { toggleSidebar } = $.use(BindActionCreators(uiActions));
+  const { toggleSidebar } = $.use(BindActionCreators(AppStore, uiActions));
   const version = $.use(state$.get('version'));
 
   const handleGoKitchensink = $.useCallback(() => {

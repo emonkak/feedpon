@@ -5,7 +5,7 @@ import {
   getEntrySummary,
   getEntryUrl,
   parseStreamId,
-} from 'feedpon-store/state';
+} from 'feedpon-store';
 
 import { EmbeddedHTML } from '../primitives/EmbeddedHTML.ts';
 import { RelativeTime } from '../primitives/RelativeTime.ts';

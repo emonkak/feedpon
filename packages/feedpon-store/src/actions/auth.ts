@@ -1,10 +1,10 @@
-import type { AppAction } from '../action.ts';
 import type { FeedlyCredential } from '../apis/feedly.ts';
+import type { AppAction } from '../index.ts';
 
 export function acquireCredential(): AppAction<Promise<FeedlyCredential>> {
-  return ({ feedlyAuthLock, feedlyAuthenticator, feedlyClient, state$ }) => {
+  return (state$, { feedlyAuthMutex, feedlyAuthenticator, feedlyClient }) => {
     return state$.mutate(async (state) => {
-      await feedlyAuthLock.acquire();
+      await feedlyAuthMutex.lock();
 
       try {
         if (state.credential !== null) {
@@ -46,16 +46,15 @@ export function acquireCredential(): AppAction<Promise<FeedlyCredential>> {
 
         return state.credential;
       } finally {
-        feedlyAuthLock.release();
+        feedlyAuthMutex.unlock();
       }
     });
   };
 }
 
 export function getExportUrl(): AppAction<Promise<string>> {
-  return async (context) => {
-    const { feedlyClient } = context;
-    const credential = await acquireCredential()(context);
+  return async (_state$, { feedlyClient }, dispatch) => {
+    const credential = await dispatch(acquireCredential());
     return (
       feedlyClient.baseUrl +
       'v3/opml' +
@@ -65,7 +64,7 @@ export function getExportUrl(): AppAction<Promise<string>> {
 }
 
 export function revokeCredential(): AppAction<void> {
-  return ({ feedlyClient, state$ }) => {
+  return (state$, { feedlyClient }) => {
     return state$.mutate(async (state) => {
       if (state.credential !== null) {
         await feedlyClient.logout(state.credential.accessToken);

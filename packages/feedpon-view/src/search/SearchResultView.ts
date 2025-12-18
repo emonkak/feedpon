@@ -1,10 +1,5 @@
 import { createComponent, type RenderContext } from 'barebind';
-import type {
-  Category,
-  Feed,
-  SearchResult,
-  Subscription,
-} from 'feedpon-store/state';
+import type { Category, Feed, SearchResult, Subscription } from 'feedpon-store';
 import { SubscriptionSettingsDropdown } from '../subscription/SubscriptionSettingsDropdown.ts';
 
 interface SearchResultViewProps {

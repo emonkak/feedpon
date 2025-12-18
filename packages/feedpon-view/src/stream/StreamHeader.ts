@@ -1,5 +1,5 @@
 import { createComponent, type RenderContext } from 'barebind';
-import type { Session, SessionSettings, Stream } from 'feedpon-store/state';
+import type { Session, SessionSettings, Stream } from 'feedpon-store';
 
 import { Navbar } from '../primitives/Navbar.ts';
 import { SessionSettingsDropdown } from './SessionSettingsDropdown.ts';

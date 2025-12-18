@@ -4,13 +4,11 @@
   "version": "3.0.0",
   "private": true,
   "type": "module",
-  "exports": {
-    ".": "./src/main.ts"
-  },
   "dependencies": {
     "@types/chrome": "^0.1.32",
     "barebind": "catalog:",
     "feedpon-store": "workspace:^",
-    "feedpon-view": "workspace:^"
+    "feedpon-view": "workspace:^",
+    "state-management": "workspace:^"
   }
 }

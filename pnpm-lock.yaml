@@ -54,8 +54,6 @@ importers:
         specifier: ^0.14.12
         version: 0.14.12
 
-  packages/data-structures: {}
-
   packages/feedpon:
     dependencies:
       '@types/chrome':
@@ -70,6 +68,9 @@ importers:
       feedpon-view:
         specifier: workspace:^
         version: link:../feedpon-view
+      state-management:
+        specifier: workspace:^
+        version: link:../state-management
 
   packages/feedpon-store:
     dependencies:
@@ -79,9 +80,9 @@ importers:
       barebind:
         specifier: 'catalog:'
         version: https://codeload.github.com/emonkak/barebind/tar.gz/110a893c53e0a396ab80a71b399a7e6e037cc885
-      data-structures:
+      state-management:
         specifier: workspace:^
-        version: link:../data-structures
+        version: link:../state-management
       up-fetch:
         specifier: 'catalog:'
         version: 2.5.0
@@ -100,6 +101,15 @@ importers:
       feedpon-store:
         specifier: workspace:^
         version: link:../feedpon-store
+      state-management:
+        specifier: workspace:^
+        version: link:../state-management
+
+  packages/state-management:
+    dependencies:
+      barebind:
+        specifier: 'catalog:'
+        version: https://codeload.github.com/emonkak/barebind/tar.gz/110a893c53e0a396ab80a71b399a7e6e037cc885
 
 packages:
 

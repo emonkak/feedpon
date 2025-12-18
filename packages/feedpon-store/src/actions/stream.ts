@@ -1,6 +1,6 @@
 import { Readability } from '@mozilla/readability';
 import type { Reactive } from 'barebind/extras/reactive';
-import type { AppAction, AppContext } from '../action.ts';
+import type { AppAction } from '../index.ts';
 import {
   type AppState,
   type Entry,
@@ -14,8 +14,7 @@ import {
   type StreamLayout,
   type StreamSettings,
   type URLFilter,
-} from '../state.ts';
-import { absolutifyUrls } from '../utils/absolutifyUrls.ts';
+} from '../index.ts';
 import { decodeResponse } from '../utils/decodeResponse.ts';
 import { acquireCredential } from './auth.ts';
 import { sendNotification } from './ui.ts';
@@ -25,7 +24,7 @@ const MAX_URL_LENGTH = 2048;
 const STREAM_LAYOUTS: StreamLayout[] = ['full', 'compact'];
 
 export function clearSessions(): AppAction<Promise<void>> {
-  return ({ state$, stateRepository }) => {
+  return (state$, { stateRepository }) => {
     return state$.mutate(async (state) => {
       state.session = null;
       state.pastSessions = [];
@@ -39,7 +38,7 @@ export function clearSessions(): AppAction<Promise<void>> {
 }
 
 export function expandEntry(index: number): AppAction<void> {
-  return ({ state$ }) => {
+  return (state$) => {
     state$.mutate((state) => {
       if (state.session === null || state.session.expandedIndex === index) {
         return;
@@ -54,8 +53,7 @@ export function expandEntry(index: number): AppAction<void> {
 }
 
 export function fetchFullContents(entryId: string): AppAction<Promise<void>> {
-  return (context) => {
-    const { state$ } = context;
+  return (state$, _context, dispatch) => {
     const siteinfos$ = state$.get('siteinfos');
     const siteinfosUpdated$ = state$.get('siteinfosUpdated');
 
@@ -82,10 +80,8 @@ export function fetchFullContents(entryId: string): AppAction<Promise<void>> {
             'text/html',
           );
 
-          absolutifyUrls(document, url);
-
           if (siteinfosUpdated$.value < 0) {
-            updateSiteinfos()(context);
+            dispatch(updateSiteinfos());
           }
 
           const fullContent = extractFullContentBySiteinfos(
@@ -109,7 +105,7 @@ export function fetchFullContents(entryId: string): AppAction<Promise<void>> {
 }
 
 export function fetchHatenaBookmarkCounts(): AppAction<Promise<void>> {
-  return ({ hatenaBookmarkClient, state$ }) => {
+  return (state$, { hatenaBookmarkClient }) => {
     return state$.mutate(async (state) => {
       const { stream } = state;
 
@@ -150,7 +146,7 @@ export function fetchHatenaBookmarkCounts(): AppAction<Promise<void>> {
 export function fetchHatenaBookmarkEntry(
   entryId: string,
 ): AppAction<Promise<void>> {
-  return ({ state$, hatenaBookmarkClient }) => {
+  return (state$, { hatenaBookmarkClient }) => {
     return (
       findEntry(state$, entryId)?.mutate(async (entry) => {
         entry.hatenaBookmarkEntryLoading = true;
@@ -168,9 +164,7 @@ export function fetchHatenaBookmarkEntry(
 }
 
 export function fetchStream(continuation?: string): AppAction<Promise<void>> {
-  return (context) => {
-    const { feedlyClient, state$ } = context;
-
+  return (state$, { feedlyClient }, dispatch) => {
     return state$.mutate(async (state) => {
       const { feed: oldFeed, session, stream: oldStream, urlFilters } = state;
 
@@ -181,7 +175,7 @@ export function fetchStream(continuation?: string): AppAction<Promise<void>> {
       state.streamLoading = true;
 
       try {
-        const credential = await acquireCredential()(context);
+        const credential = await dispatch(acquireCredential());
 
         if (oldFeed === null && isFeedId(session.id)) {
           state.feed = await feedlyClient.getFeed(
@@ -231,7 +225,7 @@ export function fetchStream(continuation?: string): AppAction<Promise<void>> {
 }
 
 export function focusEntry(index: number): AppAction<void> {
-  return ({ state$ }) => {
+  return (state$) => {
     state$.mutate((state) => {
       if (state.session === null) {
         return;
@@ -246,9 +240,7 @@ export function focusEntry(index: number): AppAction<void> {
 }
 
 export function markStreamAsRead(): AppAction<Promise<void>> {
-  return (context) => {
-    const { state$ } = context;
-
+  return (state$, { feedlyClient }, dispatch) => {
     return state$.mutate(async (state) => {
       const { readCounts, session, stream } = state;
 
@@ -268,7 +260,35 @@ export function markStreamAsRead(): AppAction<Promise<void>> {
       state.streamUpdating = true;
 
       try {
-        await updateMarker(context, session.id, latestItem?.id);
+        const credential = await dispatch(acquireCredential());
+        const parsedId = parseStreamId(session.id);
+
+        switch (parsedId.type) {
+          case 'category':
+            await feedlyClient.updateMarker(credential.accessToken, {
+              action: 'markAsRead',
+              type: 'categories',
+              categoryIds: [session.id],
+              lastReadEntryId: latestItem?.id,
+            });
+            break;
+          case 'feed':
+            await feedlyClient.updateMarker(credential.accessToken, {
+              action: 'markAsRead',
+              type: 'feeds',
+              feedIds: [session.id],
+              lastReadEntryId: latestItem?.id,
+            });
+            break;
+          case 'tag':
+            await feedlyClient.updateMarker(credential.accessToken, {
+              action: 'markAsRead',
+              type: 'tags',
+              tagIds: [session.id],
+              lastReadEntryId: latestItem?.id,
+            });
+            break;
+        }
 
         state.session = {
           ...session,
@@ -288,16 +308,18 @@ export function markStreamAsRead(): AppAction<Promise<void>> {
         state.streamUpdating = false;
       }
 
-      sendNotification(
-        'info',
-        `${stream.items.length} entries are marked as read.`,
-      )(context);
+      dispatch(
+        sendNotification(
+          'info',
+          `${stream.items.length} entries are marked as read.`,
+        ),
+      );
     });
   };
 }
 
 export function quitSession(): AppAction<Promise<void>> {
-  return ({ state$, stateRepository }) => {
+  return (state$, { stateRepository }) => {
     return state$.mutate(async (state) => {
       const { feed, pastSessions, session, stream, streamSettings } = state;
 
@@ -336,7 +358,7 @@ export function quitSession(): AppAction<Promise<void>> {
 }
 
 export function shrinkEntry(): AppAction<void> {
-  return ({ state$ }) => {
+  return (state$) => {
     state$.mutate((state) => {
       if (state.session === null || state.session.expandedIndex < 0) {
         return;
@@ -351,7 +373,7 @@ export function shrinkEntry(): AppAction<void> {
 }
 
 export function startSession(streamId: string): AppAction<Promise<void>> {
-  return ({ state$, stateRepository }) => {
+  return (state$, { stateRepository }) => {
     return state$.mutate(async (state) => {
       const {
         defaultSessionSettings,
@@ -429,12 +451,10 @@ export function tagEntry(
   entryId: string,
   tagId: string,
 ): AppAction<Promise<void>> {
-  return (context) => {
-    const { feedlyClient, state$ } = context;
-
+  return (state$, { feedlyClient }, dispatch) => {
     return (
       findEntry(state$, entryId)?.mutate(async (entry) => {
-        const credential = await acquireCredential()(context);
+        const credential = await dispatch(acquireCredential());
 
         await feedlyClient.tagEntry(credential.accessToken, [tagId], {
           entryId: entry.id,
@@ -450,7 +470,7 @@ export function toggleFullContents(
   entryId: string,
   shown: boolean,
 ): AppAction<void> {
-  return ({ state$ }) => {
+  return (state$) => {
     findEntry(state$, entryId)?.mutate((entry) => {
       entry.fullContentsShown = shown;
     });
@@ -461,7 +481,7 @@ export function toggleHatenaBookmarkEntry(
   entryId: string,
   shown: boolean,
 ): AppAction<void> {
-  return ({ state$ }) => {
+  return (state$) => {
     findEntry(state$, entryId)?.mutate((entry) => {
       entry.hatenaBookmarkEntryShown = shown;
     });
@@ -469,7 +489,7 @@ export function toggleHatenaBookmarkEntry(
 }
 
 export function toggleStreamLayout(): AppAction<void> {
-  return ({ state$ }) => {
+  return (state$) => {
     const session$ = state$.get('session');
 
     return session$?.mutate((session) => {
@@ -493,12 +513,10 @@ export function untagEntry(
   entryId: string,
   tagId: string,
 ): AppAction<Promise<void>> {
-  return (context) => {
-    const { feedlyClient, state$ } = context;
-
+  return (state$, { feedlyClient }, dispatch) => {
     return (
       findEntry(state$, entryId)?.mutate(async (entry) => {
-        const credential = await acquireCredential()(context);
+        const credential = await dispatch(acquireCredential());
 
         await feedlyClient.untagEntry(credential.accessToken, [tagId], {
           entryId: entry.id,
@@ -513,7 +531,7 @@ export function untagEntry(
 export function updateDefaultSessionSettings(
   settings: SessionSettings,
 ): AppAction<void> {
-  return ({ state$ }) => {
+  return (state$) => {
     state$.mutate((state) => {
       state.defaultSessionSettings = settings;
     });
@@ -523,7 +541,7 @@ export function updateDefaultSessionSettings(
 export function updateSessionSettings(
   settings: SessionSettings,
 ): AppAction<void> {
-  return ({ state$ }) => {
+  return (state$) => {
     state$.get('session').mutate((session) => {
       if (session === null) {
         return;
@@ -536,17 +554,17 @@ export function updateSessionSettings(
 }
 
 export function updateSiteinfos(): AppAction<Promise<void>> {
-  return (context) => {
-    const { state$, wedataClient } = context;
-
+  return (state$, { wedataClient }, dispatch) => {
     return state$.mutate(async (state) => {
       state.siteinfos = await wedataClient.getAutoPagerizeItems();
       state.siteinfosUpdated = Date.now();
 
-      sendNotification(
-        'info',
-        `${state.siteinfos.length} siteinfos are loaded.`,
-      )(context);
+      dispatch(
+        sendNotification(
+          'info',
+          `${state.siteinfos.length} siteinfos are loaded.`,
+        ),
+      );
     });
   };
 }
@@ -554,7 +572,7 @@ export function updateSiteinfos(): AppAction<Promise<void>> {
 export function updateStreamSettings(
   streamSettings: StreamSettings,
 ): AppAction<void> {
-  return ({ state$ }) => {
+  return (state$) => {
     state$.mutate((state) => {
       state.streamSettings = streamSettings;
     });
@@ -730,42 +748,5 @@ function tryTestPattern(pattern: string, str: string): boolean {
     return new RegExp(pattern).test(str);
   } catch {
     return false;
-  }
-}
-
-async function updateMarker(
-  context: AppContext,
-  id: string,
-  lastReadEntryId?: string,
-): Promise<void> {
-  const { feedlyClient } = context;
-  const credential = await acquireCredential()(context);
-  const parsedId = parseStreamId(id);
-
-  switch (parsedId.type) {
-    case 'category':
-      await feedlyClient.updateMarker(credential.accessToken, {
-        action: 'markAsRead',
-        type: 'categories',
-        categoryIds: [id],
-        lastReadEntryId,
-      });
-      break;
-    case 'feed':
-      await feedlyClient.updateMarker(credential.accessToken, {
-        action: 'markAsRead',
-        type: 'feeds',
-        feedIds: [id],
-        lastReadEntryId,
-      });
-      break;
-    case 'tag':
-      await feedlyClient.updateMarker(credential.accessToken, {
-        action: 'markAsRead',
-        type: 'tags',
-        tagIds: [id],
-        lastReadEntryId,
-      });
-      break;
   }
 }

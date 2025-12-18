@@ -4,8 +4,7 @@ import {
   type RenderContext,
 } from 'barebind';
 import { CurrentHistory } from 'barebind/extras/router';
-import { AppStore } from 'feedpon-store';
-import type { Theme } from 'feedpon-store/state';
+import { AppStore, type Theme } from 'feedpon-store';
 
 import { AuthenticationPage } from './authentication/AuthenticationPage.ts';
 import { SidebarLayout } from './layout/SidebarLayout.ts';

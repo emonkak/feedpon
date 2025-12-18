@@ -1,6 +1,4 @@
-export type Scrollable = Window | Element;
-
-export type ScrollEasing = (t: number) => number;
+import type { ScrollEasing, ScrollTarget } from 'feedpon-store';
 
 interface ScrollState {
   aborted: boolean;
@@ -8,79 +6,79 @@ interface ScrollState {
   promise: Promise<void>;
 }
 
-export class SmoothScroll {
-  private readonly _scrollStates: WeakMap<Scrollable, ScrollState> =
+export class SmoothScrollController {
+  private readonly _scrollStates: WeakMap<ScrollTarget, ScrollState> =
     new WeakMap();
 
   scrollTo(
-    scrollable: Scrollable,
+    target: ScrollTarget,
     destX: number,
     destY: number,
     duration: number,
-    scrollEasing: ScrollEasing,
+    easing: ScrollEasing,
   ): Promise<void> {
-    if (scrollable instanceof Window) {
-      const srcX = scrollable.scrollX;
-      const srcY = scrollable.scrollY;
+    if (target instanceof Window) {
+      const srcX = target.scrollX;
+      const srcY = target.scrollY;
       return this._startScroll(
-        scrollable,
+        target,
         srcX,
         srcY,
         destX,
         destY,
-        scrollEasing,
         duration,
+        easing,
       );
     } else {
-      const srcX = scrollable.scrollLeft;
-      const srcY = scrollable.scrollTop;
+      const srcX = target.scrollLeft;
+      const srcY = target.scrollTop;
       return this._startScroll(
-        scrollable,
+        target,
         srcX,
         srcY,
         destX,
         destY,
-        scrollEasing,
         duration,
+        easing,
       );
     }
   }
 
   scrollBy(
-    scrollable: Scrollable,
+    target: ScrollTarget,
     dx: number,
     dy: number,
     duration: number,
-    scrollEasing: ScrollEasing,
+    easing: ScrollEasing,
   ): Promise<void> {
-    if (scrollable instanceof Window) {
-      const srcX = scrollable.scrollX;
-      const srcY = scrollable.scrollY;
+    if (target instanceof Window) {
+      const srcX = target.scrollX;
+      const srcY = target.scrollY;
       return this._startScroll(
-        scrollable,
+        target,
         srcX,
         srcY,
         srcX + dx,
         srcY + dy,
-        scrollEasing,
         duration,
+        easing,
       );
     } else {
-      const srcX = scrollable.scrollLeft;
-      const srcY = scrollable.scrollTop;
+      const srcX = target.scrollLeft;
+      const srcY = target.scrollTop;
       return this._startScroll(
-        scrollable,
+        target,
         srcX,
         srcY,
         srcX + dx,
         srcY + dy,
-        scrollEasing,
         duration,
+        easing,
       );
     }
   }
 
-  async waitForScroll(scrollable: Scrollable): Promise<void> {
+  async waitForScroll(scrollable: ScrollTarget): Promise<void> {
     let scrollState: ScrollState | undefined;
 
     while ((scrollState = this._scrollStates.get(scrollable))) {
@@ -89,15 +87,15 @@ export class SmoothScroll {
   }
 
   private _startScroll(
-    scrollable: Scrollable,
+    target: ScrollTarget,
     srcX: number,
     srcY: number,
     destX: number,
     destY: number,
-    scrollEasing: ScrollEasing,
     duration: number,
+    easing: ScrollEasing,
   ): Promise<void> {
-    let scrollState = this._scrollStates.get(scrollable);
+    let scrollState = this._scrollStates.get(target);
 
     if (scrollState !== undefined) {
       scrollState.aborted = true;
@@ -114,7 +112,7 @@ export class SmoothScroll {
     const promise = new Promise<void>((resolve) => {
       const step = (currentTime: number) => {
         if (scrollState!.aborted) {
-          this._scrollStates.delete(scrollable);
+          this._scrollStates.delete(target);
           resolve();
           return;
         }
@@ -122,17 +120,17 @@ export class SmoothScroll {
         const progress = Math.max(currentTime - startTime, 0) / duration;
 
         if (progress >= 1.0) {
-          scrollable.scrollTo(destX, destY);
-          this._scrollStates.delete(scrollable);
+          target.scrollTo(destX, destY);
+          this._scrollStates.delete(target);
           resolve();
           return;
         }
 
-        const t = scrollEasing(progress);
+        const t = easing(progress);
         const x = srcX + (destX - srcX) * t;
         const y = srcY + (destY - srcY) * t;
 
-        scrollable.scrollTo(x, y);
+        target.scrollTo(x, y);
 
         scrollState!.previousTime = currentTime;
 
@@ -148,7 +146,7 @@ export class SmoothScroll {
       promise,
     };
 
-    this._scrollStates.set(scrollable, scrollState);
+    this._scrollStates.set(target, scrollState);
 
     return promise;
   }

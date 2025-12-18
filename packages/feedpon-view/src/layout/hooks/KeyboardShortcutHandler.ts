@@ -1,12 +1,11 @@
 import type { CustomHookFunction } from 'barebind';
-import { ImmutableTrie } from 'data-structures';
-
 import {
   type CommandId,
   type KeyboardShortcut,
   type KeyStroke,
   Modifier,
-} from '../state.ts';
+} from 'feedpon-store';
+import { ImmutableTrie } from 'state-management/collections/ImmutableTrie';
 
 const SPECIAL_KEYS: { [key: string]: string } = {
   ' ': 'Space',

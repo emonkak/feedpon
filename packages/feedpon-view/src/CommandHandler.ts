@@ -1,5 +1,6 @@
 import type { HistoryNavigator } from 'barebind/extras/router/history';
-import type { AppContext } from 'feedpon-store';
+import type { AppAction } from 'feedpon-store';
+import { type CommandHandler, getEntryUrl } from 'feedpon-store';
 import {
   expandEntry,
   fetchHatenaBookmarkCounts,
@@ -12,36 +13,35 @@ import {
 } from 'feedpon-store/actions/stream';
 import { reloadSubscriptions } from 'feedpon-store/actions/subscription';
 import {
+  scrollBy,
   showOsd,
-  smoothScrollBy,
   toggleKeyboardShortcuts,
   toggleSidebar,
 } from 'feedpon-store/actions/ui';
-import { type CommandHandler, getEntryUrl } from 'feedpon-store/state';
 
-export class AppCommandHandler implements CommandHandler<AppContext> {
-  private readonly _navigator: HistoryNavigator;
+export class AppCommandHandler implements CommandHandler {
+  private readonly _historyNavigator: HistoryNavigator;
 
-  constructor(navigator: HistoryNavigator) {
-    this._navigator = navigator;
+  constructor(historyNavigator: HistoryNavigator) {
+    this._historyNavigator = historyNavigator;
   }
 
-  expandEntry(context: AppContext): void {
-    const { state$ } = context;
+  expandEntry(): AppAction<void> {
+    return (state$, _context, dispatch) => {
+      const { session } = state$.value;
 
-    state$.mutate(({ session }) => {
       if (session === null || session.focusIndex < 0) {
         return;
       }
 
-      expandEntry(session.focusIndex)(context);
-    });
+      dispatch(expandEntry(session.focusIndex));
+    };
   }
 
-  focusSearchBox(context: AppContext): void {
-    const { state$ } = context;
+  focusSearchBox(): AppAction<void> {
+    return (state$) => {
+      const { sidebarOpened } = state$.value;
 
-    state$.mutate(({ sidebarOpened }) => {
       if (!sidebarOpened) {
         return;
       }
@@ -52,29 +52,35 @@ export class AppCommandHandler implements CommandHandler<AppContext> {
       if (searchInput !== null) {
         searchInput.focus();
       }
-    });
+    };
   }
 
-  goToBottom(_context: AppContext): void {
-    window.scrollTo(
-      0,
-      document.documentElement.scrollHeight -
-        document.documentElement.clientHeight,
-    );
+  goToBottom(): AppAction<void> {
+    return () => {
+      window.scrollTo(
+        0,
+        document.documentElement.scrollHeight -
+          document.documentElement.clientHeight,
+      );
+    };
   }
 
-  goToTop(_context: AppContext): void {
-    window.scrollTo(0, 0);
+  goToTop(): AppAction<void> {
+    return () => {
+      window.scrollTo(0, 0);
+    };
   }
 
-  markStreamAsRead(context: AppContext): void {
-    markStreamAsRead()(context);
+  markStreamAsRead(): AppAction<Promise<void>> {
+    return async (_state$, _context, dispatch) => {
+      await dispatch(markStreamAsRead());
+    };
   }
 
-  openArticle(context: AppContext): void {
-    const { state$ } = context;
+  openArticle(): AppAction<void> {
+    return (state$, _context, dispatch) => {
+      const { keyboardSettings, session, stream } = state$.value;
 
-    state$.mutate(({ keyboardSettings, session, stream }) => {
       if (stream === null || session === null) {
         return;
       }
@@ -84,7 +90,7 @@ export class AppCommandHandler implements CommandHandler<AppContext> {
         return;
       }
 
-      showOsd('Open Original Article')(context);
+      dispatch(showOsd('Open Original Article'));
 
       chrome.tabs.getCurrent((tab) => {
         chrome.tabs.create({
@@ -93,18 +99,18 @@ export class AppCommandHandler implements CommandHandler<AppContext> {
           url: getEntryUrl(focusEntry),
         });
       });
-    });
+    };
   }
 
-  openWebsite(context: AppContext): void {
-    const { state$ } = context;
+  openWebsite(): AppAction<void> {
+    return (state$, _context, dispatch) => {
+      const { feed, keyboardSettings } = state$.value;
 
-    state$.mutate(({ feed, keyboardSettings }) => {
       if (feed === null || feed.website === null) {
         return;
       }
 
-      showOsd('Open Feed Website')(context);
+      dispatch(showOsd('Open Feed Website'));
 
       chrome.tabs.getCurrent((tab) => {
         chrome.tabs.create({
@@ -113,58 +119,54 @@ export class AppCommandHandler implements CommandHandler<AppContext> {
           url: feed.website,
         });
       });
-    });
+    };
   }
 
-  async reloadStream(context: AppContext): Promise<void> {
-    showOsd('Reload Current Stream')(context);
+  reloadStream(): AppAction<Promise<void>> {
+    return async (_state$, _context, dispatch) => {
+      dispatch(showOsd('Reload Current Stream'));
 
-    await fetchStream()(context);
-    await fetchHatenaBookmarkCounts()(context);
+      await dispatch(fetchStream());
+      await dispatch(fetchHatenaBookmarkCounts());
+    };
   }
 
-  reloadSubscriptions(context: AppContext): Promise<void> {
-    showOsd('Reload Subscriptions')(context);
+  reloadSubscriptions(): AppAction<Promise<void>> {
+    return async (_state$, _context, dispatch) => {
+      dispatch(showOsd('Reload Subscriptions'));
 
-    return reloadSubscriptions()(context);
+      await dispatch(reloadSubscriptions());
+    };
   }
 
-  scrollDown(context: AppContext): void {
-    const { state$ } = context;
+  scrollDown(): AppAction<void> {
+    return (state$, _context, dispatch) => {
+      const { keyboardSettings } = state$.value;
+      const { scrollDistanceRatio } = keyboardSettings;
 
-    state$.mutate(({ keyboardSettings }) => {
-      const { scrollDistanceRatio, scrollDuration } = keyboardSettings;
       const dx = 0;
       const dy = document.documentElement.clientHeight * scrollDistanceRatio;
 
-      if (scrollDuration > 0) {
-        smoothScrollBy(window, dx, dy, scrollDuration)(context);
-      } else {
-        window.scrollBy(dx, dy);
-      }
-    });
+      dispatch(scrollBy(window, dx, dy));
+    };
   }
 
-  scrollUp(context: AppContext): void {
-    const { state$ } = context;
+  scrollUp(): AppAction<void> {
+    return (state$, _context, dispatch) => {
+      const { keyboardSettings } = state$.value;
+      const { scrollDistanceRatio } = keyboardSettings;
 
-    state$.mutate(({ keyboardSettings }) => {
-      const { scrollDistanceRatio, scrollDuration } = keyboardSettings;
       const dx = 0;
       const dy = -document.documentElement.clientHeight * scrollDistanceRatio;
 
-      if (scrollDuration > 0) {
-        smoothScrollBy(window, dx, dy, scrollDuration)(context);
-      } else {
-        window.scrollBy(dx, dy);
-      }
-    });
+      dispatch(scrollBy(window, dx, dy));
+    };
   }
 
-  selectNextCategory(context: AppContext): void {
-    const { state$ } = context;
+  selectNextCategory(): AppAction<void> {
+    return (state$) => {
+      const { session, subscriptionsTree } = state$.value;
 
-    state$.mutate(({ session, subscriptionsTree }) => {
       if (session === null) {
         return;
       }
@@ -181,47 +183,40 @@ export class AppCommandHandler implements CommandHandler<AppContext> {
         subscriptionsTree.subscriptionGroups[nextIndex]?.category;
 
       if (nextCategory !== undefined) {
-        this._navigator.navigate(
+        this._historyNavigator.navigate(
           '/streams/' + encodeURIComponent(nextCategory.id),
         );
       }
-    });
+    };
   }
 
-  selectNextEntry(context: AppContext): Promise<void> {
-    const { state$ } = context;
+  selectNextEntry(): AppAction<Promise<void>> {
+    return async (state$, _context, dispatch) => {
+      const { session, stream, streamLoading } = state$.value;
 
-    return state$.mutate(
-      async ({ keyboardSettings, session, stream, streamLoading }) => {
-        if (session === null || session.focusIndex < 0) {
-          return;
-        }
+      if (session === null || session.focusIndex < 0) {
+        return;
+      }
 
-        const offset = getNextEntryOffset();
+      const offset = getNextEntryOffset();
 
-        if (Math.abs(offset) >= 1) {
-          const { scrollDuration } = keyboardSettings;
-          if (scrollDuration > 0) {
-            smoothScrollBy(window, 0, offset, scrollDuration)(context);
-          } else {
-            window.scrollBy(0, offset);
-          }
-        } else if (
-          stream !== null &&
-          stream.continuation !== undefined &&
-          !streamLoading
-        ) {
-          await fetchStream(stream.continuation)(context);
-          await fetchHatenaBookmarkCounts()(context);
-        }
-      },
-    );
+      if (Math.abs(offset) >= 1) {
+        dispatch(scrollBy(window, 0, offset));
+      } else if (
+        stream !== null &&
+        stream.continuation !== undefined &&
+        !streamLoading
+      ) {
+        await dispatch(fetchStream(stream.continuation));
+        await dispatch(fetchHatenaBookmarkCounts());
+      }
+    };
   }
 
-  selectNextSubscription(context: AppContext): void {
-    const { state$ } = context;
+  selectNextSubscription(): AppAction<void> {
+    return (state$) => {
+      const { session, subscriptionsTree } = state$.value;
 
-    state$.mutate(({ session, subscriptionsTree }) => {
       if (session === null) {
         return;
       }
@@ -237,18 +232,17 @@ export class AppCommandHandler implements CommandHandler<AppContext> {
       const nextSubscription = visibleSubscriptions[nextIndex];
 
       if (nextSubscription !== undefined) {
-        this._navigator.navigate(
+        this._historyNavigator.navigate(
           '/streams/' + encodeURIComponent(nextSubscription.id),
         );
-        return;
       }
-    });
+    };
   }
 
-  selectPreviousCategory(context: AppContext): void {
-    const { state$ } = context;
+  selectPreviousCategory(): AppAction<void> {
+    return (state$) => {
+      const { session, subscriptionsTree } = state$.value;
 
-    state$.mutate(({ session, subscriptionsTree }) => {
       if (session === null) {
         return;
       }
@@ -265,17 +259,17 @@ export class AppCommandHandler implements CommandHandler<AppContext> {
         subscriptionsTree.subscriptionGroups[previousIndex]?.category;
 
       if (previousCategory !== undefined) {
-        this._navigator.navigate(
+        this._historyNavigator.navigate(
           '/streams/' + encodeURIComponent(previousCategory.id),
         );
       }
-    });
+    };
   }
 
-  selectPreviousEntry(context: AppContext): Promise<void> {
-    const { state$ } = context;
+  selectPreviousEntry(): AppAction<void> {
+    return (state$, _context, dispatch) => {
+      const { session } = state$.value;
 
-    return state$.mutate(async ({ session, keyboardSettings }) => {
       if (session === null || session.focusIndex < 0) {
         return;
       }
@@ -283,20 +277,15 @@ export class AppCommandHandler implements CommandHandler<AppContext> {
       const offset = getPreviousEntryOffset();
 
       if (Math.abs(offset) >= 1) {
-        const { scrollDuration } = keyboardSettings;
-        if (scrollDuration > 0) {
-          smoothScrollBy(window, 0, offset, scrollDuration)(context);
-        } else {
-          window.scrollBy(0, offset);
-        }
+        dispatch(scrollBy(window, 0, offset));
       }
-    });
+    };
   }
 
-  selectPreviousSubscription(context: AppContext): void {
-    const { state$ } = context;
+  selectPreviousSubscription(): AppAction<void> {
+    return (state$) => {
+      const { session, subscriptionsTree } = state$.value;
 
-    state$.mutate(({ session, subscriptionsTree }) => {
       if (session === null) {
         return;
       }
@@ -312,30 +301,29 @@ export class AppCommandHandler implements CommandHandler<AppContext> {
       const previousSubscription = visibleSubscriptions[previousIndex];
 
       if (previousSubscription !== undefined) {
-        this._navigator.navigate(
+        this._historyNavigator.navigate(
           '/streams/' + encodeURIComponent(previousSubscription.id),
         );
-        return;
       }
-    });
+    };
   }
 
-  shrinkEntry(context: AppContext): void {
-    const { state$ } = context;
+  shrinkEntry(): AppAction<void> {
+    return (state$, _context, dispatch) => {
+      const { session } = state$.value;
 
-    state$.mutate(({ session }) => {
       if (session === null) {
         return;
       }
 
-      shrinkEntry()(context);
-    });
+      dispatch(shrinkEntry());
+    };
   }
 
-  toggleFullContents(context: AppContext): void {
-    const { state$ } = context;
+  toggleFullContents(): AppAction<void> {
+    return (state$, _context, dispatch) => {
+      const { stream, session } = state$.value;
 
-    state$.mutate(({ stream, session }) => {
       if (stream === null || session === null || session.focusIndex < 0) {
         return;
       }
@@ -345,20 +333,24 @@ export class AppCommandHandler implements CommandHandler<AppContext> {
         return;
       }
 
-      showOsd(
-        focusEntry.fullContentsShown
-          ? 'Hide Full Contents'
-          : 'Show Full Contents',
-      )(context);
+      dispatch(
+        showOsd(
+          focusEntry.fullContentsShown
+            ? 'Hide Full Contents'
+            : 'Show Full Contents',
+        ),
+      );
 
-      toggleFullContents(focusEntry.id, !focusEntry.fullContentsShown)(context);
-    });
+      dispatch(
+        toggleFullContents(focusEntry.id, !focusEntry.fullContentsShown),
+      );
+    };
   }
 
-  toggleHatenaBookmarkEntry(context: AppContext): void {
-    const { state$ } = context;
+  toggleHatenaBookmarkEntry(): AppAction<void> {
+    return (state$, _context, dispatch) => {
+      const { stream, session } = state$.value;
 
-    state$.mutate(({ stream, session }) => {
       if (stream === null || session === null || session.focusIndex < 0) {
         return;
       }
@@ -368,29 +360,39 @@ export class AppCommandHandler implements CommandHandler<AppContext> {
         return;
       }
 
-      showOsd(
-        focusEntry.hatenaBookmarkEntryShown
-          ? 'Hide Hatena Bookmark Entry'
-          : 'Show Hatena Bookmark Entry',
-      )(context);
+      dispatch(
+        showOsd(
+          focusEntry.hatenaBookmarkEntryShown
+            ? 'Hide Hatena Bookmark Entry'
+            : 'Show Hatena Bookmark Entry',
+        ),
+      );
 
-      toggleHatenaBookmarkEntry(
-        focusEntry.id,
-        !focusEntry.hatenaBookmarkEntryShown,
-      )(context);
-    });
+      dispatch(
+        toggleHatenaBookmarkEntry(
+          focusEntry.id,
+          !focusEntry.hatenaBookmarkEntryShown,
+        ),
+      );
+    };
   }
 
-  toggleKeyboardShortcuts(context: AppContext): void {
-    toggleKeyboardShortcuts()(context);
+  toggleKeyboardShortcuts(): AppAction<void> {
+    return (_state$, _context, dispatch) => {
+      dispatch(toggleKeyboardShortcuts());
+    };
   }
 
-  toggleSidebar(context: AppContext): void {
-    toggleSidebar()(context);
+  toggleSidebar(): AppAction<void> {
+    return (_state$, _context, dispatch) => {
+      dispatch(toggleSidebar());
+    };
   }
 
-  toggleStreamLayout(context: AppContext): void {
-    toggleStreamLayout()(context);
+  toggleStreamLayout(): AppAction<void> {
+    return (_state$, _context, dispatch) => {
+      dispatch(toggleStreamLayout());
+    };
   }
 }
 

@@ -1,9 +1,8 @@
 import { createComponent, type RenderContext, Repeat } from 'barebind';
-import type { AppStore } from 'feedpon-store';
+import { AppStore, parseStreamId, type Session } from 'feedpon-store';
 import {} from 'feedpon-store/actions/stream';
 import * as uiActions from 'feedpon-store/actions/ui';
-import { BindActionCreators } from 'feedpon-store/hooks/BindActionCreators';
-import { parseStreamId, type Session } from 'feedpon-store/state';
+import { BindActionCreators } from 'state-management';
 
 import { MainLayout } from '../layout/MainLayout.ts';
 import { Navbar } from '../primitives/Navbar.ts';
@@ -20,7 +19,7 @@ export const DashboardPage = createComponent(function DashboardPage(
   const { state$ } = store;
   const pastSessions = $.use(state$.get('pastSessions'));
 
-  const { toggleSidebar } = $.use(BindActionCreators(uiActions));
+  const { toggleSidebar } = $.use(BindActionCreators(AppStore, uiActions));
 
   const pastSessionList =
     pastSessions.length === 0

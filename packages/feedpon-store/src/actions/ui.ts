@@ -1,11 +1,14 @@
-import type { AppAction } from '../action.ts';
-import type { NotificationType } from '../state.ts';
-import type { Scrollable, ScrollEasing } from '../utils/SmoothScroll.ts';
+import type {
+  AppAction,
+  NotificationType,
+  ScrollEasing,
+  ScrollTarget,
+} from '../index.ts';
 
 const SMOOTH_SCROLL_EASING: ScrollEasing = (t: number) => t * t * t;
 
 export function dismissNotification(id: string): AppAction<void> {
-  return ({ state$ }) => {
+  return (state$) => {
     state$.mutate((state) => {
       state.notifications = state.notifications.filter(
         (notification) => notification.id !== id,
@@ -15,10 +18,44 @@ export function dismissNotification(id: string): AppAction<void> {
 }
 
 export function dismissOsd(): AppAction<void> {
-  return ({ state$ }) => {
+  return (state$) => {
     state$.mutate((state) => {
       state.osd = null;
     });
+  };
+}
+
+export function scrollBy(
+  target: ScrollTarget,
+  dx: number,
+  dy: number,
+): AppAction<Promise<void>> {
+  return (state$, { scrollController }) => {
+    const { keyboardSettings } = state$.value;
+    return scrollController.scrollBy(
+      target,
+      dx,
+      dy,
+      keyboardSettings.scrollDuration,
+      SMOOTH_SCROLL_EASING,
+    );
+  };
+}
+
+export function scrollTo(
+  target: ScrollTarget,
+  destX: number,
+  destY: number,
+): AppAction<Promise<void>> {
+  return (state$, { scrollController }) => {
+    const { keyboardSettings } = state$.value;
+    return scrollController.scrollTo(
+      target,
+      destX,
+      destY,
+      keyboardSettings.scrollDuration,
+      SMOOTH_SCROLL_EASING,
+    );
   };
 }
 
@@ -27,7 +64,7 @@ export function sendNotification(
   message: string,
   timeout?: number,
 ): AppAction<void> {
-  return ({ state$ }) => {
+  return (state$) => {
     state$.mutate((state) => {
       state.notifications = state.notifications.concat({
         id: crypto.randomUUID(),
@@ -43,49 +80,15 @@ export function showOsd(
   message: string,
   timeout: number = 1000,
 ): AppAction<void> {
-  return ({ state$ }) => {
+  return (state$) => {
     state$.mutate((state) => {
       state.osd = { message, timeout };
     });
   };
 }
 
-export function smoothScrollBy(
-  scrollable: Scrollable,
-  dx: number,
-  dy: number,
-  duration: number,
-): AppAction<Promise<void>> {
-  return ({ smoothScroll }) => {
-    return smoothScroll.scrollBy(
-      scrollable,
-      dx,
-      dy,
-      duration,
-      SMOOTH_SCROLL_EASING,
-    );
-  };
-}
-
-export function smoothScrollTo(
-  scrollable: Scrollable,
-  destX: number,
-  destY: number,
-  duration: number,
-): AppAction<Promise<void>> {
-  return ({ smoothScroll }) => {
-    return smoothScroll.scrollTo(
-      scrollable,
-      destX,
-      destY,
-      duration,
-      SMOOTH_SCROLL_EASING,
-    );
-  };
-}
-
 export function toggleKeyboardShortcuts(opened?: boolean): AppAction<void> {
-  return ({ state$ }) => {
+  return (_state$, { state$ }) => {
     state$.mutate((state) => {
       state.keyboardShortcutsOpened = opened ?? !state.keyboardShortcutsOpened;
     });
@@ -93,17 +96,15 @@ export function toggleKeyboardShortcuts(opened?: boolean): AppAction<void> {
 }
 
 export function toggleSidebar(opened?: boolean): AppAction<void> {
-  return ({ state$ }) => {
+  return (state$) => {
     state$.mutate((state) => {
       state.sidebarOpened = opened ?? !state.sidebarOpened;
     });
   };
 }
 
-export function waitForScroll(
-  scrollable: Scrollable,
-): AppAction<Promise<void>> {
-  return ({ smoothScroll }) => {
-    return smoothScroll.waitForScroll(scrollable);
+export function waitForScroll(target: ScrollTarget): AppAction<Promise<void>> {
+  return (_state$, { scrollController }) => {
+    return scrollController.waitForScroll(target);
   };
 }

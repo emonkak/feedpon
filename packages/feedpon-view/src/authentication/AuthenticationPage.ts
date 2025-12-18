@@ -1,6 +1,7 @@
 import { createComponent, type RenderContext } from 'barebind';
+import { AppStore } from 'feedpon-store';
 import * as autoActions from 'feedpon-store/actions/auth';
-import { BindActionCreators } from 'feedpon-store/hooks/BindActionCreators';
+import { BindActionCreators } from 'state-management';
 
 export interface AuthenticationPageProps {}
 
@@ -8,7 +9,9 @@ export const AuthenticationPage = createComponent(function AuthenticationPage(
   _props: AuthenticationPageProps,
   $: RenderContext,
 ): unknown {
-  const { acquireCredential } = $.use(BindActionCreators(autoActions));
+  const { acquireCredential } = $.use(
+    BindActionCreators(AppStore, autoActions),
+  );
 
   return $.html`
     <div class="authentication">
