@@ -221,7 +221,7 @@ const MenuButton = createComponent(
       </button>
     `;
   },
-  { shouldSkipUpdate: shallowEqual },
+  { arePropsEqual: shallowEqual },
 );
 
 const MenuForm = createComponent(
@@ -255,7 +255,7 @@ const MenuForm = createComponent(
       </form>
     `;
   },
-  { shouldSkipUpdate: shallowEqual },
+  { arePropsEqual: shallowEqual },
 );
 
 const MenuGroup = createComponent(
@@ -288,7 +288,7 @@ const MenuGroup = createComponent(
       </section>
     `;
   },
-  { shouldSkipUpdate: shallowEqual },
+  { arePropsEqual: shallowEqual },
 );
 
 const MenuLink = createComponent(
@@ -321,7 +321,7 @@ const MenuLink = createComponent(
     </a>
   `;
   },
-  { shouldSkipUpdate: shallowEqual },
+  { arePropsEqual: shallowEqual },
 );
 
 function activeElementIndex(children: ArrayLike<Element>) {

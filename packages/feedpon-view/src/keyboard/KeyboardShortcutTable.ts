@@ -74,5 +74,5 @@ const KeyStrokeView = createComponent(
       </span>
     `;
   },
-  { shouldSkipUpdate: shallowEqual },
+  { arePropsEqual: shallowEqual },
 );

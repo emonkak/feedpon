@@ -88,5 +88,5 @@ export const TabItem = createComponent(
       `;
     }
   },
-  { shouldSkipUpdate: shallowEqual },
+  { arePropsEqual: shallowEqual },
 );

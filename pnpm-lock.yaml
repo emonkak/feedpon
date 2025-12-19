@@ -37,7 +37,7 @@ importers:
         version: 0.27.2
       esbuild-plugin-minify-templates:
         specifier: github:emonkak/barebind#path:tools/esbuild-plugin-minify-templates
-        version: https://codeload.github.com/emonkak/barebind/tar.gz/110a893c53e0a396ab80a71b399a7e6e037cc885#path:tools/esbuild-plugin-minify-templates
+        version: https://codeload.github.com/emonkak/barebind/tar.gz/bdf0d7829ead3df5f428ae654f5a18e6a2fde552#path:tools/esbuild-plugin-minify-templates
       fast-check:
         specifier: ^4.4.0
         version: 4.4.0
@@ -61,7 +61,7 @@ importers:
         version: 0.1.32
       barebind:
         specifier: 'catalog:'
-        version: https://codeload.github.com/emonkak/barebind/tar.gz/110a893c53e0a396ab80a71b399a7e6e037cc885
+        version: https://codeload.github.com/emonkak/barebind/tar.gz/bdf0d7829ead3df5f428ae654f5a18e6a2fde552
       feedpon-store:
         specifier: workspace:^
         version: link:../feedpon-store
@@ -79,7 +79,7 @@ importers:
         version: 0.6.0
       barebind:
         specifier: 'catalog:'
-        version: https://codeload.github.com/emonkak/barebind/tar.gz/110a893c53e0a396ab80a71b399a7e6e037cc885
+        version: https://codeload.github.com/emonkak/barebind/tar.gz/bdf0d7829ead3df5f428ae654f5a18e6a2fde552
       state-management:
         specifier: workspace:^
         version: link:../state-management
@@ -97,7 +97,7 @@ importers:
         version: 0.1.32
       barebind:
         specifier: 'catalog:'
-        version: https://codeload.github.com/emonkak/barebind/tar.gz/110a893c53e0a396ab80a71b399a7e6e037cc885
+        version: https://codeload.github.com/emonkak/barebind/tar.gz/bdf0d7829ead3df5f428ae654f5a18e6a2fde552
       feedpon-store:
         specifier: workspace:^
         version: link:../feedpon-store
@@ -109,7 +109,7 @@ importers:
     dependencies:
       barebind:
         specifier: 'catalog:'
-        version: https://codeload.github.com/emonkak/barebind/tar.gz/110a893c53e0a396ab80a71b399a7e6e037cc885
+        version: https://codeload.github.com/emonkak/barebind/tar.gz/bdf0d7829ead3df5f428ae654f5a18e6a2fde552
 
 packages:
 
@@ -731,8 +731,8 @@ packages:
     resolution: {integrity: sha512-vjtV3hiLqYDNRoiAv0zC4QaGAMPomEoq83PRmYIofPswwZurCeWR5LByXm7SyoL0Zh5+2z0+HC7jG8gSZJUh0w==}
     engines: {node: '>= 16'}
 
-  barebind@https://codeload.github.com/emonkak/barebind/tar.gz/110a893c53e0a396ab80a71b399a7e6e037cc885:
-    resolution: {tarball: https://codeload.github.com/emonkak/barebind/tar.gz/110a893c53e0a396ab80a71b399a7e6e037cc885}
+  barebind@https://codeload.github.com/emonkak/barebind/tar.gz/bdf0d7829ead3df5f428ae654f5a18e6a2fde552:
+    resolution: {tarball: https://codeload.github.com/emonkak/barebind/tar.gz/bdf0d7829ead3df5f428ae654f5a18e6a2fde552}
     version: 0.1.0
 
   binary-extensions@2.3.0:
@@ -767,8 +767,8 @@ packages:
   es-module-lexer@1.7.0:
     resolution: {integrity: sha512-jEQoCwk8hyb2AZziIOLhDqpm5+2ww5uIE6lkO/6jcOCusfk6LhMHpXXfBLXTZ7Ydyt0j4VoUQv6uGNYbdW+kBA==}
 
-  esbuild-plugin-minify-templates@https://codeload.github.com/emonkak/barebind/tar.gz/110a893c53e0a396ab80a71b399a7e6e037cc885#path:tools/esbuild-plugin-minify-templates:
-    resolution: {path: tools/esbuild-plugin-minify-templates, tarball: https://codeload.github.com/emonkak/barebind/tar.gz/110a893c53e0a396ab80a71b399a7e6e037cc885}
+  esbuild-plugin-minify-templates@https://codeload.github.com/emonkak/barebind/tar.gz/bdf0d7829ead3df5f428ae654f5a18e6a2fde552#path:tools/esbuild-plugin-minify-templates:
+    resolution: {path: tools/esbuild-plugin-minify-templates, tarball: https://codeload.github.com/emonkak/barebind/tar.gz/bdf0d7829ead3df5f428ae654f5a18e6a2fde552}
     version: 0.0.0
 
   esbuild@0.25.12:
@@ -1519,7 +1519,7 @@ snapshots:
 
   balanced-match@3.0.1: {}
 
-  barebind@https://codeload.github.com/emonkak/barebind/tar.gz/110a893c53e0a396ab80a71b399a7e6e037cc885:
+  barebind@https://codeload.github.com/emonkak/barebind/tar.gz/bdf0d7829ead3df5f428ae654f5a18e6a2fde552:
     dependencies:
       navigation-api-types: 0.6.1
 
@@ -1553,7 +1553,7 @@ snapshots:
 
   es-module-lexer@1.7.0: {}
 
-  esbuild-plugin-minify-templates@https://codeload.github.com/emonkak/barebind/tar.gz/110a893c53e0a396ab80a71b399a7e6e037cc885#path:tools/esbuild-plugin-minify-templates:
+  esbuild-plugin-minify-templates@https://codeload.github.com/emonkak/barebind/tar.gz/bdf0d7829ead3df5f428ae654f5a18e6a2fde552#path:tools/esbuild-plugin-minify-templates:
     dependencies:
       '@types/node': 24.10.4
       acorn: 8.15.0
