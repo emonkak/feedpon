@@ -10,15 +10,15 @@
   --container-width: 704px;
 
   --scale-base: 1.125;
-  --scale-1: calc(var(--scale-base) * var(--scale-2));
-  --scale-2: calc(var(--scale-base) * var(--scale-3));
-  --scale-3: calc(var(--scale-base) * var(--scale-4));
-  --scale-4: calc(var(--scale-base) * var(--scale-5));
-  --scale-5: calc(var(--scale-base) * var(--scale-6));
-  --scale-6: var(--scale-base);
-  --scale-7: calc(1 / var(--scale-6));
-  --scale-8: calc(1 / var(--scale-5));
-  --scale-9: calc(1 / var(--scale-4));
+  --scale-1: pow(var(--scale-base), 6);
+  --scale-2: pow(var(--scale-base), 5);
+  --scale-3: pow(var(--scale-base), 4);
+  --scale-4: pow(var(--scale-base), 3);
+  --scale-5: pow(var(--scale-base), 2);
+  --scale-6: pow(var(--scale-base), 1);
+  --scale-7: pow(var(--scale-base), -1);
+  --scale-8: pow(var(--scale-base), -2);
+  --scale-9: pow(var(--scale-base), -3);
 
   --font-text:
     -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Kaku Gothic ProN",

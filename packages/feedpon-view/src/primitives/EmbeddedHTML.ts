@@ -149,9 +149,13 @@ export const EmbeddedHTML = createComponent(function EmbeddedHTML(
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-display);
   font-size: calc(1rem * var(--scale, 1));
-  line-height: round(1rlh * var(--scale, 1), 0.5rlh);
-  margin-block: 0 1rlh;
+  line-height: round(1rlh * var(--scale, 1) - 0.25rlh, 0.5rlh);
+  margin-block: 0 0.5rlh;
   text-wrap: balance;
+
+  :not(&) + & {
+    margin-block-start: 1rlh;
+  }
 }
 
 h1 {
@@ -226,20 +230,20 @@ a:hover {
   text-decoration-color: currentColor;
 }
 
-code,
-kbd,
-pre,
-samp {
+code, kbd, pre, samp {
   font-family: var(--font-coding);
 }
 
-iframe,
-img,
-video {
+iframe {
+  max-inline-size: 100%;
+}
+
+img, video {
   max-inline-size: 100%;
   block-size: auto;
 }
 
+:has(> a:only-child > img:only-child),
 :has(> :is(iframe, img, video):only-child) {
   inline-size: fit-content;
   margin-inline: auto;
