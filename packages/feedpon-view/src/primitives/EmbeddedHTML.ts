@@ -296,6 +296,8 @@ function parseHTML(srcdoc: string, origin: string): DocumentFragment {
       continue;
     }
 
+    sanitizeElement(el);
+
     switch (el.localName) {
       case 'a':
       case 'area':
@@ -403,6 +405,13 @@ function sandboxifyIframe(el: Element) {
     'sandbox',
     'allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts',
   );
+}
+
+function sanitizeElement(el: Element): void {
+  // Event handlers are not removed here because scripts are blocked by CSP.
+  el.removeAttribute('class');
+  el.removeAttribute('id');
+  el.removeAttribute('style');
 }
 
 function toAbsoluteUrl(url: string, origin: string): string {
