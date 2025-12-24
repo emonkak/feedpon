@@ -87,9 +87,10 @@ export function fetchFullContents(entryId: string): AppAction<Promise<void>> {
           const fullContent = extractFullContentBySiteinfos(
             document,
             siteinfos$.value,
+            url,
           ) ??
             extractFullContentByReadability(document) ?? {
-              url: document.baseURI,
+              url,
               content: '',
               nextUrl: null,
             };
@@ -623,11 +624,12 @@ function extractFullContentByReadability(
 function extractFullContentBySiteinfos(
   document: Document,
   siteinfos: Siteinfo[],
+  url: string,
 ): FullContent | null {
   for (const siteinfo of siteinfos) {
-    const { url, nextLink, pageElement } = siteinfo.data;
+    const { url: urlPattern, nextLink, pageElement } = siteinfo.data;
 
-    if (!tryTestPattern(url, document.baseURI)) {
+    if (!tryTestPattern(urlPattern, url)) {
       continue;
     }
 
@@ -658,7 +660,7 @@ function extractFullContentBySiteinfos(
         : null;
 
     return {
-      url: document.baseURI,
+      url,
       content: pageResult.singleNodeValue.outerHTML,
       nextUrl,
     };
