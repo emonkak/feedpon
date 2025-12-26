@@ -68,9 +68,9 @@ importers:
       feedpon-view:
         specifier: workspace:^
         version: link:../feedpon-view
-      state-management:
+      store:
         specifier: workspace:^
-        version: link:../state-management
+        version: link:../store
 
   packages/feedpon-store:
     dependencies:
@@ -80,9 +80,9 @@ importers:
       barebind:
         specifier: 'catalog:'
         version: https://codeload.github.com/emonkak/barebind/tar.gz/ac10f68f5e097622d9624850d7161a9a0ca4b509
-      state-management:
+      store:
         specifier: workspace:^
-        version: link:../state-management
+        version: link:../store
       up-fetch:
         specifier: 'catalog:'
         version: 2.5.0
@@ -101,11 +101,11 @@ importers:
       feedpon-store:
         specifier: workspace:^
         version: link:../feedpon-store
-      state-management:
+      store:
         specifier: workspace:^
-        version: link:../state-management
+        version: link:../store
 
-  packages/state-management:
+  packages/store:
     dependencies:
       barebind:
         specifier: 'catalog:'

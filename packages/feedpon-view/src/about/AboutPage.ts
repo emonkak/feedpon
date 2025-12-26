@@ -2,7 +2,7 @@ import { createComponent, type RenderContext, Repeat } from 'barebind';
 import { type HistoryNavigator, RelativeURL } from 'barebind/addons/router';
 import { AppStore } from 'feedpon-store';
 import * as uiActions from 'feedpon-store/actions/ui';
-import { BindActionCreators } from 'state-management';
+import { BindActionCreators } from 'store';
 import { MainLayout } from '../layout/MainLayout.ts';
 import { Dropdown } from '../primitives/Dropdown.ts';
 import { Navbar } from '../primitives/Navbar.ts';

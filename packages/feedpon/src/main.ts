@@ -6,11 +6,11 @@ import { FeedlyClient } from 'feedpon-store/apis/feedly';
 import { HatenaBookmarkClient } from 'feedpon-store/apis/hatenaBookmark';
 import { WedataClient } from 'feedpon-store/apis/wedata';
 import { App } from 'feedpon-view';
-import { Mutex } from 'state-management';
+import { Mutex } from 'store/concurrent/Mutex';
 import {
   PersistentMiddleware,
   restoreState,
-} from 'state-management/middlewares/PersistenceMiddleware';
+} from 'store/middlewares/PersistenceMiddleware';
 import { ChromeAuthenticator } from './ChromeAuthenticator.ts';
 import { ErrorHandlerMiddleware } from './ErrorHandlerMiddleware.ts';
 import { IndexedDBStateRepository } from './IndexedDBStateRepository.ts';

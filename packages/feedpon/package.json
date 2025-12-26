@@ -9,6 +9,6 @@
     "barebind": "catalog:",
     "feedpon-store": "workspace:^",
     "feedpon-view": "workspace:^",
-    "state-management": "workspace:^"
+    "store": "workspace:^"
   }
 }

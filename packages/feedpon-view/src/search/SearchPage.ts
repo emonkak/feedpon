@@ -5,7 +5,7 @@ import { AppStore } from 'feedpon-store';
 import * as searchActions from 'feedpon-store/actions/search';
 import * as subscriptionActions from 'feedpon-store/actions/subscription';
 import * as uiActions from 'feedpon-store/actions/ui';
-import { BindActionCreators } from 'state-management';
+import { BindActionCreators } from 'store';
 
 import { MainLayout } from '../layout/MainLayout.ts';
 import { Navbar } from '../primitives/Navbar.ts';

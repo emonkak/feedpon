@@ -1,7 +1,7 @@
 import { createComponent, type RenderContext } from 'barebind';
 import { AppStore } from 'feedpon-store';
 import * as autoActions from 'feedpon-store/actions/auth';
-import { BindActionCreators } from 'state-management';
+import { BindActionCreators } from 'store';
 
 export interface AuthenticationPageProps {}
 

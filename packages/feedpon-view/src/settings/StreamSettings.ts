@@ -3,7 +3,7 @@ import { LocalAtom, LocalComputed } from 'barebind/addons/signal';
 import type { EntriesOrdering, StreamLayout } from 'feedpon-store';
 import { AppStore } from 'feedpon-store';
 import * as streamActions from 'feedpon-store/actions/stream';
-import { BindActionCreators } from 'state-management';
+import { BindActionCreators } from 'store';
 import { openAlertDialog } from '../primitives/AlertDialog.ts';
 
 export interface StreamSettingsProps {

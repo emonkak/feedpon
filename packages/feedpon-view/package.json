@@ -9,6 +9,6 @@
     "@types/chrome": "^0.1.32",
     "barebind": "catalog:",
     "feedpon-store": "workspace:^",
-    "state-management": "workspace:^"
+    "store": "workspace:^"
   }
 }

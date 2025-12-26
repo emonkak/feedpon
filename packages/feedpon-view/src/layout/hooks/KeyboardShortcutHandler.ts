@@ -5,7 +5,7 @@ import {
   type KeyStroke,
   Modifier,
 } from 'feedpon-store';
-import { ImmutableTrie } from 'state-management/collections/ImmutableTrie';
+import { ImmutableTrie } from 'store/collections/ImmutableTrie';
 
 const SPECIAL_KEYS: { [key: string]: string } = {
   ' ': 'Space',

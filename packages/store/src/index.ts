@@ -1,5 +1,4 @@
 export { BindActionCreators } from './BindActionCreators.ts';
-export { Mutex } from './Mutex.ts';
 export {
   type Action,
   type Dispatcher,

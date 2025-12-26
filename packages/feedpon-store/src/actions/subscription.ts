@@ -1,4 +1,4 @@
-import { ImmutableMap } from 'state-management/collections/ImmutableMap';
+import { ImmutableMap } from 'store/collections/ImmutableMap';
 import type {
   AppAction,
   Category,

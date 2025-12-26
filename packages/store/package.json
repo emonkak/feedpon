@@ -1,9 +1,10 @@
 {
-  "name": "state-management",
+  "name": "store",
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
     "./collections/*": "./src/collections/*.ts",
+    "./concurrent/*": "./src/concurrent/*.ts",
     "./middlewares/*": "./src/middlewares/*.ts"
   },
   "dependencies": {

@@ -11,7 +11,7 @@
       "path": "packages/feedpon-view"
     },
     {
-      "path": "packages/state-management"
+      "path": "packages/store"
     }
   ]
 }

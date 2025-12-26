@@ -1,5 +1,5 @@
 import type { AppStateRepository, Feed, Stream } from 'feedpon-store';
-import type { Patch } from 'state-management/middlewares/PersistenceMiddleware';
+import type { Patch } from 'store/middlewares/PersistenceMiddleware';
 
 const DB_NAME = 'feedpon';
 const DB_VERSION = 2;

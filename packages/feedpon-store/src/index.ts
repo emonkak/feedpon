@@ -4,12 +4,13 @@ import {
   type RenderContext,
 } from 'barebind';
 import type { Reactive } from 'barebind/addons/reactive';
-import { type Action, type Mutex, Store } from 'state-management';
-import { ImmutableMap } from 'state-management/collections/ImmutableMap';
+import { type Action, Store } from 'store';
+import { ImmutableMap } from 'store/collections/ImmutableMap';
+import { type Mutex } from 'store/concurrent/Mutex';
 import type {
   PatchRepository,
   PersistentContext,
-} from 'state-management/middlewares/PersistenceMiddleware';
+} from 'store/middlewares/PersistenceMiddleware';
 import type * as v from 'valibot';
 
 import type {

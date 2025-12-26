@@ -1,7 +1,7 @@
 import type { Reactive } from 'barebind/addons/reactive';
 import type { AppAction, AppContext, AppState } from 'feedpon-store';
 import { sendNotification } from 'feedpon-store/actions/ui';
-import type { Dispatcher, Middleware } from 'state-management';
+import type { Dispatcher, Middleware } from 'store';
 
 export class ErrorHandlerMiddleware
   implements Middleware<AppState, AppContext>

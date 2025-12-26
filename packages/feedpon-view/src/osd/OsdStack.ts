@@ -2,7 +2,7 @@ import { createComponent, type RenderContext } from 'barebind';
 import type { Osd } from 'feedpon-store';
 import { AppStore } from 'feedpon-store';
 import * as uiActions from 'feedpon-store/actions/ui';
-import { BindActionCreators } from 'state-management';
+import { BindActionCreators } from 'store';
 
 export interface OsdStackProps {}
 

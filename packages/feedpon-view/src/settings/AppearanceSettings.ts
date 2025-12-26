@@ -3,7 +3,7 @@ import { LocalAtom } from 'barebind/addons/signal';
 import type { Theme } from 'feedpon-store';
 import { AppStore } from 'feedpon-store';
 import * as appearanceActions from 'feedpon-store/actions/appearance';
-import { BindActionCreators } from 'state-management';
+import { BindActionCreators } from 'store';
 
 export interface AppearanceSettingsProps {
   store: AppStore;

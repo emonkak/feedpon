@@ -3,7 +3,7 @@ import { CurrentHistory } from 'barebind/addons/router';
 import type { CommandId } from 'feedpon-store';
 import { AppStore } from 'feedpon-store';
 import * as uiActions from 'feedpon-store/actions/ui';
-import { BindActionCreators } from 'state-management';
+import { BindActionCreators } from 'store';
 
 import { AppCommandHandler } from '../CommandHandler.ts';
 import { KeyboardShortcutTable } from '../keyboard/KeyboardShortcutTable.ts';

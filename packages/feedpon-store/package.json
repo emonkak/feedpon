@@ -10,7 +10,7 @@
   "dependencies": {
     "@mozilla/readability": "catalog:",
     "barebind": "catalog:",
-    "state-management": "workspace:^",
+    "store": "workspace:^",
     "up-fetch": "catalog:",
     "valibot": "catalog:"
   },

@@ -4,7 +4,7 @@ import { AppStore, getFeedUrl, type Subscription } from 'feedpon-store';
 import * as authActions from 'feedpon-store/actions/auth';
 import * as profileActions from 'feedpon-store/actions/profile';
 import * as subscriptionActions from 'feedpon-store/actions/subscription';
-import { BindActionCreators } from 'state-management';
+import { BindActionCreators } from 'store';
 import { AutoComplete } from '../primitives/AutoComplete.ts';
 import type { MenuItem } from '../primitives/Menu.ts';
 import { RelativeTime } from '../primitives/RelativeTime.ts';

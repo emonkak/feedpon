@@ -1,7 +1,7 @@
 import { createComponent, type RenderContext } from 'barebind';
 import { AppStore, type NotificationType } from 'feedpon-store';
 import { sendNotification, toggleSidebar } from 'feedpon-store/actions/ui';
-import { BindActionCreators } from 'state-management';
+import { BindActionCreators } from 'store';
 import { MainLayout } from '../layout/MainLayout.ts';
 import { Dialog } from '../primitives/Dialog.ts';
 import { Dropdown } from '../primitives/Dropdown.ts';
