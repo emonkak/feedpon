@@ -3,7 +3,7 @@ import {
   createComponent,
   type RenderContext,
 } from 'barebind';
-import { CurrentHistory } from 'barebind/extras/router';
+import { CurrentHistory } from 'barebind/addons/router';
 import type { AppStore, Theme } from 'feedpon-store';
 
 import { AuthenticationPage } from './authentication/AuthenticationPage.ts';

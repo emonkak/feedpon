@@ -1,6 +1,6 @@
 import { createComponent, type RenderContext } from 'barebind';
-import { LocalAtom, LocalComputed } from 'barebind/extras/hooks';
-import type { Computed } from 'barebind/extras/signal';
+import type { Computed } from 'barebind/addons/signal';
+import { LocalAtom, LocalComputed } from 'barebind/addons/signal';
 import type {
   EntriesOrdering,
   SessionSettings,

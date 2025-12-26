@@ -3,7 +3,7 @@ import {
   Router,
   route,
   wildcard,
-} from 'barebind/extras/router';
+} from 'barebind/addons/router';
 import type { AppStore } from 'feedpon-store';
 import { AboutPage } from './about/AboutPage.ts';
 import { CategoriesPage } from './category/CategoriesPage.ts';

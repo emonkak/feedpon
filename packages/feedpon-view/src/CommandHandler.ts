@@ -1,4 +1,4 @@
-import type { HistoryNavigator } from 'barebind/extras/router/history';
+import type { HistoryNavigator } from 'barebind/addons/router/history';
 import type { AppAction } from 'feedpon-store';
 import { type CommandHandler, getEntryUrl } from 'feedpon-store';
 import {

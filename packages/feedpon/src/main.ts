@@ -1,6 +1,6 @@
 import { BrowserBackend, Root, Runtime } from 'barebind';
-import { ConsoleReporter, PerformanceProfiler } from 'barebind/extras/profiler';
-import { Reactive } from 'barebind/extras/reactive';
+import { ConsoleReporter, PerformanceProfiler } from 'barebind/addons/profiler';
+import { Reactive } from 'barebind/addons/reactive';
 import { type AppContext, AppState, AppStore } from 'feedpon-store';
 import { FeedlyClient } from 'feedpon-store/apis/feedly';
 import { HatenaBookmarkClient } from 'feedpon-store/apis/hatenaBookmark';

@@ -3,7 +3,7 @@ import {
   type CustomHookObject,
   type RenderContext,
 } from 'barebind';
-import type { Reactive } from 'barebind/extras/reactive';
+import type { Reactive } from 'barebind/addons/reactive';
 import { type Action, type Mutex, Store } from 'state-management';
 import { ImmutableMap } from 'state-management/collections/ImmutableMap';
 import type {

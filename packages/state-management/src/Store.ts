@@ -1,4 +1,4 @@
-import type { Reactive } from 'barebind/extras/reactive';
+import type { Reactive } from 'barebind/addons/reactive';
 
 export type Action<TState, TContext, TResult> = (
   state: Reactive<TState>,

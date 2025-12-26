@@ -1,5 +1,5 @@
 import { createComponent, type RenderContext } from 'barebind';
-import { CurrentHistory } from 'barebind/extras/router';
+import { CurrentHistory } from 'barebind/addons/router';
 import type { CommandId } from 'feedpon-store';
 import { AppStore } from 'feedpon-store';
 import * as uiActions from 'feedpon-store/actions/ui';

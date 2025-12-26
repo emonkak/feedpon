@@ -4,7 +4,7 @@ import {
   type RefObject,
   type RenderContext,
 } from 'barebind';
-import { EventCallback } from 'barebind/extras/hooks';
+import { EventCallback } from 'barebind/addons/hooks';
 import type { Entry, ScrollTarget, Session, Stream } from 'feedpon-store';
 
 import {

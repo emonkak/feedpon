@@ -1,5 +1,5 @@
 import { createComponent, type RenderContext, Repeat } from 'barebind';
-import { LocalAtom, LocalComputed } from 'barebind/extras/hooks';
+import { LocalAtom, LocalComputed } from 'barebind/addons/signal';
 import type { EntriesOrdering, StreamLayout } from 'feedpon-store';
 import { AppStore } from 'feedpon-store';
 import * as streamActions from 'feedpon-store/actions/stream';

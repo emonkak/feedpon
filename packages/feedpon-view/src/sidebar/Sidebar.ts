@@ -1,5 +1,5 @@
 import { createComponent, type RenderContext } from 'barebind';
-import { CurrentHistory, RelativeURL } from 'barebind/extras/router';
+import { CurrentHistory, RelativeURL } from 'barebind/addons/router';
 import { AppStore, getFeedUrl, type Subscription } from 'feedpon-store';
 import * as authActions from 'feedpon-store/actions/auth';
 import * as profileActions from 'feedpon-store/actions/profile';

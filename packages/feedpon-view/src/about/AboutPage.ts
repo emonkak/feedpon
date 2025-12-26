@@ -1,5 +1,5 @@
 import { createComponent, type RenderContext, Repeat } from 'barebind';
-import { type HistoryNavigator, RelativeURL } from 'barebind/extras/router';
+import { type HistoryNavigator, RelativeURL } from 'barebind/addons/router';
 import { AppStore } from 'feedpon-store';
 import * as uiActions from 'feedpon-store/actions/ui';
 import { BindActionCreators } from 'state-management';

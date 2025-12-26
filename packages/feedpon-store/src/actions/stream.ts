@@ -1,5 +1,5 @@
 import { Readability } from '@mozilla/readability';
-import type { Reactive } from 'barebind/extras/reactive';
+import type { Reactive } from 'barebind/addons/reactive';
 import type { AppAction } from '../index.ts';
 import {
   type AppState,

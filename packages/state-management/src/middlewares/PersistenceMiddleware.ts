@@ -1,4 +1,4 @@
-import type { Difference, Reactive } from 'barebind/extras/reactive';
+import type { Difference, Reactive } from 'barebind/addons/reactive';
 
 import { ImmutableMap } from '../collections/ImmutableMap.ts';
 import type { Action, Dispatcher, Middleware } from '../Store.ts';

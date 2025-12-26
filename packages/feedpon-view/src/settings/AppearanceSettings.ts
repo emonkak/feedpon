@@ -1,5 +1,5 @@
 import { createComponent, type RenderContext, Repeat } from 'barebind';
-import { LocalAtom } from 'barebind/extras/hooks';
+import { LocalAtom } from 'barebind/addons/signal';
 import type { Theme } from 'feedpon-store';
 import { AppStore } from 'feedpon-store';
 import * as appearanceActions from 'feedpon-store/actions/appearance';

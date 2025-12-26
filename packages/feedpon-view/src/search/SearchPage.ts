@@ -1,6 +1,6 @@
 import { createComponent, type RenderContext, Repeat } from 'barebind';
-import { LocalAtom } from 'barebind/extras/hooks';
-import type { HistoryNavigator } from 'barebind/extras/router';
+import type { HistoryNavigator } from 'barebind/addons/router';
+import { LocalAtom } from 'barebind/addons/signal';
 import { AppStore } from 'feedpon-store';
 import * as searchActions from 'feedpon-store/actions/search';
 import * as subscriptionActions from 'feedpon-store/actions/subscription';
