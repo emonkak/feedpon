@@ -263,6 +263,10 @@ function copyAttribute(source: Element, dest: Element, name: string): void {
 function embedSVG(el: Element): HTMLImageElement {
   const img = document.createElement('img');
 
+  if (!el.hasAttribute('xmlns')) {
+    el.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+  }
+
   copyAttribute(el, img, 'width');
   copyAttribute(el, img, 'height');
 
@@ -291,7 +295,7 @@ function parseHTML(srcdoc: string, origin: string): DocumentFragment {
     const el = currentNode as Element;
 
     if (!SAFE_ELEMENTS.has(el.localName)) {
-      currentNode = walker.nextSibling();
+      currentNode = skipNode(walker);
       el.remove();
       continue;
     }
@@ -323,11 +327,11 @@ function parseHTML(srcdoc: string, origin: string): DocumentFragment {
         break;
 
       case 'math':
-        currentNode = walker.nextSibling();
+        currentNode = skipNode(walker);
         continue;
 
       case 'svg':
-        currentNode = walker.nextSibling();
+        currentNode = skipNode(walker);
         el.replaceWith(embedSVG(el));
         continue;
     }
@@ -412,6 +416,16 @@ function sanitizeElement(el: Element): void {
   el.removeAttribute('class');
   el.removeAttribute('id');
   el.removeAttribute('style');
+}
+
+function skipNode(walker: TreeWalker): Node | null {
+  do {
+    const nextNode = walker.nextSibling();
+    if (nextNode !== null) {
+      return nextNode;
+    }
+  } while (walker.parentNode() !== null);
+  return null;
 }
 
 function toAbsoluteUrl(url: string, origin: string): string {
