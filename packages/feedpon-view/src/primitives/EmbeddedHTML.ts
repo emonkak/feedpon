@@ -149,7 +149,7 @@ export const EmbeddedHTML = createComponent(function EmbeddedHTML(
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-display);
   font-size: calc(1rem * var(--scale, 1));
-  line-height: round(1rlh * var(--scale, 1) - 0.25rlh, 0.5rlh);
+  line-height: round(1rlh * var(--scale, 1) - 0.125rlh, 0.25rlh);
   margin-block: 0 0.5rlh;
   text-wrap: balance;
 
