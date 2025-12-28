@@ -1,6 +1,6 @@
 import {
   createComponent,
-  type ElementRef,
+  type Ref,
   type RefObject,
   type RenderContext,
 } from 'barebind';
@@ -101,7 +101,7 @@ export const EntryList = createComponent(function EntryList(
     items: stream?.items ?? [],
     onUpdateDimensions: handleUpdateDimensions,
     ref,
-    renderItem: (entry: Entry, index: number, ref: ElementRef) => {
+    renderItem: (entry: Entry, index: number, ref: Ref<Element>) => {
       return EntryView({
         entry,
         index,
@@ -119,7 +119,7 @@ export const EntryList = createComponent(function EntryList(
     renderList: (
       children: unknown,
       blankSpaces: BlankSpaces,
-      ref: ElementRef,
+      ref: Ref<Element>,
       $: RenderContext,
     ) => {
       return $.html`

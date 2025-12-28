@@ -3,7 +3,7 @@ import {
   type Component,
   type CustomHookFunction,
   createComponent,
-  type ElementRef,
+  type Ref,
   type RefCallback,
   type RefObject,
   type RenderContext,
@@ -57,13 +57,13 @@ export interface VirtualScrollListProps<
   renderItem: (
     item: TItem,
     index: number,
-    ref: ElementRef,
+    ref: Ref<Element>,
     context: RenderContext,
   ) => unknown;
   renderList: (
     children: unknown,
     blankSpaces: BlankSpaces,
-    ref: ElementRef,
+    ref: Ref<Element>,
     context: RenderContext,
   ) => unknown;
   scheduleUpdate?: (callback: VoidFunction) => void;

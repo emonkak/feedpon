@@ -1,4 +1,4 @@
-import { createComponent, type ElementRef, type RenderContext } from 'barebind';
+import { createComponent, type Ref, type RenderContext } from 'barebind';
 import { type HistoryNavigator, RelativeURL } from 'barebind/addons/router';
 import { AppStore, type Subscription } from 'feedpon-store';
 import * as subscriptionActions from 'feedpon-store/actions/subscription';
@@ -65,7 +65,7 @@ export const CategoriesPage = createComponent(function CategoriesPage(
     (
       { subscription }: { id: string | number; subscription: Subscription },
       _index: number,
-      _ref: ElementRef,
+      _ref: Ref<Element>,
       _context: RenderContext,
     ) =>
       SubscriptionView({
@@ -284,7 +284,7 @@ export const CategoriesPage = createComponent(function CategoriesPage(
 function renderSubscriptionList(
   children: unknown,
   blankSpaces: BlankSpaces,
-  elementRef: ElementRef,
+  elementRef: Ref<Element>,
   $: RenderContext,
 ): unknown {
   return $.html`
