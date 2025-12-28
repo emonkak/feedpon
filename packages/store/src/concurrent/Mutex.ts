@@ -1,4 +1,4 @@
-import { LinkedList } from 'barebind/collections/linked-list';
+import { LinkedList } from 'barebind';
 
 export class Mutex {
   private _queue: LinkedList<() => void> = new LinkedList();
