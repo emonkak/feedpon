@@ -4,9 +4,7 @@ import {
   type RenderContext,
 } from 'barebind';
 import type { Reactive } from 'barebind/addons/reactive';
-import { type Action, Store } from 'store';
-import { ImmutableMap } from 'store/collections/ImmutableMap';
-import { type Mutex } from 'store/concurrent/Mutex';
+import { type Action, ImmutableMap, type Mutex, Store } from 'store';
 import type {
   PatchRepository,
   PersistentContext,

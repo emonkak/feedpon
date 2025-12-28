@@ -6,7 +6,7 @@ import { FeedlyClient } from 'feedpon-store/apis/feedly';
 import { HatenaBookmarkClient } from 'feedpon-store/apis/hatenaBookmark';
 import { WedataClient } from 'feedpon-store/apis/wedata';
 import { App } from 'feedpon-view';
-import { Mutex } from 'store/concurrent/Mutex';
+import { Mutex } from 'store';
 import {
   PersistentMiddleware,
   restoreState,

@@ -1,6 +1,6 @@
 import type { Difference, Reactive } from 'barebind/addons/reactive';
 
-import { ImmutableMap } from '../collections/ImmutableMap.ts';
+import { ImmutableMap } from '../ImmutableMap.ts';
 import type { Action, Dispatcher, Middleware } from '../Store.ts';
 
 export interface Patch extends Difference {

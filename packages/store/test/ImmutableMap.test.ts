@@ -2,7 +2,7 @@ import fc from 'fast-check';
 
 import { describe, expect, test } from 'vitest';
 
-import { BLACK, ImmutableMap, RED } from '@/collections/ImmutableMap.ts';
+import { BLACK, ImmutableMap, RED } from '@/ImmutableMap.ts';
 
 describe('ImmutableMap', () => {
   describe('delete()', () => {
