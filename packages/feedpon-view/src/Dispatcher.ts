@@ -1,6 +1,7 @@
 import {
   type CustomHookFunction,
   createComponent,
+  Keyed,
   type RenderContext,
 } from 'barebind';
 import { CurrentHistory } from 'barebind/addons/router';
@@ -36,7 +37,10 @@ export const Dispatcher = createComponent(function Dispatcher(
     });
   }
 
-  const child = router.handle(location.url, { navigator, store });
+  const child = Keyed(
+    location.url.pathname,
+    router.handle(location.url, { navigator, store }),
+  );
 
   return SidebarLayout({
     child,

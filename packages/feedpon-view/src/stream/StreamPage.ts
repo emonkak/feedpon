@@ -6,7 +6,7 @@ import * as subscriptionActions from 'feedpon-store/actions/subscription';
 import * as uiActions from 'feedpon-store/actions/ui';
 import { BindActionCreators } from 'store';
 import { MainLayout } from '../layout/MainLayout.ts';
-import type { VirtualScrollListRef } from '../primitives/VirtualScrollList.ts';
+import type { VirtualScrollerHandle } from '../primitives/VirtualScroller.ts';
 import { CategoryHeader } from './CategoryHeader.ts';
 import { EntryList } from './EntryList.ts';
 import { FeedHeader } from './FeedHeader.ts';
@@ -27,6 +27,9 @@ export const StreamPage = createComponent(function StreamPage(
   const category = $.use(state$.get('categories')).get(streamId) ?? null;
   const feed = $.use(state$.get('feed'));
   const readCount = $.use(state$.get('readCounts')).get(streamId) ?? 0;
+  const scrollDuration = $.use(
+    state$.get('keyboardSettings').get('scrollDuration'),
+  );
   const session = $.use(state$.get('session'));
   const stream = $.use(state$.get('stream'));
   const streamLoading = $.use(state$.get('streamLoading'));
@@ -49,9 +52,7 @@ export const StreamPage = createComponent(function StreamPage(
     toggleHatenaBookmarkEntry,
     updateSessionSettings,
   } = $.use(BindActionCreators(AppStore, streamActions));
-  const { waitForScroll, toggleSidebar } = $.use(
-    BindActionCreators(AppStore, uiActions),
-  );
+  const { toggleSidebar } = $.use(BindActionCreators(AppStore, uiActions));
   const {
     createCategory,
     createSubscription,
@@ -59,7 +60,7 @@ export const StreamPage = createComponent(function StreamPage(
     updateSubscription,
   } = $.use(BindActionCreators(AppStore, subscriptionActions));
 
-  const virtualScrollListRef = $.useRef<VirtualScrollListRef | null>(null);
+  const virtualScrollerRef = $.useRef<VirtualScrollerHandle | null>(null);
 
   $.useEffect(() => {
     if (session === null || session.id !== streamId) {
@@ -68,7 +69,7 @@ export const StreamPage = createComponent(function StreamPage(
       if (stream === null) {
         fetchStream().then(() => fetchHatenaBookmarkCounts());
       } else if (session.focusIndex >= 0) {
-        virtualScrollListRef.current?.scrollTo(session.focusIndex);
+        virtualScrollerRef.current?.scrollToIndex(session.focusIndex);
       } else {
         window.scrollTo(0, 0);
       }
@@ -83,12 +84,12 @@ export const StreamPage = createComponent(function StreamPage(
 
   const handleEntryExpand = (index: number) => {
     expandEntry(index);
-    virtualScrollListRef.current?.scrollTo(index);
+    virtualScrollerRef.current?.scrollToIndex(index);
   };
 
   const handleEntrySelect = (index: number) => {
     focusEntry(index);
-    virtualScrollListRef.current?.scrollTo(index);
+    virtualScrollerRef.current?.scrollToIndex(index);
   };
 
   const handleStreamLoadMoreEntries = async () => {
@@ -163,10 +164,10 @@ export const StreamPage = createComponent(function StreamPage(
           onFullContentsToggle: toggleFullContents,
           onHatenaBookmarkEntryFetch: fetchHatenaBookmarkEntry,
           onHatenaBookmarkEntryToggle: toggleHatenaBookmarkEntry,
-          ref: virtualScrollListRef,
+          scrollDuration,
           session,
           stream,
-          waitForScroll,
+          virtualScrollerRef,
         })
       : null;
 

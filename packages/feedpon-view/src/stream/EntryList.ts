@@ -1,18 +1,17 @@
 import {
   createComponent,
-  type Ref,
+  Keyed,
   type RefObject,
   type RenderContext,
 } from 'barebind';
 import { EventCallback } from 'barebind/addons/hooks';
-import type { Entry, ScrollTarget, Session, Stream } from 'feedpon-store';
-
+import type { Entry, Session, Stream } from 'feedpon-store';
+import { throttle } from '../primitives/utils/throttle.ts';
 import {
-  type BlankSpaces,
-  type Dimensions,
-  VirtualScrollList,
-  type VirtualScrollListRef,
-} from '../primitives/VirtualScrollList.ts';
+  type Range,
+  VirtualScroller,
+  type VirtualScrollerHandle,
+} from '../primitives/VirtualScroller.ts';
 import { EntryView } from './EntryView.ts';
 
 export interface EntryListProps {
@@ -23,10 +22,10 @@ export interface EntryListProps {
   onFullContentsToggle: (entryId: string, shown: boolean) => void;
   onHatenaBookmarkEntryFetch: (entryId: string) => Promise<void>;
   onHatenaBookmarkEntryToggle: (entryId: string, shown: boolean) => void;
-  ref: RefObject<VirtualScrollListRef | null>;
+  scrollDuration: number;
   session: Session;
   stream: Stream | null;
-  waitForScroll: (target: ScrollTarget) => Promise<void>;
+  virtualScrollerRef: RefObject<VirtualScrollerHandle | null>;
 }
 
 export const EntryList = createComponent(function EntryList(
@@ -38,37 +37,46 @@ export const EntryList = createComponent(function EntryList(
     onFullContentsToggle,
     onHatenaBookmarkEntryFetch,
     onHatenaBookmarkEntryToggle,
-    ref,
+    virtualScrollerRef,
     session,
+    scrollDuration,
     stream,
-    waitForScroll,
   }: EntryListProps,
   $: RenderContext,
 ): unknown {
-  const getHeaderHeight = $.use(getHeaderHeightHook);
-
-  const scheduleUpdate = $.useCallback((callback: () => void) => {
-    waitForScroll(window).then(callback);
-  }, []);
-
-  const handleUpdateDimensions = $.use(
-    EventCallback((dimensions: Dimensions) => {
-      const focusIndex = getFocusIndex(dimensions, getHeaderHeight());
+  const scrollCallback = $.use(
+    EventCallback(() => {
+      const visibleElements = virtualScrollerRef.current!.getVisibleElements();
+      const visibleRange = virtualScrollerRef.current!.getVisibleRange();
+      const focusIndex = getFocusIndex(visibleElements, visibleRange);
 
       if (session !== null && focusIndex !== session.focusIndex) {
         onEntryFocus(focusIndex);
       }
     }),
   );
+  const throttledScrollCallback = $.useMemo(
+    () => throttle(scrollCallback, scrollDuration),
+    [],
+  );
 
-  const scrollBy = $.useCallback((x: number, y: number) => {
-    window.scrollBy(x, y - getHeaderHeight());
+  $.useLayoutEffect(() => {
+    window.addEventListener('scroll', throttledScrollCallback, {
+      passive: true,
+    });
+    return () => {
+      window.removeEventListener('scroll', throttledScrollCallback);
+    };
   }, []);
+
+  $.useLayoutEffect(() => {
+    scrollCallback();
+  }, [stream]);
 
   if (isStreamLoading && stream === null) {
     if (session.settings.layout === 'full') {
       return $.html`
-        <div class="entry-list">
+        <div class="stream-body">
           <${FullEntryPlaceholder({})}>
           <${FullEntryPlaceholder({})}>
           <${FullEntryPlaceholder({})}>
@@ -78,7 +86,7 @@ export const EntryList = createComponent(function EntryList(
       `;
     } else {
       return $.html`
-        <div class="entry-list">
+        <div class="stream-body">
           <${CompactEntryPlaceholder({})}>
           <${CompactEntryPlaceholder({})}>
           <${CompactEntryPlaceholder({})}>
@@ -94,45 +102,44 @@ export const EntryList = createComponent(function EntryList(
     }
   }
 
-  return VirtualScrollList({
-    assumedItemSize: session.settings.layout === 'full' ? 800 : 100,
-    initialItemIndex:
-      session.expandedIndex >= 0 ? session.expandedIndex : session.focusIndex,
-    items: stream?.items ?? [],
-    onUpdateDimensions: handleUpdateDimensions,
-    ref,
-    renderItem: (entry: Entry, index: number, ref: Ref<Element>) => {
-      return EntryView({
-        entry,
-        index,
-        isSelected: index === session.focusIndex,
-        isExpanded:
-          session.settings.layout === 'full' || index === session.expandedIndex,
-        onEntryExpand,
-        onFullContentsFetch,
-        onFullContentsToggle,
-        onHatenaBookmarkEntryFetch,
-        onHatenaBookmarkEntryToggle,
-        ref,
-      });
-    },
-    renderList: (
-      children: unknown,
-      blankSpaces: BlankSpaces,
-      ref: Ref<Element>,
-      $: RenderContext,
-    ) => {
-      return $.html`
-        <div :ref=${ref} class="entry-list">
-          <div :style=${{ height: blankSpaces.above + 'px', overflowAnchor: 'none' }}></div>
-          <${children}>
-          <div :style=${{ height: blankSpaces.below + 'px', overflowAnchor: 'none' }}></div>
-        </div>
-      `;
-    },
-    scheduleUpdate,
-    scrollBy,
-  });
+  const virtualScroller = Keyed(
+    session.settings.layout,
+    VirtualScroller({
+      assumedItemHeight: session.settings.layout === 'full' ? 800 : 100,
+      delay: scrollDuration,
+      initialItemIndex:
+        session.expandedIndex >= 0
+          ? session.expandedIndex
+          : session.focusIndex >= 0
+            ? session.focusIndex
+            : 0,
+      onVisibleRangeChange: throttledScrollCallback,
+      source: stream?.items ?? [],
+      ref: virtualScrollerRef,
+      scrollMargin: '2rlh 0 0',
+      renderItem: (entry: Entry, index: number) => {
+        return EntryView({
+          entry,
+          index,
+          isSelected: index === session.focusIndex,
+          isExpanded:
+            session.settings.layout === 'full' ||
+            index === session.expandedIndex,
+          onEntryExpand,
+          onFullContentsFetch,
+          onFullContentsToggle,
+          onHatenaBookmarkEntryFetch,
+          onHatenaBookmarkEntryToggle,
+        });
+      },
+    }),
+  );
+
+  return $.html`
+    <div class="stream-body">
+      <${virtualScroller}>
+    </div>
+  `;
 });
 
 export const FullEntryPlaceholder = createComponent(
@@ -209,63 +216,49 @@ export const CompactEntryPlaceholder = createComponent(
   },
 );
 
-function getFocusIndex(dimensions: Dimensions, scrollPadding: number): number {
-  const { blockPositions } = dimensions;
+function getFocusIndex(elements: Element[], visibleRange: Range): number {
+  const viewportTop = 0;
+  const viewportBottom = window.innerHeight;
 
-  if (blockPositions.length === 0) {
-    return -1;
-  }
-
-  const { screen } = dimensions;
-  const bottomInsets = blockPositions[blockPositions.length - 1]!;
-
-  const screenTop = screen.top + scrollPadding;
-  const screenBottom = screen.bottom;
-
-  if (Math.abs(bottomInsets.end - screenTop) <= 1.0) {
-    return blockPositions.length;
-  }
-
-  let focusIndex = -1;
   let maxVisibleHeight = 0;
+  let mostVisibleIndex = -1;
+  let traversedIndex = -1;
 
-  for (let i = 0, l = blockPositions.length; i < l; i++) {
-    const blockInset = blockPositions[i]!;
+  for (let i = 0, l = elements.length; i < l; i++) {
+    const el = elements[i]!;
+    const style = window.getComputedStyle(el);
+    const { top, bottom, height } = el.getBoundingClientRect();
 
-    if (
-      blockInset.start + 0.5 >= screenTop - 0.5 &&
-      blockInset.end - 0.5 <= screenBottom + 0.5
-    ) {
-      return i;
+    const minTop = viewportTop + (parseFloat(style.scrollMarginTop) ?? 0);
+    const maxBottom = viewportBottom - (parseFloat(style.scrollMarginTop) ?? 0);
+
+    if (top > maxBottom) {
+      break;
     }
 
-    if (blockInset.start < screenBottom && blockInset.end > screenTop) {
-      const visibleSize =
-        Math.min(blockInset.end, screenBottom) -
-        Math.max(blockInset.start, screenTop);
-      if (visibleSize > maxVisibleHeight) {
-        maxVisibleHeight = visibleSize;
-        focusIndex = i;
-      }
-    } else {
-      if (focusIndex > -1) {
-        break;
-      }
+    const visibleTop = Math.max(top, minTop);
+    const visibleBottom = Math.min(bottom, maxBottom);
+    const visibleHeight = Math.max(0, visibleBottom - visibleTop);
+
+    if (visibleHeight > maxVisibleHeight) {
+      maxVisibleHeight = visibleHeight;
+      mostVisibleIndex = i;
     }
+
+    if (Math.abs(visibleHeight - height) < 1) {
+      break;
+    }
+
+    traversedIndex = i;
   }
 
-  return focusIndex;
-}
+  if (mostVisibleIndex >= 0) {
+    return visibleRange.start + mostVisibleIndex;
+  }
 
-function getHeaderHeightHook(context: RenderContext): () => number {
-  const headerHeightRef = context.useRef(0);
+  if (traversedIndex >= 0) {
+    return visibleRange.end;
+  }
 
-  context.useLayoutEffect(() => {
-    const header = document.querySelector('.l-header');
-    if (header) {
-      headerHeightRef.current = header.getBoundingClientRect().height;
-    }
-  }, []);
-
-  return () => headerHeightRef.current;
+  return -1;
 }

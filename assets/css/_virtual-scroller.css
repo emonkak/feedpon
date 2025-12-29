@@ -1,0 +1,8 @@
+.VirtualScroller-list {
+  display: contents;
+  list-style: none;
+}
+
+.VirtualScroller-item {
+  scroll-margin: inherit;
+}

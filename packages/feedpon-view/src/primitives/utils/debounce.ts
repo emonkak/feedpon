@@ -4,7 +4,7 @@ export function debounce<TCallback extends (...args: any[]) => void>(
 ): (this: ThisType<TCallback>, ...args: Parameters<TCallback>) => void {
   let timer: ReturnType<typeof setTimeout> | null = null;
   return function (...args) {
-    if (timer) {
+    if (timer !== null) {
       clearTimeout(timer);
     }
     timer = setTimeout(() => {

@@ -1,4 +1,4 @@
-import { createComponent, type Ref, type RenderContext } from 'barebind';
+import { createComponent, type RenderContext } from 'barebind';
 import {
   type Entry,
   getEntryContent,
@@ -24,7 +24,6 @@ interface EntryViewProps {
   onFullContentsToggle: (entryId: string, shown: boolean) => void;
   onHatenaBookmarkEntryFetch: (entryId: string) => Promise<void>;
   onHatenaBookmarkEntryToggle: (entryId: string, shown: boolean) => void;
-  ref: Ref<Element>;
 }
 
 interface FullEntryViewProps {
@@ -50,7 +49,6 @@ export const EntryView = createComponent(function EntryView(
     onFullContentsToggle,
     onHatenaBookmarkEntryFetch,
     onHatenaBookmarkEntryToggle,
-    ref: elementRef,
   }: EntryViewProps,
   $: RenderContext,
 ): unknown {
@@ -71,7 +69,6 @@ export const EntryView = createComponent(function EntryView(
         'is-selected': isSelected,
         'is-expanded': isExpanded,
       }}
-      :ref=${elementRef}
       lang=${entry.language}
       @click=${handleEntryExpand}
     >

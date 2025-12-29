@@ -17,6 +17,7 @@ import {
   toggleKeyboardShortcuts,
   toggleSidebar,
 } from 'feedpon-store/actions/ui';
+import { cubicBezier } from 'motion';
 
 export class AppCommandHandler implements CommandHandler {
   private readonly _historyNavigator: HistoryNavigator;
@@ -139,34 +140,40 @@ export class AppCommandHandler implements CommandHandler {
   }
 
   scrollDown(): AppAction<void> {
-    return (state$) => {
+    return (state$, { scrollController }) => {
       const { keyboardSettings } = state$.value;
-      const { scrollDistanceRatio } = keyboardSettings;
+      const { scrollDuration, scrollDistanceRatio, scrollEasingCoordinates } =
+        keyboardSettings;
 
       const dx = 0;
       const dy = document.documentElement.clientHeight * scrollDistanceRatio;
 
-      window.scrollBy({
-        left: dx,
-        top: dy,
-        behavior: 'smooth',
-      });
+      scrollController.scrollBy(
+        window,
+        dx,
+        dy,
+        scrollDuration,
+        cubicBezier(...scrollEasingCoordinates),
+      );
     };
   }
 
   scrollUp(): AppAction<void> {
-    return (state$) => {
+    return (state$, { scrollController }) => {
       const { keyboardSettings } = state$.value;
-      const { scrollDistanceRatio } = keyboardSettings;
+      const { scrollDistanceRatio, scrollDuration, scrollEasingCoordinates } =
+        keyboardSettings;
 
       const dx = 0;
       const dy = -document.documentElement.clientHeight * scrollDistanceRatio;
 
-      window.scrollBy({
-        left: dx,
-        top: dy,
-        behavior: 'smooth',
-      });
+      scrollController.scrollBy(
+        window,
+        dx,
+        dy,
+        scrollDuration,
+        cubicBezier(...scrollEasingCoordinates),
+      );
     };
   }
 
@@ -198,17 +205,24 @@ export class AppCommandHandler implements CommandHandler {
   }
 
   selectNextEntry(): AppAction<Promise<void>> {
-    return async (state$, _context, dispatch) => {
-      const { session, stream, streamLoading } = state$.value;
+    return async (state$, { scrollController }, dispatch) => {
+      const { keyboardSettings, session, stream, streamLoading } = state$.value;
+      const { scrollDuration, scrollEasingCoordinates } = keyboardSettings;
 
-      if (session === null || session.focusIndex < 0) {
+      if (session === null) {
         return;
       }
 
       const offset = getNextEntryOffset();
 
       if (Math.abs(offset) >= 1) {
-        window.scrollBy(0, offset);
+        scrollController.scrollBy(
+          window,
+          0,
+          offset,
+          scrollDuration,
+          cubicBezier(...scrollEasingCoordinates),
+        );
       } else if (
         stream !== null &&
         stream.continuation !== undefined &&
@@ -274,17 +288,24 @@ export class AppCommandHandler implements CommandHandler {
   }
 
   selectPreviousEntry(): AppAction<void> {
-    return (state$) => {
-      const { session } = state$.value;
+    return (state$, { scrollController }) => {
+      const { session, keyboardSettings } = state$.value;
+      const { scrollDuration, scrollEasingCoordinates } = keyboardSettings;
 
-      if (session === null || session.focusIndex < 0) {
+      if (session === null) {
         return;
       }
 
       const offset = getPreviousEntryOffset();
 
       if (Math.abs(offset) >= 1) {
-        window.scrollBy(0, offset);
+        scrollController.scrollBy(
+          window,
+          0,
+          offset,
+          scrollDuration,
+          cubicBezier(...scrollEasingCoordinates),
+        );
       }
     };
   }
@@ -421,10 +442,11 @@ function getNextEntryOffset(): number {
   }
 
   const belowSpacer = document.querySelector<HTMLElement>(
-    '.entry-list > :last-child',
+    '.stream-body .VirtualScroller-spacer:last-child',
   );
-  if (belowSpacer && belowSpacer.offsetHeight > 0) {
-    return 0;
+
+  if (belowSpacer !== null) {
+    return belowSpacer.getBoundingClientRect().top;
   }
 
   return (
@@ -445,12 +467,12 @@ function getPreviousEntryOffset(): number {
     }
   }
 
-  const aboveSpaces = document.querySelector<HTMLElement>(
-    '.entry-list > :first-child',
+  const aboveSpacer = document.querySelector<HTMLElement>(
+    '.stream-body .VirtualScroller-spacer:first-child',
   );
 
-  if (aboveSpaces && aboveSpaces.offsetHeight > 0) {
-    return 0;
+  if (aboveSpacer !== null) {
+    return aboveSpacer.getBoundingClientRect().bottom - window.innerHeight;
   }
 
   return -window.scrollY;

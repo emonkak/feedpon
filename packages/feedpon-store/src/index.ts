@@ -103,7 +103,8 @@ export class AppState {
   keyboardSettings: KeyboardSettings = {
     openLinksInBackground: true,
     scrollDistanceRatio: 0.5,
-    scrollDuration: (1000 / 60) * 10,
+    scrollDuration: 160,
+    scrollEasingCoordinates: [0.55, 0.055, 0.675, 0.19],
   };
   keyboardShortcuts: KeyboardShortcut[] = [
     {
@@ -398,6 +399,7 @@ export interface KeyboardSettings {
   openLinksInBackground: boolean;
   scrollDistanceRatio: number;
   scrollDuration: number;
+  scrollEasingCoordinates: ScrollEasingCoordinates;
 }
 
 export interface KeyStroke {
@@ -453,7 +455,14 @@ export type ParsedStreamId =
 
 export type SearchResult = v.InferOutput<typeof SearchResult>;
 
-export type ScrollEasing = (t: number) => number;
+export type ScrollEasingCoordinates = [
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number,
+];
+
+export type ScrollEasingFunction = (t: number) => number;
 
 export type ScrollTarget = Window | Element;
 
@@ -463,14 +472,14 @@ export interface ScrollController {
     x: number,
     y: number,
     duration: number,
-    easing: ScrollEasing,
+    easing: ScrollEasingFunction,
   ): Promise<void>;
   scrollBy(
     target: ScrollTarget,
     dx: number,
     dy: number,
     duration: number,
-    easing: ScrollEasing,
+    easing: ScrollEasingFunction,
   ): Promise<void>;
   waitForScroll(target: ScrollTarget): Promise<void>;
 }

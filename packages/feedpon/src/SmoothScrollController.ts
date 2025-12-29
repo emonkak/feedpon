@@ -1,4 +1,4 @@
-import type { ScrollEasing, ScrollTarget } from 'feedpon-store';
+import type { ScrollEasingFunction, ScrollTarget } from 'feedpon-store';
 
 interface ScrollState {
   aborted: boolean;
@@ -15,7 +15,7 @@ export class SmoothScrollController {
     x: number,
     y: number,
     duration: number,
-    easing: ScrollEasing,
+    easingFn: ScrollEasingFunction,
   ): Promise<void> {
     if (target instanceof Window) {
       const { scrollX, scrollY } = target;
@@ -26,7 +26,7 @@ export class SmoothScrollController {
         x,
         y,
         duration,
-        easing,
+        easingFn,
       );
     } else {
       const { scrollLeft, scrollTop } = target;
@@ -37,7 +37,7 @@ export class SmoothScrollController {
         x,
         y,
         duration,
-        easing,
+        easingFn,
       );
     }
   }
@@ -47,7 +47,7 @@ export class SmoothScrollController {
     dx: number,
     dy: number,
     duration: number,
-    easing: ScrollEasing,
+    easingFn: ScrollEasingFunction,
   ): Promise<void> {
     if (target instanceof Window) {
       const { scrollX, scrollY } = target;
@@ -58,7 +58,7 @@ export class SmoothScrollController {
         scrollX + dx,
         scrollY + dy,
         duration,
-        easing,
+        easingFn,
       );
     } else {
       const { scrollLeft, scrollTop } = target;
@@ -69,7 +69,7 @@ export class SmoothScrollController {
         scrollLeft + dx,
         scrollTop + dy,
         duration,
-        easing,
+        easingFn,
       );
     }
   }
@@ -89,7 +89,7 @@ export class SmoothScrollController {
     destX: number,
     destY: number,
     duration: number,
-    easing: ScrollEasing,
+    easingFn: ScrollEasingFunction,
   ): Promise<void> {
     let scrollState = this._scrollStates.get(target);
 
@@ -122,7 +122,7 @@ export class SmoothScrollController {
           return;
         }
 
-        const t = easing(progress);
+        const t = easingFn(progress);
         const x = srcX + (destX - srcX) * t;
         const y = srcY + (destY - srcY) * t;
 
