@@ -13,7 +13,6 @@ import {
 } from 'feedpon-store/actions/stream';
 import { reloadSubscriptions } from 'feedpon-store/actions/subscription';
 import {
-  scrollBy,
   showOsd,
   toggleKeyboardShortcuts,
   toggleSidebar,
@@ -140,26 +139,34 @@ export class AppCommandHandler implements CommandHandler {
   }
 
   scrollDown(): AppAction<void> {
-    return (state$, _context, dispatch) => {
+    return (state$) => {
       const { keyboardSettings } = state$.value;
       const { scrollDistanceRatio } = keyboardSettings;
 
       const dx = 0;
       const dy = document.documentElement.clientHeight * scrollDistanceRatio;
 
-      dispatch(scrollBy(window, dx, dy));
+      window.scrollBy({
+        left: dx,
+        top: dy,
+        behavior: 'smooth',
+      });
     };
   }
 
   scrollUp(): AppAction<void> {
-    return (state$, _context, dispatch) => {
+    return (state$) => {
       const { keyboardSettings } = state$.value;
       const { scrollDistanceRatio } = keyboardSettings;
 
       const dx = 0;
       const dy = -document.documentElement.clientHeight * scrollDistanceRatio;
 
-      dispatch(scrollBy(window, dx, dy));
+      window.scrollBy({
+        left: dx,
+        top: dy,
+        behavior: 'smooth',
+      });
     };
   }
 
@@ -201,7 +208,7 @@ export class AppCommandHandler implements CommandHandler {
       const offset = getNextEntryOffset();
 
       if (Math.abs(offset) >= 1) {
-        dispatch(scrollBy(window, 0, offset));
+        window.scrollBy(0, offset);
       } else if (
         stream !== null &&
         stream.continuation !== undefined &&
@@ -267,7 +274,7 @@ export class AppCommandHandler implements CommandHandler {
   }
 
   selectPreviousEntry(): AppAction<void> {
-    return (state$, _context, dispatch) => {
+    return (state$) => {
       const { session } = state$.value;
 
       if (session === null || session.focusIndex < 0) {
@@ -277,7 +284,7 @@ export class AppCommandHandler implements CommandHandler {
       const offset = getPreviousEntryOffset();
 
       if (Math.abs(offset) >= 1) {
-        dispatch(scrollBy(window, 0, offset));
+        window.scrollBy(0, offset);
       }
     };
   }

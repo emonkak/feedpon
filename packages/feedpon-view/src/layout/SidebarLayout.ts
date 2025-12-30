@@ -65,7 +65,7 @@ export const SidebarLayout = createComponent(function SidebarLayout(
 
   $.useEffect(() => {
     if (location.url.pathname.indexOf('/streams/') !== 0) {
-      scrollTo(0, 0);
+      window.scrollTo(0, 0);
     }
 
     if (sidebarOpened && isMobileLayout()) {

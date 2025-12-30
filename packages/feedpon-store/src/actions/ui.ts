@@ -1,11 +1,4 @@
-import type {
-  AppAction,
-  NotificationType,
-  ScrollEasing,
-  ScrollTarget,
-} from '../index.ts';
-
-const SMOOTH_SCROLL_EASING: ScrollEasing = (t: number) => t * t * t;
+import type { AppAction, NotificationType } from '../index.ts';
 
 export function dismissNotification(id: string): AppAction<void> {
   return (state$) => {
@@ -22,40 +15,6 @@ export function dismissOsd(): AppAction<void> {
     state$.mutate((state) => {
       state.osd = null;
     });
-  };
-}
-
-export function scrollBy(
-  target: ScrollTarget,
-  dx: number,
-  dy: number,
-): AppAction<Promise<void>> {
-  return (state$, { scrollController }) => {
-    const { keyboardSettings } = state$.value;
-    return scrollController.scrollBy(
-      target,
-      dx,
-      dy,
-      keyboardSettings.scrollDuration,
-      SMOOTH_SCROLL_EASING,
-    );
-  };
-}
-
-export function scrollTo(
-  target: ScrollTarget,
-  x: number,
-  y: number,
-): AppAction<Promise<void>> {
-  return (state$, { scrollController }) => {
-    const { keyboardSettings } = state$.value;
-    return scrollController.scrollTo(
-      target,
-      x,
-      y,
-      keyboardSettings.scrollDuration,
-      SMOOTH_SCROLL_EASING,
-    );
   };
 }
 
@@ -100,11 +59,5 @@ export function toggleSidebar(opened?: boolean): AppAction<void> {
     state$.mutate((state) => {
       state.sidebarOpened = opened ?? !state.sidebarOpened;
     });
-  };
-}
-
-export function waitForScroll(target: ScrollTarget): AppAction<Promise<void>> {
-  return (_state$, { scrollController }) => {
-    return scrollController.waitForScroll(target);
   };
 }
