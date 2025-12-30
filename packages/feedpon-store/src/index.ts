@@ -460,15 +460,15 @@ export type ScrollTarget = Window | Element;
 export interface ScrollController {
   scrollTo(
     target: ScrollTarget,
-    destX: number,
-    destY: number,
+    x: number,
+    y: number,
     duration: number,
     easing: ScrollEasing,
   ): Promise<void>;
   scrollBy(
     target: ScrollTarget,
-    destX: number,
-    destY: number,
+    dx: number,
+    dy: number,
     duration: number,
     easing: ScrollEasing,
   ): Promise<void>;

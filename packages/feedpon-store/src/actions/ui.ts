@@ -44,15 +44,15 @@ export function scrollBy(
 
 export function scrollTo(
   target: ScrollTarget,
-  destX: number,
-  destY: number,
+  x: number,
+  y: number,
 ): AppAction<Promise<void>> {
   return (state$, { scrollController }) => {
     const { keyboardSettings } = state$.value;
     return scrollController.scrollTo(
       target,
-      destX,
-      destY,
+      x,
+      y,
       keyboardSettings.scrollDuration,
       SMOOTH_SCROLL_EASING,
     );

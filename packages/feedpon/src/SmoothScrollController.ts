@@ -12,32 +12,30 @@ export class SmoothScrollController {
 
   scrollTo(
     target: ScrollTarget,
-    destX: number,
-    destY: number,
+    x: number,
+    y: number,
     duration: number,
     easing: ScrollEasing,
   ): Promise<void> {
     if (target instanceof Window) {
-      const srcX = target.scrollX;
-      const srcY = target.scrollY;
+      const { scrollX, scrollY } = target;
       return this._startScroll(
         target,
-        srcX,
-        srcY,
-        destX,
-        destY,
+        scrollX,
+        scrollY,
+        x,
+        y,
         duration,
         easing,
       );
     } else {
-      const srcX = target.scrollLeft;
-      const srcY = target.scrollTop;
+      const { scrollLeft, scrollTop } = target;
       return this._startScroll(
         target,
-        srcX,
-        srcY,
-        destX,
-        destY,
+        scrollLeft,
+        scrollTop,
+        x,
+        y,
         duration,
         easing,
       );
@@ -52,26 +50,24 @@ export class SmoothScrollController {
     easing: ScrollEasing,
   ): Promise<void> {
     if (target instanceof Window) {
-      const srcX = target.scrollX;
-      const srcY = target.scrollY;
+      const { scrollX, scrollY } = target;
       return this._startScroll(
         target,
-        srcX,
-        srcY,
-        srcX + dx,
-        srcY + dy,
+        scrollX,
+        scrollY,
+        scrollX + dx,
+        scrollY + dy,
         duration,
         easing,
       );
     } else {
-      const srcX = target.scrollLeft;
-      const srcY = target.scrollTop;
+      const { scrollLeft, scrollTop } = target;
       return this._startScroll(
         target,
-        srcX,
-        srcY,
-        srcX + dx,
-        srcY + dy,
+        scrollLeft,
+        scrollTop,
+        scrollLeft + dx,
+        scrollTop + dy,
         duration,
         easing,
       );
