@@ -662,7 +662,7 @@ function extractFullContentBySiteinfos(
     return {
       url,
       content: pageResult.singleNodeValue.outerHTML,
-      nextUrl,
+      nextUrl: nextUrl !== null ? new URL(nextUrl, url).toString() : null,
     };
   }
 
