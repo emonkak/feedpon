@@ -140,10 +140,10 @@ export const VirtualScroller: VirtualScroller = createComponent(
             const bottom = top + entry.rootBounds!.height;
             const visibleRange = computeVisibleRange(top, bottom);
 
-            onVisibleRangeChange?.();
-
             setVisibleRange(visibleRange, {
               areStatesEqual: areRangesEqual,
+            }).finished.then(() => {
+              onVisibleRangeChange?.();
             });
           }
         },
@@ -214,9 +214,9 @@ export const VirtualScroller: VirtualScroller = createComponent(
           if (!withinRange(visibleRange, index)) {
             intersectionObserver.disconnect();
 
-            onVisibleRangeChange?.();
-
             await setVisibleRange({ start: index, end: index + 1 }).finished;
+
+            onVisibleRangeChange?.();
           }
           visibleElements.get(index)?.scrollIntoView(options);
         },
@@ -273,9 +273,9 @@ export const VirtualScroller: VirtualScroller = createComponent(
         : null;
 
     return $.html`
-      <div class="VirtualScroller">
+      <div class="VirtualScroller" :style=${{ scrollMargin }}>
         <${Keyed(aboveSpace, aboveSpacer)}>
-        <ul class="VirtualScroller-list" :style=${{ scrollMargin }}>
+        <ul class="VirtualScroller-list">
           <${Repeat({
             source: source.slice(visibleRange.start, visibleRange.end),
             keySelector: (item, offset) =>

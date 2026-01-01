@@ -4,6 +4,7 @@
 }
 
 .VirtualScroller-spacer,
+.VirtualScroller-list,
 .VirtualScroller-item {
   scroll-margin: inherit;
 }

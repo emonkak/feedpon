@@ -47,7 +47,6 @@ export const EntryList = createComponent(function EntryList(
   const scrollCallback = $.use(
     EventCallback(() => {
       const virtualScroller = virtualScrollerRef.current;
-
       if (virtualScroller === null) {
         return;
       }
@@ -235,18 +234,16 @@ function getFocusIndex(elements: Element[], visibleRange: Range): number {
     const style = window.getComputedStyle(el);
     const { top, bottom, height } = el.getBoundingClientRect();
 
-    const minTop = viewportTop + (parseFloat(style.scrollMarginTop) ?? 0);
-    const maxBottom = viewportBottom - (parseFloat(style.scrollMarginTop) ?? 0);
+    const scrollMarginTop = parseFloat(style.scrollMarginTop) ?? 0;
+    const scrollMarginBottom = parseFloat(style.scrollMarginBottom) ?? 0;
+    const scrollTop = viewportTop + scrollMarginTop;
+    const scrollBottom = viewportBottom - scrollMarginBottom;
 
-    if (top > maxBottom) {
-      break;
-    }
-
-    const visibleTop = Math.max(top, minTop);
-    const visibleBottom = Math.min(bottom, maxBottom);
+    const visibleTop = Math.max(top, scrollTop);
+    const visibleBottom = Math.min(bottom, scrollBottom);
     const visibleHeight = Math.max(0, visibleBottom - visibleTop);
 
-    if (visibleHeight > maxVisibleHeight) {
+    if (visibleHeight >= 1 && visibleHeight > maxVisibleHeight) {
       maxVisibleHeight = visibleHeight;
       mostVisibleIndex = i;
     }
