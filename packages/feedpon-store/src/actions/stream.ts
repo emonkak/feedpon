@@ -629,6 +629,11 @@ function extractFullContentBySiteinfos(
   for (const siteinfo of siteinfos) {
     const { url: urlPattern, nextLink, pageElement } = siteinfo.data;
 
+    // Ignore generic rules.
+    if (urlPattern.startsWith('^https?://.')) {
+      continue;
+    }
+
     if (!tryTestPattern(urlPattern, url)) {
       continue;
     }
