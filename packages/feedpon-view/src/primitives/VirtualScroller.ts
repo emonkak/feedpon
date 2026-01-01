@@ -1,5 +1,7 @@
 import {
+  type Bindable,
   type Component,
+  type CustomHookFunction,
   createComponent,
   Keyed,
   type Ref,
@@ -9,7 +11,7 @@ import {
 import { EventCallback, ImperativeHandle } from 'barebind/addons/hooks';
 
 export interface VirtualScroller extends Component<VirtualScrollerProps<any>> {
-  <T>(props: VirtualScrollerProps<T>): unknown;
+  <T>(props: VirtualScrollerProps<T>): Bindable<VirtualScrollerProps<T>>;
 }
 
 export interface VirtualScrollerProps<T> {
@@ -124,29 +126,36 @@ export const VirtualScroller: VirtualScroller = createComponent(
       };
     };
 
-    const intersectionObserverCallback = $.use(
-      EventCallback((entries: IntersectionObserverEntry[]) => {
-        for (const entry of entries) {
-          if (!entry.isIntersecting && !entry.target.isConnected) {
-            continue;
+    const intersectionObserver = $.use(
+      NewIntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (!entry.isIntersecting && !entry.target.isConnected) {
+              continue;
+            }
+
+            const top =
+              -entry.target.parentElement!.getBoundingClientRect().top +
+              entry.rootBounds!.top;
+            const bottom = top + entry.rootBounds!.height;
+            const visibleRange = computeVisibleRange(top, bottom);
+
+            onVisibleRangeChange?.();
+
+            setVisibleRange(visibleRange, {
+              areStatesEqual: areRangesEqual,
+            });
           }
-
-          const top =
-            -entry.target.parentElement!.getBoundingClientRect().top +
-            entry.rootBounds!.top;
-          const bottom = top + entry.rootBounds!.height;
-          const visibleRange = computeVisibleRange(top, bottom);
-
-          onVisibleRangeChange?.();
-
-          setVisibleRange(visibleRange, {
-            areStatesEqual: areRangesEqual,
-          });
-        }
-      }),
+        },
+        {
+          rootMargin: offscreenRatio * 100 + '%',
+          delay,
+        } as IntersectionObserverInit & { delay?: number },
+      ),
     );
-    const resizeObserverCallback = $.use(
-      EventCallback((entries: ResizeObserverEntry[]) => {
+
+    const resizeObserver = $.use(
+      NewResizeObsever((entries) => {
         for (const entry of entries) {
           if (!entry.target.isConnected) {
             continue;
@@ -166,25 +175,13 @@ export const VirtualScroller: VirtualScroller = createComponent(
       }),
     );
 
-    const intersectionObserver = $.useMemo(
-      () =>
-        new IntersectionObserver(intersectionObserverCallback, {
-          rootMargin: offscreenRatio * 100 + '%',
-          delay,
-        } as IntersectionObserverInit & { delay?: number }),
-      [],
-    );
-    const resizeObserver = $.useMemo(
-      () => new ResizeObserver(resizeObserverCallback),
-      [],
-    );
-
     const spacerRef = $.useCallback((element: Element) => {
       intersectionObserver.observe(element);
       return () => {
         intersectionObserver.unobserve(element);
       };
     }, []);
+
     const itemRef = $.useCallback((element: Element) => {
       const index = Number(element.getAttribute('aria-posinset')) - 1;
       visibleElements.set(index, element);
@@ -303,6 +300,28 @@ export const VirtualScroller: VirtualScroller = createComponent(
     `;
   },
 );
+
+function NewIntersectionObserver(
+  callback: IntersectionObserverCallback,
+  options?: IntersectionObserverInit,
+): CustomHookFunction<IntersectionObserver> {
+  return ($) => {
+    const eventCallback = $.use(EventCallback(callback));
+    return $.useMemo(
+      () => new IntersectionObserver(eventCallback, options),
+      [],
+    );
+  };
+}
+
+function NewResizeObsever(
+  callback: ResizeObserverCallback,
+): CustomHookFunction<ResizeObserver> {
+  return ($) => {
+    const eventCallback = $.use(EventCallback(callback));
+    return $.useMemo(() => new ResizeObserver(eventCallback), []);
+  };
+}
 
 function areRangesEqual(x: Range, y: Range) {
   return x.start === y.start && x.end === y.end;
