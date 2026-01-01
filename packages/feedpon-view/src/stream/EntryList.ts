@@ -46,8 +46,14 @@ export const EntryList = createComponent(function EntryList(
 ): unknown {
   const scrollCallback = $.use(
     EventCallback(() => {
-      const visibleElements = virtualScrollerRef.current!.getVisibleElements();
-      const visibleRange = virtualScrollerRef.current!.getVisibleRange();
+      const virtualScroller = virtualScrollerRef.current;
+
+      if (virtualScroller === null) {
+        return;
+      }
+
+      const visibleElements = virtualScroller.getVisibleElements();
+      const visibleRange = virtualScroller.getVisibleRange();
       const focusIndex = getFocusIndex(visibleElements, visibleRange);
 
       if (session !== null && focusIndex !== session.focusIndex) {

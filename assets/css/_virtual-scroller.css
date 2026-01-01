@@ -3,6 +3,7 @@
   list-style: none;
 }
 
+.VirtualScroller-spacer,
 .VirtualScroller-item {
   scroll-margin: inherit;
 }

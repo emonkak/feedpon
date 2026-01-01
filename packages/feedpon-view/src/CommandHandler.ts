@@ -17,7 +17,6 @@ import {
   toggleKeyboardShortcuts,
   toggleSidebar,
 } from 'feedpon-store/actions/ui';
-import { cubicBezier } from 'motion';
 
 export class AppCommandHandler implements CommandHandler {
   private readonly _historyNavigator: HistoryNavigator;
@@ -140,40 +139,26 @@ export class AppCommandHandler implements CommandHandler {
   }
 
   scrollDown(): AppAction<void> {
-    return (state$, { scrollController }) => {
+    return (state$) => {
       const { keyboardSettings } = state$.value;
-      const { scrollDuration, scrollDistanceRatio, scrollEasingCoordinates } =
-        keyboardSettings;
+      const { scrollDistanceRatio } = keyboardSettings;
 
       const dx = 0;
       const dy = document.documentElement.clientHeight * scrollDistanceRatio;
 
-      scrollController.scrollBy(
-        window,
-        dx,
-        dy,
-        scrollDuration,
-        cubicBezier(...scrollEasingCoordinates),
-      );
+      window.scrollBy({ left: dx, top: dy, behavior: 'smooth' });
     };
   }
 
   scrollUp(): AppAction<void> {
-    return (state$, { scrollController }) => {
+    return (state$) => {
       const { keyboardSettings } = state$.value;
-      const { scrollDistanceRatio, scrollDuration, scrollEasingCoordinates } =
-        keyboardSettings;
+      const { scrollDistanceRatio } = keyboardSettings;
 
       const dx = 0;
       const dy = -document.documentElement.clientHeight * scrollDistanceRatio;
 
-      scrollController.scrollBy(
-        window,
-        dx,
-        dy,
-        scrollDuration,
-        cubicBezier(...scrollEasingCoordinates),
-      );
+      window.scrollBy({ left: dx, top: dy, behavior: 'smooth' });
     };
   }
 
@@ -205,24 +190,26 @@ export class AppCommandHandler implements CommandHandler {
   }
 
   selectNextEntry(): AppAction<Promise<void>> {
-    return async (state$, { scrollController }, dispatch) => {
-      const { keyboardSettings, session, stream, streamLoading } = state$.value;
-      const { scrollDuration, scrollEasingCoordinates } = keyboardSettings;
+    return async (state$, _context, dispatch) => {
+      const { session, stream, streamLoading } = state$.value;
 
       if (session === null) {
         return;
       }
 
-      const offset = getNextEntryOffset();
+      const target = getNextScrollTarget();
 
-      if (Math.abs(offset) >= 1) {
-        scrollController.scrollBy(
-          window,
-          0,
-          offset,
-          scrollDuration,
-          cubicBezier(...scrollEasingCoordinates),
-        );
+      if (target !== null) {
+        target.scrollIntoView({ behavior: 'smooth' });
+      } else if (
+        window.scrollY <
+        document.body.scrollHeight - window.innerHeight
+      ) {
+        window.scrollTo({
+          left: 0,
+          top: document.body.scrollHeight,
+          behavior: 'smooth',
+        });
       } else if (
         stream !== null &&
         stream.continuation !== undefined &&
@@ -288,24 +275,19 @@ export class AppCommandHandler implements CommandHandler {
   }
 
   selectPreviousEntry(): AppAction<void> {
-    return (state$, { scrollController }) => {
-      const { session, keyboardSettings } = state$.value;
-      const { scrollDuration, scrollEasingCoordinates } = keyboardSettings;
+    return (state$) => {
+      const { session } = state$.value;
 
       if (session === null) {
         return;
       }
 
-      const offset = getPreviousEntryOffset();
+      const target = getPreviousScrollTarget();
 
-      if (Math.abs(offset) >= 1) {
-        scrollController.scrollBy(
-          window,
-          0,
-          offset,
-          scrollDuration,
-          cubicBezier(...scrollEasingCoordinates),
-        );
+      if (target !== null) {
+        target.scrollIntoView({ behavior: 'smooth' });
+      } else if (window.scrollY > 0) {
+        window.scrollTo({ left: 0, top: 0, behavior: 'smooth' });
       }
     };
   }
@@ -424,61 +406,45 @@ export class AppCommandHandler implements CommandHandler {
   }
 }
 
-function getNextEntryOffset(): number {
-  const elements = document.getElementsByClassName('entry');
-  const scrollOffset = getScrollOffset();
+function getNextScrollTarget(): Element | null {
+  const elements = document.querySelectorAll(
+    '.stream-body .VirtualScroller-item',
+  );
+  const scrollY = getScrollOffset();
 
   for (let i = 0; i < elements.length; i++) {
-    const element = elements[i] as HTMLElement;
-    const { top, bottom } = element.getBoundingClientRect();
-    let offset = top - scrollOffset;
-    if (offset >= 1) {
-      return offset;
-    }
-    offset = bottom - scrollOffset;
-    if (offset >= 1) {
-      return offset;
+    const element = elements[i]!;
+    const { top } = element.getBoundingClientRect();
+    if (top - scrollY >= 1) {
+      return element;
     }
   }
 
-  const belowSpacer = document.querySelector<HTMLElement>(
+  return document.querySelector(
     '.stream-body .VirtualScroller-spacer:last-child',
-  );
-
-  if (belowSpacer !== null) {
-    return belowSpacer.getBoundingClientRect().top;
-  }
-
-  return (
-    document.documentElement.scrollHeight - window.innerHeight - window.scrollY
   );
 }
 
-function getPreviousEntryOffset(): number {
-  const elements = document.getElementsByClassName('entry');
-  const scrollOffset = getScrollOffset();
+function getPreviousScrollTarget(): Element | null {
+  const elements = document.querySelectorAll(
+    '.stream-body .VirtualScroller-item',
+  );
+  const scrollY = getScrollOffset();
 
   for (let i = elements.length - 1; i >= 0; i--) {
-    const element = elements[i] as HTMLElement;
-    const top = element.getBoundingClientRect().top;
-    const offset = top - scrollOffset;
-    if (offset <= -1) {
-      return offset;
+    const element = elements[i]!;
+    const { top } = element.getBoundingClientRect();
+    if (scrollY - top >= 1) {
+      return element;
     }
   }
 
-  const aboveSpacer = document.querySelector<HTMLElement>(
+  return document.querySelector(
     '.stream-body .VirtualScroller-spacer:first-child',
   );
-
-  if (aboveSpacer !== null) {
-    return aboveSpacer.getBoundingClientRect().bottom - window.innerHeight;
-  }
-
-  return -window.scrollY;
 }
 
 function getScrollOffset(): number {
-  const navbar = document.getElementsByClassName('navbar')[0];
-  return navbar ? (navbar as HTMLElement).offsetHeight : 0;
+  const el = document.querySelector<HTMLElement>('.navbar');
+  return el?.offsetHeight ?? 0;
 }

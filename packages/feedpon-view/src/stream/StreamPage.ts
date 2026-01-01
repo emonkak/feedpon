@@ -62,16 +62,18 @@ export const StreamPage = createComponent(function StreamPage(
 
   const virtualScrollerRef = $.useRef<VirtualScrollerHandle | null>(null);
 
-  $.useEffect(() => {
+  $.useLayoutEffect(() => {
     if (session === null || session.id !== streamId) {
       startSession(streamId);
     } else {
       if (stream === null) {
         fetchStream().then(() => fetchHatenaBookmarkCounts());
-      } else if (session.focusIndex >= 0) {
-        virtualScrollerRef.current?.scrollToIndex(session.focusIndex);
-      } else {
+      } else if (session.focusIndex < 0) {
         window.scrollTo(0, 0);
+      } else if (session.focusIndex >= stream.items.length) {
+        window.scrollTo(0, document.body.scrollHeight);
+      } else {
+        virtualScrollerRef.current?.scrollToIndex(session.focusIndex);
       }
     }
   }, [session?.id, streamId]);
