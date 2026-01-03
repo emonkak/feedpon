@@ -17,6 +17,7 @@ import {
   toggleKeyboardShortcuts,
   toggleSidebar,
 } from 'feedpon-store/actions/ui';
+import { cubicBezier } from 'motion';
 
 export class AppCommandHandler implements CommandHandler {
   private readonly _historyNavigator: HistoryNavigator;
@@ -139,26 +140,34 @@ export class AppCommandHandler implements CommandHandler {
   }
 
   scrollDown(): AppAction<void> {
-    return (state$) => {
+    return (state$, { scrollController }) => {
       const { keyboardSettings } = state$.value;
-      const { scrollDistanceRatio } = keyboardSettings;
+      const { scrollDistanceRatio, scrollDuration, scrollEasingCoordinates } =
+        keyboardSettings;
 
-      const dx = 0;
-      const dy = document.documentElement.clientHeight * scrollDistanceRatio;
-
-      window.scrollBy({ left: dx, top: dy, behavior: 'smooth' });
+      scrollController.scrollBy(
+        window,
+        0,
+        document.documentElement.clientHeight * scrollDistanceRatio,
+        scrollDuration,
+        cubicBezier(...scrollEasingCoordinates),
+      );
     };
   }
 
   scrollUp(): AppAction<void> {
-    return (state$) => {
+    return (state$, { scrollController }) => {
       const { keyboardSettings } = state$.value;
-      const { scrollDistanceRatio } = keyboardSettings;
+      const { scrollDistanceRatio, scrollDuration, scrollEasingCoordinates } =
+        keyboardSettings;
 
-      const dx = 0;
-      const dy = -document.documentElement.clientHeight * scrollDistanceRatio;
-
-      window.scrollBy({ left: dx, top: dy, behavior: 'smooth' });
+      scrollController.scrollBy(
+        window,
+        0,
+        -document.documentElement.clientHeight * scrollDistanceRatio,
+        scrollDuration,
+        cubicBezier(...scrollEasingCoordinates),
+      );
     };
   }
 
@@ -190,8 +199,9 @@ export class AppCommandHandler implements CommandHandler {
   }
 
   selectNextEntry(): AppAction<Promise<void>> {
-    return async (state$, _context, dispatch) => {
-      const { session, stream, streamLoading } = state$.value;
+    return async (state$, { scrollController }, dispatch) => {
+      const { keyboardSettings, session, stream, streamLoading } = state$.value;
+      const { scrollDuration, scrollEasingCoordinates } = keyboardSettings;
 
       if (session === null) {
         return;
@@ -200,16 +210,24 @@ export class AppCommandHandler implements CommandHandler {
       const target = getNextScrollTarget();
 
       if (target !== null) {
-        target.scrollIntoView({ behavior: 'smooth' });
+        scrollController.scrollBy(
+          window,
+          0,
+          target.getBoundingClientRect().top - 52,
+          scrollDuration,
+          cubicBezier(...scrollEasingCoordinates),
+        );
       } else if (
         window.scrollY <
         document.body.scrollHeight - window.innerHeight
       ) {
-        window.scrollTo({
-          left: 0,
-          top: document.body.scrollHeight,
-          behavior: 'smooth',
-        });
+        scrollController.scrollTo(
+          window,
+          0,
+          document.body.scrollHeight - window.innerHeight,
+          scrollDuration,
+          cubicBezier(...scrollEasingCoordinates),
+        );
       } else if (
         stream !== null &&
         stream.continuation !== undefined &&
@@ -275,8 +293,9 @@ export class AppCommandHandler implements CommandHandler {
   }
 
   selectPreviousEntry(): AppAction<void> {
-    return (state$) => {
-      const { session } = state$.value;
+    return (state$, { scrollController }) => {
+      const { keyboardSettings, session } = state$.value;
+      const { scrollDuration, scrollEasingCoordinates } = keyboardSettings;
 
       if (session === null) {
         return;
@@ -285,9 +304,21 @@ export class AppCommandHandler implements CommandHandler {
       const target = getPreviousScrollTarget();
 
       if (target !== null) {
-        target.scrollIntoView({ behavior: 'smooth' });
+        scrollController.scrollBy(
+          window,
+          0,
+          target.getBoundingClientRect().top - 52,
+          scrollDuration,
+          cubicBezier(...scrollEasingCoordinates),
+        );
       } else if (window.scrollY > 0) {
-        window.scrollTo({ left: 0, top: 0, behavior: 'smooth' });
+        scrollController.scrollTo(
+          window,
+          0,
+          0,
+          scrollDuration,
+          cubicBezier(...scrollEasingCoordinates),
+        );
       }
     };
   }

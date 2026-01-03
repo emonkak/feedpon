@@ -103,7 +103,7 @@ export class AppState {
   keyboardSettings: KeyboardSettings = {
     openLinksInBackground: true,
     scrollDistanceRatio: 0.5,
-    scrollDuration: 160,
+    scrollDuration: 166.6,
     scrollEasingCoordinates: [0.55, 0.055, 0.675, 0.19],
   };
   keyboardShortcuts: KeyboardShortcut[] = [
