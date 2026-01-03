@@ -1,4 +1,4 @@
-import type { CustomHookFunction, StyleProps } from 'barebind';
+import type { HookFunction, StyleProps } from 'barebind';
 
 export interface Popup {
   close: () => void;
@@ -21,7 +21,7 @@ interface PopupState {
 export function createPopupHook(
   defaultOpened: boolean,
   pullDirections: PullDirections = ['down', 'up', 'right', 'left'],
-): CustomHookFunction<Popup> {
+): HookFunction<Popup> {
   return (context) => {
     const [popupState, setPopupState] = context.useState<PopupState>({
       opened: defaultOpened,

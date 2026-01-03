@@ -1,6 +1,6 @@
 import {
-  type CustomHookFunction,
   createComponent,
+  type HookFunction,
   Keyed,
   type RenderContext,
 } from 'barebind';
@@ -47,7 +47,7 @@ export const Dispatcher = createComponent(function Dispatcher(
   });
 });
 
-function UserStyle(rule: string): CustomHookFunction<void> {
+function UserStyle(rule: string): HookFunction<void> {
   return (context) => {
     context.useInsertionEffect(() => {
       const style = document.createElement('style');
@@ -65,7 +65,7 @@ function UserStyle(rule: string): CustomHookFunction<void> {
   };
 }
 
-function Theme(theme: Theme): CustomHookFunction<void> {
+function Theme(theme: Theme): HookFunction<void> {
   return (context) => {
     context.useInsertionEffect(() => {
       document.body.dataset['theme'] = theme;

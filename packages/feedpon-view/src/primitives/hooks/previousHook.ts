@@ -1,6 +1,6 @@
-import type { CustomHookFunction } from 'barebind';
+import type { HookFunction } from 'barebind';
 
-export function createPreviousHook<T>(value: T): CustomHookFunction<T | null> {
+export function createPreviousHook<T>(value: T): HookFunction<T | null> {
   return (context) => {
     const ref = context.useRef<T | null>(null);
     const previous = ref.current;

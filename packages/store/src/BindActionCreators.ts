@@ -1,4 +1,4 @@
-import type { CustomHookFunction, CustomHookObject } from 'barebind';
+import type { HookFunction, HookObject } from 'barebind';
 
 import type { Action, Store } from './Store.ts';
 
@@ -22,9 +22,9 @@ export function BindActionCreators<
   TContext,
   const TActionFactories extends ActionFactories<TState, TContext>,
 >(
-  storeClass: CustomHookObject<Store<TState, TContext>>,
+  storeClass: HookObject<Store<TState, TContext>>,
   actionFactories: TActionFactories,
-): CustomHookFunction<BoundActionCreators<TState, TContext, TActionFactories>> {
+): HookFunction<BoundActionCreators<TState, TContext, TActionFactories>> {
   return (context) => {
     const store = context.use(storeClass);
 

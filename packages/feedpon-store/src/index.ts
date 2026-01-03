@@ -1,8 +1,4 @@
-import {
-  $customHook,
-  type CustomHookObject,
-  type RenderContext,
-} from 'barebind';
+import { $hook, type HookObject, type RenderContext } from 'barebind';
 import type { Reactive } from 'barebind/addons/reactive';
 import { type Action, ImmutableMap, type Mutex, Store } from 'store';
 import type {
@@ -72,9 +68,9 @@ export interface AppStateRepository extends PatchRepository {
 
 export class AppStore
   extends Store<AppState, AppContext>
-  implements CustomHookObject<void>
+  implements HookObject<void>
 {
-  static [$customHook](context: RenderContext): AppStore {
+  static [$hook](context: RenderContext): AppStore {
     const value = context.getSharedContext(AppStore);
 
     if (!(value instanceof AppStore)) {
@@ -84,7 +80,7 @@ export class AppStore
     return value;
   }
 
-  [$customHook](context: RenderContext): void {
+  [$hook](context: RenderContext): void {
     context.setSharedContext(this.constructor, this);
   }
 }

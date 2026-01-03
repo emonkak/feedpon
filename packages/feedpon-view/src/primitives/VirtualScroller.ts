@@ -1,8 +1,8 @@
 import {
   type Bindable,
   type Component,
-  type CustomHookFunction,
   createComponent,
+  type HookFunction,
   Keyed,
   type Ref,
   type RenderContext,
@@ -304,7 +304,7 @@ export const VirtualScroller: VirtualScroller = createComponent(
 function NewIntersectionObserver(
   callback: IntersectionObserverCallback,
   options?: IntersectionObserverInit,
-): CustomHookFunction<IntersectionObserver> {
+): HookFunction<IntersectionObserver> {
   return ($) => {
     const eventCallback = $.use(EventCallback(callback));
     return $.useMemo(
@@ -316,7 +316,7 @@ function NewIntersectionObserver(
 
 function NewResizeObsever(
   callback: ResizeObserverCallback,
-): CustomHookFunction<ResizeObserver> {
+): HookFunction<ResizeObserver> {
   return ($) => {
     const eventCallback = $.use(EventCallback(callback));
     return $.useMemo(() => new ResizeObserver(eventCallback), []);

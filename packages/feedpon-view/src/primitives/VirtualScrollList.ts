@@ -1,8 +1,8 @@
 import {
   type Bindable,
   type Component,
-  type CustomHookFunction,
   createComponent,
+  type HookFunction,
   type Ref,
   type RefCallback,
   type RefObject,
@@ -411,7 +411,7 @@ function computeBlockPositions<TItem extends { id: PropertyKey }>(
 
 function createResizeObserverHook(
   callback: ResizeObserverCallback,
-): CustomHookFunction<ResizeObserver> {
+): HookFunction<ResizeObserver> {
   return (context) => {
     const resizeObserver = context.useMemo(
       () => new ResizeObserver(callback),

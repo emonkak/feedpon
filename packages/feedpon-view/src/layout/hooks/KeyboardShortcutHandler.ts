@@ -1,4 +1,4 @@
-import type { CustomHookFunction } from 'barebind';
+import type { HookFunction } from 'barebind';
 import {
   type CommandId,
   type KeyboardShortcut,
@@ -22,7 +22,7 @@ export function KeyboardShortcutHandler(
   keyboardShortcuts: KeyboardShortcut[],
   onCommandInvoke: (commandId: CommandId) => void,
   options: KeyboardShortcutHandlerOptions = {},
-): CustomHookFunction<void> {
+): HookFunction<void> {
   return (context) => {
     const { timeout = 1000 } = options;
 
