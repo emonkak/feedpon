@@ -14,7 +14,7 @@ export const FullContents = createComponent(function FullContents(
   $: RenderContext,
 ): unknown {
   const fullContentList = Repeat({
-    source: fullContents,
+    items: fullContents,
     valueSelector: (fullContent, index) => $.html`
       <section class="entry-page">
         <${

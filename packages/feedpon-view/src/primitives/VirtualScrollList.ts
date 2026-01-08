@@ -338,7 +338,7 @@ export const VirtualScrollList: VirtualScrollList = createComponent(
     const children = $.useMemo(
       () =>
         Repeat({
-          source: items.slice(scopeRef.current.start, scopeRef.current.end),
+          items: items.slice(scopeRef.current.start, scopeRef.current.end),
           keySelector: (item) => item.id,
           valueSelector: (item, index) => {
             const id = item.id;

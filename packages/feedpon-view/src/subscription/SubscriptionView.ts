@@ -42,7 +42,7 @@ export const SubscriptionView = createComponent(function SubscriptionView(
     `;
 
   const labels = Repeat({
-    source: subscription.categories,
+    items: subscription.categories,
     keySelector: (category) => category.label,
     valueSelector: (category) => $.html`
       <span class="badge badge-small badge-default">

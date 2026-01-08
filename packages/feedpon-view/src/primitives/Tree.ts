@@ -94,7 +94,7 @@ export const Tree: Tree = createComponent(function Tree<TKey, TValue>(
   };
 
   const children = Repeat({
-    source: items.reduce(
+    items: items.reduce(
       (results, item) => aggregate(results, item, null),
       [] as ItemAggregation<TKey, TValue>[],
     ),

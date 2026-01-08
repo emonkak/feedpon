@@ -59,7 +59,7 @@ export const SearchPage = createComponent(function SearchPage(
     searchResultList = $.html`
       <ol className="list-group">
         <${Repeat({
-          source: new Array(10),
+          items: new Array(10),
           valueSelector: () => $.html`
             <li class="list-group-item">
               <div class="link-strong">
@@ -83,7 +83,7 @@ export const SearchPage = createComponent(function SearchPage(
         ? $.html`
           <ol class="list-group">
             <${Repeat({
-              source: searchResults,
+              items: searchResults,
               valueSelector: (searchResult) =>
                 SearchResultView({
                   categories,

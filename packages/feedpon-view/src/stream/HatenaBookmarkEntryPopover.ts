@@ -37,7 +37,7 @@ export const HatenaBookmarkEntryPopover = createComponent(
         `
         : bookmarks.length > 0
           ? Repeat({
-              source: bookmarks,
+              items: bookmarks,
               valueSelector: (bookmark) =>
                 HatenaBookmarkBookmarkView({ bookmark }),
             })

@@ -1,4 +1,5 @@
-import { createComponent, Literal, type RenderContext } from 'barebind';
+import { createComponent, type RenderContext } from 'barebind';
+import { DynamicTemplate } from 'barebind/addons/dynamic-template';
 
 export interface FormControlProps {
   as: FormControlElementTagName;
@@ -36,6 +37,7 @@ export const FormControl = createComponent(function FormControl(
 ): unknown {
   const [status, setStatus] = $.useState(FormControlStatus.Empty);
   const elementRef = $.useRef<FormControlElement | null>(null);
+  const { html, literal } = $.use(DynamicTemplate());
 
   const runValidations = () => {
     const element = elementRef.current!;
@@ -69,8 +71,8 @@ export const FormControl = createComponent(function FormControl(
   });
 
   if (as.toLowerCase() === 'input') {
-    return $.dynamicHTML`
-      <${new Literal(as)}
+    return html`
+      <${literal(as)}
         :ref=${elementRef}
         :class=${{
           'is-valid': status === FormControlStatus.Valid,
@@ -81,8 +83,8 @@ export const FormControl = createComponent(function FormControl(
       >
     `;
   } else {
-    return $.dynamicHTML`
-      <${new Literal(as)}
+    return html`
+      <${literal(as)}
         ${ownProps}
         :ref=${elementRef}
         :class=${{
@@ -90,7 +92,7 @@ export const FormControl = createComponent(function FormControl(
           'is-invalid': status === FormControlStatus.Invalid,
         }}
         @input=${handleInput}
-      ></${new Literal(as)}
+      ></${literal(as)}
     `;
   }
 });

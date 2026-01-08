@@ -91,7 +91,7 @@ export const AboutPage = createComponent(function AboutPage(
   });
 
   const usingLibraries = Repeat({
-    source: USING_LIBRARIES,
+    items: USING_LIBRARIES,
     valueSelector: ({ license, name, url }) => $.html`
         <li>
           <h2>

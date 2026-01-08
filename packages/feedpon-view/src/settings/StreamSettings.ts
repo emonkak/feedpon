@@ -128,7 +128,7 @@ export const StreamSettings = createComponent(function StreamSettings(
         <div class="form-group">
           <div class="form-group-heading">Entries Ordering</div>
           <${Repeat({
-            source: [
+            items: [
               'engagement',
               'newest',
               'oldest',
@@ -151,7 +151,7 @@ export const StreamSettings = createComponent(function StreamSettings(
         <div class="form-group">
           <div class="form-group-heading">Entries Layout</div>
           <${Repeat({
-            source: ['full', 'compact'] satisfies StreamLayout[],
+            items: ['full', 'compact'] satisfies StreamLayout[],
             valueSelector: (value) => $.html`
               <label class="form-check-label">
                 <input

@@ -41,7 +41,7 @@ export const AppearanceSettings = createComponent(function AppearanceSettings(
   );
 
   const themeItems = Repeat({
-    source: ['system', 'light', 'dark'] as Theme[],
+    items: ['system', 'light', 'dark'] as Theme[],
     valueSelector: (theme) => $.html`
       <label key={theme} class="form-check-label">
         <input

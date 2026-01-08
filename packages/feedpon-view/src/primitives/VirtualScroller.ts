@@ -277,7 +277,7 @@ export const VirtualScroller: VirtualScroller = createComponent(
         <${Keyed(aboveSpace, aboveSpacer)}>
         <ul class="VirtualScroller-list">
           <${Repeat({
-            source: source.slice(visibleRange.start, visibleRange.end),
+            items: source.slice(visibleRange.start, visibleRange.end),
             keySelector: (item, offset) =>
               getItemKey(item, visibleRange.start + offset),
             valueSelector: (item, offset) => {

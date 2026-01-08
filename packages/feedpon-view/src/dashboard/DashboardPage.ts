@@ -29,7 +29,7 @@ export const DashboardPage = createComponent(function DashboardPage(
       : $.html`
         <ol class="list-group">
           <${Repeat({
-            source: pastSessions,
+            items: pastSessions,
             keySelector: (session) => session.id,
             valueSelector: (session) => PastSessionView({ session }),
           })}>

@@ -23,7 +23,7 @@ export const TabList = createComponent(function TabList(
   $: RenderContext,
 ): unknown {
   const tabs = Repeat({
-    source: items,
+    items,
     keySelector: (item) => item.key,
     valueSelector: (item) => TabItem({ item, onTabSelect }),
   });

@@ -15,13 +15,13 @@ export const KeyboardShortcutTable = createComponent(function KeyMappingsTable(
   $: RenderContext,
 ): unknown {
   const rows = Repeat({
-    source: keyboardShortcuts,
+    items: keyboardShortcuts,
     valueSelector: (keyboardShortcut) => {
       return $.html`
         <tr>
           <td>
             <${Repeat({
-              source: keyboardShortcut.keyStorokes,
+              items: keyboardShortcut.keyStorokes,
               valueSelector: (keyStroke) => KeyStrokeView({ keyStroke }),
             })}>
           </td>
