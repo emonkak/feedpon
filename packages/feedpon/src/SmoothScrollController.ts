@@ -1,4 +1,8 @@
-import type { ScrollEasingFunction, ScrollTarget } from 'feedpon-store';
+import type {
+  ScrollController,
+  ScrollEasingFunction,
+  ScrollTarget,
+} from 'feedpon-store';
 
 interface ScrollState {
   aborted: boolean;
@@ -6,7 +10,7 @@ interface ScrollState {
   promise: Promise<void>;
 }
 
-export class SmoothScrollController {
+export class SmoothScrollController implements ScrollController {
   private readonly _scrollStates: WeakMap<ScrollTarget, ScrollState> =
     new WeakMap();
 
@@ -72,6 +76,22 @@ export class SmoothScrollController {
         easingFn,
       );
     }
+  }
+
+  scrollIntoView(
+    target: Element,
+    scrollDuration: number,
+    easingFn: ScrollEasingFunction,
+  ): Promise<void> {
+    const style = window.getComputedStyle(target);
+    const scrollMarginTop = parseFloat(style.scrollMarginTop) ?? 0;
+    return this.scrollBy(
+      window,
+      0,
+      target.getBoundingClientRect().top - scrollMarginTop,
+      scrollDuration,
+      easingFn,
+    );
   }
 
   async waitForScroll(scrollable: ScrollTarget): Promise<void> {

@@ -477,6 +477,11 @@ export interface ScrollController {
     duration: number,
     easing: ScrollEasingFunction,
   ): Promise<void>;
+  scrollIntoView(
+    target: Element,
+    duration: number,
+    easing: ScrollEasingFunction,
+  ): Promise<void>;
   waitForScroll(target: ScrollTarget): Promise<void>;
 }
 

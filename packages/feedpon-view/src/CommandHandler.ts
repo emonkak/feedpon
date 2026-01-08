@@ -210,10 +210,8 @@ export class AppCommandHandler implements CommandHandler {
       const target = getNextScrollTarget();
 
       if (target !== null) {
-        scrollController.scrollBy(
-          window,
-          0,
-          target.getBoundingClientRect().top - 52,
+        scrollController.scrollIntoView(
+          target,
           scrollDuration,
           cubicBezier(...scrollEasingCoordinates),
         );
@@ -304,10 +302,8 @@ export class AppCommandHandler implements CommandHandler {
       const target = getPreviousScrollTarget();
 
       if (target !== null) {
-        scrollController.scrollBy(
-          window,
-          0,
-          target.getBoundingClientRect().top - 52,
+        scrollController.scrollIntoView(
+          target,
           scrollDuration,
           cubicBezier(...scrollEasingCoordinates),
         );
