@@ -75,8 +75,20 @@ export const EntryList = createComponent(function EntryList(
   }, []);
 
   $.useLayoutEffect(() => {
-    scrollCallback();
+    throttledScrollCallback();
   }, [stream]);
+
+  $.useLayoutEffect(() => {
+    const virtualScroller = virtualScrollerRef.current!;
+    if (session.expandedIndex >= 0) {
+      virtualScroller.scrollToIndex(session.expandedIndex);
+    } else if (session.focusIndex >= 0) {
+      const element = virtualScroller.getVisibleElement(session.focusIndex);
+      if (element !== undefined && !isInViewport(element)) {
+        virtualScroller.scrollToIndex(session.focusIndex);
+      }
+    }
+  }, [session.focusIndex, session.expandedIndex]);
 
   if (isStreamLoading && stream === null) {
     if (session.settings.layout === 'full') {
@@ -112,12 +124,6 @@ export const EntryList = createComponent(function EntryList(
     VirtualScroller({
       assumedItemHeight: session.settings.layout === 'full' ? 800 : 100,
       delay: scrollDuration,
-      initialItemIndex:
-        session.expandedIndex >= 0
-          ? session.expandedIndex
-          : session.focusIndex >= 0
-            ? session.focusIndex
-            : 0,
       onVisibleRangeChange: throttledScrollCallback,
       source: stream?.items ?? [],
       ref: virtualScrollerRef,
@@ -264,4 +270,15 @@ function getFocusIndex(elements: Element[], visibleRange: Range): number {
   }
 
   return -1;
+}
+
+function isInViewport(el: Element): boolean {
+  const { bottom, right, top, left } = el.getBoundingClientRect();
+
+  return (
+    bottom > 0 &&
+    right > 0 &&
+    top < window.innerHeight &&
+    left < window.innerWidth
+  );
 }

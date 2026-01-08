@@ -1,11 +1,11 @@
 export function throttle<TCallback extends (...args: any[]) => void>(
   callback: TCallback,
   timeout: number,
-): (this: ThisType<TCallback>, ...args: Parameters<TCallback>) => void {
+): (...args: Parameters<TCallback>) => void {
   let tailTimer: ReturnType<typeof setTimeout> | null = null;
   let lastInvoked = 0;
 
-  return function (...args) {
+  return function (this: any, ...args) {
     if (tailTimer !== null) {
       return;
     }

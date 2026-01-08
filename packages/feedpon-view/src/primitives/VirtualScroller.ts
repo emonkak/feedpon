@@ -18,7 +18,6 @@ export interface VirtualScrollerProps<T> {
   assumedItemHeight: number;
   delay?: number;
   getItemKey?: (item: T, index: number) => unknown;
-  initialItemIndex?: number;
   offscreenRatio?: number;
   onVisibleRangeChange?: () => void;
   ref?: Ref<VirtualScrollerHandle>;
@@ -29,6 +28,7 @@ export interface VirtualScrollerProps<T> {
 
 export interface VirtualScrollerHandle {
   getMeasuredItems(): MeasuredItem[];
+  getVisibleElement(index: number): Element | undefined;
   getVisibleElements(): Element[];
   getVisibleRange(): Range;
   scrollToIndex(index: number): void;
@@ -51,7 +51,6 @@ export const VirtualScroller: VirtualScroller = createComponent(
       assumedItemHeight,
       delay,
       getItemKey = (_item, index) => index,
-      initialItemIndex = -1,
       onVisibleRangeChange,
       offscreenRatio = 1,
       ref = null,
@@ -61,14 +60,10 @@ export const VirtualScroller: VirtualScroller = createComponent(
     }: VirtualScrollerProps<T>,
     $: RenderContext,
   ): unknown {
-    const [visibleRange, setVisibleRange] = $.useState<Range>(() =>
-      initialItemIndex >= 0
-        ? {
-            start: initialItemIndex,
-            end: Math.min(initialItemIndex + 1, source.length),
-          }
-        : { start: 0, end: 0 },
-    );
+    const [visibleRange, setVisibleRange] = $.useState<Range>({
+      start: 0,
+      end: 0,
+    });
     const measuredItems = $.useMemo<MeasuredItem[]>(() => [], []);
     const visibleElements = $.useMemo<Map<number, Element>>(
       () => new Map(),
@@ -130,7 +125,7 @@ export const VirtualScroller: VirtualScroller = createComponent(
       NewIntersectionObserver(
         (entries) => {
           for (const entry of entries) {
-            if (!entry.isIntersecting && !entry.target.isConnected) {
+            if (!entry.isIntersecting || !entry.target.isConnected) {
               continue;
             }
 
@@ -197,6 +192,9 @@ export const VirtualScroller: VirtualScroller = createComponent(
         getMeasuredItems(): MeasuredItem[] {
           return measuredItems.slice();
         },
+        getVisibleElement(index: number): Element | undefined {
+          return visibleElements.get(index);
+        },
         getVisibleElements(): Element[] {
           return visibleElements
             .entries()
@@ -238,15 +236,6 @@ export const VirtualScroller: VirtualScroller = createComponent(
 
       measuredItems.length = source.length;
     }, [source]);
-
-    $.useLayoutEffect(() => {
-      if (initialItemIndex >= 0) {
-        const element = visibleElements.get(initialItemIndex);
-        if (element !== undefined && !isInViewport(element)) {
-          element.scrollIntoView();
-        }
-      }
-    }, [initialItemIndex]);
 
     const aboveSpace = computeRangeHeight(0, visibleRange.start);
     const belowSpace = computeRangeHeight(visibleRange.end);
@@ -325,17 +314,6 @@ function NewResizeObsever(
 
 function areRangesEqual(x: Range, y: Range) {
   return x.start === y.start && x.end === y.end;
-}
-
-function isInViewport(el: Element): boolean {
-  const { bottom, right, top, left } = el.getBoundingClientRect();
-
-  return (
-    bottom > 0 &&
-    right > 0 &&
-    top < window.innerHeight &&
-    left < window.innerWidth
-  );
 }
 
 function withinRange(range: Range, index: number): boolean {
