@@ -1,9 +1,4 @@
-import {
-  createComponent,
-  Keyed,
-  type RefObject,
-  type RenderContext,
-} from 'barebind';
+import { createComponent, type RefObject, type RenderContext } from 'barebind';
 import { EventCallback } from 'barebind/addons/hooks';
 import type { Entry, Session, Stream } from 'feedpon-store';
 import { throttle } from '../primitives/utils/throttle.ts';
@@ -85,10 +80,10 @@ export const EntryList = createComponent(function EntryList(
   }, [session.expandedIndex]);
 
   $.useLayoutEffect(() => {
-    if (session.focusIndex >= 0) {
+    if (session.expandedIndex < 0 && session.focusIndex >= 0) {
       const virtualScroller = virtualScrollerRef.current!;
       const element = virtualScroller.getVisibleElement(session.focusIndex);
-      if (element !== undefined && !isInViewport(element)) {
+      if (element === undefined || !isInViewport(element)) {
         virtualScroller.scrollToIndex(session.focusIndex);
       }
     }
@@ -123,32 +118,28 @@ export const EntryList = createComponent(function EntryList(
     }
   }
 
-  const virtualScroller = Keyed(
-    session.settings.layout,
-    VirtualScroller({
-      assumedItemHeight: session.settings.layout === 'full' ? 800 : 100,
-      delay: scrollDuration,
-      onVisibleRangeChange: throttledScrollCallback,
-      source: stream?.items ?? [],
-      ref: virtualScrollerRef,
-      scrollMargin: '2rlh 0 0',
-      renderItem: (entry: Entry, index: number) => {
-        return EntryView({
-          entry,
-          index,
-          isSelected: index === session.focusIndex,
-          isExpanded:
-            session.settings.layout === 'full' ||
-            index === session.expandedIndex,
-          onEntryExpand,
-          onFullContentsFetch,
-          onFullContentsToggle,
-          onHatenaBookmarkEntryFetch,
-          onHatenaBookmarkEntryToggle,
-        });
-      },
-    }),
-  );
+  const virtualScroller = VirtualScroller({
+    assumedItemHeight: session.settings.layout === 'full' ? 800 : 100,
+    delay: scrollDuration,
+    onVisibleRangeChange: throttledScrollCallback,
+    source: stream?.items ?? [],
+    ref: virtualScrollerRef,
+    scrollMargin: '2rlh 0 0',
+    renderItem: (entry: Entry, index: number) => {
+      return EntryView({
+        entry,
+        index,
+        isSelected: index === session.focusIndex,
+        isExpanded:
+          session.settings.layout === 'full' || index === session.expandedIndex,
+        onEntryExpand,
+        onFullContentsFetch,
+        onFullContentsToggle,
+        onHatenaBookmarkEntryFetch,
+        onHatenaBookmarkEntryToggle,
+      });
+    },
+  });
 
   return $.html`
     <div class="stream-body">

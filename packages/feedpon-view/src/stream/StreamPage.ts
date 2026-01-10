@@ -1,4 +1,4 @@
-import { createComponent, type RenderContext } from 'barebind';
+import { createComponent, Keyed, type RenderContext } from 'barebind';
 import type { SessionSettings } from 'feedpon-store';
 import { AppStore } from 'feedpon-store';
 import * as streamActions from 'feedpon-store/actions/stream';
@@ -158,19 +158,22 @@ export const StreamPage = createComponent(function StreamPage(
         : null;
   const entryList =
     session !== null
-      ? EntryList({
-          isStreamLoading: streamLoading,
-          onEntryExpand: handleEntryExpand,
-          onEntryFocus: focusEntry,
-          onFullContentsFetch: fetchFullContents,
-          onFullContentsToggle: toggleFullContents,
-          onHatenaBookmarkEntryFetch: fetchHatenaBookmarkEntry,
-          onHatenaBookmarkEntryToggle: toggleHatenaBookmarkEntry,
-          scrollDuration,
-          session,
-          stream,
-          virtualScrollerRef,
-        })
+      ? Keyed(
+          session.settings.layout,
+          EntryList({
+            isStreamLoading: streamLoading,
+            onEntryExpand: handleEntryExpand,
+            onEntryFocus: focusEntry,
+            onFullContentsFetch: fetchFullContents,
+            onFullContentsToggle: toggleFullContents,
+            onHatenaBookmarkEntryFetch: fetchHatenaBookmarkEntry,
+            onHatenaBookmarkEntryToggle: toggleHatenaBookmarkEntry,
+            scrollDuration,
+            session,
+            stream,
+            virtualScrollerRef,
+          }),
+        )
       : null;
 
   const content = $.html`
