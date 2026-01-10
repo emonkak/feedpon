@@ -79,16 +79,20 @@ export const EntryList = createComponent(function EntryList(
   }, [stream]);
 
   $.useLayoutEffect(() => {
-    const virtualScroller = virtualScrollerRef.current!;
     if (session.expandedIndex >= 0) {
-      virtualScroller.scrollToIndex(session.expandedIndex);
-    } else if (session.focusIndex >= 0) {
+      virtualScrollerRef.current!.scrollToIndex(session.expandedIndex);
+    }
+  }, [session.expandedIndex]);
+
+  $.useLayoutEffect(() => {
+    if (session.focusIndex >= 0) {
+      const virtualScroller = virtualScrollerRef.current!;
       const element = virtualScroller.getVisibleElement(session.focusIndex);
       if (element !== undefined && !isInViewport(element)) {
         virtualScroller.scrollToIndex(session.focusIndex);
       }
     }
-  }, [session.focusIndex, session.expandedIndex]);
+  }, [session.focusIndex]);
 
   if (isStreamLoading && stream === null) {
     if (session.settings.layout === 'full') {
