@@ -3,19 +3,19 @@ import type { Reactive } from 'barebind/addons/reactive';
 export type Action<TState, TContext, TResult> = (
   state: Reactive<TState>,
   context: TContext,
-  dispatch: Dispatcher<TState, TContext>,
+  dispatch: Dispatch<TState, TContext>,
 ) => TResult;
 
-export type Dispatcher<TState, TContext> = <TResult>(
+export type Dispatch<TState, TContext> = <TResult>(
   action: Action<TState, TContext, TResult>,
 ) => TResult;
 
 export interface Middleware<TState, TContext> {
+  connect?(store: Store<TState, TContext>): void;
   handleAction<TResult>(
     action: Action<TState, TContext, TResult>,
-    state$: Reactive<TState>,
-    context: TContext,
-    dispatch: Dispatcher<TState, TContext>,
+    dispatch: Dispatch<TState, TContext>,
+    store: Store<TState, TContext>,
   ): TResult;
 }
 
@@ -31,26 +31,26 @@ export class Store<TState, TContext> {
     this._context = context;
   }
 
+  get context(): TContext {
+    return this._context;
+  }
+
   get state$(): Reactive<TState> {
     return this._state$;
   }
 
-  dispatchAction<TResult>(action: Action<TState, TContext, TResult>): TResult {
+  dispatch<TResult>(action: Action<TState, TContext, TResult>): TResult {
     let index = 0;
-    const dispatch: Dispatcher<TState, TContext> = (action) => {
+    const dispatch: Dispatch<TState, TContext> = (action) => {
       return this._middlewares.length > index
-        ? this._middlewares[index++]!.handleAction(
-            action,
-            this._state$,
-            this._context,
-            dispatch,
-          )
+        ? this._middlewares[index++]!.handleAction(action, dispatch, this)
         : action(this._state$, this._context, dispatch);
     };
     return dispatch(action);
   }
 
   with(middleware: Middleware<TState, TContext>): this {
+    middleware.connect?.(this);
     this._middlewares.push(middleware);
     return this;
   }

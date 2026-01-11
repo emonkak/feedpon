@@ -57,7 +57,7 @@ export const SidebarLayout = createComponent(function SidebarLayout(
 
     return (commandId: CommandId) => {
       const action = commandHandler[commandId]();
-      store.dispatchAction(action);
+      store.dispatch(action);
     };
   }, []);
 

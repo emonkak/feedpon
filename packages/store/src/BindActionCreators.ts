@@ -41,7 +41,7 @@ export function BindActionCreators<
         const actionFactory = actionFactories[key]!;
 
         boundActionFactories[key] = (...args: any[]) =>
-          store.dispatchAction(actionFactory(...args));
+          store.dispatch(actionFactory(...args));
       }
 
       return boundActionFactories;

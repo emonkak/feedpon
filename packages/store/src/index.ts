@@ -4,7 +4,7 @@ export { ImmutableTrie } from './ImmutableTrie.ts';
 export { Mutex } from './Mutex.ts';
 export {
   type Action,
-  type Dispatcher,
+  type Dispatch,
   type Middleware,
   Store,
 } from './Store.ts';

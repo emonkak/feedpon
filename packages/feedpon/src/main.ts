@@ -34,11 +34,11 @@ const prepareStore = async (): Promise<AppStore> => {
     state$: Reactive.from(new AppState()),
     wedataClient: new WedataClient(),
   };
-  const store = new AppStore(state, context)
+  const store = new AppStore(state, context);
+  await store.dispatch(restoreState());
+  return store
     .with(new PersistentMiddleware())
     .with(new ErrorHandlerMiddleware());
-  await store.dispatchAction(restoreState());
-  return store;
 };
 const runtime = new Runtime(new BrowserBackend());
 const root = Root.create(App({ prepareStore }), document.body, runtime);
