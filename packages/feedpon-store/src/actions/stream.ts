@@ -609,7 +609,8 @@ function applyUrlFilters(items: Entry[], filters: URLFilter[]): void {
 function extractFullContentByReadability(
   document: Document,
 ): FullContent | null {
-  const content = new Readability(document).parse()?.content;
+  const content = new Readability(document, { keepClasses: true }).parse()
+    ?.content;
   if (content == null) {
     return null;
   }

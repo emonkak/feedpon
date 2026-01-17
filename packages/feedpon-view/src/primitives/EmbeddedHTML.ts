@@ -214,6 +214,10 @@ ol, ul {
   margin-block: 0 1rlh;
 }
 
+ul[class] {
+  list-style: none;
+}
+
 p {
   hyphens: auto;
   text-align: justify;
@@ -299,8 +303,6 @@ function parseHTML(srcdoc: string, origin: string): DocumentFragment {
       el.remove();
       continue;
     }
-
-    sanitizeElement(el);
 
     switch (el.localName) {
       case 'a':
@@ -409,13 +411,6 @@ function sandboxifyIframe(el: Element) {
     'sandbox',
     'allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts',
   );
-}
-
-function sanitizeElement(el: Element): void {
-  // Event handlers are not removed here because scripts are blocked by CSP.
-  el.removeAttribute('class');
-  el.removeAttribute('id');
-  el.removeAttribute('style');
 }
 
 function skipNode(walker: TreeWalker): Node | null {
