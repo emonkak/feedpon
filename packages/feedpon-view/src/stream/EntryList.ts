@@ -222,7 +222,10 @@ export const CompactEntryPlaceholder = createComponent(
   },
 );
 
-function getFocusIndex(elements: Element[], visibleRange: Range): number {
+function getFocusIndex(
+  visibleElements: Element[],
+  visibleRange: Range,
+): number {
   const viewportTop = 0;
   const viewportBottom = window.innerHeight;
 
@@ -230,8 +233,8 @@ function getFocusIndex(elements: Element[], visibleRange: Range): number {
   let mostVisibleIndex = -1;
   let traversedIndex = -1;
 
-  for (let i = 0, l = elements.length; i < l; i++) {
-    const el = elements[i]!;
+  for (let i = 0, l = visibleElements.length; i < l; i++) {
+    const el = visibleElements[i]!;
     const style = window.getComputedStyle(el);
     const { top, bottom, height } = el.getBoundingClientRect();
 
