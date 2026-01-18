@@ -122,7 +122,7 @@ export const EntryList = createComponent(function EntryList(
     assumedItemHeight: session.settings.layout === 'full' ? 800 : 100,
     delay: scrollDuration,
     onVisibleRangeChange: throttledScrollCallback,
-    source: stream?.items ?? [],
+    items: stream?.items ?? [],
     ref: virtualScrollerRef,
     scrollMargin: '2rlh 0 0',
     renderItem: (entry: Entry, index: number) => {

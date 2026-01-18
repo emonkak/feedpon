@@ -18,12 +18,12 @@ export interface VirtualScrollerProps<T> {
   assumedItemHeight: number;
   delay?: number;
   getItemKey?: (item: T, index: number) => unknown;
+  items: T[];
   offscreenRatio?: number;
   onVisibleRangeChange?: () => void;
   ref?: Ref<VirtualScrollerHandle>;
   renderItem: (item: T, index: number, context: RenderContext) => unknown;
   scrollMargin?: string;
-  source: T[];
 }
 
 export interface VirtualScrollerHandle {
@@ -56,7 +56,7 @@ export const VirtualScroller: VirtualScroller = createComponent(
       ref = null,
       renderItem,
       scrollMargin,
-      source,
+      items,
     }: VirtualScrollerProps<T>,
     $: RenderContext,
   ): unknown {
@@ -80,23 +80,23 @@ export const VirtualScroller: VirtualScroller = createComponent(
 
     const computeRangeHeight = (
       start: number,
-      end: number = source.length,
+      end: number = items.length,
     ): number => {
       let height = 0;
       for (let i = start; i < end; i++) {
-        height += getItemHeight(source[i]!, i);
+        height += getItemHeight(items[i]!, i);
       }
       return height;
     };
 
     const computeVisibleRange = (top: number, bottom: number): Range => {
-      const size = source.length;
+      const size = items.length;
       let start = 0;
       let y = 0;
 
       // Skip head items.
       for (let i = start; i < size; i++) {
-        const height = getItemHeight(source[i]!, i);
+        const height = getItemHeight(items[i]!, i);
         if (y + height >= top) {
           break;
         }
@@ -111,7 +111,7 @@ export const VirtualScroller: VirtualScroller = createComponent(
         if (y > bottom) {
           break;
         }
-        y += getItemHeight(source[i]!, i);
+        y += getItemHeight(items[i]!, i);
         end = i + 1;
       }
 
@@ -157,7 +157,7 @@ export const VirtualScroller: VirtualScroller = createComponent(
           }
 
           const index = Number(entry.target.getAttribute('aria-posinset')!) - 1;
-          const item = source[index];
+          const item = items[index];
 
           if (item !== undefined) {
             const key = getItemKey(item, index);
@@ -222,9 +222,9 @@ export const VirtualScroller: VirtualScroller = createComponent(
     );
 
     $.useLayoutEffect(() => {
-      for (let i = 0, l = source.length; i < l; i++) {
+      for (let i = 0, l = items.length; i < l; i++) {
         const measuredItem = measuredItems[i];
-        const key = getItemKey(source[i]!, i);
+        const key = getItemKey(items[i]!, i);
 
         if (measuredItem === undefined || !Object.is(measuredItem.key, key)) {
           measuredItems[i] = {
@@ -234,8 +234,8 @@ export const VirtualScroller: VirtualScroller = createComponent(
         }
       }
 
-      measuredItems.length = source.length;
-    }, [source]);
+      measuredItems.length = items.length;
+    }, [items]);
 
     const aboveSpace = computeRangeHeight(0, visibleRange.start);
     const belowSpace = computeRangeHeight(visibleRange.end);
@@ -266,7 +266,7 @@ export const VirtualScroller: VirtualScroller = createComponent(
         <${Keyed(aboveSpace, aboveSpacer)}>
         <ul class="VirtualScroller-list">
           <${Repeat({
-            items: source.slice(visibleRange.start, visibleRange.end),
+            items: items.slice(visibleRange.start, visibleRange.end),
             keySelector: (item, offset) =>
               getItemKey(item, visibleRange.start + offset),
             valueSelector: (item, offset) => {
@@ -274,7 +274,7 @@ export const VirtualScroller: VirtualScroller = createComponent(
               return $.html`
                 <li
                   aria-posinset=${index + 1}
-                  aria-setsize=${source.length}
+                  aria-setsize=${items.length}
                   class="VirtualScroller-item"
                   :ref=${itemRef}
                 >
