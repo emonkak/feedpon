@@ -36,7 +36,7 @@ export class PersistentMiddleware<
 
     store.state$.subscribe((event) => {
       this._pendingPatches.push(
-        createPatch(event.reversePath.toReversed(), event.newValue, version),
+        createPatch(event.path, event.newValue, version),
       );
     });
   }

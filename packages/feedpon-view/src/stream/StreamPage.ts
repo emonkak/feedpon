@@ -159,7 +159,6 @@ export const StreamPage = createComponent(function StreamPage(
   const entryList =
     session !== null
       ? Keyed(
-          session.settings.layout,
           EntryList({
             isStreamLoading: streamLoading,
             onEntryExpand: handleEntryExpand,
@@ -173,6 +172,7 @@ export const StreamPage = createComponent(function StreamPage(
             stream,
             virtualScrollerRef,
           }),
+          session.settings.layout,
         )
       : null;
 

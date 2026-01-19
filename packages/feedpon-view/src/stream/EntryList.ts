@@ -1,5 +1,5 @@
 import { createComponent, type RefObject, type RenderContext } from 'barebind';
-import { EventCallback } from 'barebind/addons/hooks';
+import { EffectEvent } from 'barebind/addons/hooks';
 import type { Entry, Session, Stream } from 'feedpon-store';
 import { throttle } from '../primitives/utils/throttle.ts';
 import {
@@ -40,7 +40,7 @@ export const EntryList = createComponent(function EntryList(
   $: RenderContext,
 ): unknown {
   const scrollCallback = $.use(
-    EventCallback(() => {
+    EffectEvent(() => {
       const virtualScroller = virtualScrollerRef.current;
       if (virtualScroller === null) {
         return;

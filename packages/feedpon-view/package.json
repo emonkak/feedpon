@@ -6,10 +6,10 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
-    "@types/chrome": "^0.1.33",
+    "@types/chrome": "^0.1.36",
     "barebind": "catalog:",
     "feedpon-store": "workspace:^",
-    "motion": "^12.25.0",
+    "motion": "^12.31.0",
     "store": "workspace:^"
   }
 }

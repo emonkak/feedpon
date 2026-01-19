@@ -1,8 +1,8 @@
 import {
+  decoded,
   type HistoryNavigator,
   Router,
   route,
-  wildcard,
 } from 'barebind/addons/router';
 import type { AppStore } from 'feedpon-store';
 import { AboutPage } from './about/AboutPage.ts';
@@ -21,15 +21,16 @@ export interface RouterState {
 }
 
 export const router = new Router<unknown, RouterState>([
-  route([''], (_args, _url, { store }) => DashboardPage({ store })),
-  route(['about'], (_args, _url, { navigator, store }) =>
+  route([''], (_captures, _url, { store }) => DashboardPage({ store })),
+  route(['about'], (_captures, _url, { navigator, store }) =>
     AboutPage({ navigator, store }),
   ),
   route(
     ['categories'],
-    (_args, _url, { navigator, store }) => CategoriesPage({ navigator, store }),
+    (_captures, _url, { navigator, store }) =>
+      CategoriesPage({ navigator, store }),
     [
-      route([wildcard], ([label], _url, { navigator, store }) =>
+      route([decoded], ([label], _url, { navigator, store }) =>
         CategoriesPage({ label, navigator, store }),
       ),
     ],
@@ -37,28 +38,28 @@ export const router = new Router<unknown, RouterState>([
   route(['kitchensink'], () => KitchensinkPage({})),
   route(
     ['search'],
-    (_args, _url, { navigator, store }) => SearchPage({ navigator, store }),
+    (_captures, _url, { navigator, store }) => SearchPage({ navigator, store }),
     [
-      route([wildcard], ([query], _url, { navigator, store }) =>
+      route([decoded], ([query], _url, { navigator, store }) =>
         SearchPage({ navigator, query, store }),
       ),
     ],
   ),
   route(['settings'], null, [
-    route(['appearance'], (_args, url, { store }) =>
+    route(['appearance'], (_captures, url, { store }) =>
       SettingsPage({
         url,
         children: AppearanceSettings({ store }),
       }),
     ),
-    route(['stream'], (_args, url, { store }) =>
+    route(['stream'], (_captures, url, { store }) =>
       SettingsPage({
         url,
         children: StreamSettings({ store }),
       }),
     ),
   ]),
-  route(['streams', wildcard], ([streamId], _url, { store }) =>
+  route(['streams', decoded], ([streamId], _url, { store }) =>
     StreamPage({ store, streamId }),
   ),
 ]);

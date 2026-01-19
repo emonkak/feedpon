@@ -38,8 +38,8 @@ export const Dispatcher = createComponent(function Dispatcher(
   }
 
   const child = Keyed(
+    router.match(location.url, { navigator, store }),
     location.url.pathname,
-    router.handle(location.url, { navigator, store }),
   );
 
   return SidebarLayout({

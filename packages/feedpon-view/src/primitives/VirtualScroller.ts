@@ -8,7 +8,7 @@ import {
   type RenderContext,
   Repeat,
 } from 'barebind';
-import { EventCallback, ImperativeHandle } from 'barebind/addons/hooks';
+import { EffectEvent, ImperativeHandle } from 'barebind/addons/hooks';
 
 export interface VirtualScroller extends Component<VirtualScrollerProps<any>> {
   <T>(props: VirtualScrollerProps<T>): Bindable<VirtualScrollerProps<T>>;
@@ -268,7 +268,7 @@ export const VirtualScroller: VirtualScroller = createComponent(
 
     return $.html`
       <div class="VirtualScroller" :style=${{ scrollMargin }}>
-        <${Keyed(headSpace, headSpacer)}>
+        <${Keyed(headSpacer, headSpace)}>
         <ul class="VirtualScroller-list">
           <${Repeat({
             items: items.slice(visibleRange.start, visibleRange.end),
@@ -289,7 +289,7 @@ export const VirtualScroller: VirtualScroller = createComponent(
             },
           })}>
         </ul>
-        <${Keyed(tailSpace, tailSpacer)}>
+        <${Keyed(tailSpacer, tailSpace)}>
       </div>
     `;
   },
@@ -300,7 +300,7 @@ function NewIntersectionObserver(
   options?: IntersectionObserverInit,
 ): HookFunction<IntersectionObserver> {
   return ($) => {
-    const eventCallback = $.use(EventCallback(callback));
+    const eventCallback = $.use(EffectEvent(callback));
     return $.useMemo(
       () => new IntersectionObserver(eventCallback, options),
       [],
@@ -312,7 +312,7 @@ function NewResizeObsever(
   callback: ResizeObserverCallback,
 ): HookFunction<ResizeObserver> {
   return ($) => {
-    const eventCallback = $.use(EventCallback(callback));
+    const eventCallback = $.use(EffectEvent(callback));
     return $.useMemo(() => new ResizeObserver(eventCallback), []);
   };
 }
