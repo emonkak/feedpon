@@ -3,9 +3,9 @@ import { EventCallback } from 'barebind/addons/hooks';
 import type { Entry, Session, Stream } from 'feedpon-store';
 import { throttle } from '../primitives/utils/throttle.ts';
 import {
-  type Range,
   VirtualScroller,
   type VirtualScrollerHandle,
+  type VisibleRange,
 } from '../primitives/VirtualScroller.ts';
 import { EntryView } from './EntryView.ts';
 
@@ -224,7 +224,7 @@ export const CompactEntryPlaceholder = createComponent(
 
 function getFocusIndex(
   visibleElements: Element[],
-  visibleRange: Range,
+  visibleRange: VisibleRange,
 ): number {
   const viewportTop = 0;
   const viewportBottom = window.innerHeight;
