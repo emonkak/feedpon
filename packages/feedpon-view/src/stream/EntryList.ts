@@ -79,16 +79,6 @@ export const EntryList = createComponent(function EntryList(
     }
   }, [session.expandedIndex]);
 
-  $.useLayoutEffect(() => {
-    if (session.expandedIndex < 0 && session.focusIndex >= 0) {
-      const virtualScroller = virtualScrollerRef.current!;
-      const element = virtualScroller.getVisibleElement(session.focusIndex);
-      if (element === undefined || !isInViewport(element)) {
-        virtualScroller.scrollToIndex(session.focusIndex);
-      }
-    }
-  }, [session.focusIndex]);
-
   if (isStreamLoading && stream === null) {
     if (session.settings.layout === 'full') {
       return $.html`
@@ -268,15 +258,4 @@ function getFocusIndex(
   }
 
   return -1;
-}
-
-function isInViewport(el: Element): boolean {
-  const { bottom, right, top, left } = el.getBoundingClientRect();
-
-  return (
-    bottom > 0 &&
-    right > 0 &&
-    top < window.innerHeight &&
-    left < window.innerWidth
-  );
 }
