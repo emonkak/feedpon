@@ -50,7 +50,7 @@ export const EntryList = createComponent(function EntryList(
       const visibleRange = virtualScroller.getVisibleRange();
       const focusIndex = getFocusIndex(visibleElements, visibleRange);
 
-      if (session !== null && focusIndex !== session.focusIndex) {
+      if (focusIndex !== session.focusIndex) {
         onEntryFocus(focusIndex);
       }
     }),
