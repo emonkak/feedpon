@@ -23,9 +23,9 @@ export const TabList = createComponent(function TabList(
   $: RenderContext,
 ): unknown {
   const tabs = Repeat({
-    items,
+    elementSelector: (item) => TabItem({ item, onTabSelect }),
     keySelector: (item) => item.key,
-    valueSelector: (item) => TabItem({ item, onTabSelect }),
+    source: items,
   });
 
   return $.html`

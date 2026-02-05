@@ -91,17 +91,17 @@ export const AboutPage = createComponent(function AboutPage(
   });
 
   const usingLibraries = Repeat({
-    items: USING_LIBRARIES,
-    valueSelector: ({ license, name, url }) => $.html`
-        <li>
-          <h2>
-            <a href=${url} target="_blank" rel="noreferrer">
-              ${name}
-            </a>
-          </h2>
-          <pre class="u-text-prewrap">${license}</pre>
-        </li>
-      `,
+    elementSelector: ({ license, name, url }) => $.html`
+      <li>
+        <h2>
+          <a href=${url} target="_blank" rel="noreferrer">
+            ${name}
+          </a>
+        </h2>
+        <pre class="u-text-prewrap">${license}</pre>
+      </li>
+    `,
+    source: USING_LIBRARIES,
   });
   const content = $.html`
     <section class="section u-text-center">

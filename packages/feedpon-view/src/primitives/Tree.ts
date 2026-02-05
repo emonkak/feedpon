@@ -94,12 +94,7 @@ export const Tree: Tree = createComponent(function Tree<TKey, TValue>(
   };
 
   const children = Repeat({
-    items: items.reduce(
-      (results, item) => aggregate(results, item, null),
-      [] as ItemAggregation<TKey, TValue>[],
-    ),
-    keySelector: ({ item }) => item.key,
-    valueSelector: ({ item, state, parent }) =>
+    elementSelector: ({ item, state, parent }) =>
       TreeNode({
         children: renderItem(item.value, item.key, $),
         item,
@@ -108,6 +103,11 @@ export const Tree: Tree = createComponent(function Tree<TKey, TValue>(
         parent,
         state,
       }),
+    keySelector: ({ item }) => item.key,
+    source: items.reduce(
+      (results, item) => aggregate(results, item, null),
+      [] as ItemAggregation<TKey, TValue>[],
+    ),
   });
 
   unmanagedStatesRef.current = newUnmanagedStates;

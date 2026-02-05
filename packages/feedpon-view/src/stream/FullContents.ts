@@ -14,8 +14,7 @@ export const FullContents = createComponent(function FullContents(
   $: RenderContext,
 ): unknown {
   const fullContentList = Repeat({
-    items: fullContents,
-    valueSelector: (fullContent, index) => $.html`
+    elementSelector: (fullContent, index) => $.html`
       <section class="entry-page">
         <${
           index > 0
@@ -50,6 +49,7 @@ export const FullContents = createComponent(function FullContents(
         }>
       </section>
     `,
+    source: fullContents,
   });
 
   const nextButton =

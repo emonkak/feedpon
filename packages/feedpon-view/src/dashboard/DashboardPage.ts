@@ -29,9 +29,9 @@ export const DashboardPage = createComponent(function DashboardPage(
       : $.html`
         <ol class="list-group">
           <${Repeat({
-            items: pastSessions,
+            elementSelector: (session) => PastSessionView({ session }),
             keySelector: (session) => session.id,
-            valueSelector: (session) => PastSessionView({ session }),
+            source: pastSessions,
           })}>
         </ol>
       `;

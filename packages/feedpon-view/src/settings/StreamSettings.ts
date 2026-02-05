@@ -128,12 +128,7 @@ export const StreamSettings = createComponent(function StreamSettings(
         <div class="form-group">
           <div class="form-group-heading">Entries Ordering</div>
           <${Repeat({
-            items: [
-              'engagement',
-              'newest',
-              'oldest',
-            ] satisfies EntriesOrdering[],
-            valueSelector: (value) => $.html`
+            elementSelector: (value) => $.html`
               <label class="form-check-label">
                 <input
                   checked=${ranked$.value === value}
@@ -146,13 +141,17 @@ export const StreamSettings = createComponent(function StreamSettings(
                 ${value.charAt(0).toUpperCase() + value.slice(1)}
               </label>
             `,
+            source: [
+              'engagement',
+              'newest',
+              'oldest',
+            ] satisfies EntriesOrdering[],
           })}>
         </div>
         <div class="form-group">
           <div class="form-group-heading">Entries Layout</div>
           <${Repeat({
-            items: ['full', 'compact'] satisfies StreamLayout[],
-            valueSelector: (value) => $.html`
+            elementSelector: (value) => $.html`
               <label class="form-check-label">
                 <input
                   checked=${layout$.value === value}
@@ -165,6 +164,7 @@ export const StreamSettings = createComponent(function StreamSettings(
                 ${value.charAt(0).toUpperCase() + value.slice(1)}
               </label>
             `,
+            source: ['full', 'compact'] satisfies StreamLayout[],
           })}>
         </div>
         <div class="form-group">

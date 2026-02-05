@@ -19,13 +19,13 @@ export const NotificationStack = createComponent(function NotificationStack(
   return $.html`
     <div class="notification-list">
       <${Repeat({
-        items: notifications,
-        keySelector: (notification) => notification.id,
-        valueSelector: (notification) =>
+        elementSelector: (notification) =>
           NotificationView({
             notification,
             dismissNotification,
           }),
+        keySelector: (notification) => notification.id,
+        source: notifications,
       })}>
     </div>
   `;

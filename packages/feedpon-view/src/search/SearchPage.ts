@@ -59,8 +59,7 @@ export const SearchPage = createComponent(function SearchPage(
     searchResultList = $.html`
       <ol className="list-group">
         <${Repeat({
-          items: new Array(10),
-          valueSelector: () => $.html`
+          elementSelector: () => $.html`
             <li class="list-group-item">
               <div class="link-strong">
                 <span class="placeholder placeholder-40 animation-shining"></span>
@@ -74,6 +73,7 @@ export const SearchPage = createComponent(function SearchPage(
               </div>
             </li>
           `,
+          source: new Array(10),
         })}>
       </ol>
     `;
@@ -83,8 +83,7 @@ export const SearchPage = createComponent(function SearchPage(
         ? $.html`
           <ol class="list-group">
             <${Repeat({
-              items: searchResults,
-              valueSelector: (searchResult) =>
+              elementSelector: (searchResult) =>
                 SearchResultView({
                   categories,
                   onCategoryCreate: createCategory,
@@ -94,6 +93,7 @@ export const SearchPage = createComponent(function SearchPage(
                   searchResult,
                   subscription: subscriptions.get(searchResult.feedId) ?? null,
                 }),
+              source: searchResults,
             })}>
           </ol>
         `

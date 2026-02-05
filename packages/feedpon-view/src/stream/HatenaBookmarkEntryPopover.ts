@@ -37,9 +37,9 @@ export const HatenaBookmarkEntryPopover = createComponent(
         `
         : bookmarks.length > 0
           ? Repeat({
-              items: bookmarks,
-              valueSelector: (bookmark) =>
+              elementSelector: (bookmark) =>
                 HatenaBookmarkBookmarkView({ bookmark }),
+              source: bookmarks,
             })
           : $.html`No comments yet in this entry.`;
 

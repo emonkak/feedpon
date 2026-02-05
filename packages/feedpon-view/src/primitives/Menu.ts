@@ -168,9 +168,9 @@ export const Menu = createComponent(function Menu(
   }, [open]);
 
   const children = Repeat({
-    items,
+    elementSelector: (item) => renderItem(item, onItemAction, $),
     keySelector: (item) => item.key,
-    valueSelector: (item) => renderItem(item, onItemAction, $),
+    source: items,
   });
 
   return $.html`
@@ -272,9 +272,9 @@ const MenuGroup = createComponent(
     const ariaLabelId = $.useId();
 
     const children = Repeat({
-      items: item.childItems,
+      elementSelector: (item) => renderItem(item, onItemAction, $),
       keySelector: (item) => item.key,
-      valueSelector: (item) => renderItem(item, onItemAction, $),
+      source: item.childItems,
     });
 
     return $.html`
