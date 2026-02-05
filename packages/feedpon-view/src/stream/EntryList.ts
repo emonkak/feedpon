@@ -79,6 +79,12 @@ export const EntryList = createComponent(function EntryList(
     }
   }, [session.expandedIndex]);
 
+  $.useLayoutEffect(() => {
+    if (session.focusIndex >= 0) {
+      virtualScrollerRef.current!.scrollToIndex(session.focusIndex);
+    }
+  }, [session.settings.layout]);
+
   if (isStreamLoading && stream === null) {
     if (session.settings.layout === 'full') {
       return $.html`
