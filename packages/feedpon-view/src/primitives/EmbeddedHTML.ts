@@ -304,6 +304,8 @@ function parseHTML(srcdoc: string, origin: string): DocumentFragment {
       continue;
     }
 
+    sanitizeElement(el);
+
     switch (el.localName) {
       case 'a':
       case 'area':
@@ -411,6 +413,10 @@ function sandboxifyIframe(el: Element) {
     'sandbox',
     'allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts',
   );
+}
+
+function sanitizeElement(el: Element) {
+  el.removeAttribute('style');
 }
 
 function skipNode(walker: TreeWalker): Node | null {
