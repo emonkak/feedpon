@@ -116,13 +116,12 @@ const SRCSET_SEPARATOR_PATTERN = /\s*,\s*/;
 const SRCSET_SPACES_PATTERN = /\s+/;
 
 interface EmbeddedHTMLProps {
+  html: string;
   origin: string;
-  srcdoc: string;
-  [key: string]: unknown;
 }
 
 export const EmbeddedHTML = createComponent(function EmbeddedHTML(
-  { origin, srcdoc, ...ownProps }: EmbeddedHTMLProps,
+  { origin, html }: EmbeddedHTMLProps,
   $: RenderContext,
 ): unknown {
   const containerRef = $.useRef<HTMLDivElement | null>(null);
@@ -132,12 +131,12 @@ export const EmbeddedHTML = createComponent(function EmbeddedHTML(
 
     shadowRoot!.replaceChildren(
       shadowRoot!.firstChild!,
-      parseHTML(srcdoc, origin),
+      parseHTML(html, origin),
     );
-  }, [origin, srcdoc]);
+  }, [html, origin]);
 
   return $.html`
-    <div :ref=${containerRef} ${ownProps}>
+    <div :ref=${containerRef}>
       <template shadowrootclonable shadowrootmode="open">
         <style>
 :host {
@@ -281,10 +280,10 @@ function embedSVG(el: Element): HTMLImageElement {
   return img;
 }
 
-function parseHTML(srcdoc: string, origin: string): DocumentFragment {
+function parseHTML(html: string, origin: string): DocumentFragment {
   const template = document.createElement('template');
 
-  template.setHTMLUnsafe(srcdoc);
+  template.setHTMLUnsafe(html);
 
   const walker = document.createTreeWalker(template.content);
 

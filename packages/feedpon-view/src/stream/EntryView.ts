@@ -126,9 +126,8 @@ const FullEntryView = createComponent(function FullEntryView(
           onFullContentsFetch: handleFullContentsFetch,
         })
       : EmbeddedHTML({
-          class: 'entry-content u-clearfix',
+          html: getEntryContent(entry),
           origin: getEntryUrl(entry),
-          srcdoc: getEntryContent(entry),
         });
 
   return $.html`
