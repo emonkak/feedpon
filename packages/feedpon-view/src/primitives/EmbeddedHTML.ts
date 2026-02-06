@@ -235,7 +235,7 @@ a:hover {
 }
 
 code, kbd, pre, samp {
-  font-family: var(--font-coding);
+  font-family: var(--font-code);
 }
 
 iframe {
