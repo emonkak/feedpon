@@ -80,6 +80,8 @@ export function fetchFullContents(entryId: string): AppAction<Promise<void>> {
             'text/html',
           );
 
+          setDocumentBaseURI(document, url);
+
           if (siteinfosUpdated$.value < 0) {
             await dispatch(updateSiteinfos());
           }
@@ -757,4 +759,14 @@ function tryTestPattern(pattern: string, str: string): boolean {
   } catch {
     return false;
   }
+}
+
+function setDocumentBaseURI(document: Document, url: string): void {
+  for (const el of document.head.querySelectorAll('base')) {
+    el.remove();
+  }
+  const base = document.createElement('base');
+  base.setAttribute('href', url);
+  base.setAttribute('target', '_blank');
+  document.head.appendChild(base);
 }
