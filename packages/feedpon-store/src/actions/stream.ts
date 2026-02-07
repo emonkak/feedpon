@@ -81,7 +81,7 @@ export function fetchFullContents(entryId: string): AppAction<Promise<void>> {
           );
 
           if (siteinfosUpdated$.value < 0) {
-            dispatch(updateSiteinfos());
+            await dispatch(updateSiteinfos());
           }
 
           const fullContent = extractFullContentBySiteinfos(
