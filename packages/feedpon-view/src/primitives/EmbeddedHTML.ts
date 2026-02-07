@@ -237,18 +237,15 @@ code, kbd, pre, samp {
   font-family: var(--font-code);
 }
 
-iframe {
-  max-inline-size: 100%;
-}
-
-img, video {
-  max-inline-size: 100%;
-  block-size: auto;
+:where(iframe, img, video) {
+  height: auto;
+  max-width: 100%;
+  vertical-align: bottom;
 }
 
 :has(> a:only-child > img:only-child),
-:has(> :is(iframe, img, video):only-child) {
-  inline-size: fit-content;
+:has(> :where(iframe, img, video):only-child) {
+  width: fit-content;
   margin-inline: auto;
 }
         </style>
