@@ -1,7 +1,7 @@
 import { LinkedList } from 'barebind';
 
 export class Mutex {
-  private _queue: LinkedList<() => void> = new LinkedList();
+  private readonly _resolvers: LinkedList<() => void> = new LinkedList();
 
   private _locked: boolean = false;
 
@@ -12,15 +12,14 @@ export class Mutex {
     }
 
     await new Promise<void>((resolve) => {
-      this._queue.pushBack(resolve);
+      this._resolvers.pushBack(resolve);
     });
   }
 
   unlock(): void {
-    const node = this._queue.popFront();
-    if (node !== null) {
-      const resolve = node.value;
-      resolve();
+    const resolver = this._resolvers.popFront()?.value;
+    if (resolver !== undefined) {
+      resolver();
     } else {
       this._locked = false;
     }
