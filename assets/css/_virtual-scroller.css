@@ -8,3 +8,8 @@
 .VirtualScroller-item {
   scroll-margin: inherit;
 }
+
+.VirtualScroller-spacer,
+.VirtualScroller-item {
+  contain: layout;
+}
