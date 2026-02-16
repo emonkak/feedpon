@@ -237,6 +237,10 @@ code, kbd, pre, samp {
   font-family: var(--font-code);
 }
 
+iframe[width][height] {
+  aspect-ratio: auto attr(width type(<number>)) / attr(height type(<number>));
+}
+
 :where(iframe, img, video) {
   height: auto;
   max-width: 100%;
