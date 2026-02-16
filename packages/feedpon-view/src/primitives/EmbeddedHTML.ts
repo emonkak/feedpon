@@ -140,7 +140,8 @@ export const EmbeddedHTML = createComponent(function EmbeddedHTML(
       <template shadowrootclonable shadowrootmode="open">
         <style>
 :host {
-  contain: layout paint style;
+  contain: content;
+  margin-block: 0 1rlh;
   overflow-wrap: anywhere;
   word-break: break-word;
 }
