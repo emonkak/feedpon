@@ -408,14 +408,14 @@ function resolveSrcset(el: Element, origin: string): void {
   }
 }
 
-function sandboxifyIframe(el: Element) {
+function sandboxifyIframe(el: Element): void {
   el.setAttribute(
     'sandbox',
     'allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts',
   );
 }
 
-function sanitizeElement(el: Element) {
+function sanitizeElement(el: Element): void {
   el.removeAttribute('style');
 }
 
