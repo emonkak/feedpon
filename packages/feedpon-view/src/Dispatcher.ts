@@ -47,21 +47,21 @@ export const Dispatcher = createComponent(function Dispatcher(
   });
 });
 
-function UserStyle(rule: string): HookFunction<void> {
+function UserStyle(style: string): HookFunction<void> {
   return (context) => {
     context.useInsertionEffect(() => {
-      const style = document.createElement('style');
+      const sheet = new CSSStyleSheet();
 
-      document.body.append(style);
+      sheet.replaceSync(style);
 
-      if (rule !== '') {
-        style.sheet!.insertRule(rule);
-      }
+      document.adoptedStyleSheets.push(sheet);
 
       return () => {
-        document.body.removeChild(style);
+        document.adoptedStyleSheets = document.adoptedStyleSheets.filter(
+          (s) => s !== sheet,
+        );
       };
-    }, [rule]);
+    }, [style]);
   };
 }
 
