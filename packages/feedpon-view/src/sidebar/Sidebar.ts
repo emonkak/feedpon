@@ -176,7 +176,7 @@ export const Sidebar = createComponent(function Sidebar(
             SidebarItem: true,
             'is-selected': location.url.pathname.startsWith('/settings/'),
           }}
-          href="#/settings/ui"
+          href="#/settings/appearance"
         >
           <span class="SidebarItem-label">Settings</span>
         </a>

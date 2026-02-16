@@ -28,12 +28,12 @@ export const SettingsPage = createComponent(function SettingsPage(
   const tabList = TabList({
     items: [
       {
-        key: 'ui',
-        href: '#/settings/ui',
-        selected: url.pathname === '/settings/ui',
+        key: 'appearance',
+        href: '#/settings/appearance',
+        selected: url.pathname === '/settings/appearance',
         children: $.html`
           <i class="u-inline-block u-md-none icon icon-20 icon-browser-window"></i>
-          <span class="u-none u-md-inline">UI</span>
+          <span class="u-none u-md-inline">Appearance</span>
         `,
       },
       {
