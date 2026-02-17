@@ -115,30 +115,7 @@ const LAZY_SRCSET_ATTRIBUTES = ['data-lazy-srcset', 'data-srcset'];
 const SRCSET_SEPARATOR_PATTERN = /\s*,\s*/;
 const SRCSET_SPACES_PATTERN = /\s+/;
 
-interface EmbeddedHTMLProps {
-  html: string;
-  origin: string;
-}
-
-export const EmbeddedHTML = createComponent(function EmbeddedHTML(
-  { origin, html }: EmbeddedHTMLProps,
-  $: RenderContext,
-): unknown {
-  const containerRef = $.useRef<HTMLDivElement | null>(null);
-
-  $.useLayoutEffect(() => {
-    const { shadowRoot } = containerRef.current!;
-
-    shadowRoot!.replaceChildren(
-      shadowRoot!.firstChild!,
-      parseHTML(html, origin),
-    );
-  }, [html, origin]);
-
-  return $.html`
-    <div :ref=${containerRef}>
-      <template shadowrootclonable shadowrootmode="open">
-        <style>
+const STYLE_SHEET = css`
 :host {
   contain: content;
   margin-block: 0 1rlh;
@@ -249,8 +226,34 @@ iframe[width][height] {
   width: fit-content;
   margin-inline: auto;
 }
-        </style>
-      </template>
+`;
+
+interface EmbeddedHTMLProps {
+  html: string;
+  origin: string;
+}
+
+export const EmbeddedHTML = createComponent(function EmbeddedHTML(
+  { origin, html }: EmbeddedHTMLProps,
+  $: RenderContext,
+): unknown {
+  const containerRef = $.useRef<HTMLDivElement | null>(null);
+
+  $.useLayoutEffect(() => {
+    const { shadowRoot } = containerRef.current!;
+
+    shadowRoot!.adoptedStyleSheets = [STYLE_SHEET];
+  }, []);
+
+  $.useLayoutEffect(() => {
+    const { shadowRoot } = containerRef.current!;
+
+    shadowRoot!.replaceChildren(parseHTML(html, origin));
+  }, [html, origin]);
+
+  return $.html`
+    <div :ref=${containerRef}>
+      <template shadowrootclonable shadowrootmode="open"></template>
     </div>
   `;
 });
@@ -259,6 +262,15 @@ function copyAttribute(source: Element, dest: Element, name: string): void {
   if (source.hasAttribute(name)) {
     dest.setAttribute(name, source.getAttribute(name)!);
   }
+}
+
+function css(
+  strings: TemplateStringsArray,
+  ...values: unknown[]
+): CSSStyleSheet {
+  const sheet = new CSSStyleSheet();
+  sheet.replaceSync(String.raw(strings, ...values));
+  return sheet;
 }
 
 function embedSVG(el: Element): HTMLImageElement {
