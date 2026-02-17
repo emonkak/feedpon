@@ -582,6 +582,19 @@ export function updateStreamSettings(
   };
 }
 
+function aggregateIteratorResult(result: XPathResult): string {
+  const serializer = new XMLSerializer();
+  let node: Node | null;
+  let html = '';
+  while ((node = result.iterateNext()) !== null) {
+    html +=
+      node instanceof Element
+        ? node.outerHTML
+        : serializer.serializeToString(node);
+  }
+  return html;
+}
+
 function applyUrlFilters(items: Entry[], filters: URLFilter[]): void {
   for (const filter of filters) {
     const pattern = tryConstructRegExp(filter.pattern, filter.flags);
@@ -632,25 +645,28 @@ function extractFullContentBySiteinfos(
   for (const siteinfo of siteinfos) {
     const { url: urlPattern, nextLink, pageElement } = siteinfo.data;
 
-    // Ignore generic rules.
-    if (urlPattern.startsWith('^https?://.')) {
+    if (
+      // Ignore generic rules.
+      tryTestPattern(urlPattern, 'https://example.com') ||
+      !tryTestPattern(urlPattern, url)
+    ) {
       continue;
     }
 
-    if (!tryTestPattern(urlPattern, url)) {
-      continue;
-    }
-
-    const pageResult = tryEvaluateXPath(
+    const contentResult = tryEvaluateXPath(
       document,
       pageElement,
       document.body,
       null,
-      XPathResult.FIRST_ORDERED_NODE_TYPE,
+      XPathResult.ORDERED_NODE_ITERATOR_TYPE,
       null,
     );
+    if (contentResult === null) {
+      continue;
+    }
 
-    if (!(pageResult?.singleNodeValue instanceof Element)) {
+    const content = aggregateIteratorResult(contentResult);
+    if (content === '') {
       continue;
     }
 
@@ -662,15 +678,16 @@ function extractFullContentBySiteinfos(
       XPathResult.FIRST_ORDERED_NODE_TYPE,
       null,
     );
-    const nextUrl =
+    const href =
       nextLinkResult?.singleNodeValue instanceof Element
         ? nextLinkResult.singleNodeValue.getAttribute('href')
         : null;
+    const nextUrl = href !== null ? new URL(href, url).toString() : null;
 
     return {
       url,
-      content: pageResult.singleNodeValue.outerHTML,
-      nextUrl: nextUrl !== null ? new URL(nextUrl, url).toString() : null,
+      content,
+      nextUrl,
     };
   }
 
