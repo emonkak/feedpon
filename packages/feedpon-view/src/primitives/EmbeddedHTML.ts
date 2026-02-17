@@ -152,10 +152,6 @@ h1, h2, h3, h4, h5, h6 {
   line-height: round(1rlh * var(--scale, 1) - 0.125rlh, 0.25rlh);
   margin-block: 0 0.5rlh;
   text-wrap: balance;
-
-  :not(&) + & {
-    margin-block-start: 1rlh;
-  }
 }
 
 h1 {
