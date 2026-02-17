@@ -9,7 +9,7 @@
     "@types/chrome": "^0.1.36",
     "barebind": "catalog:",
     "feedpon-store": "workspace:^",
-    "motion": "^12.33.0",
+    "motion": "^12.34.1",
     "store": "workspace:^"
   }
 }
