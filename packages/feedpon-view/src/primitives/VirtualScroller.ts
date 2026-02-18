@@ -124,7 +124,7 @@ export const VirtualScroller: VirtualScroller = createComponent(
     };
 
     const intersectionObserver = $.use(
-      NewIntersectionObserver(
+      IntersectionObserver(
         (entries) => {
           for (const entry of entries) {
             if (!entry.isIntersecting || !entry.target.isConnected) {
@@ -152,7 +152,7 @@ export const VirtualScroller: VirtualScroller = createComponent(
     );
 
     const resizeObserver = $.use(
-      NewResizeObsever((entries) => {
+      ResizeObserver((entries) => {
         for (const entry of entries) {
           if (!entry.target.isConnected) {
             continue;
@@ -295,25 +295,25 @@ export const VirtualScroller: VirtualScroller = createComponent(
   },
 );
 
-function NewIntersectionObserver(
+function IntersectionObserver(
   callback: IntersectionObserverCallback,
   options?: IntersectionObserverInit,
 ): HookFunction<IntersectionObserver> {
   return ($) => {
-    const eventCallback = $.use(EffectEvent(callback));
+    const onEntries = $.use(EffectEvent(callback));
     return $.useMemo(
-      () => new IntersectionObserver(eventCallback, options),
+      () => new window.IntersectionObserver(onEntries, options),
       [],
     );
   };
 }
 
-function NewResizeObsever(
+function ResizeObserver(
   callback: ResizeObserverCallback,
 ): HookFunction<ResizeObserver> {
   return ($) => {
-    const eventCallback = $.use(EffectEvent(callback));
-    return $.useMemo(() => new ResizeObserver(eventCallback), []);
+    const onEntries = $.use(EffectEvent(callback));
+    return $.useMemo(() => new window.ResizeObserver(onEntries), []);
   };
 }
 
