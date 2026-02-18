@@ -10,54 +10,61 @@ import {
 } from 'barebind';
 import { EffectEvent, ImperativeHandle } from 'barebind/addons/hooks';
 
-export interface VirtualScroller extends Component<VirtualScrollerProps<any>> {
-  <T>(props: VirtualScrollerProps<T>): Bindable<VirtualScrollerProps<T>>;
+export interface VirtualScroller
+  extends Component<VirtualScrollerProps<any, any, any>> {
+  <TSource, TKey, TElement>(
+    props: VirtualScrollerProps<TSource, TKey, TElement>,
+  ): Bindable<VirtualScrollerProps<TSource, TKey, TElement>>;
 }
 
-export interface VirtualScrollerProps<T> {
+export interface VirtualScrollerProps<TSource, TKey, TElement> {
   assumedItemHeight: number;
   delay?: number;
-  getItemKey?: (item: T, index: number) => unknown;
-  items: T[];
+  elementSelector: (
+    item: TSource,
+    index: number,
+    context: RenderContext,
+  ) => TElement;
+  keySelector?: (item: TSource, index: number) => TKey;
   offscreenRatio?: number;
   onVisibleRangeChange?: (range: VisibleRange) => void;
-  ref?: Ref<VirtualScrollerHandle>;
-  renderItem: (item: T, index: number, context: RenderContext) => unknown;
+  ref?: Ref<VirtualScrollerHandle<TKey>>;
   scrollMargin?: string;
+  source: TSource[];
 }
 
-export interface VirtualScrollerHandle {
-  getMeasuredItems(): readonly MeasuredItem[];
+export interface VirtualScrollerHandle<TKey> {
+  getMeasuredItems(): readonly MeasuredItem<TKey>[];
   getVisibleElement(index: number): Element | undefined;
   getVisibleElements(): Element[];
   getVisibleRange(): VisibleRange;
-  scrollToIndex(index: number): void;
+  scrollToIndex(index: number): Promise<void>;
 }
 
-export interface MeasuredItem {
-  key: unknown;
-  height: number;
+export interface MeasuredItem<TKey> {
+  readonly key: TKey;
+  readonly height: number;
 }
 
 // A (half-open) range bounded inclusively below and exclusively above.
 export interface VisibleRange {
-  start: number;
-  end: number;
+  readonly start: number;
+  readonly end: number;
 }
 
 export const VirtualScroller: VirtualScroller = createComponent(
-  function VirtualScroller<T>(
+  function VirtualScroller<TSource, TKey, TElement>(
     {
       assumedItemHeight,
       delay,
-      getItemKey = (_item, index) => index,
-      onVisibleRangeChange,
+      elementSelector,
+      keySelector = (_item, index) => index as TKey,
       offscreenRatio = 1,
+      onVisibleRangeChange,
       ref,
-      renderItem,
       scrollMargin,
-      items,
-    }: VirtualScrollerProps<T>,
+      source,
+    }: VirtualScrollerProps<TSource, TKey, TElement>,
     $: RenderContext,
   ): unknown {
     const [visibleRange, setVisibleRange] = $.useState<VisibleRange>({
@@ -66,39 +73,36 @@ export const VirtualScroller: VirtualScroller = createComponent(
     });
     const { measuredItems, visibleElements } = $.useMemo(
       () => ({
-        measuredItems: [] as MeasuredItem[],
+        measuredItems: [] as MeasuredItem<TKey>[],
         visibleElements: new Map<number, Element>(),
       }),
       [],
     );
 
-    const getItemHeight = (item: T, index: number): number => {
+    const getMeasuredHeight = (item: TSource, index: number): number => {
       const measuredItem = measuredItems[index];
       return measuredItem !== undefined &&
-        Object.is(measuredItem.key, getItemKey(item, index))
+        Object.is(measuredItem.key, keySelector(item, index))
         ? measuredItem.height
         : assumedItemHeight;
     };
 
-    const computeRangeHeight = (
-      start: number,
-      end: number = items.length,
-    ): number => {
+    const computeRangeHeight = (start: number, end: number): number => {
       let height = 0;
       for (let i = start; i < end; i++) {
-        height += getItemHeight(items[i]!, i);
+        height += getMeasuredHeight(source[i]!, i);
       }
       return height;
     };
 
     const computeVisibleRange = (top: number, bottom: number): VisibleRange => {
-      const size = items.length;
+      const size = source.length;
       let start = 0;
       let y = 0;
 
       // Skip head items.
       for (let i = start; i < size; i++) {
-        const height = getItemHeight(items[i]!, i);
+        const height = getMeasuredHeight(source[i]!, i);
         if (y + height >= top) {
           break;
         }
@@ -113,7 +117,7 @@ export const VirtualScroller: VirtualScroller = createComponent(
         if (y > bottom) {
           break;
         }
-        y += getItemHeight(items[i]!, i);
+        y += getMeasuredHeight(source[i]!, i);
         end = i + 1;
       }
 
@@ -159,10 +163,10 @@ export const VirtualScroller: VirtualScroller = createComponent(
           }
 
           const index = Number(entry.target.getAttribute('aria-posinset')!) - 1;
-          const item = items[index];
+          const item = source[index];
 
           if (item !== undefined) {
-            const key = getItemKey(item, index);
+            const key = keySelector(item, index);
             measuredItems[index] = {
               key,
               height: entry.contentRect.height,
@@ -191,7 +195,7 @@ export const VirtualScroller: VirtualScroller = createComponent(
 
     $.use(
       ImperativeHandle(ref, () => ({
-        getMeasuredItems(): readonly MeasuredItem[] {
+        getMeasuredItems(): readonly MeasuredItem<TKey>[] {
           return measuredItems;
         },
         getVisibleElement(index: number): Element | undefined {
@@ -205,33 +209,31 @@ export const VirtualScroller: VirtualScroller = createComponent(
             .map((x) => x[1]);
         },
         getVisibleRange(): VisibleRange {
-          return structuredClone(visibleRange);
+          return visibleRange;
         },
         async scrollToIndex(
           index: number,
           options?: ScrollIntoViewOptions,
         ): Promise<void> {
           if (!withinRange(visibleRange, index)) {
-            intersectionObserver.disconnect();
-
             const visibleRange = {
               start: index,
               end: index + 1,
             };
-
+            intersectionObserver.disconnect();
             await setVisibleRange(visibleRange).finished;
-
             onVisibleRangeChange?.(visibleRange);
           }
+
           visibleElements.get(index)?.scrollIntoView(options);
         },
       })),
     );
 
     $.useLayoutEffect(() => {
-      for (let i = 0, l = items.length; i < l; i++) {
+      for (let i = 0, l = source.length; i < l; i++) {
         const measuredItem = measuredItems[i];
-        const key = getItemKey(items[i]!, i);
+        const key = keySelector(source[i]!, i);
 
         if (measuredItem === undefined || !Object.is(measuredItem.key, key)) {
           measuredItems[i] = {
@@ -241,11 +243,11 @@ export const VirtualScroller: VirtualScroller = createComponent(
         }
       }
 
-      measuredItems.length = items.length;
-    }, [items]);
+      measuredItems.length = source.length;
+    }, [source]);
 
     const headSpace = computeRangeHeight(0, visibleRange.start);
-    const tailSpace = computeRangeHeight(visibleRange.end);
+    const tailSpace = computeRangeHeight(visibleRange.end, source.length);
 
     const headSpacer =
       headSpace > 0
@@ -279,16 +281,16 @@ export const VirtualScroller: VirtualScroller = createComponent(
                 <li
                   :ref=${itemRef}
                   aria-posinset=${index + 1}
-                  aria-setsize=${items.length}
+                  aria-setsize=${source.length}
                   class="VirtualScroller-item"
                 >
-                  <${renderItem(item, index, $)}>
+                  <${elementSelector(item, index, $)}>
                 </li>
               `;
             },
             keySelector: (item, offset) =>
-              getItemKey(item, visibleRange.start + offset),
-            source: items.slice(visibleRange.start, visibleRange.end),
+              keySelector(item, visibleRange.start + offset),
+            source: source.slice(visibleRange.start, visibleRange.end),
           })}>
         </ul>
         <${Keyed(tailSpacer, tailSpace)}>
@@ -301,9 +303,9 @@ function IntersectionObserver(
   callback: IntersectionObserverCallback,
   options?: IntersectionObserverInit,
 ): HookFunction<IntersectionObserver> {
-  return ($) => {
-    const onEntries = $.use(EffectEvent(callback));
-    return $.useMemo(
+  return (context) => {
+    const onEntries = context.use(EffectEvent(callback));
+    return context.useMemo(
       () => new window.IntersectionObserver(onEntries, options),
       [],
     );
@@ -313,9 +315,9 @@ function IntersectionObserver(
 function ResizeObserver(
   callback: ResizeObserverCallback,
 ): HookFunction<ResizeObserver> {
-  return ($) => {
-    const onEntries = $.use(EffectEvent(callback));
-    return $.useMemo(() => new window.ResizeObserver(onEntries), []);
+  return (context) => {
+    const onEntries = context.use(EffectEvent(callback));
+    return context.useMemo(() => new window.ResizeObserver(onEntries), []);
   };
 }
 

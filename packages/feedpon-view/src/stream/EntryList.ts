@@ -20,7 +20,7 @@ export interface EntryListProps {
   scrollDuration: number;
   session: Session;
   stream: Stream | null;
-  virtualScrollerRef: RefObject<VirtualScrollerHandle | null>;
+  virtualScrollerRef: RefObject<VirtualScrollerHandle<string> | null>;
 }
 
 export const EntryList = createComponent(function EntryList(
@@ -117,11 +117,7 @@ export const EntryList = createComponent(function EntryList(
   const virtualScroller = VirtualScroller({
     assumedItemHeight: session.settings.layout === 'full' ? 800 : 100,
     delay: scrollDuration,
-    onVisibleRangeChange: throttledScrollCallback,
-    items: stream?.items ?? [],
-    ref: virtualScrollerRef,
-    scrollMargin: '2rlh 0 0',
-    renderItem: (entry: Entry, index: number) => {
+    elementSelector: (entry: Entry, index: number) => {
       return EntryView({
         entry,
         index,
@@ -135,6 +131,10 @@ export const EntryList = createComponent(function EntryList(
         onHatenaBookmarkEntryToggle,
       });
     },
+    onVisibleRangeChange: throttledScrollCallback,
+    ref: virtualScrollerRef,
+    scrollMargin: '2rlh 0 0',
+    source: stream?.items ?? [],
   });
 
   return $.html`

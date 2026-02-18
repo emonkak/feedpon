@@ -60,7 +60,9 @@ export const StreamPage = createComponent(function StreamPage(
     updateSubscription,
   } = $.use(BindActionCreators(AppStore, subscriptionActions));
 
-  const virtualScrollerRef = $.useRef<VirtualScrollerHandle | null>(null);
+  const virtualScrollerRef = $.useRef<VirtualScrollerHandle<string> | null>(
+    null,
+  );
 
   $.useLayoutEffect(() => {
     if (session === null || session.id !== streamId) {
