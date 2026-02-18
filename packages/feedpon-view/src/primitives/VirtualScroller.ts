@@ -20,7 +20,7 @@ export interface VirtualScrollerProps<T> {
   getItemKey?: (item: T, index: number) => unknown;
   items: T[];
   offscreenRatio?: number;
-  onVisibleRangeChange?: () => void;
+  onVisibleRangeChange?: (range: VisibleRange) => void;
   ref?: Ref<VirtualScrollerHandle>;
   renderItem: (item: T, index: number, context: RenderContext) => unknown;
   scrollMargin?: string;
@@ -140,7 +140,7 @@ export const VirtualScroller: VirtualScroller = createComponent(
             setVisibleRange(visibleRange, {
               areStatesEqual: areRangesEqual,
             }).finished.then(() => {
-              onVisibleRangeChange?.();
+              onVisibleRangeChange?.(visibleRange);
             });
           }
         },
@@ -214,12 +214,14 @@ export const VirtualScroller: VirtualScroller = createComponent(
           if (!withinRange(visibleRange, index)) {
             intersectionObserver.disconnect();
 
-            await setVisibleRange({
+            const visibleRange = {
               start: index,
               end: index + 1,
-            }).finished;
+            };
 
-            onVisibleRangeChange?.();
+            await setVisibleRange(visibleRange).finished;
+
+            onVisibleRangeChange?.(visibleRange);
           }
           visibleElements.get(index)?.scrollIntoView(options);
         },
