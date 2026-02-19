@@ -1,6 +1,10 @@
 import { BrowserBackend, Root, Runtime } from 'barebind';
-import { ConsoleReporter, PerformanceProfiler } from 'barebind/addons/profiler';
+import { DevToolsProfiler } from 'barebind/addons/dev-tools-profiler';
 import { Reactive } from 'barebind/addons/reactive';
+import {
+  ConsoleReporter,
+  RuntimeProfiler,
+} from 'barebind/addons/runtime-profiler';
 import { type AppContext, AppState, AppStore } from 'feedpon-store';
 import { FeedlyClient } from 'feedpon-store/apis/feedly';
 import { HatenaBookmarkClient } from 'feedpon-store/apis/hatenaBookmark';
@@ -44,7 +48,8 @@ const runtime = new Runtime(new BrowserBackend());
 const root = Root.create(App({ prepareStore }), document.body, runtime);
 
 DEBUG: {
-  runtime.addObserver(new PerformanceProfiler(new ConsoleReporter()));
+  runtime.addObserver(new RuntimeProfiler(new ConsoleReporter()));
+  runtime.addObserver(new DevToolsProfiler());
 }
 
 root.mount();

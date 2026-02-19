@@ -6,3 +6,6 @@ catalog:
   barebind: github:emonkak/barebind
   up-fetch: ^2.5.1
   valibot: ^1.2.0
+
+ignoredBuiltDependencies:
+  - esbuild
