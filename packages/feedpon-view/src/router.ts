@@ -15,12 +15,12 @@ import { SettingsPage } from './settings/SettingsPage.ts';
 import { StreamSettings } from './settings/StreamSettings.ts';
 import { StreamPage } from './stream/StreamPage.ts';
 
-export interface RouterState {
+export interface RouterContext {
   navigator: HistoryNavigator;
   store: AppStore;
 }
 
-export const router = new Router<unknown, RouterState>([
+export const router = new Router<unknown, RouterContext>([
   route([''], (_captures, _url, { store }) => DashboardPage({ store })),
   route(['about'], (_captures, _url, { navigator, store }) =>
     AboutPage({ navigator, store }),
