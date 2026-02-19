@@ -12,7 +12,7 @@ export type Dispatch<TState, TContext> = <TResult>(
 
 export interface Middleware<TState, TContext> {
   connect?(store: Store<TState, TContext>): void;
-  handleAction<TResult>(
+  handle<TResult>(
     action: Action<TState, TContext, TResult>,
     dispatch: Dispatch<TState, TContext>,
     store: Store<TState, TContext>,
@@ -43,7 +43,7 @@ export class Store<TState, TContext> {
     let index = 0;
     const dispatch: Dispatch<TState, TContext> = (action) => {
       return this._middlewares.length > index
-        ? this._middlewares[index++]!.handleAction(action, dispatch, this)
+        ? this._middlewares[index++]!.handle(action, dispatch, this)
         : action(this._state$, this._context, dispatch);
     };
     return dispatch(action);

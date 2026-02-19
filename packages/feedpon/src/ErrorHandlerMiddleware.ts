@@ -5,7 +5,7 @@ import type { Dispatch, Middleware, Store } from 'store';
 export class ErrorHandlerMiddleware
   implements Middleware<AppState, AppContext>
 {
-  handleAction<TResult>(
+  handle<TResult>(
     action: AppAction<TResult>,
     dispatch: Dispatch<AppState, AppContext>,
     _store: Store<AppState, AppContext>,

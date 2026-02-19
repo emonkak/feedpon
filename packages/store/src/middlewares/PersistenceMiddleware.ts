@@ -41,7 +41,7 @@ export class PersistentMiddleware<
     });
   }
 
-  handleAction<TResult>(
+  handle<TResult>(
     action: Action<TState, TContext, TResult>,
     dispatch: Dispatch<TState, TContext>,
     store: Store<TState, TContext>,
