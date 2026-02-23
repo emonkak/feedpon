@@ -119,8 +119,15 @@ const STYLE_SHEET = css`
 :host {
   contain: content;
   margin-block: 0 1rlh;
+  margin-trim: block-end;
   overflow-wrap: anywhere;
   word-break: break-word;
+}
+
+@supports not (margin-trim: block-end) {
+  :last-child {
+    margin-block-end: 0;
+  }
 }
 
 h1, h2, h3, h4, h5, h6 {
