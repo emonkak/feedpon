@@ -4,7 +4,7 @@ import {
   Keyed,
   type RenderContext,
 } from 'barebind';
-import { CurrentHistory } from 'barebind/addons/router';
+import { HistoryContext } from 'barebind/addons/router';
 import type { AppStore, Theme } from 'feedpon-store';
 
 import { AuthenticationPage } from './authentication/AuthenticationPage.ts';
@@ -25,7 +25,7 @@ export const Dispatcher = createComponent(function Dispatcher(
   const credential = $.use(state$.get('credential'));
   const theme = $.use(state$.get('theme'));
 
-  const { location, navigator } = $.use(CurrentHistory);
+  const { location } = $.use(HistoryContext);
 
   $.use(store);
   $.use(UserStyle(userStyle));
@@ -37,10 +37,7 @@ export const Dispatcher = createComponent(function Dispatcher(
     });
   }
 
-  const child = Keyed(
-    router.match(location.url, { navigator, store }),
-    location.url.pathname,
-  );
+  const child = Keyed(router.match(location.url), location.url.pathname);
 
   return SidebarLayout({
     child,

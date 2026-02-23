@@ -1,5 +1,5 @@
 import { createComponent, type RenderContext, Repeat } from 'barebind';
-import { type HistoryNavigator, RelativeURL } from 'barebind/addons/router';
+import { HistoryContext, RelativeURL } from 'barebind/addons/router';
 import { AppStore } from 'feedpon-store';
 import * as uiActions from 'feedpon-store/actions/ui';
 import { BindActionCreators } from 'store';
@@ -7,10 +7,7 @@ import { MainLayout } from '../layout/MainLayout.ts';
 import { Dropdown } from '../primitives/Dropdown.ts';
 import { Navbar } from '../primitives/Navbar.ts';
 
-export interface AboutPageProps {
-  navigator: HistoryNavigator;
-  store: AppStore;
-}
+export interface AboutPageProps {}
 
 const USING_LIBRARIES = [
   {
@@ -43,10 +40,11 @@ SOFTWARE.
 ];
 
 export const AboutPage = createComponent(function AboutPage(
-  { store, navigator }: AboutPageProps,
+  {}: AboutPageProps,
   $: RenderContext,
 ): unknown {
-  const { state$ } = store;
+  const { state$ } = $.use(AppStore);
+  const { navigator } = $.use(HistoryContext);
   const { toggleSidebar } = $.use(BindActionCreators(AppStore, uiActions));
   const version = $.use(state$.get('version'));
 

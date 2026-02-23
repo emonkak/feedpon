@@ -5,15 +5,13 @@ import { AppStore } from 'feedpon-store';
 import * as appearanceActions from 'feedpon-store/actions/appearance';
 import { BindActionCreators } from 'store';
 
-export interface AppearanceSettingsProps {
-  store: AppStore;
-}
+export interface AppearanceSettingsProps {}
 
 export const AppearanceSettings = createComponent(function AppearanceSettings(
-  { store }: AppearanceSettingsProps,
+  {}: AppearanceSettingsProps,
   $: RenderContext,
 ): unknown {
-  const { state$ } = store;
+  const { state$ } = $.use(AppStore);
   const currentUserStyle = $.use(state$.get('userStyle'));
   const currentTheme = $.use(state$.get('theme'));
 

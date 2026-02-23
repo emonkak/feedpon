@@ -1,5 +1,5 @@
 import { createComponent, type Ref, type RenderContext } from 'barebind';
-import { type HistoryNavigator, RelativeURL } from 'barebind/addons/router';
+import { HistoryContext, RelativeURL } from 'barebind/addons/router';
 import { AppStore, type Subscription } from 'feedpon-store';
 import * as subscriptionActions from 'feedpon-store/actions/subscription';
 import * as uiActions from 'feedpon-store/actions/ui';
@@ -19,15 +19,14 @@ import { CategoryForm } from './CategoryForm.ts';
 
 export interface CategoriesPageProps {
   label?: string;
-  navigator: HistoryNavigator;
-  store: AppStore;
 }
 
 export const CategoriesPage = createComponent(function CategoriesPage(
-  { label, navigator, store }: CategoriesPageProps,
+  { label }: CategoriesPageProps,
   $: RenderContext,
 ): unknown {
-  const { state$ } = store;
+  const { state$ } = $.use(AppStore);
+  const { navigator } = $.use(HistoryContext);
   const categories = $.use(state$.get('unsortedCategories'));
   const subscriptions = $.use(state$.get('unsortedSubscriptions'));
   const { toggleSidebar } = $.use(BindActionCreators(AppStore, uiActions));

@@ -1,5 +1,4 @@
 import { createComponent, type RenderContext } from 'barebind';
-import type { Computed } from 'barebind/addons/signal';
 import { LocalAtom, LocalComputed } from 'barebind/addons/signal';
 import type {
   EntriesOrdering,
@@ -30,14 +29,15 @@ export const SessionSettingsDropdown = createComponent(function SessionDropdown(
   const layout$ = $.use(LocalAtom(sessionSettings.layout));
   const ranked$ = $.use(LocalAtom(sessionSettings.ranked));
   const unreadOnly$ = $.use(LocalAtom(sessionSettings.unreadOnly));
-  const sessionSettings$: Computed<SessionSettings> = $.use(
+  const sessionSettings$ = $.use(
     LocalComputed(
-      (count, layout, ranked, unreadOnly) => ({
-        count,
-        layout,
-        ranked,
-        unreadOnly,
-      }),
+      (count, layout, ranked, unreadOnly) =>
+        ({
+          count,
+          layout,
+          ranked,
+          unreadOnly,
+        }) satisfies SessionSettings,
       [count$, layout$, ranked$, unreadOnly$],
     ),
   );

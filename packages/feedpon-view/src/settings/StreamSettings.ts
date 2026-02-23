@@ -6,15 +6,13 @@ import * as streamActions from 'feedpon-store/actions/stream';
 import { BindActionCreators } from 'store';
 import { openAlertDialog } from '../primitives/AlertDialog.ts';
 
-export interface StreamSettingsProps {
-  store: AppStore;
-}
+export interface StreamSettingsProps {}
 
 export const StreamSettings = createComponent(function StreamSettings(
-  { store }: StreamSettingsProps,
+  {}: StreamSettingsProps,
   $: RenderContext,
 ): unknown {
-  const { state$ } = store;
+  const { state$ } = $.use(AppStore);
   const currentDefaultSessionSettings = $.use(
     state$.get('defaultSessionSettings'),
   );

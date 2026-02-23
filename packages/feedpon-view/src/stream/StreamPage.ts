@@ -15,14 +15,13 @@ import { StreamHeader } from './StreamHeader.ts';
 
 export interface StreamPageProps {
   streamId: string;
-  store: AppStore;
 }
 
 export const StreamPage = createComponent(function StreamPage(
-  { streamId, store }: StreamPageProps,
+  { streamId }: StreamPageProps,
   $: RenderContext,
 ): unknown {
-  const { state$ } = store;
+  const { state$ } = $.use(AppStore);
   const categories = $.use(state$.get('unsortedCategories'));
   const category = $.use(state$.get('categories')).get(streamId) ?? null;
   const feed = $.use(state$.get('feed'));

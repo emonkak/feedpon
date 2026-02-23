@@ -1,3 +1,4 @@
+import type { Bindable } from 'barebind';
 import {
   decoded,
   type HistoryNavigator,
@@ -20,46 +21,29 @@ export interface RouterContext {
   store: AppStore;
 }
 
-export const router = new Router<unknown, RouterContext>([
-  route([''], (_captures, _url, { store }) => DashboardPage({ store })),
-  route(['about'], (_captures, _url, { navigator, store }) =>
-    AboutPage({ navigator, store }),
-  ),
-  route(
-    ['categories'],
-    (_captures, _url, { navigator, store }) =>
-      CategoriesPage({ navigator, store }),
-    [
-      route([decoded], ([label], _url, { navigator, store }) =>
-        CategoriesPage({ label, navigator, store }),
-      ),
-    ],
-  ),
+export const router = new Router<Bindable<unknown>>([
+  route([''], () => DashboardPage({})),
+  route(['about'], () => AboutPage({})),
+  route(['categories'], () => CategoriesPage({}), [
+    route([decoded], ([label]) => CategoriesPage({ label })),
+  ]),
   route(['kitchensink'], () => KitchensinkPage({})),
-  route(
-    ['search'],
-    (_captures, _url, { navigator, store }) => SearchPage({ navigator, store }),
-    [
-      route([decoded], ([query], _url, { navigator, store }) =>
-        SearchPage({ navigator, query, store }),
-      ),
-    ],
-  ),
+  route(['search'], () => SearchPage({}), [
+    route([decoded], ([query]) => SearchPage({ query })),
+  ]),
   route(['settings'], null, [
-    route(['appearance'], (_captures, url, { store }) =>
+    route(['appearance'], (_captures, url) =>
       SettingsPage({
         url,
-        children: AppearanceSettings({ store }),
+        children: AppearanceSettings({}),
       }),
     ),
-    route(['stream'], (_captures, url, { store }) =>
+    route(['stream'], (_captures, url) =>
       SettingsPage({
         url,
-        children: StreamSettings({ store }),
+        children: StreamSettings({}),
       }),
     ),
   ]),
-  route(['streams', decoded], ([streamId], _url, { store }) =>
-    StreamPage({ store, streamId }),
-  ),
+  route(['streams', decoded], ([streamId]) => StreamPage({ streamId })),
 ]);

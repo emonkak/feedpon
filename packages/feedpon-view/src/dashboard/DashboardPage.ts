@@ -8,15 +8,13 @@ import { MainLayout } from '../layout/MainLayout.ts';
 import { Navbar } from '../primitives/Navbar.ts';
 import { RelativeTime } from '../primitives/RelativeTime.ts';
 
-export interface DashboardPageProps {
-  store: AppStore;
-}
+export interface DashboardPageProps {}
 
 export const DashboardPage = createComponent(function DashboardPage(
-  { store }: DashboardPageProps,
+  {}: DashboardPageProps,
   $: RenderContext,
 ): unknown {
-  const { state$ } = store;
+  const { state$ } = $.use(AppStore);
   const pastSessions = $.use(state$.get('pastSessions'));
 
   const { toggleSidebar } = $.use(BindActionCreators(AppStore, uiActions));

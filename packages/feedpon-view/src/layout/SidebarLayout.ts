@@ -1,5 +1,5 @@
 import { createComponent, type RenderContext } from 'barebind';
-import { CurrentHistory } from 'barebind/addons/router';
+import { HistoryContext } from 'barebind/addons/router';
 import type { CommandId } from 'feedpon-store';
 import { AppStore } from 'feedpon-store';
 import * as uiActions from 'feedpon-store/actions/ui';
@@ -37,7 +37,7 @@ export const SidebarLayout = createComponent(function SidebarLayout(
     BindActionCreators(AppStore, uiActions),
   );
 
-  const { location, navigator } = $.use(CurrentHistory);
+  const { location, navigator } = $.use(HistoryContext);
 
   const sidebarWidthRef = $.useRef(0);
 

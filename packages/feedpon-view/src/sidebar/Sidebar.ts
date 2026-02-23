@@ -1,5 +1,5 @@
 import { createComponent, type RenderContext } from 'barebind';
-import { CurrentHistory, RelativeURL } from 'barebind/addons/router';
+import { HistoryContext, RelativeURL } from 'barebind/addons/router';
 import { AppStore, getFeedUrl, type Subscription } from 'feedpon-store';
 import * as authActions from 'feedpon-store/actions/auth';
 import * as profileActions from 'feedpon-store/actions/profile';
@@ -19,7 +19,7 @@ export const Sidebar = createComponent(function Sidebar(
   $: RenderContext,
 ): unknown {
   const { state$ } = $.use(AppStore);
-  const { location, navigator } = $.use(CurrentHistory);
+  const { location, navigator } = $.use(HistoryContext);
 
   const allCategory = $.use(state$.get('allCategory'));
   const pinTag = $.use(state$.get('pinTag'));

@@ -1,5 +1,4 @@
 import { createComponent, type RenderContext, Repeat } from 'barebind';
-import type { HistoryNavigator } from 'barebind/addons/router';
 import { LocalAtom } from 'barebind/addons/signal';
 import { AppStore } from 'feedpon-store';
 import * as searchActions from 'feedpon-store/actions/search';
@@ -12,16 +11,14 @@ import { Navbar } from '../primitives/Navbar.ts';
 import { SearchResultView } from './SearchResultView.ts';
 
 export interface SearchPageProps {
-  navigator: HistoryNavigator;
-  store: AppStore;
   query?: string;
 }
 
 export const SearchPage = createComponent(function SearchPage(
-  { store, query }: SearchPageProps,
+  { query }: SearchPageProps,
   $: RenderContext,
 ): unknown {
-  const { state$ } = store;
+  const { state$ } = $.use(AppStore);
   const categories = $.use(state$.get('unsortedCategories'));
   const searchQuery = $.use(state$.get('searchQuery'));
   const searchResults = $.use(state$.get('searchResults'));
