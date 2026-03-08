@@ -1,4 +1,4 @@
-import type { Reactive } from 'barebind/addons/reactive';
+import type { Reactive } from 'barebind/addons/signal';
 import { ImmutableMap } from '../ImmutableMap.ts';
 import type { Action, Dispatch, Middleware, Store } from '../Store.ts';
 

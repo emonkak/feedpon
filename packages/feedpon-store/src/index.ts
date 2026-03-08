@@ -1,5 +1,5 @@
 import { $hook, type HookObject, type RenderContext } from 'barebind';
-import type { Reactive } from 'barebind/addons/reactive';
+import type { Reactive } from 'barebind/addons/signal';
 import { type Action, ImmutableMap, type Mutex, Store } from 'store';
 import type {
   PatchRepository,
