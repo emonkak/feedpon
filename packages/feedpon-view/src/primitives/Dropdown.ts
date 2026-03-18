@@ -20,29 +20,26 @@ export const Dropdown = createComponent(function Dropdown(
 ): unknown {
   const [open, setOpen] = $.useState(false);
 
-  const closeDropdown = $.useCallback(() => {
+  const closeDropdown = () => {
     setOpen(false);
     onMenuToggle?.(false);
-  }, []);
+  };
 
-  const toggleDropdown = $.useCallback(() => {
-    setOpen((open) => {
-      const newOpen = !open;
-      onMenuToggle?.(newOpen);
-      return newOpen;
-    });
-  }, []);
+  const toggleDropdown = () => {
+    setOpen((open) => !open);
+    onMenuToggle?.(!open);
+  };
 
-  const handleItemAction = $.useCallback((event: Event) => {
+  const handleItemAction = (event: Event) => {
     if (!event.defaultPrevented) {
       closeDropdown();
     }
-  }, []);
+  };
 
-  const handleMenuToggle = $.useCallback((open: boolean) => {
+  const handleMenuToggle = (open: boolean) => {
     setOpen(open);
     onMenuToggle?.(open);
-  }, []);
+  };
 
   const triggerId = $.useId();
 
