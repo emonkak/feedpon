@@ -1,4 +1,4 @@
-import type { HistoryNavigator } from 'barebind/addons/router/history';
+import type { NavigationAdapter } from 'barebind/addons/router';
 import type { AppAction } from 'feedpon-store';
 import { type CommandHandler, getEntryUrl } from 'feedpon-store';
 import {
@@ -20,10 +20,10 @@ import {
 import { cubicBezier } from 'motion';
 
 export class AppCommandHandler implements CommandHandler {
-  private readonly _historyNavigator: HistoryNavigator;
+  private readonly _navigation: NavigationAdapter;
 
-  constructor(historyNavigator: HistoryNavigator) {
-    this._historyNavigator = historyNavigator;
+  constructor(historyNavigator: NavigationAdapter) {
+    this._navigation = historyNavigator;
   }
 
   expandEntry(): AppAction<void> {
@@ -191,7 +191,7 @@ export class AppCommandHandler implements CommandHandler {
         subscriptionsTree.subscriptionGroups[nextIndex]?.category;
 
       if (nextCategory !== undefined) {
-        this._historyNavigator.navigate(
+        this._navigation.navigate(
           '/streams/' + encodeURIComponent(nextCategory.id),
         );
       }
@@ -256,7 +256,7 @@ export class AppCommandHandler implements CommandHandler {
       const nextSubscription = visibleSubscriptions[nextIndex];
 
       if (nextSubscription !== undefined) {
-        this._historyNavigator.navigate(
+        this._navigation.navigate(
           '/streams/' + encodeURIComponent(nextSubscription.id),
         );
       }
@@ -283,7 +283,7 @@ export class AppCommandHandler implements CommandHandler {
         subscriptionsTree.subscriptionGroups[previousIndex]?.category;
 
       if (previousCategory !== undefined) {
-        this._historyNavigator.navigate(
+        this._navigation.navigate(
           '/streams/' + encodeURIComponent(previousCategory.id),
         );
       }
@@ -338,7 +338,7 @@ export class AppCommandHandler implements CommandHandler {
       const previousSubscription = visibleSubscriptions[previousIndex];
 
       if (previousSubscription !== undefined) {
-        this._historyNavigator.navigate(
+        this._navigation.navigate(
           '/streams/' + encodeURIComponent(previousSubscription.id),
         );
       }

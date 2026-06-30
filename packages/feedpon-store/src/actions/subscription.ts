@@ -11,7 +11,7 @@ import { acquireCredential } from './auth.ts';
 
 export function createCategory(label: string): AppAction<Promise<void>> {
   return (state$, _context, dispatch) => {
-    return state$.mutate(async (state) => {
+    return state$.scope(async (state) => {
       const credential = await dispatch(acquireCredential());
       const category = toCategory(credential.id, label);
 
@@ -25,7 +25,7 @@ export function createSubscription(
   labels: string[],
 ): AppAction<Promise<void>> {
   return (state$, { feedlyClient }, dispatch) => {
-    return state$.mutate(async (state) => {
+    return state$.scope(async (state) => {
       const credential = await dispatch(acquireCredential());
       const categories = labels.map((label) =>
         toCategory(credential.id, label),
@@ -69,7 +69,7 @@ export function deleteCategory(categoryId: string): AppAction<Promise<void>> {
   return (state$, context, dispatch) => {
     const { feedlyClient } = context;
 
-    return state$.mutate(async (state) => {
+    return state$.scope(async (state) => {
       const credential = await dispatch(acquireCredential());
       const latestCategories = state.categories;
       const latestSubscriptions = state.subscriptions;
@@ -112,7 +112,7 @@ export function deleteSubscription(
   return (state$, context, dispatch) => {
     const { feedlyClient } = context;
 
-    return state$.mutate(async (state) => {
+    return state$.scope(async (state) => {
       const credential = await dispatch(acquireCredential());
       const latestSubscriptions = state.subscriptions;
       const latestUnreadCounts = state.unreadCounts;
@@ -145,7 +145,7 @@ export function exportOpml(): AppAction<Promise<URL>> {
 
 export function importOpml(opmlString: string): AppAction<Promise<void>> {
   return (state$, { feedlyClient }, dispatch) => {
-    return state$.mutate(async (state) => {
+    return state$.scope(async (state) => {
       state.opmlImporting = true;
 
       try {
@@ -160,7 +160,7 @@ export function importOpml(opmlString: string): AppAction<Promise<void>> {
 
 export function reloadSubscriptions(): AppAction<Promise<void>> {
   return (state$, { feedlyClient }, dispatch) => {
-    return state$.mutate(async (state) => {
+    return state$.scope(async (state) => {
       state.subscriptionsLoading = true;
 
       try {
@@ -204,7 +204,7 @@ export function updateCategory(
   newLabel: string,
 ): AppAction<Promise<void>> {
   return (state$, { feedlyClient }, dispatch) => {
-    return state$.mutate(async (state) => {
+    return state$.scope(async (state) => {
       const credential = await dispatch(acquireCredential());
       const latestsCategories = state.categories;
       const latestSubscriptions = state.subscriptions;
@@ -249,7 +249,7 @@ export function updateSubscription(
   newLabels: string[],
 ): AppAction<Promise<void>> {
   return (state$, { feedlyClient }, dispatch) => {
-    return state$.mutate(async (state) => {
+    return state$.scope(async (state) => {
       const credential = await dispatch(acquireCredential());
       const previousSubscriptions = state.subscriptions;
       const newCategories = newLabels.map((label) =>
@@ -283,7 +283,7 @@ export function updateSubscriptionsSettings(
   subscriptionsSettings: SubscriptionsSettings,
 ): AppAction<void> {
   return (state$) => {
-    state$.mutate((state) => {
+    state$.scope((state) => {
       state.subscriptionsSettings = subscriptionsSettings;
     });
   };

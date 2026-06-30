@@ -2,7 +2,7 @@ import type { AppAction, NotificationType } from '../index.ts';
 
 export function dismissNotification(id: string): AppAction<void> {
   return (state$) => {
-    state$.mutate((state) => {
+    state$.scope((state) => {
       state.notifications = state.notifications.filter(
         (notification) => notification.id !== id,
       );
@@ -12,7 +12,7 @@ export function dismissNotification(id: string): AppAction<void> {
 
 export function dismissOsd(): AppAction<void> {
   return (state$) => {
-    state$.mutate((state) => {
+    state$.scope((state) => {
       state.osd = null;
     });
   };
@@ -24,7 +24,7 @@ export function sendNotification(
   timeout?: number,
 ): AppAction<void> {
   return (state$) => {
-    state$.mutate((state) => {
+    state$.scope((state) => {
       state.notifications = state.notifications.concat({
         id: crypto.randomUUID(),
         type,
@@ -40,7 +40,7 @@ export function showOsd(
   timeout: number = 1000,
 ): AppAction<void> {
   return (state$) => {
-    state$.mutate((state) => {
+    state$.scope((state) => {
       state.osd = { message, timeout };
     });
   };
@@ -48,7 +48,7 @@ export function showOsd(
 
 export function toggleKeyboardShortcuts(opened?: boolean): AppAction<void> {
   return (_state$, { state$ }) => {
-    state$.mutate((state) => {
+    state$.scope((state) => {
       state.keyboardShortcutsOpened = opened ?? !state.keyboardShortcutsOpened;
     });
   };
@@ -56,7 +56,7 @@ export function toggleKeyboardShortcuts(opened?: boolean): AppAction<void> {
 
 export function toggleSidebar(opened?: boolean): AppAction<void> {
   return (state$) => {
-    state$.mutate((state) => {
+    state$.scope((state) => {
       state.sidebarOpened = opened ?? !state.sidebarOpened;
     });
   };

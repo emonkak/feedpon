@@ -1,78 +1,69 @@
-.popup {
-  position: fixed;
-  z-index: 2000;
-  animation: popup-fade-out 0.2s ease-out;
+.Popup {
+  opacity: 0;
+  transition:
+    display 0.2s ease-in-out allow-discrete,
+    overlay 0.2s ease-in-out allow-discrete,
+    opacity 0.2s ease-in-out;
 }
 
-.popup[open] {
-  animation: popup-fade-in 0.2s ease-out;
+.Popup::backdrop {
+  background: none;
 }
 
-.popup.is-pull-up {
+.Popup[open] {
+  opacity: 1;
+
+  @starting-style {
+    opacity: 0;
+  }
+}
+
+.Popup.is-pull-up,
+.Popup.is-pull-down {
+  left: 50%;
+}
+
+.Popup.is-pull-up {
   padding-bottom: 16px;
 }
 
-.popup.is-pull-down {
+.Popup.is-pull-down {
   padding-top: 16px;
 }
 
-.popup.is-pull-left {
+.Popup.is-pull-left {
   padding-right: 16px;
 }
 
-.popup.is-pull-right {
+.Popup.is-pull-right {
   padding-left: 16px;
 }
 
-.popup.is-pull-up,
-.popup.is-pull-down {
+.Popup.is-pull-up,
+.Popup.is-pull-down {
   transform: translateX(-50%);
 }
 
-.popup.is-pull-left,
-.popup.is-pull-right {
+.Popup.is-pull-left,
+.Popup.is-pull-right {
   transform: translateY(-50%);
 }
 
-.popup > .popover {
+.Popup > .popover {
   display: flex;
   align-items: stretch;
   margin: 0;
 }
 
-.popup > .popover > .popover-content {
+.Popup > .popover > .popover-content {
   overflow: auto;
   box-sizing: border-box;
 }
 
-.popup > .popover {
+.Popup > .popover {
   box-shadow: 0 1px 2px var(--shadow-color);
 }
 
-.popup > .popover > .popover-arrow {
+.Popup > .popover > .popover-arrow {
   box-shadow: -1px 1px 2px var(--shadow-color);
-}
-
-@keyframes popup-fade-in {
-  0% {
-    opacity: 0;
-    display: none;
-  }
-
-  100% {
-    opacity: 1;
-    display: block;
-  }
-}
-
-@keyframes popup-fade-out {
-  0% {
-    opacity: 1;
-    display: block;
-  }
-
-  100% {
-    opacity: 0;
-    display: none;
-  }
 }

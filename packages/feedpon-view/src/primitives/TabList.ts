@@ -1,9 +1,4 @@
-import {
-  createComponent,
-  type RenderContext,
-  Repeat,
-  shallowEqual,
-} from 'barebind';
+import { createComponent, shallowEqual, html } from 'barebind';
 
 export interface TabListProps {
   items: TabItem[];
@@ -18,35 +13,23 @@ export interface TabItem {
   selected: boolean;
 }
 
-export const TabList = createComponent(function TabList(
-  { items, onTabSelect }: TabListProps,
-  $: RenderContext,
-): unknown {
-  const tabs = Repeat({
-    elementSelector: (item) => TabItem({ item, onTabSelect }),
-    keySelector: (item) => item.key,
-    source: items,
-  });
-
-  return $.html`
+export const TabList = createComponent<TabListProps>(function TabList({
+  items,
+  onTabSelect,
+}) {
+  return html`
     <div class="TabList" role="tablist">
-      <${tabs}>
+      ${items.map((item) => TabItem({ item, onTabSelect }).withKey(item.key))}
     </div>
   `;
 });
 
-export const TabItem = createComponent(
-  function TabItem(
-    {
-      item,
-      onTabSelect,
-    }: {
-      item: TabItem;
-      onTabSelect: ((event: Event, key: string) => void) | undefined;
-    },
-    $: RenderContext,
-  ): unknown {
-    const handleTabSelect = $.useCallback(
+export const TabItem = createComponent<{
+  item: TabItem;
+  onTabSelect: ((event: Event, key: string) => void) | undefined;
+}>(
+  function TabItem({ item, onTabSelect }) {
+    const handleTabSelect = this.useCallback(
       (event: Event) => {
         item.onSelect?.(event);
         onTabSelect?.(event, item.key);
@@ -55,9 +38,9 @@ export const TabItem = createComponent(
     );
 
     if (item.href !== undefined) {
-      return $.html`
+      return html`
         <a
-          :class=${{
+          class=${{
             Tab: true,
             'is-selected': item.selected,
           }}
@@ -68,12 +51,12 @@ export const TabItem = createComponent(
           @click=${handleTabSelect}
         >
           <${item.children}>
-        </button>
+        </a>
       `;
     } else {
-      return $.html`
+      return html`
         <button
-          :class=${{
+          class=${{
             Tab: true,
             'is-selected': item.selected,
           }}

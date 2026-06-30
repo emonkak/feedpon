@@ -98,14 +98,14 @@ export function restoreState<
   };
 }
 
-function applyPatch(state$: Reactive<unknown>, patch: Patch): void {
+function applyPatch<T>(state$: Reactive<T>, patch: Patch): void {
   const { path, type, value } = patch;
 
-  let target$: Reactive<unknown> | null = state$;
+  let target$: Reactive<unknown> | undefined = state$ as Reactive<unknown>;
 
   for (let i = 0, l = path.length; i < l; i++) {
     target$ = target$.get(path[i]!);
-    if (target$ === null) {
+    if (target$ === undefined) {
       return;
     }
   }

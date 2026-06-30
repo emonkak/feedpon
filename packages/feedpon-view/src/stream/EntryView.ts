@@ -1,4 +1,4 @@
-import { createComponent, type RenderContext } from 'barebind';
+import { createComponent, html } from 'barebind';
 import {
   type Entry,
   getEntryContent,
@@ -38,20 +38,17 @@ interface CompactEntryViewProps {
   entry: Entry;
 }
 
-export const EntryView = createComponent(function EntryView(
-  {
-    entry,
-    index,
-    isSelected,
-    isExpanded,
-    onEntryExpand,
-    onFullContentsFetch,
-    onFullContentsToggle,
-    onHatenaBookmarkEntryFetch,
-    onHatenaBookmarkEntryToggle,
-  }: EntryViewProps,
-  $: RenderContext,
-): unknown {
+export const EntryView = createComponent<EntryViewProps>(function EntryView({
+  entry,
+  index,
+  isSelected,
+  isExpanded,
+  onEntryExpand,
+  onFullContentsFetch,
+  onFullContentsToggle,
+  onHatenaBookmarkEntryFetch,
+  onHatenaBookmarkEntryToggle,
+}) {
   const handleEntryExpand = (event: Event) => {
     const target = event.target as HTMLElement;
     if (isExpanded || target.closest('a, button') !== null) {
@@ -62,9 +59,9 @@ export const EntryView = createComponent(function EntryView(
     onEntryExpand(index);
   };
 
-  return $.html`
+  return html`
     <article
-      :class=${{
+      class=${{
         entry: true,
         'is-selected': isSelected,
         'is-expanded': isExpanded,
@@ -89,166 +86,164 @@ export const EntryView = createComponent(function EntryView(
   `;
 });
 
-const FullEntryView = createComponent(function FullEntryView(
-  {
+const FullEntryView = createComponent<FullEntryViewProps>(
+  function FullEntryView({
     entry,
     onFullContentsFetch,
     onFullContentsToggle,
     onHatenaBookmarkEntryFetch,
     onHatenaBookmarkEntryToggle,
-  }: FullEntryViewProps,
-  $: RenderContext,
-): unknown {
-  $.useEffect(() => {
-    if (
-      entry.hatenaBookmarkEntry === undefined &&
-      entry.hatenaBookmarkEntryShown
-    ) {
-      onHatenaBookmarkEntryFetch(entry.id);
-    }
-  }, [entry.hatenaBookmarkEntry, entry.hatenaBookmarkEntryShown]);
+  }) {
+    this.useEffect(() => {
+      if (
+        entry.hatenaBookmarkEntry === undefined &&
+        entry.hatenaBookmarkEntryShown
+      ) {
+        onHatenaBookmarkEntryFetch(entry.id);
+      }
+    }, [entry.hatenaBookmarkEntry, entry.hatenaBookmarkEntryShown]);
 
-  $.useEffect(() => {
-    if (entry.fullContents === undefined && entry.fullContentsShown) {
+    this.useEffect(() => {
+      if (entry.fullContents === undefined && entry.fullContentsShown) {
+        onFullContentsFetch(entry.id);
+      }
+    }, [entry.fullContents, entry.fullContentsShown]);
+
+    const handleFullContentsFetch = () => {
       onFullContentsFetch(entry.id);
-    }
-  }, [entry.fullContents, entry.fullContentsShown]);
+    };
 
-  const handleFullContentsFetch = () => {
-    onFullContentsFetch(entry.id);
-  };
+    const content =
+      entry.fullContents !== undefined && entry.fullContentsShown
+        ? FullContents({
+            isLoading: entry.fullContentsLoading ?? false,
+            fullContents: entry.fullContents,
+            onFullContentsFetch: handleFullContentsFetch,
+          })
+        : EmbeddedHTML({
+            html: getEntryContent(entry),
+            origin: getEntryUrl(entry),
+          });
 
-  const content =
-    entry.fullContents !== undefined && entry.fullContentsShown
-      ? FullContents({
-          isLoading: entry.fullContentsLoading ?? false,
-          fullContents: entry.fullContents,
-          onFullContentsFetch: handleFullContentsFetch,
-        })
-      : EmbeddedHTML({
-          html: getEntryContent(entry),
-          origin: getEntryUrl(entry),
-        });
-
-  return $.html`
-    <div class="container">
-      <header class="entry-header">
-        <${EntryNav({
-          isFullContentsLoading:
-            (entry.fullContentsShown && entry.fullContents === undefined) ||
-            (entry.fullContentsLoading ?? false),
-          isFullContentsShown: entry.fullContentsShown ?? false,
-          onFullContentsToggle,
-          entry: entry,
-        })}>
-        <h2 class="entry-title">
-          <a
-            class="link-soft"
-            target="_blank"
-            href=${getEntryUrl(entry)}
-            rel="noreferrer"
-          >
-            ${entry.title || 'No Title'}
-          </a>
-        </h2>
-        <div class="entry-metadata">
-          <ul class="list-inline list-inline-dotted">
-            <${renderBookmarks(entry, $)}>
-            <${renderOrign(entry, $)}>
-            <${renderAuthor(entry, $)}>
-            <${renderUpdated(entry, $)}>
-          </ul>
-        </div>
-      </header>
-      <${content}>
-      <footer class="entry-footer">
-        <${EntryActionList({
-          isHatenaBookmarkEntryLoading:
-            entry.hatenaBookmarkEntryLoading ?? false,
-          isHatenaBookmarkEntryShown: entry.hatenaBookmarkEntryShown ?? false,
-          onHatenaBookmarkEntryToggle,
-          entry,
-        })}>
-        <${
-          entry.hatenaBookmarkEntryShown
-            ? HatenaBookmarkEntryPopover({
-                arrowOffset: -44,
-                hatenaBookmarkEntry: entry.hatenaBookmarkEntry ?? null,
-              })
-            : null
-        }>
-      </footer>
-    </div>
-  `;
-});
-
-const CompactEntryView = createComponent(function CompactEntryView(
-  { entry }: CompactEntryViewProps,
-  $: RenderContext,
-): unknown {
-  return $.html`
-    <div class="container">
-      <div class="u-flex">
-        <div class="u-flex-grow-1 u-flex-truncate">
-          <header class="entry-header">
-            <h2 class="entry-title">
-              <a
-                class="link-soft"
-                target="_blank"
-                href=${getEntryUrl(entry)}
-                rel="noreferrer"
-              >
-                ${entry.title || 'No Title'}
-              </a>
-            </h2>
-            <div class="entry-metadata">
-              <ul class="list-inline list-inline-dotted">
-                <${renderBookmarks(entry, $)}>
-                <${renderOrign(entry, $)}>
-                <${renderAuthor(entry, $)}>
-                <${renderUpdated(entry, $)}>
-              </ul>
-            </div>
-          </header>
-          <div class="entry-summary">${getEntrySummary(entry)}</div>
-        </div>
-        <div class="entry-visual">
+    return html`
+      <div class="container">
+        <header class="entry-header">
+          <${EntryNav({
+            isFullContentsLoading:
+              (entry.fullContentsShown && entry.fullContents === undefined) ||
+              (entry.fullContentsLoading ?? false),
+            isFullContentsShown: entry.fullContentsShown ?? false,
+            onFullContentsToggle,
+            entry: entry,
+          })}>
+          <h2 class="entry-title">
+            <a
+              class="link-soft"
+              target="_blank"
+              href=${getEntryUrl(entry)}
+              rel="noreferrer"
+            >
+              ${entry.title || 'No Title'}
+            </a>
+          </h2>
+          <div class="entry-metadata">
+            <ul class="list-inline list-inline-dotted">
+              <${renderBookmarks(entry)}>
+              <${renderOrign(entry)}>
+              <${renderAuthor(entry)}>
+              <${renderUpdated(entry)}>
+            </ul>
+          </div>
+        </header>
+        <${content}>
+        <footer class="entry-footer">
+          <${EntryActionList({
+            isHatenaBookmarkEntryLoading:
+              entry.hatenaBookmarkEntryLoading ?? false,
+            isHatenaBookmarkEntryShown: entry.hatenaBookmarkEntryShown ?? false,
+            onHatenaBookmarkEntryToggle,
+            entry,
+          })}>
           <${
-            entry.visual
-              ? $.html`
-                <img
-                  width=${entry.visual.width}
-                  height=${entry.visual.height}
-                  src=${entry.visual.edgeCacheUrl ?? entry.visual.url}
-                >
-              `
+            entry.hatenaBookmarkEntryShown
+              ? HatenaBookmarkEntryPopover({
+                  arrowOffset: -44,
+                  hatenaBookmarkEntry: entry.hatenaBookmarkEntry ?? null,
+                })
               : null
           }>
+        </footer>
+      </div>
+    `;
+  },
+);
+
+const CompactEntryView = createComponent<CompactEntryViewProps>(
+  function CompactEntryView({ entry }) {
+    return html`
+      <div class="container">
+        <div class="u-flex">
+          <div class="u-flex-grow-1 u-flex-truncate">
+            <header class="entry-header">
+              <h2 class="entry-title">
+                <a
+                  class="link-soft"
+                  target="_blank"
+                  href=${getEntryUrl(entry)}
+                  rel="noreferrer"
+                >
+                  ${entry.title || 'No Title'}
+                </a>
+              </h2>
+              <div class="entry-metadata">
+                <ul class="list-inline list-inline-dotted">
+                  <${renderBookmarks(entry)}>
+                  <${renderOrign(entry)}>
+                  <${renderAuthor(entry)}>
+                  <${renderUpdated(entry)}>
+                </ul>
+              </div>
+            </header>
+            <div class="entry-summary">${getEntrySummary(entry)}</div>
+          </div>
+          <div class="entry-visual">
+            <${
+              entry.visual
+                ? html`
+                  <img
+                    width=${entry.visual.width}
+                    height=${entry.visual.height}
+                    src=${entry.visual.edgeCacheUrl ?? entry.visual.url}
+                  >
+                `
+                : null
+            }>
+          </div>
         </div>
       </div>
-    </div>
-  `;
-});
+    `;
+  },
+);
 
-function renderAuthor(entry: Entry, $: RenderContext): unknown {
+function renderAuthor(entry: Entry): unknown {
   if (entry.author === undefined) {
-    return $.html``;
+    return html``;
   }
 
-  return $.html`
+  return html`
     <li class="list-inline-item">
       <span>by ${entry.author}</span>
     </li>
   `;
 }
 
-function renderBookmarks(entry: Entry, $: RenderContext): unknown {
+function renderBookmarks(entry: Entry): unknown {
   const bookmarkCount = entry.hatenaBookmarkCount ?? 0;
 
-  return $.html`
+  return html`
     <li class="list-inline-item">
       <a
-        :class=${{
+        class=${{
           'badge badge-medium link-soft': true,
           'badge-negative': bookmarkCount >= 10,
           'u-text-negative': bookmarkCount > 0,
@@ -263,13 +258,13 @@ function renderBookmarks(entry: Entry, $: RenderContext): unknown {
   `;
 }
 
-function renderOrign(entry: Entry, $: RenderContext): unknown {
+function renderOrign(entry: Entry): unknown {
   const parsedId = parseStreamId(entry.originId);
   if (parsedId.type === 'feed') {
     return null;
   }
 
-  return $.html`
+  return html`
     <li class="list-inline-item">
       <a
         class="link-strong"
@@ -281,12 +276,12 @@ function renderOrign(entry: Entry, $: RenderContext): unknown {
   `;
 }
 
-function renderUpdated(entry: Entry, $: RenderContext): unknown {
+function renderUpdated(entry: Entry): unknown {
   if (entry.updated === undefined) {
     return null;
   }
 
-  return $.html`
+  return html`
     <li class="list-inline-item">
       <${RelativeTime({ time: entry.updated })}>
     </li>

@@ -1,5 +1,5 @@
-import { createComponent, type RenderContext } from 'barebind';
-import { HashHistory, ScrollRestration } from 'barebind/addons/router';
+import { createComponent, html } from 'barebind';
+import { HashAdapter, Navigation } from 'barebind/addons/router';
 import type { AppStore } from 'feedpon-store';
 import { Dispatcher } from './Dispatcher.ts';
 
@@ -7,17 +7,13 @@ export interface AppProps {
   prepareStore: () => Promise<AppStore>;
 }
 
-export const App = createComponent(function App(
-  { prepareStore }: AppProps,
-  $: RenderContext,
-): unknown {
-  const [store, setStore] = $.useState<AppStore | null>(null);
-  const [error, setError] = $.useState<NonNullable<unknown> | null>(null);
+export const App = createComponent<AppProps>(function App({ prepareStore }) {
+  const [store, setStore] = this.useState<AppStore | null>(null);
+  const [error, setError] = this.useState<NonNullable<unknown> | null>(null);
 
-  $.use(HashHistory());
-  $.use(ScrollRestration());
+  this.use(Navigation(new HashAdapter()));
 
-  $.useEffect(() => {
+  this.useEffect(() => {
     prepareStore().then(
       (store) => {
         setStore(store);
@@ -30,10 +26,10 @@ export const App = createComponent(function App(
   }, [prepareStore]);
 
   if (store === null) {
-    return $.html`
+    return html`
       <div class="l-boot">
         <img
-          :class=${{
+          class=${{
             'u-margin-bottom-1': true,
             'animation-blinking': !error,
           }}
@@ -43,7 +39,7 @@ export const App = createComponent(function App(
         >
         <${
           error !== null
-            ? $.html`
+            ? html`
               <div class="u-text-negative u-text-center">
                 <p class="u-text-4">${error.toString()}</p>
               </div>

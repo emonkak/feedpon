@@ -1,4 +1,4 @@
-import { createComponent, Keyed, type RenderContext } from 'barebind';
+import { createComponent, html } from 'barebind';
 import type { SessionSettings } from 'feedpon-store';
 import { AppStore } from 'feedpon-store';
 import * as streamActions from 'feedpon-store/actions/stream';
@@ -17,24 +17,24 @@ export interface StreamPageProps {
   streamId: string;
 }
 
-export const StreamPage = createComponent(function StreamPage(
-  { streamId }: StreamPageProps,
-  $: RenderContext,
-): unknown {
-  const { state$ } = $.use(AppStore);
-  const categories = $.use(state$.get('unsortedCategories'));
-  const category = $.use(state$.get('categories')).get(streamId) ?? null;
-  const feed = $.use(state$.get('feed'));
-  const readCount = $.use(state$.get('readCounts')).get(streamId) ?? 0;
-  const scrollDuration = $.use(
+export const StreamPage = createComponent<StreamPageProps>(function StreamPage({
+  streamId,
+}) {
+  const { state$ } = this.use(AppStore);
+  const categories = this.use(state$.get('unsortedCategories'));
+  const category = this.use(state$.get('categories')).get(streamId) ?? null;
+  const feed = this.use(state$.get('feed'));
+  const readCount = this.use(state$.get('readCounts')).get(streamId) ?? 0;
+  const scrollDuration = this.use(
     state$.get('keyboardSettings').get('scrollDuration'),
   );
-  const session = $.use(state$.get('session'));
-  const stream = $.use(state$.get('stream'));
-  const streamLoading = $.use(state$.get('streamLoading'));
-  const streamUpdating = $.use(state$.get('streamUpdating'));
-  const subscription = $.use(state$.get('subscriptions')).get(streamId) ?? null;
-  const unreadCount = $.use(state$.get('unreadCounts')).get(streamId) ?? 0;
+  const session = this.use(state$.get('session'));
+  const stream = this.use(state$.get('stream'));
+  const streamLoading = this.use(state$.get('streamLoading'));
+  const streamUpdating = this.use(state$.get('streamUpdating'));
+  const subscription =
+    this.use(state$.get('subscriptions')).get(streamId) ?? null;
+  const unreadCount = this.use(state$.get('unreadCounts')).get(streamId) ?? 0;
 
   const {
     expandEntry,
@@ -50,20 +50,20 @@ export const StreamPage = createComponent(function StreamPage(
     toggleFullContents,
     toggleHatenaBookmarkEntry,
     updateSessionSettings,
-  } = $.use(BindActionCreators(AppStore, streamActions));
-  const { toggleSidebar } = $.use(BindActionCreators(AppStore, uiActions));
+  } = this.use(BindActionCreators(AppStore, streamActions));
+  const { toggleSidebar } = this.use(BindActionCreators(AppStore, uiActions));
   const {
     createCategory,
     createSubscription,
     deleteSubscription,
     updateSubscription,
-  } = $.use(BindActionCreators(AppStore, subscriptionActions));
+  } = this.use(BindActionCreators(AppStore, subscriptionActions));
 
-  const virtualScrollerRef = $.useRef<VirtualScrollerHandle<string> | null>(
+  const virtualScrollerRef = this.useRef<VirtualScrollerHandle<string> | null>(
     null,
   );
 
-  $.useLayoutEffect(() => {
+  this.useEffect(() => {
     if (session === null || session.id !== streamId) {
       startSession(streamId);
     } else {
@@ -79,7 +79,7 @@ export const StreamPage = createComponent(function StreamPage(
     }
   }, [session?.id, streamId]);
 
-  $.useEffect(() => {
+  this.useEffect(() => {
     return () => {
       quitSession();
     };
@@ -159,25 +159,22 @@ export const StreamPage = createComponent(function StreamPage(
         : null;
   const entryList =
     session !== null
-      ? Keyed(
-          EntryList({
-            isStreamLoading: streamLoading,
-            onEntryExpand: handleEntryExpand,
-            onEntryFocus: focusEntry,
-            onFullContentsFetch: fetchFullContents,
-            onFullContentsToggle: toggleFullContents,
-            onHatenaBookmarkEntryFetch: fetchHatenaBookmarkEntry,
-            onHatenaBookmarkEntryToggle: toggleHatenaBookmarkEntry,
-            scrollDuration,
-            session,
-            stream,
-            virtualScrollerRef,
-          }),
-          session.settings.layout,
-        )
+      ? EntryList({
+          isStreamLoading: streamLoading,
+          onEntryExpand: handleEntryExpand,
+          onEntryFocus: focusEntry,
+          onFullContentsFetch: fetchFullContents,
+          onFullContentsToggle: toggleFullContents,
+          onHatenaBookmarkEntryFetch: fetchHatenaBookmarkEntry,
+          onHatenaBookmarkEntryToggle: toggleHatenaBookmarkEntry,
+          scrollDuration,
+          session,
+          stream,
+          virtualScrollerRef,
+        }).withKey(session.settings.layout)
       : null;
 
-  const content = $.html`
+  const content = html`
     <${entryHeader}>
     <${entryList}>
   `;

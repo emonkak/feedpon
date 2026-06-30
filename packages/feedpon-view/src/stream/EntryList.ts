@@ -1,4 +1,4 @@
-import { createComponent, type RefObject, type RenderContext } from 'barebind';
+import { createComponent, type Ref, html } from 'barebind';
 import { EffectEvent } from 'barebind/addons/hooks';
 import type { Entry, Session, Stream } from 'feedpon-store';
 import { throttle } from '../primitives/utils/throttle.ts';
@@ -20,26 +20,23 @@ export interface EntryListProps {
   scrollDuration: number;
   session: Session;
   stream: Stream | null;
-  virtualScrollerRef: RefObject<VirtualScrollerHandle<string> | null>;
+  virtualScrollerRef: Ref<VirtualScrollerHandle<string> | null>;
 }
 
-export const EntryList = createComponent(function EntryList(
-  {
-    isStreamLoading,
-    onEntryExpand,
-    onEntryFocus,
-    onFullContentsFetch,
-    onFullContentsToggle,
-    onHatenaBookmarkEntryFetch,
-    onHatenaBookmarkEntryToggle,
-    virtualScrollerRef,
-    session,
-    scrollDuration,
-    stream,
-  }: EntryListProps,
-  $: RenderContext,
-): unknown {
-  const scrollCallback = $.use(
+export const EntryList = createComponent<EntryListProps>(function EntryList({
+  isStreamLoading,
+  onEntryExpand,
+  onEntryFocus,
+  onFullContentsFetch,
+  onFullContentsToggle,
+  onHatenaBookmarkEntryFetch,
+  onHatenaBookmarkEntryToggle,
+  virtualScrollerRef,
+  session,
+  scrollDuration,
+  stream,
+}) {
+  const scrollCallback = this.use(
     EffectEvent(() => {
       const virtualScroller = virtualScrollerRef.current;
       if (virtualScroller === null) {
@@ -55,12 +52,12 @@ export const EntryList = createComponent(function EntryList(
       }
     }),
   );
-  const throttledScrollCallback = $.useMemo(
+  const throttledScrollCallback = this.useMemo(
     () => throttle(scrollCallback, scrollDuration),
     [],
   );
 
-  $.useLayoutEffect(() => {
+  this.useEffect(() => {
     window.addEventListener('scroll', throttledScrollCallback, {
       passive: true,
     });
@@ -69,17 +66,17 @@ export const EntryList = createComponent(function EntryList(
     };
   }, []);
 
-  $.useLayoutEffect(() => {
+  this.useEffect(() => {
     throttledScrollCallback();
   }, [stream]);
 
-  $.useLayoutEffect(() => {
+  this.useEffect(() => {
     if (session.expandedIndex >= 0) {
       virtualScrollerRef.current!.scrollToIndex(session.expandedIndex);
     }
   }, [session.expandedIndex]);
 
-  $.useLayoutEffect(() => {
+  this.useEffect(() => {
     if (session.focusIndex >= 0) {
       virtualScrollerRef.current!.scrollToIndex(session.focusIndex);
     }
@@ -87,7 +84,7 @@ export const EntryList = createComponent(function EntryList(
 
   if (isStreamLoading && stream === null) {
     if (session.settings.layout === 'full') {
-      return $.html`
+      return html`
         <div class="stream-body">
           <${FullEntryPlaceholder({})}>
           <${FullEntryPlaceholder({})}>
@@ -97,7 +94,7 @@ export const EntryList = createComponent(function EntryList(
         </div>
       `;
     } else {
-      return $.html`
+      return html`
         <div class="stream-body">
           <${CompactEntryPlaceholder({})}>
           <${CompactEntryPlaceholder({})}>
@@ -137,7 +134,7 @@ export const EntryList = createComponent(function EntryList(
     source: stream?.items ?? [],
   });
 
-  return $.html`
+  return html`
     <div class="stream-body">
       <${virtualScroller}>
     </div>
@@ -145,8 +142,8 @@ export const EntryList = createComponent(function EntryList(
 });
 
 export const FullEntryPlaceholder = createComponent(
-  function FullEntryPlaceholder(_props: {}, $: RenderContext): unknown {
-    return $.html`
+  function FullEntryPlaceholder() {
+    return html`
       <article class="entry is-expanded">
         <div class="container">
           <header class="entry-header">
@@ -197,8 +194,8 @@ export const FullEntryPlaceholder = createComponent(
 );
 
 export const CompactEntryPlaceholder = createComponent(
-  function CompactEntryPlaceholder(_props: {}, $: RenderContext): unknown {
-    return $.html`
+  function CompactEntryPlaceholder() {
+    return html`
       <article class="entry">
         <div class="container">
           <header class="entry-header">

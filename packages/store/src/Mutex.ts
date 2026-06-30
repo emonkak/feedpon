@@ -1,4 +1,4 @@
-import { LinkedList } from 'barebind/collections/linked-list';
+import { LinkedList } from './LinkedList.ts';
 
 export class Mutex {
   private readonly _resolvers: LinkedList<() => void> = new LinkedList();

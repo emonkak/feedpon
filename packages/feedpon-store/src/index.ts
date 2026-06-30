@@ -1,4 +1,4 @@
-import { $hook, type HookObject, type RenderContext } from 'barebind';
+import { type HookObject, type RenderContext } from 'barebind';
 import type { Reactive } from 'barebind/addons/signal';
 import { type Action, ImmutableMap, type Mutex, Store } from 'store';
 import type {
@@ -70,8 +70,8 @@ export class AppStore
   extends Store<AppState, AppContext>
   implements HookObject<void>
 {
-  static [$hook](context: RenderContext): AppStore {
-    const value = context.getSharedContext(AppStore);
+  static onUse(context: RenderContext): AppStore {
+    const value = context.inject(AppStore);
 
     if (!(value instanceof AppStore)) {
       throw new Error('AppStore is not registered in this context.');
@@ -80,8 +80,8 @@ export class AppStore
     return value;
   }
 
-  [$hook](context: RenderContext): void {
-    context.setSharedContext(this.constructor, this);
+  onUse(context: RenderContext): void {
+    context.provide(this);
   }
 }
 

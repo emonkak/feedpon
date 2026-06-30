@@ -1,4 +1,4 @@
-import { createComponent, type RenderContext, Repeat } from 'barebind';
+import { createComponent, html } from 'barebind';
 import { LocalAtom } from 'barebind/addons/signal';
 import { AppStore } from 'feedpon-store';
 import * as searchActions from 'feedpon-store/actions/search';
@@ -14,49 +14,49 @@ export interface SearchPageProps {
   query?: string;
 }
 
-export const SearchPage = createComponent(function SearchPage(
-  { query }: SearchPageProps,
-  $: RenderContext,
-): unknown {
-  const { state$ } = $.use(AppStore);
-  const categories = $.use(state$.get('unsortedCategories'));
-  const searchQuery = $.use(state$.get('searchQuery'));
-  const searchResults = $.use(state$.get('searchResults'));
-  const searching = $.use(state$.get('searching'));
-  const subscriptions = $.use(state$.get('subscriptions'));
+export const SearchPage = createComponent<SearchPageProps>(function SearchPage({
+  query,
+}) {
+  const { state$ } = this.use(AppStore);
+  const categories = this.use(state$.get('unsortedCategories'));
+  const searchQuery = this.use(state$.get('searchQuery'));
+  const searchResults = this.use(state$.get('searchResults'));
+  const searching = this.use(state$.get('searching'));
+  const subscriptions = this.use(state$.get('subscriptions'));
 
-  const query$ = $.use(LocalAtom(query ?? searchQuery));
+  const query$ = this.use(LocalAtom(query ?? searchQuery));
 
-  const { searchFeeds } = $.use(BindActionCreators(AppStore, searchActions));
+  const { searchFeeds } = this.use(BindActionCreators(AppStore, searchActions));
   const {
     createSubscription,
     createCategory,
     updateSubscription,
     deleteSubscription,
-  } = $.use(BindActionCreators(AppStore, subscriptionActions));
-  const { toggleSidebar } = $.use(BindActionCreators(AppStore, uiActions));
+  } = this.use(BindActionCreators(AppStore, subscriptionActions));
+  const { toggleSidebar } = this.use(BindActionCreators(AppStore, uiActions));
 
-  const handleChange = $.useCallback((event: Event) => {
+  const handleChange = this.useCallback((event: Event) => {
     query$.value = (event.currentTarget as HTMLInputElement).value;
   }, []);
 
-  const handleSearch = $.useCallback((event: SubmitEvent) => {
+  const handleSearch = this.useCallback((event: SubmitEvent) => {
     event.preventDefault();
     searchFeeds(query$.value);
   }, []);
 
   const header = Navbar({
     onSidebarToggle: toggleSidebar,
-    children: $.html`<div class="navbar-title">Search</div>`,
+    children: html`<div class="navbar-title">Search</div>`,
   });
 
   let searchResultList: unknown;
 
   if (searching) {
-    searchResultList = $.html`
+    searchResultList = html`
       <ol className="list-group">
-        <${Repeat({
-          elementSelector: () => $.html`
+        ${Array.from(
+          { length: 10 },
+          () => html`
             <li class="list-group-item">
               <div class="link-strong">
                 <span class="placeholder placeholder-40 animation-shining"></span>
@@ -70,38 +70,35 @@ export const SearchPage = createComponent(function SearchPage(
               </div>
             </li>
           `,
-          source: new Array(10),
-        })}>
+        )}
       </ol>
     `;
   } else if (searchResults !== null) {
     searchResultList =
       searchResults.length > 0
-        ? $.html`
+        ? html`
           <ol class="list-group">
-            <${Repeat({
-              elementSelector: (searchResult) =>
-                SearchResultView({
-                  categories,
-                  onCategoryCreate: createCategory,
-                  onSubscriptionCreate: createSubscription,
-                  onSubscriptionDelete: deleteSubscription,
-                  onSubscriptionUpdate: updateSubscription,
-                  searchResult,
-                  subscription: subscriptions.get(searchResult.feedId) ?? null,
-                }),
-              source: searchResults,
-            })}>
+            ${searchResults.map((searchResult) =>
+              SearchResultView({
+                categories,
+                onCategoryCreate: createCategory,
+                onSubscriptionCreate: createSubscription,
+                onSubscriptionDelete: deleteSubscription,
+                onSubscriptionUpdate: updateSubscription,
+                searchResult,
+                subscription: subscriptions.get(searchResult.feedId) ?? null,
+              }),
+            )}
           </ol>
         `
-        : $.html`
+        : html`
           <p>Your search "<strong>${searchQuery}</strong>" did not match any feeds.</p>
         `;
   } else {
     searchResultList = null;
   }
 
-  const content = $.html`
+  const content = html`
     <div class="container u-margin-top-2 u-margin-bottom-4">
       <h1 class="display-1">Search for feeds to subscribe</h1>
       <form class="form" @submit=${handleSearch}>

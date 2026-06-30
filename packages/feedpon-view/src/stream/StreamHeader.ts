@@ -1,4 +1,4 @@
-import { createComponent, type RenderContext } from 'barebind';
+import { createComponent, html } from 'barebind';
 import type { Session, SessionSettings, Stream } from 'feedpon-store';
 
 import { Navbar } from '../primitives/Navbar.ts';
@@ -21,8 +21,8 @@ interface StreamNavbarProps {
   stream: Stream | null;
 }
 
-export const StreamHeader = createComponent(function StreamHeader(
-  {
+export const StreamHeader = createComponent<StreamNavbarProps>(
+  function StreamHeader({
     isStreamLoading,
     isStreamUpdating,
     onEntrySelect,
@@ -33,56 +33,55 @@ export const StreamHeader = createComponent(function StreamHeader(
     onStreamMarkAsRead,
     session,
     stream,
-  }: StreamNavbarProps,
-  $: RenderContext,
-): unknown {
-  return Navbar({
-    onSidebarToggle,
-    progress:
-      stream !== null && session !== null && stream.items.length > 0
-        ? session.focusIndex / stream.items.length
-        : 0,
-    children: $.html`
-      <h1 class="navbar-title">
-        <span class="stream-title u-text-truncate">${stream?.title ?? ''}</span>
-      </h1>
-      <button
-        type="button"
-        disabled=${isStreamLoading}
-        class="navbar-action"
-        @click=${onStreamReload}
-      >
-        <i class="icon icon-24 icon-refresh"></i>
-      </button>
-      <${
-        session !== null && stream !== null
-          ? StreamDropdown({
-              isStreamUpdating,
-              onEntrySelect,
-              onStreamMarkAsRead,
-              session,
-              stream,
-            })
-          : null
-      }>
-      <${
-        session !== null && session.expandedIndex >= 0
-          ? $.html`
-            <button type="button" class="navbar-action" @click=${onEntryShrink}>
-              <i class="icon icon-24 icon-close"></i>
-            </button>
-          `
-          : null
-      }>
-      <${
-        session !== null && session.expandedIndex < 0
-          ? SessionSettingsDropdown({
-              disabled: isStreamLoading,
-              sessionSettings: session.settings,
-              onSessionSettingsUpdate,
-            })
-          : null
-      }>
-    `,
-  });
-});
+  }) {
+    return Navbar({
+      onSidebarToggle,
+      progress:
+        stream !== null && session !== null && stream.items.length > 0
+          ? session.focusIndex / stream.items.length
+          : 0,
+      children: html`
+        <h1 class="navbar-title">
+          <span class="stream-title u-text-truncate">${stream?.title ?? ''}</span>
+        </h1>
+        <button
+          type="button"
+          disabled=${isStreamLoading}
+          class="navbar-action"
+          @click=${onStreamReload}
+        >
+          <i class="icon icon-24 icon-refresh"></i>
+        </button>
+        <${
+          session !== null && stream !== null
+            ? StreamDropdown({
+                isStreamUpdating,
+                onEntrySelect,
+                onStreamMarkAsRead,
+                session,
+                stream,
+              })
+            : null
+        }>
+        <${
+          session !== null && session.expandedIndex >= 0
+            ? html`
+              <button type="button" class="navbar-action" @click=${onEntryShrink}>
+                <i class="icon icon-24 icon-close"></i>
+              </button>
+            `
+            : null
+        }>
+        <${
+          session !== null && session.expandedIndex < 0
+            ? SessionSettingsDropdown({
+                disabled: isStreamLoading,
+                sessionSettings: session.settings,
+                onSessionSettingsUpdate,
+              })
+            : null
+        }>
+      `,
+    });
+  },
+);

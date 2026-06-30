@@ -1,8 +1,7 @@
-/coverage
-/dist/*
-!/dist/img
-!/dist/index.html
-!/dist/manifest.json
-.wireit
-node_modules
 *.tsbuildinfo
+.wireit
+/coverage
+/dist/css
+/dist/js
+/meta.json
+node_modules

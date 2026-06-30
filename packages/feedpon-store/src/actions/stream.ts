@@ -25,7 +25,7 @@ const STREAM_LAYOUTS: StreamLayout[] = ['full', 'compact'];
 
 export function clearSessions(): AppAction<Promise<void>> {
   return (state$, { stateRepository }) => {
-    return state$.mutate(async (state) => {
+    return state$.scope(async (state) => {
       state.session = null;
       state.pastSessions = [];
       state.feed = null;
@@ -39,7 +39,7 @@ export function clearSessions(): AppAction<Promise<void>> {
 
 export function expandEntry(index: number): AppAction<void> {
   return (state$) => {
-    state$.mutate((state) => {
+    state$.scope((state) => {
       if (state.session === null || state.session.expandedIndex === index) {
         return;
       }
@@ -58,7 +58,7 @@ export function fetchFullContents(entryId: string): AppAction<Promise<void>> {
     const siteinfosUpdated$ = state$.get('siteinfosUpdated');
 
     return (
-      findEntry(state$, entryId)?.mutate(async (entry) => {
+      findEntry(state$, entryId)?.scope(async (entry) => {
         const url =
           entry.fullContents !== undefined
             ? entry.fullContents.at(-1)?.nextUrl
@@ -109,7 +109,7 @@ export function fetchFullContents(entryId: string): AppAction<Promise<void>> {
 
 export function fetchHatenaBookmarkCounts(): AppAction<Promise<void>> {
   return (state$, { hatenaBookmarkClient }) => {
-    return state$.mutate(async (state) => {
+    return state$.scope(async (state) => {
       const { stream } = state;
 
       if (stream === null) {
@@ -151,7 +151,7 @@ export function fetchHatenaBookmarkEntry(
 ): AppAction<Promise<void>> {
   return (state$, { hatenaBookmarkClient }) => {
     return (
-      findEntry(state$, entryId)?.mutate(async (entry) => {
+      findEntry(state$, entryId)?.scope(async (entry) => {
         entry.hatenaBookmarkEntryLoading = true;
 
         try {
@@ -168,7 +168,7 @@ export function fetchHatenaBookmarkEntry(
 
 export function fetchStream(continuation?: string): AppAction<Promise<void>> {
   return (state$, { feedlyClient }, dispatch) => {
-    return state$.mutate(async (state) => {
+    return state$.scope(async (state) => {
       const { feed: oldFeed, session, stream: oldStream, urlFilters } = state;
 
       if (session === null) {
@@ -229,7 +229,7 @@ export function fetchStream(continuation?: string): AppAction<Promise<void>> {
 
 export function focusEntry(index: number): AppAction<void> {
   return (state$) => {
-    state$.mutate((state) => {
+    state$.scope((state) => {
       if (state.session === null) {
         return;
       }
@@ -244,7 +244,7 @@ export function focusEntry(index: number): AppAction<void> {
 
 export function markStreamAsRead(): AppAction<Promise<void>> {
   return (state$, { feedlyClient }, dispatch) => {
-    return state$.mutate(async (state) => {
+    return state$.scope(async (state) => {
       const { readCounts, session, stream } = state;
 
       if (session === null || stream === null) {
@@ -323,7 +323,7 @@ export function markStreamAsRead(): AppAction<Promise<void>> {
 
 export function quitSession(): AppAction<Promise<void>> {
   return (state$, { stateRepository }) => {
-    return state$.mutate(async (state) => {
+    return state$.scope(async (state) => {
       const { feed, pastSessions, session, stream, streamSettings } = state;
 
       if (session === null) {
@@ -362,7 +362,7 @@ export function quitSession(): AppAction<Promise<void>> {
 
 export function shrinkEntry(): AppAction<void> {
   return (state$) => {
-    state$.mutate((state) => {
+    state$.scope((state) => {
       if (state.session === null || state.session.expandedIndex < 0) {
         return;
       }
@@ -377,7 +377,7 @@ export function shrinkEntry(): AppAction<void> {
 
 export function startSession(streamId: string): AppAction<Promise<void>> {
   return (state$, { stateRepository }) => {
-    return state$.mutate(async (state) => {
+    return state$.scope(async (state) => {
       const {
         defaultSessionSettings,
         feed,
@@ -456,7 +456,7 @@ export function tagEntry(
 ): AppAction<Promise<void>> {
   return (state$, { feedlyClient }, dispatch) => {
     return (
-      findEntry(state$, entryId)?.mutate(async (entry) => {
+      findEntry(state$, entryId)?.scope(async (entry) => {
         const credential = await dispatch(acquireCredential());
 
         await feedlyClient.tagEntry(credential.accessToken, [tagId], {
@@ -474,7 +474,7 @@ export function toggleFullContents(
   shown: boolean,
 ): AppAction<void> {
   return (state$) => {
-    findEntry(state$, entryId)?.mutate((entry) => {
+    findEntry(state$, entryId)?.scope((entry) => {
       entry.fullContentsShown = shown;
     });
   };
@@ -485,7 +485,7 @@ export function toggleHatenaBookmarkEntry(
   shown: boolean,
 ): AppAction<void> {
   return (state$) => {
-    findEntry(state$, entryId)?.mutate((entry) => {
+    findEntry(state$, entryId)?.scope((entry) => {
       entry.hatenaBookmarkEntryShown = shown;
     });
   };
@@ -495,7 +495,7 @@ export function toggleStreamLayout(): AppAction<void> {
   return (state$) => {
     const session$ = state$.get('session');
 
-    return session$?.mutate((session) => {
+    return session$?.scope((session) => {
       if (session === null) {
         return;
       }
@@ -518,7 +518,7 @@ export function untagEntry(
 ): AppAction<Promise<void>> {
   return (state$, { feedlyClient }, dispatch) => {
     return (
-      findEntry(state$, entryId)?.mutate(async (entry) => {
+      findEntry(state$, entryId)?.scope(async (entry) => {
         const credential = await dispatch(acquireCredential());
 
         await feedlyClient.untagEntry(credential.accessToken, [tagId], {
@@ -535,7 +535,7 @@ export function updateDefaultSessionSettings(
   settings: SessionSettings,
 ): AppAction<void> {
   return (state$) => {
-    state$.mutate((state) => {
+    state$.scope((state) => {
       state.defaultSessionSettings = settings;
     });
   };
@@ -545,7 +545,7 @@ export function updateSessionSettings(
   settings: SessionSettings,
 ): AppAction<void> {
   return (state$) => {
-    state$.get('session').mutate((session) => {
+    state$.get('session').scope((session) => {
       if (session === null) {
         return;
       }
@@ -558,7 +558,7 @@ export function updateSessionSettings(
 
 export function updateSiteinfos(): AppAction<Promise<void>> {
   return (state$, { wedataClient }, dispatch) => {
-    return state$.mutate(async (state) => {
+    return state$.scope(async (state) => {
       state.siteinfos = await wedataClient.getAutoPagerizeItems();
       state.siteinfosUpdated = Date.now();
 
@@ -576,7 +576,7 @@ export function updateStreamSettings(
   streamSettings: StreamSettings,
 ): AppAction<void> {
   return (state$) => {
-    state$.mutate((state) => {
+    state$.scope((state) => {
       state.streamSettings = streamSettings;
     });
   };
@@ -699,7 +699,7 @@ function findEntry(
   entryId: string,
 ): Reactive<Entry> | null {
   const items$ = state$.get('stream').get('items');
-  if (items$ === null) {
+  if (items$ === undefined) {
     return null;
   }
 

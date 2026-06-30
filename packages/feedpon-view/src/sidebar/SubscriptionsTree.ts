@@ -1,4 +1,4 @@
-import { createComponent, type RenderContext } from 'barebind';
+import { createComponent, html } from 'barebind';
 import type {
   Category,
   Subscription,
@@ -29,87 +29,82 @@ type SubscriptionTreeItemValue =
       unreadCount: number;
     };
 
-export const SubscriptionsTree = createComponent(function SubscriptionsTree(
-  {
+export const SubscriptionsTree = createComponent<SubscriptionTreeProps>(
+  function SubscriptionsTree({
     onStreamSelect,
     selectedStreamId,
     ungroupedItems,
     subscriptionGroups,
-  }: SubscriptionTreeProps,
-  $: RenderContext,
-): unknown {
-  const items = $.useMemo(() => {
-    const categorizedItems: SubscriptionTreeItem[] = subscriptionGroups.map(
-      ({ category, subscriptionItems, unreadCount, readCount }) => {
-        const children: SubscriptionTreeItem[] = subscriptionItems.map(
-          ({ subscription, unreadCount, readCount }) => {
-            return {
-              children: [],
-              key: subscription.id,
-              selected: subscription.id === selectedStreamId,
-              value: {
-                type: 'subscription',
-                subscription,
-                unreadCount: Math.max(0, unreadCount - readCount),
-              },
-            };
-          },
-        );
-        return {
-          children,
-          key: category.id,
-          selected: category.id === selectedStreamId,
-          value: {
-            type: 'category',
-            unreadCount: Math.max(0, unreadCount - readCount),
-            category,
-          },
-        };
-      },
-    );
+  }) {
+    const items = this.useMemo(() => {
+      const categorizedItems: SubscriptionTreeItem[] = subscriptionGroups.map(
+        ({ category, subscriptionItems, unreadCount, readCount }) => {
+          const children: SubscriptionTreeItem[] = subscriptionItems.map(
+            ({ subscription, unreadCount, readCount }) => {
+              return {
+                children: [],
+                key: subscription.id,
+                selected: subscription.id === selectedStreamId,
+                value: {
+                  type: 'subscription',
+                  subscription,
+                  unreadCount: Math.max(0, unreadCount - readCount),
+                },
+              };
+            },
+          );
+          return {
+            children,
+            key: category.id,
+            selected: category.id === selectedStreamId,
+            value: {
+              type: 'category',
+              unreadCount: Math.max(0, unreadCount - readCount),
+              category,
+            },
+          };
+        },
+      );
 
-    const uncategorizedItems: SubscriptionTreeItem[] = ungroupedItems.map(
-      ({ subscription, unreadCount }) => {
-        return {
-          children: [],
-          key: subscription.id,
-          selected: subscription.id === selectedStreamId,
-          value: {
-            type: 'subscription',
-            subscription,
-            unreadCount,
-          },
-        };
-      },
-    );
+      const uncategorizedItems: SubscriptionTreeItem[] = ungroupedItems.map(
+        ({ subscription, unreadCount }) => {
+          return {
+            children: [],
+            key: subscription.id,
+            selected: subscription.id === selectedStreamId,
+            value: {
+              type: 'subscription',
+              subscription,
+              unreadCount,
+            },
+          };
+        },
+      );
 
-    return categorizedItems.concat(uncategorizedItems);
-  }, [selectedStreamId, subscriptionGroups]);
+      return categorizedItems.concat(uncategorizedItems);
+    }, [selectedStreamId, subscriptionGroups]);
 
-  const handleSelect = (item: SubscriptionTreeItem) => {
-    const streamId =
-      item.value.type === 'category'
-        ? item.value.category.id
-        : item.value.subscription.id;
-    onStreamSelect(streamId);
-  };
+    const handleSelect = (item: SubscriptionTreeItem) => {
+      const streamId =
+        item.value.type === 'category'
+          ? item.value.category.id
+          : item.value.subscription.id;
+      onStreamSelect(streamId);
+    };
 
-  return Tree({
-    items,
-    onSelect: handleSelect,
-    renderItem,
-  });
-});
+    return Tree({
+      items,
+      onSelect: handleSelect,
+      renderItem,
+    });
+  },
+);
 
-function renderItem(
-  value: SubscriptionTreeItemValue,
-  _key: string,
-  $: RenderContext,
-): unknown {
+function renderItem(value: SubscriptionTreeItemValue, _key: string): unknown {
   if (value.type === 'category') {
     const { unreadCount, category } = value;
-    return $.html`
-      <div :class=${{ StreamItem: true, 'has-unread': unreadCount > 0 }}>
+    return html`
+      <div class=${{ StreamItem: true, 'has-unread': unreadCount > 0 }}>
         <div class="StreamItem-title">${category.label}</div>
         <div
           aria-label=${`${unreadCount} unread item(s) available`}
@@ -123,7 +118,7 @@ function renderItem(
     const { subscription, unreadCount } = value;
     const icon =
       subscription.iconUrl !== ''
-        ? $.html`
+        ? html`
           <img
             alt=${subscription.title}
             class="u-vertical-middle u-object-fit-cover"
@@ -132,9 +127,9 @@ function renderItem(
             width="16"
           >
         `
-        : $.html`<i class="icon icon-16 icon-file"></i>`;
-    return $.html`
-      <div :class=${{ StreamItem: true, 'has-unread': unreadCount > 0 }}>
+        : html`<i class="icon icon-16 icon-file"></i>`;
+    return html`
+      <div class=${{ StreamItem: true, 'has-unread': unreadCount > 0 }}>
         <div class="StreamItem-icon"><${icon}></div>
         <div class="StreamItem-title">${subscription.title !== '' ? subscription.title : '<NO TITLE>'}</div>
         <div class="StreamItem-unread">${unreadCount > 0 ? unreadCount.toLocaleString() : ''}</div>

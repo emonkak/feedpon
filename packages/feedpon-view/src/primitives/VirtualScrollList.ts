@@ -1,13 +1,10 @@
 import {
-  type Bindable,
   type Component,
   createComponent,
   type HookFunction,
-  type Ref,
-  type RefCallback,
-  type RefObject,
+  Ref,
   type RenderContext,
-  Repeat,
+  type VComponent,
 } from 'barebind';
 import { createEventHook } from '../primitives/hooks/eventHook.ts';
 import { isMountedHook } from '../primitives/hooks/isMountedHook.ts';
@@ -53,17 +50,17 @@ export interface VirtualScrollListProps<
   offscreenRatio?: number;
   onUpdateBlockSizes?: (newBlockSizes: BlockSizes) => void;
   onUpdateDimensions?: (dimensions: Dimensions) => void;
-  ref?: RefObject<VirtualScrollListRef | null>;
+  ref?: Ref<VirtualScrollListRef | null>;
   renderItem: (
     item: TItem,
     index: number,
-    ref: Ref<Element>,
+    ref: (element: Element) => (() => void) | void,
     context: RenderContext,
   ) => unknown;
   renderList: (
     children: unknown,
     blankSpaces: BlankSpaces,
-    ref: Ref<Element>,
+    ref: Ref<Element | null>,
     context: RenderContext,
   ) => unknown;
   scheduleUpdate?: (callback: VoidFunction) => void;
@@ -74,11 +71,12 @@ export interface VirtualScrollListProps<
 export interface VirtualScrollList extends Component<VirtualScrollListProps> {
   <TItem extends { id: PropertyKey }>(
     props: VirtualScrollListProps<TItem>,
-  ): Bindable<VirtualScrollListProps<TItem>>;
+  ): VComponent<VirtualScrollListProps<TItem>>;
 }
 
 export const VirtualScrollList: VirtualScrollList = createComponent(
   function VirtualScrollList<TItem extends { id: PropertyKey }>(
+    this: RenderContext,
     {
       assumedItemSize = 200,
       getScrollContainer = () => window,
@@ -89,20 +87,19 @@ export const VirtualScrollList: VirtualScrollList = createComponent(
       offscreenRatio = 1.0,
       onUpdateBlockSizes,
       onUpdateDimensions,
-      ref = { current: null },
+      ref = new Ref<VirtualScrollListRef | null>(null),
       renderItem,
       renderList,
       scheduleUpdate = queueMicrotask,
       scrollBy = (x, y) => window.scrollBy(x, y),
-      scrollThrottleTime = 100,
+      scrollThrottleTime = 50,
     }: VirtualScrollListProps<TItem>,
-    $: RenderContext,
-  ): unknown {
-    const containerRef = $.useRef<Element | null>(null);
-    const scrollingItemIndexRef = $.useRef(initialItemIndex);
-    const blockSizesRef = $.useMemo(() => ({ current: new Map() }), []);
-    const isDirtyRef = $.useRef(false);
-    const blockPositionsRef = $.useMemo(
+  ) {
+    const containerRef = this.useRef<Element | null>(null);
+    const scrollingItemIndexRef = this.useRef(initialItemIndex);
+    const blockSizesRef = this.useMemo(() => ({ current: new Map() }), []);
+    const isDirtyRef = this.useRef(false);
+    const blockPositionsRef = this.useMemo(
       () => ({
         current: computeBlockPositions(
           items,
@@ -112,7 +109,7 @@ export const VirtualScrollList: VirtualScrollList = createComponent(
       }),
       [],
     );
-    const scopeRef = $.useMemo(
+    const scopeRef = this.useMemo(
       () => ({
         current: getInitialScope(
           items,
@@ -125,7 +122,7 @@ export const VirtualScrollList: VirtualScrollList = createComponent(
       [],
     );
 
-    const oldItems = $.use(createPreviousHook(items)) ?? [];
+    const oldItems = this.use(createPreviousHook(items)) ?? [];
     if (items !== oldItems) {
       const newSlice = items.slice(
         scopeRef.current.start,
@@ -161,6 +158,7 @@ export const VirtualScrollList: VirtualScrollList = createComponent(
       );
     }
 
+    const context = this;
     ref.current = {
       scrollTo(index: number): void {
         scopeRef.current = getInitialScope(
@@ -174,13 +172,13 @@ export const VirtualScrollList: VirtualScrollList = createComponent(
         scrollingItemIndexRef.current = index;
 
         // Force update even if the scope has not changed.
-        $.forceUpdate();
+        context.forceUpdate();
       },
     };
 
-    const isMounted = $.use(isMountedHook);
+    const isMounted = this.use(isMountedHook);
 
-    const updateDimensions = $.useCallback(() => {
+    const updateDimensions = this.useCallback(() => {
       if (!isMounted()) {
         requestAnimationFrame(updateDimensions);
         return;
@@ -201,7 +199,7 @@ export const VirtualScrollList: VirtualScrollList = createComponent(
 
       if (!areScopesEqual(scopeRef.current, newScope)) {
         scopeRef.current = newScope;
-        $.forceUpdate();
+        this.forceUpdate();
       }
 
       onUpdateDimensions?.({
@@ -214,7 +212,7 @@ export const VirtualScrollList: VirtualScrollList = createComponent(
       isDirtyRef.current = false;
     }, [onUpdateDimensions]);
 
-    $.useEffect(() => {
+    this.useEffect(() => {
       const scrollContainer = getScrollContainer();
 
       const callback = throttle(() => {
@@ -238,7 +236,7 @@ export const VirtualScrollList: VirtualScrollList = createComponent(
       updateDimensions,
     ]);
 
-    $.useEffect(() => {
+    this.useEffect(() => {
       let shouldUpdate = false;
 
       const newSlice = items.slice(
@@ -289,12 +287,12 @@ export const VirtualScrollList: VirtualScrollList = createComponent(
       }
     }, [items, scrollingItemIndexRef.current, scopeRef.current]);
 
-    const elementToIdMap = $.useMemo(
+    const elementToIdMap = this.useMemo(
       () => new WeakMap<Element, TItem['id']>(),
       [],
     );
 
-    const handleResizeObserverEntries = $.use(
+    const handleResizeObserverEntries = this.use(
       createEventHook((entries: ResizeObserverEntry[]) => {
         const blockSizes = blockSizesRef.current;
         let hasChanged = false;
@@ -331,16 +329,17 @@ export const VirtualScrollList: VirtualScrollList = createComponent(
         onUpdateBlockSizes?.(blockSizesRef.current);
       }),
     );
-    const resizeObserver = $.use(
+    const resizeObserver = this.use(
       createResizeObserverHook(handleResizeObserverEntries),
     );
 
-    const children = $.useMemo(
+    const children = this.useMemo(
       () =>
-        Repeat({
-          elementSelector: (item, index) => {
+        items
+          .slice(scopeRef.current.start, scopeRef.current.end)
+          .map((item, index) => {
             const id = item.id;
-            const ref: RefCallback<Element> = (element) => {
+            const ref = (element: Element) => {
               elementToIdMap.set(element, id);
               resizeObserver.observe(element);
               return () => {
@@ -348,11 +347,10 @@ export const VirtualScrollList: VirtualScrollList = createComponent(
                 resizeObserver.unobserve(element);
               };
             };
-            return renderItem(item, index + scopeRef.current.start, ref, $);
-          },
-          keySelector: (item) => item.id,
-          source: items.slice(scopeRef.current.start, scopeRef.current.end),
-        }),
+            return (
+              renderItem(item, index + scopeRef.current.start, ref, this) as any
+            ).withKey(item.id);
+          }),
       [items, renderItem, scopeRef.current],
     );
 
@@ -361,7 +359,7 @@ export const VirtualScrollList: VirtualScrollList = createComponent(
       scopeRef.current,
     );
 
-    return renderList(children, blankSpaces, containerRef, $);
+    return renderList(children, blankSpaces, containerRef, this);
   },
 );
 

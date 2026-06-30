@@ -1,13 +1,8 @@
-import { createComponent, type RenderContext } from 'barebind';
-import {
-  PartialTemplate,
-  PartialTemplateContext,
-} from 'barebind/addons/partial-template';
+import { createComponent, html, Partial } from 'barebind';
 
 export interface FormControlProps {
   as: FormControlElementTagName;
   validations?: FormValidation[];
-  ownProps?: Record<string, any>;
 }
 
 export type FormControlElementTagName = {
@@ -34,68 +29,64 @@ enum FormControlStatus {
   Invalid,
 }
 
-export const FormControl = createComponent(function FormControl(
-  { as, validations = [], ownProps = {} }: FormControlProps,
-  $: RenderContext,
-): unknown {
-  const [status, setStatus] = $.useState(FormControlStatus.Empty);
-  const elementRef = $.useRef<FormControlElement | null>(null);
-  const { html } = $.use(PartialTemplateContext);
+export const FormControl = createComponent<FormControlProps>(
+  function FormControl({ as, validations = [] }) {
+    const [status, setStatus] = this.useState(FormControlStatus.Empty);
+    const elementRef = this.useRef<FormControlElement | null>(null);
 
-  const runValidations = () => {
-    const element = elementRef.current!;
+    const runValidations = () => {
+      const element = elementRef.current!;
 
-    if (element.value !== '') {
-      const errors = [];
-      for (const validation of validations) {
-        const error = validation(element);
-        if (error !== null) {
-          errors.push(error);
+      if (element.value !== '') {
+        const errors = [];
+        for (const validation of validations) {
+          const error = validation(element);
+          if (error !== null) {
+            errors.push(error);
+          }
         }
-      }
-      if (errors.length > 0) {
-        element.setCustomValidity(errors.join('\n'));
-        setStatus(FormControlStatus.Invalid);
+        if (errors.length > 0) {
+          element.setCustomValidity(errors.join('\n'));
+          setStatus(FormControlStatus.Invalid);
+        } else {
+          setStatus(FormControlStatus.Valid);
+        }
       } else {
-        setStatus(FormControlStatus.Valid);
+        element.setCustomValidity('');
+        setStatus(FormControlStatus.Empty);
       }
+    };
+
+    const handleInput = this.useCallback(() => {
+      runValidations();
+    }, [validations]);
+
+    this.useEffect(() => {
+      runValidations();
+    });
+
+    if (as.toLowerCase() === 'input') {
+      return Partial.html`
+        <${Partial.literal(as)}
+          class=${{
+            'is-valid': status === FormControlStatus.Valid,
+            'is-invalid': status === FormControlStatus.Invalid,
+          }}
+          @change=${handleInput}
+          ${elementRef}
+        >
+      `;
     } else {
-      element.setCustomValidity('');
-      setStatus(FormControlStatus.Empty);
+      return html`
+        <${Partial.literal(as)}
+          class=${{
+            'is-valid': status === FormControlStatus.Valid,
+            'is-invalid': status === FormControlStatus.Invalid,
+          }}
+          @input=${handleInput}
+          ${elementRef}
+        ></${Partial.literal(as)}>
+      `;
     }
-  };
-
-  const handleInput = $.useCallback(() => {
-    runValidations();
-  }, [validations]);
-
-  $.useEffect(() => {
-    runValidations();
-  });
-
-  if (as.toLowerCase() === 'input') {
-    return html`
-      <${PartialTemplate.literal(as)}
-        :ref=${elementRef}
-        :class=${{
-          'is-valid': status === FormControlStatus.Valid,
-          'is-invalid': status === FormControlStatus.Invalid,
-        }}
-        @change=${handleInput}
-        ${ownProps}
-      >
-    `;
-  } else {
-    return html`
-      <${PartialTemplate.literal(as)}
-        ${ownProps}
-        :ref=${elementRef}
-        :class=${{
-          'is-valid': status === FormControlStatus.Valid,
-          'is-invalid': status === FormControlStatus.Invalid,
-        }}
-        @input=${handleInput}
-      ></${PartialTemplate.literal(as)}
-    `;
-  }
-});
+  },
+);

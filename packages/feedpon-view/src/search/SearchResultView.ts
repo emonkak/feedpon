@@ -1,4 +1,4 @@
-import { createComponent, type RenderContext } from 'barebind';
+import { createComponent, html } from 'barebind';
 import type { Category, Feed, SearchResult, Subscription } from 'feedpon-store';
 import { SubscriptionSettingsDropdown } from '../subscription/SubscriptionSettingsDropdown.ts';
 
@@ -15,8 +15,8 @@ interface SearchResultViewProps {
   subscription: Subscription | null;
 }
 
-export const SearchResultView = createComponent(function SearchResultView(
-  {
+export const SearchResultView = createComponent<SearchResultViewProps>(
+  function SearchResultView({
     categories,
     searchResult,
     onCategoryCreate,
@@ -24,34 +24,33 @@ export const SearchResultView = createComponent(function SearchResultView(
     onSubscriptionDelete,
     onSubscriptionUpdate,
     subscription,
-  }: SearchResultViewProps,
-  $: RenderContext,
-): unknown {
-  return $.html`
-    <li class="list-group-item">
-      <div class="u-flex u-flex-justify-content-between u-flex-align-items-center">
-        <div class="u-flex-grow-1 u-margin-right-2">
-          <a
-            class="link-strong"
-            href=${`#/streams/${encodeURIComponent(searchResult.feedId)}`}
-          >
-            ${searchResult.title}
-          </a>
-          <div class="u-text-7">
-            <strong>${searchResult.subscribers}</strong> subscribers
+  }) {
+    return html`
+      <li class="list-group-item">
+        <div class="u-flex u-flex-justify-content-between u-flex-align-items-center">
+          <div class="u-flex-grow-1 u-margin-right-2">
+            <a
+              class="link-strong"
+              href=${`#/streams/${encodeURIComponent(searchResult.feedId)}`}
+            >
+              ${searchResult.title}
+            </a>
+            <div class="u-text-7">
+              <strong>${searchResult.subscribers}</strong> subscribers
+            </div>
+            <div class="u-text-muted">${searchResult.description}</div>
           </div>
-          <div class="u-text-muted">${searchResult.description}</div>
+          <${SubscriptionSettingsDropdown({
+            categories,
+            feed: { id: searchResult.feedId, ...searchResult },
+            onCategoryCreate,
+            onSubscriptionCreate,
+            onSubscriptionDelete,
+            onSubscriptionUpdate,
+            subscription,
+          })}>
         </div>
-        <${SubscriptionSettingsDropdown({
-          categories,
-          feed: { id: searchResult.feedId, ...searchResult },
-          onCategoryCreate,
-          onSubscriptionCreate,
-          onSubscriptionDelete,
-          onSubscriptionUpdate,
-          subscription,
-        })}>
-      </div>
-    </li>
-  `;
-});
+      </li>
+    `;
+  },
+);

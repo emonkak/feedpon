@@ -1,4 +1,4 @@
-import { createComponent, type RenderContext } from 'barebind';
+import { createComponent, html } from 'barebind';
 import type { Osd } from 'feedpon-store';
 import { AppStore } from 'feedpon-store';
 import * as uiActions from 'feedpon-store/actions/ui';
@@ -6,20 +6,17 @@ import { BindActionCreators } from 'store';
 
 export interface OsdStackProps {}
 
-export const OsdStack = createComponent(function OsdStack(
-  {}: OsdStackProps,
-  $: RenderContext,
-): unknown {
-  const { state$ } = $.use(AppStore);
-  const osd = $.use(state$.get('osd'));
-  const [osdInProgress, setOsdInProgress] = $.useState<Osd | null>(null);
-  const { dismissOsd } = $.use(BindActionCreators(AppStore, uiActions));
+export const OsdStack = createComponent<OsdStackProps>(function OsdStack() {
+  const { state$ } = this.use(AppStore);
+  const osd = this.use(state$.get('osd'));
+  const [osdInProgress, setOsdInProgress] = this.useState<Osd | null>(null);
+  const { dismissOsd } = this.use(BindActionCreators(AppStore, uiActions));
 
-  $.useLayoutEffect(() => {
+  this.useEffect(() => {
     setOsdInProgress(osd);
   }, [osd]);
 
-  $.useEffect(() => {
+  this.useEffect(() => {
     let timer: ReturnType<typeof setTimeout> | null = null;
     if (osdInProgress !== null) {
       timer = setTimeout(() => {
@@ -41,13 +38,13 @@ export const OsdStack = createComponent(function OsdStack(
     }
   };
 
-  const ariaLabelId = $.useId();
+  const ariaLabelId = this.useId();
 
   if (osdInProgress === null) {
     return null;
   }
 
-  return $.html`
+  return html`
     <div
       aria-labelledby=${ariaLabelId}
       class="OSD"

@@ -1,7 +1,7 @@
 import type { Bindable } from 'barebind';
 import {
   decoded,
-  type HistoryNavigator,
+  type NavigationAdapter,
   Router,
   route,
 } from 'barebind/addons/router';
@@ -17,33 +17,43 @@ import { StreamSettings } from './settings/StreamSettings.ts';
 import { StreamPage } from './stream/StreamPage.ts';
 
 export interface RouterContext {
-  navigator: HistoryNavigator;
+  navigator: NavigationAdapter;
   store: AppStore;
 }
 
-export const router = new Router<Bindable<unknown>>([
-  route([''], () => DashboardPage({})),
-  route(['about'], () => AboutPage({})),
-  route(['categories'], () => CategoriesPage({}), [
-    route([decoded], ([label]) => CategoriesPage({ label })),
+export const router = new Router<Bindable>([
+  route([''], () => DashboardPage({}) as unknown as Bindable),
+  route(['about'], () => AboutPage({}) as unknown as Bindable),
+  route(['categories'], () => CategoriesPage({}) as unknown as Bindable, [
+    route(
+      [decoded],
+      ([label]) => CategoriesPage({ label }) as unknown as Bindable,
+    ),
   ]),
-  route(['kitchensink'], () => KitchensinkPage({})),
-  route(['search'], () => SearchPage({}), [
-    route([decoded], ([query]) => SearchPage({ query })),
+  route(['kitchensink'], () => KitchensinkPage({}) as unknown as Bindable),
+  route(['search'], () => SearchPage({}) as unknown as Bindable, [
+    route([decoded], ([query]) => SearchPage({ query }) as unknown as Bindable),
   ]),
   route(['settings'], null, [
-    route(['appearance'], (_captures, url) =>
-      SettingsPage({
-        url,
-        children: AppearanceSettings({}),
-      }),
+    route(
+      ['appearance'],
+      (_captures, url) =>
+        SettingsPage({
+          url,
+          children: AppearanceSettings({}),
+        }) as unknown as Bindable,
     ),
-    route(['stream'], (_captures, url) =>
-      SettingsPage({
-        url,
-        children: StreamSettings({}),
-      }),
+    route(
+      ['stream'],
+      (_captures, url) =>
+        SettingsPage({
+          url,
+          children: StreamSettings({}),
+        }) as unknown as Bindable,
     ),
   ]),
-  route(['streams', decoded], ([streamId]) => StreamPage({ streamId })),
+  route(
+    ['streams', decoded],
+    ([streamId]) => StreamPage({ streamId }) as unknown as Bindable,
+  ),
 ]);

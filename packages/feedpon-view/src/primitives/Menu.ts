@@ -1,8 +1,8 @@
 import {
   createComponent,
-  type RefObject,
+  html,
+  Ref,
   type RenderContext,
-  Repeat,
   shallowEqual,
 } from 'barebind';
 
@@ -13,7 +13,7 @@ export interface MenuProps {
   onItemAction?: (event: Event, key: string) => void;
   onMenuToggle?: (open: boolean) => void;
   open?: boolean;
-  ref?: RefObject<MenuRef | null>;
+  ref?: Ref<MenuRef | null>;
   target: string;
 }
 
@@ -77,22 +77,19 @@ interface MenuSeparator {
 const FOCUSABLE_ELEMENT_SELECTOR =
   'a[href], button:not(:disabled), input:not(:disabled), textarea:not(:disabled), select:not(:disabled), details, [tabindex]:not([tabindex="-1"])';
 
-export const Menu = createComponent(function Menu(
-  {
-    autoFocus = true,
-    items,
-    manual = false,
-    onItemAction,
-    onMenuToggle,
-    open = false,
-    ref: exposedRef = { current: null },
-    target,
-  }: MenuProps,
-  $: RenderContext,
-): unknown {
-  const menuRef = $.useRef<HTMLElement | null>(null);
+export const Menu = createComponent<MenuProps>(function Menu({
+  autoFocus = true,
+  items,
+  manual = false,
+  onItemAction,
+  onMenuToggle,
+  open = false,
+  ref: exposedRef = new Ref<MenuRef | null>(null),
+  target,
+}) {
+  const menuRef = this.useRef<HTMLElement | null>(null);
 
-  exposedRef.current = $.useMemo(
+  exposedRef.current = this.useMemo(
     () => ({
       focusFirst() {
         focusFirstItem(menuRef.current!);
@@ -110,7 +107,7 @@ export const Menu = createComponent(function Menu(
     [],
   );
 
-  const handleKeyDown = $.useCallback((event: KeyboardEvent) => {
+  const handleKeyDown = this.useCallback((event: KeyboardEvent) => {
     if (
       !(
         event.target === event.currentTarget ||
@@ -140,14 +137,14 @@ export const Menu = createComponent(function Menu(
     }
   }, []);
 
-  const handleToggle = $.useCallback(
+  const handleToggle = this.useCallback(
     (event: ToggleEvent) => {
       onMenuToggle?.(event.newState === 'open');
     },
     [onMenuToggle],
   );
 
-  $.useLayoutEffect(() => {
+  this.useEffect(() => {
     const menu = menuRef.current!;
 
     if (open) {
@@ -167,15 +164,8 @@ export const Menu = createComponent(function Menu(
     }
   }, [open]);
 
-  const children = Repeat({
-    elementSelector: (item) => renderItem(item, onItemAction, $),
-    keySelector: (item) => item.key,
-    source: items,
-  });
-
-  return $.html`
+  return html`
     <div
-      :ref=${menuRef}
       autofocus=${autoFocus}
       class="Menu"
       popover=${manual ? 'manual' : 'auto'}
@@ -183,24 +173,22 @@ export const Menu = createComponent(function Menu(
       tabindex=${autoFocus ? '0' : false}
       @keydown=${handleKeyDown}
       @toggle=${handleToggle}
+      ${menuRef}
     >
-      <${children}>
+      <${items.map((item) => {
+        const result = renderItem(item, onItemAction, this);
+        return (result as any).withKey(item.key);
+      })}>
     </div>
   `;
 });
 
-const MenuButton = createComponent(
-  function MenuButton(
-    {
-      item,
-      onItemAction,
-    }: {
-      item: MenuButton;
-      onItemAction?: ((event: Event, key: string) => void) | undefined;
-    },
-    $: RenderContext,
-  ): unknown {
-    const handleAction = $.useCallback(
+const MenuButton = createComponent<{
+  item: MenuButton;
+  onItemAction?: ((event: Event, key: string) => void) | undefined;
+}>(
+  function MenuButton({ item, onItemAction }) {
+    const handleAction = this.useCallback(
       (event: Event) => {
         item.onAction?.(event, item.key);
         onItemAction?.(event, item.key);
@@ -208,7 +196,7 @@ const MenuButton = createComponent(
       [item.key, item.onAction, onItemAction],
     );
 
-    return $.html`
+    return html`
       <button
         aria-checked=${item.checked?.toString()}
         class="MenuItem"
@@ -224,18 +212,12 @@ const MenuButton = createComponent(
   { arePropsEqual: shallowEqual },
 );
 
-const MenuForm = createComponent(
-  function MenuForm(
-    {
-      item,
-      onItemAction,
-    }: {
-      item: MenuForm;
-      onItemAction?: ((event: Event, key: string) => void) | undefined;
-    },
-    $: RenderContext,
-  ): unknown {
-    const handleAction = $.useCallback(
+const MenuForm = createComponent<{
+  item: MenuForm;
+  onItemAction?: ((event: Event, key: string) => void) | undefined;
+}>(
+  function MenuForm({ item, onItemAction }) {
+    const handleAction = this.useCallback(
       (event: Event) => {
         item.onAction?.(event, item.key);
         onItemAction?.(event, item.key);
@@ -244,7 +226,7 @@ const MenuForm = createComponent(
       [item.key, item.onAction, onItemAction],
     );
 
-    return $.html`
+    return html`
       <form
         aria-label=${item.ariaLabel}
         class="MenuItem"
@@ -258,51 +240,36 @@ const MenuForm = createComponent(
   { arePropsEqual: shallowEqual },
 );
 
-const MenuGroup = createComponent(
-  function MenuGroup(
-    {
-      item,
-      onItemAction,
-    }: {
-      item: MenuGroup;
-      onItemAction?: ((event: Event, key: string) => void) | undefined;
-    },
-    $: RenderContext,
-  ): unknown {
-    const ariaLabelId = $.useId();
+const MenuGroup = createComponent<{
+  item: MenuGroup;
+  onItemAction?: ((event: Event, key: string) => void) | undefined;
+}>(
+  function MenuGroup({ item, onItemAction }) {
+    const ariaLabelId = this.useId();
 
-    const children = Repeat({
-      elementSelector: (item) => renderItem(item, onItemAction, $),
-      keySelector: (item) => item.key,
-      source: item.childItems,
-    });
-
-    return $.html`
+    return html`
       <section
         aria-labeledby=${ariaLabelId}
         class="MenuGroup"
         role="group"
       >
         <header class="MenuGroup-label" id=${ariaLabelId}>${item.label}</header>
-        <${children}>
+        <${item.childItems.map((item) => {
+          const result = renderItem(item, onItemAction, this);
+          return (result as any).withKey(item.key);
+        })}>
       </section>
     `;
   },
   { arePropsEqual: shallowEqual },
 );
 
-const MenuLink = createComponent(
-  function MenuLink(
-    {
-      item,
-      onItemAction,
-    }: {
-      item: MenuLink;
-      onItemAction?: ((event: Event, key: string) => void) | undefined;
-    },
-    $: RenderContext,
-  ): unknown {
-    const handleAction = $.useCallback(
+const MenuLink = createComponent<{
+  item: MenuLink;
+  onItemAction?: ((event: Event, key: string) => void) | undefined;
+}>(
+  function MenuLink({ item, onItemAction }) {
+    const handleAction = this.useCallback(
       (event: Event) => {
         item.onAction?.(event, item.key);
         onItemAction?.(event, item.key);
@@ -310,16 +277,16 @@ const MenuLink = createComponent(
       [item.key, item.onAction, onItemAction],
     );
 
-    return $.html`
-    <a
-      class="MenuItem"
-      href=${item.href}
-      role="menuitem"
-      @click=${handleAction}
-    >
-      <${item.children}>
-    </a>
-  `;
+    return html`
+      <a
+        class="MenuItem"
+        href=${item.href}
+        role="menuitem"
+        @click=${handleAction}
+      >
+        <${item.children}>
+      </a>
+    `;
   },
   { arePropsEqual: shallowEqual },
 );
@@ -393,7 +360,7 @@ function getMenuPosition({ top, bottom, left, right }: DOMRect): MenuPosition {
 function renderItem(
   item: MenuItem,
   onItemAction: ((event: Event, key: string) => void) | undefined,
-  $: RenderContext,
+  _: RenderContext,
 ): unknown {
   switch (item.type) {
     case 'button':
@@ -405,6 +372,6 @@ function renderItem(
     case 'link':
       return MenuLink({ item, onItemAction });
     case 'separator':
-      return $.html`<hr class="MenuSeparator">`;
+      return html`<hr class="MenuSeparator">`;
   }
 }

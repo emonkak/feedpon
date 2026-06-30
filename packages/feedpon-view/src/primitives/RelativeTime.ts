@@ -1,4 +1,4 @@
-import { createComponent, type RenderContext } from 'barebind';
+import { createComponent, html } from 'barebind';
 
 const MILLIS_PER_SECOND = 1000;
 const MILLIS_PER_MINITE = 60 * 1000;
@@ -13,46 +13,45 @@ interface RelativeTimeProps {
   time: number;
 }
 
-export const RelativeTime = createComponent(function RelativeTime(
-  {
+export const RelativeTime = createComponent<RelativeTimeProps>(
+  function RelativeTime({
     class: className,
     locales = 'en',
     time,
     updateInterval = MILLIS_PER_MINITE,
-  }: RelativeTimeProps,
-  $: RenderContext,
-): unknown {
-  const [now, setNow] = $.useState(() => new Date());
+  }) {
+    const [now, setNow] = this.useState(() => new Date());
 
-  $.useEffect(() => {
-    const timer = setInterval(() => {
-      setNow(new Date());
-    }, updateInterval);
+    this.useEffect(() => {
+      const timer = setInterval(() => {
+        setNow(new Date());
+      }, updateInterval);
 
-    return () => {
-      clearInterval(timer);
-    };
-  }, [updateInterval]);
+      return () => {
+        clearInterval(timer);
+      };
+    }, [updateInterval]);
 
-  const formatter = $.useMemo(
-    () => new Intl.RelativeTimeFormat(locales),
-    [locales],
-  );
-  const date = typeof time === 'number' ? new Date(time) : time;
-  const [amount, unit] = toRelativeTime(date, now);
-  const relativeTimeString =
-    unit === 'second' && amount <= 0 ? 'now' : formatter.format(amount, unit);
+    const formatter = this.useMemo(
+      () => new Intl.RelativeTimeFormat(locales),
+      [locales],
+    );
+    const date = typeof time === 'number' ? new Date(time) : time;
+    const [amount, unit] = toRelativeTime(date, now);
+    const relativeTimeString =
+      unit === 'second' && amount <= 0 ? 'now' : formatter.format(amount, unit);
 
-  return $.html`
-    <time
-      class=${className}
-      datetime=${date.toISOString()}
-      title=${date.toLocaleString()}
-    >
-      ${relativeTimeString}
-    </time>
-  `;
-});
+    return html`
+      <time
+        class=${className}
+        datetime=${date.toISOString()}
+        title=${date.toLocaleString()}
+      >
+        ${relativeTimeString}
+      </time>
+    `;
+  },
+);
 
 function toRelativeTime(
   date: Date,

@@ -1,4 +1,4 @@
-import { createComponent, type RenderContext } from 'barebind';
+import { createComponent, type RenderContext, html } from 'barebind';
 
 import { Menu, type MenuItem } from './Menu.ts';
 
@@ -14,11 +14,12 @@ export interface TriggerProps {
   open: boolean;
 }
 
-export const Dropdown = createComponent(function Dropdown(
-  { items, trigger, onMenuToggle }: DropdownProps,
-  $: RenderContext,
-): unknown {
-  const [open, setOpen] = $.useState(false);
+export const Dropdown = createComponent<DropdownProps>(function Dropdown({
+  items,
+  trigger,
+  onMenuToggle,
+}) {
+  const [open, setOpen] = this.useState(false);
 
   const closeDropdown = () => {
     setOpen(false);
@@ -41,13 +42,13 @@ export const Dropdown = createComponent(function Dropdown(
     onMenuToggle?.(open);
   };
 
-  const triggerId = $.useId();
+  const triggerId = this.useId();
 
-  return $.html`
+  return html`
     <div
       class="Dropdown"
     >
-      <${trigger({ id: triggerId, onMenuToggle: toggleDropdown, open }, $)}>
+      <${trigger({ id: triggerId, onMenuToggle: toggleDropdown, open }, this)}>
       <${Menu({
         target: triggerId,
         items,

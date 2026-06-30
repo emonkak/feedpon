@@ -3,7 +3,7 @@ import type { AppAction } from '../index.ts';
 
 export function acquireCredential(): AppAction<Promise<FeedlyCredential>> {
   return (state$, { feedlyAuthMutex, feedlyAuthenticator, feedlyClient }) => {
-    return state$.mutate(async (state) => {
+    return state$.scope(async (state) => {
       await feedlyAuthMutex.lock();
 
       try {
@@ -65,7 +65,7 @@ export function getExportUrl(): AppAction<Promise<string>> {
 
 export function revokeCredential(): AppAction<void> {
   return (state$, { feedlyClient }) => {
-    return state$.mutate(async (state) => {
+    return state$.scope(async (state) => {
       if (state.credential !== null) {
         await feedlyClient.logout(state.credential.accessToken);
 

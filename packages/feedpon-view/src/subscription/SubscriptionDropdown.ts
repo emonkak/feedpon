@@ -1,4 +1,4 @@
-import { createComponent, type RenderContext } from 'barebind';
+import { createComponent, html } from 'barebind';
 import { LocalAtom } from 'barebind/addons/signal';
 import type { Category, Subscription } from 'feedpon-store';
 import { openAlertDialog } from '../primitives/AlertDialog.ts';
@@ -16,20 +16,17 @@ interface SubscriptionDropdownProps {
   subscription: Subscription;
 }
 
-export const SubscriptionDropdown = createComponent(
-  function SubscriptionDropdown(
-    {
-      categories,
-      onCategoryCreate,
-      onSubscriptionDelete,
-      onSubscriptionUpdate,
-      subscription,
-    }: SubscriptionDropdownProps,
-    $: RenderContext,
-  ): unknown {
-    const newLabel$ = $.use(LocalAtom(''));
+export const SubscriptionDropdown = createComponent<SubscriptionDropdownProps>(
+  function SubscriptionDropdown({
+    categories,
+    onCategoryCreate,
+    onSubscriptionDelete,
+    onSubscriptionUpdate,
+    subscription,
+  }) {
+    const newLabel$ = this.use(LocalAtom(''));
 
-    const handleCategoryCreate = $.useCallback(
+    const handleCategoryCreate = this.useCallback(
       async (event: Event) => {
         event.preventDefault();
         const newLabel = newLabel$.value;
@@ -46,7 +43,7 @@ export const SubscriptionDropdown = createComponent(
       [subscription, onCategoryCreate, onSubscriptionUpdate],
     );
 
-    const handleAddToCategory = $.useCallback(
+    const handleAddToCategory = this.useCallback(
       async (event: Event, key: string) => {
         event.preventDefault();
         await onSubscriptionUpdate(
@@ -60,7 +57,7 @@ export const SubscriptionDropdown = createComponent(
       [subscription, onSubscriptionUpdate],
     );
 
-    const removeFromCategory = $.useCallback(
+    const removeFromCategory = this.useCallback(
       (event: Event, key: string) => {
         event.preventDefault();
         onSubscriptionUpdate(
@@ -75,39 +72,36 @@ export const SubscriptionDropdown = createComponent(
       [subscription, onSubscriptionUpdate],
     );
 
-    const handleNewCategoryLabelChange = $.useCallback((event: Event) => {
+    const handleNewCategoryLabelChange = this.useCallback((event: Event) => {
       newLabel$.value = (event.currentTarget as HTMLInputElement).value;
     }, []);
 
-    const handleUnsubscribe = $.useCallback(() => {
-      openAlertDialog(
-        {
-          confirmButton: ({ onConfirm }, context) => context.html`
-            <button
-              class="button button-negative"
-              type="button"
-              @click=${onConfirm}
-            >
-              Logout
-            </button>
-          `,
-          cancelButton: ({ onCancel }, context) => context.html`
-            <button
-              class="button button-outline-default"
-              type="button"
-              @click=${onCancel}
-            >
-              Cancel
-            </button>
-          `,
-          onConfirm: () => {
-            onSubscriptionDelete(subscription.id);
-          },
-          title: `Unsubscribe "${subscription.title}"`,
-          message: 'Are you sure you want to unsubscribe the feed?',
+    const handleUnsubscribe = this.useCallback(() => {
+      openAlertDialog({
+        confirmButton: ({ onConfirm }) => html`
+          <button
+            class="button button-negative"
+            type="button"
+            @click=${onConfirm}
+          >
+            Logout
+          </button>
+        `,
+        cancelButton: ({ onCancel }) => html`
+          <button
+            class="button button-outline-default"
+            type="button"
+            @click=${onCancel}
+          >
+            Cancel
+          </button>
+        `,
+        onConfirm: () => {
+          onSubscriptionDelete(subscription.id);
         },
-        $,
-      );
+        title: `Unsubscribe "${subscription.title}"`,
+        message: 'Are you sure you want to unsubscribe the feed?',
+      });
     }, []);
 
     const categoryMenuItems = categories.map((category) => {
@@ -115,7 +109,7 @@ export const SubscriptionDropdown = createComponent(
         (category) => category.label === category.label,
       );
       const icon = isAdded
-        ? $.html`<i aria-hidden class="icon icon-16 icon-checkmark" role="img"></i></div>`
+        ? html`<i aria-hidden class="icon icon-16 icon-checkmark" role="img"></i></div>`
         : null;
       const handleAction = isAdded ? removeFromCategory : handleAddToCategory;
 
@@ -123,7 +117,7 @@ export const SubscriptionDropdown = createComponent(
         type: 'button',
         checked: isAdded,
         key: category.label,
-        children: $.html`
+        children: html`
           <div class="MenuItem-content">${category.label}</div>
           <div class="MenuItem-icon"><${icon}></div>
         `,
@@ -132,7 +126,7 @@ export const SubscriptionDropdown = createComponent(
     });
 
     return Dropdown({
-      trigger: ({ id, onMenuToggle, open }, context) => context.html`
+      trigger: ({ id, onMenuToggle, open }) => html`
         <button
           aria-expanded=${open.toString()}
           type="button"
@@ -167,25 +161,25 @@ export const SubscriptionDropdown = createComponent(
               type: 'form',
               key: 'create_new_category',
               ariaLabel: 'Create new category',
-              children: $.html`
-              <div class="MenuItem-content">
-                <div class="input-group">
-                  <input
-                    type="text"
-                    class="form-control"
-                    style="width: 12rem"
-                    $value=${newLabel$}
-                    @change=${handleNewCategoryLabelChange}
-                  >
-                  <button
-                    type="submit"
-                    class="button button-positive"
-                  >
-                    OK
-                  </button>
+              children: html`
+                <div class="MenuItem-content">
+                  <div class="input-group">
+                    <input
+                      type="text"
+                      class="form-control"
+                      style="width: 12rem"
+                      $value=${newLabel$}
+                      @change=${handleNewCategoryLabelChange}
+                    >
+                    <button
+                      type="submit"
+                      class="button button-positive"
+                    >
+                      OK
+                    </button>
+                  </div>
                 </div>
-              </div>
-            `,
+              `,
               onAction: handleCategoryCreate,
             },
           ],
@@ -197,9 +191,9 @@ export const SubscriptionDropdown = createComponent(
         {
           type: 'button',
           key: 'unsubscribe',
-          children: $.html`
-          <div class="MenuItem-content">Unsubscribe...</div>
-        `,
+          children: html`
+            <div class="MenuItem-content">Unsubscribe...</div>
+          `,
           onAction: handleUnsubscribe,
         },
       ],

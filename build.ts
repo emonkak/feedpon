@@ -8,7 +8,7 @@ const configs: esbuild.BuildOptions[] = [
     bundle: true,
     entryPoints: ['assets/css/main.css'],
     logLevel: 'info',
-    outfile: 'dist/main.css',
+    outfile: 'dist/css/main.css',
   },
   {
     bundle: true,
@@ -16,14 +16,14 @@ const configs: esbuild.BuildOptions[] = [
     entryPoints: ['packages/feedpon/src/main.ts'],
     logLevel: 'info',
     metafile: true,
-    outfile: 'dist/main.js',
+    outfile: 'dist/js/main.js',
     plugins: [minifyTemplates()],
   },
   {
     bundle: true,
     entryPoints: ['packages/feedpon/src/background.ts'],
     logLevel: 'info',
-    outfile: 'dist/background.js',
+    outfile: 'dist/js/background.js',
   },
 ];
 
@@ -31,6 +31,6 @@ for (const result of await Promise.all(
   configs.map((config) => esbuild.build(config)),
 )) {
   if (result.metafile !== undefined) {
-    await fs.writeFile('dist/meta.json', JSON.stringify(result.metafile));
+    await fs.writeFile('meta.json', JSON.stringify(result.metafile));
   }
 }

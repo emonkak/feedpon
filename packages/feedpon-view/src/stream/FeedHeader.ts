@@ -1,4 +1,4 @@
-import { createComponent, type RenderContext } from 'barebind';
+import { createComponent, html } from 'barebind';
 import {
   type Category,
   type Feed,
@@ -20,25 +20,22 @@ interface FeedHeaderProps {
   subscription: Subscription | null;
 }
 
-export const FeedHeader = createComponent(function FeedHeader(
-  {
-    categories,
-    feed,
-    onCategoryCreate,
-    onSubscriptionCreate,
-    onSubscriptionDelete,
-    onSubscriptionUpdate,
-    subscription,
-  }: FeedHeaderProps,
-  $: RenderContext,
-): unknown {
+export const FeedHeader = createComponent<FeedHeaderProps>(function FeedHeader({
+  categories,
+  feed,
+  onCategoryCreate,
+  onSubscriptionCreate,
+  onSubscriptionDelete,
+  onSubscriptionUpdate,
+  subscription,
+}) {
   const feedUrl = getFeedUrl(feed.id);
   const feedLink =
     feed.website !== undefined
-      ? $.html`<a target="_blank" class="link-strong" href=${feed.website} rel="noreferrer">${feed.title}</a>`
-      : $.html`<strong>${feed.title}</strong>`;
+      ? html`<a target="_blank" class="link-strong" href=${feed.website} rel="noreferrer">${feed.title}</a>`
+      : html`<strong>${feed.title}</strong>`;
 
-  return $.html`
+  return html`
     <header class="stream-header">
       <div class="container">
         <div class="u-flex u-flex-align-items-center u-flex-justify-content-between">

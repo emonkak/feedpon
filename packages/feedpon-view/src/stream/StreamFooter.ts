@@ -1,4 +1,4 @@
-import { createComponent, type RenderContext } from 'barebind';
+import { createComponent, html } from 'barebind';
 
 interface StreamFooterProps {
   canMarkAsRead: boolean;
@@ -8,52 +8,51 @@ interface StreamFooterProps {
   onStreamMarkAsRead: () => void;
 }
 
-export const StreamFooter = createComponent(function StreamFooter(
-  {
+export const StreamFooter = createComponent<StreamFooterProps>(
+  function StreamFooter({
     canMarkAsRead,
     hasMoreEntries,
     isStreamLoading,
     onStreamLoadMoreEntries,
     onStreamMarkAsRead,
-  }: StreamFooterProps,
-  $: RenderContext,
-): unknown {
-  const handleStreamFetch = (event: Event) => {
-    event.preventDefault();
-    onStreamLoadMoreEntries();
-  };
+  }) {
+    const handleStreamFetch = (event: Event) => {
+      event.preventDefault();
+      onStreamLoadMoreEntries();
+    };
 
-  if (hasMoreEntries) {
-    if (isStreamLoading) {
-      return $.html`
+    if (hasMoreEntries) {
+      if (isStreamLoading) {
+        return html`
+          <footer class="stream-footer">
+            <i class="icon icon-32 icon-spinner animation-rotating"></i>
+          </footer>
+        `;
+      }
+
+      return html`
         <footer class="stream-footer">
-          <i class="icon icon-32 icon-spinner animation-rotating"></i>
+          <a class="link-strong" href="#" @click=${handleStreamFetch}>
+            Load more entries...
+          </a>
         </footer>
       `;
     }
 
-    return $.html`
+    return html`
       <footer class="stream-footer">
-        <a class="link-strong" href="#" @click=${handleStreamFetch}>
-          Load more entries...
-        </a>
+        <p>No more entries here.</p>
+        <p>
+          <button
+            type="button"
+            class="button button-positive"
+            disabled=${!canMarkAsRead}
+            @click=${onStreamMarkAsRead}
+          >
+            Mark all entries as read
+          </button>
+        </p>
       </footer>
     `;
-  }
-
-  return $.html`
-    <footer class="stream-footer">
-      <p>No more entries here.</p>
-      <p>
-        <button
-          type="button"
-          class="button button-positive"
-          disabled=${!canMarkAsRead}
-          @click=${onStreamMarkAsRead}
-        >
-          Mark all entries as read
-        </button>
-      </p>
-    </footer>
-  `;
-});
+  },
+);

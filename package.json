@@ -13,16 +13,16 @@
     "test": "vitest"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.4.7",
-    "@types/node": "^25.5.0",
-    "@vitest/coverage-v8": "^4.1.0",
-    "esbuild": "^0.27.4",
+    "@biomejs/biome": "^2.5.4",
+    "@types/node": "^26.1.1",
+    "@vitest/coverage-v8": "^4.1.10",
+    "esbuild": "^0.28.1",
     "esbuild-plugin-minify-templates": "github:emonkak/barebind#path:tools/esbuild-plugin-minify-templates",
-    "fast-check": "^4.6.0",
-    "tsx": "^4.21.0",
-    "typescript": "^5.9.3",
-    "vitest": "^4.1.0",
-    "wireit": "^0.14.12"
+    "fast-check": "^4.9.0",
+    "tsx": "^4.23.1",
+    "typescript": "^7.0.2",
+    "vitest": "^4.1.10",
+    "wireit": "^0.14.13"
   },
   "workspaces": [
     "packages/*"
@@ -40,9 +40,9 @@
         "tsconfig.json"
       ],
       "output": [
-        "dist/background.js",
-        "dist/main.css",
-        "dist/main.js"
+        "dist/css/main.css",
+        "dist/js/background.js",
+        "dist/js/main.js"
       ],
       "dependencies": [
         "typecheck"
@@ -50,12 +50,12 @@
     },
     "clean": {
       "dependencies": [
-        "clean:dist",
+        "clean:build",
         "clean:tsc"
       ]
     },
-    "clean:dist": {
-      "command": "rm --force --recursive dist"
+    "clean:build": {
+      "command": "rm --force --recursive dist/{css,js}"
     },
     "clean:tsc": {
       "command": "tsc --build --clean"

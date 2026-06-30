@@ -1,4 +1,4 @@
-import { createComponent, type RenderContext } from 'barebind';
+import { createComponent, html } from 'barebind';
 
 interface NavbarProps {
   children: unknown;
@@ -6,15 +6,16 @@ interface NavbarProps {
   progress?: number;
 }
 
-export const Navbar = createComponent(function Navbar(
-  { children, onSidebarToggle, progress }: NavbarProps,
-  $: RenderContext,
-): unknown {
+export const Navbar = createComponent<NavbarProps>(function Navbar({
+  children,
+  onSidebarToggle,
+  progress,
+}) {
   const handleSidebarToggle = () => {
     onSidebarToggle();
   };
 
-  return $.html`
+  return html`
     <nav class="navbar">
       <div class="navbar-container">
         <button
@@ -28,7 +29,7 @@ export const Navbar = createComponent(function Navbar(
       </div>
       <${
         progress !== undefined
-          ? $.html`<div :style=${{ width: `${progress * 100}%` }} class="navbar-indicator"></div>`
+          ? html`<div style=${{ width: `${progress * 100}%` }} class="navbar-indicator"></div>`
           : null
       }>
     </nav>

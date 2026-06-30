@@ -1,4 +1,4 @@
-import { createComponent, type RenderContext } from 'barebind';
+import { createComponent, html } from 'barebind';
 
 // Tag list from https://html.spec.whatwg.org/
 const SAFE_ELEMENTS = new Set([
@@ -240,30 +240,29 @@ interface EmbeddedHTMLProps {
   origin: string;
 }
 
-export const EmbeddedHTML = createComponent(function EmbeddedHTML(
-  { origin, html }: EmbeddedHTMLProps,
-  $: RenderContext,
-): unknown {
-  const containerRef = $.useRef<HTMLDivElement | null>(null);
+export const EmbeddedHTML = createComponent<EmbeddedHTMLProps>(
+  function EmbeddedHTML({ origin, html: htmlString }) {
+    const containerRef = this.useRef<HTMLDivElement | null>(null);
 
-  $.useLayoutEffect(() => {
-    const { shadowRoot } = containerRef.current!;
+    this.useEffect(() => {
+      const { shadowRoot } = containerRef.current!;
 
-    shadowRoot!.adoptedStyleSheets = [STYLE_SHEET];
-  }, []);
+      shadowRoot!.adoptedStyleSheets = [STYLE_SHEET];
+    }, []);
 
-  $.useLayoutEffect(() => {
-    const { shadowRoot } = containerRef.current!;
+    this.useEffect(() => {
+      const { shadowRoot } = containerRef.current!;
 
-    shadowRoot!.replaceChildren(parseHTML(html, origin));
-  }, [html, origin]);
+      shadowRoot!.replaceChildren(parseHTML(htmlString, origin));
+    }, [htmlString, origin]);
 
-  return $.html`
-    <div :ref=${containerRef}>
-      <template shadowrootclonable shadowrootmode="open"></template>
-    </div>
-  `;
-});
+    return html`
+      <div ${containerRef}>
+        <template shadowrootclonable shadowrootmode="open"></template>
+      </div>
+    `;
+  },
+);
 
 function copyAttribute(source: Element, dest: Element, name: string): void {
   if (source.hasAttribute(name)) {

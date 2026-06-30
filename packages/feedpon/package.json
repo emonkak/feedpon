@@ -5,7 +5,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@types/chrome": "^0.1.38",
+    "@types/chrome": "^0.2.2",
     "barebind": "catalog:",
     "feedpon-store": "workspace:^",
     "feedpon-view": "workspace:^",

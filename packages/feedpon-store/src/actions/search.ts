@@ -3,7 +3,7 @@ import { acquireCredential } from './auth.ts';
 
 export function searchFeeds(query: string): AppAction<Promise<void>> {
   return (state$, { feedlyClient }, dispatch) => {
-    return state$.mutate(async (state) => {
+    return state$.scope(async (state) => {
       state.searching = true;
 
       try {

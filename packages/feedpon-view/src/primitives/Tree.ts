@@ -1,9 +1,9 @@
 import {
-  type Bindable,
   type Component,
   createComponent,
+  html,
   type RenderContext,
-  Repeat,
+  type VComponent,
 } from 'barebind';
 
 export interface TreeProps<TKey = unknown, TValue = unknown> {
@@ -35,22 +35,22 @@ interface UnmanagedState {
 export interface Tree extends Component<TreeProps> {
   <TKey, TValue>(
     props: TreeProps<TKey, TValue>,
-  ): Bindable<TreeProps<TKey, TValue>>;
+  ): VComponent<TreeProps<TKey, TValue>>;
 }
 
 export const Tree: Tree = createComponent(function Tree<TKey, TValue>(
+  this: RenderContext,
   { items, renderItem, onSelect }: TreeProps<TKey, TValue>,
-  $: RenderContext,
-): unknown {
-  const unmanagedStatesRef = $.useMemo(
+) {
+  const unmanagedStatesRef = this.useMemo(
     () => ({ current: new Map<TKey, UnmanagedState>() }),
     [],
   );
   const oldUnmanagedStates = unmanagedStatesRef.current;
   const newUnmanagedStates = new Map<TKey, UnmanagedState>();
 
-  const forceUpdate = $.useCallback(() => {
-    $.forceUpdate();
+  const forceUpdate = this.useCallback(() => {
+    this.forceUpdate();
   }, []);
 
   const aggregate = (
@@ -93,34 +93,31 @@ export const Tree: Tree = createComponent(function Tree<TKey, TValue>(
     return accumulator;
   };
 
-  const children = Repeat({
-    elementSelector: ({ item, state, parent }) =>
-      TreeNode({
-        children: renderItem(item.value, item.key, $),
-        item,
-        onSelect,
-        onStateUpadte: forceUpdate,
-        parent,
-        state,
-      }),
-    keySelector: ({ item }) => item.key,
-    source: items.reduce(
-      (results, item) => aggregate(results, item, null),
-      [] as ItemAggregation<TKey, TValue>[],
-    ),
-  });
-
   unmanagedStatesRef.current = newUnmanagedStates;
 
-  return $.html`
+  return html`
     <div class="Tree" role="tree">
-      <${children}>
+      <${items
+        .reduce(
+          (results, item) => aggregate(results, item, null),
+          [] as ItemAggregation<TKey, TValue>[],
+        )
+        .map(({ item, state, parent }) =>
+          TreeNode({
+            children: renderItem(item.value, item.key, this),
+            item,
+            onSelect,
+            onStateUpadte: forceUpdate,
+            parent,
+            state,
+          }).withKey(item.key),
+        )}>
     </div>
   `;
 });
 
 interface TreeNode extends Component<TreeNodeProps> {
-  <T>(props: TreeNodeProps<T>): Bindable<TreeNodeProps<T>>;
+  <T>(props: TreeNodeProps<T>): VComponent<TreeNodeProps<T>>;
 }
 
 interface TreeNodeProps<TKey = unknown, TValue = unknown> {
@@ -133,6 +130,7 @@ interface TreeNodeProps<TKey = unknown, TValue = unknown> {
 }
 
 const TreeNode: TreeNode = createComponent(function TreeNode<TKey, TValue>(
+  this: RenderContext,
   {
     children,
     item,
@@ -141,9 +139,8 @@ const TreeNode: TreeNode = createComponent(function TreeNode<TKey, TValue>(
     state,
     parent,
   }: TreeNodeProps<TKey, TValue>,
-  $: RenderContext,
-): unknown {
-  const handleClick = $.useCallback(
+) {
+  const handleClick = this.useCallback(
     (event: MouseEvent) => {
       event.preventDefault();
       onSelect(item);
@@ -151,7 +148,7 @@ const TreeNode: TreeNode = createComponent(function TreeNode<TKey, TValue>(
     [onSelect, item.value],
   );
 
-  const handleKeyDown = $.useCallback(
+  const handleKeyDown = this.useCallback(
     (event: KeyboardEvent) => {
       if (event.currentTarget !== event.target) {
         return;
@@ -233,11 +230,11 @@ const TreeNode: TreeNode = createComponent(function TreeNode<TKey, TValue>(
     onStateUpadte();
   };
 
-  const ariaLabelId = $.useId();
+  const ariaLabelId = this.useId();
 
   const expandButton =
     item.children.length > 0
-      ? $.html`
+      ? html`
         <button
           aria-expanded=${state.expanded.toString()}
           aria-label=${state.expanded ? 'Shrink item' : 'Expand item'}
@@ -259,10 +256,10 @@ const TreeNode: TreeNode = createComponent(function TreeNode<TKey, TValue>(
       `
       : null;
 
-  return $.html`
+  return html`
     <div
-      :class=${{ TreeItem: true, 'is-selected': item.selected }}
-      :style=${{ '--level': state.level.toString() }}
+      class=${{ TreeItem: true, 'is-selected': item.selected }}
+      style=${{ '--level': state.level.toString() }}
       aria-labelledby=${ariaLabelId}
       aria-level=${state.level}
       aria-selected=${item.selected.toString()}

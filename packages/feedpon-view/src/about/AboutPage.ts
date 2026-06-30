@@ -1,5 +1,5 @@
-import { createComponent, type RenderContext, Repeat } from 'barebind';
-import { HistoryContext, RelativeURL } from 'barebind/addons/router';
+import { createComponent, html } from 'barebind';
+import { NavigationContext } from 'barebind/addons/router';
 import { AppStore } from 'feedpon-store';
 import * as uiActions from 'feedpon-store/actions/ui';
 import { BindActionCreators } from 'store';
@@ -39,25 +39,22 @@ SOFTWARE.
   },
 ];
 
-export const AboutPage = createComponent(function AboutPage(
-  {}: AboutPageProps,
-  $: RenderContext,
-): unknown {
-  const { state$ } = $.use(AppStore);
-  const { navigator } = $.use(HistoryContext);
-  const { toggleSidebar } = $.use(BindActionCreators(AppStore, uiActions));
-  const version = $.use(state$.get('version'));
+export const AboutPage = createComponent<AboutPageProps>(function AboutPage() {
+  const { state$ } = this.use(AppStore);
+  const { adapter: navigator } = this.inject(NavigationContext);
+  const { toggleSidebar } = this.use(BindActionCreators(AppStore, uiActions));
+  const version = this.use(state$.get('version'));
 
-  const handleGoKitchensink = $.useCallback(() => {
-    navigator.navigate(new RelativeURL('/kitchensink'));
+  const handleGoKitchensink = this.useCallback(() => {
+    navigator.navigate('/kitchensink');
   }, []);
 
   const header = Navbar({
     onSidebarToggle: toggleSidebar,
-    children: $.html`
+    children: html`
       <h1 class="navbar-title">About</h1>
       <${Dropdown({
-        trigger: ({ id, onMenuToggle, open }, context) => context.html`
+        trigger: ({ id, onMenuToggle, open }) => html`
           <button
             aria-label="Open menu"
             aria-expanded=${open.toString()}
@@ -78,7 +75,7 @@ export const AboutPage = createComponent(function AboutPage(
           {
             type: 'button',
             key: 'go_kitchensink',
-            children: $.html`
+            children: html`
               <div class="MenuItem-content">Go kitchensink...</div>
             `,
             onAction: handleGoKitchensink,
@@ -88,8 +85,8 @@ export const AboutPage = createComponent(function AboutPage(
     `,
   });
 
-  const usingLibraries = Repeat({
-    elementSelector: ({ license, name, url }) => $.html`
+  const usingLibraries = USING_LIBRARIES.map(
+    ({ license, name, url }) => html`
       <li>
         <h2>
           <a href=${url} target="_blank" rel="noreferrer">
@@ -99,9 +96,8 @@ export const AboutPage = createComponent(function AboutPage(
         <pre class="u-text-prewrap">${license}</pre>
       </li>
     `,
-    source: USING_LIBRARIES,
-  });
-  const content = $.html`
+  );
+  const content = html`
     <section class="section u-text-center">
       <div class="container">
         <a

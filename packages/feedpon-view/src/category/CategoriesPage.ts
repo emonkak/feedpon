@@ -1,5 +1,5 @@
-import { createComponent, type Ref, type RenderContext } from 'barebind';
-import { HistoryContext, RelativeURL } from 'barebind/addons/router';
+import { createComponent, html, type Ref, text } from 'barebind';
+import { NavigationContext } from 'barebind/addons/router';
 import { AppStore, type Subscription } from 'feedpon-store';
 import * as subscriptionActions from 'feedpon-store/actions/subscription';
 import * as uiActions from 'feedpon-store/actions/ui';
@@ -21,276 +21,274 @@ export interface CategoriesPageProps {
   label?: string;
 }
 
-export const CategoriesPage = createComponent(function CategoriesPage(
-  { label }: CategoriesPageProps,
-  $: RenderContext,
-): unknown {
-  const { state$ } = $.use(AppStore);
-  const { navigator } = $.use(HistoryContext);
-  const categories = $.use(state$.get('unsortedCategories'));
-  const subscriptions = $.use(state$.get('unsortedSubscriptions'));
-  const { toggleSidebar } = $.use(BindActionCreators(AppStore, uiActions));
-  const {
-    createCategory,
-    deleteCategory,
-    deleteSubscription,
-    exportOpml,
-    importOpml,
-    updateCategory,
-    updateSubscription,
-  } = $.use(BindActionCreators(AppStore, subscriptionActions));
-  const [query, setQuery] = $.useState('');
-  const searchInputRef = $.useRef<HTMLInputElement | null>(null);
-  const uploadInputRef = $.useRef<HTMLInputElement | null>(null);
+export const CategoriesPage = createComponent<CategoriesPageProps>(
+  function CategoriesPage({ label }) {
+    const { state$ } = this.use(AppStore);
+    const { adapter: navigator } = this.inject(NavigationContext);
+    const categories = this.use(state$.get('unsortedCategories'));
+    const subscriptions = this.use(state$.get('unsortedSubscriptions'));
+    const { toggleSidebar } = this.use(BindActionCreators(AppStore, uiActions));
+    const {
+      createCategory,
+      deleteCategory,
+      deleteSubscription,
+      exportOpml,
+      importOpml,
+      updateCategory,
+      updateSubscription,
+    } = this.use(BindActionCreators(AppStore, subscriptionActions));
+    const [query, setQuery] = this.useState('');
+    const searchInputRef = this.useRef<HTMLInputElement | null>(null);
+    const uploadInputRef = this.useRef<HTMLInputElement | null>(null);
 
-  const activeCategory = $.useMemo(
-    () =>
-      label !== undefined
-        ? (categories.find((category) => category.label === label) ?? null)
-        : null,
-    [categories, label],
-  );
-
-  const selectedSubscriptions = $.useMemo(() => {
-    return Object.values(subscriptions).filter(
-      label !== undefined
-        ? (subscription) =>
-            subscription.categories.some((category) => category.label === label)
-        : (subscription) => subscription.categories.length === 0,
+    const activeCategory = this.useMemo(
+      () =>
+        label !== undefined
+          ? (categories.find((category) => category.label === label) ?? null)
+          : null,
+      [categories, label],
     );
-  }, [subscriptions, label]);
 
-  const renderSubscriptionItem = $.useCallback(
-    (
-      { subscription }: { id: string | number; subscription: Subscription },
-      _index: number,
-      _ref: Ref<Element>,
-      _context: RenderContext,
-    ) =>
-      SubscriptionView({
-        categories,
-        onCategoryCreate: createCategory,
-        onSubscriptionDelete: deleteSubscription,
-        onSubscriptionUpdate: updateSubscription,
-        subscription,
-      }),
-    [categories],
-  );
-
-  const handleChangeSearchQuery = $.useMemo(
-    () =>
-      debounce((_event: Event) => {
-        if (!searchInputRef.current) {
-          return;
-        }
-
-        setQuery(searchInputRef.current.value);
-      }, 100),
-    [],
-  );
-
-  const handleChangeUploadFile = $.useCallback((event: Event) => {
-    const target = event.currentTarget as HTMLInputElement;
-    if (!target.files) {
-      return;
-    }
-
-    const file = target.files[0];
-    if (!file) {
-      return;
-    }
-
-    const reader = new FileReader();
-
-    reader.onload = (_event) => {
-      importOpml(reader.result as string);
-    };
-
-    reader.readAsText(file);
-  }, []);
-
-  const handleCategoryDelete = $.useCallback(async (categoryId: string) => {
-    await deleteCategory(categoryId);
-
-    navigator.navigate(new RelativeURL('/categories/'), { replace: true });
-  }, []);
-
-  const handleCategoryUpdate = $.useCallback(
-    async (categoryId: string, newLabel: string) => {
-      await updateCategory(categoryId, newLabel);
-
-      navigator.navigate(
-        new RelativeURL('/categories/' + encodeURIComponent(newLabel)),
-        { replace: true },
+    const selectedSubscriptions = this.useMemo(() => {
+      return Object.values(subscriptions).filter(
+        label !== undefined
+          ? (subscription) =>
+              subscription.categories.some(
+                (category) => category.label === label,
+              )
+          : (subscription) => subscription.categories.length === 0,
       );
-    },
-    [],
-  );
+    }, [subscriptions, label]);
 
-  const handleImportOpml = $.useCallback(() => {
-    uploadInputRef.current?.click();
-  }, []);
-
-  const handleSelectCategory = $.useCallback((_event: Event, key: string) => {
-    navigator.navigate(
-      new RelativeURL('/categories/' + encodeURIComponent(key)),
-      { replace: true },
+    const renderSubscriptionItem = this.useCallback(
+      (
+        { subscription }: { id: string | number; subscription: Subscription },
+        _index: number,
+      ) =>
+        SubscriptionView({
+          categories,
+          onCategoryCreate: createCategory,
+          onSubscriptionDelete: deleteSubscription,
+          onSubscriptionUpdate: updateSubscription,
+          subscription,
+        }),
+      [categories],
     );
-  }, []);
 
-  const filteredSubscriptions = $.useMemo(() => {
-    const normalizedQuery = query.trim().toLowerCase();
-    if (normalizedQuery === '') {
-      return selectedSubscriptions.map((subscription) => ({
-        id: subscription.id,
-        subscription,
-      }));
-    }
+    const handleChangeSearchQuery = this.useMemo(
+      () =>
+        debounce((_event: Event) => {
+          if (!searchInputRef.current) {
+            return;
+          }
 
-    const tokens = normalizedQuery.split(/\s+/);
+          setQuery(searchInputRef.current.value);
+        }, 100),
+      [],
+    );
 
-    return selectedSubscriptions
-      .filter((subscription) => {
-        const input = (
-          subscription.title +
-          ' ' +
-          subscription.website
-        ).toLowerCase();
-        return tokens.every((query) => input.includes(query));
-      })
-      .map((subscription) => ({
-        id: subscription.id,
-        subscription,
-      }));
-  }, [query, selectedSubscriptions]);
+    const handleChangeUploadFile = this.useCallback((event: Event) => {
+      const target = event.currentTarget as HTMLInputElement;
+      if (!target.files) {
+        return;
+      }
 
-  const dropdown = Dropdown({
-    trigger: ({ id, onMenuToggle, open }, context) => context.html`
-          <button
-            aria-expanded=${open.toString()}
-            aria-label="Toggle menu"
-            class="navbar-action"
-            id=${id}
-            type="button"
-            @click=${onMenuToggle}
-          >
-            <i
-              aria-hidden
-              class="icon icon-24 icon-menu-2"
-              role="img"
-            ></i>
-          </button>
-        `,
-    items: [
-      {
-        type: 'button',
-        key: 'import_opml',
-        children: $.html`
-          <div class="MenuItem-content">Import OPML...</div>
-        `,
-        onAction: handleImportOpml,
+      const file = target.files[0];
+      if (!file) {
+        return;
+      }
+
+      const reader = new FileReader();
+
+      reader.onload = (_event) => {
+        importOpml(reader.result as string);
+      };
+
+      reader.readAsText(file);
+    }, []);
+
+    const handleCategoryDelete = this.useCallback(
+      async (categoryId: string) => {
+        await deleteCategory(categoryId);
+
+        navigator.navigate('/categories/');
       },
-      {
-        type: 'button',
-        key: 'export_opml',
-        children: $.html`
-          <div class="MenuItem-content">Export OPML...</div>
-        `,
-        onAction: exportOpml,
+      [],
+    );
+
+    const handleCategoryUpdate = this.useCallback(
+      async (categoryId: string, newLabel: string) => {
+        await updateCategory(categoryId, newLabel);
+
+        navigator.navigate('/categories/' + encodeURIComponent(newLabel));
       },
-    ],
-  });
+      [],
+    );
 
-  const header = Navbar({
-    onSidebarToggle: toggleSidebar,
-    children: $.html`
-      <h1 class="navbar-title">Organize subscriptions</h1>
-      <${dropdown}>
-      <input
-        :ref=${uploadInputRef}
-        class="u-none"
-        type="file"
-        @change=${handleChangeUploadFile}
-      >
-    `,
-  });
+    const handleImportOpml = this.useCallback(() => {
+      uploadInputRef.current?.click();
+    }, []);
 
-  const tabList = TabList({
-    items: [
-      {
-        key: '',
-        children: $.text`Uncategorized`,
-        selected: label === undefined,
-      } as TabItem,
-    ].concat(
-      categories.map((category) => ({
-        key: category.label ?? '',
-        children: $.text`${category.label}`,
-        selected: label === category.label,
-      })),
-    ),
-    onTabSelect: handleSelectCategory,
-  });
+    const handleSelectCategory = this.useCallback(
+      (_event: Event, key: string) => {
+        navigator.navigate('/categories/' + encodeURIComponent(key));
+      },
+      [],
+    );
 
-  const description =
-    selectedSubscriptions.length > 0
-      ? $.html`
-        <p>
-          <strong>${selectedSubscriptions.length}</strong> subscriptions are
-          available in this category.
-        </p>
-      `
-      : $.html`<p>There are no subscriptions in this category.</p>`;
+    const filteredSubscriptions = this.useMemo(() => {
+      const normalizedQuery = query.trim().toLowerCase();
+      if (normalizedQuery === '') {
+        return selectedSubscriptions.map((subscription) => ({
+          id: subscription.id,
+          subscription,
+        }));
+      }
 
-  const content = $.html`
-    <div class="container">
-      <${tabList}>
-      <${
-        activeCategory !== null
-          ? CategoryForm({
-              category: activeCategory,
-              onCategoryUpdate: handleCategoryUpdate,
-              onCategoryDelete: handleCategoryDelete,
-            })
-          : null
-      }>
-      <h1 class="display-1">${label ?? 'Uncategorized'}</h1>
-      <p>
-        <input
-          :ref=${searchInputRef}
-          type="search"
-          class="form-control"
-          placeholder="Filter for subscriptions..."
-          @change=${handleChangeSearchQuery}
+      const tokens = normalizedQuery.split(/\s+/);
+
+      return selectedSubscriptions
+        .filter((subscription) => {
+          const input = (
+            subscription.title +
+            ' ' +
+            subscription.website
+          ).toLowerCase();
+          return tokens.every((query) => input.includes(query));
+        })
+        .map((subscription) => ({
+          id: subscription.id,
+          subscription,
+        }));
+    }, [query, selectedSubscriptions]);
+
+    const dropdown = Dropdown({
+      trigger: ({ id, onMenuToggle, open }) => html`
+        <button
+          aria-expanded=${open.toString()}
+          aria-label="Toggle menu"
+          class="navbar-action"
+          id=${id}
+          type="button"
+          @click=${onMenuToggle}
         >
-      </p>
-      <${description}>
-      <${VirtualScrollList({
-        assumedItemSize: 60,
-        items: filteredSubscriptions,
-        renderItem: renderSubscriptionItem,
-        renderList: renderSubscriptionList,
-      })}>
-    </div>
-  `;
+          <i
+            aria-hidden
+            class="icon icon-24 icon-menu-2"
+            role="img"
+          ></i>
+        </button>
+      `,
+      items: [
+        {
+          type: 'button',
+          key: 'import_opml',
+          children: html`
+            <div class="MenuItem-content">Import OPML...</div>
+          `,
+          onAction: handleImportOpml,
+        },
+        {
+          type: 'button',
+          key: 'export_opml',
+          children: html`
+            <div class="MenuItem-content">Export OPML...</div>
+          `,
+          onAction: exportOpml,
+        },
+      ],
+    });
 
-  return MainLayout({
-    header,
-    content,
-  });
-});
+    const header = Navbar({
+      onSidebarToggle: toggleSidebar,
+      children: html`
+        <h1 class="navbar-title">Organize subscriptions</h1>
+        <${dropdown}>
+        <input
+          class="u-none"
+          type="file"
+          @change=${handleChangeUploadFile}
+          ${uploadInputRef}
+        >
+      `,
+    });
+
+    const tabList = TabList({
+      items: [
+        {
+          key: '',
+          children: text`Uncategorized`,
+          selected: label === undefined,
+        } as TabItem,
+      ].concat(
+        categories.map((category) => ({
+          key: category.label ?? '',
+          children: text`${category.label}`,
+          selected: label === category.label,
+        })),
+      ),
+      onTabSelect: handleSelectCategory,
+    });
+
+    const description =
+      selectedSubscriptions.length > 0
+        ? html`
+          <p>
+            <strong>${selectedSubscriptions.length}</strong> subscriptions are
+            available in this category.
+          </p>
+        `
+        : html`<p>There are no subscriptions in this category.</p>`;
+
+    const content = html`
+      <div class="container">
+        <${tabList}>
+        <${
+          activeCategory !== null
+            ? CategoryForm({
+                category: activeCategory,
+                onCategoryUpdate: handleCategoryUpdate,
+                onCategoryDelete: handleCategoryDelete,
+              })
+            : null
+        }>
+        <h1 class="display-1">${label ?? 'Uncategorized'}</h1>
+        <p>
+          <input
+            type="search"
+            class="form-control"
+            placeholder="Filter for subscriptions..."
+            @change=${handleChangeSearchQuery}
+            ${searchInputRef}
+          >
+        </p>
+        <${description}>
+        <${VirtualScrollList({
+          assumedItemSize: 60,
+          items: filteredSubscriptions,
+          renderItem: renderSubscriptionItem,
+          renderList: renderSubscriptionList,
+        })}>
+      </div>
+    `;
+
+    return MainLayout({
+      header,
+      content,
+    });
+  },
+);
 
 function renderSubscriptionList(
   children: unknown,
   blankSpaces: BlankSpaces,
-  elementRef: Ref<Element>,
-  $: RenderContext,
+  elementRef: Ref<Element | null>,
 ): unknown {
-  return $.html`
-    <ul class="list-group" :ref=${elementRef}>
-      <li :style=${{ height: blankSpaces.above + 'px' }}></li>
+  return html`
+    <ul class="list-group" ${elementRef}>
+      <li style=${{ height: blankSpaces.above + 'px' }}></li>
       <${children}>
-      <li :style=${{ height: blankSpaces.below + 'px' }}></li>
+      <li style=${{ height: blankSpaces.below + 'px' }}></li>
     </ul>
   `;
 }

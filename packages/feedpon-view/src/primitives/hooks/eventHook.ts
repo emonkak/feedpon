@@ -8,7 +8,7 @@ export function createEventHook<THandler extends (...args: any[]) => any>(
   return (context) => {
     const handlerRef = context.useRef<THandler>(handler);
 
-    context.useLayoutEffect(() => {
+    context.useEffect(() => {
       handlerRef.current = handler;
     });
 

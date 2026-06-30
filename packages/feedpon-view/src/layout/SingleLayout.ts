@@ -1,4 +1,4 @@
-import { createComponent, type RenderContext } from 'barebind';
+import { createComponent, html } from 'barebind';
 import { AppStore } from 'feedpon-store';
 
 import { NotificationStack } from '../notification/NotificationStack.ts';
@@ -8,14 +8,12 @@ export interface SingleLayoutProps {
   child?: unknown;
 }
 
-export const SingleLayout = createComponent(function SingleLayout(
-  { child }: SingleLayoutProps,
-  $: RenderContext,
-): unknown {
-  const { state$ } = $.use(AppStore);
-  const authenticating = $.use(state$.get('authenticating'));
+export const SingleLayout = createComponent<SingleLayoutProps>(
+  function SingleLayout({ child }) {
+    const { state$ } = this.use(AppStore);
+    const authenticating = this.use(state$.get('authenticating'));
 
-  return $.html`
+    return html`
     <div class="l-main">
       <div class="l-notifications">
         <${NotificationStack({})}>
@@ -28,9 +26,10 @@ export const SingleLayout = createComponent(function SingleLayout(
     <div class="l-backdrop">
       <${
         authenticating
-          ? $.html`<i class="icon icon-48 icon-spinner animation-rotating"></i>`
+          ? html`<i class="icon icon-48 icon-spinner animation-rotating"></i>`
           : null
       }>
     </div>
   `;
-});
+  },
+);

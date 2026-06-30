@@ -3,6 +3,7 @@
   "compilerOptions": {
     "composite": true,
     "resolveJsonModule": true,
-    "rootDir": "src"
+    "rootDir": "src",
+    "types": ["chrome"]
   }
 }

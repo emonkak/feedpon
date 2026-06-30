@@ -1,4 +1,11 @@
-import { createComponent, type RenderContext, Root } from 'barebind';
+import {
+  createComponent,
+  DOMAdapter,
+  DOMRoot,
+  html,
+  type RenderContext,
+  Runtime,
+} from 'barebind';
 
 export interface AlertDialogProps {
   cancelButton: (
@@ -16,8 +23,8 @@ export interface AlertDialogProps {
   title: string;
 }
 
-export const AlertDialog = createComponent(function AlertDialog(
-  {
+export const AlertDialog = createComponent<AlertDialogProps>(
+  function AlertDialog({
     cancelButton,
     confirmButton,
     message,
@@ -25,66 +32,64 @@ export const AlertDialog = createComponent(function AlertDialog(
     onConfirm,
     open = false,
     title,
-  }: AlertDialogProps,
-  $: RenderContext,
-): unknown {
-  const dialogRef = $.useRef<HTMLDialogElement | null>(null);
+  }) {
+    const dialogRef = this.useRef<HTMLDialogElement | null>(null);
 
-  $.useLayoutEffect(() => {
-    const dialog = dialogRef.current!;
-    if (open) {
-      dialog.showModal();
-    } else {
-      dialog.close();
-    }
-  }, [open]);
-
-  const handleConfirm = $.useCallback(() => {
-    dialogRef.current!.close('confirmed');
-  }, []);
-
-  const handleCancel = $.useCallback(() => {
-    dialogRef.current!.close();
-  }, []);
-
-  const handleClose = $.useCallback(
-    async (event: Event) => {
-      const dialog = event.currentTarget as HTMLDialogElement;
-      if (dialog.returnValue === 'confirmed') {
-        onConfirm?.(dialog);
+    this.useEffect(() => {
+      const dialog = dialogRef.current!;
+      if (open) {
+        dialog.showModal();
       } else {
-        onCancel?.(dialog);
+        dialog.close();
       }
-    },
-    [onCancel, onConfirm],
-  );
+    }, [open]);
 
-  const ariaDescriptionId = $.useId();
-  const ariaLabelId = $.useId();
+    const handleConfirm = this.useCallback(() => {
+      dialogRef.current!.close('confirmed');
+    }, []);
 
-  return $.html`
-    <dialog
-      :ref=${dialogRef}
-      aria-describedby=${ariaDescriptionId}
-      aria-labelledby=${ariaLabelId}
-      class="Modal"
-      closedby="any"
-      role="alertdialog"
-      @close=${handleClose}
-    >
-      <h1 class="Modal-title" id=${ariaLabelId}>${title}</h1>
-      <p id=${ariaDescriptionId}>${message}</p>
-      <div class="button-toolbar">
-        <${confirmButton({ onConfirm: handleConfirm }, $)}>
-        <${cancelButton({ onCancel: handleCancel }, $)}>
-      </div>
-    </dialog>
-  `;
-});
+    const handleCancel = this.useCallback(() => {
+      dialogRef.current!.close();
+    }, []);
+
+    const handleClose = this.useCallback(
+      async (event: Event) => {
+        const dialog = event.currentTarget as HTMLDialogElement;
+        if (dialog.returnValue === 'confirmed') {
+          onConfirm?.(dialog);
+        } else {
+          onCancel?.(dialog);
+        }
+      },
+      [onCancel, onConfirm],
+    );
+
+    const ariaDescriptionId = this.useId();
+    const ariaLabelId = this.useId();
+
+    return html`
+      <dialog
+        aria-describedby=${ariaDescriptionId}
+        aria-labelledby=${ariaLabelId}
+        class="Modal"
+        closedby="any"
+        role="alertdialog"
+        @close=${handleClose}
+        ${dialogRef}
+      >
+        <h1 class="Modal-title" id=${ariaLabelId}>${title}</h1>
+        <p id=${ariaDescriptionId}>${message}</p>
+        <div class="button-toolbar">
+          <${confirmButton({ onConfirm: handleConfirm }, this)}>
+          <${cancelButton({ onCancel: handleCancel }, this)}>
+        </div>
+      </dialog>
+    `;
+  },
+);
 
 export async function openAlertDialog(
   props: AlertDialogProps,
-  context: RenderContext,
 ): Promise<boolean> {
   const { resolve, promise } = Promise.withResolvers<boolean>();
   const value = AlertDialog({
@@ -101,8 +106,9 @@ export async function openAlertDialog(
       resolve(true);
     },
   });
-  const root = Root.create(value, document.body, context.getSessionContext());
-  root.mount();
+  const runtime = new Runtime(new DOMAdapter());
+  const root = new DOMRoot(document.body, runtime);
+  root.render(value);
   try {
     return await promise;
   } finally {

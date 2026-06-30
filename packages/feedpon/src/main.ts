@@ -1,10 +1,7 @@
-import { BrowserBackend, Root, Runtime } from 'barebind';
-import { DevToolsProfiler } from 'barebind/addons/dev-tools-profiler';
-import {
-  ConsoleReporter,
-  SessionProfiler,
-} from 'barebind/addons/session-profiler';
+import { DOMAdapter, DOMRoot, Runtime } from 'barebind';
 import { Reactive } from 'barebind/addons/signal';
+import { UpdateLogger } from 'barebind/addons/update-logger';
+import { UpdateProfiler } from 'barebind/addons/update-profiler';
 import { type AppContext, AppState, AppStore } from 'feedpon-store';
 import { FeedlyClient } from 'feedpon-store/apis/feedly';
 import { HatenaBookmarkClient } from 'feedpon-store/apis/hatenaBookmark';
@@ -44,12 +41,12 @@ const prepareStore = async (): Promise<AppStore> => {
     .with(new PersistentMiddleware())
     .with(new ErrorHandlerMiddleware());
 };
-const runtime = new Runtime(new BrowserBackend());
-const root = Root.create(App({ prepareStore }), document.body, runtime);
+const runtime = new Runtime(new DOMAdapter());
+const root = new DOMRoot(document.body, runtime);
 
 DEBUG: {
-  runtime.addObserver(new SessionProfiler(new ConsoleReporter()));
-  runtime.addObserver(new DevToolsProfiler());
+  runtime.use(new UpdateLogger());
+  runtime.use(new UpdateProfiler());
 }
 
-root.mount();
+root.render(App({ prepareStore }));

@@ -1,10 +1,5 @@
-import {
-  createComponent,
-  type HookFunction,
-  Keyed,
-  type RenderContext,
-} from 'barebind';
-import { HistoryContext } from 'barebind/addons/router';
+import { type Bindable, createComponent, type HookFunction } from 'barebind';
+import { NavigationContext } from 'barebind/addons/router';
 import type { AppStore, Theme } from 'feedpon-store';
 
 import { AuthenticationPage } from './authentication/AuthenticationPage.ts';
@@ -16,20 +11,19 @@ export interface DispatcherProps {
   store: AppStore;
 }
 
-export const Dispatcher = createComponent(function Dispatcher(
-  { store }: DispatcherProps,
-  $: RenderContext,
-): unknown {
+export const Dispatcher = createComponent<DispatcherProps>(function Dispatcher({
+  store,
+}) {
   const { state$ } = store;
-  const userStyle = $.use(state$.get('userStyle'));
-  const credential = $.use(state$.get('credential'));
-  const theme = $.use(state$.get('theme'));
+  const userStyle = this.use(state$.get('userStyle'));
+  const credential = this.use(state$.get('credential'));
+  const theme = this.use(state$.get('theme'));
 
-  const { location } = $.use(HistoryContext);
+  const { scene } = this.inject(NavigationContext);
 
-  $.use(store);
-  $.use(UserStyle(userStyle));
-  $.use(Theme(theme));
+  this.use(store);
+  this.use(UserStyle(userStyle));
+  this.use(Theme(theme));
 
   if (credential === null) {
     return SingleLayout({
@@ -37,7 +31,10 @@ export const Dispatcher = createComponent(function Dispatcher(
     });
   }
 
-  const child = Keyed(router.match(location.url), location.url.pathname);
+  const matched = router.match(scene.url) as
+    | { withKey(key: string): Bindable }
+    | undefined;
+  const child = matched?.withKey(scene.url);
 
   return SidebarLayout({
     child,
@@ -46,7 +43,7 @@ export const Dispatcher = createComponent(function Dispatcher(
 
 function UserStyle(style: string): HookFunction<void> {
   return (context) => {
-    context.useInsertionEffect(() => {
+    context.useEffect(() => {
       const sheet = new CSSStyleSheet();
 
       sheet.replaceSync(style);
@@ -64,11 +61,11 @@ function UserStyle(style: string): HookFunction<void> {
 
 function Theme(theme: Theme): HookFunction<void> {
   return (context) => {
-    context.useInsertionEffect(() => {
-      document.body.dataset['theme'] = theme;
+    context.useEffect(() => {
+      document.documentElement.dataset['theme'] = theme;
 
       return () => {
-        document.body.dataset['theme'] = undefined;
+        document.documentElement.dataset['theme'] = undefined;
       };
     }, [theme]);
   };
