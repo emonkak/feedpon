@@ -1,4 +1,4 @@
-import { type HookObject, type RenderContext } from 'barebind';
+import type { HookObject, RenderContext } from 'barebind';
 import type { Reactive } from 'barebind/addons/signal';
 import { type Action, ImmutableMap, type Mutex, Store } from 'store';
 import type {
@@ -104,101 +104,101 @@ export class AppState {
   };
   keyboardShortcuts: KeyboardShortcut[] = [
     {
-      keyStorokes: [{ key: 'Space', modifiers: Modifier.None }],
+      keyStrokes: [{ key: 'Space', modifiers: Modifier.None }],
       commandId: 'scrollDown',
     },
     {
-      keyStorokes: [{ key: 'Space', modifiers: Modifier.Shift }],
+      keyStrokes: [{ key: 'Space', modifiers: Modifier.Shift }],
       commandId: 'scrollUp',
     },
     {
-      keyStorokes: [{ key: '/', modifiers: Modifier.None }],
+      keyStrokes: [{ key: '/', modifiers: Modifier.None }],
       commandId: 'focusSearchBox',
     },
     {
-      keyStorokes: [{ key: '?', modifiers: Modifier.None }],
+      keyStrokes: [{ key: '?', modifiers: Modifier.None }],
       commandId: 'toggleKeyboardShortcuts',
     },
     {
-      keyStorokes: [{ key: 'A', modifiers: Modifier.None }],
+      keyStrokes: [{ key: 'A', modifiers: Modifier.None }],
       commandId: 'selectPreviousCategory',
     },
     {
-      keyStorokes: [{ key: 'G', modifiers: Modifier.None }],
+      keyStrokes: [{ key: 'G', modifiers: Modifier.None }],
       commandId: 'goToBottom',
     },
     {
-      keyStorokes: [{ key: 'R', modifiers: Modifier.None }],
+      keyStrokes: [{ key: 'R', modifiers: Modifier.None }],
       commandId: 'reloadStream',
     },
     {
-      keyStorokes: [{ key: 'S', modifiers: Modifier.None }],
+      keyStrokes: [{ key: 'S', modifiers: Modifier.None }],
       commandId: 'selectNextCategory',
     },
     {
-      keyStorokes: [{ key: 'S', modifiers: Modifier.None }],
+      keyStrokes: [{ key: 'S', modifiers: Modifier.None }],
       commandId: 'selectNextCategory',
     },
     {
-      keyStorokes: [{ key: 'V', modifiers: Modifier.None }],
+      keyStrokes: [{ key: 'V', modifiers: Modifier.None }],
       commandId: 'openWebsite',
     },
     {
-      keyStorokes: [{ key: 'a', modifiers: Modifier.None }],
+      keyStrokes: [{ key: 'a', modifiers: Modifier.None }],
       commandId: 'selectPreviousSubscription',
     },
     {
-      keyStorokes: [{ key: 'b', modifiers: Modifier.None }],
+      keyStrokes: [{ key: 'b', modifiers: Modifier.None }],
       commandId: 'toggleHatenaBookmarkEntry',
     },
     {
-      keyStorokes: [{ key: 'c', modifiers: Modifier.None }],
+      keyStrokes: [{ key: 'c', modifiers: Modifier.None }],
       commandId: 'toggleStreamLayout',
     },
     {
-      keyStorokes: [{ key: 'f', modifiers: Modifier.None }],
+      keyStrokes: [{ key: 'f', modifiers: Modifier.None }],
       commandId: 'toggleFullContents',
     },
     {
-      keyStorokes: [
+      keyStrokes: [
         { key: 'g', modifiers: Modifier.None },
         { key: 'g', modifiers: Modifier.None },
       ],
       commandId: 'goToTop',
     },
     {
-      keyStorokes: [
+      keyStrokes: [
         { key: 'g', modifiers: Modifier.None },
         { key: 'm', modifiers: Modifier.None },
       ],
       commandId: 'markStreamAsRead',
     },
     {
-      keyStorokes: [{ key: 'h', modifiers: Modifier.None }],
+      keyStrokes: [{ key: 'h', modifiers: Modifier.None }],
       commandId: 'shrinkEntry',
     },
     {
-      keyStorokes: [{ key: 'j', modifiers: Modifier.None }],
+      keyStrokes: [{ key: 'j', modifiers: Modifier.None }],
       commandId: 'selectNextEntry',
     },
     {
-      keyStorokes: [{ key: 'k', modifiers: Modifier.None }],
+      keyStrokes: [{ key: 'k', modifiers: Modifier.None }],
       commandId: 'selectPreviousEntry',
     },
     {
-      keyStorokes: [{ key: 'l', modifiers: Modifier.None }],
+      keyStrokes: [{ key: 'l', modifiers: Modifier.None }],
       commandId: 'expandEntry',
     },
     {
-      keyStorokes: [{ key: 's', modifiers: Modifier.None }],
+      keyStrokes: [{ key: 's', modifiers: Modifier.None }],
       commandId: 'selectNextSubscription',
     },
     {
-      keyStorokes: [{ key: 'v', modifiers: Modifier.None }],
+      keyStrokes: [{ key: 'v', modifiers: Modifier.None }],
       commandId: 'openArticle',
     },
     {
-      keyStorokes: [{ key: 'z', modifiers: Modifier.None }],
+      keyStrokes: [{ key: 'z', modifiers: Modifier.None }],
       commandId: 'toggleSidebar',
     },
   ];
@@ -404,7 +404,7 @@ export interface KeyStroke {
 }
 
 export interface KeyboardShortcut {
-  keyStorokes: KeyStroke[];
+  keyStrokes: KeyStroke[];
   commandId: CommandId;
 }
 

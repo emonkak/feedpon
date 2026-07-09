@@ -13,7 +13,7 @@ export const KeyboardShortcutTable =
       return html`
         <tr>
           <td>
-            <${keyboardShortcut.keyStorokes.map((keyStroke) =>
+            <${keyboardShortcut.keyStrokes.map((keyStroke) =>
               KeyStrokeView({ keyStroke }),
             )}>
           </td>

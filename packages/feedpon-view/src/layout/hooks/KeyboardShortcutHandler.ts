@@ -28,8 +28,8 @@ export function KeyboardShortcutHandler(
 
     const handleKeyDown = context.useMemo(() => {
       const keyboardShortcutTree = Iterator.from(keyboardShortcuts).reduce(
-        (keyboardShortcutTree, { keyStorokes, commandId }) =>
-          keyboardShortcutTree.insert(keyStorokes.map(toKeyNotion), commandId),
+        (keyboardShortcutTree, { keyStrokes, commandId }) =>
+          keyboardShortcutTree.insert(keyStrokes.map(toKeyNotion), commandId),
         ImmutableTrie.empty<string, CommandId>(),
       );
       let pendingKeys: string[] = [];
