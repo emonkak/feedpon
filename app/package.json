@@ -1,0 +1,17 @@
+{
+  "name": "@feedpon/webextension",
+  "description": "A feed reader for me",
+  "version": "3.0.0",
+  "type": "module",
+  "dependencies": {
+    "@feedpon/feedly-client": "workspace:^",
+    "@feedpon/foundation": "workspace:^",
+    "@feedpon/hatena-bookmark-client": "workspace:^",
+    "@feedpon/model": "workspace:^",
+    "@feedpon/view": "workspace:^",
+    "@feedpon/wedata-client": "workspace:^",
+    "@types/chrome": "^0.2.2",
+    "barebind": "catalog:"
+  },
+  "private": true
+}

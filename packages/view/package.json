@@ -1,0 +1,16 @@
+{
+  "name": "@feedpon/view",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@feedpon/foundation": "workspace:^",
+    "@feedpon/hatena-bookmark-client": "workspace:^",
+    "@feedpon/model": "workspace:^",
+    "@feedpon/primitives": "workspace:^",
+    "@types/chrome": "^0.2.2",
+    "barebind": "catalog:",
+    "motion": "^12.42.2"
+  }
+}

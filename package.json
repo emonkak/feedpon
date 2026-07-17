@@ -1,15 +1,11 @@
 {
   "type": "module",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/emonkak/feedpon.git"
-  },
   "scripts": {
     "build": "wireit",
-    "ci": "wireit",
-    "clean": "wireit",
-    "format": "wireit",
-    "lint": "wireit",
+    "ci": "pnpm run clean && pnpm run lint && pnpm run build && pnpm test --coverage",
+    "clean": "rm --force --recursive dist",
+    "format": "biome check --fix",
+    "lint": "biome ci .",
     "test": "vitest"
   },
   "devDependencies": {
@@ -24,63 +20,51 @@
     "vitest": "^4.1.10",
     "wireit": "^0.14.13"
   },
-  "workspaces": [
-    "packages/*"
-  ],
   "wireit": {
     "build": {
       "command": "node --import tsx build.ts",
       "files": [
-        "assets/css/*",
-        "build.ts",
-        "packages/*/src/**/*",
-        "packages/*/tsconfig.json",
-        "pnpm-lock.yaml",
-        "tsconfig.base.json",
-        "tsconfig.json"
+        "app/css/**/*",
+        "build.ts"
       ],
       "output": [
-        "dist/css/main.css",
-        "dist/js/background.js",
-        "dist/js/main.js"
+        "dist/app.css",
+        "dist/app.js",
+        "dist/background.js"
       ],
       "dependencies": [
+        "dist:/",
+        "dist:/img",
         "typecheck"
       ]
     },
-    "clean": {
-      "dependencies": [
-        "clean:build",
-        "clean:tsc"
-      ]
-    },
-    "clean:build": {
-      "command": "rm --force --recursive dist/{css,js}"
-    },
-    "clean:tsc": {
-      "command": "tsc --build --clean"
-    },
-    "ci": {
-      "dependencies": [
-        "build",
-        "lint"
-      ]
-    },
-    "format": {
-      "command": "biome check --fix"
-    },
-    "lint": {
-      "command": "biome ci .",
+    "dist:/": {
+      "command": "install -D --mode=644 --target-directory=dist app/{app.html,manifest.json}",
       "files": [
-        "packages/*/src/**/*.ts"
+        "app/app.html",
+        "app/manifest.json"
+      ],
+      "output": [
+        "dist/app.html",
+        "dist/manifest.json"
+      ]
+    },
+    "dist:/img": {
+      "command": "install -D --mode=644 --target-directory=dist/img app/img/*",
+      "files": [
+        "app/img/*"
+      ],
+      "output": [
+        "dist/img/*"
       ]
     },
     "typecheck": {
       "command": "tsc --build --pretty --incremental",
       "clean": "if-file-deleted",
       "files": [
+        "app/src/**/*",
         "packages/*/src/**/*",
-        "packages/*/tsconfig.json",
+        "pnpm-lock.yaml",
         "tsconfig.base.json",
         "tsconfig.json"
       ],

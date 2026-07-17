@@ -6,7 +6,7 @@
       "!coverage",
       "!dist",
       "!packages/*/.wireit",
-      "!packages/feedpon-store/src/api"
+      "!packages/@feedpon/model/src/api"
     ]
   },
   "css": {
@@ -28,6 +28,9 @@
   },
   "linter": {
     "rules": {
+      "a11y": {
+        "noSvgWithoutTitle": "off"
+      },
       "complexity": {
         "noBannedTypes": "off",
         "noThisInStatic": "off",

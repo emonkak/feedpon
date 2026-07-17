@@ -1,0 +1,10 @@
+{
+  "name": "@feedpon/primitives",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "barebind": "catalog:"
+  }
+}

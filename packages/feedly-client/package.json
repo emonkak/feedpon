@@ -1,0 +1,11 @@
+{
+  "name": "@feedpon/feedly-client",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "up-fetch": "catalog:",
+    "valibot": "catalog:"
+  }
+}

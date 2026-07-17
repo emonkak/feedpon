@@ -1,7 +1,9 @@
 packages:
+  - app
   - packages/*
 
 allowBuilds:
+  '@swc/core': true
   esbuild: true
 
 catalog:

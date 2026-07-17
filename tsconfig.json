@@ -2,16 +2,28 @@
   "files": [],
   "references": [
     {
-      "path": "packages/feedpon"
+      "path": "app/src"
     },
     {
-      "path": "packages/feedpon-store"
+      "path": "packages/feedly-client/src"
     },
     {
-      "path": "packages/feedpon-view"
+      "path": "packages/foundation/src"
     },
     {
-      "path": "packages/store"
+      "path": "packages/hanate-bookmark-client/src"
+    },
+    {
+      "path": "packages/model/src"
+    },
+    {
+      "path": "packages/primitives/src"
+    },
+    {
+      "path": "packages/view/src"
+    },
+    {
+      "path": "packages/wedata-client/src"
     }
   ]
 }

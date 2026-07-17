@@ -1,7 +1,5 @@
 *.tsbuildinfo
 .wireit
 /coverage
-/dist/css
-/dist/js
-/meta.json
+/dist
 node_modules
