@@ -1,6 +1,6 @@
 import type { Reactive } from 'barebind/addons/signal';
 import { ImmutableMap } from '../ImmutableMap.ts';
-import type { Action, Dispatch, Middleware, Store } from '../Store.ts';
+import type { Action, AsyncMiddleware, Dispatch, Store } from '../Store.ts';
 
 export interface Patch {
   path: readonly PropertyKey[];
@@ -9,34 +9,34 @@ export interface Patch {
   version: number;
 }
 
-export interface PatchRepository {
-  addPatches(patches: Patch[]): Promise<void>;
-  findPatches(): Promise<Patch[]>;
-}
-
-export interface PersistentContext {
-  stateRepository: PatchRepository;
-}
-
 export interface PersistentState {
   version: number;
 }
 
-export class PersistentMiddleware<
-  TState extends PersistentState,
-  TContext extends PersistentContext,
-> implements Middleware<TState, TContext>
-{
-  private _pendingActions: number = 0;
+export interface PersistentStorage {
+  addPatches(patches: Patch[]): Promise<void>;
+  findPatches(): Promise<Patch[]>;
+}
 
+export class PersistentMiddleware<TState extends PersistentState, TContext>
+  implements AsyncMiddleware<TState, TContext>
+{
+  private readonly _storage: PersistentStorage;
+  private _pendingActions: number = 0;
   private _pendingPatches: Patch[] = [];
 
-  connect(store: Store<TState, TContext>): () => void {
-    const { version } = store.state$.value;
+  constructor(storage: PersistentStorage) {
+    this._storage = storage;
+  }
 
+  async connect(store: Store<TState, TContext>): Promise<() => void> {
+    const patches = await this._storage.findPatches();
+    for (const patch of patches) {
+      applyPatch(store.state$, patch);
+    }
     return store.state$.subscribe((event) => {
       this._pendingPatches.push(
-        createPatch(event.path, event.newValue, version),
+        createPatch(event.path, event.newValue, store.state$.version),
       );
     });
   }
@@ -44,9 +44,8 @@ export class PersistentMiddleware<
   handle<TResult>(
     action: Action<TState, TContext, TResult>,
     dispatch: Dispatch<TState, TContext>,
-    store: Store<TState, TContext>,
+    _store: Store<TState, TContext>,
   ): TResult {
-    const { stateRepository } = store.context;
     const flushPatches = async () => {
       if (this._pendingActions > 0) {
         return;
@@ -54,7 +53,7 @@ export class PersistentMiddleware<
       if (this._pendingPatches.length > 0) {
         const wipPatches = this._pendingPatches.splice(0);
         try {
-          await stateRepository.addPatches(wipPatches);
+          await this._storage.addPatches(wipPatches);
         } catch {
           this._pendingPatches.push(...wipPatches);
         }
@@ -87,26 +86,15 @@ export class PersistentMiddleware<
   }
 }
 
-export function restoreState<
-  TState extends PersistentState,
-  TContext extends PersistentContext,
->(): Action<TState, TContext, Promise<void>> {
-  return async (state$, context) => {
-    const { stateRepository } = context;
-    const { version } = state$.value;
-    const patches = await stateRepository.findPatches();
+function applyPatch<T extends PersistentState>(
+  state$: Reactive<T>,
+  patch: Patch,
+): void {
+  const { path, type, value, version } = patch;
 
-    for (let i = 0, l = patches.length; i < l; i++) {
-      const patch = patches[i]!;
-      if (patch.version === version) {
-        applyPatch(state$, patch);
-      }
-    }
-  };
-}
-
-function applyPatch<T>(state$: Reactive<T>, patch: Patch): void {
-  const { path, type, value } = patch;
+  if (version !== state$.value.version) {
+    return;
+  }
 
   let target$: Reactive<unknown> | undefined = state$ as Reactive<unknown>;
 

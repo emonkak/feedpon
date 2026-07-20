@@ -1,5 +1,5 @@
 import { FeedlyClient } from '@feedpon/feedly-client';
-import { Mutex, PersistentMiddleware, restoreState } from '@feedpon/foundation';
+import { Mutex, PersistentMiddleware } from '@feedpon/foundation';
 import { HatenaBookmarkClient } from '@feedpon/hatena-bookmark-client';
 import { type AppContext, AppState, AppStore } from '@feedpon/model';
 import { App } from '@feedpon/view';
@@ -32,8 +32,7 @@ const prepareStore = async (): Promise<AppStore> => {
     wedataClient: new WedataClient(),
   };
   const store = new AppStore(state, context);
-  await store.dispatch(restoreState());
-  store.use(new PersistentMiddleware());
+  await store.use(new PersistentMiddleware(context.stateRepository));
   store.use(new ErrorHandlerMiddleware());
   return store;
 };

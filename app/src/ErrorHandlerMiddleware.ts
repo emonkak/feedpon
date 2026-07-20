@@ -1,10 +1,12 @@
-import type { Dispatch, Middleware, Store } from '@feedpon/foundation';
+import type { Dispatch, Store, SyncMiddleware } from '@feedpon/foundation';
 import type { AppAction, AppContext, AppState } from '@feedpon/model';
 import { sendNotification } from '@feedpon/model/actions/ui';
 
 export class ErrorHandlerMiddleware
-  implements Middleware<AppState, AppContext>
+  implements SyncMiddleware<AppState, AppContext>
 {
+  connect(_store: Store<AppState, AppContext>): void {}
+
   handle<TResult>(
     action: AppAction<TResult>,
     dispatch: Dispatch<AppState, AppContext>,

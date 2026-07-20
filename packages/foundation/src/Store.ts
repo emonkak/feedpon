@@ -11,8 +11,21 @@ export type Dispatch<TState, TContext> = <TResult>(
   action: Action<TState, TContext, TResult>,
 ) => TResult;
 
-export interface Middleware<TState, TContext> {
-  connect?(store: Store<TState, TContext>): (() => void) | void;
+export type Middleware<TState, TContext> =
+  | AsyncMiddleware<TState, TContext>
+  | SyncMiddleware<TState, TContext>;
+
+export interface AsyncMiddleware<TState, TContext> {
+  connect(store: Store<TState, TContext>): Promise<(() => void) | void> | void;
+  handle<TResult>(
+    action: Action<TState, TContext, TResult>,
+    dispatch: Dispatch<TState, TContext>,
+    store: Store<TState, TContext>,
+  ): TResult;
+}
+
+export interface SyncMiddleware<TState, TContext> {
+  connect(store: Store<TState, TContext>): (() => void) | void;
   handle<TResult>(
     action: Action<TState, TContext, TResult>,
     dispatch: Dispatch<TState, TContext>,
@@ -53,12 +66,23 @@ export class Store<TState, TContext> {
     return next(action, this._middlewares.front());
   }
 
-  use(middleware: Middleware<TState, TContext>): () => void {
-    const disconnect = middleware.connect?.(this);
-    const node = this._middlewares.pushBack(middleware);
-    return () => {
-      this._middlewares.remove(node);
-      disconnect?.();
+  use(middleware: SyncMiddleware<TState, TContext>): () => void;
+  use(
+    middleware: AsyncMiddleware<TState, TContext>,
+  ): Promise<() => Promise<void>>;
+  use(
+    middleware: Middleware<TState, TContext>,
+  ): Promise<() => void> | (() => void) {
+    const disconnect = middleware.connect(this);
+    const register = (disconnect: (() => void) | void) => {
+      const node = this._middlewares.pushBack(middleware);
+      return () => {
+        this._middlewares.remove(node);
+        disconnect?.();
+      };
     };
+    return disconnect instanceof Promise
+      ? disconnect.then(register)
+      : register(disconnect);
   }
 }

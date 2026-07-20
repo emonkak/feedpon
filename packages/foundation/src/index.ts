@@ -4,15 +4,15 @@ export { ImmutableTrie } from './ImmutableTrie.ts';
 export { Mutex } from './Mutex.ts';
 export {
   type Patch,
-  type PatchRepository,
-  type PersistentContext,
   PersistentMiddleware,
   type PersistentState,
-  restoreState,
+  type PersistentStorage,
 } from './middlewares/PersistenceMiddleware.ts';
 export {
   type Action,
+  type AsyncMiddleware,
   type Dispatch,
   type Middleware,
   Store,
+  type SyncMiddleware,
 } from './Store.ts';

@@ -1,5 +1,5 @@
 import type * as feedly from '@feedpon/feedly-client';
-import type { PatchRepository, PersistentContext } from '@feedpon/foundation';
+import type { PersistentStorage } from '@feedpon/foundation';
 import {
   type Action,
   ImmutableMap,
@@ -22,7 +22,7 @@ const STREAM_ID_PATTERN =
 
 export type AppAction<TResult> = Action<AppState, AppContext, TResult>;
 
-export interface AppContext extends PersistentContext {
+export interface AppContext {
   feedlyAuthMutex: Mutex;
   feedlyAuthenticator: Authenticator;
   feedlyClient: feedly.FeedlyClient;
@@ -33,7 +33,7 @@ export interface AppContext extends PersistentContext {
   wedataClient: wedata.WedataClient;
 }
 
-export interface AppStateRepository extends PatchRepository {
+export interface AppStateRepository extends PersistentStorage {
   addFeed(feed: Feed): Promise<void>;
   addStream(stream: Stream): Promise<void>;
   deleteAllFeeds(): Promise<void>;
