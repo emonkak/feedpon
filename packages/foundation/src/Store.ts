@@ -1,4 +1,5 @@
 import type { Reactive } from 'barebind/addons/signal';
+import { LinkedList } from './LinkedList.ts';
 
 export type Action<TState, TContext, TResult> = (
   state: Reactive<TState>,
@@ -11,7 +12,7 @@ export type Dispatch<TState, TContext> = <TResult>(
 ) => TResult;
 
 export interface Middleware<TState, TContext> {
-  connect?(store: Store<TState, TContext>): void;
+  connect?(store: Store<TState, TContext>): (() => void) | void;
   handle<TResult>(
     action: Action<TState, TContext, TResult>,
     dispatch: Dispatch<TState, TContext>,
@@ -24,7 +25,8 @@ export class Store<TState, TContext> {
 
   private readonly _context: TContext;
 
-  private readonly _middlewares: Middleware<TState, TContext>[] = [];
+  private readonly _middlewares: LinkedList<Middleware<TState, TContext>> =
+    new LinkedList();
 
   constructor(state$: Reactive<TState>, context: TContext) {
     this._state$ = state$;
@@ -40,18 +42,23 @@ export class Store<TState, TContext> {
   }
 
   dispatch<TResult>(action: Action<TState, TContext, TResult>): TResult {
-    let index = 0;
-    const dispatch: Dispatch<TState, TContext> = (action) => {
-      return this._middlewares.length > index
-        ? this._middlewares[index++]!.handle(action, dispatch, this)
-        : action(this._state$, this._context, dispatch);
+    const next = <TResult>(
+      action: Action<TState, TContext, TResult>,
+      node: LinkedList.Node<Middleware<TState, TContext>> | null,
+    ): TResult => {
+      return node !== null
+        ? node.value.handle(action, (action) => next(action, node.next), this)
+        : action(this._state$, this._context, this.dispatch.bind(this));
     };
-    return dispatch(action);
+    return next(action, this._middlewares.front());
   }
 
-  with(middleware: Middleware<TState, TContext>): this {
-    middleware.connect?.(this);
-    this._middlewares.push(middleware);
-    return this;
+  use(middleware: Middleware<TState, TContext>): () => void {
+    const disconnect = middleware.connect?.(this);
+    const node = this._middlewares.pushBack(middleware);
+    return () => {
+      this._middlewares.remove(node);
+      disconnect?.();
+    };
   }
 }

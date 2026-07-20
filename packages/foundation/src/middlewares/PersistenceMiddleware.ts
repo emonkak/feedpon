@@ -31,10 +31,10 @@ export class PersistentMiddleware<
 
   private _pendingPatches: Patch[] = [];
 
-  connect(store: Store<TState, TContext>): void {
+  connect(store: Store<TState, TContext>): () => void {
     const { version } = store.state$.value;
 
-    store.state$.subscribe((event) => {
+    return store.state$.subscribe((event) => {
       this._pendingPatches.push(
         createPatch(event.path, event.newValue, version),
       );
@@ -47,36 +47,43 @@ export class PersistentMiddleware<
     store: Store<TState, TContext>,
   ): TResult {
     const { stateRepository } = store.context;
-    const flushPendingPatches = async () => {
+    const flushPatches = async () => {
       if (this._pendingActions > 0) {
         return;
       }
       if (this._pendingPatches.length > 0) {
-        const pendingPatches = this._pendingPatches;
-        this._pendingPatches = [];
+        const wipPatches = this._pendingPatches.splice(0);
         try {
-          await stateRepository.addPatches(pendingPatches);
+          await stateRepository.addPatches(wipPatches);
         } catch {
-          this._pendingPatches = pendingPatches.concat(this._pendingPatches);
+          this._pendingPatches.push(...wipPatches);
         }
       }
     };
-    const result = dispatch(action);
-    if (result instanceof Promise) {
-      result.then(
-        () => {
-          requestPersistentCallback(flushPendingPatches);
-          this._pendingActions--;
-        },
-        () => {
-          this._pendingActions--;
-        },
-      );
-      this._pendingActions++;
-    } else {
-      requestPersistentCallback(flushPendingPatches);
+    this._pendingActions++;
+    try {
+      const result = dispatch(action);
+      if (result instanceof Promise) {
+        result.then(
+          () => {
+            if (--this._pendingActions === 0) {
+              requestPersistentCallback(flushPatches);
+            }
+          },
+          () => {
+            this._pendingActions--;
+          },
+        );
+      } else {
+        if (--this._pendingActions === 0) {
+          requestPersistentCallback(flushPatches);
+        }
+      }
+      return result;
+    } catch (error) {
+      this._pendingActions--;
+      throw error;
     }
-    return result;
   }
 }
 

@@ -33,9 +33,9 @@ const prepareStore = async (): Promise<AppStore> => {
   };
   const store = new AppStore(state, context);
   await store.dispatch(restoreState());
-  return store
-    .with(new PersistentMiddleware())
-    .with(new ErrorHandlerMiddleware());
+  store.use(new PersistentMiddleware());
+  store.use(new ErrorHandlerMiddleware());
+  return store;
 };
 const runtime = new Runtime(new DOMAdapter());
 const root = new DOMRoot(document.body, runtime);
