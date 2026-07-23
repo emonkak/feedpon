@@ -2,22 +2,24 @@ import type { AppAction } from '../index.ts';
 import { acquireCredential } from './auth.ts';
 
 export function searchFeeds(query: string): AppAction<Promise<void>> {
-  return (state$, { feedlyClient }, dispatch) => {
-    return state$.scope(async (state) => {
-      state.searching = true;
+  return async (state$, { feedlyClient }, dispatch) => {
+    const searchQuery$ = state$.get('searchQuery');
+    const searchResults$ = state$.get('searchResults');
+    const searching$ = state$.get('searching');
 
-      try {
-        const credential = await dispatch(acquireCredential());
+    searching$.value = true;
 
-        state.searchResults = (
-          await feedlyClient.searchFeeds(credential.accessToken, {
-            query,
-          })
-        ).results;
-        state.searchQuery = query;
-      } finally {
-        state.searching = false;
-      }
-    });
+    try {
+      const credential = await dispatch(acquireCredential());
+
+      searchResults$.value = (
+        await feedlyClient.searchFeeds(credential.accessToken, {
+          query,
+        })
+      ).results;
+      searchQuery$.value = query;
+    } finally {
+      searching$.value = false;
+    }
   };
 }

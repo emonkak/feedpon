@@ -2,53 +2,57 @@ import type { FeedlyCredential } from '@feedpon/feedly-client';
 import type { AppAction } from '../index.ts';
 
 export function acquireCredential(): AppAction<Promise<FeedlyCredential>> {
-  return (state$, { feedlyAuthMutex, feedlyAuthenticator, feedlyClient }) => {
-    return state$.scope(async (state) => {
-      await feedlyAuthMutex.lock();
+  return async (
+    state$,
+    { feedlyAuthMutex, feedlyAuthenticator, feedlyClient },
+  ) => {
+    const credential$ = state$.get('credential');
+    const authenticating$ = state$.get('authenticating');
 
-      try {
-        if (state.credential !== null) {
-          const { expiresIn, refreshToken, timestamp } = state.credential;
-          const now = Date.now();
-          const skew = 1000 * 60;
-          const expiredAt = timestamp + expiresIn;
+    await feedlyAuthMutex.lock();
 
-          if (now + skew >= expiredAt) {
-            const tokens = await feedlyClient.refreshToken(refreshToken);
-            state.credential = {
-              id: tokens.id,
-              accessToken: tokens.access_token,
-              refreshToken,
-              expiresIn: tokens.expires_in,
-              timestamp: Date.now(),
-            };
-          }
-        } else {
-          state.authenticating = true;
+    try {
+      if (credential$.value !== null) {
+        const { expiresIn, refreshToken, timestamp } = credential$.value;
+        const now = Date.now();
+        const skew = 1000 * 60;
+        const expiredAt = timestamp + expiresIn;
 
-          try {
-            const code = await feedlyAuthenticator.authenticate(
-              feedlyClient.authenticationUrl,
-              feedlyClient.redirectUrl,
-            );
-            const tokens = await feedlyClient.exchangeCode(code);
-            state.credential = {
-              id: tokens.id,
-              accessToken: tokens.access_token,
-              refreshToken: tokens.refresh_token,
-              expiresIn: tokens.expires_in,
-              timestamp: Date.now(),
-            };
-          } finally {
-            state.authenticating = false;
-          }
+        if (now + skew >= expiredAt) {
+          const tokens = await feedlyClient.refreshToken(refreshToken);
+          credential$.value = {
+            id: tokens.id,
+            accessToken: tokens.access_token,
+            refreshToken,
+            expiresIn: tokens.expires_in,
+            timestamp: Date.now(),
+          };
         }
+      } else {
+        authenticating$.value = true;
 
-        return state.credential;
-      } finally {
-        feedlyAuthMutex.unlock();
+        try {
+          const code = await feedlyAuthenticator.authenticate(
+            feedlyClient.authenticationUrl,
+            feedlyClient.redirectUrl,
+          );
+          const tokens = await feedlyClient.exchangeCode(code);
+          credential$.value = {
+            id: tokens.id,
+            accessToken: tokens.access_token,
+            refreshToken: tokens.refresh_token,
+            expiresIn: tokens.expires_in,
+            timestamp: Date.now(),
+          };
+        } finally {
+          authenticating$.value = false;
+        }
       }
-    });
+
+      return credential$.value;
+    } finally {
+      feedlyAuthMutex.unlock();
+    }
   };
 }
 
@@ -64,13 +68,12 @@ export function getExportUrl(): AppAction<Promise<string>> {
 }
 
 export function revokeCredential(): AppAction<void> {
-  return (state$, { feedlyClient }) => {
-    return state$.scope(async (state) => {
-      if (state.credential !== null) {
-        await feedlyClient.logout(state.credential.accessToken);
+  return async (state$, { feedlyClient }) => {
+    const credential$ = state$.get('credential');
 
-        state.credential = null;
-      }
-    });
+    if (credential$.value !== null) {
+      await feedlyClient.logout(credential$.value.accessToken);
+      credential$.value = null;
+    }
   };
 }

@@ -1,5 +1,5 @@
 import { Readability } from '@mozilla/readability';
-import type { Reactive } from 'barebind/addons/signal';
+import type { Derivable } from 'barebind/addons/signal';
 import type { AppAction } from '../index.ts';
 import {
   type AppState,
@@ -10,7 +10,6 @@ import {
   type Session,
   type SessionSettings,
   type Siteinfo,
-  type Stream,
   type StreamLayout,
   type StreamSettings,
   type URLFilter,
@@ -24,429 +23,436 @@ const MAX_URL_LENGTH = 2048;
 const STREAM_LAYOUTS: StreamLayout[] = ['full', 'compact'];
 
 export function clearSessions(): AppAction<Promise<void>> {
-  return (state$, { stateRepository }) => {
-    return state$.scope(async (state) => {
+  return async (state$, { stateRepository }) => {
+    state$.scope((state) => {
       state.session = null;
       state.pastSessions = [];
       state.feed = null;
       state.stream = null;
-
-      await stateRepository.deleteAllFeeds();
-      await stateRepository.deleteAllStreams();
     });
+
+    await stateRepository.deleteAllFeeds();
+    await stateRepository.deleteAllStreams();
   };
 }
 
 export function expandEntry(index: number): AppAction<void> {
   return (state$) => {
-    state$.scope((state) => {
-      if (state.session === null || state.session.expandedIndex === index) {
-        return;
+    state$.get('session').scope((session) => {
+      if (session !== null) {
+        session.expandedIndex = index;
       }
-
-      state.session = {
-        ...state.session,
-        expandedIndex: index,
-      };
     });
   };
 }
 
 export function fetchFullContents(entryId: string): AppAction<Promise<void>> {
-  return (state$, _context, dispatch) => {
+  return async (state$, _context, dispatch) => {
+    const entry$ = lookupEntry(state$, entryId);
+    if (entry$ === undefined) {
+      return;
+    }
+
+    const fullContents$ = entry$.get('fullContents');
+    const fullContentsLoading$ = entry$.get('fullContentsLoading');
     const siteinfos$ = state$.get('siteinfos');
     const siteinfosUpdated$ = state$.get('siteinfosUpdated');
 
-    return (
-      findEntry(state$, entryId)?.scope(async (entry) => {
-        const url =
-          entry.fullContents !== undefined
-            ? entry.fullContents.at(-1)?.nextUrl
-            : getEntryUrl(entry);
-        if (url == null) {
-          return;
-        }
+    const url = entry$.scope((entry) => {
+      return entry.fullContents !== undefined
+        ? entry.fullContents.at(-1)?.nextUrl
+        : getEntryUrl(entry);
+    });
+    if (url == null) {
+      return;
+    }
 
-        entry.fullContentsLoading = true;
+    fullContentsLoading$.value = true;
 
-        try {
-          const response = await fetch(url, {
-            credentials: 'include',
-            mode: 'cors',
-          });
-          const content = await decodeResponse(response);
-          const document = new DOMParser().parseFromString(
-            content,
-            'text/html',
-          );
+    try {
+      const response = await fetch(url, {
+        credentials: 'include',
+        mode: 'cors',
+      });
+      const content = await decodeResponse(response);
+      const document = new DOMParser().parseFromString(content, 'text/html');
 
-          setDocumentBaseURI(document, url);
+      setDocumentBaseURI(document, url);
 
-          if (siteinfosUpdated$.value < 0) {
-            await dispatch(updateSiteinfos());
-          }
+      if (siteinfosUpdated$.value < 0) {
+        await dispatch(updateSiteinfos());
+      }
 
-          const fullContent = extractFullContentBySiteinfos(
-            document,
-            siteinfos$.value,
-            url,
-          ) ??
-            extractFullContentByReadability(document) ?? {
-              url,
-              content: '',
-              nextUrl: null,
-            };
+      const fullContent = extractFullContentBySiteinfos(
+        document,
+        siteinfos$.value,
+        url,
+      ) ??
+        extractFullContentByReadability(document) ?? {
+          url,
+          content: '',
+          nextUrl: null,
+        };
 
-          entry.fullContents = (entry.fullContents ?? []).concat(fullContent);
-        } finally {
-          entry.fullContents ??= [];
-          entry.fullContentsLoading = false;
-        }
-      }) ?? Promise.resolve()
-    );
+      fullContents$.value = (fullContents$.value ?? []).concat(fullContent);
+    } finally {
+      fullContents$.value ??= [];
+      fullContentsLoading$.value = false;
+    }
   };
 }
 
 export function fetchHatenaBookmarkCounts(): AppAction<Promise<void>> {
-  return (state$, { hatenaBookmarkClient }) => {
-    return state$.scope(async (state) => {
-      const { stream } = state;
+  return async (state$, { hatenaBookmarkClient }) => {
+    const stream$ = state$.get('stream');
+    if (stream$.value === null) {
+      return;
+    }
 
-      if (stream === null) {
-        return;
-      }
+    const urls = stream$.value.items
+      .filter((item) => item.hatenaBookmarkCount === undefined)
+      .map((item) => getEntryUrl(item));
 
-      const urls = stream.items
-        .filter((item) => item.hatenaBookmarkCount === undefined)
-        .map((item) => getEntryUrl(item));
+    if (urls.length > 0) {
+      const newItems = stream$.value.items.slice();
 
-      if (urls.length > 0) {
-        const newItems = stream.items.slice();
+      for (const chunkedUrls of splitStrings(urls, MAX_URL_LENGTH)) {
+        const counts = await hatenaBookmarkClient.getMultipleBookmarkCounts({
+          url: chunkedUrls,
+        });
 
-        for (const chunkedUrls of splitStrings(urls, MAX_URL_LENGTH)) {
-          const counts = await hatenaBookmarkClient.getMultipleBookmarkCounts({
-            url: chunkedUrls,
-          });
-
-          for (let i = 0, l = newItems.length; i < l; i++) {
-            const item = newItems[i]!;
-            const url = getEntryUrl(item);
-            if (Object.hasOwn(counts, url)) {
-              newItems[i] = {
-                ...item,
-                hatenaBookmarkCount: counts[url],
-              };
-            }
+        for (let i = 0, l = newItems.length; i < l; i++) {
+          const item = newItems[i]!;
+          const url = getEntryUrl(item);
+          if (Object.hasOwn(counts, url)) {
+            newItems[i] = {
+              ...item,
+              hatenaBookmarkCount: counts[url],
+            };
           }
         }
-
-        state.stream = { ...stream, items: newItems };
       }
-    });
+
+      stream$.value = { ...stream$.value, items: newItems };
+    }
   };
 }
 
 export function fetchHatenaBookmarkEntry(
   entryId: string,
 ): AppAction<Promise<void>> {
-  return (state$, { hatenaBookmarkClient }) => {
-    return (
-      findEntry(state$, entryId)?.scope(async (entry) => {
-        entry.hatenaBookmarkEntryLoading = true;
+  return async (state$, { hatenaBookmarkClient }) => {
+    const entry$ = lookupEntry(state$, entryId);
+    if (entry$ === undefined) {
+      return;
+    }
 
-        try {
-          entry.hatenaBookmarkEntry = await hatenaBookmarkClient.getEntry({
-            url: getEntryUrl(entry),
-          });
-        } finally {
-          entry.hatenaBookmarkEntryLoading = false;
-        }
-      }) ?? Promise.resolve()
+    const hatenaBookmarkEntry$ = entry$.get('hatenaBookmarkEntry');
+    const hatenaBookmarkEntryLoading$ = entry$.get(
+      'hatenaBookmarkEntryLoading',
     );
+    const hatenaBookmarkEntryShown$ = entry$.get('hatenaBookmarkEntryShown');
+    const url = entry$.scope((entry) => getEntryUrl(entry));
+
+    hatenaBookmarkEntryLoading$.value = true;
+
+    try {
+      hatenaBookmarkEntry$.value = await hatenaBookmarkClient.getEntry({
+        url,
+      });
+      hatenaBookmarkEntryShown$.value = true;
+    } finally {
+      hatenaBookmarkEntryLoading$.value = false;
+    }
   };
 }
 
 export function fetchStream(continuation?: string): AppAction<Promise<void>> {
-  return (state$, { feedlyClient }, dispatch) => {
-    return state$.scope(async (state) => {
-      const { feed: oldFeed, session, stream: oldStream, urlFilters } = state;
+  return async (state$, { feedlyClient }, dispatch) => {
+    const session$ = state$.get('session');
+    const session = session$.value;
 
-      if (session === null) {
-        return;
-      }
+    if (session === null) {
+      return;
+    }
 
-      state.streamLoading = true;
+    const feed$ = state$.get('feed');
+    const stream$ = state$.get('stream');
+    const streamLoading$ = state$.get('streamLoading');
+    const urlFilters$ = state$.get('urlFilters');
 
-      try {
-        const credential = await dispatch(acquireCredential());
+    streamLoading$.value = true;
 
-        if (oldFeed === null && isFeedId(session.id)) {
-          state.feed = await feedlyClient.getFeed(
-            credential.accessToken,
-            session.id,
-          );
-        }
+    try {
+      const credential = await dispatch(acquireCredential());
 
-        let newStream = await feedlyClient.getStreamContents(
+      if (feed$.value === null && isFeedId(session.id)) {
+        feed$.value = await feedlyClient.getFeed(
           credential.accessToken,
           session.id,
-          { ...session.settings, continuation },
         );
-
-        if (urlFilters.length > 0) {
-          applyUrlFilters(newStream.items, urlFilters);
-        }
-
-        if (
-          oldStream !== null &&
-          oldStream.id === session.id &&
-          continuation !== undefined
-        ) {
-          newStream = mergeStreams(oldStream, newStream);
-
-          state.session = {
-            ...session,
-            updated: Date.now(),
-          };
-        } else {
-          state.session = {
-            ...session,
-            expandedIndex: -1,
-            focusIndex: -1,
-            readIndex: -1,
-            title: newStream.title ?? session.title,
-            updated: Date.now(),
-          };
-        }
-
-        state.stream = newStream;
-      } finally {
-        state.streamLoading = false;
       }
-    });
+
+      let newStream = await feedlyClient.getStreamContents(
+        credential.accessToken,
+        session.id,
+        { ...session.settings, continuation },
+      );
+
+      if (urlFilters$.value.length > 0) {
+        applyUrlFilters(newStream.items, urlFilters$.value);
+      }
+
+      if (
+        stream$.value !== null &&
+        stream$.value.id === session.id &&
+        continuation !== undefined
+      ) {
+        newStream = {
+          ...newStream,
+          items: stream$.value.items.concat(newStream.items),
+        };
+        session$.scope((session) => {
+          if (session !== null) {
+            session.updated = Date.now();
+          }
+        });
+      } else {
+        session$.scope((session) => {
+          if (session !== null) {
+            session.expandedIndex = -1;
+            session.focusIndex = -1;
+            session.readIndex = -1;
+            session.title = newStream.title ?? session.title;
+            session.updated = Date.now();
+          }
+        });
+      }
+
+      stream$.value = newStream;
+    } finally {
+      streamLoading$.value = false;
+    }
   };
 }
 
 export function focusEntry(index: number): AppAction<void> {
   return (state$) => {
-    state$.scope((state) => {
-      if (state.session === null) {
-        return;
+    const session$ = state$.get('session');
+    session$.scope((session) => {
+      if (session !== null) {
+        session.focusIndex = index;
       }
-
-      state.session = {
-        ...state.session,
-        focusIndex: index,
-      };
     });
   };
 }
 
 export function markStreamAsRead(): AppAction<Promise<void>> {
-  return (state$, { feedlyClient }, dispatch) => {
-    return state$.scope(async (state) => {
-      const { readCounts, session, stream } = state;
+  return async (state$, { feedlyClient }, dispatch) => {
+    const readCounts$ = state$.get('readCounts');
+    const session$ = state$.get('session');
+    const stream$ = state$.get('stream');
+    const streamLoading$ = state$.get('streamLoading');
+    const session = session$.value;
+    const stream = stream$.value;
 
-      if (session === null || stream === null) {
-        return;
+    if (session === null || stream === null) {
+      return;
+    }
+
+    const latestItem =
+      session.settings.ranked === 'newest'
+        ? stream.items[0]
+        : stream.items.at(-1);
+
+    if (latestItem === undefined) {
+      return;
+    }
+
+    streamLoading$.value = true;
+
+    try {
+      const credential = await dispatch(acquireCredential());
+      const parsedId = parseStreamId(session.id);
+
+      switch (parsedId.type) {
+        case 'category':
+          await feedlyClient.updateMarker(credential.accessToken, {
+            action: 'markAsRead',
+            type: 'categories',
+            categoryIds: [session.id],
+            lastReadEntryId: latestItem?.id,
+          });
+          break;
+        case 'feed':
+          await feedlyClient.updateMarker(credential.accessToken, {
+            action: 'markAsRead',
+            type: 'feeds',
+            feedIds: [session.id],
+            lastReadEntryId: latestItem?.id,
+          });
+          break;
+        case 'tag':
+          await feedlyClient.updateMarker(credential.accessToken, {
+            action: 'markAsRead',
+            type: 'tags',
+            tagIds: [session.id],
+            lastReadEntryId: latestItem?.id,
+          });
+          break;
       }
 
-      const latestItem =
-        session.settings.ranked === 'newest'
-          ? stream.items[0]
-          : stream.items.at(-1);
-
-      if (latestItem === undefined) {
-        return;
-      }
-
-      state.streamUpdating = true;
-
-      try {
-        const credential = await dispatch(acquireCredential());
-        const parsedId = parseStreamId(session.id);
-
-        switch (parsedId.type) {
-          case 'category':
-            await feedlyClient.updateMarker(credential.accessToken, {
-              action: 'markAsRead',
-              type: 'categories',
-              categoryIds: [session.id],
-              lastReadEntryId: latestItem?.id,
-            });
-            break;
-          case 'feed':
-            await feedlyClient.updateMarker(credential.accessToken, {
-              action: 'markAsRead',
-              type: 'feeds',
-              feedIds: [session.id],
-              lastReadEntryId: latestItem?.id,
-            });
-            break;
-          case 'tag':
-            await feedlyClient.updateMarker(credential.accessToken, {
-              action: 'markAsRead',
-              type: 'tags',
-              tagIds: [session.id],
-              lastReadEntryId: latestItem?.id,
-            });
-            break;
+      session$.scope((session) => {
+        if (session !== null) {
+          session.readIndex = stream.items.length - 1;
         }
+      });
 
-        state.session = {
-          ...session,
-          readIndex: stream.items.length - 1,
-        };
-
-        state.readCounts = stream.items.reduce(
-          (readCounts, item) =>
-            readCounts.updateOrInsert(
-              item.origin.streamId,
-              (count) => count + 1,
-              () => 1,
-            ),
-          readCounts,
-        );
-      } finally {
-        state.streamUpdating = false;
-      }
-
-      dispatch(
-        sendNotification(
-          'info',
-          `${stream.items.length} entries are marked as read.`,
-        ),
+      readCounts$.value = stream.items.reduce(
+        (readCounts, item) =>
+          readCounts.updateOrInsert(
+            item.origin.streamId,
+            (count) => count + 1,
+            () => 1,
+          ),
+        readCounts$.value,
       );
-    });
+    } finally {
+      streamLoading$.value = false;
+    }
+
+    dispatch(
+      sendNotification(
+        'info',
+        `${stream.items.length} entries are marked as read.`,
+      ),
+    );
   };
 }
 
 export function quitSession(): AppAction<Promise<void>> {
-  return (state$, { stateRepository }) => {
-    return state$.scope(async (state) => {
-      const { feed, pastSessions, session, stream, streamSettings } = state;
+  return async (state$, { stateRepository }) => {
+    const session$ = state$.get('session');
+    const session = session$.value;
 
-      if (session === null) {
-        return;
+    if (session === null) {
+      return;
+    }
+
+    const feed$ = state$.get('feed');
+    const stream$ = state$.get('stream');
+    const streamSettings$ = state$.get('streamSettings');
+    const pastSessions$ = state$.get('pastSessions');
+
+    const sweepCount = Math.max(
+      0,
+      pastSessions$.value.length - streamSettings$.value.maxSessions,
+    );
+    const sweptSessions = pastSessions$.value.slice(0, sweepCount);
+
+    for (const sweptSession of sweptSessions) {
+      await stateRepository.deleteStream(sweptSession.id);
+
+      if (isFeedId(sweptSession.id)) {
+        await stateRepository.deleteFeed(sweptSession.id);
       }
+    }
 
-      const sweepCount = Math.max(
-        0,
-        pastSessions.length - streamSettings.maxSessions,
-      );
-      const sweptSessions = pastSessions.slice(0, sweepCount);
+    if (stream$.value !== null) {
+      await stateRepository.addStream(stream$.value);
+    }
 
-      for (const sweptSession of sweptSessions) {
-        await stateRepository.deleteStream(sweptSession.id);
+    if (feed$.value !== null) {
+      await stateRepository.addFeed(feed$.value);
+    }
 
-        if (isFeedId(sweptSession.id)) {
-          await stateRepository.deleteFeed(sweptSession.id);
-        }
-      }
-
-      if (stream !== null) {
-        await stateRepository.addStream(stream);
-      }
-
-      if (feed !== null) {
-        await stateRepository.addFeed(feed);
-      }
-
-      state.feed = null;
-      state.stream = null;
-      state.session = null;
-      state.pastSessions = pastSessions.slice(sweepCount).concat(session);
-    });
+    feed$.value = null;
+    stream$.value = null;
+    session$.value = null;
+    pastSessions$.value = pastSessions$.value.slice(sweepCount).concat(session);
   };
 }
 
 export function shrinkEntry(): AppAction<void> {
   return (state$) => {
-    state$.scope((state) => {
-      if (state.session === null || state.session.expandedIndex < 0) {
-        return;
+    state$.get('session').scope((session) => {
+      if (session !== null) {
+        session.expandedIndex = -1;
       }
-
-      state.session = {
-        ...state.session,
-        expandedIndex: -1,
-      };
     });
   };
 }
 
 export function startSession(streamId: string): AppAction<Promise<void>> {
-  return (state$, { stateRepository }) => {
-    return state$.scope(async (state) => {
-      const {
-        defaultSessionSettings,
-        feed,
-        streamSettings,
-        session: oldSession,
-        stream,
-      } = state;
-      let { pastSessions } = state;
+  return async (state$, { stateRepository }) => {
+    const defaultSessionSettings$ = state$.get('defaultSessionSettings');
+    const feed$ = state$.get('feed');
+    const pastSessions$ = state$.get('pastSessions');
+    const session$ = state$.get('session');
+    const stream$ = state$.get('stream');
+    const streamSettings$ = state$.get('streamSettings');
+    const session = session$.value;
+    let pastSessions = pastSessions$.value;
 
-      const index = pastSessions.findIndex(
-        (pastSession) => pastSession.id === streamId,
-      );
-      let newSession: Session;
+    const index = pastSessions.findIndex(
+      (pastSession) => pastSession.id === streamId,
+    );
+    let newSession: Session;
 
-      if (index >= 0) {
-        const pastSession = pastSessions[index]!;
-        newSession = {
-          ...pastSession,
-          settings: pastSession.settings,
-        };
-        pastSessions = pastSessions.toSpliced(index, 1);
-      } else {
-        newSession = {
-          expandedIndex: -1,
-          id: streamId,
-          readIndex: -1,
-          focusIndex: -1,
-          settings: defaultSessionSettings,
-          title: '',
-          updated: Date.now(),
-        };
+    if (index >= 0) {
+      const pastSession = pastSessions[index]!;
+      newSession = {
+        ...pastSession,
+        settings: pastSession.settings,
+      };
+      pastSessions = pastSessions.toSpliced(index, 1);
+    } else {
+      newSession = {
+        expandedIndex: -1,
+        id: streamId,
+        readIndex: -1,
+        focusIndex: -1,
+        settings: defaultSessionSettings$.value,
+        title: '',
+        updated: Date.now(),
+      };
+    }
+
+    if (session !== null && session.id !== streamId) {
+      pastSessions = pastSessions.concat(session);
+    }
+
+    const sweepCount = Math.max(
+      0,
+      pastSessions.length - streamSettings$.value.maxSessions,
+    );
+    const sweptSessions = pastSessions.slice(0, sweepCount);
+
+    for (const sweptSession of sweptSessions) {
+      await stateRepository.deleteStream(sweptSession.id);
+
+      if (isFeedId(sweptSession.id)) {
+        await stateRepository.deleteFeed(sweptSession.id);
       }
+    }
 
-      if (oldSession !== null && oldSession.id !== streamId) {
-        pastSessions = pastSessions.concat(oldSession);
-      }
+    if (stream$.value !== null) {
+      await stateRepository.addStream(stream$.value);
+    }
 
-      const sweepCount = Math.max(
-        0,
-        pastSessions.length - streamSettings.maxSessions,
-      );
-      const sweptSessions = pastSessions.slice(0, sweepCount);
+    if (feed$.value !== null) {
+      await stateRepository.addFeed(feed$.value);
+    }
 
-      for (const sweptSession of sweptSessions) {
-        await stateRepository.deleteStream(sweptSession.id);
+    const newFeed = isFeedId(streamId)
+      ? await stateRepository.findFeed(streamId)
+      : null;
+    const newStream = await stateRepository.findStream(streamId);
 
-        if (isFeedId(sweptSession.id)) {
-          await stateRepository.deleteFeed(sweptSession.id);
-        }
-      }
-
-      if (stream !== null) {
-        await stateRepository.addStream(stream);
-      }
-
-      if (feed !== null) {
-        await stateRepository.addFeed(feed);
-      }
-
-      const newFeed = isFeedId(streamId)
-        ? await stateRepository.findFeed(streamId)
-        : null;
-      const newStream = await stateRepository.findStream(streamId);
-
-      state.feed = newFeed;
-      state.stream = newStream;
-      state.session = newSession;
-      state.pastSessions = pastSessions.slice(sweepCount);
-    });
+    feed$.value = newFeed;
+    stream$.value = newStream;
+    session$.value = newSession;
+    pastSessions$.value = pastSessions.slice(sweepCount);
   };
 }
 
@@ -454,18 +460,21 @@ export function tagEntry(
   entryId: string,
   tagId: string,
 ): AppAction<Promise<void>> {
-  return (state$, { feedlyClient }, dispatch) => {
-    return (
-      findEntry(state$, entryId)?.scope(async (entry) => {
-        const credential = await dispatch(acquireCredential());
+  return async (state$, { feedlyClient }, dispatch) => {
+    const entry$ = lookupEntry(state$, entryId);
+    if (entry$ === undefined) {
+      return;
+    }
 
-        await feedlyClient.tagEntry(credential.accessToken, [tagId], {
-          entryId: entry.id,
-        });
+    const credential = await dispatch(acquireCredential());
 
-        entry.tags = (entry.tags ?? []).concat({ id: tagId });
-      }) ?? Promise.resolve()
-    );
+    await feedlyClient.tagEntry(credential.accessToken, [tagId], {
+      entryId: entryId,
+    });
+
+    entry$.scope((entry) => {
+      entry.tags = (entry.tags ?? []).concat({ id: tagId });
+    });
   };
 }
 
@@ -474,7 +483,7 @@ export function toggleFullContents(
   shown: boolean,
 ): AppAction<void> {
   return (state$) => {
-    findEntry(state$, entryId)?.scope((entry) => {
+    lookupEntry(state$, entryId)?.scope((entry) => {
       entry.fullContentsShown = shown;
     });
   };
@@ -485,7 +494,8 @@ export function toggleHatenaBookmarkEntry(
   shown: boolean,
 ): AppAction<void> {
   return (state$) => {
-    findEntry(state$, entryId)?.scope((entry) => {
+    const entry$ = lookupEntry(state$, entryId);
+    entry$?.scope((entry) => {
       entry.hatenaBookmarkEntryShown = shown;
     });
   };
@@ -503,10 +513,7 @@ export function toggleStreamLayout(): AppAction<void> {
       const index = STREAM_LAYOUTS.indexOf(session.settings.layout);
       const layout = STREAM_LAYOUTS[(index + 1) % STREAM_LAYOUTS.length]!;
 
-      session.settings = {
-        ...session.settings,
-        layout,
-      };
+      session.settings.layout = layout;
       session.expandedIndex = -1;
     });
   };
@@ -516,18 +523,21 @@ export function untagEntry(
   entryId: string,
   tagId: string,
 ): AppAction<Promise<void>> {
-  return (state$, { feedlyClient }, dispatch) => {
-    return (
-      findEntry(state$, entryId)?.scope(async (entry) => {
-        const credential = await dispatch(acquireCredential());
+  return async (state$, { feedlyClient }, dispatch) => {
+    const entry$ = lookupEntry(state$, entryId);
+    if (entry$ === undefined) {
+      return;
+    }
 
-        await feedlyClient.untagEntry(credential.accessToken, [tagId], {
-          entryId: entry.id,
-        });
+    const credential = await dispatch(acquireCredential());
 
-        entry.tags = (entry.tags ?? []).filter((tag) => tag.id !== tagId);
-      }) ?? Promise.resolve()
-    );
+    await feedlyClient.untagEntry(credential.accessToken, [tagId], {
+      entryId,
+    });
+
+    entry$.scope((entry) => {
+      entry.tags = (entry.tags ?? []).filter((tag) => tag.id !== tagId);
+    });
   };
 }
 
@@ -545,7 +555,8 @@ export function updateSessionSettings(
   settings: SessionSettings,
 ): AppAction<void> {
   return (state$) => {
-    state$.get('session').scope((session) => {
+    const session$ = state$.get('session');
+    session$.scope((session) => {
       if (session === null) {
         return;
       }
@@ -557,18 +568,17 @@ export function updateSessionSettings(
 }
 
 export function updateSiteinfos(): AppAction<Promise<void>> {
-  return (state$, { wedataClient }, dispatch) => {
-    return state$.scope(async (state) => {
-      state.siteinfos = await wedataClient.getAutoPagerizeItems();
-      state.siteinfosUpdated = Date.now();
+  return async (state$, { wedataClient }, dispatch) => {
+    const siteinfos = await wedataClient.getAutoPagerizeItems();
 
-      dispatch(
-        sendNotification(
-          'info',
-          `${state.siteinfos.length} siteinfos are loaded.`,
-        ),
-      );
+    state$.scope((state) => {
+      state.siteinfos = siteinfos;
+      state.siteinfosUpdated = Date.now();
     });
+
+    dispatch(
+      sendNotification('info', `${siteinfos.length} siteinfos are loaded.`),
+    );
   };
 }
 
@@ -694,32 +704,25 @@ function extractFullContentBySiteinfos(
   return null;
 }
 
-function findEntry(
-  state$: Reactive<AppState>,
+function lookupEntry(
+  state$: Derivable<AppState>,
   entryId: string,
-): Reactive<Entry> | null {
+): Derivable<Entry> | undefined {
   const items$ = state$.get('stream').get('items');
   if (items$ === undefined) {
-    return null;
+    return undefined;
   }
 
   const index = items$.value.findIndex((item) => item.id === entryId);
   if (index < 0) {
-    return null;
+    return undefined;
   }
 
-  return items$.get(index) as Reactive<Entry>;
+  return items$.get(index) as Derivable<Entry>;
 }
 
 function isFeedId(streamId: string): boolean {
   return streamId.startsWith('feed/');
-}
-
-function mergeStreams(oldStream: Stream, newStream: Stream): Stream {
-  return {
-    ...newStream,
-    items: oldStream.items.concat(newStream.items),
-  };
 }
 
 function* splitStrings(

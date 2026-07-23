@@ -1,11 +1,11 @@
 import { FeedlyClient } from '@feedpon/feedly-client';
-import { Mutex, PersistentMiddleware } from '@feedpon/foundation';
+import { Mutex, PersistentPlugin } from '@feedpon/foundation';
 import { HatenaBookmarkClient } from '@feedpon/hatena-bookmark-client';
 import { type AppContext, AppState, AppStore } from '@feedpon/model';
 import { App } from '@feedpon/view';
 import { WedataClient } from '@feedpon/wedata-client';
 import { DOMAdapter, DOMRoot, Runtime } from 'barebind';
-import { Reactive } from 'barebind/addons/signal';
+import { Derivable } from 'barebind/addons/signal';
 import { UpdateLogger } from 'barebind/addons/update-logger';
 import { UpdateProfiler } from 'barebind/addons/update-profiler';
 import { ChromeAuthenticator } from './ChromeAuthenticator.ts';
@@ -14,7 +14,7 @@ import { IndexedDBStateRepository } from './IndexedDBStateRepository.ts';
 import { SmoothScrollController } from './SmoothScrollController.ts';
 
 const prepareStore = async (): Promise<AppStore> => {
-  const state = Reactive.from(new AppState());
+  const state = Derivable.from(new AppState());
   const context: AppContext = {
     feedlyAuthMutex: new Mutex(),
     feedlyAuthenticator: new ChromeAuthenticator(),
@@ -28,11 +28,11 @@ const prepareStore = async (): Promise<AppStore> => {
     hatenaBookmarkClient: new HatenaBookmarkClient(),
     scrollController: new SmoothScrollController(),
     stateRepository: new IndexedDBStateRepository(),
-    state$: Reactive.from(new AppState()),
+    state$: Derivable.from(new AppState()),
     wedataClient: new WedataClient(),
   };
   const store = new AppStore(state, context);
-  await store.use(new PersistentMiddleware(context.stateRepository));
+  await store.use(new PersistentPlugin(context.stateRepository, 1));
   store.use(new ErrorHandlerMiddleware());
   return store;
 };

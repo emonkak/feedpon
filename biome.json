@@ -55,6 +55,7 @@
         "noAssignInExpressions": "off",
         "noConfusingLabels": "off",
         "noConfusingVoidType": "off",
+        "noConstEnum": "off",
         "noEmptyInterface": "off",
         "noExplicitAny": "off",
         "noExtraNonNullAssertion": "off"

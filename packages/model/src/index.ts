@@ -9,7 +9,7 @@ import {
 import type * as hatenaBookmark from '@feedpon/hatena-bookmark-client';
 import type * as wedata from '@feedpon/wedata-client';
 import type { HookObject, RenderContext } from 'barebind';
-import type { Reactive } from 'barebind/addons/signal';
+import type { Derivable } from 'barebind/addons/signal';
 import {
   type Comparer,
   orderByAscending,
@@ -28,7 +28,7 @@ export interface AppContext {
   feedlyClient: feedly.FeedlyClient;
   hatenaBookmarkClient: hatenaBookmark.HatenaBookmarkClient;
   scrollController: ScrollController;
-  state$: Reactive<AppState>;
+  state$: Derivable<AppState>;
   stateRepository: AppStateRepository;
   wedataClient: wedata.WedataClient;
 }
@@ -226,7 +226,6 @@ export class AppState {
     },
   ];
   userStyle: string = '';
-  version: number = 1;
 
   get allCategory(): Category | null {
     return this.credential !== null
