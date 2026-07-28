@@ -189,7 +189,6 @@ figcaption {
 }
 
 ol, ul {
-  list-style-position: inside;
   padding-inline-start: 1rlh;
   margin-block: 0 1rlh;
 }
