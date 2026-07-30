@@ -297,23 +297,18 @@ function embedSVG(el: Element): HTMLImageElement {
 
 function parseHTML(html: string, origin: string): DocumentFragment {
   const template = document.createElement('template');
+  const walker = document.createTreeWalker(
+    template.content,
+    NodeFilter.SHOW_ELEMENT,
+  );
 
   template.setHTMLUnsafe(html);
 
-  const walker = document.createTreeWalker(template.content);
-
-  let currentNode = walker.nextNode();
-
-  while (currentNode !== null) {
-    if (currentNode.nodeType !== Node.ELEMENT_NODE) {
-      currentNode = walker.nextNode();
-      continue;
-    }
-
-    const el = currentNode as Element;
+  while (walker.nextNode() !== null) {
+    const el = walker.currentNode as Element;
 
     if (!SAFE_ELEMENTS.has(el.localName)) {
-      currentNode = skipNode(walker);
+      skipNode(walker);
       el.remove();
       continue;
     }
@@ -345,16 +340,14 @@ function parseHTML(html: string, origin: string): DocumentFragment {
         break;
 
       case 'math':
-        currentNode = skipNode(walker);
+        skipNode(walker);
         continue;
 
       case 'svg':
-        currentNode = skipNode(walker);
+        skipNode(walker);
         el.replaceWith(embedSVG(el));
         continue;
     }
-
-    currentNode = walker.nextNode();
   }
 
   return template.content;
