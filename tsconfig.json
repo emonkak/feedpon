@@ -2,28 +2,28 @@
   "files": [],
   "references": [
     {
-      "path": "app/src"
+      "path": "app"
     },
     {
-      "path": "packages/feedly-client/src"
+      "path": "packages/feedly-client"
     },
     {
-      "path": "packages/foundation/src"
+      "path": "packages/foundation"
     },
     {
-      "path": "packages/hanate-bookmark-client/src"
+      "path": "packages/hanate-bookmark-client"
     },
     {
-      "path": "packages/model/src"
+      "path": "packages/model"
     },
     {
-      "path": "packages/primitives/src"
+      "path": "packages/primitives"
     },
     {
-      "path": "packages/view/src"
+      "path": "packages/view"
     },
     {
-      "path": "packages/wedata-client/src"
+      "path": "packages/wedata-client"
     }
   ]
 }

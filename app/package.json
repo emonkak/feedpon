@@ -13,5 +13,62 @@
     "@types/chrome": "^0.2.2",
     "barebind": "catalog:"
   },
-  "private": true
+  "private": true,
+  "wireit": {
+    "build": {
+      "dependencies": [
+        "build:css",
+        "build:img",
+        "build:js"
+      ]
+    },
+    "build:css": {
+      "command": "esbuild --bundle css/app.css --outfile=dist/app.css",
+      "files": [
+        "css/**/*"
+      ],
+      "output": [
+        "dist/app.css"
+      ],
+      "dependencies": [
+        "build:pre"
+      ]
+    },
+    "build:js": {
+      "command": "bun build.js",
+      "files": [
+        "build.js"
+      ],
+      "output": [
+        "dist/app.js",
+        "dist/background.js"
+      ],
+      "dependencies": [
+        "build:pre"
+      ]
+    },
+    "build:img": {
+      "command": "install -D --mode=644 --target-directory=dist/img img/*",
+      "files": [
+        "img/*"
+      ],
+      "output": [
+        "dist/img/*"
+      ],
+      "dependencies": [
+        "build:pre"
+      ]
+    },
+    "build:pre": {
+      "command": "install -D --mode=644 --target-directory=dist {app.html,manifest.json}",
+      "files": [
+        "app.html",
+        "manifest.json"
+      ],
+      "output": [
+        "dist/app.html",
+        "dist/manifest.json"
+      ]
+    }
+  }
 }

@@ -3,7 +3,7 @@
   "scripts": {
     "build": "wireit",
     "ci": "pnpm run clean && pnpm run lint && pnpm run build && pnpm test --coverage",
-    "clean": "rm --force --recursive dist",
+    "clean": "rm --force --recursive app/dist",
     "format": "biome check --fix",
     "lint": "biome ci .",
     "test": "vitest"
@@ -22,58 +22,8 @@
   "wireit": {
     "build": {
       "dependencies": [
-        "build:css",
-        "build:img",
-        "build:js"
-      ]
-    },
-    "build:css": {
-      "command": "esbuild --bundle app/css/app.css --outfile=dist/app.css",
-      "files": [
-        "app/css/**/*"
-      ],
-      "output": [
-        "dist/app.css"
-      ],
-      "dependencies": [
-        "build:pre"
-      ]
-    },
-    "build:js": {
-      "command": "bun build.js",
-      "files": [
-        "build.js"
-      ],
-      "output": [
-        "dist/app.js",
-        "dist/background.js"
-      ],
-      "dependencies": [
-        "build:pre",
+        "./app:build",
         "typecheck"
-      ]
-    },
-    "build:img": {
-      "command": "install -D --mode=644 --target-directory=dist/img app/img/*",
-      "files": [
-        "app/img/*"
-      ],
-      "output": [
-        "dist/img/*"
-      ],
-      "dependencies": [
-        "build:pre"
-      ]
-    },
-    "build:pre": {
-      "command": "install -D --mode=644 --target-directory=dist app/{app.html,manifest.json}",
-      "files": [
-        "app/app.html",
-        "app/manifest.json"
-      ],
-      "output": [
-        "dist/app.html",
-        "dist/manifest.json"
       ]
     },
     "typecheck": {
@@ -81,12 +31,15 @@
       "clean": "if-file-deleted",
       "files": [
         "app/src/**/*",
+        "app/tsconfig.json",
         "packages/*/src/**/*",
+        "packages/*/tsconfig.json",
         "pnpm-lock.yaml",
         "tsconfig.base.json",
         "tsconfig.json"
       ],
       "output": [
+        "app/*.tsbuildinfo",
         "packages/*/*.tsbuildinfo"
       ]
     }

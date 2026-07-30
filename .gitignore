@@ -1,5 +1,5 @@
 *.tsbuildinfo
 .wireit
+/app/dist
 /coverage
-/dist
 node_modules

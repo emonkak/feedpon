@@ -7,14 +7,14 @@ const configs = [
   {
     bundle: true,
     dropLabels: isProduction ? ['DEBUG'] : [],
-    entryPoints: ['app/src/app.ts'],
+    entryPoints: ['src/app.ts'],
     metafile: !isProduction,
     outfile: 'dist/app.js',
     plugins: [minifyTemplates()],
   },
   {
     bundle: true,
-    entryPoints: ['app/src/background.ts'],
+    entryPoints: ['src/background.ts'],
     outfile: 'dist/background.js',
   },
 ];
