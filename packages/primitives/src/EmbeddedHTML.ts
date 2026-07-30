@@ -1,5 +1,12 @@
 import { createComponent, html } from 'barebind';
 
+const ATTRIBUTE_HREF = 'href';
+const ATTRIBUTE_SRC = 'src';
+const ATTRIBUTE_SRCSET = 'srcset';
+
+const LAZY_SRC_ATTRIBUTES = ['data-lazy-src', 'data-src'];
+const LAZY_SRCSET_ATTRIBUTES = ['data-lazy-srcset', 'data-srcset'];
+
 // Tag list from https://html.spec.whatwg.org/
 const SAFE_ELEMENTS = new Set([
   // 4.3 Sections (excluding "body")
@@ -104,13 +111,6 @@ const SAFE_ELEMENTS = new Set([
 ]);
 
 const SAFE_URL_PATTERN = /^(?:data|https?|mailto|sms|tel):/i;
-
-const HREF_ATTRIBUTE = 'href';
-const SRC_ATTRIBUTE = 'src';
-const SRCSET_ATTRIBUTE = 'srcset';
-
-const LAZY_SRC_ATTRIBUTES = ['data-lazy-src', 'data-src'];
-const LAZY_SRCSET_ATTRIBUTES = ['data-lazy-srcset', 'data-srcset'];
 
 const SRCSET_SEPARATOR_PATTERN = /\s*,\s*/;
 const SRCSET_SPACES_PATTERN = /\s+/;
@@ -367,14 +367,14 @@ function preprocessMathML(mathEl: Element): void {
 }
 
 function resolveHref(el: Element, origin: string): void {
-  if (el.hasAttribute(HREF_ATTRIBUTE)) {
-    const url = toAbsoluteUrl(el.getAttribute(HREF_ATTRIBUTE)!, origin);
+  if (el.hasAttribute(ATTRIBUTE_HREF)) {
+    const url = toAbsoluteUrl(el.getAttribute(ATTRIBUTE_HREF)!, origin);
 
     if (SAFE_URL_PATTERN.test(url)) {
-      el.setAttribute(HREF_ATTRIBUTE, url);
+      el.setAttribute(ATTRIBUTE_HREF, url);
       el.setAttribute('target', '_blank');
     } else {
-      el.removeAttribute(HREF_ATTRIBUTE);
+      el.removeAttribute(ATTRIBUTE_HREF);
     }
   }
 }
@@ -382,17 +382,17 @@ function resolveHref(el: Element, origin: string): void {
 function resolveSrc(el: Element, origin: string): void {
   for (const name of LAZY_SRC_ATTRIBUTES) {
     if (el.hasAttribute(name)) {
-      el.setAttribute(SRC_ATTRIBUTE, el.getAttribute(name)!);
+      el.setAttribute(ATTRIBUTE_SRC, el.getAttribute(name)!);
     }
   }
 
-  if (el.hasAttribute(SRC_ATTRIBUTE)) {
-    const url = toAbsoluteUrl(el.getAttribute(SRC_ATTRIBUTE)!, origin);
+  if (el.hasAttribute(ATTRIBUTE_SRC)) {
+    const url = toAbsoluteUrl(el.getAttribute(ATTRIBUTE_SRC)!, origin);
 
     if (SAFE_URL_PATTERN.test(url)) {
-      el.setAttribute(SRC_ATTRIBUTE, url);
+      el.setAttribute(ATTRIBUTE_SRC, url);
     } else {
-      el.removeAttribute(SRCSET_ATTRIBUTE);
+      el.removeAttribute(ATTRIBUTE_SRCSET);
     }
   }
 }
@@ -400,15 +400,15 @@ function resolveSrc(el: Element, origin: string): void {
 function resolveSrcset(el: Element, origin: string): void {
   for (const name of LAZY_SRCSET_ATTRIBUTES) {
     if (el.hasAttribute(name)) {
-      el.setAttribute(SRCSET_ATTRIBUTE, el.getAttribute(name)!);
+      el.setAttribute(ATTRIBUTE_SRCSET, el.getAttribute(name)!);
     }
   }
 
-  if (el.hasAttribute(SRCSET_ATTRIBUTE)) {
+  if (el.hasAttribute(ATTRIBUTE_SRCSET)) {
     el.setAttribute(
-      SRCSET_ATTRIBUTE,
+      ATTRIBUTE_SRCSET,
       el
-        .getAttribute(SRCSET_ATTRIBUTE)!
+        .getAttribute(ATTRIBUTE_SRCSET)!
         .trim()
         .split(SRCSET_SEPARATOR_PATTERN)
         .map((component) => {
