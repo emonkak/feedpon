@@ -3,6 +3,7 @@
     "allowImportingTsExtensions": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
+    "incremental": true,
     "isolatedModules": true,
     "module": "nodenext",
     "moduleResolution": "nodenext",

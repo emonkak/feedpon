@@ -5,6 +5,9 @@
       "path": "app"
     },
     {
+      "path": "app-next"
+    },
+    {
       "path": "packages/feedly-client"
     },
     {

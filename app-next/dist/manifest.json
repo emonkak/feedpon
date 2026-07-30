@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Feedpon",
-  "version": "2.1.1",
-  "description": "A LDR inspired feed reader",
+  "name": "Feedpon Next",
+  "version": "3.0.0",
+  "description": "The feed reader for me",
   "icons": {
     "16": "img/icon-16.png",
     "32": "img/icon-32.png",
@@ -18,7 +18,7 @@
     }
   },
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "js/background.js"
   },
   "host_permissions": ["<all_urls>"],
   "permissions": ["tabs", "unlimitedStorage"]

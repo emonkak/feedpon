@@ -1,5 +1,8 @@
 *.tsbuildinfo
-.wireit
-/app/dist
+/app-next/dist/css
+/app-next/dist/js
+/app/dist/css
+/app/dist/js
 /coverage
+meta.json
 node_modules

@@ -1,22 +1,17 @@
 {
-  "name": "@feedpon/app",
+  "name": "@feedpon/app-next",
   "type": "module",
   "scripts": {
     "build": "pnpm run --aggregate-output --parallel '/^build:/'",
-    "build:dist": "bun bundle.ts",
+    "build:bundle": "bun bundle.ts",
     "build:typecheck": "tsc --build",
     "watch": "pnpm run --parallel '/^watch:/'",
-    "watch:dist": "bun bundle.ts --watch",
+    "watch:bundle": "bun bundle.ts --watch",
     "watch:typecheck": "tsc --build --watch --preserveWatchOutput",
     "clean": "rm --force --recursive dist/css dist/js"
   },
   "dependencies": {
     "@feedpon/feedly-client": "workspace:^",
-    "@feedpon/foundation": "workspace:^",
-    "@feedpon/hatena-bookmark-client": "workspace:^",
-    "@feedpon/model": "workspace:^",
-    "@feedpon/view": "workspace:^",
-    "@feedpon/wedata-client": "workspace:^",
     "@types/chrome": "^0.2.2",
     "barebind": "catalog:"
   }

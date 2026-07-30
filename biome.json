@@ -1,13 +1,6 @@
 {
   "files": {
-    "includes": [
-      "**",
-      "!.wireit",
-      "!coverage",
-      "!dist",
-      "!packages/*/.wireit",
-      "!packages/@feedpon/model/src/api"
-    ]
+    "includes": ["**", "!.wireit", "!coverage", "!app/dist", "!app-next/dist"]
   },
   "css": {
     "formatter": {
