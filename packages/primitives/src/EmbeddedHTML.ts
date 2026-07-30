@@ -245,14 +245,14 @@ export const EmbeddedHTML = createComponent<EmbeddedHTMLProps>(
 
     this.useEffect(() => {
       const { shadowRoot } = containerRef.current!;
-
       shadowRoot!.adoptedStyleSheets = [STYLE_SHEET];
     }, []);
 
     this.useEffect(() => {
       const { shadowRoot } = containerRef.current!;
-
-      shadowRoot!.replaceChildren(parseHTML(htmlString, origin));
+      const fragment = parseHTML(htmlString);
+      preprocessDocument(fragment, origin);
+      shadowRoot!.replaceChildren(fragment);
     }, [htmlString, origin]);
 
     return html`
@@ -295,14 +295,14 @@ function embedSVG(el: Element): HTMLImageElement {
   return img;
 }
 
-function parseHTML(html: string, origin: string): DocumentFragment {
+function parseHTML(html: string): DocumentFragment {
   const template = document.createElement('template');
-  const walker = document.createTreeWalker(
-    template.content,
-    NodeFilter.SHOW_ELEMENT,
-  );
-
   template.setHTMLUnsafe(html);
+  return template.content;
+}
+
+function preprocessDocument(fragment: DocumentFragment, origin: string): void {
+  const walker = document.createTreeWalker(fragment, NodeFilter.SHOW_ELEMENT);
 
   while (walker.nextNode() !== null) {
     const el = walker.currentNode as Element;
@@ -341,6 +341,7 @@ function parseHTML(html: string, origin: string): DocumentFragment {
 
       case 'math':
         skipNode(walker);
+        preprocessMathML(el);
         continue;
 
       case 'svg':
@@ -349,8 +350,20 @@ function parseHTML(html: string, origin: string): DocumentFragment {
         continue;
     }
   }
+}
 
-  return template.content;
+function preprocessMathML(mathEl: Element): void {
+  const walker = document.createTreeWalker(mathEl, NodeFilter.SHOW_ELEMENT);
+
+  while (walker.nextNode() !== null) {
+    const el = walker.currentNode as Element;
+    if (el.namespaceURI !== mathEl.namespaceURI) {
+      skipNode(walker);
+      el.remove();
+    } else {
+      sanitizeElement(el);
+    }
+  }
 }
 
 function resolveHref(el: Element, origin: string): void {
