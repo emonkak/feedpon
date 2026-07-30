@@ -3,18 +3,11 @@ import * as esbuild from 'esbuild';
 import { minifyTemplates } from 'esbuild-plugin-minify-templates';
 
 const isProduction = process.env.NODE_ENV === 'production';
-const configs: esbuild.BuildOptions[] = [
-  {
-    bundle: true,
-    entryPoints: ['app/css/app.css'],
-    logLevel: 'info',
-    outfile: 'dist/app.css',
-  },
+const configs = [
   {
     bundle: true,
     dropLabels: isProduction ? ['DEBUG'] : [],
     entryPoints: ['app/src/app.ts'],
-    logLevel: 'info',
     metafile: !isProduction,
     outfile: 'dist/app.js',
     plugins: [minifyTemplates()],
@@ -22,7 +15,6 @@ const configs: esbuild.BuildOptions[] = [
   {
     bundle: true,
     entryPoints: ['app/src/background.ts'],
-    logLevel: 'info',
     outfile: 'dist/background.js',
   },
 ];

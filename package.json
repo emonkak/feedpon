@@ -15,30 +15,57 @@
     "esbuild": "^0.28.1",
     "esbuild-plugin-minify-templates": "github:emonkak/barebind#path:tools/esbuild-plugin-minify-templates",
     "fast-check": "^4.9.0",
-    "tsx": "^4.23.1",
     "typescript": "^7.0.2",
     "vitest": "^4.1.10",
     "wireit": "^0.14.13"
   },
   "wireit": {
     "build": {
-      "command": "node --import tsx build.ts",
+      "dependencies": [
+        "build:css",
+        "build:img",
+        "build:js"
+      ]
+    },
+    "build:css": {
+      "command": "esbuild --bundle app/css/app.css --outfile=dist/app.css",
       "files": [
-        "app/css/**/*",
-        "build.ts"
+        "app/css/**/*"
       ],
       "output": [
-        "dist/app.css",
+        "dist/app.css"
+      ],
+      "dependencies": [
+        "build:pre"
+      ]
+    },
+    "build:js": {
+      "command": "bun build.js",
+      "files": [
+        "build.js"
+      ],
+      "output": [
         "dist/app.js",
         "dist/background.js"
       ],
       "dependencies": [
-        "dist:/",
-        "dist:/img",
+        "build:pre",
         "typecheck"
       ]
     },
-    "dist:/": {
+    "build:img": {
+      "command": "install -D --mode=644 --target-directory=dist/img app/img/*",
+      "files": [
+        "app/img/*"
+      ],
+      "output": [
+        "dist/img/*"
+      ],
+      "dependencies": [
+        "build:pre"
+      ]
+    },
+    "build:pre": {
       "command": "install -D --mode=644 --target-directory=dist app/{app.html,manifest.json}",
       "files": [
         "app/app.html",
@@ -47,15 +74,6 @@
       "output": [
         "dist/app.html",
         "dist/manifest.json"
-      ]
-    },
-    "dist:/img": {
-      "command": "install -D --mode=644 --target-directory=dist/img app/img/*",
-      "files": [
-        "app/img/*"
-      ],
-      "output": [
-        "dist/img/*"
       ]
     },
     "typecheck": {
