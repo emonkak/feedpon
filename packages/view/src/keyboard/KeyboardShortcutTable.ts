@@ -10,7 +10,7 @@ interface KeyboardShortcutTableProps {
 }
 
 export const KeyboardShortcutTable =
-  createComponent<KeyboardShortcutTableProps>(function KeyMappingsTable({
+  createComponent<KeyboardShortcutTableProps>(function KeyboardShortcutTable({
     keyboardShortcuts,
   }) {
     const rows = keyboardShortcuts.map((keyboardShortcut) => {

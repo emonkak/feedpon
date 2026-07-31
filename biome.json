@@ -54,5 +54,6 @@
         "noExtraNonNullAssertion": "off"
       }
     }
-  }
+  },
+  "plugins": ["node_modules/barebind/biome/use-named-component.grit"]
 }

@@ -18,121 +18,122 @@ interface SessionSetttingsDropdownProps {
 }
 
 export const SessionSettingsDropdown =
-  createComponent<SessionSetttingsDropdownProps>(function SessionDropdown({
-    sessionSettings,
-    disabled,
-    onSessionSettingsUpdate,
-  }) {
-    const count$ = this.use(LocalAtom(sessionSettings.count));
-    const layout$ = this.use(LocalAtom(sessionSettings.layout));
-    const ranked$ = this.use(LocalAtom(sessionSettings.ranked));
-    const unreadOnly$ = this.use(LocalAtom(sessionSettings.unreadOnly));
-    const sessionSettings$ = this.use(
-      LocalComputed(
-        (count, layout, ranked, unreadOnly) =>
-          ({
-            count,
-            layout,
-            ranked,
-            unreadOnly,
-          }) satisfies SessionSettings,
-        [count$, layout$, ranked$, unreadOnly$],
-      ),
-    );
-
-    const handleSessionSettingsUpdate = () => {
-      onSessionSettingsUpdate(sessionSettings$.value, sessionSettings);
-    };
-
-    const handleCountChange = (event: Event) => {
-      count$.value = (event.currentTarget as HTMLInputElement).valueAsNumber;
-    };
-
-    const handleRankedChange = (_event: Event, key: string) => {
-      ranked$.value = key as EntryRanking;
-      onSessionSettingsUpdate(sessionSettings$.value, sessionSettings);
-    };
-
-    const handleLayoutChange = (_event: Event, key: string) => {
-      layout$.value = key as StreamLayout;
-      onSessionSettingsUpdate(sessionSettings$.value, sessionSettings);
-    };
-
-    const handleUnreadonlyChange = () => {
-      unreadOnly$.value = !unreadOnly$.value;
-      onSessionSettingsUpdate(sessionSettings$.value, sessionSettings);
-    };
-
-    const checkmark = html`<i class="icon icon-16 icon-checkmark"></i>`;
-
-    const items: MenuItem[] = [
-      {
-        type: 'group',
-        key: 'layout',
-        label: 'Layout',
-        childItems: [
-          { key: 'full' satisfies StreamLayout, label: 'Full Layout' },
-          {
-            key: 'compact' satisfies StreamLayout,
-            label: 'Compact Layout',
-          },
-        ].map(
-          ({ key, label }) =>
+  createComponent<SessionSetttingsDropdownProps>(
+    function SessionSettingsDropdown({
+      sessionSettings,
+      disabled,
+      onSessionSettingsUpdate,
+    }) {
+      const count$ = this.use(LocalAtom(sessionSettings.count));
+      const layout$ = this.use(LocalAtom(sessionSettings.layout));
+      const ranked$ = this.use(LocalAtom(sessionSettings.ranked));
+      const unreadOnly$ = this.use(LocalAtom(sessionSettings.unreadOnly));
+      const sessionSettings$ = this.use(
+        LocalComputed(
+          (count, layout, ranked, unreadOnly) =>
             ({
-              type: 'button',
-              key,
-              checked: key === layout$.value,
-              children: html`
+              count,
+              layout,
+              ranked,
+              unreadOnly,
+            }) satisfies SessionSettings,
+          [count$, layout$, ranked$, unreadOnly$],
+        ),
+      );
+
+      const handleSessionSettingsUpdate = () => {
+        onSessionSettingsUpdate(sessionSettings$.value, sessionSettings);
+      };
+
+      const handleCountChange = (event: Event) => {
+        count$.value = (event.currentTarget as HTMLInputElement).valueAsNumber;
+      };
+
+      const handleRankedChange = (_event: Event, key: string) => {
+        ranked$.value = key as EntryRanking;
+        onSessionSettingsUpdate(sessionSettings$.value, sessionSettings);
+      };
+
+      const handleLayoutChange = (_event: Event, key: string) => {
+        layout$.value = key as StreamLayout;
+        onSessionSettingsUpdate(sessionSettings$.value, sessionSettings);
+      };
+
+      const handleUnreadonlyChange = () => {
+        unreadOnly$.value = !unreadOnly$.value;
+        onSessionSettingsUpdate(sessionSettings$.value, sessionSettings);
+      };
+
+      const checkmark = html`<i class="icon icon-16 icon-checkmark"></i>`;
+
+      const items: MenuItem[] = [
+        {
+          type: 'group',
+          key: 'layout',
+          label: 'Layout',
+          childItems: [
+            { key: 'full' satisfies StreamLayout, label: 'Full Layout' },
+            {
+              key: 'compact' satisfies StreamLayout,
+              label: 'Compact Layout',
+            },
+          ].map(
+            ({ key, label }) =>
+              ({
+                type: 'button',
+                key,
+                checked: key === layout$.value,
+                children: html`
                 <div class="MenuItem-icon"><${key === layout$.value ? checkmark : null}></div>
                 <div class="MenuItem-content">${label}</div>
               `,
-              onAction: handleLayoutChange,
-            }) satisfies MenuItem,
-        ),
-      },
-      {
-        type: 'separator',
-        key: 'separator1',
-      },
-      {
-        type: 'group',
-        key: 'ranked',
-        label: 'Ordering',
-        childItems: [
-          {
-            key: 'engagement' as EntryRanking,
-            label: 'Higher engagement first',
-          },
-          { key: 'newest' as EntryRanking, label: 'Newest first' },
-          { key: 'oldest' as EntryRanking, label: 'Oldest first' },
-        ].map(
-          ({ key, label }) =>
-            ({
-              type: 'button',
-              key,
-              checked: key === ranked$.value,
-              children: html`
+                onAction: handleLayoutChange,
+              }) satisfies MenuItem,
+          ),
+        },
+        {
+          type: 'separator',
+          key: 'separator1',
+        },
+        {
+          type: 'group',
+          key: 'ranked',
+          label: 'Ordering',
+          childItems: [
+            {
+              key: 'engagement' as EntryRanking,
+              label: 'Higher engagement first',
+            },
+            { key: 'newest' as EntryRanking, label: 'Newest first' },
+            { key: 'oldest' as EntryRanking, label: 'Oldest first' },
+          ].map(
+            ({ key, label }) =>
+              ({
+                type: 'button',
+                key,
+                checked: key === ranked$.value,
+                children: html`
                 <div class="MenuItem-icon"><${key === ranked$.value ? checkmark : null}></div>
                 <div class="MenuItem-content">${label}</div>
               `,
-              onAction: handleRankedChange,
-            }) as MenuItem,
-        ),
-      },
-      {
-        type: 'separator',
-        key: 'separator2',
-      },
-      {
-        type: 'group',
-        key: 'count',
-        label: `Fetch ${sessionSettings.count} entries at a time`,
-        childItems: [
-          {
-            type: 'form',
-            key: 'count',
-            ariaLabel: 'Number of entries to fetch',
-            children: html`
+                onAction: handleRankedChange,
+              }) as MenuItem,
+          ),
+        },
+        {
+          type: 'separator',
+          key: 'separator2',
+        },
+        {
+          type: 'group',
+          key: 'count',
+          label: `Fetch ${sessionSettings.count} entries at a time`,
+          childItems: [
+            {
+              type: 'form',
+              key: 'count',
+              ariaLabel: 'Number of entries to fetch',
+              children: html`
               <div class="MenuItem-content">
                 <div class="input-group">
                   <input
@@ -150,28 +151,28 @@ export const SessionSettingsDropdown =
                 </div>
               </div>
             `,
-            onAction: handleSessionSettingsUpdate,
-          },
-        ],
-      },
-      {
-        type: 'separator',
-        key: 'separator3',
-      },
-      {
-        type: 'button',
-        key: 'unreadOnly',
-        checked: unreadOnly$.value,
-        children: html`
+              onAction: handleSessionSettingsUpdate,
+            },
+          ],
+        },
+        {
+          type: 'separator',
+          key: 'separator3',
+        },
+        {
+          type: 'button',
+          key: 'unreadOnly',
+          checked: unreadOnly$.value,
+          children: html`
           <div class="MenuItem-icon"><${sessionSettings.unreadOnly ? checkmark : null}></div>
           <div class="MenuItem-content">Only unread</div>
         `,
-        onAction: handleUnreadonlyChange,
-      },
-    ];
+          onAction: handleUnreadonlyChange,
+        },
+      ];
 
-    return Dropdown({
-      trigger: ({ id, onMenuToggle, open }) => html`
+      return Dropdown({
+        trigger: ({ id, onMenuToggle, open }) => html`
         <button
           aria-expanded=${open.toString()}
           aria-label="Stream fetch options"
@@ -183,6 +184,7 @@ export const SessionSettingsDropdown =
           <i class="icon icon-24 icon-menu-2"></i>
         </button>
       `,
-      items,
-    });
-  });
+        items,
+      });
+    },
+  );
