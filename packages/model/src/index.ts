@@ -66,7 +66,7 @@ export class AppStore
 export class AppState {
   authenticating: boolean = false;
   categories: ImmutableMap<Category['id'], Category> = ImmutableMap.empty();
-  credential: feedly.FeedlyCredential | null = null;
+  credential: Credential | null = null;
   defaultSessionSettings: SessionSettings = {
     count: 50,
     layout: 'full',
@@ -347,6 +347,14 @@ export interface CommandHandler {
 }
 
 export type CommandId = keyof CommandHandler;
+
+export interface Credential {
+  id: string;
+  accessToken: string;
+  refreshToken: string;
+  expiresIn: number;
+  timestamp: number;
+}
 
 export interface Entry extends feedly.Entry {
   fullContents?: FullContent[];

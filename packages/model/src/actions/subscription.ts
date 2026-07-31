@@ -132,12 +132,11 @@ export function deleteSubscription(
   };
 }
 
-export function exportOpml(): AppAction<Promise<URL>> {
+export function exportOpml(): AppAction<Promise<void>> {
   return async (_state$, { feedlyClient }, dispatch) => {
     const credential = await dispatch(acquireCredential());
-    const url = new URL('v3/opml', feedlyClient.baseUrl);
-    url.searchParams.append('feedlyToken', credential.accessToken);
-    return url;
+    const url = feedlyClient.getExportURL(credential.accessToken);
+    window.open(url);
   };
 }
 

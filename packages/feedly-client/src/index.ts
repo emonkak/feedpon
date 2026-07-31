@@ -4,7 +4,6 @@ import type * as schema from './schema.ts';
 export {
   FeedlyClient,
   type FeedlyClientOptions,
-  type FeedlyCredential,
   type FeedlyEnvironment,
 } from './client.ts';
 

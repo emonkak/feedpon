@@ -38,14 +38,6 @@ export interface FeedlyClientOptions {
   fetch?: typeof fetch;
 }
 
-export interface FeedlyCredential {
-  id: string;
-  accessToken: string;
-  refreshToken: string;
-  expiresIn: number;
-  timestamp: number;
-}
-
 export interface FeedlyEnvironment {
   baseUrl: string;
   clientId: string;
@@ -69,7 +61,7 @@ export class FeedlyClient {
     }));
   }
 
-  get authenticationUrl(): string {
+  getAuthenticationURL(): string {
     const { baseUrl, clientId, redirectUrl, scope } = this._environment;
     const url = new URL('/v3/auth/auth', baseUrl);
     const { searchParams } = url;
@@ -82,11 +74,15 @@ export class FeedlyClient {
     return url.toString();
   }
 
-  get baseUrl(): string {
-    return this._environment.baseUrl;
+  getExportURL(accessToken: string): string {
+    return (
+      this._environment.baseUrl +
+      'v3/opml' +
+      new URLSearchParams({ feedlyToken: accessToken })
+    );
   }
 
-  get redirectUrl(): string {
+  getRedirectURL(): string {
     return this._environment.redirectUrl;
   }
 

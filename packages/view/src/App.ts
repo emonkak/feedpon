@@ -1,6 +1,6 @@
 import type { AppStore } from '@feedpon/model';
 import { createComponent, html } from 'barebind';
-import { HashAdapter, Navigation } from 'barebind/addons/router';
+import { HashAdapter, SyncNavigation } from 'barebind/addons/router';
 import { Dispatcher } from './Dispatcher.ts';
 
 export interface AppProps {
@@ -11,7 +11,7 @@ export const App = createComponent<AppProps>(function App({ prepareStore }) {
   const [store, setStore] = this.useState<AppStore | null>(null);
   const [error, setError] = this.useState<NonNullable<unknown> | null>(null);
 
-  this.use(Navigation(new HashAdapter()));
+  this.use(SyncNavigation(new HashAdapter()));
 
   this.useEffect(() => {
     prepareStore().then(

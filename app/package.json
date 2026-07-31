@@ -17,7 +17,7 @@
     "@feedpon/model": "workspace:^",
     "@feedpon/view": "workspace:^",
     "@feedpon/wedata-client": "workspace:^",
-    "@types/chrome": "^0.2.2",
+    "@types/chrome": "^0.2.5",
     "barebind": "catalog:"
   }
 }

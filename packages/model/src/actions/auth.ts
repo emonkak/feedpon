@@ -1,7 +1,6 @@
-import type { FeedlyCredential } from '@feedpon/feedly-client';
-import type { AppAction } from '../index.ts';
+import type { AppAction, Credential } from '../index.ts';
 
-export function acquireCredential(): AppAction<Promise<FeedlyCredential>> {
+export function acquireCredential(): AppAction<Promise<Credential>> {
   return async (
     state$,
     { feedlyAuthMutex, feedlyAuthenticator, feedlyClient },
@@ -33,8 +32,8 @@ export function acquireCredential(): AppAction<Promise<FeedlyCredential>> {
 
         try {
           const code = await feedlyAuthenticator.authenticate(
-            feedlyClient.authenticationUrl,
-            feedlyClient.redirectUrl,
+            feedlyClient.getAuthenticationURL(),
+            feedlyClient.getRedirectURL(),
           );
           const tokens = await feedlyClient.exchangeCode(code);
           credential$.value = {
@@ -53,17 +52,6 @@ export function acquireCredential(): AppAction<Promise<FeedlyCredential>> {
     } finally {
       feedlyAuthMutex.unlock();
     }
-  };
-}
-
-export function getExportUrl(): AppAction<Promise<string>> {
-  return async (_state$, { feedlyClient }, dispatch) => {
-    const credential = await dispatch(acquireCredential());
-    return (
-      feedlyClient.baseUrl +
-      'v3/opml' +
-      new URLSearchParams({ feedlyToken: credential.accessToken })
-    );
   };
 }
 
