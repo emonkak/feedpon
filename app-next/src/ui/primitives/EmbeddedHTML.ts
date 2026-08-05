@@ -227,16 +227,17 @@ iframe[width][height] {
 `;
 
 export interface EmbeddedHTMLProps {
-  class?:
-    | string
-    | Record<string, boolean>
-    | (string | Record<string, boolean>)[];
   html: string;
   origin: string;
+  additionalAttributes?: Record<string, string>;
 }
 
 export const EmbeddedHTML = createComponent<EmbeddedHTMLProps>(
-  function EmbeddedHTML({ class: className, origin, html: htmlString }) {
+  function EmbeddedHTML({
+    additionalAttributes = {},
+    origin,
+    html: htmlString,
+  }) {
     const containerRef = this.useRef<HTMLDivElement | null>(null);
 
     this.useEffect(() => {
@@ -251,8 +252,20 @@ export const EmbeddedHTML = createComponent<EmbeddedHTMLProps>(
       shadowRoot!.replaceChildren(fragment);
     }, [htmlString, origin]);
 
+    this.useEffect(() => {
+      const el = containerRef.current!;
+      for (const name of Object.keys(additionalAttributes)) {
+        el.setAttribute(name, additionalAttributes[name]!);
+      }
+      return () => {
+        for (const name of Object.keys(additionalAttributes)) {
+          el.removeAttribute(name);
+        }
+      };
+    }, [additionalAttributes]);
+
     return html`
-      <div class=${className} ${containerRef}>
+      <div ${containerRef}>
         <template shadowrootclonable shadowrootmode="open"></template>
       </div>
     `;

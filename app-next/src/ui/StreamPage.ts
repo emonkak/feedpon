@@ -18,7 +18,7 @@ export const StreamPage = createComponent<StreamPageProps>(function StreamPage({
               <h1>${item.title}</h1>
             </summary>
             <${EmbeddedHTML({
-              class: 'Entry-content',
+              additionalAttributes: { class: 'Entry-content' },
               html: item.content?.content ?? item.summary?.content ?? '',
               origin: item.origin.htmlUrl,
             })}>
