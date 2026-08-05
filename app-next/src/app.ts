@@ -1,5 +1,7 @@
 import { FeedlyClient } from '@feedpon/feedly-client';
 import { DOMAdapter, DOMRoot, Runtime } from 'barebind';
+import { UpdateLogger } from 'barebind/addons/update-logger';
+import { UpdateProfiler } from 'barebind/addons/update-profiler';
 import { ChromeAuthenticator } from './foundation/authenticator/chrome.ts';
 import { IDBObjectStoreManager } from './foundation/database/indexedDB.ts';
 import { Mutex } from './foundation/mutex.ts';
@@ -35,6 +37,9 @@ async function prepareStore(): Promise<AppStore> {
 
 const runtime = new Runtime(new DOMAdapter());
 const root = new DOMRoot(document.body, runtime);
+
+runtime.use(new UpdateLogger());
+runtime.use(new UpdateProfiler());
 
 root.render(
   App({
