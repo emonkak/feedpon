@@ -7,7 +7,7 @@ const isWatch = process.argv.includes('--watch');
 const configs: esbuild.BuildOptions[] = [
   {
     bundle: true,
-    entryPoints: ['css/app.css'],
+    entryPoints: ['src/app.css'],
     logLevel: 'info',
     outfile: 'dist/css/app.css',
   },
