@@ -338,12 +338,12 @@ function preprocessHTML(root: DocumentFragment, origin: string): void {
       case 'math':
         skipNode(walker);
         preprocessMathML(el);
-        continue;
+        break;
 
       case 'svg':
         skipNode(walker);
         el.replaceWith(embedSVG(el));
-        continue;
+        break;
     }
   }
 }
@@ -432,7 +432,17 @@ function sandboxifyIframe(el: Element): void {
 }
 
 function sanitizeElement(el: Element): void {
-  el.removeAttribute('style');
+  for (const name of el.getAttributeNames()) {
+    switch (name) {
+      case 'style':
+        el.removeAttribute('style');
+        break;
+      default:
+        if (name.startsWith('on') && typeof (el as any)[name] === 'function') {
+          el.removeAttribute(name);
+        }
+    }
+  }
 }
 
 function skipNode(walker: TreeWalker): Node | null {
