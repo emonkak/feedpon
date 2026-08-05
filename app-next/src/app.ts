@@ -1,10 +1,11 @@
 import { FeedlyClient } from '@feedpon/feedly-client';
 import { DOMAdapter, DOMRoot, Runtime } from 'barebind';
-import { ChromeAuthenticator } from './authenticator/chrome.ts';
-import { App } from './components/App.ts';
-import { IDBObjectStoreManager } from './database/indexedDB.ts';
-import { PersistentPlugin } from './store/persistent.ts';
-import { AppState, AppStore, AppStoreMap } from './store.ts';
+import { ChromeAuthenticator } from './foundation/authenticator/chrome.ts';
+import { IDBObjectStoreManager } from './foundation/database/indexedDB.ts';
+import { Mutex } from './foundation/mutex.ts';
+import { PersistentPlugin } from './foundation/store/persistent.ts';
+import { AppState, AppStore, AppStoreMap } from './state/store.ts';
+import { App } from './ui/App.ts';
 
 const DB_NAME = 'feedpon';
 const DB_VERSION = 1;
@@ -17,6 +18,7 @@ async function prepareStore(): Promise<AppStore> {
     AppStoreMap,
   );
   const store = new AppStore(new AppState(), {
+    authMutex: new Mutex(),
     authenticator: new ChromeAuthenticator(),
     feedlyClient: new FeedlyClient({
       baseUrl: 'https://cloud.feedly.com',

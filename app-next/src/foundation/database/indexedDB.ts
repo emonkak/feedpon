@@ -31,11 +31,6 @@ export abstract class IDBGenericStore<T extends object> {
     this._store = store;
   }
 
-  async add(object: T): Promise<void> {
-    const request = this._store.put(object);
-    await waitForRequest(request);
-  }
-
   async clear(): Promise<void> {
     const request = this._store.clear();
     await waitForRequest(request);
@@ -54,6 +49,11 @@ export abstract class IDBGenericStore<T extends object> {
   async getAll(): Promise<T[]> {
     const request = this._store.getAll();
     return await waitForRequest(request);
+  }
+
+  async put(object: T): Promise<void> {
+    const request = this._store.put(object);
+    await waitForRequest(request);
   }
 }
 

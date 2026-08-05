@@ -1,11 +1,12 @@
 import { createComponent, html } from 'barebind';
-import type { AppStore } from '../store.ts';
+import type { AppStore } from '../state/store.ts';
+import { Dispatcher } from './Dispatcher.ts';
 
 export interface AppProps {
   prepareStore: () => Promise<AppStore>;
 }
 
-export const App = createComponent<AppProps>(function App({ prepareStore }) {
+export const App = createComponent(function App({ prepareStore }: AppProps) {
   const [store, setStore] = this.useState<AppStore | null>(null);
 
   this.useEffect(() => {
@@ -18,9 +19,5 @@ export const App = createComponent<AppProps>(function App({ prepareStore }) {
     return html`<div>Preparing Store...</div>`;
   }
 
-  this.provide(store);
-
-  return html`
-    <div>Hello, Feedpon!</div>
-  `;
+  return Dispatcher({ store });
 });

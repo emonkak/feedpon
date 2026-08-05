@@ -16,7 +16,7 @@ export interface Patch {
 }
 
 export interface PatchStore {
-  add(patche: Patch): Promise<void>;
+  put(patche: Patch): Promise<void>;
   getAll(): Promise<Patch[]>;
   invalidatePath(path: PropertyKey[]): Promise<void>;
 }
@@ -96,7 +96,7 @@ export class PersistentPlugin<TState, TContext>
         async ({ patches }) => {
           for (const patch of this._pendingPatches.splice(0)) {
             await patches.invalidatePath(patch.path);
-            await patches.add(patch);
+            await patches.put(patch);
           }
         },
         {

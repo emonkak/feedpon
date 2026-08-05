@@ -4,12 +4,8 @@ export type UseStoreMap<
   TStoreMap extends StoreMap,
   TStoreNames extends (keyof TStoreMap)[],
 > = {
-  [StoreName in UnionTuple<TStoreNames>]: InstanceType<TStoreMap[StoreName]>;
+  [StoreName in Union<TStoreNames>]: InstanceType<TStoreMap[StoreName]>;
 };
-
-type UnionTuple<T> = T extends [infer Head, ...infer Tail]
-  ? Head | UnionTuple<Tail>
-  : never;
 
 export interface ObjectStoreManager<TStoreMap extends StoreMap> {
   runTransaction<const TStoreNames extends (keyof TStoreMap)[], TReturn>(
@@ -18,3 +14,7 @@ export interface ObjectStoreManager<TStoreMap extends StoreMap> {
     options?: IDBTransactionOptions & { mode?: IDBTransactionMode },
   ): Promise<TReturn>;
 }
+
+type Union<T> = T extends [infer Head, ...infer Tail]
+  ? Head | Union<Tail>
+  : never;

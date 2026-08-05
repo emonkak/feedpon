@@ -1,0 +1,22 @@
+import type { VElement } from 'barebind';
+import { decoded, Router, route } from 'barebind/addons/router';
+import { loadStream, loadSubscriptions } from '../state/actions.ts';
+import type { AppStore } from '../state/store.ts';
+import { IndexPage } from './IndexPage.ts';
+import { StreamPage } from './StreamPage.ts';
+
+export type Loader = (
+  store: AppStore,
+  signal: AbortSignal,
+) => Promise<VElement>;
+
+export const router = new Router<Loader>([
+  route([''], () => async (store, signal) => {
+    const subscriptions = await store.dispatch(loadSubscriptions(signal));
+    return IndexPage({ subscriptions });
+  }),
+  route(['streams', decoded], ([streamId]) => async (store, signal) => {
+    const stream = await store.dispatch(loadStream(streamId, signal));
+    return StreamPage({ stream });
+  }),
+]);

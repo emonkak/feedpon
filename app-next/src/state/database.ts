@@ -1,6 +1,9 @@
-import type { Feed, Stream } from '@feedpon/feedly-client';
-import { IDBGenericStore, waitForRequest } from './database/indexedDB.ts';
-import type { Patch } from './store/persistent.ts';
+import type { Feed, Stream, Subscription } from '@feedpon/feedly-client';
+import {
+  IDBGenericStore,
+  waitForRequest,
+} from '../foundation/database/indexedDB.ts';
+import type { Patch } from '../foundation/store/persistent.ts';
 
 export class FeedStore extends IDBGenericStore<Feed> {}
 
@@ -24,3 +27,5 @@ export class PatchStore extends IDBGenericStore<Patch> {
 }
 
 export class StreamStore extends IDBGenericStore<Stream> {}
+
+export class SubscriptionStore extends IDBGenericStore<Subscription> {}
