@@ -1,23 +1,11 @@
-import type { Subscription } from '@feedpon/feedly-client';
 import { createComponent, html } from 'barebind';
 
-export interface IndexPageProps {
-  subscriptions: Subscription[];
-}
+export interface IndexPageProps {}
 
-export const IndexPage = createComponent(function IndexPage({
-  subscriptions,
-}: IndexPageProps) {
-  const items = subscriptions.map(
-    (subscription) => html`
-      <li>
-        <a href=${`#/streams/${encodeURIComponent(subscription.id)}`}>${subscription.title}</a>
-      </li>
-    `,
-  );
+export const IndexPage = createComponent(function IndexPage(
+  _props: IndexPageProps,
+) {
   return html`
-    <ul>
-      <${items}>
-    </ul>
+    <div>Hello, Feedpon!</div>
   `;
 });

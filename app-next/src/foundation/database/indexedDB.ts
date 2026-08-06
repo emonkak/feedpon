@@ -102,14 +102,12 @@ export class IDBObjectStoreManager<TStoreMap extends IDBStoreMap>
       options,
     );
 
-    const stores = {} as Record<string, object>;
-
-    for (const storeName of storeNames as string[]) {
-      const Store = this._storeMap[storeName]!;
-      stores[storeName] = new Store(transaction.objectStore(storeName));
-    }
-
     try {
+      const stores = {} as Record<string, object>;
+      for (const storeName of storeNames as string[]) {
+        const Store = this._storeMap[storeName]!;
+        stores[storeName] = new Store(transaction.objectStore(storeName));
+      }
       const returnValue = await callback(
         stores as UseStoreMap<TStoreMap, TStoreNames>,
       );

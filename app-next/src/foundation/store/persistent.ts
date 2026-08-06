@@ -63,15 +63,10 @@ export class PersistentPlugin<TState, TContext>
     try {
       const result = dispatch(action);
       if (result instanceof Promise) {
-        result.then(
-          () => {
-            this._pendingActions--;
-            this._requestFlush();
-          },
-          () => {
-            this._pendingActions--;
-          },
-        );
+        result.finally(() => {
+          this._pendingActions--;
+          this._requestFlush();
+        });
       } else {
         this._pendingActions--;
         this._requestFlush();
