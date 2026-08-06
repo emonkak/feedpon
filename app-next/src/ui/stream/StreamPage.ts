@@ -1,6 +1,6 @@
 import type { Stream } from '@feedpon/feedly-client';
 import { createComponent, html } from 'barebind';
-import { EmbeddedHTML } from './primitives/EmbeddedHTML.ts';
+import { EmbeddedHTML } from '../primitives/EmbeddedHTML.ts';
 
 export interface StreamPageProps {
   stream: Stream;

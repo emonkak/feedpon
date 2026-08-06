@@ -1,6 +1,6 @@
 import { createComponent, html } from 'barebind';
-import { acquireCredential } from '../state/actions.ts';
-import { AppStore } from '../state/store.ts';
+import { acquireCredential } from '../../state/actions.ts';
+import { AppStore } from '../../state/store.ts';
 
 export interface AuthPageProps {}
 

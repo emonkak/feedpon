@@ -2,9 +2,9 @@ import { createComponent, html, type VElement } from 'barebind';
 import { HashAdapter, SyncNavigation } from 'barebind/addons/router';
 import { loadSubscriptions } from '../state/actions.ts';
 import type { AppStore } from '../state/store.ts';
-import { AuthPage } from './AuthPage.ts';
+import { AuthPage } from './auth/AuthPage.ts';
 import { router } from './router.ts';
-import { Sidebar } from './Sidebar.ts';
+import { Sidebar } from './sidebar/Sidebar.ts';
 
 export interface DispatcherProps {
   store: AppStore;
