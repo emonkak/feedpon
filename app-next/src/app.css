@@ -64,7 +64,8 @@ h6 {
   --heading-scale: var(--text-scale-6);
 }
 
-.ReaderLayout {
+.ReaderLayout-Main,
+.ReaderLayout-Sidebar {
   &.loading {
     opacity: 0.5;
   }
