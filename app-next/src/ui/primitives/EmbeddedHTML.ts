@@ -122,36 +122,36 @@ const STYLE_SHEET = css`
   word-break: break-word;
 }
 
-:heading {
+h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-display);
   font-size: calc(1rem * var(--heading-scale, 1));
-  line-height: round(1rlh * var(--text-scale, 1) - 0.125rlh, 0.25rlh);
+  line-height: round(1rlh * var(--heading-scale, 1) - 0.25rlh, 0.25rlh);
   margin-block: 0 0.5rlh;
   text-wrap: balance;
 }
 
 h1 {
-  --heading-scale: var(--scale-1);
+  --heading-scale: var(--text-scale-1);
 }
 
 h2 {
-  --heading-scale: var(--scale-2);
+  --heading-scale: var(--text-scale-2);
 }
 
 h3 {
-  --heading-scale: var(--scale-3);
+  --heading-scale: var(--text-scale-3);
 }
 
 h4 {
-  --heading-scale: var(--scale-4);
+  --heading-scale: var(--text-scale-4);
 }
 
 h5 {
-  --heading-scale: var(--scale-5);
+  --heading-scale: var(--text-scale-5);
 }
 
 h6 {
-  --heading-scale: var(--scale-6);
+  --heading-scale: var(--text-scale-6);
 }
 
 blockquote,
@@ -185,7 +185,7 @@ ol, ul {
   margin-block: 0 1rlh;
 }
 
-ul[class] {
+:where(ol, ul)[class] {
   list-style: none;
 }
 
@@ -213,7 +213,7 @@ iframe[width][height] {
   aspect-ratio: auto attr(width type(<number>)) / attr(height type(<number>));
 }
 
-:where(iframe, img, video) {
+iframe, img, video {
   height: auto;
   max-width: 100%;
   vertical-align: bottom;
@@ -229,48 +229,51 @@ iframe[width][height] {
 export interface EmbeddedHTMLProps {
   html: string;
   origin: string;
-  additionalAttributes?: Record<string, string>;
+  additionalAttributes?: Record<string, string | null | undefined>;
 }
 
-export const EmbeddedHTML = createComponent<EmbeddedHTMLProps>(
-  function EmbeddedHTML({
-    additionalAttributes = {},
-    origin,
-    html: htmlString,
-  }) {
-    const containerRef = this.useRef<HTMLDivElement | null>(null);
+export const EmbeddedHTML = createComponent(function EmbeddedHTML({
+  additionalAttributes = {},
+  origin,
+  html: htmlString,
+}: EmbeddedHTMLProps) {
+  const containerRef = this.useRef<HTMLDivElement | null>(null);
 
-    this.useEffect(() => {
-      const { shadowRoot } = containerRef.current!;
-      shadowRoot!.adoptedStyleSheets = [STYLE_SHEET];
-    }, []);
+  this.useEffect(() => {
+    const { shadowRoot } = containerRef.current!;
+    shadowRoot!.adoptedStyleSheets = [STYLE_SHEET];
+  }, []);
 
-    this.useEffect(() => {
-      const { shadowRoot } = containerRef.current!;
-      const fragment = parseHTML(htmlString);
-      preprocessHTML(fragment, origin);
-      shadowRoot!.replaceChildren(fragment);
-    }, [htmlString, origin]);
+  this.useEffect(() => {
+    const { shadowRoot } = containerRef.current!;
+    const fragment = parseHTML(htmlString);
+    preprocessHTML(fragment, origin);
+    shadowRoot!.replaceChildren(fragment);
+  }, [htmlString, origin]);
 
-    this.useEffect(() => {
-      const el = containerRef.current!;
-      for (const name of Object.keys(additionalAttributes)) {
-        el.setAttribute(name, additionalAttributes[name]!);
+  this.useEffect(() => {
+    const el = containerRef.current!;
+    for (const name of Object.keys(additionalAttributes)) {
+      const value = additionalAttributes[name]!;
+      if (value != null) {
+        el.setAttribute(name, value);
       }
-      return () => {
-        for (const name of Object.keys(additionalAttributes)) {
+    }
+    return () => {
+      for (const name of Object.keys(additionalAttributes)) {
+        if (additionalAttributes[name] != null) {
           el.removeAttribute(name);
         }
-      };
-    }, [additionalAttributes]);
+      }
+    };
+  }, [additionalAttributes]);
 
-    return html`
+  return html`
       <div ${containerRef}>
         <template shadowrootclonable shadowrootmode="open"></template>
       </div>
     `;
-  },
-);
+});
 
 function copyAttribute(source: Element, dest: Element, name: string): void {
   if (source.hasAttribute(name)) {

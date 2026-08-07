@@ -1,4 +1,4 @@
-import { html } from 'barebind';
+import { createComponent, html } from 'barebind';
 import type { AsyncResource } from '../hooks/AsyncResource.ts';
 
 export interface ReaderLayoutProps {
@@ -6,7 +6,10 @@ export interface ReaderLayoutProps {
   sidebar: AsyncResource<unknown>;
 }
 
-export function ReaderLayout({ main, sidebar }: ReaderLayoutProps) {
+export const ReaderLayout = createComponent(function ReaderLayout({
+  main,
+  sidebar,
+}: ReaderLayoutProps) {
   return html`
     <div class="ReaderLayout">
       <aside class=${['ReaderLayout-Sidebar', { loading: sidebar.loading }]}>
@@ -17,4 +20,4 @@ export function ReaderLayout({ main, sidebar }: ReaderLayoutProps) {
       </main>
     </div>
   `;
-}
+});

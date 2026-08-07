@@ -1,0 +1,29 @@
+.ReaderLayout {
+  column-rule: 1px solid rgb(from var(--slate-6) r g b / 0.2);
+  display: grid;
+  gap: 1px;
+  grid-template-areas: "sidebar main";
+  grid-template-columns: 16rem minmax(auto, 60rem);
+  justify-content: center;
+}
+
+.ReaderLayout-Main,
+.ReaderLayout-Sidebar {
+  min-height: 0;
+
+  &.loading {
+    opacity: 0.5;
+  }
+}
+
+.ReaderLayout-Main {
+  grid-area: main;
+}
+
+.ReaderLayout-Sidebar {
+  grid-area: sidebar;
+  max-height: 100vh;
+  overflow-y: auto;
+  position: sticky;
+  top: 0;
+}

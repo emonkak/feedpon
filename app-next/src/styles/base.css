@@ -1,0 +1,116 @@
+html {
+  -webkit-text-size-adjust: 100%;
+  font-family: var(--font-text);
+  line-height: var(--text-leading);
+  scroll-padding-top: 2rlh;
+  scroll-snap-type: y mandatory;
+  touch-action: manipulation;
+}
+
+body {
+  font: inherit;
+  margin: 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-display);
+  font-size: calc(1rem * var(--heading-scale, 1));
+  line-height: round(1rlh * var(--heading-scale, 1) - 0.25rlh, 0.25rlh);
+  margin-block: 0 0.5rlh;
+  text-wrap: balance;
+}
+
+:where(h1, h2, h3, h4, h5, h6)[class] {
+  font-size: inherit;
+  line-height: inherit;
+  margin-block: 0;
+}
+
+h1 {
+  --heading-scale: var(--text-scale-1);
+}
+
+h2 {
+  --heading-scale: var(--text-scale-2);
+}
+
+h3 {
+  --heading-scale: var(--text-scale-3);
+}
+
+h4 {
+  --heading-scale: var(--text-scale-4);
+}
+
+h5 {
+  --heading-scale: var(--text-scale-5);
+}
+
+h6 {
+  --heading-scale: var(--text-scale-6);
+}
+
+blockquote,
+dl,
+figure,
+ol,
+p,
+pre,
+table,
+ul {
+  margin-block: 0 1rlh;
+}
+
+dd {
+  margin-inline-start: 1rlh;
+}
+
+figure {
+  margin-inline: 0;
+}
+
+figcaption {
+  font-family: var(--font-display);
+  font-style: italic;
+  text-align: center;
+  text-wrap: balance;
+}
+
+ol,
+ul {
+  padding-inline-start: 1rlh;
+  margin-block: 0 1rlh;
+}
+
+:where(ul, ol)[class] {
+  list-style: none;
+  padding: 0;
+}
+
+p {
+  hyphens: auto;
+  text-align: justify;
+  text-wrap: pretty;
+}
+
+a {
+  text-decoration-color: color-mix(in srgb, currentColor 40%, transparent);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 2px;
+}
+
+a:hover {
+  text-decoration-color: currentColor;
+}
+
+code,
+kbd,
+pre,
+samp {
+  font-family: var(--font-code);
+}
