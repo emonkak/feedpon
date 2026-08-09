@@ -125,6 +125,7 @@ const STYLE_SHEET = css`
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-display);
   font-size: calc(1rem * var(--heading-scale, 1));
+  letter-spacing: -2%;
   line-height: round(1rlh * var(--heading-scale, 1) - 0.25rlh, 0.25rlh);
   margin-block: 0 0.5rlh;
   text-wrap: balance;
@@ -187,6 +188,8 @@ ol, ul {
 
 :where(ol, ul)[class] {
   list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
 p {
@@ -195,8 +198,28 @@ p {
   text-wrap: pretty;
 }
 
+iframe, img, video {
+  height: auto;
+  max-width: 100%;
+  vertical-align: bottom;
+}
+
+iframe {
+  border: 0;
+}
+
+iframe[width][height] {
+  aspect-ratio: auto attr(width type(<number>)) / attr(height type(<number>));
+}
+
+:has(> a:only-child > img:only-child),
+:has(> :where(iframe, img, video):only-child) {
+  width: fit-content;
+  margin-inline: auto;
+}
+
 a {
-  text-decoration-color: color-mix(in srgb, currentColor 40%, transparent);
+  text-decoration-color: color-mix(in srgb, currentColor 20%, transparent);
   text-decoration-thickness: 2px;
   text-underline-offset: 2px;
 }
@@ -205,24 +228,20 @@ a:hover {
   text-decoration-color: currentColor;
 }
 
-code, kbd, pre, samp {
+b,
+cite,
+dfn,
+em,
+i,
+strong {
+  font-family: var(--font-display);
+}
+
+code,
+kbd,
+pre,
+samp {
   font-family: var(--font-code);
-}
-
-iframe[width][height] {
-  aspect-ratio: auto attr(width type(<number>)) / attr(height type(<number>));
-}
-
-iframe, img, video {
-  height: auto;
-  max-width: 100%;
-  vertical-align: bottom;
-}
-
-:has(> a:only-child > img:only-child),
-:has(> :where(iframe, img, video):only-child) {
-  width: fit-content;
-  margin-inline: auto;
 }
 `;
 

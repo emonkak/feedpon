@@ -1,34 +1,17 @@
 .StreamPage-Header {
-  background-color: white;
+  background-color: rgb(from white r g b / 0.9);
   border-bottom: 1px solid rgb(from var(--slate-6) r g b / 0.2);
+  display: none;
   padding-block: 0.5rlh;
   padding-inline: 1rlh;
   position: sticky;
   top: 0;
-  z-index: 1;
-}
-
-.StreamPage-Content {
-  grid-area: content;
-}
-
-.EntryList-Item {
-  contain: content;
-  container-name: EntryList-Item;
-  container-type: scroll-state;
-  scroll-padding-top: 2rlh;
-  scroll-snap-align: start end;
+  z-index: 10;
 }
 
 .Entry {
-  background-color: white;
   box-sizing: border-box;
-  min-block-size: calc(100vh - 2rlh);
-  padding: 1rlh;
-}
-
-@container EntryList-Item scroll-state(snapped: y) {
-  .Entry {
-    background-color: var(--slate-1);
-  }
+  min-block-size: 100vh;
+  padding-block: 1rlh max(50vh, 1rlh);
+  padding-inline: 1rlh;
 }

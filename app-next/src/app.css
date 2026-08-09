@@ -2,5 +2,6 @@
 @import "./styles/base.css";
 
 @import "./ui/layout/ReaderLayout.css";
+@import "./ui/primitives/StackScroller.css";
 @import "./ui/sidebar/Sidebar.css";
 @import "./ui/stream/StreamPage.css";

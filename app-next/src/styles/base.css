@@ -1,9 +1,9 @@
 html {
+  -webkit-font-smoothing: antialiased;
   -webkit-text-size-adjust: 100%;
   font-family: var(--font-text);
   line-height: var(--text-leading);
-  scroll-padding-top: 2rlh;
-  scroll-snap-type: y mandatory;
+  overscroll-behavior: none;
   touch-action: manipulation;
 }
 
@@ -19,8 +19,15 @@ h4,
 h5,
 h6 {
   font-family: var(--font-display);
-  font-size: calc(1rem * var(--heading-scale, 1));
-  line-height: round(1rlh * var(--heading-scale, 1) - 0.25rlh, 0.25rlh);
+  font-size: calc(1rem * var(--heading-scale));
+  letter-spacing: -2%;
+  line-height: round(
+    1rlh *
+    var(--heading-scale) -
+    0.25rlh *
+    var(--heading-scale),
+    0.25rlh
+  );
   margin-block: 0 0.5rlh;
   text-wrap: balance;
 }
@@ -70,17 +77,6 @@ dd {
   margin-inline-start: 1rlh;
 }
 
-figure {
-  margin-inline: 0;
-}
-
-figcaption {
-  font-family: var(--font-display);
-  font-style: italic;
-  text-align: center;
-  text-wrap: balance;
-}
-
 ol,
 ul {
   padding-inline-start: 1rlh;
@@ -89,6 +85,7 @@ ul {
 
 :where(ul, ol)[class] {
   list-style: none;
+  margin: 0;
   padding: 0;
 }
 
@@ -99,13 +96,26 @@ p {
 }
 
 a {
-  text-decoration-color: color-mix(in srgb, currentColor 40%, transparent);
+  text-decoration-color: color-mix(in srgb, currentColor 20%, transparent);
   text-decoration-thickness: 2px;
   text-underline-offset: 2px;
 }
 
 a:hover {
   text-decoration-color: currentColor;
+}
+
+a[class] {
+  text-decoration: none;
+}
+
+b,
+cite,
+dfn,
+em,
+i,
+strong {
+  font-family: var(--font-display);
 }
 
 code,

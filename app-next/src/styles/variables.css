@@ -1,13 +1,13 @@
 :root {
   --font-code:
     "Menlo", "Consolas", "Toppan Bunkyu Gothic", "Hiragino Kaku Gothic ProN",
-    "Meiryo", monospace;
+    "Meiryo", "Noto Sans Mono CJK JP", monospace;
   --font-display:
-    "Avenir Next", "Segoe UI", "Toppan Bunkyu Midashi Gothic",
-    "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
+    "Avenir Next", "Segoe UI", "Arial", "Toppan Bunkyu Midashi Gothic",
+    "Hiragino Kaku Gothic ProN", "Meiryo", "Noto Sans CJK JP", sans-serif;
   --font-text:
-    "Optima", "Cambria", "Toppan Bunkyu Mincho", "Hiragino Mincho ProN",
-    "Meiryo", serif;
+    "Optima", "Cambria", "Times", "Toppan Bunkyu Mincho",
+    "Hiragino Mincho ProN", "Meiryo", "Noto Serif CJK JP", serif;
 
   --text-leading: 1.625rem;
   --text-scale-1: pow(var(--text-scale-base), 6);

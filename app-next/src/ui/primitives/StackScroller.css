@@ -1,0 +1,50 @@
+.StackScroller-List {
+  &::before {
+    content: "";
+    display: block;
+    height: 100vh;
+  }
+}
+
+.StackScroller-Item {
+  background-color: white;
+  box-sizing: border-box;
+  contain: content;
+  min-height: 100vh;
+  position: sticky;
+
+  & + & {
+    border-top: 1px solid rgb(from var(--slate-6) r g b / 0.2);
+  }
+
+  &.current {
+    background-color: var(--slate-1);
+  }
+
+  &.current:only-child {
+    margin-top: -100vh;
+  }
+
+  &.current:not(:first-child):not(:last-child) {
+    margin-top: 100vh;
+  }
+
+  &.current:not(:last-child) {
+    bottom: 0;
+  }
+
+  &.prev,
+  &.next {
+    max-height: 100vh;
+    overflow: hidden;
+  }
+
+  &.prev {
+    top: 0;
+    margin-top: -100vh;
+  }
+
+  &.next {
+    margin-top: -100vh;
+  }
+}
