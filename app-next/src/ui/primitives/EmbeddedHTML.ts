@@ -288,10 +288,10 @@ export const EmbeddedHTML = createComponent(function EmbeddedHTML({
   }, [additionalAttributes]);
 
   return html`
-      <div ${containerRef}>
-        <template shadowrootclonable shadowrootmode="open"></template>
-      </div>
-    `;
+    <div ${containerRef}>
+      <template shadowrootclonable shadowrootmode="open"></template>
+    </div>
+  `;
 });
 
 function copyAttribute(source: Element, dest: Element, name: string): void {
