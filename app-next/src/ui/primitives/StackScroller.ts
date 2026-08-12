@@ -63,7 +63,7 @@ export const StackScroller: StackScroller = createComponent(
       const key = keySelector(source[index]!, index);
       return html`
         <li
-          aria-posinset=${index}
+          aria-posinset=${index + 1}
           aria-setsize=${source.length}
           class=${['StackScroller-Item', kind]}
         >
