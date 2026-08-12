@@ -460,10 +460,7 @@ function resolveSrcset(el: Element, origin: string): void {
 }
 
 function sandboxifyIframe(el: Element): void {
-  el.setAttribute(
-    'sandbox',
-    'allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts',
-  );
+  el.setAttribute('sandbox', 'allow-popups allow-popups-to-escape-sandbox');
 }
 
 function sanitizeElement(el: Element): void {
