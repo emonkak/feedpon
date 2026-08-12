@@ -13,19 +13,23 @@ export const EntryView = createComponent(function EntryView({
     <article class="Entry" lang=${entry.language}>
       <header>
         <h1>
-          <a href=${entry.canonicalUrl ?? getAlternate(entry, 'text/html')?.href} target="_blank">
+          <a
+            href=${entry.canonicalUrl ?? getAlternate(entry, 'text/html')?.href}
+            target="_blank"
+          >
             ${entry.title}
           </a>
         </h1>
       </header>
-      <${EmbeddedHTML({
-        additionalAttributes: {
-          class: 'Entry-content',
-          dir: entry.content?.direction ?? entry.summary?.direction,
-        },
-        html: entry.content?.content ?? entry.summary?.content ?? '',
-        origin: entry.origin.htmlUrl,
-      })}>
+      <div
+        class="Entry-content"
+        dir=${(entry.content ?? entry.summary)?.direction}
+      >
+        <${EmbeddedHTML({
+          html: (entry.content ?? entry.summary)?.content ?? '',
+          origin: entry.origin.htmlUrl,
+        })}>
+      </div>
     </article>
   `;
 });

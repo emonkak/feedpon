@@ -248,49 +248,27 @@ samp {
 export interface EmbeddedHTMLProps {
   html: string;
   origin: string;
-  additionalAttributes?: Record<string, string | null | undefined>;
 }
 
 export const EmbeddedHTML = createComponent(function EmbeddedHTML({
-  additionalAttributes = {},
   origin,
   html: htmlString,
 }: EmbeddedHTMLProps) {
   const containerRef = this.useRef<HTMLDivElement | null>(null);
 
   this.useEffect(() => {
-    const { shadowRoot } = containerRef.current!;
+    const shadowRoot = containerRef.current!.attachShadow({ mode: 'open' });
     shadowRoot!.adoptedStyleSheets = [STYLE_SHEET];
   }, []);
 
   this.useEffect(() => {
-    const { shadowRoot } = containerRef.current!;
     const fragment = parseHTML(htmlString);
     preprocessHTML(fragment, origin);
-    shadowRoot!.replaceChildren(fragment);
+    containerRef.current!.shadowRoot!.replaceChildren(fragment);
   }, [htmlString, origin]);
 
-  this.useEffect(() => {
-    const el = containerRef.current!;
-    for (const name of Object.keys(additionalAttributes)) {
-      const value = additionalAttributes[name]!;
-      if (value != null) {
-        el.setAttribute(name, value);
-      }
-    }
-    return () => {
-      for (const name of Object.keys(additionalAttributes)) {
-        if (additionalAttributes[name] != null) {
-          el.removeAttribute(name);
-        }
-      }
-    };
-  }, [additionalAttributes]);
-
   return html`
-    <div ${containerRef}>
-      <template shadowrootclonable shadowrootmode="open"></template>
-    </div>
+    <div ${containerRef}></div>
   `;
 });
 
