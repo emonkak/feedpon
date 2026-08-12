@@ -35,7 +35,5 @@ export const Dispatcher = createComponent(function Dispatcher({
     }, []),
   );
 
-  this.provide(store);
-
   return ReaderLayout({ main, sidebar });
 });

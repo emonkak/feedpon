@@ -20,5 +20,7 @@ export const App = createComponent(function App({ prepareStore }: AppProps) {
     return html`<div>Preparing Store...</div>`;
   }
 
+  this.provide(store);
+
   return AuthGuard({ children: Dispatcher({ store }), store });
 });
