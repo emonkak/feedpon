@@ -466,8 +466,12 @@ function sandboxifyIframe(el: Element): void {
 function sanitizeElement(el: Element): void {
   for (const name of el.getAttributeNames()) {
     switch (name) {
+      case 'command':
+      case 'commandfor':
+      case 'popover':
+      case 'popovertarget':
       case 'style':
-        el.removeAttribute('style');
+        el.removeAttribute(name);
         break;
       default:
         if (name.startsWith('on') && typeof (el as any)[name] === 'function') {
