@@ -35,16 +35,12 @@
 
   &.prev,
   &.next {
+    margin-top: -100vh;
     max-height: 100vh;
-    overflow: hidden;
+    overflow: clip;
   }
 
   &.prev {
     top: 0;
-    margin-top: -100vh;
-  }
-
-  &.next {
-    margin-top: -100vh;
   }
 }
