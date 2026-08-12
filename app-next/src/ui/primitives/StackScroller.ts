@@ -10,7 +10,7 @@ export interface StackScrollerProps<T> {
   elementSelector: (element: T, index: number) => unknown;
   initialIndex?: number;
   keySelector: (element: T, index: number) => unknown;
-  source: T[];
+  source: ArrayLike<T>;
 }
 
 export interface StackScroller extends Component<StackScrollerProps<any>> {
