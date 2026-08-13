@@ -9,8 +9,8 @@
     "@feedpon/hatena-bookmark-client": "workspace:^",
     "@feedpon/model": "workspace:^",
     "@feedpon/primitives": "workspace:^",
-    "@types/chrome": "^0.2.5",
+    "@types/chrome": "^0.2.6",
     "barebind": "catalog:",
-    "motion": "^12.43.0"
+    "motion": "^13.1.0"
   }
 }

@@ -10,11 +10,11 @@
     "watch": "pnpm run --recursive watch"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.5.7",
-    "@types/node": "^26.1.2",
+    "@biomejs/biome": "^2.5.8",
+    "@types/node": "^26.2.0",
     "@vitest/coverage-v8": "^4.1.10",
     "barebind": "catalog:",
-    "esbuild": "^0.28.1",
+    "esbuild": "^0.28.2",
     "esbuild-plugin-minify-templates": "github:emonkak/barebind#path:tools/esbuild-plugin-minify-templates",
     "fast-check": "^4.9.0",
     "typescript": "^7.0.2",
