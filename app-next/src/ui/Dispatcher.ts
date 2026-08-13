@@ -17,11 +17,11 @@ export const Dispatcher = createComponent(function Dispatcher({
   const { scene } = this.use(SyncNavigation(new HashAdapter()));
   const main = this.use(
     AsyncResource(
-      (signal) => {
+      async (signal) => {
         const loader = router.match(scene.url);
         return loader !== undefined
-          ? loader(store, signal)
-          : Promise.resolve(null);
+          ? (await loader(store, signal)).withKey(scene.url)
+          : null;
       },
       [scene.url],
     ),
