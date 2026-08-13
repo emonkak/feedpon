@@ -1,4 +1,5 @@
 import { createComponent, html } from 'barebind';
+import styleSheetContent from './EmbeddedHTML.css' with { type: 'text' };
 
 const ATTRIBUTE_HREF = 'href';
 const ATTRIBUTE_SRC = 'src';
@@ -115,135 +116,7 @@ const SAFE_URL_PATTERN = /^(?:data|https?|mailto|sms|tel):/i;
 const SRCSET_SEPARATOR_PATTERN = /\s*,\s*/;
 const SRCSET_SPACES_PATTERN = /\s+/;
 
-const STYLE_SHEET = css`
-:host {
-  contain: content;
-  overflow-wrap: anywhere;
-  word-break: break-word;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-display);
-  font-size: calc(1rem * var(--heading-scale, 1));
-  letter-spacing: -2%;
-  line-height: round(1rlh * var(--heading-scale, 1) - 0.25rlh, 0.25rlh);
-  margin-block: 0 0.5rlh;
-  text-wrap: balance;
-}
-
-h1 {
-  --heading-scale: var(--text-scale-1);
-}
-
-h2 {
-  --heading-scale: var(--text-scale-2);
-}
-
-h3 {
-  --heading-scale: var(--text-scale-3);
-}
-
-h4 {
-  --heading-scale: var(--text-scale-4);
-}
-
-h5 {
-  --heading-scale: var(--text-scale-5);
-}
-
-h6 {
-  --heading-scale: var(--text-scale-6);
-}
-
-blockquote,
-dl,
-figure,
-ol,
-p,
-pre,
-table,
-ul {
-  margin-block: 0 1rlh;
-}
-
-dd {
-  margin-inline-start: 1rlh;
-}
-
-figure {
-  margin-inline: 0;
-}
-
-figcaption {
-  font-family: var(--font-display);
-  font-style: italic;
-  text-align: center;
-  text-wrap: balance;
-}
-
-ol, ul {
-  padding-inline-start: 1.5rlh;
-  margin-block: 0 1rlh;
-}
-
-:where(ol, ul)[class] {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-p {
-  hyphens: auto;
-  text-align: justify;
-  text-wrap: pretty;
-}
-
-iframe, img, video {
-  height: auto;
-  max-width: 100%;
-  vertical-align: bottom;
-}
-
-iframe {
-  border: 0;
-}
-
-iframe[width][height] {
-  aspect-ratio: auto attr(width type(<number>)) / attr(height type(<number>));
-}
-
-:has(> a:only-child > img:only-child),
-:has(> :where(iframe, img, video):only-child) {
-  width: fit-content;
-  margin-inline: auto;
-}
-
-a {
-  text-decoration-color: color-mix(in srgb, currentColor 20%, transparent);
-  text-decoration-thickness: 2px;
-  text-underline-offset: 2px;
-}
-
-a:hover {
-  text-decoration-color: currentColor;
-}
-
-b,
-cite,
-dfn,
-em,
-i,
-strong {
-  font-family: var(--font-display);
-}
-
-code,
-kbd,
-pre,
-samp {
-  font-family: var(--font-code);
-}
-`;
+const STYLE_SHEET = createStyleSheet(styleSheetContent);
 
 export interface EmbeddedHTMLProps {
   html: string;
@@ -278,13 +151,10 @@ function copyAttribute(source: Element, dest: Element, name: string): void {
   }
 }
 
-function css(
-  strings: TemplateStringsArray,
-  ...values: unknown[]
-): CSSStyleSheet {
-  const sheet = new CSSStyleSheet();
-  sheet.replaceSync(String.raw(strings, ...values));
-  return sheet;
+function createStyleSheet(content: string): CSSStyleSheet {
+  const styleSheet = new CSSStyleSheet();
+  styleSheet.replaceSync(content);
+  return styleSheet;
 }
 
 function embedSVG(el: Element): HTMLImageElement {
