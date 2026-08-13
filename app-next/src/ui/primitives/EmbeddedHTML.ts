@@ -182,7 +182,7 @@ figcaption {
 }
 
 ol, ul {
-  padding-inline-start: 1rlh;
+  padding-inline-start: 1.5rlh;
   margin-block: 0 1rlh;
 }
 
