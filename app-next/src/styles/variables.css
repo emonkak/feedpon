@@ -1,9 +1,39 @@
+@font-face {
+  font-family: "Toppan Bunkyu Gothic";
+  font-weight: 400;
+  src: local("Toppan Bunkyu Gothic Regular");
+}
+
+@font-face {
+  font-family: "Toppan Bunkyu Gothic";
+  font-weight: 600;
+  src: local("Toppan Bunkyu Gothic DemiBold");
+}
+
+@font-face {
+  font-family: "Toppan Bunkyu Gothic";
+  font-weight: 800;
+  src: local("Toppan Bunkyu Midashi Gothic ExtraBold");
+}
+
+@font-face {
+  font-family: "Toppan Bunkyu Mincho";
+  font-weight: 400;
+  src: local("Toppan Bunkyu Mincho Regular");
+}
+
+@font-face {
+  font-family: "Toppan Bunkyu Mincho";
+  font-weight: 800;
+  src: local("Toppan Bunkyu Midashi Mincho Extrabold");
+}
+
 :root {
   --font-code:
     "Menlo", "Consolas", "Toppan Bunkyu Gothic", "Hiragino Kaku Gothic ProN",
     "Meiryo", "Noto Sans Mono CJK JP", monospace;
   --font-display:
-    "Avenir Next", "Segoe UI", "Arial", "Toppan Bunkyu Midashi Gothic",
+    "Avenir Next", "Segoe UI", "Arial", "Toppan Bunkyu Gothic",
     "Hiragino Kaku Gothic ProN", "Meiryo", "Noto Sans CJK JP", sans-serif;
   --font-text:
     "Optima", "Cambria", "Times", "Toppan Bunkyu Mincho",

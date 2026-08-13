@@ -2,6 +2,7 @@ import {
   type Component,
   createComponent,
   html,
+  type Ref,
   type RenderContext,
   type VComponent,
 } from 'barebind';
@@ -11,6 +12,7 @@ export interface StackScrollerProps<T> {
   initialIndex?: number;
   keySelector: (element: T, index: number) => unknown;
   source: ArrayLike<T>;
+  onIndexChange?: (index: number) => void;
 }
 
 export interface StackScroller extends Component<StackScrollerProps<any>> {
@@ -24,6 +26,7 @@ export const StackScroller: StackScroller = createComponent(
       elementSelector,
       initialIndex = 0,
       keySelector,
+      onIndexChange,
       source,
     }: StackScrollerProps<T>,
   ) {
@@ -42,6 +45,7 @@ export const StackScroller: StackScroller = createComponent(
                   (entry.target as HTMLElement).dataset['index'],
                 );
                 setIndex(index);
+                onIndexChange?.(index);
               }
             }
           },
@@ -49,13 +53,18 @@ export const StackScroller: StackScroller = createComponent(
         ),
       [],
     );
-    const ref = this.useCallback((target: Element) => {
+    const currentRef = this.useRef<HTMLElement | null>(null);
+    const sentinelRef = this.useCallback((target: HTMLElement) => {
       intersectionObserver.observe(target);
       return () => {
         intersectionObserver.unobserve(target);
       };
     }, []);
-    const renderItem = (kind: 'prev' | 'current' | 'next', index: number) => {
+    const renderItem = (
+      kind: 'prev' | 'current' | 'next',
+      index: number,
+      ref?: Ref<HTMLElement | null>,
+    ) => {
       if (index < 0 || index >= source.length) {
         return undefined;
       }
@@ -66,6 +75,7 @@ export const StackScroller: StackScroller = createComponent(
           aria-posinset=${index + 1}
           aria-setsize=${source.length}
           class=${['StackScroller-Item', kind]}
+          ${ref}
         >
           <${element}>
         </li>
@@ -73,11 +83,14 @@ export const StackScroller: StackScroller = createComponent(
     };
 
     this.useEffect(() => {
-      window.scrollTo(0, index > 0 ? window.innerHeight : 0);
+      const y =
+        currentRef.current?.previousElementSibling?.getBoundingClientRect()
+          .height ?? 0;
+      window.scrollTo(0, y);
     }, [index]);
 
     const prev = renderItem('prev', index - 1);
-    const current = renderItem('current', index);
+    const current = renderItem('current', index, currentRef);
     const next = renderItem('next', index + 1);
 
     return html`
@@ -85,7 +98,7 @@ export const StackScroller: StackScroller = createComponent(
         <div
           class="StackScroller-Top"
           data-index=${prev !== undefined ? index - 1 : undefined}
-          ${ref}
+          ${sentinelRef}
         ></div>
         <ul class="StackScroller-List">
           <${[prev, current, next]}>
@@ -93,7 +106,7 @@ export const StackScroller: StackScroller = createComponent(
         <div
           class="StackScroller-Bottom"
           data-index=${next !== undefined ? index + 1 : undefined}
-          ${ref}
+          ${sentinelRef}
         ></div>
       </div>
     `;

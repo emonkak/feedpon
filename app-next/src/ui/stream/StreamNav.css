@@ -1,0 +1,23 @@
+.StreamNav {
+  display: grid;
+  line-height: 1.5;
+  min-inline-size: 0;
+  padding-inline: 1rlh;
+  place-content: center stretch;
+}
+
+.StreamNav-title,
+.StreamNav-subtitle {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.StreamNav-title {
+  font-size: calc(1rem * var(--text-scale-7));
+}
+
+.StreamNav-subtitle {
+  color: var(--slate-6);
+  font-size: calc(1rem * var(--text-scale-8));
+}

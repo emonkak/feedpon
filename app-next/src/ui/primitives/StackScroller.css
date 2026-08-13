@@ -1,8 +1,13 @@
+.StackScroller {
+  --StackScroller-headerSize: 2rlh;
+  --StackScroller-itemSize: calc(100vh - var(--StackScroller-headerSize));
+}
+
 .StackScroller-List {
   &::before {
+    block-size: var(--StackScroller-itemSize);
     content: "";
     display: block;
-    height: 100vh;
   }
 }
 
@@ -10,11 +15,12 @@
   background-color: white;
   box-sizing: border-box;
   contain: content;
-  min-height: 100vh;
+  min-block-size: var(--StackScroller-itemSize);
   position: sticky;
+  scroll-margin-block-start: var(--StackScroller-headerSize);
 
   & + & {
-    border-top: 1px solid rgb(from var(--slate-6) r g b / 0.2);
+    border-block-start: 1px solid rgb(from var(--slate-6) r g b / 0.2);
   }
 
   &.current {
@@ -22,25 +28,25 @@
   }
 
   &.current:only-child {
-    margin-top: -100vh;
+    margin-block-start: calc(var(--StackScroller-itemSize) * -1);
   }
 
   &.current:not(:first-child):not(:last-child) {
-    margin-top: 100vh;
+    margin-block-start: var(--StackScroller-itemSize);
   }
 
   &.current:not(:last-child) {
-    bottom: 0;
+    inset-block-end: 0;
   }
 
   &.prev,
   &.next {
-    margin-top: -100vh;
-    max-height: 100vh;
+    margin-block-start: calc(var(--StackScroller-itemSize) * -1);
+    max-block-size: var(--StackScroller-itemSize);
     overflow: clip;
   }
 
   &.prev {
-    top: 0;
+    inset-block-start: var(--StackScroller-headerSize);
   }
 }

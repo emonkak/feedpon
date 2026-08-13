@@ -22,9 +22,10 @@ export interface AppContext {
 
 export class AppState {
   credential: Credential | null = null;
-  subscriptions: SubscirptionsState = {
+  serverState: ServerState = {
     lastSynced: -1,
   };
+  session: Session | null = null;
 }
 
 export class AppStore extends Store<AppState, AppContext> {}
@@ -46,6 +47,11 @@ export interface Credential {
   refreshedAt: number;
 }
 
-export interface SubscirptionsState {
+export interface ServerState {
   lastSynced: number;
+}
+
+export interface Session {
+  id: string;
+  index: number;
 }

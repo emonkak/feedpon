@@ -2,15 +2,15 @@ import type { Entry, Link } from '@feedpon/feedly-client';
 import { createComponent, html } from 'barebind';
 import { EmbeddedHTML } from '../primitives/EmbeddedHTML.ts';
 
-export interface EntryViewProps {
+export interface StreamItemProps {
   entry: Entry;
 }
 
-export const EntryView = createComponent(function EntryView({
+export const StreamItem = createComponent(function StreamItem({
   entry,
-}: EntryViewProps) {
+}: StreamItemProps) {
   return html`
-    <article class="Entry" lang=${entry.language}>
+    <article class="StreamItem" lang=${entry.language}>
       <header>
         <h1>
           <a

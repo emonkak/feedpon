@@ -45,12 +45,23 @@ export function acquireCredential(): AppAction<Promise<Credential>> {
   };
 }
 
+export function changeIndex(id: string, index: number): AppAction<void> {
+  return async (state$) => {
+    state$.get('session').scope((session) => {
+      if (session?.id === id) {
+        session.index = index;
+      }
+    });
+  };
+}
+
 export function loadStream(
   streamId: string,
   signal: AbortSignal,
 ): AppAction<Promise<Stream>> {
-  return async (_state$, context, dispatch) => {
+  return async (state$, context, dispatch) => {
     const { feedlyClient, objectStoreManager } = context;
+    const session$ = state$.get('session');
 
     let stream = await objectStoreManager.runTransaction(
       ['streams'],
@@ -72,6 +83,13 @@ export function loadStream(
       );
     }
 
+    if (session$.value?.id !== stream.id) {
+      session$.value = {
+        id: stream.id,
+        index: 0,
+      };
+    }
+
     return stream;
   };
 }
@@ -81,9 +99,9 @@ export function loadSubscriptions(
 ): AppAction<Promise<Subscription[]>> {
   return async (state$, context, dispatch) => {
     const { feedlyClient, objectStoreManager } = context;
-    const subscriptions$ = state$.get('subscriptions');
+    const serverState$ = state$.get('serverState');
 
-    if (subscriptions$.value.lastSynced >= 0) {
+    if (serverState$.value.lastSynced >= 0) {
       return await objectStoreManager.runTransaction(
         ['subscriptions'],
         ({ subscriptions }) => subscriptions.getAll(),
@@ -106,7 +124,7 @@ export function loadSubscriptions(
       { mode: 'readwrite' },
     );
 
-    subscriptions$.scope((subscriptions) => {
+    serverState$.scope((subscriptions) => {
       subscriptions.lastSynced = Date.now();
     });
 

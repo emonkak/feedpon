@@ -1,0 +1,6 @@
+.StreamItem {
+  box-sizing: border-box;
+  min-block-size: calc(100vh - var(--StreamPage-headerSize));
+  padding-block: 1rlh max(50vh, 1rlh);
+  padding-inline: 1rlh;
+}

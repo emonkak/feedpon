@@ -1,17 +1,14 @@
-.StreamPage-Header {
-  background-color: rgb(from white r g b / 0.9);
-  border-bottom: 1px solid rgb(from var(--slate-6) r g b / 0.2);
-  display: none;
-  padding-block: 0.5rlh;
-  padding-inline: 1rlh;
-  position: sticky;
-  top: 0;
-  z-index: 10;
+.StreamPage {
+  --StreamPage-headerSize: 2rlh;
 }
 
-.Entry {
-  box-sizing: border-box;
-  min-block-size: 100vh;
-  padding-block: 1rlh max(50vh, 1rlh);
-  padding-inline: 1rlh;
+.StreamPage-Header {
+  background-color: white;
+  block-size: var(--StreamPage-headerSize);
+  border-bottom: 1px solid rgb(from var(--slate-6) r g b / 0.2);
+  display: grid;
+  place-items: stretch;
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }

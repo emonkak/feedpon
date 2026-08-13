@@ -36,6 +36,7 @@ h6 {
   font-size: inherit;
   line-height: inherit;
   margin-block: 0;
+  text-wrap: inherit;
 }
 
 h1 {
