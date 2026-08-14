@@ -1,24 +1,26 @@
 .ReaderLayout {
-  column-rule: 1px solid rgb(from var(--slate-6) r g b / 0.2);
   display: grid;
-  gap: 1px;
   grid-template-areas: "sidebar main";
   grid-template-columns: 16rem minmax(auto, 50rem);
   justify-content: center;
 }
 
-.ReaderLayout-Main,
+.ReaderLayout-Page,
 .ReaderLayout-Sidebar {
-  min-height: 0;
-
   &.loading {
     opacity: 0.5;
   }
 }
 
-.ReaderLayout-Main {
+.ReaderLayout-Page {
+  border-left: 1px solid rgb(from var(--default-6) r g b / 0.2);
+  border-right: 1px solid rgb(from var(--default-6) r g b / 0.2);
+  margin-left: -1px;
+  margin-right: -1px;
   grid-area: main;
-  border-right: 1px solid rgb(from var(--slate-6) r g b / 0.2);
+  min-height: 100vh;
+  overflow: clip;
+  z-index: 1;
 }
 
 .ReaderLayout-Sidebar {

@@ -109,9 +109,14 @@ iframe[width][height] {
 }
 
 a {
+  color: var(--primary-6);
   text-decoration-color: color-mix(in srgb, currentColor 20%, transparent);
   text-decoration-thickness: 2px;
   text-underline-offset: 2px;
+}
+
+a:visited {
+  color: var(--secondary-6);
 }
 
 a:hover {

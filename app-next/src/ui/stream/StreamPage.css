@@ -3,9 +3,9 @@
 }
 
 .StreamPage-Header {
-  background-color: white;
+  background-color: var(--default-1);
   block-size: var(--StreamPage-headerSize);
-  border-bottom: 1px solid rgb(from var(--slate-6) r g b / 0.2);
+  border-bottom: 1px solid rgb(from var(--default-6) r g b / 0.2);
   display: grid;
   place-items: stretch;
   position: sticky;

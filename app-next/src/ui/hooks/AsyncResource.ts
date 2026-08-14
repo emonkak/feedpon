@@ -1,8 +1,10 @@
 import type { HookFunction } from 'barebind';
+import { Suspend, type SuspendStatus } from '../../foundation/suspend.ts';
 
 export interface AsyncResource<T> {
-  content: T | null;
-  loading: boolean;
+  status: SuspendStatus;
+  value: T | undefined;
+  reason: unknown;
 }
 
 export function AsyncResource<T>(
@@ -10,29 +12,41 @@ export function AsyncResource<T>(
   dependencies: unknown[],
 ): HookFunction<AsyncResource<T>> {
   return (context) => {
-    const [resource, setResource] = context.useState<AsyncResource<T>>({
-      content: null,
-      loading: false,
-    });
-    context.useEffect(() => {
+    const [value, setValue] = context.useState<T | undefined>(undefined);
+    const [reason, setReason] = context.useState<unknown>(undefined);
+    const { suspend, controller } = context.useMemo(() => {
       const controller = new AbortController();
-      fetcher(controller.signal).then(
-        (content) => {
-          setResource({ content, loading: false });
+      const promise = fetcher(controller.signal);
+      const suspend = Suspend.await(promise);
+      return { suspend, controller };
+    }, dependencies);
+
+    context.useEffect(() => {
+      suspend.then(
+        (value) => {
+          setValue(() => value);
+          setReason(undefined);
         },
-        (error) => {
-          setResource((resource) => ({
-            content: resource.content,
-            loading: false,
-          }));
-          return Promise.reject(error);
+        (reason) => {
+          setReason(() => reason);
         },
       );
-      setResource((resource) => ({ content: resource.content, loading: true }));
       return () => {
         controller.abort();
       };
-    }, dependencies);
-    return resource;
+    }, [suspend]);
+
+    return { status: suspend.status, value, reason };
+  };
+}
+
+export function mapAsyncResource<T, U>(
+  resource: AsyncResource<T>,
+  selector: (value: T) => U,
+): AsyncResource<U> {
+  return {
+    status: resource.status,
+    value: resource.value !== undefined ? selector(resource.value) : undefined,
+    reason: resource.reason,
   };
 }

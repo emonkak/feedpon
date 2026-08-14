@@ -1,8 +1,8 @@
-import { createComponent } from 'barebind';
+import { createComponent, html } from 'barebind';
 import { HashAdapter, SyncNavigation } from 'barebind/addons/router';
 import { loadSubscriptions } from '../state/actions.ts';
 import type { AppStore } from '../state/store.ts';
-import { AsyncResource } from './hooks/AsyncResource.ts';
+import { AsyncResource, mapAsyncResource } from './hooks/AsyncResource.ts';
 import { ReaderLayout } from './layout/ReaderLayout.ts';
 import { router } from './router.ts';
 import { Sidebar } from './sidebar/Sidebar.ts';
@@ -15,25 +15,27 @@ export const Dispatcher = createComponent(function Dispatcher({
   store,
 }: DispatcherProps) {
   const { scene } = this.use(SyncNavigation(new HashAdapter()));
-  const main = this.use(
+  const page = this.use(
     AsyncResource(
       async (signal) => {
         const loader = router.match(scene.url);
         return loader !== undefined
           ? (await loader(store, signal)).withKey(scene.url)
-          : null;
+          : html`Not Found`;
       },
       [scene.url],
     ),
   );
-  const sidebar = this.use(
+  const subscriptions = this.use(
     AsyncResource(async (signal) => {
-      const subscriptions = await store.dispatch(loadSubscriptions(signal));
-      return Sidebar({
-        subscriptions,
-      });
+      return store.dispatch(loadSubscriptions(signal));
     }, []),
   );
+  const sidebar = this.useMemo(() => {
+    return mapAsyncResource(subscriptions, (subscriptions) =>
+      Sidebar({ subscriptions, scene }),
+    );
+  }, [subscriptions, scene.url]);
 
-  return ReaderLayout({ main, sidebar });
+  return ReaderLayout({ page, sidebar });
 });

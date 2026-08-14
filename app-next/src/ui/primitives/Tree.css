@@ -1,0 +1,49 @@
+.TreeNode {
+  --TreeNode-backgroundColor: transparent;
+  --TreeNode-color: currentColor;
+  display: grid;
+  grid-template-areas: "cell-head cell-tail" "children children";
+  grid-template-columns: 16px 1fr;
+
+  &:where(:not(:has(&:hover))):hover {
+    --TreeNode-backgroundColor: var(--default-2);
+  }
+
+  &.selected {
+    --TreeNode-backgroundColor: var(--primary-6);
+    --TreeNode-color: white;
+  }
+}
+
+.TreeNode-Toggle {
+  grid-area: cell-head;
+  z-index: 1;
+
+  &::before {
+    background-color: currentColor;
+    clip-path: polygon(37.5% 75%, 37.5% 25%, 62.5% 50%);
+    color: var(--TreeNode-color);
+    content: "";
+    display: block;
+    height: 16px;
+    width: 16px;
+  }
+
+  &.opened::before {
+    clip-path: polygon(50% 62.5%, 25% 37.5%, 75% 37.5%);
+  }
+}
+
+.TreeNode-Cell {
+  align-items: center;
+  background-color: var(--TreeNode-backgroundColor);
+  color: var(--TreeNode-color);
+  display: flex;
+  gap: 1ch;
+  grid-area: cell-head-start / cell-head / cell-tail / cell-tail-end;
+  padding-inline: 16px;
+}
+
+.TreeNode-Children {
+  grid-area: children;
+}

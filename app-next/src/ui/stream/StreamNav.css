@@ -18,6 +18,6 @@
 }
 
 .StreamNav-subtitle {
-  color: var(--slate-6);
+  color: var(--default-6);
   font-size: calc(1rem * var(--text-scale-8));
 }
