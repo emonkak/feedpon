@@ -7,8 +7,12 @@
 
 .ReaderLayout-Page,
 .ReaderLayout-Sidebar {
+  opacity: 1;
+  transition: opacity 0s 0s;
+
   &.loading {
     opacity: 0.5;
+    transition: opacity 0s step-end 100ms;
   }
 }
 
