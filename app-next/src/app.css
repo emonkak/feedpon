@@ -1,6 +1,7 @@
 @import "./styles/fonts.css";
 @import "./styles/variables.css";
 @import "./styles/global.css";
+@import "./styles/components.css";
 
 @import "./ui/layout/ReaderLayout.css";
 @import "./ui/primitives/StackScroller.css";

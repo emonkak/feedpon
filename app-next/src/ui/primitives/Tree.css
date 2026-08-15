@@ -39,7 +39,7 @@
   background-color: var(--TreeNode-backgroundColor);
   color: var(--TreeNode-color);
   display: flex;
-  gap: 1ch;
+  gap: 8px;
   grid-area: cell-head-start / cell-head / cell-tail / cell-tail-end;
   padding-inline: 16px;
 }

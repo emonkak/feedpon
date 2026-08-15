@@ -1,5 +1,10 @@
 import type { Category, Subscription } from '@feedpon/feedly-client';
-import { createComponent, html, type VComponent } from 'barebind';
+import {
+  createComponent,
+  html,
+  type VComponent,
+  type VElement,
+} from 'barebind';
 import type { NavigationScene } from 'barebind/addons/router';
 import { orderByAscending } from '../../foundation/comparer.ts';
 import { Tree, TreeNode, type TreeNodeProps } from '../primitives/Tree.ts';
@@ -78,23 +83,27 @@ function renderCategoryNode(
   }).withKey(category.id);
 }
 
+function renderFavicon(subscription: Subscription): VElement {
+  return subscription.iconUrl !== undefined
+    ? html`
+        <img
+          alt=${subscription.title}
+          aria-hidden="true"
+          height="16"
+          src=${subscription.iconUrl}
+          width="16"
+        >
+      `
+    : html`<i aria-hidden="true" class="EmojiIcon"><span>🌍️</span></i>`;
+}
+
 function renderSubscriptionNode(
   subscription: Subscription,
   scene: NavigationScene,
 ): VComponent<TreeNodeProps> {
   const url = `/streams/${encodeURIComponent(subscription.id)}`;
-  const iconUrl =
-    subscription.iconUrl ??
-    (subscription.website !== undefined
-      ? `https://t2.gstatic.com/faviconV2?url=${encodeURIComponent(subscription.website)}&size=32`
-      : 'https://t2.gstatic.com/faviconV2');
   const content = html`
-    <img
-      alt=${subscription.title}
-      src=${iconUrl}
-      width="16"
-      height="16"
-    >
+    <${renderFavicon(subscription)}>
     <div>${subscription.title}</div>
   `;
   return TreeNode({
