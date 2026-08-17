@@ -1,4 +1,4 @@
-.TreeNode {
+.TreeItem {
   --TreeNode-backgroundColor: transparent;
   --TreeNode-color: currentColor;
   display: grid;
@@ -15,7 +15,7 @@
   }
 }
 
-.TreeNode-Toggle {
+.TreeItem-Toggle {
   grid-area: cell-head;
   z-index: 1;
 
@@ -29,12 +29,12 @@
     width: 16px;
   }
 
-  &.opened::before {
+  &.expanded::before {
     clip-path: polygon(50% 62.5%, 25% 37.5%, 75% 37.5%);
   }
 }
 
-.TreeNode-Cell {
+.TreeItem-Cell {
   align-items: center;
   background-color: var(--TreeNode-backgroundColor);
   color: var(--TreeNode-color);
@@ -44,6 +44,6 @@
   padding-inline: 16px;
 }
 
-.TreeNode-Children {
+.TreeItem-Children {
   grid-area: children;
 }

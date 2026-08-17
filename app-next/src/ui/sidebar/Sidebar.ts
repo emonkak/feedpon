@@ -7,7 +7,7 @@ import {
 } from 'barebind';
 import type { NavigationScene } from 'barebind/addons/router';
 import { orderByAscending } from '../../foundation/comparer.ts';
-import { Tree, TreeNode, type TreeNodeProps } from '../primitives/Tree.ts';
+import { Tree, TreeItem, type TreeItemProps } from '../primitives/Tree.ts';
 
 export interface SidebarProps {
   scene: NavigationScene;
@@ -41,7 +41,7 @@ export const Sidebar = createComponent(function Sidebar({
       .toArray()
       .sort(orderByAscending((category) => category.label))
       .map((category) =>
-        renderCategoryNode(
+        renderCategory(
           category,
           subscriptionsByCategory.get(category.id)!,
           scene,
@@ -49,7 +49,7 @@ export const Sidebar = createComponent(function Sidebar({
       )
       .concat(
         uncagorizedSubscriptions.map((subscription) =>
-          renderSubscriptionNode(subscription, scene),
+          renderSubscription(subscription, scene),
         ),
       );
   }, [scene, subscriptions]);
@@ -57,25 +57,26 @@ export const Sidebar = createComponent(function Sidebar({
   return html`
     <nav class="Sidebar">
       <ul class="Sidebar-Group">
-        <${Tree({ children: treeNodes })}>
+        <${Tree({ ariaLabel: 'Subscriptions', children: treeNodes })}>
       </ul>
     </nav>
   `;
 });
 
-function renderCategoryNode(
+function renderCategory(
   category: Category,
   subscriptions: Subscription[],
   scene: NavigationScene,
-): VComponent<TreeNodeProps> {
+): VComponent<TreeItemProps> {
   const url = `/streams/${encodeURIComponent(category.id)}`;
   const children = subscriptions.map((subscription) =>
-    renderSubscriptionNode(subscription, scene),
+    renderSubscription(subscription, scene),
   );
   const content = html`
     <div>${category.label}</div>
   `;
-  return TreeNode({
+  return TreeItem({
+    ariaLabel: category.label,
     children,
     content,
     href: '#' + url,
@@ -97,16 +98,17 @@ function renderFavicon(subscription: Subscription): VElement {
     : html`<i aria-hidden="true" class="EmojiIcon"><span>🌍️</span></i>`;
 }
 
-function renderSubscriptionNode(
+function renderSubscription(
   subscription: Subscription,
   scene: NavigationScene,
-): VComponent<TreeNodeProps> {
+): VComponent<TreeItemProps> {
   const url = `/streams/${encodeURIComponent(subscription.id)}`;
   const content = html`
     <${renderFavicon(subscription)}>
     <div>${subscription.title}</div>
   `;
-  return TreeNode({
+  return TreeItem({
+    ariaLabel: subscription.title,
     content,
     href: '#' + url,
     selected: scene.url === url,

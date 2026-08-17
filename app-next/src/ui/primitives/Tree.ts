@@ -1,95 +1,149 @@
 import { createComponent, html, type VComponent } from 'barebind';
 
-const enum OpenStatus {
+const enum ControlStatus {
   NEUTRAL,
-  OPENED,
-  CLOSED,
+  EXPANDED,
+  COLLAPSED,
 }
 
 export interface TreeProps {
-  children: VComponent<TreeNodeProps>[];
+  ariaLabel: string;
+  children: VComponent<TreeItemProps>[];
 }
 
-export interface TreeNodeProps {
-  children?: VComponent<TreeNodeProps>[];
+export interface TreeItemProps {
+  ariaLabel?: string;
+  children?: VComponent<TreeItemProps>[];
   content: unknown;
   href: string;
   selected: boolean;
 }
 
-export const Tree = createComponent(function Tree({ children }: TreeProps) {
+export const Tree = createComponent(function Tree({
+  ariaLabel,
+  children,
+}: TreeProps) {
   return html`
-    <ul class="Tree">
+    <div
+      aria-label=${ariaLabel}
+      class="Tree"
+      focusgroup="menu"
+      role="tree"
+    >
       <${children}>
-    </ul>
+    </div>
   `;
 });
 
-export const TreeNode = createComponent(function TreeNode({
+export const TreeItem = createComponent(function TreeItem({
   children,
   content,
   href,
   selected,
-}: TreeNodeProps) {
-  const [openStatus, setOpenStatus] = this.useState(OpenStatus.NEUTRAL);
-  const selectedKey = children?.find(isSelected)?.key;
-  const opened = shouldOpen(openStatus, selectedKey);
-  const toggle = () => {
-    setOpenStatus(
-      selectedKey !== undefined
-        ? opened
-          ? OpenStatus.CLOSED
-          : OpenStatus.NEUTRAL
-        : opened
-          ? OpenStatus.NEUTRAL
-          : OpenStatus.OPENED,
+}: TreeItemProps) {
+  const [controllStatus, setControllStatus] = this.useState(
+    ControlStatus.NEUTRAL,
+  );
+  const indirectlySelected = children?.some(isSelected) ?? false;
+  const expanded = isExpanded(controllStatus, indirectlySelected);
+  const toggle = (expanded: boolean) => {
+    setControllStatus(
+      indirectlySelected
+        ? expanded
+          ? ControlStatus.NEUTRAL
+          : ControlStatus.COLLAPSED
+        : expanded
+          ? ControlStatus.EXPANDED
+          : ControlStatus.NEUTRAL,
     );
   };
 
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (children === undefined) {
+      return;
+    }
+    switch (event.key) {
+      case 'ArrowLeft':
+        event.preventDefault();
+        event.stopPropagation();
+        toggle(false);
+        break;
+      case 'ArrowRight':
+        event.preventDefault();
+        event.stopPropagation();
+        toggle(true);
+        break;
+      case ' ':
+        event.preventDefault();
+        event.stopPropagation();
+        toggle(!expanded);
+        break;
+      default:
+        return;
+    }
+    if (event.currentTarget !== event.target) {
+      (event.currentTarget as HTMLElement).querySelector('a')?.focus();
+    }
+  };
+  const handleToggle = () => {
+    toggle(!expanded);
+  };
+
   return html`
-    <li class=${['TreeNode', { selected }]}>
+    <div
+      @keydown=${handleKeyDown}
+      aria-selected=${selected.toString()}
+      class=${['TreeItem', { selected }]}
+      role="treeitem"
+    >
       <${
         children !== undefined
           ? html`
             <button
-              @click=${toggle}
-              aria-expanded=${opened.toString()}
-              class=${['TreeNode-Toggle', { opened }]}
+              @click=${handleToggle}
+              aria-expanded=${expanded.toString()}
+              class=${['TreeItem-Toggle', { expanded }]}
+              tabindex="-1"
             >
             </button>
           `
           : null
       }>
-      <a class="TreeNode-Cell" href=${href}>
+      <a
+        class="TreeItem-Cell"
+        href=${href}
+        tabindex="0"
+      >
         <${content}>
       </a>
       <${
-        opened
+        expanded
           ? html`
-            <div class="TreeNode-Children">
-              <ul class="Tree">
-                <${children}>
-              </ul>
+            <div class="TreeItem-Children" role="group">
+              <${children}>
             </div>
           `
           : null
       }>
-    </li>
+    </div>
   `;
 });
 
-function isSelected(element: VComponent<TreeNodeProps>): boolean {
-  const { selected, children } = element.props;
-  return selected ? true : (children?.some(isSelected) ?? false);
+function isExpanded(
+  status: ControlStatus,
+  indirectlySelected: boolean,
+): boolean {
+  switch (status) {
+    case ControlStatus.EXPANDED:
+      return true;
+    case ControlStatus.COLLAPSED:
+      return false;
+    case ControlStatus.NEUTRAL:
+      return indirectlySelected;
+  }
 }
 
-function shouldOpen(status: OpenStatus, selectedKey: unknown): boolean {
-  switch (status) {
-    case OpenStatus.OPENED:
-      return true;
-    case OpenStatus.CLOSED:
-      return false;
-    case OpenStatus.NEUTRAL:
-      return selectedKey !== undefined;
-  }
+function isSelected(element: VComponent<TreeItemProps>): boolean {
+  const { selected, children } = element.props;
+  return selected ? true : (children?.some(isSelected) ?? false);
 }
