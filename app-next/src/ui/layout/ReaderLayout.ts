@@ -13,14 +13,14 @@ export const ReaderLayout = createComponent(function ReaderLayout({
   return html`
     <div class="ReaderLayout">
       <aside
-        class=${['ReaderLayout-Sidebar', { loading: sidebar.status === 'pending' }]}
-        inert=${sidebar.status === 'pending'}
+        class=${['ReaderLayout-Sidebar', { loading: sidebar.state === 'pending' }]}
+        inert=${sidebar.state === 'pending'}
       >
         <${sidebar.value}>
       </aside>
       <main
-        class=${['ReaderLayout-Page', { loading: page.status === 'pending' }]}
-        inert=${page.status === 'pending'}
+        class=${['ReaderLayout-Page', { loading: page.state === 'pending' }]}
+        inert=${page.state === 'pending'}
       >
         <${page.value}>
       </main>

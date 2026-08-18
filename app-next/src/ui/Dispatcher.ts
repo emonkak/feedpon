@@ -35,7 +35,7 @@ export const Dispatcher = createComponent(function Dispatcher({
     return mapAsyncResource(subscriptions, (subscriptions) =>
       Sidebar({ subscriptions, scene }),
     );
-  }, [subscriptions, scene.url]);
+  }, [subscriptions.state, scene.url]);
 
   return ReaderLayout({ page, sidebar });
 });
