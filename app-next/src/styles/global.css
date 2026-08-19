@@ -21,24 +21,17 @@ h4,
 h5,
 h6 {
   font-family: var(--font-display);
-  font-size: calc(1rem * var(--heading-scale));
+  font-size: calc(1rem * var(--heading-scale, 1));
   letter-spacing: -2%;
   line-height: round(
     1rlh *
-    var(--heading-scale) -
+    var(--heading-scale, 1) -
     0.25rlh *
-    var(--heading-scale),
+    var(--heading-scale, 1),
     0.25rlh
   );
   margin-block: 0 0.5rlh;
   text-wrap: balance;
-}
-
-:where(h1, h2, h3, h4, h5, h6)[class] {
-  font-size: inherit;
-  line-height: inherit;
-  margin-block: 0;
-  text-wrap: inherit;
 }
 
 h1 {
@@ -63,6 +56,11 @@ h5 {
 
 h6 {
   --heading-scale: var(--text-scale-6);
+}
+
+:where(h1, h2, h3, h4, h5, h6)[class] {
+  --heading-scale: 1;
+  margin-block: 0;
 }
 
 blockquote,

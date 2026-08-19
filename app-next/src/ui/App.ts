@@ -1,6 +1,7 @@
-import { createComponent, html } from 'barebind';
+import { createComponent } from 'barebind';
 import type { AppStore } from '../state/store.ts';
 import { AuthGuard } from './auth/AuthGuard.ts';
+import { BootScreen } from './Bootscreen.ts';
 import { Dispatcher } from './Dispatcher.ts';
 
 export interface AppProps {
@@ -17,7 +18,7 @@ export const App = createComponent(function App({ prepareStore }: AppProps) {
   }, [prepareStore]);
 
   if (store === null) {
-    return html`<div>Preparing Store...</div>`;
+    return BootScreen({ message: 'Initializing application...' });
   }
 
   this.provide(store);
