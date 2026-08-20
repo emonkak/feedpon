@@ -6,6 +6,7 @@ export {
   type FeedlyClientOptions,
   type FeedlyEnvironment,
 } from './client.ts';
+export type * from './schema.ts';
 
 export type Category = v.InferOutput<typeof schema.Category>;
 export type Content = v.InferOutput<typeof schema.Content>;
@@ -17,6 +18,7 @@ export type Gender = v.InferOutput<typeof schema.Gender>;
 export type Link = v.InferOutput<typeof schema.Link>;
 export type Marker = v.InferOutput<typeof schema.Marker>;
 export type Origin = v.InferOutput<typeof schema.Origin>;
+export type Plan = v.InferOutput<typeof schema.Plan>;
 export type Profile = v.InferOutput<typeof schema.Profile>;
 export type SearchResult = v.InferOutput<typeof schema.SearchResult>;
 export type Stream = v.InferOutput<typeof schema.Stream>;

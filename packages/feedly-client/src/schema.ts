@@ -419,6 +419,8 @@ export const Subscription = v.object({
   visualUrl: v.optional(v.pipe(v.string(), v.url())),
 });
 
+export const Plan = v.picklist(['standard', 'pro', 'business']);
+
 export interface ExchangeTokenRequest {
   /**
    * The code returned from the previous call.
@@ -476,7 +478,7 @@ export const ExchangeTokenResponse = v.object({
   /**
    * Indicated the user plan
    */
-  plan: v.picklist(['standard', 'pro', 'business']),
+  plan: Plan,
   /**
    * The state that was passed in
    */
@@ -525,7 +527,7 @@ export const RefreshTokenResponse = v.object({
   /**
    * Indicated the user plan
    */
-  plan: v.picklist(['standard', 'pro', 'business']),
+  plan: Plan,
 });
 
 export interface UpdateCategoryRequest {
