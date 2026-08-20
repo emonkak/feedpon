@@ -1,7 +1,5 @@
-import { Queue } from './queue.ts';
-
 export class Mutex {
-  private readonly _resolvers: Queue<() => void> = new Queue();
+  private readonly _resolvers: (() => void)[] = [];
   private _locked: boolean = false;
 
   async scope<T>(callback: () => T): Promise<Awaited<T>> {
@@ -20,12 +18,12 @@ export class Mutex {
     }
 
     await new Promise<void>((resolve) => {
-      this._resolvers.enqueue(resolve);
+      this._resolvers.push(resolve);
     });
   }
 
   unlock(): void {
-    const resolver = this._resolvers.dequeue();
+    const resolver = this._resolvers.shift();
     if (resolver !== undefined) {
       resolver();
     } else {
