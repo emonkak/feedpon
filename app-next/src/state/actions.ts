@@ -1,5 +1,5 @@
-import type { Stream, Subscription } from '@feedpon/feedly-client';
-import type { AppAction, Credential } from './store.ts';
+import type * as feedly from '@feedpon/feedly-client';
+import type { AppAction, Credential, Session } from './store.ts';
 
 // Refresh the token when it is within this time of expiring (5 minutes)
 const TOKEN_REFRESH_SKEW = 1000 * 60 * 5;
@@ -11,9 +11,9 @@ export function acquireCredential(): AppAction<Promise<Credential>> {
 
     return authMutex.scope(async () => {
       if (credential$.value !== null) {
-        const { expiresIn, refreshToken, refreshedAt } = credential$.value;
+        const { expiresIn, refreshToken, refreshed } = credential$.value;
         const now = Date.now();
-        const expiredAt = refreshedAt + expiresIn;
+        const expiredAt = refreshed + expiresIn;
 
         if (now + TOKEN_REFRESH_SKEW >= expiredAt) {
           const tokens = await feedlyClient.refreshToken(refreshToken);
@@ -21,8 +21,8 @@ export function acquireCredential(): AppAction<Promise<Credential>> {
             id: tokens.id,
             accessToken: tokens.access_token,
             refreshToken,
-            expiresIn: tokens.expires_in,
-            refreshedAt: Date.now(),
+            expiresIn: tokens.expires_in * 1000,
+            refreshed: Date.now(),
           };
         }
       } else {
@@ -36,7 +36,7 @@ export function acquireCredential(): AppAction<Promise<Credential>> {
           accessToken: tokens.access_token,
           refreshToken: tokens.refresh_token,
           expiresIn: tokens.expires_in,
-          refreshedAt: Date.now(),
+          refreshed: Date.now(),
         };
       }
 
@@ -45,50 +45,56 @@ export function acquireCredential(): AppAction<Promise<Credential>> {
   };
 }
 
-export function changeIndex(id: string, index: number): AppAction<void> {
-  return async (state$) => {
-    state$.get('session').scope((session) => {
-      if (session?.id === id) {
-        session.index = index;
-      }
-    });
-  };
-}
-
 export function loadStream(
   streamId: string,
+  session: Session,
   signal: AbortSignal,
-): AppAction<Promise<Stream>> {
+): AppAction<Promise<feedly.Stream>> {
   return async (state$, context, dispatch) => {
     const { feedlyClient, objectStoreManager } = context;
-    const session$ = state$.get('session');
-
-    let stream = await objectStoreManager.runTransaction(
-      ['streams'],
-      ({ streams }) => streams.get(streamId),
+    const lastSynced = state$.scope(
+      ({ serverState }) => serverState.lastSynced,
     );
 
-    if (stream === undefined) {
-      const credential = await dispatch(acquireCredential());
-      stream = await feedlyClient.getStreamContents(
-        credential.accessToken,
-        streamId,
-        {},
-        { signal },
+    if (session.started > lastSynced) {
+      const cachedStreams = await objectStoreManager.runTransaction(
+        ['streams'],
+        (stores) =>
+          stores.streams.getAll(
+            IDBKeyRange.bound([streamId, 0], [streamId, Infinity], true, true),
+          ),
       );
+      if (cachedStreams.length > 0) {
+        return cachedStreams.reduce((stream, cachedStream) => {
+          return { ...stream, items: stream.items.concat(cachedStream.items) };
+        });
+      }
+    } else {
       await objectStoreManager.runTransaction(
         ['streams'],
-        ({ streams }) => streams.put(stream!),
+        (stores) =>
+          stores.streams.delete(
+            IDBKeyRange.bound([streamId, 0], [streamId, Infinity], true, true),
+          ),
         { mode: 'readwrite' },
       );
     }
 
-    if (session$.value?.id !== stream.id) {
-      session$.value = {
-        id: stream.id,
-        index: 0,
-      };
-    }
+    const credential = await dispatch(acquireCredential());
+    const stream = await feedlyClient.getStreamContents(
+      credential.accessToken,
+      streamId,
+      {},
+      { signal },
+    );
+
+    await objectStoreManager.runTransaction(
+      ['streams'],
+      (stores) => stores.streams.put(stream!),
+      { mode: 'readwrite' },
+    );
+
+    state$.get('session').value = session;
 
     return stream;
   };
@@ -96,15 +102,16 @@ export function loadStream(
 
 export function loadSubscriptions(
   signal: AbortSignal,
-): AppAction<Promise<Subscription[]>> {
+): AppAction<Promise<feedly.Subscription[]>> {
   return async (state$, context, dispatch) => {
     const { feedlyClient, objectStoreManager } = context;
     const serverState$ = state$.get('serverState');
+    const lastSynced = serverState$.scope(({ lastSynced }) => lastSynced);
 
-    if (serverState$.value.lastSynced >= 0) {
+    if (lastSynced >= 0) {
       return await objectStoreManager.runTransaction(
         ['subscriptions'],
-        ({ subscriptions }) => subscriptions.getAll(),
+        (stores) => stores.subscriptions.getAll(),
       );
     }
 
@@ -116,16 +123,16 @@ export function loadSubscriptions(
 
     await objectStoreManager.runTransaction(
       ['subscriptions'],
-      async ({ subscriptions: subscriptionStore }) => {
+      async (stores) => {
         for (const subscription of subscriptions) {
-          subscriptionStore.put(subscription);
+          stores.subscriptions.put(subscription);
         }
       },
       { mode: 'readwrite' },
     );
 
-    serverState$.scope((subscriptions) => {
-      subscriptions.lastSynced = Date.now();
+    serverState$.scope((serverState) => {
+      serverState.lastSynced = Date.now();
     });
 
     return subscriptions;
@@ -139,7 +146,40 @@ export function revokeCredential(): AppAction<void> {
 
     if (credential$.value !== null) {
       await feedlyClient.logout(credential$.value.accessToken);
+
       credential$.value = null;
     }
+  };
+}
+
+export function startSession(streamId: string): AppAction<Promise<Session>> {
+  return async (state$, context) => {
+    const { objectStoreManager } = context;
+    const session$ = state$.get('session');
+    const session = session$.value;
+
+    if (session?.id === streamId) {
+      return session;
+    }
+
+    if (session !== null) {
+      await objectStoreManager.runTransaction(
+        ['sessions'],
+        (stores) => stores.sessions.put(session),
+        { mode: 'readwrite' },
+      );
+    }
+
+    return {
+      id: streamId,
+      index: 0,
+      started: Date.now(),
+    };
+  };
+}
+
+export function updateSession(session: Session): AppAction<Promise<void>> {
+  return async (state$) => {
+    state$.get('session').value = session;
   };
 }

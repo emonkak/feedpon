@@ -7,6 +7,7 @@ import { type Action, Store } from '../foundation/store/store.ts';
 import {
   FeedStore,
   PatchStore,
+  SessionStore,
   StreamStore,
   SubscriptionStore,
 } from './database.ts';
@@ -33,6 +34,7 @@ export class AppStore extends Store<AppState, AppContext> {}
 export const AppStoreMap = {
   feeds: FeedStore,
   patches: PatchStore,
+  sessions: SessionStore,
   streams: StreamStore,
   subscriptions: SubscriptionStore,
 } as const satisfies IDBStoreMap;
@@ -44,7 +46,7 @@ export interface Credential {
   accessToken: string;
   refreshToken: string;
   expiresIn: number;
-  refreshedAt: number;
+  refreshed: number;
 }
 
 export interface ServerState {
@@ -54,4 +56,5 @@ export interface ServerState {
 export interface Session {
   id: string;
   index: number;
+  started: number;
 }

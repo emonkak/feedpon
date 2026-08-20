@@ -1,17 +1,17 @@
 import type { Stream } from '@feedpon/feedly-client';
 import { createComponent, html } from 'barebind';
-import { AppStore } from '../../state/store.ts';
+import type { Session } from '../../state/store.ts';
 
 export interface StreamNavProps {
   stream: Stream;
+  session: Session;
 }
 
 export const StreamNav = createComponent(function StreamNav({
   stream,
+  session,
 }: StreamNavProps) {
-  const store = this.inject(AppStore);
-  const session = this.use(store.state$.get('session'));
-  const item = session !== null ? stream.items[session.index] : undefined;
+  const item = stream.items[session.index];
 
   return html`
     <nav class="StreamNav">
