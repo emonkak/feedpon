@@ -36,18 +36,18 @@ export abstract class IDBGenericStore<T extends object> {
     await waitForRequest(request);
   }
 
-  async delete(id: string): Promise<void> {
-    const request = this._store.delete(id);
+  async delete(query: IDBValidKey | IDBKeyRange): Promise<void> {
+    const request = this._store.delete(query);
     await waitForRequest(request);
   }
 
-  async get(id: string): Promise<T | undefined> {
-    const request = this._store.get(id);
+  async get(query: IDBValidKey | IDBKeyRange): Promise<T | undefined> {
+    const request = this._store.get(query);
     return await waitForRequest(request);
   }
 
-  async getAll(): Promise<T[]> {
-    const request = this._store.getAll();
+  async getAll(query?: IDBValidKey | IDBKeyRange): Promise<T[]> {
+    const request = this._store.getAll(query);
     return await waitForRequest(request);
   }
 

@@ -1,8 +1,5 @@
 import type { Feed, Stream, Subscription } from '@feedpon/feedly-client';
-import {
-  IDBGenericStore,
-  waitForRequest,
-} from '../foundation/database/indexedDB.ts';
+import { IDBGenericStore } from '../foundation/database/indexedDB.ts';
 import type { Patch } from '../foundation/store/persistent.ts';
 
 export class FeedStore extends IDBGenericStore<Feed> {}
@@ -19,10 +16,6 @@ export class PatchStore extends IDBGenericStore<Patch> {
     });
   }
 
-  async invalidatePath(path: PropertyKey[]): Promise<void> {
-    await waitForRequest(
-      this._store.delete(IDBKeyRange.bound(path, [...path, []], true, true)),
-    );
   }
 }
 

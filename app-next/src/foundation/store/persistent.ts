@@ -18,7 +18,7 @@ export interface Patch {
 export interface PatchStore {
   put(patche: Patch): Promise<void>;
   getAll(): Promise<Patch[]>;
-  invalidatePath(path: PropertyKey[]): Promise<void>;
+  delete(query: IDBValidKey | IDBKeyRange): Promise<void>;
 }
 
 export type PatchTransactionManager = ObjectStoreManager<{
@@ -90,7 +90,9 @@ export class PersistentPlugin<TState, TContext>
         ['patches'],
         async ({ patches }) => {
           for (const patch of this._pendingPatches.splice(0)) {
-            await patches.invalidatePath(patch.path);
+            patches.delete(
+              IDBKeyRange.bound(patch.path, [...patch.path, []], true, true),
+            );
             await patches.put(patch);
           }
         },
