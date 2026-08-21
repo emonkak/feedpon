@@ -16,10 +16,10 @@
 }
 
 .ReaderLayout-Page {
-  border-left: 1px solid rgb(from var(--default-6) r g b / 0.2);
-  border-right: 1px solid rgb(from var(--default-6) r g b / 0.2);
-  margin-left: -1px;
-  margin-right: -1px;
+  border-color: rgb(from var(--default-6) r g b / 0.2);
+  border-style: solid;
+  border-width: 0 1px;
+  box-sizing: border-box;
   grid-area: main;
   min-height: 100vh;
   overflow: clip;
@@ -28,6 +28,7 @@
 
 .ReaderLayout-Sidebar {
   grid-area: sidebar;
+  margin-inline: -1px;
   max-height: 100vh;
   overflow-y: auto;
   position: sticky;

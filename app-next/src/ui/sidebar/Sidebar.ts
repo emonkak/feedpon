@@ -22,7 +22,8 @@ export const Sidebar = createComponent(function Sidebar({
   const store = this.inject(AppStore);
   const [subscriptions, _reloadSubscriptions] = this.use(
     AsyncResource(
-      (reload, signal) => store.dispatch(loadSubscriptions({ reload, signal })),
+      ({ reload, signal }) =>
+        store.dispatch(loadSubscriptions({ reload, signal })),
       [],
       [] as Subscription[],
     ),

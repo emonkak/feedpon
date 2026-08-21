@@ -8,13 +8,18 @@ export interface AsyncResource<T> {
   reason: unknown;
 }
 
+export interface AsyncResourceContext {
+  reload: boolean;
+  signal: AbortSignal;
+}
+
 export function AsyncResource<
   TValue,
   const TArgs extends readonly any[],
   const TDefault = undefined,
 >(
   fetcher: (
-    ...args: [...TArgs, reload: boolean, signal: AbortSignal]
+    ...args: [...TArgs, context: AsyncResourceContext]
   ) => Promise<TValue>,
   args: TArgs,
   defaultValue?: TDefault,
@@ -24,7 +29,10 @@ export function AsyncResource<
   return (context) => {
     const prefetch = context.useMemo(() => {
       const controller = new AbortController();
-      const promise = fetcher(...args, false, controller.signal);
+      const promise = fetcher(...args, {
+        reload: false,
+        signal: controller.signal,
+      });
       promise.then(
         () => {
           prefetch.state = 'fulfilled';
@@ -68,7 +76,10 @@ export function AsyncResource<
     };
     const reload = () => {
       const controller = new AbortController();
-      const promise = fetcher(...args, true, controller.signal);
+      const promise = fetcher(...args, {
+        reload: true,
+        signal: controller.signal,
+      });
       promise.then(
         () => {
           prefetch.state = 'fulfilled';
