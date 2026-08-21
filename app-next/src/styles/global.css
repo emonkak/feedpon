@@ -74,6 +74,10 @@ ul {
   margin-block: 0 1rlh;
 }
 
+blockquote {
+  margin-inline: 1.5rlh;
+}
+
 dd {
   margin-inline-start: 1rlh;
 }
