@@ -24,6 +24,7 @@ export const StreamPage = createComponent(function StreamPage({
     setSession(newSession);
   };
 
+  const nav = StreamNav({ session, stream });
   const scroller = StackScroller({
     elementSelector: (entry) => StreamItem({ entry }),
     initialIndex: session?.index,
@@ -35,7 +36,7 @@ export const StreamPage = createComponent(function StreamPage({
   return html`
     <div class="StreamPage">
       <header class="StreamPage-Header">
-        <${StreamNav({ session, stream })}>
+        <${nav}>
       </header>
       <div class="StreamPage-Content">
         <${scroller}>

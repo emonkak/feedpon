@@ -2,15 +2,14 @@ import type { Derivable, InvalidateEvent } from 'barebind/addons/signal';
 import type { ObjectStoreManager } from '../database/types.ts';
 import type { Action, AsyncPlugin, Dispatch, Store } from './store.ts';
 
-const enum PatchKind {
+const enum PatchOp {
   SET = 0,
   DELETE = 1,
 }
 
 export interface Patch {
   path: PropertyKey[];
-  kind: PatchKind;
-  type: string | null;
+  op: PatchOp;
   value: unknown;
   version: number;
 }
@@ -105,15 +104,15 @@ export class PersistentPlugin<TState, TContext>
 }
 
 function applyPatch<T>(state$: Derivable<T>, patch: Patch): void {
-  switch (patch.kind) {
-    case PatchKind.SET: {
+  switch (patch.op) {
+    case PatchOp.SET: {
       const target$ = lookupProperty(state$, patch.path);
       if (target$ !== undefined) {
         target$.value = patch.value;
       }
       break;
     }
-    case PatchKind.DELETE: {
+    case PatchOp.DELETE: {
       const target$ = lookupProperty(state$, patch.path.slice(0, -1));
       if (target$ !== undefined) {
         delete (target$.value as any)[patch.path.at(-1)!];
@@ -128,16 +127,14 @@ function createPatch(event: InvalidateEvent, version: number): Patch {
     case 'set':
       return {
         path: event.path,
-        kind: PatchKind.SET,
-        type: null,
+        op: PatchOp.SET,
         value: event.newValue,
         version,
       };
     case 'delete':
       return {
         path: event.path,
-        kind: PatchKind.DELETE,
-        type: null,
+        op: PatchOp.DELETE,
         value: undefined,
         version,
       };
