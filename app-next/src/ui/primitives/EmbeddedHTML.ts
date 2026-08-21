@@ -111,10 +111,15 @@ const SAFE_ELEMENTS = new Set([
   'summary',
 ]);
 
-const SAFE_URL_PATTERN = /^(?:data|https?|mailto|sms|tel):/i;
+const SAFE_URL_SCHEMA_PATTERN = /^(?:data|https?|mailto|sms|tel):/i;
 
-const SRCSET_SEPARATOR_PATTERN = /\s*,\s*/;
-const SRCSET_SPACES_PATTERN = /\s+/;
+const URL_PATTERN = String.raw`\S+`;
+const WIDTH_DESCRIPTOR_PATTERN = String.raw`\d+w`;
+const PIXEL_DENSOTY_DESCRIPTOR_PATTERN = String.raw`-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?x`;
+const SRCSET_PATTERN = new RegExp(
+  String.raw`(?<url>${URL_PATTERN})(?:\s+(?<descriptor>${WIDTH_DESCRIPTOR_PATTERN}|${PIXEL_DENSOTY_DESCRIPTOR_PATTERN}))?\s*,?`,
+  'g',
+);
 
 const STYLE_SHEET = createStyleSheet(styleSheetContent);
 
@@ -178,6 +183,18 @@ function parseHTML(html: string): DocumentFragment {
   const template = document.createElement('template');
   template.setHTMLUnsafe(html);
   return template.content;
+}
+
+function parseImageCandidates(
+  srcset: string,
+): { url: string; descriptor: string | undefined }[] {
+  return srcset
+    .matchAll(SRCSET_PATTERN)
+    .map((matches) => ({
+      url: matches.groups!['url']!,
+      descriptor: matches.groups!['descriptor'],
+    }))
+    .toArray();
 }
 
 function preprocessHTML(root: DocumentFragment, origin: string): void {
@@ -249,7 +266,7 @@ function resolveHref(el: Element, origin: string): void {
   if (el.hasAttribute(ATTRIBUTE_HREF)) {
     const url = toAbsoluteUrl(el.getAttribute(ATTRIBUTE_HREF)!, origin);
 
-    if (SAFE_URL_PATTERN.test(url)) {
+    if (SAFE_URL_SCHEMA_PATTERN.test(url)) {
       el.setAttribute(ATTRIBUTE_HREF, url);
       el.setAttribute('target', '_blank');
     } else {
@@ -268,7 +285,7 @@ function resolveSrc(el: Element, origin: string): void {
   if (el.hasAttribute(ATTRIBUTE_SRC)) {
     const url = toAbsoluteUrl(el.getAttribute(ATTRIBUTE_SRC)!, origin);
 
-    if (SAFE_URL_PATTERN.test(url)) {
+    if (SAFE_URL_SCHEMA_PATTERN.test(url)) {
       el.setAttribute(ATTRIBUTE_SRC, url);
     } else {
       el.removeAttribute(ATTRIBUTE_SRCSET);
@@ -286,21 +303,12 @@ function resolveSrcset(el: Element, origin: string): void {
   if (el.hasAttribute(ATTRIBUTE_SRCSET)) {
     el.setAttribute(
       ATTRIBUTE_SRCSET,
-      el
-        .getAttribute(ATTRIBUTE_SRCSET)!
-        .trim()
-        .split(SRCSET_SEPARATOR_PATTERN)
-        .map((component) => {
-          const [url, descriptor] = component.split(SRCSET_SPACES_PATTERN, 2);
-          return {
-            url: toAbsoluteUrl(url!, origin),
-            descriptor,
-          };
-        })
-        .filter(({ url }) => SAFE_URL_PATTERN.test(url))
+      parseImageCandidates(el.getAttribute(ATTRIBUTE_SRCSET)!)
+        .filter(({ url }) => SAFE_URL_SCHEMA_PATTERN.test(url))
         .map(
           ({ url, descriptor }) =>
-            url + (descriptor !== undefined ? ' ' + descriptor : ''),
+            toAbsoluteUrl(url, origin) +
+            (descriptor !== undefined ? ' ' + descriptor : ''),
         )
         .join(','),
     );
