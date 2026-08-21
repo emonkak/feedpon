@@ -1,4 +1,9 @@
-import { createComponent, html, type VComponent } from 'barebind';
+import {
+  createComponent,
+  html,
+  type VComponent,
+  type VElement,
+} from 'barebind';
 
 const enum ControlStatus {
   NEUTRAL,
@@ -14,7 +19,7 @@ export interface TreeProps {
 export interface TreeItemProps {
   ariaLabel?: string;
   children?: VComponent<TreeItemProps>[];
-  content: unknown;
+  content: VElement | null | undefined;
   href: string;
   selected: boolean;
 }
@@ -63,6 +68,11 @@ export const TreeItem = createComponent(function TreeItem({
       return;
     }
     switch (event.key) {
+      case ' ': // Space
+        event.preventDefault();
+        event.stopPropagation();
+        toggle(!expanded);
+        break;
       case 'ArrowLeft':
         event.preventDefault();
         event.stopPropagation();
@@ -72,11 +82,6 @@ export const TreeItem = createComponent(function TreeItem({
         event.preventDefault();
         event.stopPropagation();
         toggle(true);
-        break;
-      case ' ':
-        event.preventDefault();
-        event.stopPropagation();
-        toggle(!expanded);
         break;
       default:
         return;

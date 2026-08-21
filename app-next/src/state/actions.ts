@@ -48,7 +48,7 @@ export function acquireCredential(): AppAction<Promise<Credential>> {
 export function loadStream(
   streamId: string,
   session: Session,
-  signal: AbortSignal,
+  { reload, signal }: { reload?: boolean; signal?: AbortSignal } = {},
 ): AppAction<Promise<feedly.Stream>> {
   return async (state$, context, dispatch) => {
     const { feedlyClient, objectStoreManager } = context;
@@ -56,7 +56,7 @@ export function loadStream(
       ({ serverState }) => serverState.lastSynced,
     );
 
-    if (session.started > lastSynced) {
+    if (!reload && session.started > lastSynced) {
       const cachedStreams = await objectStoreManager.runTransaction(
         ['streams'],
         (stores) =>
@@ -100,15 +100,19 @@ export function loadStream(
   };
 }
 
-export function loadSubscriptions(
-  signal: AbortSignal,
-): AppAction<Promise<feedly.Subscription[]>> {
+export function loadSubscriptions({
+  reload,
+  signal,
+}: {
+  reload?: boolean;
+  signal?: AbortSignal;
+} = {}): AppAction<Promise<feedly.Subscription[]>> {
   return async (state$, context, dispatch) => {
     const { feedlyClient, objectStoreManager } = context;
     const serverState$ = state$.get('serverState');
     const lastSynced = serverState$.scope(({ lastSynced }) => lastSynced);
 
-    if (lastSynced >= 0) {
+    if (!reload && lastSynced >= 0) {
       return await objectStoreManager.runTransaction(
         ['subscriptions'],
         (stores) => stores.subscriptions.getAll(),

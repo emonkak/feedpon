@@ -1,21 +1,30 @@
-import type { HookFunction } from 'barebind';
+import type { HookFunction, UpdateHandle } from 'barebind';
 
 type PromiseState = 'pending' | 'fulfilled' | 'rejected';
 
 export interface AsyncResource<T> {
   state: PromiseState;
-  value: T | undefined;
+  value: T;
   reason: unknown;
 }
 
-export function AsyncResource<T>(
-  fetcher: (signal: AbortSignal) => Promise<T>,
-  dependencies: unknown[],
-): HookFunction<AsyncResource<T>> {
+export function AsyncResource<
+  TValue,
+  const TArgs extends readonly any[],
+  const TDefault = undefined,
+>(
+  fetcher: (
+    ...args: [...TArgs, reload: boolean, signal: AbortSignal]
+  ) => Promise<TValue>,
+  args: TArgs,
+  defaultValue?: TDefault,
+): HookFunction<
+  [resource: AsyncResource<TValue | TDefault>, reload: () => UpdateHandle]
+> {
   return (context) => {
     const prefetch = context.useMemo(() => {
       const controller = new AbortController();
-      const promise = fetcher(controller.signal);
+      const promise = fetcher(...args, false, controller.signal);
       promise.then(
         () => {
           prefetch.state = 'fulfilled';
@@ -24,38 +33,56 @@ export function AsyncResource<T>(
           prefetch.state = 'rejected';
         },
       );
-      return { state: 'pending' as PromiseState, controller, promise };
-    }, dependencies);
-    const [value, setValue] = context.useState<T | undefined>(undefined);
+      return { controller, promise, state: 'pending' as PromiseState };
+    }, args);
+    const [value, setValue] = context.useState<TValue | TDefault>(
+      () => defaultValue!,
+    );
     const [reason, setReason] = context.useState<unknown>(undefined);
+    const { promise, controller } = prefetch;
 
     context.useEffect(() => {
-      prefetch.promise.then(
+      promise.then(
         (value) => {
-          setValue(() => value);
-          setReason(undefined);
+          if (!controller.signal.aborted) {
+            setValue(() => value);
+            setReason(undefined);
+          }
         },
         (reason) => {
-          setValue(undefined);
-          setReason(() => reason);
+          if (!controller.signal.aborted) {
+            setValue(() => defaultValue!);
+            setReason(() => reason);
+          }
         },
       );
       return () => {
-        prefetch.controller.abort();
+        controller.abort();
       };
-    }, [prefetch]);
+    }, [promise, controller]);
 
-    return { state: prefetch.state, value, reason };
-  };
-}
+    const resource: AsyncResource<TValue | TDefault> = {
+      state: prefetch.state,
+      value,
+      reason,
+    };
+    const reload = () => {
+      const controller = new AbortController();
+      const promise = fetcher(...args, true, controller.signal);
+      promise.then(
+        () => {
+          prefetch.state = 'fulfilled';
+        },
+        () => {
+          prefetch.state = 'rejected';
+        },
+      );
+      prefetch.controller = controller;
+      prefetch.promise = promise;
+      prefetch.state = 'pending';
+      return context.forceUpdate();
+    };
 
-export function mapAsyncResource<T, U>(
-  resource: AsyncResource<T>,
-  selector: (value: T) => U,
-): AsyncResource<U> {
-  return {
-    state: resource.state,
-    value: resource.value !== undefined ? selector(resource.value) : undefined,
-    reason: resource.reason,
+    return [resource, reload];
   };
 }

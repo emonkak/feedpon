@@ -16,7 +16,9 @@ export const router = new Router<Loader>([
   }),
   route(['streams', decoded], ([streamId]) => async (store, signal) => {
     const session = await store.dispatch(startSession(streamId));
-    const stream = await store.dispatch(loadStream(streamId, session, signal));
+    const stream = await store.dispatch(
+      loadStream(streamId, session, { signal }),
+    );
     return StreamPage({ session, stream });
   }),
 ]);

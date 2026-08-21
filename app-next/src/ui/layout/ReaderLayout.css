@@ -5,12 +5,11 @@
   justify-content: center;
 }
 
-.ReaderLayout-Page,
-.ReaderLayout-Sidebar {
+.ReaderLayout-Page {
   opacity: 1;
   transition: opacity 0s 0s;
 
-  &.loading {
+  &[inert] {
     opacity: 0.5;
     transition: opacity 0s step-end 100ms;
   }

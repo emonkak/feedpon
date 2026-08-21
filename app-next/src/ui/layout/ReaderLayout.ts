@@ -1,29 +1,23 @@
-import { createComponent, html, type VElement } from 'barebind';
+import { html, type VElement } from 'barebind';
 import type { AsyncResource } from '../hooks/AsyncResource.ts';
 
 export interface ReaderLayoutProps {
-  page: AsyncResource<VElement>;
-  sidebar: AsyncResource<VElement>;
+  page: AsyncResource<VElement | undefined>;
+  sidebar: VElement;
 }
 
-export const ReaderLayout = createComponent(function ReaderLayout({
-  page,
-  sidebar,
-}: ReaderLayoutProps) {
+export function ReaderLayout({ page, sidebar }: ReaderLayoutProps) {
   return html`
     <div class="ReaderLayout">
-      <aside
-        class=${['ReaderLayout-Sidebar', { loading: sidebar.state === 'pending' }]}
-        inert=${sidebar.state === 'pending'}
-      >
-        <${sidebar.value}>
+      <aside class="ReaderLayout-Sidebar">
+        <${sidebar}>
       </aside>
       <main
-        class=${['ReaderLayout-Page', { loading: page.state === 'pending' }]}
+        class="ReaderLayout-Page"
         inert=${page.state === 'pending'}
       >
         <${page.value}>
       </main>
     </div>
   `;
-});
+}
