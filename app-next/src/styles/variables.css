@@ -21,6 +21,10 @@
   --text-scale-9: pow(var(--text-scale-base), -3);
   --text-scale-base: 1.125;
 
+  --default-light: rgb(255 255 255 / 0.4);
+  --default-shadow: rgb(from var(--default-10) r g b / 0.2);
+  --default-border: rgb(from var(--default-6) r g b / 0.8);
+  --default-bg: #ffffff;
   --default-1: #f0f4f7;
   --default-2: #d9e4ea;
   --default-3: #a2b3bd;
@@ -31,6 +35,10 @@
   --default-8: #1d2e37;
   --default-9: #121d22;
   --default-10: #0a0f11;
+
+  --primary-light: rgb(255 255 255 / 0.4);
+  --primary-shadow: rgb(from var(--primary-10) r g b / 0.2);
+  --primary-border: rgb(from var(--primary-6) r g b / 0.8);
   --primary-1: #f5f2fe;
   --primary-2: #e6defe;
   --primary-3: #b4a8e9;
@@ -41,6 +49,10 @@
   --primary-8: #242365;
   --primary-9: #18163f;
   --primary-10: #110a1f;
+
+  --secondary-light: rgb(255 255 255 / 0.4);
+  --secondary-shadow: rgb(from var(--secondary-10) r g b / 0.2);
+  --secondary-border: rgb(from var(--secondary-6) r g b / 0.8);
   --secondary-1: #fef0f4;
   --secondary-2: #fdd9e3;
   --secondary-3: #e09fb1;

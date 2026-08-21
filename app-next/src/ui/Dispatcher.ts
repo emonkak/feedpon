@@ -2,9 +2,10 @@ import { createComponent, html } from 'barebind';
 import { HashAdapter, SyncNavigation } from 'barebind/addons/router';
 import type { AppStore } from '../state/store.ts';
 import { AsyncResource } from './hooks/AsyncResource.ts';
-import { ReaderLayout } from './layout/ReaderLayout.ts';
 import { router } from './router.ts';
-import { Sidebar } from './sidebar/Sidebar.ts';
+import { ReaderScreen } from './screens/ReaderScreen.ts';
+import { Sidenav } from './sidenav/Sidenav.ts';
+import { Sidetoc } from './sidetoc/Sidetoc.ts';
 
 export interface DispatcherProps {
   store: AppStore;
@@ -25,7 +26,8 @@ export const Dispatcher = createComponent(function Dispatcher({
       [scene.url],
     ),
   );
-  const sidebar = Sidebar({ scene });
+  const sidenav = Sidenav({ scene });
+  const sidetoc = Sidetoc({ scene });
 
-  return ReaderLayout({ page, sidebar });
+  return ReaderScreen({ page, sidenav, sidetoc });
 });

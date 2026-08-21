@@ -1,5 +1,6 @@
 .TreeItem {
   --TreeNode-backgroundColor: transparent;
+  --TreeNode-boxShadow: none;
   --TreeNode-color: currentColor;
   --TreeNode-level: calc(var(--TreeNode-parent-level, 0) + 1);
   display: grid;
@@ -8,36 +9,48 @@
 
   &:where(:not(:has(&:hover))):hover {
     --TreeNode-backgroundColor: var(--default-2);
+    --TreeNode-boxShadow:
+      inset 1px 1px 0 var(--default-light),
+      inset -1px -1px 0 var(--default-shadow);
   }
 
   &.selected {
     --TreeNode-backgroundColor: var(--primary-6);
+    --TreeNode-boxShadow:
+      inset 1px 1px 0 var(--primary-light),
+      inset -1px -1px 0 var(--primary-shadow);
     --TreeNode-color: white;
   }
 }
 
 .TreeItem-Toggle {
+  --path: polygon(37.5% 75%, 37.5% 25%, 62.5% 50%);
   grid-area: cell-head;
   z-index: 1;
 
+  &.expanded {
+    --path: polygon(50% 62.5%, 25% 37.5%, 75% 37.5%);
+  }
+
   &::before {
-    background-color: currentColor;
-    clip-path: polygon(37.5% 75%, 37.5% 25%, 62.5% 50%);
+    clip-path: var(--path);
     color: var(--TreeNode-color);
     content: "";
     display: block;
+    grid-area: 1 / 1;
     height: 16px;
     width: 16px;
   }
 
-  &.expanded::before {
-    clip-path: polygon(50% 62.5%, 25% 37.5%, 75% 37.5%);
+  &::before {
+    background-color: var(--TreeNode-color);
   }
 }
 
 .TreeItem-Cell {
   align-items: center;
   background-color: var(--TreeNode-backgroundColor);
+  box-shadow: var(--TreeNode-boxShadow);
   color: var(--TreeNode-color);
   display: flex;
   gap: 8px;
@@ -49,6 +62,19 @@
       (var(--TreeNode-level) - 1)
     )
     16px;
+
+  [data-slot="icon"] {
+    flex: 0 0;
+  }
+
+  [data-slot="label"] {
+    flex: 1 1 auto;
+    min-inline-size: 0;
+  }
+
+  [data-slot="info"] {
+    flex: 0 0;
+  }
 }
 
 .TreeItem-Children {

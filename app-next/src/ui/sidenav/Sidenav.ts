@@ -12,13 +12,13 @@ import { AppStore } from '../../state/store.ts';
 import { AsyncResource } from '../hooks/AsyncResource.ts';
 import { Tree, TreeItem, type TreeItemProps } from '../primitives/Tree.ts';
 
-export interface SidebarProps {
+export interface SidenavProps {
   scene: NavigationScene;
 }
 
-export const Sidebar = createComponent(function Sidebar({
+export const Sidenav = createComponent(function Sidenav({
   scene,
-}: SidebarProps) {
+}: SidenavProps) {
   const store = this.inject(AppStore);
   const [subscriptions, _reloadSubscriptions] = this.use(
     AsyncResource(
@@ -34,11 +34,51 @@ export const Sidebar = createComponent(function Sidebar({
   );
 
   return html`
-    <nav class="Sidebar" inert=${subscriptions.state === 'pending'}>
-      <ul class="Sidebar-Group">
-        <${Tree({ ariaLabel: 'Subscriptions', children: treeItems })}>
-      </ul>
-    </nav>
+    <div class="Sidenav">
+      <header class="Sidenav-Header">
+        <menu class="Toolbar" role="toolbar">
+          <li class="Toolbar-Item">
+            <button
+              aria-label="Add feeds"
+              class="Button default"
+              title="Add feeds"
+            >
+              <div aria-hidden="true" class="EmojiIcon">
+                <span>➕</span>
+              </div>
+            </button>
+          </li>
+          <li class="Toolbar-Item">
+            <button
+              aria-label="Reload feeds"
+              class="Button default"
+              title="Reload feeds"
+            >
+              <div aria-hidden="true" class="EmojiIcon">
+                <span>🔄</span>
+              </div>
+            </button>
+          </li>
+          <li class="Toolbar-Spacer"></li>
+          <li class="Toolbar-Item">
+            <button
+              aria-label="Toggle sidebar"
+              class="Button default"
+              title="Toggle sidebar"
+            >
+              <div aria-hidden="true" class="EmojiIcon">
+                <span>⬅️</span>
+              </div>
+            </button>
+          </li>
+        </menu>
+      </header>
+      <div class="Sidenav-Main" inert=${subscriptions.state === 'pending'}>
+        <div class="Sidenav-Group">
+          <${Tree({ ariaLabel: 'Subscriptions', children: treeItems })}>
+        </div>
+      </div>
+    </div>
   `;
 });
 
@@ -91,8 +131,10 @@ function renderCategory(
     renderSubscription(subscription, currentURL),
   );
   const content = html`
-    <i aria-hidden="true" class="EmojiIcon"><span>📁</span></i>
-    <div>${category.label}</div>
+    <div aria-hidden="true" class="EmojiIcon" data-slot="icon">
+      <span>📁</span>
+    </div>
+    <div data-slot="label">${category.label}</div>
   `;
   return TreeItem({
     ariaLabel: category.label,
@@ -109,12 +151,17 @@ function renderFavicon(subscription: Subscription): VElement {
         <img
           alt=${subscription.title}
           aria-hidden="true"
+          data-slot="icon"
           height="16"
           src=${subscription.iconUrl}
           width="16"
         >
       `
-    : html`<i aria-hidden="true" class="EmojiIcon"><span>🌍️</span></i>`;
+    : html`
+        <div aria-hidden="true" class="EmojiIcon" data-slot="icon">
+          <span>🌍️</span>
+        </div>
+      `;
 }
 
 function renderSubscription(
@@ -124,7 +171,7 @@ function renderSubscription(
   const url = `/streams/${encodeURIComponent(subscription.id)}`;
   const content = html`
     <${renderFavicon(subscription)}>
-    <div>${subscription.title}</div>
+    <div data-slot="label">${subscription.title}</div>
   `;
   return TreeItem({
     ariaLabel: subscription.title,

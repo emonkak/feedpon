@@ -12,15 +12,33 @@
 }
 
 .StackScroller-Item {
-  background-color: white;
-  box-shadow: 0 -6px 12px rgb(from var(--default-6) r g b / 0.2);
+  background-color: var(--default-bg);
+  box-shadow: 0 -1px 2px var(--default-shadow);
   box-sizing: border-box;
   min-block-size: var(--StackScroller-itemSize);
   position: sticky;
   scroll-margin-block-start: var(--StackScroller-headerSize);
 
   & + & {
-    border-block-start: 1px solid rgb(from var(--default-6) r g b / 0.2);
+    border-block-start: 1px solid var(--default-border);
+  }
+
+  &.prev,
+  &.next {
+    margin-block-start: calc(var(--StackScroller-itemSize) * -1);
+    max-block-size: var(--StackScroller-itemSize);
+    overflow: clip;
+  }
+
+  &.prev {
+    background-color: var(--default-1);
+    inset-block-start: var(--StackScroller-headerSize);
+  }
+
+  &.current {
+    animation-name: StackScroller-Item-exit;
+    animation-timeline: view();
+    animation-range: exit 0% exit 50%;
   }
 
   &.current:only-child {
@@ -34,15 +52,14 @@
   &.current:not(:last-child) {
     inset-block-end: 0;
   }
+}
 
-  &.prev,
-  &.next {
-    margin-block-start: calc(var(--StackScroller-itemSize) * -1);
-    max-block-size: var(--StackScroller-itemSize);
-    overflow: clip;
+@keyframes StackScroller-Item-exit {
+  from {
+    background-color: var(--default-bg);
   }
 
-  &.prev {
-    inset-block-start: var(--StackScroller-headerSize);
+  to {
+    background-color: var(--default-1);
   }
 }

@@ -38,7 +38,7 @@ export const StreamPage = createComponent(function StreamPage({
       <header class="StreamPage-Header">
         <${nav}>
       </header>
-      <div class="StreamPage-Content">
+      <div class="StreamPage-Main">
         <${scroller}>
       </div>
     </div>

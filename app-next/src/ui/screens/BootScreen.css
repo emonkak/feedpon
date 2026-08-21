@@ -1,0 +1,31 @@
+.BootScreen {
+  display: grid;
+  grid-template-areas:
+    "."
+    "title"
+    "message"
+    ".";
+  grid-template-rows: 1fr auto auto 1fr;
+  min-height: 100vh;
+  place-items: center;
+}
+
+.BootScreen-title {
+  grid-area: title;
+}
+
+.BootScreen-message {
+  animation: BootScreen-pulse 2s infinite ease-in-out;
+  color: var(--default-6);
+  grid-area: message;
+}
+
+@keyframes BootScreen-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}

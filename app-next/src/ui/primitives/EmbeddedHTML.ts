@@ -304,12 +304,12 @@ function resolveSrcset(el: Element, origin: string): void {
     el.setAttribute(
       ATTRIBUTE_SRCSET,
       parseImageCandidates(el.getAttribute(ATTRIBUTE_SRCSET)!)
-        .filter(({ url }) => SAFE_URL_SCHEMA_PATTERN.test(url))
         .map(
           ({ url, descriptor }) =>
             toAbsoluteUrl(url, origin) +
             (descriptor !== undefined ? ' ' + descriptor : ''),
         )
+        .filter((candidate) => SAFE_URL_SCHEMA_PATTERN.test(candidate))
         .join(','),
     );
   }

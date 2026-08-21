@@ -1,8 +1,8 @@
 import { createComponent } from 'barebind';
 import type { AppStore } from '../state/store.ts';
 import { AuthGuard } from './auth/AuthGuard.ts';
-import { BootScreen } from './Bootscreen.ts';
 import { Dispatcher } from './Dispatcher.ts';
+import { BootScreen } from './screens/BootScreen.ts';
 
 export interface AppProps {
   prepareStore: () => Promise<AppStore>;

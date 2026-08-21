@@ -1,0 +1,24 @@
+.Sidenav {
+  display: grid;
+  grid-template-areas: "header" "main";
+  grid-template-rows: auto 1fr;
+  max-height: 100vh;
+  opacity: 1;
+  position: sticky;
+  top: 0;
+  transition: opacity 0s 0s;
+
+  &[inert] {
+    opacity: 0.5;
+    transition: opacity 0s step-end 100ms;
+  }
+}
+
+.Sidenav-Header {
+  grid-area: header;
+}
+
+.Sidenav-Main {
+  overflow-y: auto;
+  grid-area: main;
+}

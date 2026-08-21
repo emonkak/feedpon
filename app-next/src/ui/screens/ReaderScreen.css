@@ -1,0 +1,64 @@
+.ReaderScreen {
+  display: grid;
+  grid-template-areas: "sidenav main sidetoc";
+  grid-template-columns: 0 minmax(auto, 50rem) 0;
+  justify-content: center;
+}
+
+.ReaderScreen-Main {
+  background-color: var(--default-bg);
+  border-color: var(--default-border);
+  border-style: solid;
+  border-width: 0;
+  box-sizing: border-box;
+  grid-area: main;
+  min-height: 100vh;
+  opacity: 1;
+  overflow: clip;
+  transition: opacity 0s 0s;
+  z-index: 1;
+
+  &[inert] {
+    opacity: 0.5;
+    transition: opacity 0s step-end 100ms;
+  }
+}
+
+.ReaderScreen-Sidenav {
+  box-shadow: inset -1px 0 0 var(--default-shadow);
+  display: none;
+  grid-area: sidenav;
+}
+
+.ReaderScreen-Sidetoc {
+  box-shadow: inset 1px 0 0 var(--default-light);
+  display: none;
+  grid-area: sidetoc;
+}
+
+@media (min-width: 50rem) {
+  .ReaderScreen-Main {
+    border-left-width: 1px;
+    border-right-width: 1px;
+  }
+}
+
+@media (min-width: 66rem) {
+  .ReaderScreen {
+    grid-template-columns: 16rem minmax(auto, 50rem) 0;
+  }
+
+  .ReaderScreen-Sidenav {
+    display: block;
+  }
+}
+
+@media (min-width: 82rem) {
+  .ReaderScreen {
+    grid-template-columns: 16rem minmax(auto, 50rem) 17rem;
+  }
+
+  .ReaderScreen-Sidetoc {
+    display: block;
+  }
+}

@@ -9,7 +9,7 @@ html {
 
 body {
   background-color: var(--default-1);
-  color: var(--default-9);
+  color: var(--default-10);
   font: inherit;
   margin: 0;
 }
@@ -66,6 +66,7 @@ h6 {
 blockquote,
 dl,
 figure,
+menu,
 ol,
 p,
 pre,
@@ -82,13 +83,14 @@ dd {
   margin-inline-start: 1rlh;
 }
 
+menu,
 ol,
 ul {
   padding-inline-start: 1.5rlh;
   margin-block: 0 1rlh;
 }
 
-:where(ul, ol)[class] {
+:where(menu, ol, ul)[class] {
   list-style: none;
   margin: 0;
   padding: 0;
