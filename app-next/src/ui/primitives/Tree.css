@@ -1,6 +1,7 @@
 .TreeItem {
   --TreeNode-backgroundColor: transparent;
   --TreeNode-color: currentColor;
+  --TreeNode-level: calc(var(--TreeNode-parent-level, 0) + 1);
   display: grid;
   grid-template-areas: "cell-head cell-tail" "children children";
   grid-template-columns: 16px 1fr;
@@ -41,9 +42,16 @@
   display: flex;
   gap: 8px;
   grid-area: cell-head-start / cell-head / cell-tail / cell-tail-end;
-  padding-inline: 16px;
+  padding-inline: calc(
+      16px *
+      var(--TreeNode-level) +
+      8px *
+      (var(--TreeNode-level) - 1)
+    )
+    16px;
 }
 
 .TreeItem-Children {
+  --TreeNode-parent-level: var(--TreeNode-level);
   grid-area: children;
 }

@@ -91,6 +91,7 @@ function renderCategory(
     renderSubscription(subscription, currentURL),
   );
   const content = html`
+    <i aria-hidden="true" class="EmojiIcon"><span>📁</span></i>
     <div>${category.label}</div>
   `;
   return TreeItem({
