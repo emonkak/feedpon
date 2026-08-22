@@ -1,4 +1,4 @@
-.BootScreen {
+.BootLayout {
   display: grid;
   grid-template-areas:
     "."
@@ -10,17 +10,17 @@
   place-items: center;
 }
 
-.BootScreen-title {
+.BootLayout-title {
   grid-area: title;
 }
 
-.BootScreen-message {
-  animation: BootScreen-pulse 2s infinite ease-in-out;
+.BootLayout-message {
+  animation: BootLayout-pulse 2s infinite ease-in-out;
   color: var(--default-6);
   grid-area: message;
 }
 
-@keyframes BootScreen-pulse {
+@keyframes BootLayout-pulse {
   0%,
   100% {
     opacity: 1;

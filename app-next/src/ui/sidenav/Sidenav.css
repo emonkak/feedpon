@@ -1,8 +1,9 @@
 .Sidenav {
+  border-inline-end: 1px solid var(--default-border);
   display: grid;
   grid-template-areas: "header" "main";
   grid-template-rows: auto 1fr;
-  max-height: 100vh;
+  height: 100vh;
   opacity: 1;
   position: sticky;
   top: 0;
@@ -15,10 +16,32 @@
 }
 
 .Sidenav-Header {
+  background-color: var(--default-2);
+  border-block-end: 1px solid var(--default-border);
+  box-shadow:
+    inset 0 1px var(--default-light),
+    inset 1px 0 var(--default-light),
+    inset 0 -1px var(--default-light),
+    inset -1px 0 var(--default-light);
+  display: grid;
   grid-area: header;
+  height: 2rlh;
+  place-items: stretch;
 }
 
 .Sidenav-Main {
-  overflow-y: auto;
+  background-color: var(--default-1);
   grid-area: main;
+  overflow-y: auto;
+}
+
+.SideNav-Toolbar {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  padding-inline: 16px;
+}
+
+.SideNav-Toolbar-Spacer {
+  flex: 1;
 }

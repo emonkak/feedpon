@@ -1,0 +1,7 @@
+.Sidetoc {
+  background-color: var(--default-1);
+  border-inline-start: 1px solid var(--default-border);
+  height: 100vh;
+  position: sticky;
+  top: 0;
+}

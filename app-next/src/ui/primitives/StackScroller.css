@@ -12,15 +12,15 @@
 }
 
 .StackScroller-Item {
-  background-color: var(--default-bg);
-  box-shadow: 0 -1px 2px var(--default-shadow);
-  box-sizing: border-box;
+  background-color: var(--default-0);
   min-block-size: var(--StackScroller-itemSize);
   position: sticky;
   scroll-margin-block-start: var(--StackScroller-headerSize);
 
   & + & {
-    border-block-start: 1px solid var(--default-border);
+    box-shadow:
+      0 -1px var(--default-border),
+      0 -4px 8px var(--default-shadow);
   }
 
   &.prev,
@@ -30,15 +30,21 @@
     overflow: clip;
   }
 
+  &.prev,
+  &.current {
+    animation-name: StackScroller-Item-dim;
+    animation-timing-function: ease;
+  }
+
   &.prev {
-    background-color: var(--default-1);
+    animation-range: entry 0% entry 100%;
+    animation-timeline: view(block 0 100%);
     inset-block-start: var(--StackScroller-headerSize);
   }
 
   &.current {
-    animation-name: StackScroller-Item-exit;
-    animation-timeline: view();
-    animation-range: exit 0% exit 50%;
+    animation-range: exit 0% exit 100%;
+    animation-timeline: view(block 100% 0%);
   }
 
   &.current:only-child {
@@ -54,12 +60,12 @@
   }
 }
 
-@keyframes StackScroller-Item-exit {
+@keyframes StackScroller-Item-dim {
   from {
-    background-color: var(--default-bg);
+    filter: brightness(1);
   }
 
   to {
-    background-color: var(--default-1);
+    filter: brightness(0.8);
   }
 }

@@ -1,0 +1,50 @@
+.ReaderLayout {
+  display: grid;
+  grid-template-areas: "sidenav main sidetoc";
+  grid-template-columns: 0 1fr 0;
+  justify-content: center;
+}
+
+.ReaderLayout-Main {
+  grid-area: main;
+  min-height: 100vh;
+  min-width: 0;
+  opacity: 1;
+  overflow: clip;
+  transition: opacity 0s 0s;
+
+  &[inert] {
+    opacity: 0.5;
+    transition: opacity 0s step-end 100ms;
+  }
+}
+
+.ReaderLayout-Sidenav {
+  display: none;
+  grid-area: sidenav;
+}
+
+.ReaderLayout-Sidetoc {
+  display: none;
+  grid-area: sidetoc;
+}
+
+@media (min-width: 66rem) {
+  .ReaderLayout {
+    grid-template-columns: 18rem 1fr 0;
+  }
+
+  .ReaderLayout-Sidenav {
+    display: block;
+  }
+}
+
+@media (min-width: 84rem) {
+  .ReaderLayout {
+    grid-template-columns: 18rem 1fr 18rem;
+  }
+
+  .ReaderLayout-Sidetoc {
+    display: block;
+  }
+}

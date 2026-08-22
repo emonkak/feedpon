@@ -1,25 +1,25 @@
 import { html, type VElement } from 'barebind';
 import type { AsyncResource } from '../hooks/AsyncResource.ts';
 
-export interface ReaderScreenProps {
+export interface ReaderLayoutProps {
   page: AsyncResource<VElement | undefined>;
   sidenav: VElement;
   sidetoc: VElement;
 }
 
-export function ReaderScreen({ page, sidenav, sidetoc }: ReaderScreenProps) {
+export function ReaderLayout({ page, sidenav, sidetoc }: ReaderLayoutProps) {
   return html`
-    <div class="ReaderScreen">
-      <nav class="ReaderScreen-Sidenav">
+    <div class="ReaderLayout">
+      <nav class="ReaderLayout-Sidenav">
         <${sidenav}>
       </nav>
       <main
-        class="ReaderScreen-Main"
+        class="ReaderLayout-Main"
         inert=${page.state === 'pending'}
       >
         <${page.value}>
       </main>
-      <aside class="ReaderScreen-Sidetoc">
+      <aside class="ReaderLayout-Sidetoc">
         <${sidetoc}>
       </aside>
     </div>

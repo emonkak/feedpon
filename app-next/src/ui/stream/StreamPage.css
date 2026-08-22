@@ -1,11 +1,18 @@
-.StreamPage {
-  --StreamPage-headerSize: 2rlh;
-}
-
 .StreamPage-Header {
+  align-items: center;
+  background-color: var(--default-2);
+  border-block-end: 1px solid var(--default-border);
+  box-shadow:
+    inset 0 1px var(--default-light),
+    inset 1px 0 var(--default-light),
+    inset 0 -1px var(--default-light),
+    inset -1px 0 var(--default-light);
+  color: var(--default-10);
   display: grid;
-  height: var(--StreamPage-headerSize);
-  place-items: stretch;
+  grid-template-columns: minmax(auto, var(--text-width));
+  height: 2rlh;
+  padding-inline: 1rlh;
+  justify-content: center;
   position: sticky;
   top: 0;
   z-index: 1;

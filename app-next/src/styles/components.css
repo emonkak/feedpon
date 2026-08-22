@@ -27,24 +27,25 @@
   border-radius: 4px;
   border: 1px solid var(--Button-borderColor);
   box-shadow:
-    inset 1px 1px 0 var(--Button-lightColor),
-    inset -1px -1px 0 var(--Button-shadowColor);
+    inset 0 1px var(--Button-lightColor),
+    inset 1px 0 var(--Button-lightColor),
+    inset 0 -1px var(--Button-lightColor),
+    inset -1px 0 var(--Button-lightColor),
+    1px 1px var(--Button-shadowColor);
   color: var(--Button-color);
   padding-block: calc(0.25rlh - 1px);
   padding-inline: 1ch;
 
-  &:active {
-    box-shadow:
-      inset 1px 1px 0px var(--Button-shadowColor),
-      inset -1px -1px 0 var(--Button-lightColor);
-  }
-
   &.default {
-    --Button-backgroundColor: var(--default-2);
+    --Button-backgroundColor: var(--default-1);
     --Button-borderColor: var(--default-border);
     --Button-color: var(--default-10);
     --Button-lightColor: var(--default-light);
     --Button-shadowColor: var(--default-shadow);
+  }
+
+  &.default:active {
+    --Button-backgroundColor: var(--default-2);
   }
 }
 
@@ -74,16 +75,4 @@
   span::first-letter {
     font-size: calc(1em * tan(atan2(1em, 100cqi)));
   }
-}
-
-.Toolbar {
-  align-items: center;
-  display: flex;
-  gap: 8px;
-  height: 2rlh;
-  padding-inline: 16px;
-}
-
-.Toolbar-Spacer {
-  flex: 1;
 }

@@ -22,7 +22,7 @@ export const StreamItem = createComponent(function StreamItem({
         </h1>
       </header>
       <div
-        class="Entry-content"
+        class="StreamItem-Content"
         dir=${(entry.content ?? entry.summary)?.direction}
       >
         <${EmbeddedHTML({

@@ -5,9 +5,10 @@
 
 @import "./ui/primitives/StackScroller.css";
 @import "./ui/primitives/Tree.css";
-@import "./ui/screens/BootScreen.css";
-@import "./ui/screens/ReaderScreen.css";
+@import "./ui/layouts/BootLayout.css";
+@import "./ui/layouts/ReaderLayout.css";
 @import "./ui/sidenav/Sidenav.css";
+@import "./ui/sidetoc/Sidetoc.css";
 @import "./ui/stream/StreamItem.css";
 @import "./ui/stream/StreamNav.css";
 @import "./ui/stream/StreamPage.css";

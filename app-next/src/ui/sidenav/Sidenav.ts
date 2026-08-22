@@ -34,10 +34,10 @@ export const Sidenav = createComponent(function Sidenav({
   );
 
   return html`
-    <div class="Sidenav">
+    <div class="Sidenav" inert=${subscriptions.state === 'pending'}>
       <header class="Sidenav-Header">
-        <menu class="Toolbar" role="toolbar">
-          <li class="Toolbar-Item">
+        <menu class="SideNav-Toolbar" role="toolbar">
+          <li class="SideNav-Toolbar-Item">
             <button
               aria-label="Add feeds"
               class="Button default"
@@ -48,7 +48,7 @@ export const Sidenav = createComponent(function Sidenav({
               </div>
             </button>
           </li>
-          <li class="Toolbar-Item">
+          <li class="SideNav-Toolbar-Item">
             <button
               aria-label="Reload feeds"
               class="Button default"
@@ -59,8 +59,8 @@ export const Sidenav = createComponent(function Sidenav({
               </div>
             </button>
           </li>
-          <li class="Toolbar-Spacer"></li>
-          <li class="Toolbar-Item">
+          <li class="SideNav-Toolbar-Spacer"></li>
+          <li class="SideNav-Toolbar-Item">
             <button
               aria-label="Toggle sidebar"
               class="Button default"
@@ -73,7 +73,7 @@ export const Sidenav = createComponent(function Sidenav({
           </li>
         </menu>
       </header>
-      <div class="Sidenav-Main" inert=${subscriptions.state === 'pending'}>
+      <div class="Sidenav-Main">
         <div class="Sidenav-Group">
           <${Tree({ ariaLabel: 'Subscriptions', children: treeItems })}>
         </div>
@@ -159,7 +159,7 @@ function renderFavicon(subscription: Subscription): VElement {
       `
     : html`
         <div aria-hidden="true" class="EmojiIcon" data-slot="icon">
-          <span>🌍️</span>
+          <span>📄</span>
         </div>
       `;
 }
