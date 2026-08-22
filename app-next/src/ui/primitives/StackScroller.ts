@@ -53,18 +53,14 @@ export const StackScroller: StackScroller = createComponent(
         ),
       [],
     );
-    const currentRef = this.useRef<HTMLElement | null>(null);
+    const rootRef = this.useRef<HTMLElement | null>(null);
     const sentinelRef = this.useCallback((target: HTMLElement) => {
       intersectionObserver.observe(target);
       return () => {
         intersectionObserver.unobserve(target);
       };
     }, []);
-    const renderItem = (
-      kind: 'prev' | 'current' | 'next',
-      index: number,
-      ref?: Ref<HTMLElement | null>,
-    ) => {
+    const renderItem = (type: 'prev' | 'current' | 'next', index: number) => {
       if (index < 0 || index >= source.length) {
         return undefined;
       }
@@ -74,8 +70,7 @@ export const StackScroller: StackScroller = createComponent(
         <li
           aria-posinset=${index + 1}
           aria-setsize=${source.length}
-          class=${['StackScroller-Item', kind]}
-          ${ref}
+          class=${['StackScroller-Item', type]}
         >
           <${element}>
         </li>
@@ -83,18 +78,16 @@ export const StackScroller: StackScroller = createComponent(
     };
 
     this.useEffect(() => {
-      const y =
-        currentRef.current?.previousElementSibling?.getBoundingClientRect()
-          .height ?? 0;
+      const y = index > 0 ? window.innerHeight - rootRef.current!.offsetTop : 0;
       window.scrollTo(0, y);
     }, [index]);
 
     const prev = renderItem('prev', index - 1);
-    const current = renderItem('current', index, currentRef);
+    const current = renderItem('current', index);
     const next = renderItem('next', index + 1);
 
     return html`
-      <div class="StackScroller">
+      <div class="StackScroller" ${rootRef}>
         <div
           class="StackScroller-Top"
           data-index=${prev !== undefined ? index - 1 : undefined}
