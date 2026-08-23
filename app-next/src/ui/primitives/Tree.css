@@ -10,6 +10,10 @@
     --TreeNode-backgroundColor: var(--default-2);
   }
 
+  &.indirectlySelected {
+    --TreeNode-backgroundColor: var(--primary-2);
+  }
+
   &.selected {
     --TreeNode-backgroundColor: var(--primary-6);
     --TreeNode-color: var(--primary-0);

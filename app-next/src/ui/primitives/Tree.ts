@@ -98,7 +98,7 @@ export const TreeItem = createComponent(function TreeItem({
     <div
       @keydown=${handleKeyDown}
       aria-selected=${selected.toString()}
-      class=${['TreeItem', { selected }]}
+      class=${['TreeItem', { indirectlySelected, selected }]}
       role="treeitem"
     >
       <${

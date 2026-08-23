@@ -11,7 +11,6 @@
   display: grid;
   grid-template-columns: minmax(auto, var(--text-width));
   height: 2rlh;
-  padding-inline: 1rlh;
   justify-content: center;
   position: sticky;
   top: 0;

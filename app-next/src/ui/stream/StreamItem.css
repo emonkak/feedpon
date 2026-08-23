@@ -1,4 +1,5 @@
 .StreamItem {
+  box-sizing: border-box;
   margin-inline: auto;
   max-inline-size: var(--text-width);
   min-block-size: calc(100vh - 2rlh);

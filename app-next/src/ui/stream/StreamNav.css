@@ -1,6 +1,8 @@
 .StreamNav {
+  box-sizing: border-box;
   line-height: 1.5;
-  min-width: 0;
+  min-inline-size: 0;
+  padding-inline: 1rlh;
 }
 
 .StreamNav-title,
