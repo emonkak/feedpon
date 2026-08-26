@@ -15,18 +15,18 @@ export const StreamNav = createComponent(function StreamNav({
 
   return html`
     <nav class="StreamNav">
-      <div class="StreamNav-Section left u-small-only">
-        <button type="button" class="Button ghost default">
-          <div class="PathIcon shape toggle-sidebar"></div>
+      <div class="StreamNav-Left use-only-small">
+        <button type="button" class="Button flat default">
+          <div class="PathIcon shape menu slot-icon"></div>
         </button>
       </div>
-      <div class="StreamNav-Section center">
+      <div class="StreamNav-Middle">
         <h1 class="StreamNav-title">${item?.origin.title ?? stream.title}</h1>
         <h2 class="StreamNav-subtitle">${item?.title}</h2>
       </div>
-      <div class="StreamNav-Section right">
-        <button type="button" class="Button ghost default">
-          <div class="PathIcon solid vertical-dot"></div>
+      <div class="StreamNav-Right">
+        <button type="button" class="Button flat default">
+          <div class="PathIcon solid vertical-dots slot-icon"></div>
         </button>
       </div>
     </nav>

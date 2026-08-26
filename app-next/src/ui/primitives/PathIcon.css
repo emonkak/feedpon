@@ -1,47 +1,83 @@
 .PathIcon {
   --size: attr(data-size px, 16px);
-  display: block;
+  box-sizing: border-box;
   height: var(--size);
   width: var(--size);
 
   &.shape {
-    border-shape: var(--path);
-    border: 2px solid currentColor;
-    transform: translate(1px, 1px);
+    border-bottom: 2px solid currentColor;
+    border-shape: var(--path) content-box;
   }
 
   &.solid {
     background-color: currentColor;
-    clip-path: var(--path);
+    clip-path: var(--path) content-box;
   }
 
-  &.toggle-sidebar {
+  &.horizontal-dots {
     --path: shape(
-      from 37.5% 0%,
-      line to 62.5% 0%,
-      arc to 100% 37.5% of 37.5% 37.5% cw,
-      line to 100% 62.5%,
-      arc to 62.5% 100% of 37.5% 37.5% cw,
-      line to 37.5% 100%,
-      arc to 0% 62.5% of 37.5% 37.5% cw,
-      line to 0% 37.5%,
-      arc to 37.5% 0% of 37.5% 37.5% cw,
-      move to 25% 25%,
-      line to 25% 75%
+      /* left dot */
+      from 1px 8px,
+      arc to 4px 8px of 1px cw,
+      arc to 1px 8px of 1px cw,
+      /* center dot */
+      move to 6px 8px,
+      arc to 9px 8px of 1px cw,
+      arc to 6px 8px of 1px cw,
+      /* right dot */
+      move to 11px 8px,
+      arc to 14px 8px of 1px cw,
+      arc to 11px 8px of 1px cw
     );
   }
 
-  &.vertical-dot {
+  &.menu {
     --path: shape(
-      from 50% 0%,
-      arc to 50% 25% of 12.5% 12.5% cw,
-      arc to 50% 0% of 12.5% 12.5% cw,
-      move to 50% 37.5%,
-      arc to 50% 62.5% of 12.5% 12.5% cw,
-      arc to 50% 37.5% of 12.5% 12.5% cw,
-      move to 50% 75%,
-      arc to 50% 100% of 12.5% 12.5% cw,
-      arc to 50% 75% of 12.5% 12.5% cw
+      /* top border */
+      from 0px 2px,
+      line to 16px 2px,
+      /* middle border */
+      move to 0px 8px,
+      line to 16px 8px,
+      /* bottom border */
+      move to 0px 14px,
+      line to 16px 14px
+    );
+  }
+
+  &.preference {
+    --path: shape(
+      /* left border */
+      from 4px 1px,
+      line to 4px 4px,
+      arc to 4px 8px of 2px cw,
+      arc to 4px 4px of 2px cw,
+      move to 4px 8px,
+      line to 4px 15px,
+      /* right border */
+      move to 12px 1px,
+      line to 12px 8px,
+      arc to 12px 12px of 2px cw,
+      arc to 12px 8px of 2px cw,
+      move to 12px 12px,
+      line to 12px 15px
+    );
+  }
+
+  &.vertical-dots {
+    --path: shape(
+      /* top dot */
+      from 8px 1px,
+      arc to 8px 4px of 1px cw,
+      arc to 8px 1px of 1px cw,
+      /* middle dot */
+      move to 8px 6px,
+      arc to 8px 9px of 1px cw,
+      arc to 8px 6px of 1px cw,
+      /* bottom dot */
+      move to 8px 11px,
+      arc to 8px 14px of 1px cw,
+      arc to 8px 11px of 1px cw
     );
   }
 }

@@ -1,21 +1,21 @@
 .StackScroller {
-  --StackScroller-headerSize: 2rlh;
-  --StackScroller-itemSize: calc(100vh - var(--StackScroller-headerSize));
+  --header-height: 2rlh;
+  --item-height: calc(100vh - var(--header-height));
 }
 
 .StackScroller-List {
   &::before {
-    block-size: var(--StackScroller-itemSize);
+    block-size: var(--item-height);
     content: "";
     display: block;
   }
 }
 
 .StackScroller-Item {
-  background-color: var(--default-0);
-  min-block-size: var(--StackScroller-itemSize);
+  background-color: var(--default-bg);
+  min-block-size: var(--item-height);
   position: sticky;
-  scroll-margin-block-start: var(--StackScroller-headerSize);
+  scroll-margin-block-start: var(--header-height);
 
   & + & {
     box-shadow:
@@ -25,8 +25,8 @@
 
   &.prev,
   &.next {
-    margin-block-start: calc(var(--StackScroller-itemSize) * -1);
-    max-block-size: var(--StackScroller-itemSize);
+    margin-block-start: calc(var(--item-height) * -1);
+    max-block-size: var(--item-height);
     overflow: clip;
   }
 
@@ -39,7 +39,7 @@
   &.prev {
     animation-range: entry 0% entry 100%;
     animation-timeline: view(block 0 100%);
-    inset-block-start: var(--StackScroller-headerSize);
+    inset-block-start: var(--header-height);
   }
 
   &.current {
@@ -48,11 +48,11 @@
   }
 
   &.current:only-child {
-    margin-block-start: calc(var(--StackScroller-itemSize) * -1);
+    margin-block-start: calc(var(--item-height) * -1);
   }
 
   &.current:not(:first-child):not(:last-child) {
-    margin-block-start: var(--StackScroller-itemSize);
+    margin-block-start: var(--item-height);
   }
 
   &.current:not(:last-child) {

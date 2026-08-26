@@ -3,7 +3,7 @@
   --TreeNode-color: currentColor;
   --TreeNode-level: calc(var(--TreeNode-parent-level, 0) + 1);
   display: grid;
-  grid-template-areas: "cell-head cell-tail" "children children";
+  grid-template-areas: "head tail" "children children";
   grid-template-columns: 24px 1fr;
 
   &:where(:not(:has(&:hover))):hover {
@@ -16,21 +16,21 @@
 
   &.selected {
     --TreeNode-backgroundColor: var(--primary-6);
-    --TreeNode-color: var(--primary-0);
+    --TreeNode-color: var(--default-bg);
   }
 
   &::before {
     background-color: var(--TreeNode-backgroundColor);
     border-radius: 4px;
     content: "";
-    grid-area: cell-head-start / cell-head / cell-tail / cell-tail-end;
+    grid-area: head-start / head / tail / tail-end;
     margin-inline: 4px;
   }
 }
 
 .Tree-Item-Toggle {
   --path: polygon(37.5% 75%, 37.5% 25%, 62.5% 50%);
-  grid-area: cell-head;
+  grid-area: head;
   z-index: 1;
 
   &.expanded {
@@ -44,7 +44,7 @@
     content: "";
     display: block;
     inline-size: 16px;
-    margin-inline: auto;
+    margin-inline-start: auto;
   }
 
   &::before {
@@ -53,19 +53,22 @@
 }
 
 .Tree-Item-Cell {
-  align-items: center;
   position: relative;
   color: var(--TreeNode-color);
-  display: grid;
+  display: flex;
   gap: 8px;
-  grid-area: cell-head-start / cell-head / cell-tail / cell-tail-end;
-  grid-template-areas: "icon label info";
-  grid-template-columns: auto 1fr auto;
-  padding-inline: calc(24px * var(--TreeNode-level)) 16px;
+  grid-area: head-start / head / tail / tail-end;
+  padding-inline: calc(24px * var(--TreeNode-level)) 8px;
 
-  [data-slot] {
-    grid-area: attr(data-slot type(<custom-ident>));
+  .slot-icon {
+    align-self: center;
+  }
+
+  .slot-label {
+    flex: 1;
+    margin-block: calc((1lh - 1cap) / 2);
     min-inline-size: 0;
+    text-box: trim-both cap alphabetic;
   }
 }
 

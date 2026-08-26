@@ -7,7 +7,7 @@ html {
 }
 
 body {
-  background-color: var(--default-0);
+  background-color: var(--default-1);
   color: var(--default-10);
   font: inherit;
   margin: 0;
@@ -22,13 +22,7 @@ h6 {
   font-family: var(--font-display);
   font-size: calc(1rem * var(--heading-scale, 1));
   letter-spacing: -2%;
-  line-height: round(
-    1rlh *
-    var(--heading-scale, 1) -
-    0.25rlh *
-    var(--heading-scale, 1),
-    0.25rlh
-  );
+  line-height: round(0.75rlh * var(--heading-scale, 1), 0.25rlh);
   margin-block: 0 0.5rlh;
   text-wrap: balance;
 }
@@ -58,7 +52,8 @@ h6 {
 }
 
 :where(h1, h2, h3, h4, h5, h6)[class] {
-  --heading-scale: 1;
+  font-size: inherit;
+  line-height: inherit;
   margin-block: 0;
 }
 

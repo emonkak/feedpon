@@ -1,35 +1,59 @@
 .Button {
   border-radius: 4px;
-  color: var(--Button-color);
-  padding-block: calc(0.25rlh - 1px);
+  box-sizing: border-box;
+  display: flex;
+  min-block-size: 1rlh;
   padding-inline: 8px;
+  border: 1px solid transparent;
 
-  &.ghost:hover {
-    background-color: var(--Button-hoverBackgroundColor);
+  &.flat {
+    background-color: var(--flat-background-color);
+    color: var(--flat-color);
+  }
+
+  &.flat:hover {
+    background-color: var(--flat-hover-background-color);
+    color: var(--flat-hover-color);
+  }
+
+  &.flat:active {
+    background-color: var(--flat-active-background-color);
+    color: var(--flat-hover-color);
   }
 
   &.solid {
-    background-color: var(--Button-backgroundColor);
-    border: 1px solid var(--Button-borderColor);
+    border-color: var(--solid-border-color);
+    background-color: var(--solid-background-color);
     box-shadow:
-      inset 0 1px var(--Button-lightColor),
-      inset 1px 0 var(--Button-lightColor),
-      inset 0 -1px var(--Button-lightColor),
-      inset -1px 0 var(--Button-lightColor),
-      0 1px var(--Button-shadowColor);
+      inset 0 1px var(--solid-light-color),
+      inset 1px 0 var(--solid-light-color),
+      inset 0 -1px var(--solid-light-color),
+      inset -1px 0 var(--solid-light-color),
+      0 1px var(--solid-shadow-color);
+    color: var(--solid-color);
   }
 
   &.solid:active {
-    background-color: var(--Button-activeBackgroundColor);
+    background-color: var(--solid-active-background-color);
   }
 
   &.default {
-    --Button-activeBackgroundColor: var(--default-2);
-    --Button-backgroundColor: var(--default-1);
-    --Button-borderColor: var(--default-border);
-    --Button-color: var(--default-10);
-    --Button-hoverBackgroundColor: var(--default-1);
-    --Button-lightColor: var(--default-light);
-    --Button-shadowColor: var(--default-shadow);
+    --flat-active-background-color: var(--default-4);
+    --flat-background-color: var(--default-2);
+    --flat-color: var(--default-1);
+    --flat-hover-background-color: var(--default-3);
+    --flat-hover-color: var(--default-6);
+    --icon-color: var(--default-6);
+    --solid-active-background-color: var(--default-2);
+    --solid-background-color: var(--default-1);
+    --solid-border-color: var(--default-border);
+    --solid-color: var(--default-10);
+    --solid-light-color: var(--default-light);
+    --solid-shadow-color: var(--default-shadow);
+  }
+
+  .slot-icon {
+    align-self: center;
+    color: var(--icon-color);
   }
 }

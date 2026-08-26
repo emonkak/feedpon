@@ -1,0 +1,67 @@
+.SideMenu-Section {
+  & + & {
+    box-shadow: 0 -1px var(--default-border);
+    margin-block-start: calc(var(--text-leading) / 4);
+  }
+
+  &:not(:has(.SideMenu-Header)) {
+    padding-block-start: calc(var(--text-leading) / 4);
+  }
+}
+
+.SideMenu-Header {
+  color: var(--default-6);
+  display: flex;
+  font-size: calc(1rem * var(--text-scale-8));
+
+  .slot-label {
+    flex: 1;
+    min-inline-size: 0;
+    padding-inline: 24px 8px;
+  }
+
+  .slot-action {
+    place-self: center;
+  }
+}
+
+.SideMenu-Item {
+  display: grid;
+
+  &:hover {
+    --Menu-Item-backgroundColor: var(--default-2);
+  }
+
+  &.selected {
+    --Menu-Item-backgroundColor: var(--primary-6);
+    --Menu-Item-color: var(--default-bg);
+  }
+
+  &::before {
+    background-color: var(--Menu-Item-backgroundColor);
+    border-radius: 4px;
+    content: "";
+    display: block;
+    grid-area: 1 / 1;
+    margin-inline: 4px;
+  }
+}
+
+.SideMenu-Item-Cell {
+  color: var(--Menu-Item-color);
+  display: flex;
+  gap: 8px;
+  grid-area: 1 / 1;
+  padding-inline: 24px 8px;
+
+  .slot-icon {
+    align-self: center;
+  }
+
+  .slot-label {
+    flex: 1;
+    margin-block: calc((1lh - 1cap) / 2);
+    min-inline-size: 0;
+    text-box: trim-both cap alphabetic;
+  }
+}

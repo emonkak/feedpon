@@ -21,7 +21,7 @@ export const Dispatcher = createComponent(function Dispatcher({
         const loader = router.match(url);
         return loader !== undefined
           ? (await loader(store, signal)).withKey(scene.url)
-          : html`Not Found`;
+          : html`${scene.url}`;
       },
       [scene.url],
     ),

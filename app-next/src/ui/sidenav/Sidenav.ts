@@ -39,24 +39,12 @@ export const Sidenav = createComponent(function Sidenav({
         <menu class="Toolbar" role="toolbar">
           <li class="Toolbar-Item">
             <button
-              aria-label="Add feeds"
+              aria-label="Reload subscriptions"
               class="Button solid default"
-              title="Add feeds"
+              title="Reload subscriptions"
               type="button"
             >
-              <div aria-hidden="true" class="EmojiIcon">
-                <span>➕</span>
-              </div>
-            </button>
-          </li>
-          <li class="Toolbar-Item">
-            <button
-              aria-label="Reload feeds"
-              class="Button solid default"
-              title="Reload feeds"
-              type="button"
-            >
-              <div aria-hidden="true" class="EmojiIcon">
+              <div aria-hidden="true" class="EmojiIcon slot-icon">
                 <span>🔄</span>
               </div>
             </button>
@@ -64,12 +52,23 @@ export const Sidenav = createComponent(function Sidenav({
           <li class="Toolbar-Spacer"></li>
           <li class="Toolbar-Item">
             <button
+              aria-label="Search subscriptions"
+              class="Button solid default"
+              title="Search subscriptions"
+              type="button"
+            >
+              <div aria-hidden="true" class="EmojiIcon slot-icon">
+                <span>🔍︎</span>
+              </div>
+            </button>
+          <li class="Toolbar-Item">
+            <button
               aria-label="Toggle sidebar"
               class="Button solid default"
               title="Toggle sidebar"
               type="button"
             >
-              <div aria-hidden="true" class="EmojiIcon">
+              <div aria-hidden="true" class="EmojiIcon slot-icon">
                 <span>⬅️</span>
               </div>
             </button>
@@ -77,8 +76,54 @@ export const Sidenav = createComponent(function Sidenav({
         </menu>
       </header>
       <div class="Sidenav-Main">
-        <div class="Sidenav-Group">
-          <${Tree({ ariaLabel: 'Subscriptions', children: treeItems })}>
+        <div class="SideMenu" role="menu">
+          <div class="SideMenu-Section" role="group">
+            <div class="SideMenu-Item" role="menuitem">
+              <a class="SideMenu-Item-Cell" href="#/all">
+                <div aria-hidden="true" class="EmojiIcon slot-icon">
+                  <span>📚</span>
+                </div>
+                <div class="slot-label">All Feeds</div>
+              </a>
+            </div>
+            <div class="SideMenu-Item" role="menuitem">
+              <a class="SideMenu-Item-Cell" href="#/subscribe">
+                <div aria-hidden="true" class="EmojiIcon slot-icon">
+                  <span>🛜</span>
+                </div>
+                <div class="slot-label">Subscribe Feeds</div>
+              </a>
+            </div>
+          </div>
+          <div class="SideMenu-Section" role="group">
+            <div class="SideMenu-Header">
+              <h1 class="slot-label">
+                Subscriptions
+              </h1>
+              <button class="Button slot-action" type="button">
+                <div class="PathIcon slot-icon shape preference"></div>
+              </button>
+            </div>
+            <${Tree({ ariaLabel: 'Subscriptions', children: treeItems })}>
+          </div>
+          <div class="SideMenu-Section" role="group">
+            <div class="SideMenu-Item" role="menuitem">
+              <a class="SideMenu-Item-Cell" href="#/settings">
+                <div aria-hidden=true" class="EmojiIcon slot-icon">
+                  <span>⚙️</span>
+                </div>
+                <div class="slot-label">Settings</div>
+              </a>
+            </div>
+            <div class="SideMenu-Item" role="menuitem">
+              <a class="SideMenu-Item-Cell" href="#/about">
+                <div aria-hidden="true" class="EmojiIcon slot-icon">
+                  <span>ℹ️</span>
+                </div>
+                <div class="slot-label">About</div>
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -134,10 +179,10 @@ function renderCategory(
     renderSubscription(subscription, currentURL),
   );
   const content = html`
-    <div aria-hidden="true" class="EmojiIcon" data-slot="icon">
+    <div aria-hidden="true" class="EmojiIcon slot-icon">
       <span>📁</span>
     </div>
-    <div data-slot="label">${category.label}</div>
+    <div class="slot-label">${category.label}</div>
   `;
   return TreeItem({
     ariaLabel: category.label,
@@ -154,14 +199,14 @@ function renderFavicon(subscription: Subscription): VElement {
         <img
           alt=${subscription.title}
           aria-hidden="true"
-          data-slot="icon"
+          class="slot-icon"
           height="16"
           src=${subscription.iconUrl}
           width="16"
         >
       `
     : html`
-        <div aria-hidden="true" class="EmojiIcon" data-slot="icon">
+        <div aria-hidden="true" class="EmojiIcon slot-icon">
           <span>📄</span>
         </div>
       `;
@@ -174,7 +219,7 @@ function renderSubscription(
   const url = `/streams/${encodeURIComponent(subscription.id)}`;
   const content = html`
     <${renderFavicon(subscription)}>
-    <div data-slot="label">${subscription.title}</div>
+    <div class="slot-label">${subscription.title}</div>
   `;
   return TreeItem({
     ariaLabel: subscription.title,

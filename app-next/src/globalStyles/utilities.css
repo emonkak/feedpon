@@ -1,17 +1,17 @@
 @container not style(--layout: small) {
-  .u-small-only {
+  .use-only-small {
     display: none;
   }
 }
 
 @container not style(--layout: medium) {
-  .u-medium-only {
+  .use-only-medium {
     display: none;
   }
 }
 
 @container not style(--layout: large) {
-  .u-large-only {
+  .use-only-large {
     display: none;
   }
 }

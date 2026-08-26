@@ -7,11 +7,9 @@
   padding-inline: 1rlh;
 }
 
-.StreamNav-Section {
-  &.center {
-    flex: 1;
-    min-width: 0;
-  }
+.StreamNav-Middle {
+  flex: 1;
+  min-width: 0;
 }
 
 .StreamNav-title,
@@ -19,6 +17,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  line-height: 1.375;
 }
 
 .StreamNav-title {
