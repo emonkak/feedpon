@@ -1,14 +1,19 @@
-@import "./styles/fonts.css";
-@import "./styles/variables.css";
-@import "./styles/global.css";
-@import "./styles/components.css";
+@import "./globalStyles/fonts.css";
+@import "./globalStyles/variables.css";
+@import "./globalStyles/reset.css";
 
-@import "./ui/primitives/StackScroller.css";
-@import "./ui/primitives/Tree.css";
 @import "./ui/layouts/BootLayout.css";
 @import "./ui/layouts/ReaderLayout.css";
+@import "./ui/primitives/Button.css";
+@import "./ui/primitives/EmojiIcon.css";
+@import "./ui/primitives/PathIcon.css";
+@import "./ui/primitives/StackScroller.css";
+@import "./ui/primitives/Toolbar.css";
+@import "./ui/primitives/Tree.css";
 @import "./ui/sidenav/Sidenav.css";
 @import "./ui/sidetoc/Sidetoc.css";
 @import "./ui/stream/StreamItem.css";
 @import "./ui/stream/StreamNav.css";
 @import "./ui/stream/StreamPage.css";
+
+@import "./globalStyles/utilities.css";

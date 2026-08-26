@@ -1,0 +1,17 @@
+@container not style(--layout: small) {
+  .u-small-only {
+    display: none;
+  }
+}
+
+@container not style(--layout: medium) {
+  .u-medium-only {
+    display: none;
+  }
+}
+
+@container not style(--layout: large) {
+  .u-large-only {
+    display: none;
+  }
+}

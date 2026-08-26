@@ -1,4 +1,28 @@
 @font-face {
+  font-family: emoji-neutral-offset;
+  src: local("Apple Color Emoji");
+  ascent-override: 76%;
+  descent-override: 0%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: emoji-neutral-offset;
+  src: local("Segoe UI Emoji");
+  ascent-override: 52%;
+  descent-override: 0%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: emoji-neutral-offset;
+  src: local("Noto Color Emoji");
+  ascent-override: 55%;
+  descent-override: 0%;
+  line-gap-override: 0%;
+}
+
+@font-face {
   font-family: "Toppan Bunkyu Gothic";
   font-weight: 400;
   src: local("Toppan Bunkyu Gothic Regular");

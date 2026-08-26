@@ -1,8 +1,17 @@
 .StreamNav {
+  align-items: center;
   box-sizing: border-box;
-  line-height: 1.5;
+  display: flex;
+  gap: 8px;
   min-inline-size: 0;
   padding-inline: 1rlh;
+}
+
+.StreamNav-Section {
+  &.center {
+    flex: 1;
+    min-width: 0;
+  }
 }
 
 .StreamNav-title,

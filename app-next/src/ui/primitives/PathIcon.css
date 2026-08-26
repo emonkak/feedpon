@@ -1,0 +1,47 @@
+.PathIcon {
+  --size: attr(data-size px, 16px);
+  display: block;
+  height: var(--size);
+  width: var(--size);
+
+  &.shape {
+    border-shape: var(--path);
+    border: 2px solid currentColor;
+    transform: translate(1px, 1px);
+  }
+
+  &.solid {
+    background-color: currentColor;
+    clip-path: var(--path);
+  }
+
+  &.toggle-sidebar {
+    --path: shape(
+      from 37.5% 0%,
+      line to 62.5% 0%,
+      arc to 100% 37.5% of 37.5% 37.5% cw,
+      line to 100% 62.5%,
+      arc to 62.5% 100% of 37.5% 37.5% cw,
+      line to 37.5% 100%,
+      arc to 0% 62.5% of 37.5% 37.5% cw,
+      line to 0% 37.5%,
+      arc to 37.5% 0% of 37.5% 37.5% cw,
+      move to 25% 25%,
+      line to 25% 75%
+    );
+  }
+
+  &.vertical-dot {
+    --path: shape(
+      from 50% 0%,
+      arc to 50% 25% of 12.5% 12.5% cw,
+      arc to 50% 0% of 12.5% 12.5% cw,
+      move to 50% 37.5%,
+      arc to 50% 62.5% of 12.5% 12.5% cw,
+      arc to 50% 37.5% of 12.5% 12.5% cw,
+      move to 50% 75%,
+      arc to 50% 100% of 12.5% 12.5% cw,
+      arc to 50% 75% of 12.5% 12.5% cw
+    );
+  }
+}

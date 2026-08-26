@@ -1,0 +1,27 @@
+.EmojiIcon {
+  --size: attr(data-size px, 16px);
+  display: grid;
+  font-family: emoji-neutral-offset, emoji, sans-serif;
+  font-size: var(--size);
+  font-style: normal;
+  font-weight: normal;
+  height: var(--size);
+  line-height: var(--size);
+  user-select: none;
+  width: var(--size);
+
+  &::before {
+    color: transparent;
+    content: "⬛"; /* Dummy glyph for container sizing */
+    grid-area: 1 / 1;
+  }
+
+  span {
+    grid-area: 1 / 1;
+    container-type: inline-size;
+  }
+
+  span::first-letter {
+    font-size: calc(1em * tan(atan2(1em, 100cqi)));
+  }
+}

@@ -36,35 +36,38 @@ export const Sidenav = createComponent(function Sidenav({
   return html`
     <div class="Sidenav" inert=${subscriptions.state === 'pending'}>
       <header class="Sidenav-Header">
-        <menu class="SideNav-Toolbar" role="toolbar">
-          <li class="SideNav-Toolbar-Item">
+        <menu class="Toolbar" role="toolbar">
+          <li class="Toolbar-Item">
             <button
               aria-label="Add feeds"
-              class="Button default"
+              class="Button solid default"
               title="Add feeds"
+              type="button"
             >
               <div aria-hidden="true" class="EmojiIcon">
                 <span>➕</span>
               </div>
             </button>
           </li>
-          <li class="SideNav-Toolbar-Item">
+          <li class="Toolbar-Item">
             <button
               aria-label="Reload feeds"
-              class="Button default"
+              class="Button solid default"
               title="Reload feeds"
+              type="button"
             >
               <div aria-hidden="true" class="EmojiIcon">
                 <span>🔄</span>
               </div>
             </button>
           </li>
-          <li class="SideNav-Toolbar-Spacer"></li>
-          <li class="SideNav-Toolbar-Item">
+          <li class="Toolbar-Spacer"></li>
+          <li class="Toolbar-Item">
             <button
               aria-label="Toggle sidebar"
-              class="Button default"
+              class="Button solid default"
               title="Toggle sidebar"
+              type="button"
             >
               <div aria-hidden="true" class="EmojiIcon">
                 <span>⬅️</span>

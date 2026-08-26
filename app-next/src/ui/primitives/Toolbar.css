@@ -1,0 +1,10 @@
+.Toolbar {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  padding-inline: 16px;
+}
+
+.Toolbar-Spacer {
+  flex: 1;
+}

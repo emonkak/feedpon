@@ -20,7 +20,7 @@
   & + & {
     box-shadow:
       0 -1px var(--default-border),
-      0 -4px 8px var(--default-shadow);
+      0 -2px 4px var(--default-shadow);
   }
 
   &.prev,

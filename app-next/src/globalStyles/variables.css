@@ -22,7 +22,7 @@
   --text-scale-9: pow(var(--text-scale-base), -3);
   --text-scale-base: 1.125;
 
-  --default-border: var(--default-4);
+  --default-border: var(--default-3);
   --default-light: rgb(from var(--default-0) r g b / 0.5);
   --default-shadow: rgb(from var(--default-10) r g b / 0.1);
   --default-0: #ffffff;

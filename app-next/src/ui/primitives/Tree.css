@@ -1,4 +1,4 @@
-.TreeItem {
+.Tree-Item {
   --TreeNode-backgroundColor: transparent;
   --TreeNode-color: currentColor;
   --TreeNode-level: calc(var(--TreeNode-parent-level, 0) + 1);
@@ -10,7 +10,7 @@
     --TreeNode-backgroundColor: var(--default-2);
   }
 
-  &.indirectlySelected {
+  &.indirectly-selected {
     --TreeNode-backgroundColor: var(--primary-2);
   }
 
@@ -28,7 +28,7 @@
   }
 }
 
-.TreeItem-Toggle {
+.Tree-Item-Toggle {
   --path: polygon(37.5% 75%, 37.5% 25%, 62.5% 50%);
   grid-area: cell-head;
   z-index: 1;
@@ -52,7 +52,7 @@
   }
 }
 
-.TreeItem-Cell {
+.Tree-Item-Cell {
   align-items: center;
   position: relative;
   color: var(--TreeNode-color);
@@ -69,7 +69,7 @@
   }
 }
 
-.TreeItem-Children {
+.Tree-Item-Children {
   --TreeNode-parent-level: var(--TreeNode-level);
   grid-area: children;
 }

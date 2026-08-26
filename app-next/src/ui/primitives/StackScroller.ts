@@ -2,7 +2,6 @@ import {
   type Component,
   createComponent,
   html,
-  type Ref,
   type RenderContext,
   type VComponent,
 } from 'barebind';

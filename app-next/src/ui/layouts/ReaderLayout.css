@@ -1,4 +1,5 @@
 .ReaderLayout {
+  --layout: small;
   display: grid;
   grid-template-areas: "sidenav main sidetoc";
   grid-template-columns: 0 1fr 0;
@@ -31,6 +32,7 @@
 
 @media (min-width: 66rem) {
   .ReaderLayout {
+    --layout: medium;
     grid-template-columns: 18rem 1fr 0;
   }
 
@@ -41,6 +43,7 @@
 
 @media (min-width: 84rem) {
   .ReaderLayout {
+    --layout: large;
     grid-template-columns: 18rem 1fr 18rem;
   }
 

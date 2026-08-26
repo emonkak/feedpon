@@ -98,7 +98,7 @@ export const TreeItem = createComponent(function TreeItem({
     <div
       @keydown=${handleKeyDown}
       aria-selected=${selected.toString()}
-      class=${['TreeItem', { indirectlySelected, selected }]}
+      class=${['Tree-Item', { 'indirectly-selected': indirectlySelected, selected }]}
       role="treeitem"
     >
       <${
@@ -107,7 +107,7 @@ export const TreeItem = createComponent(function TreeItem({
             <button
               @click=${handleToggle}
               aria-expanded=${expanded.toString()}
-              class=${['TreeItem-Toggle', { expanded }]}
+              class=${['Tree-Item-Toggle', { expanded }]}
               tabindex="-1"
             >
             </button>
@@ -115,7 +115,7 @@ export const TreeItem = createComponent(function TreeItem({
           : null
       }>
       <a
-        class="TreeItem-Cell"
+        class="Tree-Item-Cell"
         href=${href}
         tabindex="0"
       >
@@ -124,7 +124,7 @@ export const TreeItem = createComponent(function TreeItem({
       <${
         expanded
           ? html`
-            <div class="TreeItem-Children" role="group">
+            <div class="Tree-Item-Children" role="group">
               <${children}>
             </div>
           `

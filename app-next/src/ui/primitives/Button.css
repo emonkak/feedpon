@@ -1,0 +1,35 @@
+.Button {
+  border-radius: 4px;
+  color: var(--Button-color);
+  padding-block: calc(0.25rlh - 1px);
+  padding-inline: 8px;
+
+  &.ghost:hover {
+    background-color: var(--Button-hoverBackgroundColor);
+  }
+
+  &.solid {
+    background-color: var(--Button-backgroundColor);
+    border: 1px solid var(--Button-borderColor);
+    box-shadow:
+      inset 0 1px var(--Button-lightColor),
+      inset 1px 0 var(--Button-lightColor),
+      inset 0 -1px var(--Button-lightColor),
+      inset -1px 0 var(--Button-lightColor),
+      0 1px var(--Button-shadowColor);
+  }
+
+  &.solid:active {
+    background-color: var(--Button-activeBackgroundColor);
+  }
+
+  &.default {
+    --Button-activeBackgroundColor: var(--default-2);
+    --Button-backgroundColor: var(--default-1);
+    --Button-borderColor: var(--default-border);
+    --Button-color: var(--default-10);
+    --Button-hoverBackgroundColor: var(--default-1);
+    --Button-lightColor: var(--default-light);
+    --Button-shadowColor: var(--default-shadow);
+  }
+}
