@@ -20,6 +20,7 @@
   --text-scale-7: pow(var(--text-scale-base), -1);
   --text-scale-8: pow(var(--text-scale-base), -2);
   --text-scale-9: pow(var(--text-scale-base), -3);
+  --text-scale-10: pow(var(--text-scale-base), -4);
   --text-scale-base: 1.125;
 
   --default-bg: #fff;

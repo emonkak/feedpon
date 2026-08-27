@@ -60,11 +60,11 @@
   grid-area: head-start / head / tail / tail-end;
   padding-inline: calc(24px * var(--TreeNode-level)) 8px;
 
-  .slot-icon {
+  > .slot-icon {
     align-self: center;
   }
 
-  .slot-label {
+  > .slot-label {
     flex: 1;
     margin-block: calc((1lh - 1cap) / 2);
     min-inline-size: 0;

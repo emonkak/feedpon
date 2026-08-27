@@ -14,13 +14,13 @@
   display: flex;
   font-size: calc(1rem * var(--text-scale-8));
 
-  .slot-label {
+  > .slot-label {
     flex: 1;
     min-inline-size: 0;
     padding-inline: 24px 8px;
   }
 
-  .slot-action {
+  > .slot-action {
     place-self: center;
   }
 }
@@ -54,11 +54,11 @@
   grid-area: 1 / 1;
   padding-inline: 24px 8px;
 
-  .slot-icon {
+  > .slot-icon {
     align-self: center;
   }
 
-  .slot-label {
+  > .slot-label {
     flex: 1;
     margin-block: calc((1lh - 1cap) / 2);
     min-inline-size: 0;

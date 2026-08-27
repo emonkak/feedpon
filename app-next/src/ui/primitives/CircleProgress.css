@@ -1,0 +1,56 @@
+.CircleProgress {
+  --angle: calc(360deg * var(--progress));
+  --background-color: var(--default-4);
+  --fill-color: currentColor;
+  --indicator-width: 2px;
+  --inner-radius: calc(var(--outer-radius) - 1px);
+  --outer-diameter: 1rlh;
+  --outer-radius: calc(var(--outer-diameter) / 2);
+  --progress: attr(data-progress type(<number>));
+  border-radius: 50%;
+  box-sizing: border-box;
+  color: var(--fill-color);
+  display: grid;
+  font-family: var(--font-display);
+  font-size: calc(1rem * var(--text-scale-10));
+  font-variant-numeric: tabular-nums;
+  font-weight: bold;
+  height: var(--outer-diameter);
+  letter-spacing: -2%;
+  outline: var(--indicator-width) solid var(--background-color);
+  outline-offset: calc(var(--indicator-width) * -1);
+  place-items: center;
+  position: relative;
+  width: var(--outer-diameter);
+
+  &::before {
+    --width: 6px;
+    --height: 6px;
+    content: "";
+    border-radius: 50%;
+    background-color: var(--fill-color);
+    height: var(--height);
+    left: calc(50% - var(--width) / 2);
+    position: absolute;
+    top: calc(var(--height) / -2 + var(--indicator-width) / 2);
+    transform: rotate(var(--angle));
+    transform-origin: 50%
+      calc(50% + var(--outer-radius) - var(--indicator-width) / 2);
+    width: var(--width);
+  }
+
+  &::after {
+    border-radius: 50%;
+    border: var(--indicator-width) solid var(--fill-color);
+    box-sizing: border-box;
+    content: "";
+    inset: 0;
+    mask: conic-gradient(black var(--angle), transparent 0deg);
+    position: absolute;
+  }
+
+  > .slot-content {
+    text-box: trim-both cap alphabetic;
+    place-self: center;
+  }
+}

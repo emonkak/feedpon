@@ -1,3 +1,9 @@
+.use-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 @container not style(--layout: small) {
   .use-only-small {
     display: none;

@@ -1,5 +1,6 @@
 .PathIcon {
   --size: attr(data-size px, 16px);
+  align-self: center;
   box-sizing: border-box;
   height: var(--size);
   width: var(--size);
@@ -14,21 +15,8 @@
     clip-path: var(--path) content-box;
   }
 
-  &.horizontal-dots {
-    --path: shape(
-      /* left dot */
-      from 1px 8px,
-      arc to 4px 8px of 1px cw,
-      arc to 1px 8px of 1px cw,
-      /* center dot */
-      move to 6px 8px,
-      arc to 9px 8px of 1px cw,
-      arc to 6px 8px of 1px cw,
-      /* right dot */
-      move to 11px 8px,
-      arc to 14px 8px of 1px cw,
-      arc to 11px 8px of 1px cw
-    );
+  &.checkmark {
+    --path: polygon(19% 48%, 39% 67%, 82% 23%, 92% 34%, 39% 89%, 9% 59%);
   }
 
   &.menu {
@@ -67,17 +55,17 @@
   &.vertical-dots {
     --path: shape(
       /* top dot */
-      from 8px 1px,
-      arc to 8px 4px of 1px cw,
-      arc to 8px 1px of 1px cw,
+      from 8px 0px,
+      arc to 8px 4px of 1.5px cw,
+      arc to 8px 0px of 1.5px cw,
       /* middle dot */
       move to 8px 6px,
-      arc to 8px 9px of 1px cw,
-      arc to 8px 6px of 1px cw,
+      arc to 8px 10px of 1.5px cw,
+      arc to 8px 6px of 1.5px cw,
       /* bottom dot */
-      move to 8px 11px,
-      arc to 8px 14px of 1px cw,
-      arc to 8px 11px of 1px cw
+      move to 8px 12px,
+      arc to 8px 16px of 1.5px cw,
+      arc to 8px 12px of 1.5px cw
     );
   }
 }

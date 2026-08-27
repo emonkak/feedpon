@@ -5,6 +5,7 @@
 @import "./ui/layouts/BootLayout.css";
 @import "./ui/layouts/ReaderLayout.css";
 @import "./ui/primitives/Button.css";
+@import "./ui/primitives/CircleProgress.css";
 @import "./ui/primitives/EmojiIcon.css";
 @import "./ui/primitives/PathIcon.css";
 @import "./ui/primitives/SideMenu.css";

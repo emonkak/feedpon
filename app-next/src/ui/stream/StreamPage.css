@@ -6,7 +6,7 @@
     inset 0 -1px var(--default-light),
     inset -1px 0 var(--default-light),
     0 1px var(--default-border),
-    0 2px 4px var(--default-shadow);
+    0 2px 1px var(--default-shadow);
   color: var(--default-10);
   display: grid;
   grid-template-columns: minmax(auto, var(--text-width));

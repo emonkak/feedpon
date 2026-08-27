@@ -7,24 +7,40 @@
   padding-inline: 1rlh;
 }
 
-.StreamNav-Middle {
-  flex: 1;
-  min-width: 0;
+.StreamNav-Side {
+  display: flex;
 }
 
-.StreamNav-title,
-.StreamNav-subtitle {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.StreamNav-Content {
+  flex: 1;
+  min-width: 0;
   line-height: 1.375;
 }
 
-.StreamNav-title {
+.StreamNav-OriginTitle {
   font-size: calc(1rem * var(--text-scale-7));
 }
 
-.StreamNav-subtitle {
+.StreamNav-ItemTitle {
   color: var(--default-6);
   font-size: calc(1rem * var(--text-scale-8));
+}
+
+.StreamNav-Button {
+  block-size: 1.5rlh;
+  border-radius: 4px;
+  box-sizing: border-box;
+  color: var(--default-6);
+  display: flex;
+  inline-size: 48px;
+  justify-content: center;
+
+  &:hover {
+    background-color: var(--default-3);
+  }
+
+  > .slot-icon {
+    align-self: center;
+    color: var(--icon-color);
+  }
 }
