@@ -13,9 +13,10 @@
 
 .StackScroller-Item {
   background-color: var(--default-bg);
+  contain: content;
   min-block-size: var(--item-height);
-  position: sticky;
   scroll-margin-block-start: var(--header-height);
+  will-change: filter;
 
   & + & {
     box-shadow:
@@ -25,8 +26,9 @@
 
   &.prev,
   &.next {
+    block-size: var(--item-height);
+    content-visibility: auto;
     margin-block-start: calc(var(--item-height) * -1);
-    max-block-size: var(--item-height);
     overflow: clip;
   }
 
@@ -34,12 +36,17 @@
   &.current {
     animation-name: StackScroller-Item-dim;
     animation-timing-function: ease;
+    position: sticky;
   }
 
   &.prev {
     animation-range: entry 0% entry 100%;
     animation-timeline: view(block 0 100%);
     inset-block-start: var(--header-height);
+  }
+
+  &.next {
+    position: relative;
   }
 
   &.current {

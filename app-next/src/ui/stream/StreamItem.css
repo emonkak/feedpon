@@ -2,8 +2,7 @@
   box-sizing: border-box;
   margin-inline: auto;
   max-inline-size: var(--text-width);
-  min-block-size: calc(100vh - 2rlh);
   min-inline-size: 0;
-  padding-block: 1rlh max(50vh - 2rlh, 1rlh);
+  padding-block: 1rlh max(1rlh, 50vh - 2rlh);
   padding-inline: 1rlh;
 }
