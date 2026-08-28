@@ -18,16 +18,16 @@ export const StreamNav = createComponent(function StreamNav({
     <nav class="StreamNav">
       <div class="StreamNav-Side use-only-small">
         <button type="button" class="StreamNav-Button">
-          <div class="PathIcon shape menu slot-icon"></div>
+          <div class="StreamNav-Button-icon PathIcon shape menu"></div>
         </button>
       </div>
       <div class="StreamNav-Content">
-        <h1 class="StreamNav-OriginTitle use-ellipsis">${item?.origin.title ?? stream.title}</h1>
-        <h2 class="StreamNav-ItemTitle use-ellipsis">${item?.title}</h2>
+        <h1 class="StreamNav-feedTitle use-ellipsis">${item?.origin.title ?? stream.title}</h1>
+        <h2 class="StreamNav-articleTitle use-ellipsis">${item?.title}</h2>
       </div>
       <div class="StreamNav-Side">
         <button type="button" class="StreamNav-Button">
-          <div class="slot-icon">
+          <div class="StreamNav-Button-icon">
             <${CircleProgress({
               label: (session.index + 1).toString().slice(-3),
               progress: (session.index + 1) / stream.items.length,
@@ -35,7 +35,7 @@ export const StreamNav = createComponent(function StreamNav({
           </div>
         </button>
         <button type="button" class="StreamNav-Button">
-          <div class="PathIcon solid vertical-dots slot-icon"></div>
+          <div class="StreamNav-Button-icon PathIcon solid vertical-dots"></div>
         </button>
       </div>
     </nav>

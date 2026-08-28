@@ -59,20 +59,20 @@
   gap: 8px;
   grid-area: head-start / head / tail / tail-end;
   padding-inline: calc(24px * var(--TreeNode-level)) 8px;
-
-  > .slot-icon {
-    align-self: center;
-  }
-
-  > .slot-label {
-    flex: 1;
-    margin-block: calc((1lh - 1cap) / 2);
-    min-inline-size: 0;
-    text-box: trim-both cap alphabetic;
-  }
 }
 
 .Tree-Item-Children {
   --TreeNode-parent-level: var(--TreeNode-level);
   grid-area: children;
+}
+
+.Tree-Item-icon {
+  align-self: center;
+}
+
+.Tree-Item-label {
+  flex: 1;
+  margin-block: calc((1lh - 1cap) / 2);
+  min-inline-size: 0;
+  text-box: trim-both cap alphabetic;
 }

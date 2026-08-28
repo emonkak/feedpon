@@ -32,9 +32,9 @@
     --solid-light-color: var(--default-light);
     --solid-shadow-color: var(--default-shadow);
   }
+}
 
-  > .slot-icon {
-    align-self: center;
-    color: var(--icon-color);
-  }
+.Button-icon {
+  align-self: center;
+  color: var(--icon-color);
 }

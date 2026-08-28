@@ -44,8 +44,8 @@ export const Sidenav = createComponent(function Sidenav({
               title="Reload subscriptions"
               type="button"
             >
-              <div aria-hidden="true" class="EmojiIcon slot-icon">
-                <span>🔄</span>
+              <div aria-hidden="true" class="Button-icon EmojiIcon">
+                <span class="EmojiIcon-glyph">🔄</span>
               </div>
             </button>
           </li>
@@ -57,8 +57,8 @@ export const Sidenav = createComponent(function Sidenav({
               title="Search subscriptions"
               type="button"
             >
-              <div aria-hidden="true" class="EmojiIcon slot-icon">
-                <span>🔍︎</span>
+              <div aria-hidden="true" class="Button-icon EmojiIcon">
+                <span class="EmojiIcon-glyph">🔍︎</span>
               </div>
             </button>
           <li class="Toolbar-Item">
@@ -68,8 +68,8 @@ export const Sidenav = createComponent(function Sidenav({
               title="Toggle sidebar"
               type="button"
             >
-              <div aria-hidden="true" class="EmojiIcon slot-icon">
-                <span>⬅️</span>
+              <div aria-hidden="true" class="Button-icon EmojiIcon">
+                <span class="EmojiIcon-glyph">⬅️</span>
               </div>
             </button>
           </li>
@@ -80,28 +80,28 @@ export const Sidenav = createComponent(function Sidenav({
           <div class="SideMenu-Section" role="group">
             <div class="SideMenu-Item" role="menuitem">
               <a class="SideMenu-Item-Cell" href="#/all">
-                <div aria-hidden="true" class="EmojiIcon slot-icon">
-                  <span>📚</span>
+                <div aria-hidden="true" class="SideMenu-Item-icon EmojiIcon">
+                  <span class="EmojiIcon-glyph">📚</span>
                 </div>
-                <div class="slot-label">All Feeds</div>
+                <div class="SideMenu-item-label">All Feeds</div>
               </a>
             </div>
             <div class="SideMenu-Item" role="menuitem">
               <a class="SideMenu-Item-Cell" href="#/subscribe">
-                <div aria-hidden="true" class="EmojiIcon slot-icon">
-                  <span>🛜</span>
+                <div aria-hidden="true" class="SideMenu-Item-icon EmojiIcon">
+                  <span class="EmojiIcon-glyph">🛜</span>
                 </div>
-                <div class="slot-label">Subscribe Feeds</div>
+                <div class="SideMenu-item-label">Subscribe Feeds</div>
               </a>
             </div>
           </div>
           <div class="SideMenu-Section" role="group">
             <div class="SideMenu-Header">
-              <h1 class="slot-label">
+              <h1 class="SideMenu-Header-label">
                 Subscriptions
               </h1>
-              <button class="Button slot-action" type="button">
-                <div class="PathIcon slot-icon shape preference"></div>
+              <button class="SideMenu-Header-action Button" type="button">
+                <div class="Button-icon PathIcon shape preference"></div>
               </button>
             </div>
             <${Tree({ ariaLabel: 'Subscriptions', children: treeItems })}>
@@ -109,18 +109,18 @@ export const Sidenav = createComponent(function Sidenav({
           <div class="SideMenu-Section" role="group">
             <div class="SideMenu-Item" role="menuitem">
               <a class="SideMenu-Item-Cell" href="#/settings">
-                <div aria-hidden=true" class="EmojiIcon slot-icon">
-                  <span>⚙️</span>
+                <div aria-hidden=true" class="SideMenu-Item-icon EmojiIcon">
+                  <span class="EmojiIcon-glyph">⚙️</span>
                 </div>
-                <div class="slot-label">Settings</div>
+                <div class="SideMenu-Item-label">Settings</div>
               </a>
             </div>
             <div class="SideMenu-Item" role="menuitem">
               <a class="SideMenu-Item-Cell" href="#/about">
-                <div aria-hidden="true" class="EmojiIcon slot-icon">
-                  <span>ℹ️</span>
+                <div aria-hidden="true" class="SideMenu-Item-icon EmojiIcon">
+                  <span class="EmojiIcon-glyph">ℹ️</span>
                 </div>
-                <div class="slot-label">About</div>
+                <div class="SideMenu-Item-label">About</div>
               </a>
             </div>
           </div>
@@ -179,10 +179,10 @@ function renderCategory(
     renderSubscription(subscription, currentURL),
   );
   const content = html`
-    <div aria-hidden="true" class="EmojiIcon slot-icon">
-      <span>📁</span>
+    <div aria-hidden="true" class="Tree-Item-icon EmojiIcon">
+      <span class="EmojiIcon-glyph">📁</span>
     </div>
-    <div class="slot-label">${category.label}</div>
+    <div class="Tree-Item-label">${category.label}</div>
   `;
   return TreeItem({
     ariaLabel: category.label,
@@ -199,15 +199,15 @@ function renderFavicon(subscription: Subscription): VElement {
         <img
           alt=${subscription.title}
           aria-hidden="true"
-          class="slot-icon"
+          class="Tree-Item-icon"
           height="16"
           src=${subscription.iconUrl}
           width="16"
         >
       `
     : html`
-        <div aria-hidden="true" class="EmojiIcon slot-icon">
-          <span>📄</span>
+        <div aria-hidden="true" class="Tree-Item-icon EmojiIcon">
+          <span class="EmojiIcon-glyph">📄</span>
         </div>
       `;
 }
@@ -219,7 +219,7 @@ function renderSubscription(
   const url = `/streams/${encodeURIComponent(subscription.id)}`;
   const content = html`
     <${renderFavicon(subscription)}>
-    <div class="slot-label">${subscription.title}</div>
+    <div class="Tree-Item-label">${subscription.title}</div>
   `;
   return TreeItem({
     ariaLabel: subscription.title,

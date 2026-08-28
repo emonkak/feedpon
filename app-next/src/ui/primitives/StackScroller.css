@@ -24,7 +24,7 @@
       0 -2px 1px var(--default-shadow);
   }
 
-  &.prev,
+  &.previous,
   &.next {
     block-size: var(--item-height);
     content-visibility: auto;
@@ -32,14 +32,14 @@
     overflow: clip;
   }
 
-  &.prev,
+  &.previous,
   &.current {
     animation-name: StackScroller-Item-dim;
     animation-timing-function: ease;
     position: sticky;
   }
 
-  &.prev {
+  &.previous {
     animation-range: entry 0% entry 100%;
     animation-timeline: view(block 0 100%);
     inset-block-start: var(--header-height);

@@ -17,11 +17,11 @@
   line-height: 1.375;
 }
 
-.StreamNav-OriginTitle {
+.StreamNav-feedTitle {
   font-size: calc(1rem * var(--text-scale-7));
 }
 
-.StreamNav-ItemTitle {
+.StreamNav-articleTitle {
   color: var(--default-6);
   font-size: calc(1rem * var(--text-scale-8));
 }
@@ -38,9 +38,9 @@
   &:hover {
     background-color: var(--default-3);
   }
+}
 
-  > .slot-icon {
-    align-self: center;
-    color: var(--icon-color);
-  }
+.StreamNav-Button-icon {
+  align-self: center;
+  color: var(--icon-color);
 }

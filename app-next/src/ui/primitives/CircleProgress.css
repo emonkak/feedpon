@@ -48,9 +48,9 @@
     mask: conic-gradient(black var(--angle), transparent 0deg);
     position: absolute;
   }
+}
 
-  > .slot-content {
-    text-box: trim-both cap alphabetic;
-    place-self: center;
-  }
+.CircleProgress-content {
+  text-box: trim-both cap alphabetic;
+  place-self: center;
 }

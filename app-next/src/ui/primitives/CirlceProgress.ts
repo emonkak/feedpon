@@ -8,8 +8,8 @@ export interface CircleProgressProps {
 export function CircleProgress({ label, progress }: CircleProgressProps) {
   const content =
     progress < 1
-      ? html`<div class="slot-content">${label}</div>`
-      : html`<div class="PathIcon solid checkmark slot-content"></div>`;
+      ? html`<div class="CircleProgress-content">${label}</div>`
+      : html`<div class="CircleProgress-content PathIcon solid checkmark"></div>`;
   return html`
     <div class="CircleProgress" data-progress=${progress}>
       <${content}>

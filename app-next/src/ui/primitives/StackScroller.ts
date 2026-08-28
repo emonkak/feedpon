@@ -40,8 +40,9 @@ export const StackScroller: StackScroller = createComponent(
                 entry.target.isConnected &&
                 entry.target.hasAttribute('data-index')
               ) {
-                const index = Number(
-                  (entry.target as HTMLElement).dataset['index'],
+                const index = parseInt(
+                  (entry.target as HTMLElement).dataset['index']!,
+                  10,
                 );
                 setIndex(index);
                 onIndexChange?.(index);
@@ -59,7 +60,7 @@ export const StackScroller: StackScroller = createComponent(
         intersectionObserver.unobserve(target);
       };
     }, []);
-    const renderItem = (type: 'prev' | 'current' | 'next', index: number) => {
+    const renderItem = (variant: string, index: number) => {
       if (index < 0 || index >= source.length) {
         return undefined;
       }
@@ -69,7 +70,7 @@ export const StackScroller: StackScroller = createComponent(
         <li
           aria-posinset=${index + 1}
           aria-setsize=${source.length}
-          class=${['StackScroller-Item', type]}
+          class=${['StackScroller-Item', variant]}
         >
           <${element}>
         </li>
@@ -81,7 +82,7 @@ export const StackScroller: StackScroller = createComponent(
       window.scrollTo(0, y);
     }, [index]);
 
-    const prev = renderItem('prev', index - 1);
+    const previous = renderItem('previous', index - 1);
     const current = renderItem('current', index);
     const next = renderItem('next', index + 1);
 
@@ -89,11 +90,11 @@ export const StackScroller: StackScroller = createComponent(
       <div class="StackScroller" ${rootRef}>
         <div
           class="StackScroller-Top"
-          data-index=${prev !== undefined ? index - 1 : undefined}
+          data-index=${previous !== undefined ? index - 1 : undefined}
           ${sentinelRef}
         ></div>
         <ul class="StackScroller-List">
-          <${[prev, current, next]}>
+          <${[previous, current, next]}>
         </ul>
         <div
           class="StackScroller-Bottom"

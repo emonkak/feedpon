@@ -15,13 +15,13 @@
     content: "⬛"; /* Dummy glyph for container sizing */
     grid-area: 1 / 1;
   }
+}
 
-  span {
-    grid-area: 1 / 1;
-    container-type: inline-size;
-  }
+.EmojiIcon-glyph {
+  grid-area: 1 / 1;
+  container-type: inline-size;
+}
 
-  span::first-letter {
-    font-size: calc(1em * tan(atan2(1em, 100cqi)));
-  }
+.EmojiIcon-glyph::first-letter {
+  font-size: calc(1em * tan(atan2(1em, 100cqi)));
 }
