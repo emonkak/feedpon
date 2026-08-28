@@ -1,4 +1,4 @@
-import { type UpFetch, up } from 'up-fetch';
+import { type RetryOptions, type UpFetch, up } from 'up-fetch';
 import * as v from 'valibot';
 import {
   Category,
@@ -47,7 +47,9 @@ export interface FeedlyEnvironment {
 }
 
 export interface FeedlyFetchOptions {
+  retry?: RetryOptions;
   signal?: AbortSignal;
+  timeout?: number;
 }
 
 export class FeedlyClient {

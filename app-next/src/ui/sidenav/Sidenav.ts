@@ -7,9 +7,8 @@ import {
 } from 'barebind';
 import type { NavigationScene } from 'barebind/addons/router';
 import { orderByAscending } from '../../foundation/comparer.ts';
-import { loadSubscriptions } from '../../state/actions.ts';
+import { reloadSubscriptions } from '../../state/actions.ts';
 import { AppStore } from '../../state/store.ts';
-import { AsyncResource } from '../hooks/AsyncResource.ts';
 import { Tree, TreeItem, type TreeItemProps } from '../primitives/Tree.ts';
 
 export interface SidenavProps {
@@ -19,22 +18,35 @@ export interface SidenavProps {
 export const Sidenav = createComponent(function Sidenav({
   scene,
 }: SidenavProps) {
+  const [syncing, setSyncing] = this.useState(false);
   const store = this.inject(AppStore);
-  const [subscriptions, _reloadSubscriptions] = this.use(
-    AsyncResource(
-      ({ reload, signal }) =>
-        store.dispatch(loadSubscriptions({ reload, signal })),
-      [],
-      [] as Subscription[],
-    ),
+  const lastSynced = this.use(
+    store.state$.get('serverState').get('lastSynced'),
   );
-  const treeItems = this.useMemo(
-    () => renderTreeItems(subscriptions.value, scene.url),
-    [subscriptions.value, scene.url],
+  const subscriptions = this.use(store.state$.get('subscriptions'));
+  const subscriptionTree = this.useMemo(
+    () =>
+      Tree({
+        ariaLabel: 'Subscriptions',
+        children: renderTreeItems(subscriptions, scene.url),
+      }),
+    [subscriptions, scene.url],
   );
+  const reload = () => {
+    setSyncing(true);
+    store.dispatch(reloadSubscriptions()).finally(() => {
+      setSyncing(false);
+    });
+  };
+
+  this.useEffect(() => {
+    if (lastSynced < 0) {
+      reload();
+    }
+  }, [lastSynced]);
 
   return html`
-    <div class="Sidenav" inert=${subscriptions.state === 'pending'}>
+    <div class="Sidenav" inert=${syncing}>
       <header class="Sidenav-Header">
         <menu class="Toolbar" role="toolbar">
           <li class="Toolbar-Item">
@@ -104,7 +116,7 @@ export const Sidenav = createComponent(function Sidenav({
                 <div class="Button-icon PathIcon shape preference"></div>
               </button>
             </div>
-            <${Tree({ ariaLabel: 'Subscriptions', children: treeItems })}>
+            <${subscriptionTree}>
           </div>
           <div class="SideMenu-Section" role="group">
             <div class="SideMenu-Item" role="menuitem">

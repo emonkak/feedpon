@@ -53,19 +53,17 @@ export class Store<TState, TContext> {
   }
 
   dispatch<TResult>(action: Action<TState, TContext, TResult>): TResult {
-    const finalize = <T>(action: Action<TState, TContext, T>): T =>
-      action(this._state$, this._context, finalize);
+    const dispatch = <T>(action: Action<TState, TContext, T>): T =>
+      action(this._state$, this._context, dispatch);
     const next = <TResult>(
       action: Action<TState, TContext, TResult>,
       index: number,
     ): TResult =>
-      index < this._plugins.length
-        ? this._plugins[index]!.handle(
-            action,
-            (action) => next(action, index + 1),
-            this,
-          )
-        : finalize(action);
+      this._plugins[index]?.handle(
+        action,
+        (action) => next(action, index + 1),
+        this,
+      ) ?? dispatch(action);
     return next(action, 0);
   }
 

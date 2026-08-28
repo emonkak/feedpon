@@ -5,6 +5,10 @@
   padding-inline: 16px;
 }
 
+.Toolbar-Label {
+  flex: 1;
+}
+
 .Toolbar-Spacer {
   flex: 1;
 }

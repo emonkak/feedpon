@@ -8,31 +8,21 @@ export interface AsyncResource<T> {
   reason: unknown;
 }
 
-export interface AsyncResourceContext {
-  reload: boolean;
-  signal: AbortSignal;
-}
-
 export function AsyncResource<
   TValue,
   const TArgs extends readonly any[],
   const TDefault = undefined,
 >(
-  fetcher: (
-    ...args: [...TArgs, context: AsyncResourceContext]
-  ) => Promise<TValue>,
+  fetcher: (...args: [...TArgs, signal: AbortSignal]) => Promise<TValue>,
   args: TArgs,
   defaultValue?: TDefault,
 ): HookFunction<
-  [resource: AsyncResource<TValue | TDefault>, reload: () => UpdateHandle]
+  [resource: AsyncResource<TValue | TDefault>, refetch: () => UpdateHandle]
 > {
   return (context) => {
     const prefetch = context.useMemo(() => {
       const controller = new AbortController();
-      const promise = fetcher(...args, {
-        reload: false,
-        signal: controller.signal,
-      });
+      const promise = fetcher(...args, controller.signal);
       promise.then(
         () => {
           prefetch.state = 'fulfilled';
@@ -74,12 +64,9 @@ export function AsyncResource<
       value,
       reason,
     };
-    const reload = () => {
+    const refetch = () => {
       const controller = new AbortController();
-      const promise = fetcher(...args, {
-        reload: true,
-        signal: controller.signal,
-      });
+      const promise = fetcher(...args, controller.signal);
       promise.then(
         () => {
           prefetch.state = 'fulfilled';
@@ -94,6 +81,6 @@ export function AsyncResource<
       return context.forceUpdate();
     };
 
-    return [resource, reload];
+    return [resource, refetch];
   };
 }

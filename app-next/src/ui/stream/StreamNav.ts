@@ -1,18 +1,16 @@
-import type { Stream } from '@feedpon/feedly-client';
 import { createComponent, html } from 'barebind';
 import type { Session } from '../../state/store.ts';
 import { CircleProgress } from '../primitives/CirlceProgress.ts';
 
 export interface StreamNavProps {
-  stream: Stream;
   session: Session;
 }
 
 export const StreamNav = createComponent(function StreamNav({
-  stream,
   session,
 }: StreamNavProps) {
-  const item = stream.items[session.index];
+  const { scrollIndex, stream } = session;
+  const item = stream.items[scrollIndex];
 
   return html`
     <nav class="StreamNav">
@@ -29,8 +27,8 @@ export const StreamNav = createComponent(function StreamNav({
         <button type="button" class="StreamNav-Button">
           <div class="StreamNav-Button-icon">
             <${CircleProgress({
-              label: (session.index + 1).toString().slice(-3),
-              progress: (session.index + 1) / stream.items.length,
+              label: (scrollIndex + 1).toString().slice(-3),
+              progress: (scrollIndex + 1) / stream.items.length,
             })}>
           </div>
         </button>

@@ -17,7 +17,7 @@ export const Dispatcher = createComponent(function Dispatcher({
   const { scene } = this.use(SyncNavigation(new HashAdapter()));
   const [page] = this.use(
     AsyncResource(
-      async (url, { signal }) => {
+      async (url, signal) => {
         const loader = router.match(url);
         return loader !== undefined
           ? (await loader(store, signal)).withKey(scene.url)
