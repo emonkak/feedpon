@@ -1,5 +1,5 @@
 import { html, type VElement } from 'barebind';
-import type { AsyncResource } from '../hooks/AsyncResource.ts';
+import type { AsyncResource } from '../hooks/async-resource.ts';
 
 export interface ReaderLayoutProps {
   page: AsyncResource<VElement | undefined>;

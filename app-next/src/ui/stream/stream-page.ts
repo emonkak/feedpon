@@ -1,9 +1,9 @@
 import { createComponent, type HookFunction, html } from 'barebind';
 import { updateScrollIndex } from '../../state/actions.ts';
 import { AppStore, type Session } from '../../state/store.ts';
-import { StackScroller } from '../primitives/StackScroller.ts';
-import { StreamItem } from './StreamItem.ts';
-import { StreamNav } from './StreamNav.ts';
+import { StackScroller } from '../primitives/stack-scroller.ts';
+import { StreamItem } from './stream-item.ts';
+import { StreamNav } from './stream-nav.ts';
 
 export interface StreamPageProps {
   session: Session;

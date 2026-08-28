@@ -9,7 +9,7 @@ import type { NavigationScene } from 'barebind/addons/router';
 import { orderByAscending } from '../../foundation/comparer.ts';
 import { reloadSubscriptions } from '../../state/actions.ts';
 import { AppStore } from '../../state/store.ts';
-import { Tree, TreeItem, type TreeItemProps } from '../primitives/Tree.ts';
+import { Tree, TreeItem, type TreeItemProps } from '../primitives/tree.ts';
 
 export interface SidenavProps {
   scene: NavigationScene;

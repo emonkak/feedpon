@@ -1,6 +1,6 @@
 import type { Entry, Link } from '@feedpon/feedly-client';
 import { createComponent, html } from 'barebind';
-import { EmbeddedHTML } from '../primitives/EmbeddedHTML.ts';
+import { EmbeddedHTML } from '../primitives/embedded-html.ts';
 
 const HTNL_ENTITY_PATTERN = /&(#(?:x[0-9A-F]+|\d+)|[0-9A-Z]+)/i;
 

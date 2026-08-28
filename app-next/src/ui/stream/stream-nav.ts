@@ -1,6 +1,6 @@
 import { createComponent, html } from 'barebind';
 import type { Session } from '../../state/store.ts';
-import { CircleProgress } from '../primitives/CirlceProgress.ts';
+import { CircleProgress } from '../primitives/cirlce-progress.ts';
 
 export interface StreamNavProps {
   session: Session;

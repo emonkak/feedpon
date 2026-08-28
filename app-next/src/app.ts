@@ -3,15 +3,15 @@ import { DOMAdapter, DOMRoot, Runtime } from 'barebind';
 import { UpdateLogger } from 'barebind/addons/update-logger';
 import { UpdateProfiler } from 'barebind/addons/update-profiler';
 import { ChromeAuthenticator } from './foundation/authenticator/chrome.ts';
-import { IDBObjectStoreManager } from './foundation/database/indexedDB.ts';
+import { IDBObjectStoreManager } from './foundation/database/indexed-db.ts';
 import { Mutex } from './foundation/mutex.ts';
 import { PersistentPlugin } from './foundation/store/persistent.ts';
 import { AppState, AppStore, AppStoreMap } from './state/store.ts';
-import { App } from './ui/App.ts';
+import { App } from './ui/app.ts';
 
 const DB_NAME = 'feedpon';
 const DB_VERSION = 1;
-const STATE_VERSION = 1;
+const STORE_VERSION = 1;
 
 async function prepareStore(): Promise<AppStore> {
   const objectStoreManager = await IDBObjectStoreManager.open(
@@ -31,7 +31,7 @@ async function prepareStore(): Promise<AppStore> {
     }),
     objectStoreManager,
   });
-  await store.use(new PersistentPlugin(objectStoreManager, STATE_VERSION));
+  await store.use(new PersistentPlugin(objectStoreManager, STORE_VERSION));
   return store;
 }
 

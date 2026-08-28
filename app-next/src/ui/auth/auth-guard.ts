@@ -1,6 +1,6 @@
 import { createComponent } from 'barebind';
 import type { AppStore } from '../../state/store.ts';
-import { AuthPage } from './AuthPage.ts';
+import { AuthPage } from './auth-page.ts';
 
 export interface AuthGuardProps {
   children: unknown;

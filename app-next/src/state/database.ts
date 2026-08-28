@@ -1,5 +1,5 @@
 import type { Feed } from '@feedpon/feedly-client';
-import { IDBGenericStore } from '../foundation/database/indexedDB.ts';
+import { IDBGenericStore } from '../foundation/database/indexed-db.ts';
 import type { Patch } from '../foundation/store/persistent.ts';
 import type { Session } from './store.ts';
 

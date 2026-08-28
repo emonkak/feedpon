@@ -2,8 +2,8 @@ import type { VElement } from 'barebind';
 import { decoded, Router, route } from 'barebind/addons/router';
 import { startSession } from '../state/actions.ts';
 import type { AppStore } from '../state/store.ts';
-import { IndexPage } from './index/IndexPage.ts';
-import { StreamPage } from './stream/StreamPage.ts';
+import { IndexPage } from './index/index-page.ts';
+import { StreamPage } from './stream/stream-page.ts';
 
 export type Loader = (
   store: AppStore,

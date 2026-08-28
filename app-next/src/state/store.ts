@@ -4,7 +4,7 @@ import type {
   Subscription,
 } from '@feedpon/feedly-client';
 import type { Authenticator } from '../foundation/authenticator/types.ts';
-import type { IDBStoreMap } from '../foundation/database/indexedDB.ts';
+import type { IDBStoreMap } from '../foundation/database/indexed-db.ts';
 import type { ObjectStoreManager } from '../foundation/database/types.ts';
 import type { Mutex } from '../foundation/mutex.ts';
 import { type Action, Store } from '../foundation/store/store.ts';

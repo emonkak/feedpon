@@ -1,5 +1,5 @@
 import { createComponent, html } from 'barebind';
-import styleSheetContent from './EmbeddedHTML.css' with { type: 'text' };
+import styleSheetContent from './embedded-html.css' with { type: 'text' };
 
 const ATTRIBUTE_HREF = 'href';
 const ATTRIBUTE_SRC = 'src';
