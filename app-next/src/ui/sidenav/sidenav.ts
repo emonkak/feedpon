@@ -18,7 +18,7 @@ export interface SidenavProps {
 export const Sidenav = createComponent(function Sidenav({
   scene,
 }: SidenavProps) {
-  const [syncing, setSyncing] = this.useState(false);
+  const [isSyncing, setIsSyncing] = this.useState(false);
   const store = this.inject(AppStore);
   const lastSynced = this.use(
     store.state$.get('serverState').get('lastSynced'),
@@ -32,11 +32,13 @@ export const Sidenav = createComponent(function Sidenav({
       }),
     [subscriptions, scene.url],
   );
-  const reload = () => {
-    setSyncing(true);
-    store.dispatch(reloadSubscriptions()).finally(() => {
-      setSyncing(false);
-    });
+  const reload = async () => {
+    setIsSyncing(true);
+    try {
+      await store.dispatch(reloadSubscriptions());
+    } finally {
+      setIsSyncing(false);
+    }
   };
 
   this.useEffect(() => {
@@ -46,15 +48,17 @@ export const Sidenav = createComponent(function Sidenav({
   }, [lastSynced]);
 
   return html`
-    <div class="Sidenav" inert=${syncing}>
+    <div class="Sidenav" inert=${isSyncing}>
       <header class="Sidenav-Header">
         <menu class="Toolbar" role="toolbar">
           <li class="Toolbar-Item">
             <button
               aria-label="Reload subscriptions"
               class="Button solid default"
+              disabled=${isSyncing}
               title="Reload subscriptions"
               type="button"
+              @click=${reload}
             >
               <div aria-hidden="true" class="Button-icon EmojiIcon">
                 <span class="EmojiIcon-glyph">🔄</span>
