@@ -4,6 +4,8 @@
 }
 
 .StackScroller-List {
+  position: relative;
+
   &::before {
     block-size: var(--item-height);
     content: "";
@@ -64,6 +66,18 @@
 
   &.current:not(:last-child) {
     inset-block-end: 0;
+  }
+}
+
+.StackScroller-Anchor {
+  position: absolute;
+
+  &.top {
+    inset-block-start: 0;
+  }
+
+  &.middle {
+    inset-block-start: var(--item-height);
   }
 }
 

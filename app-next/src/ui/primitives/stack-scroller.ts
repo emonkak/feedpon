@@ -53,7 +53,7 @@ export const StackScroller: StackScroller = createComponent(
         ),
       [],
     );
-    const rootRef = this.useRef<HTMLElement | null>(null);
+    const anchorRef = this.useRef<HTMLElement | null>(null);
     const sentinelRef = this.useCallback((target: HTMLElement) => {
       intersectionObserver.observe(target);
       return () => {
@@ -78,8 +78,7 @@ export const StackScroller: StackScroller = createComponent(
     };
 
     this.useEffect(() => {
-      const y = index > 0 ? window.innerHeight - rootRef.current!.offsetTop : 0;
-      window.scrollTo(0, y);
+      anchorRef.current?.scrollIntoView();
     }, [index]);
 
     const previous = renderItem('previous', index - 1);
@@ -87,7 +86,10 @@ export const StackScroller: StackScroller = createComponent(
     const next = renderItem('next', index + 1);
 
     return html`
-      <div class="StackScroller" ${rootRef}>
+      <div class="StackScroller">
+        <div
+          class=${['StackScroller-Anchor', previous !== undefined ? 'middle' : 'top']}
+          ${anchorRef}></div>
         <div
           class="StackScroller-Top"
           data-index=${previous !== undefined ? index - 1 : undefined}
