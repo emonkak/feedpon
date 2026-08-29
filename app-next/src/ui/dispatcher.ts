@@ -1,5 +1,5 @@
 import { createComponent, html } from 'barebind';
-import { HashAdapter, SyncNavigation } from 'barebind/addons/router';
+import { HashAdapter, SyncNavigationScene } from 'barebind/addons/router';
 import type { AppStore } from '../state/store.ts';
 import { AsyncResource } from './hooks/async-resource.ts';
 import { ReaderLayout } from './layouts/reader-layout.ts';
@@ -14,7 +14,7 @@ export interface DispatcherProps {
 export const Dispatcher = createComponent(function Dispatcher({
   store,
 }: DispatcherProps) {
-  const { scene } = this.use(SyncNavigation(new HashAdapter()));
+  const scene = this.use(SyncNavigationScene(new HashAdapter()));
   const [page] = this.use(
     AsyncResource(
       async (url, signal) => {
