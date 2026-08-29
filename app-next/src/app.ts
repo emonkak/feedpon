@@ -1,5 +1,6 @@
 import { FeedlyClient } from '@feedpon/feedly-client';
 import { DOMAdapter, DOMRoot, Runtime } from 'barebind';
+import { HashAdapter } from 'barebind/addons/router';
 import { UpdateLogger } from 'barebind/addons/update-logger';
 import { UpdateProfiler } from 'barebind/addons/update-profiler';
 import { ChromeAuthenticator } from './foundation/authenticator/chrome.ts';
@@ -8,6 +9,7 @@ import { Mutex } from './foundation/mutex.ts';
 import { PersistentPlugin } from './foundation/store/persistent.ts';
 import { AppState, AppStore, AppStoreMap } from './state/store.ts';
 import { App } from './ui/app.ts';
+import { createRouter } from './ui/router.ts';
 
 const DB_NAME = 'feedpon';
 const DB_VERSION = 1;
@@ -43,6 +45,8 @@ runtime.use(new UpdateProfiler());
 
 root.render(
   App({
+    navigationAdapter: new HashAdapter(),
     prepareStore,
+    router: createRouter(),
   }),
 );

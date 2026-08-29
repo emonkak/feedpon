@@ -3,11 +3,17 @@ import type { AsyncResource } from '../hooks/async-resource.ts';
 
 export interface ReaderLayoutProps {
   page: AsyncResource<VElement | undefined>;
+  isPending: boolean;
   sidenav: VElement;
   sidetoc: VElement;
 }
 
-export function ReaderLayout({ page, sidenav, sidetoc }: ReaderLayoutProps) {
+export function ReaderLayout({
+  isPending,
+  page,
+  sidenav,
+  sidetoc,
+}: ReaderLayoutProps) {
   return html`
     <div class="ReaderLayout">
       <nav class="ReaderLayout-Sidenav">
@@ -15,7 +21,7 @@ export function ReaderLayout({ page, sidenav, sidetoc }: ReaderLayoutProps) {
       </nav>
       <main
         class="ReaderLayout-Main"
-        inert=${page.state === 'pending'}
+        inert=${page.state === 'pending' || isPending}
       >
         <${page.value}>
       </main>

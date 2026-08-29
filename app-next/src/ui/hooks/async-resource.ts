@@ -1,86 +1,110 @@
 import type { HookFunction, UpdateHandle } from 'barebind';
 
-type PromiseState = 'pending' | 'fulfilled' | 'rejected';
+export type AsyncResource<T> =
+  | {
+      state: 'pending';
+      value: undefined;
+      reason: undefined;
+    }
+  | {
+      state: 'fulfilled';
+      value: T;
+      reason: undefined;
+    }
+  | {
+      state: 'rejected';
+      value: undefined;
+      reason: unknown;
+    };
 
-export interface AsyncResource<T> {
-  state: PromiseState;
-  value: T;
-  reason: unknown;
+type AsyncResourceWithThunk<TValue, TRequest> = AsyncResource<TValue> & {
+  thunk: Thunk<TRequest>;
+};
+
+interface Thunk<T> {
+  request: T;
+  abortController: AbortController;
+  finishController: PromiseWithResolvers<UpdateHandle>;
 }
 
-export function AsyncResource<
-  TValue,
-  const TArgs extends readonly any[],
-  const TDefault = undefined,
->(
-  fetcher: (...args: [...TArgs, signal: AbortSignal]) => Promise<TValue>,
-  args: TArgs,
-  defaultValue?: TDefault,
+export function AsyncResource<TValue, TRequest>(
+  args: TRequest,
+  fetch: (request: TRequest, signal: AbortSignal) => Promise<TValue>,
 ): HookFunction<
-  [resource: AsyncResource<TValue | TDefault>, refetch: () => UpdateHandle]
+  [
+    resource: AsyncResource<TValue>,
+    refetch: (request: TRequest, signal: AbortSignal) => Promise<UpdateHandle>,
+    isPending: boolean,
+  ]
 > {
   return (context) => {
-    const prefetch = context.useMemo(() => {
-      const controller = new AbortController();
-      const promise = fetcher(...args, controller.signal);
-      promise.then(
-        () => {
-          prefetch.state = 'fulfilled';
-        },
-        () => {
-          prefetch.state = 'rejected';
-        },
-      );
-      return { controller, promise, state: 'pending' as PromiseState };
-    }, args);
-    const [value, setValue] = context.useState<TValue | TDefault>(
-      () => defaultValue!,
-    );
-    const [reason, setReason] = context.useState<unknown>(undefined);
-    const { promise, controller } = prefetch;
+    const [thunk, setThunk] = context.useState<Thunk<TRequest>>(() => {
+      const finishController = Promise.withResolvers<UpdateHandle>();
+      const abortController = new AbortController();
+      return { request: args, finishController, abortController };
+    });
+    const [resource, setResource] = context.useState<
+      AsyncResourceWithThunk<TValue, TRequest>
+    >(() => ({
+      state: 'pending',
+      value: undefined,
+      reason: undefined,
+      thunk,
+    }));
 
     context.useEffect(() => {
-      promise.then(
+      const { request, finishController, abortController } = thunk;
+      const { signal } = abortController;
+      fetch(request, signal).then(
         (value) => {
-          if (!controller.signal.aborted) {
-            setValue(() => value);
-            setReason(undefined);
+          if (!signal.aborted) {
+            finishController.resolve(
+              setResource({
+                state: 'fulfilled',
+                value,
+                reason: undefined,
+                thunk,
+              }),
+            );
           }
         },
         (reason) => {
-          if (!controller.signal.aborted) {
-            setValue(() => defaultValue!);
-            setReason(() => reason);
+          if (!signal.aborted) {
+            finishController.resolve(
+              setResource({
+                state: 'rejected',
+                value: undefined,
+                reason,
+                thunk,
+              }),
+            );
           }
+          return Promise.reject(reason);
         },
       );
+      signal.addEventListener('abort', () => {
+        finishController.reject(signal.reason);
+      });
       return () => {
-        controller.abort();
+        abortController.abort();
       };
-    }, [promise, controller]);
+    }, [thunk]);
 
-    const resource: AsyncResource<TValue | TDefault> = {
-      state: prefetch.state,
-      value,
-      reason,
-    };
-    const refetch = () => {
-      const controller = new AbortController();
-      const promise = fetcher(...args, controller.signal);
-      promise.then(
-        () => {
-          prefetch.state = 'fulfilled';
-        },
-        () => {
-          prefetch.state = 'rejected';
-        },
-      );
-      prefetch.controller = controller;
-      prefetch.promise = promise;
-      prefetch.state = 'pending';
-      return context.forceUpdate();
+    const refetch = async (request: TRequest, signal: AbortSignal) => {
+      const finishController = Promise.withResolvers<UpdateHandle>();
+      const abortController = deriveAbortController(signal);
+      await setThunk({ request, finishController, abortController }).finished;
+      return await finishController.promise;
     };
 
-    return [resource, refetch];
+    return [resource, refetch, resource.thunk !== thunk];
   };
+}
+
+function deriveAbortController(signal: AbortSignal): AbortController {
+  const controller = new AbortController();
+  signal.addEventListener('abort', () => {
+    controller.abort(signal.reason);
+  });
+  return controller;
 }
