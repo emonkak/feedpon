@@ -24,19 +24,18 @@
   width: var(--outer-diameter);
 
   &::before {
-    --width: 6px;
-    --height: 6px;
+    --circle-width: calc(6px * round(up, 1 - var(--progress), 1));
     content: "";
     border-radius: 50%;
     background-color: var(--fill-color);
-    height: var(--height);
-    left: calc(50% - var(--width) / 2);
+    height: var(--circle-width);
+    left: calc(50% - var(--circle-width) / 2);
     position: absolute;
-    top: calc(var(--height) / -2 + var(--indicator-width) / 2);
+    top: calc(var(--circle-width) / -2 + var(--indicator-width) / 2);
     transform: rotate(var(--angle));
     transform-origin: 50%
       calc(50% + var(--outer-radius) - var(--indicator-width) / 2);
-    width: var(--width);
+    width: var(--circle-width);
   }
 
   &::after {
