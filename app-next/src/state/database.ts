@@ -1,4 +1,4 @@
-import type { Feed } from '@feedpon/feedly-client';
+import type { Feed, Stream } from '@feedpon/feedly-client';
 import { IDBGenericStore } from '../foundation/database/indexed-db.ts';
 import type { Patch } from '../foundation/store/persistent.ts';
 import type { Session } from './store.ts';
@@ -18,15 +18,15 @@ export class PatchStore extends IDBGenericStore<Patch> {
   }
 }
 
-export class SessionStore extends IDBGenericStore<Session> {
+export class SessionStore extends IDBGenericStore<Session> {}
+
+export class StreamStore extends IDBGenericStore<Stream> {
   static override migrate(
     database: IDBDatabase,
     name: string,
     _oldVersin: number,
     _newVersion: number | null,
   ): void {
-    database.createObjectStore(name, {
-      keyPath: 'stream.id',
-    });
+    database.createObjectStore(name);
   }
 }

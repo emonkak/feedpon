@@ -31,8 +31,8 @@ export const Dispatcher = createComponent(function Dispatcher({
     AsyncResource(scene.url, async (url, signal) => {
       const loader = router.match(url);
       return loader !== undefined
-        ? (await loader(store, signal)).withKey(scene.url)
-        : html`${scene.url}`;
+        ? (await loader(store, signal)).withKey(url)
+        : html`${url}`;
     }),
   );
 

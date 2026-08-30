@@ -46,13 +46,16 @@ export abstract class IDBGenericStore<T extends object> {
     return await waitForRequest(request);
   }
 
-  async getAll(query?: IDBValidKey | IDBKeyRange): Promise<T[]> {
-    const request = this._store.getAll(query);
+  async getAll(
+    query?: IDBValidKey | IDBKeyRange,
+    count?: number,
+  ): Promise<T[]> {
+    const request = this._store.getAll(query, count);
     return await waitForRequest(request);
   }
 
-  async put(object: T): Promise<void> {
-    const request = this._store.put(object);
+  async put(object: T, key?: IDBValidKey): Promise<void> {
+    const request = this._store.put(object, key);
     await waitForRequest(request);
   }
 }

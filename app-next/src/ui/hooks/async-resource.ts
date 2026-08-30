@@ -28,7 +28,7 @@ interface Thunk<T> {
 }
 
 export function AsyncResource<TValue, TRequest>(
-  args: TRequest,
+  request: TRequest,
   fetch: (request: TRequest, signal: AbortSignal) => Promise<TValue>,
 ): HookFunction<
   [
@@ -41,7 +41,7 @@ export function AsyncResource<TValue, TRequest>(
     const [thunk, setThunk] = context.useState<Thunk<TRequest>>(() => {
       const finishController = Promise.withResolvers<UpdateHandle>();
       const abortController = new AbortController();
-      return { request: args, finishController, abortController };
+      return { request, finishController, abortController };
     });
     const [resource, setResource] = context.useState<
       AsyncResourceWithThunk<TValue, TRequest>

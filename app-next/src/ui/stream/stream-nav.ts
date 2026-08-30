@@ -1,15 +1,18 @@
+import type { Stream } from '@feedpon/feedly-client';
 import { createComponent, html } from 'barebind';
 import type { Session } from '../../state/store.ts';
 import { CircleProgress } from '../primitives/cirlce-progress.ts';
 
 export interface StreamNavProps {
   session: Session;
+  stream: Stream;
 }
 
 export const StreamNav = createComponent(function StreamNav({
   session,
+  stream,
 }: StreamNavProps) {
-  const { scrollIndex, stream } = session;
+  const { scrollIndex } = session;
   const item = stream.items[scrollIndex];
 
   return html`

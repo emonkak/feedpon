@@ -45,12 +45,62 @@ export function acquireCredential(): AppAction<Promise<Credential>> {
   };
 }
 
-export function reloadSubscriptions(): AppAction<
-  Promise<feedly.Subscription[]>
-> {
+export function getStream(
+  session: Session,
+  signal: AbortSignal,
+): AppAction<Promise<feedly.Stream>> {
+  return async (state$, context, dispatch) => {
+    const { feedlyClient, objectStoreManager } = context;
+    const version = state$.get('serverState').get('version').value;
+
+    if (session.version >= version) {
+      const streams = await objectStoreManager.runTransaction(
+        ['streams'],
+        (stores) =>
+          stores.streams.getAll(
+            IDBKeyRange.bound([session.id, 0], [session.id, Infinity]),
+          ),
+      );
+      if (streams.length > 0) {
+        return streams.reduce((prevStream, nextStream) => ({
+          ...nextStream,
+          items: prevStream.items.concat(nextStream.items),
+        }));
+      }
+    } else {
+      await objectStoreManager.runTransaction(
+        ['streams'],
+        (stores) =>
+          stores.streams.delete(
+            IDBKeyRange.bound([session.id, 0], [session.id, Infinity]),
+          ),
+        { mode: 'readwrite' },
+      );
+    }
+
+    const credential = await dispatch(acquireCredential());
+    const stream = await feedlyClient.getStreamContents(
+      credential.accessToken,
+      session.id,
+      {},
+      { signal },
+    );
+
+    await objectStoreManager.runTransaction(
+      ['streams'],
+      (stores) => stores.streams.put(stream, [stream.id, 0]),
+      { mode: 'readwrite' },
+    );
+
+    return stream;
+  };
+}
+
+export function reloadSubscriptions(): AppAction<Promise<void>> {
   return async (state$, context, dispatch) => {
     const { feedlyClient } = context;
     const lastSynced$ = state$.get('serverState').get('lastSynced');
+    const version$ = state$.get('serverState').get('version');
     const subscriptions$ = state$.get('subscriptions');
 
     const credential = await dispatch(acquireCredential());
@@ -59,9 +109,8 @@ export function reloadSubscriptions(): AppAction<
     );
 
     lastSynced$.value = Date.now();
+    version$.value++;
     subscriptions$.value = subscriptions;
-
-    return subscriptions;
   };
 }
 
@@ -71,7 +120,7 @@ export function updateScrollIndex(
 ): AppAction<void> {
   return (state$) => {
     state$.get('session').scope((session) => {
-      if (session?.stream.id === streamId) {
+      if (session?.id === streamId) {
         session.scrollIndex = scrollIndex;
       }
     });
@@ -85,23 +134,19 @@ export function revokeCredential(): AppAction<void> {
 
     if (credential$.value !== null) {
       await feedlyClient.logout(credential$.value.accessToken);
-
       credential$.value = null;
     }
   };
 }
 
-export function startSession(
-  streamId: string,
-  signal: AbortSignal,
-): AppAction<Promise<Session>> {
-  return async (state$, context, dispatch) => {
-    const { feedlyClient, objectStoreManager } = context;
+export function startSession(streamId: string): AppAction<Promise<Session>> {
+  return async (state$, context) => {
+    const { objectStoreManager } = context;
     const session$ = state$.get('session');
     const session = session$.value;
-    const lastSynced = state$.get('serverState').get('lastSynced').value;
+    const version = state$.get('serverState').get('version').value;
 
-    if (session?.stream.id === streamId && session.started >= lastSynced) {
+    if (session?.id === streamId && session.version >= version) {
       return session;
     }
 
@@ -118,18 +163,11 @@ export function startSession(
       (stores) => stores.sessions.get(streamId),
     );
 
-    if (newSession === undefined || newSession.started < lastSynced) {
-      const credential = await dispatch(acquireCredential());
-      const stream = await feedlyClient.getStreamContents(
-        credential.accessToken,
-        streamId,
-        {},
-        { signal },
-      );
+    if (newSession === undefined || newSession.version < version) {
       newSession = {
+        id: streamId,
         scrollIndex: 0,
-        started: Date.now(),
-        stream,
+        version: Math.max(1, version),
       };
     }
 

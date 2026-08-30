@@ -1,6 +1,6 @@
 import type { VElement } from 'barebind';
 import { decoded, Router, route } from 'barebind/addons/router';
-import { startSession } from '../state/actions.ts';
+import { getStream, startSession } from '../state/actions.ts';
 import type { AppStore } from '../state/store.ts';
 import { IndexPage } from './index/index-page.ts';
 import { StreamPage } from './stream/stream-page.ts';
@@ -16,8 +16,9 @@ export function createRouter(): Router<PageLoader> {
       return IndexPage({});
     }),
     route(['streams', decoded], ([streamId]) => async (store, signal) => {
-      const session = await store.dispatch(startSession(streamId, signal));
-      return StreamPage({ session });
+      const session = await store.dispatch(startSession(streamId));
+      const stream = await store.dispatch(getStream(session, signal));
+      return StreamPage({ session, stream });
     }),
   ]);
 }
