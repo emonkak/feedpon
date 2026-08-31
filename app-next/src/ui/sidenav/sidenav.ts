@@ -82,7 +82,7 @@ export const Sidenav = createComponent(function Sidenav({
       </header>
       <div class="Sidenav-Main">
         <div class="SideMenu" role="menu">
-          <div class="SideMenu-Section" role="group">
+          <div class="SideMenu-Group" role="group">
             <div class="SideMenu-Item" role="menuitem">
               <a class="SideMenu-Item-Cell" href="#/all">
                 <div aria-hidden="true" class="SideMenu-Item-icon EmojiIcon">
@@ -100,18 +100,16 @@ export const Sidenav = createComponent(function Sidenav({
               </a>
             </div>
           </div>
-          <div class="SideMenu-Section" role="group">
-            <div class="SideMenu-Header">
-              <h1 class="SideMenu-Header-label">
+          <div class="SideMenu-Group" role="group">
+            <button class="SideMenu-Header" type="button">
+              <div class="SideMenu-Header-label">
                 Subscriptions
-              </h1>
-              <button class="SideMenu-Header-action Button" type="button">
-                <div class="Button-icon PathIcon shape preference"></div>
-              </button>
-            </div>
+              </div>
+              <div class="SideMenu-Header-icon Button-icon PathIcon shape preference"></div>
+            </button>
             <${subscriptionTree}>
           </div>
-          <div class="SideMenu-Section" role="group">
+          <div class="SideMenu-Group" role="group">
             <div class="SideMenu-Item" role="menuitem">
               <a class="SideMenu-Item-Cell" href="#/settings">
                 <div aria-hidden=true" class="SideMenu-Item-icon EmojiIcon">

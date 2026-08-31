@@ -1,4 +1,4 @@
-.SideMenu-Section {
+.SideMenu-Group {
   & + & {
     box-shadow: 0 -1px var(--default-border);
     margin-block-start: calc(var(--text-leading) / 4);
@@ -11,17 +11,32 @@
 
 .SideMenu-Header {
   color: var(--default-6);
-  display: flex;
+  display: grid;
   font-size: calc(1rem * var(--text-scale-8));
+  grid-template-areas: "label icon";
+  grid-template-columns: 1fr 32px;
+  inline-size: stretch;
+
+  &::before {
+    background-color: var(--SideMenu-Header-backgroundColor);
+    border-radius: 4px;
+    content: "";
+    display: block;
+    grid-area: label-start / label / icon / icon-end;
+    margin-inline: 4px;
+  }
 }
 
 .SideMenu-Header-label {
-  flex: 1;
+  font-family: var(--font-display);
+  font-weight: bold;
+  grid-area: label;
   min-inline-size: 0;
   padding-inline: 24px 8px;
 }
 
-.SideMenu-Header-action {
+.SideMenu-Header-icon {
+  grid-area: icon;
   place-self: center;
 }
 
@@ -29,16 +44,16 @@
   display: grid;
 
   &:hover {
-    --Menu-Item-backgroundColor: var(--default-2);
+    --SideMenu-Item-backgroundColor: var(--default-2);
   }
 
   &.selected {
-    --Menu-Item-backgroundColor: var(--primary-6);
-    --Menu-Item-color: var(--default-bg);
+    --SideMenu-Item-backgroundColor: var(--primary-6);
+    --SideMenu-Item-color: var(--default-bg);
   }
 
   &::before {
-    background-color: var(--Menu-Item-backgroundColor);
+    background-color: var(--SideMenu-Item-backgroundColor);
     border-radius: 4px;
     content: "";
     display: block;
@@ -48,10 +63,11 @@
 }
 
 .SideMenu-Item-Cell {
-  color: var(--Menu-Item-color);
+  color: var(--SideMenu-Item-color);
   display: flex;
   gap: 8px;
   grid-area: 1 / 1;
+  inline-size: stretch;
   padding-inline: 24px 8px;
 }
 
