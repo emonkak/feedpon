@@ -16,15 +16,15 @@ export function ReaderLayout({
 }: ReaderLayoutProps) {
   return html`
     <div class="ReaderLayout">
-      <nav class="ReaderLayout-Sidenav">
-        <${sidenav}>
-      </nav>
       <main
         class="ReaderLayout-Main"
         inert=${page.state === 'pending' || isPending}
       >
         <${page.value}>
       </main>
+      <nav class="ReaderLayout-Sidenav">
+        <${sidenav}>
+      </nav>
       <aside class="ReaderLayout-Sidetoc">
         <${sidetoc}>
       </aside>

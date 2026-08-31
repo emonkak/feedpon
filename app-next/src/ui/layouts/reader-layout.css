@@ -11,7 +11,6 @@
   min-height: 100vh;
   min-width: 0;
   opacity: 1;
-  overflow: clip;
   transition: opacity 0s 0s;
 
   &[inert] {
