@@ -1,5 +1,7 @@
 import type { HookFunction, UpdateHandle } from 'barebind';
 
+const THUNK_TAG = Symbol('thunk');
+
 export type AsyncResource<T> =
   | {
       state: 'pending';
@@ -18,7 +20,7 @@ export type AsyncResource<T> =
     };
 
 type AsyncResourceWithThunk<TValue, TRequest> = AsyncResource<TValue> & {
-  thunk: Thunk<TRequest>;
+  [THUNK_TAG]: Thunk<TRequest>;
 };
 
 interface Thunk<T> {
@@ -49,7 +51,7 @@ export function AsyncResource<TValue, TRequest>(
       state: 'pending',
       value: undefined,
       reason: undefined,
-      thunk,
+      [THUNK_TAG]: thunk,
     }));
 
     context.useEffect(() => {
@@ -63,7 +65,7 @@ export function AsyncResource<TValue, TRequest>(
                 state: 'fulfilled',
                 value,
                 reason: undefined,
-                thunk,
+                [THUNK_TAG]: thunk,
               }),
             );
           }
@@ -75,7 +77,7 @@ export function AsyncResource<TValue, TRequest>(
                 state: 'rejected',
                 value: undefined,
                 reason,
-                thunk,
+                [THUNK_TAG]: thunk,
               }),
             );
           }
@@ -97,7 +99,7 @@ export function AsyncResource<TValue, TRequest>(
       return await finishController.promise;
     };
 
-    return [resource, refetch, resource.thunk !== thunk];
+    return [resource, refetch, resource[THUNK_TAG] !== thunk];
   };
 }
 
