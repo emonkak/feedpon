@@ -1,5 +1,7 @@
 import { createComponent, html } from 'barebind';
-import styleSheetContent from './embedded-html.css' with { type: 'text' };
+import styleSheetContent from '../global-styles/reset.css' with {
+  type: 'text',
+};
 
 const ATTRIBUTE_HREF = 'href';
 const ATTRIBUTE_SRC = 'src';
@@ -146,7 +148,7 @@ export const EmbeddedHTML = createComponent(function EmbeddedHTML({
   }, [htmlString, origin]);
 
   return html`
-    <div ${containerRef}></div>
+    <div class="EmbeddedHTML" ${containerRef}></div>
   `;
 });
 

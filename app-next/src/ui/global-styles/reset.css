@@ -25,6 +25,12 @@ h6 {
   line-height: round(0.75rlh * var(--heading-scale, 1), 0.25rlh);
   margin-block: 0 0.5rlh;
   text-wrap: balance;
+
+  &:where([class]) {
+    font-size: inherit;
+    line-height: inherit;
+    margin-block: 0;
+  }
 }
 
 h1 {
@@ -51,12 +57,6 @@ h6 {
   --heading-scale: var(--text-scale-6);
 }
 
-:where(h1, h2, h3, h4, h5, h6)[class] {
-  font-size: inherit;
-  line-height: inherit;
-  margin-block: 0;
-}
-
 blockquote,
 dl,
 figure,
@@ -77,17 +77,33 @@ dd {
   margin-inline-start: 1rlh;
 }
 
+figure {
+  margin-inline: 0;
+
+  iframe,
+  img,
+  video {
+    display: block;
+    margin-inline: auto;
+  }
+}
+
+figcaption {
+  font-family: var(--font-display);
+  font-size: calc(1rem * var(--text-scale-7));
+  text-align: center;
+}
+
 menu,
 ol,
 ul {
   padding-inline-start: 1.5rlh;
-  margin-block: 0 1rlh;
-}
 
-:where(menu, ol, ul)[class] {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+  &:where([class]) {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
 }
 
 p {
@@ -101,19 +117,19 @@ a {
   text-decoration-color: color-mix(in srgb, currentColor 20%, transparent);
   text-decoration-thickness: 2px;
   text-underline-offset: 2px;
-}
 
-a:where(:visited) {
-  color: var(--secondary-6);
-}
+  &:where(:visited) {
+    color: var(--secondary-6);
+  }
 
-a:where(:hover) {
-  text-decoration-color: currentColor;
-}
+  &:where(:hover) {
+    text-decoration-color: currentColor;
+  }
 
-a:where([class]:any-link) {
-  color: inherit;
-  text-decoration: none;
+  &:where([class]:any-link) {
+    color: inherit;
+    text-decoration: none;
+  }
 }
 
 b,
@@ -135,4 +151,20 @@ samp {
 button {
   all: unset;
   cursor: pointer;
+}
+
+iframe,
+img,
+video {
+  block-size: auto;
+  max-inline-size: 100%;
+  vertical-align: bottom;
+}
+
+iframe {
+  border: 0;
+
+  &[width][height] {
+    aspect-ratio: auto attr(width type(<number>)) / attr(height type(<number>));
+  }
 }
