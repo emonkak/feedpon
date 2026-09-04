@@ -13,7 +13,7 @@
   color: var(--default-6);
   display: grid;
   font-size: calc(1rem * var(--text-scale-8));
-  grid-template-areas: "label icon";
+  grid-template-areas: "label action";
   grid-template-columns: 1fr 32px;
   inline-size: stretch;
 
@@ -22,7 +22,7 @@
     border-radius: 4px;
     content: "";
     display: block;
-    grid-area: label-start / label / icon / icon-end;
+    grid-area: label-start / label / action / action-end;
     margin-inline: 4px;
   }
 }
@@ -35,9 +35,13 @@
   padding-inline: 24px 8px;
 }
 
-.SideMenu-Header-icon {
-  grid-area: icon;
-  place-self: center;
+.SideMenu-Header-action {
+  grid-area: action;
+  place-self: stretch;
+}
+
+.SideMenu-Header-action:hover {
+  color: var(--primary-6);
 }
 
 .SideMenu-Item {
@@ -80,4 +84,8 @@
   margin-block: calc((1lh - 1cap) / 2);
   min-inline-size: 0;
   text-box: trim-both cap alphabetic;
+}
+
+.SideMenu-Item-info {
+  align-self: center;
 }

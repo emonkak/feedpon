@@ -99,18 +99,21 @@ export function getStream(
 export function reloadSubscriptions(): AppAction<Promise<void>> {
   return async (state$, context, dispatch) => {
     const { feedlyClient } = context;
+    const subscriptions$ = state$.get('subscriptions');
+    const unreadCounts$ = state$.get('unreadCounts');
     const lastSynced$ = state$.get('serverState').get('lastSynced');
     const version$ = state$.get('serverState').get('version');
-    const subscriptions$ = state$.get('subscriptions');
 
     const credential = await dispatch(acquireCredential());
-    const subscriptions = await feedlyClient.getSubscriptions(
-      credential.accessToken,
-    );
+    const [subscriptions, unreadCounts] = await Promise.all([
+      feedlyClient.getSubscriptions(credential.accessToken),
+      feedlyClient.getUnreadCounts(credential.accessToken),
+    ]);
 
+    subscriptions$.value = subscriptions;
+    unreadCounts$.value = unreadCounts.unreadcounts;
     lastSynced$.value = Date.now();
     version$.value++;
-    subscriptions$.value = subscriptions;
   };
 }
 

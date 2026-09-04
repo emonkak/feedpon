@@ -4,6 +4,7 @@
 
 @import "./ui/layouts/boot-layout.css";
 @import "./ui/layouts/reader-layout.css";
+@import "./ui/primitives/badge.css";
 @import "./ui/primitives/button.css";
 @import "./ui/primitives/circle-progress.css";
 @import "./ui/primitives/emoji-icon.css";

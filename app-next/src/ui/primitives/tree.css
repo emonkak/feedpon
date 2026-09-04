@@ -76,3 +76,7 @@
   min-inline-size: 0;
   text-box: trim-both cap alphabetic;
 }
+
+.Tree-Item-info {
+  align-self: center;
+}

@@ -8,33 +8,33 @@
   border: 1px solid transparent;
 
   &.solid {
-    border-color: var(--solid-border-color);
-    background-color: var(--solid-background-color);
+    border-color: var(--Button-solidBorderColor);
+    background-color: var(--Button-solidBackgroundColor);
     box-shadow:
-      inset 0 1px var(--solid-light-color),
-      inset 1px 0 var(--solid-light-color),
-      inset 0 -1px var(--solid-light-color),
-      inset -1px 0 var(--solid-light-color),
-      0 1px var(--solid-shadow-color);
-    color: var(--solid-color);
+      inset 0 1px var(--Button-solidLightColor),
+      inset 1px 0 var(--Button-solidLightColor),
+      inset 0 -1px var(--Button-solidLightColor),
+      inset -1px 0 var(--Button-solidLightColor),
+      0 1px var(--Button-solidShadowColor);
+    color: var(--Button-solidColor);
   }
 
   &.solid:active {
-    background-color: var(--solid-active-background-color);
+    background-color: var(--Button-solidActiveBackgroundColor);
   }
 
   &.default {
-    --icon-color: var(--default-6);
-    --solid-active-background-color: var(--default-2);
-    --solid-background-color: var(--default-1);
-    --solid-border-color: var(--default-border);
-    --solid-color: var(--default-10);
-    --solid-light-color: var(--default-light);
-    --solid-shadow-color: var(--default-shadow);
+    --Button-iconColor: var(--default-6);
+    --Button-solidActiveBackground-color: var(--default-2);
+    --Button-solidBackgroundColor: var(--default-1);
+    --Button-solidBorderColor: var(--default-border);
+    --Button-solidColor: var(--default-10);
+    --Button-solidLightColor: var(--default-light);
+    --Button-solidShadowColor: var(--default-shadow);
   }
 }
 
 .Button-icon {
   align-self: center;
-  color: var(--icon-color);
+  color: var(--Button-iconColor);
 }

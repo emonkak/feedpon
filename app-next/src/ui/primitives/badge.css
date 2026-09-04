@@ -1,0 +1,27 @@
+.Badge {
+  background-color: var(--Badge-backgroundColor);
+  border-radius: 4px;
+  color: var(--Badge-color);
+  font-family: var(--font-display);
+  line-height: 1;
+  padding: 4px;
+
+  &:empty {
+    display: none;
+  }
+
+  &.default {
+    --Badge-color: var(--default-6);
+    --Badge-backgroundColor: var(--default-2);
+  }
+
+  &.primary {
+    --Badge-color: var(--primary-6);
+    --Badge-backgroundColor: var(--primary-2);
+  }
+
+  &.small {
+    font-size: calc(1rem * var(--text-scale-9));
+    text-box: trim-both cap alphabetic;
+  }
+}

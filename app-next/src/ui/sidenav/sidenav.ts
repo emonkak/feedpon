@@ -17,9 +17,14 @@ export const Sidenav = createComponent(function Sidenav({
     store.state$.get('serverState').get('lastSynced'),
   );
   const subscriptions = this.use(store.state$.get('subscriptions'));
+  const unreadCounts = this.use(store.state$.get('unreadCounts'));
+  const totalUnreadCounts = this.useMemo(
+    () => unreadCounts.reduce((totalCount, { count }) => totalCount + count, 0),
+    [unreadCounts],
+  );
   const subscriptionTree = this.useMemo(
-    () => SubscriptionTree({ subscriptions, url: scene.url }),
-    [subscriptions, scene.url],
+    () => SubscriptionTree({ subscriptions, unreadCounts, url: scene.url }),
+    [subscriptions, unreadCounts, scene.url],
   );
   const reload = async () => {
     setIsSyncing(true);
@@ -66,6 +71,7 @@ export const Sidenav = createComponent(function Sidenav({
                 <span class="EmojiIcon-glyph">🔍︎</span>
               </div>
             </button>
+          </li>
           <li class="Toolbar-Item">
             <button
               aria-label="Toggle sidebar"
@@ -88,7 +94,10 @@ export const Sidenav = createComponent(function Sidenav({
                 <div aria-hidden="true" class="SideMenu-Item-icon EmojiIcon">
                   <span class="EmojiIcon-glyph">📚</span>
                 </div>
-                <div class="SideMenu-item-label">All Feeds</div>
+                <div class="SideMenu-Item-label">All Feeds</div>
+                <div class="SideMenu-Item-info Badge primary small">
+                  ${totalUnreadCounts > 0 ? totalUnreadCounts : undefined}
+                </div>
               </a>
             </div>
             <div class="SideMenu-Item" role="menuitem">
@@ -101,12 +110,14 @@ export const Sidenav = createComponent(function Sidenav({
             </div>
           </div>
           <div class="SideMenu-Group" role="group">
-            <button class="SideMenu-Header" type="button">
+            <div class="SideMenu-Header" type="button">
               <div class="SideMenu-Header-label">
                 Subscriptions
               </div>
-              <div class="SideMenu-Header-icon Button-icon PathIcon shape preference"></div>
-            </button>
+              <button class="SideMenu-Header-action">
+                <div class="PathIcon solid horizontal-dots"></div>
+              </button>
+            </div>
             <${subscriptionTree}>
           </div>
           <div class="SideMenu-Group" role="group">

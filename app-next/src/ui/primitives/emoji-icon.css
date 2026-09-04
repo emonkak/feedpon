@@ -7,6 +7,7 @@
   font-weight: normal;
   height: var(--size);
   line-height: var(--size);
+  place-self: center;
   user-select: none;
   width: var(--size);
 

@@ -1,4 +1,8 @@
-import type { FeedlyClient, Subscription } from '@feedpon/feedly-client';
+import type {
+  FeedlyClient,
+  Subscription,
+  UnreadCount,
+} from '@feedpon/feedly-client';
 import type { Authenticator } from '../foundation/authenticator/types.ts';
 import type { IDBStoreMap } from '../foundation/database/indexed-db.ts';
 import type { ObjectStoreManager } from '../foundation/database/types.ts';
@@ -28,6 +32,7 @@ export class AppState {
   };
   session: Session | null = null;
   subscriptions: Subscription[] = [];
+  unreadCounts: UnreadCount[] = [];
 }
 
 export class AppStore extends Store<AppState, AppContext> {}

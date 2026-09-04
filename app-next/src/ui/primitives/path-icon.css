@@ -1,8 +1,8 @@
 .PathIcon {
   --size: attr(data-size px, 16px);
-  align-self: center;
   box-sizing: border-box;
   height: var(--size);
+  place-self: center;
   width: var(--size);
 
   &.shape {
@@ -19,6 +19,23 @@
     --path: polygon(19% 48%, 39% 67%, 82% 23%, 92% 34%, 39% 89%, 9% 59%);
   }
 
+  &.horizontal-dots {
+    --path: shape(
+      /* left dot */
+      from 0px 8px,
+      arc to 4px 8px of 1.5px cw,
+      arc to 0px 8px of 1.5px cw,
+      /* center dot */
+      move to 6px 8px,
+      arc to 10px 8px of 1.5px cw,
+      arc to 6px 8px of 1.5px cw,
+      /* right dot */
+      move to 12px 8px,
+      arc to 16px 8px of 1.5px cw,
+      arc to 12px 8px of 1.5px cw
+    );
+  }
+
   &.menu {
     --path: shape(
       /* top border */
@@ -30,25 +47,6 @@
       /* bottom border */
       move to 0px 14px,
       line to 16px 14px
-    );
-  }
-
-  &.preference {
-    --path: shape(
-      /* left border */
-      from 4px 1px,
-      line to 4px 4px,
-      arc to 4px 8px of 2px cw,
-      arc to 4px 4px of 2px cw,
-      move to 4px 8px,
-      line to 4px 15px,
-      /* right border */
-      move to 12px 1px,
-      line to 12px 8px,
-      arc to 12px 12px of 2px cw,
-      arc to 12px 8px of 2px cw,
-      move to 12px 12px,
-      line to 12px 15px
     );
   }
 
