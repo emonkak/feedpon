@@ -2,7 +2,6 @@
   --size: attr(data-size px, 16px);
   box-sizing: border-box;
   height: var(--size);
-  place-self: center;
   width: var(--size);
 
   &.shape {

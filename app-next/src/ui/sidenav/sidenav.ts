@@ -44,8 +44,8 @@ export const Sidenav = createComponent(function Sidenav({
   return html`
     <div class="Sidenav" inert=${isSyncing}>
       <header class="Sidenav-Header">
-        <menu class="Toolbar" role="toolbar">
-          <li class="Toolbar-Item">
+        <menu class="Sidenav-Toolbar" role="toolbar">
+          <li class="Sidenav-Toolbar-Item">
             <button
               aria-label="Reload subscriptions"
               class="Button solid default"
@@ -59,8 +59,8 @@ export const Sidenav = createComponent(function Sidenav({
               </div>
             </button>
           </li>
-          <li class="Toolbar-Spacer"></li>
-          <li class="Toolbar-Item">
+          <li class="Sidenav-Toolbar-Spacer"></li>
+          <li class="Sidenav-Toolbar-Item">
             <button
               aria-label="Search subscriptions"
               class="Button solid default"
@@ -72,7 +72,7 @@ export const Sidenav = createComponent(function Sidenav({
               </div>
             </button>
           </li>
-          <li class="Toolbar-Item">
+          <li class="Sidenav-Toolbar-Item">
             <button
               aria-label="Toggle sidebar"
               class="Button solid default"
@@ -87,54 +87,54 @@ export const Sidenav = createComponent(function Sidenav({
         </menu>
       </header>
       <div class="Sidenav-Main">
-        <div class="SideMenu" role="menu">
-          <div class="SideMenu-Group" role="group">
-            <div class="SideMenu-Item" role="menuitem">
-              <a class="SideMenu-Item-Cell" href="#/all">
-                <div aria-hidden="true" class="SideMenu-Item-icon EmojiIcon">
+        <div class="Sidenav-Menu" role="menu">
+          <div class="Sidenav-Menu-Group" role="group">
+            <div class="Sidenav-Menu-Item" role="menuitem">
+              <a class="Sidenav-Menu-Item-Cell" href="#/all">
+                <div aria-hidden="true" class="Sidenav-Menu-Item-icon EmojiIcon">
                   <span class="EmojiIcon-glyph">📚</span>
                 </div>
-                <div class="SideMenu-Item-label">All Feeds</div>
-                <div class="SideMenu-Item-info Badge primary small">
+                <div class="Sidenav-Menu-Item-label">All Feeds</div>
+                <div class="Sidenav-Menu-Item-info Badge primary small">
                   ${totalUnreadCounts > 0 ? totalUnreadCounts : undefined}
                 </div>
               </a>
             </div>
-            <div class="SideMenu-Item" role="menuitem">
-              <a class="SideMenu-Item-Cell" href="#/subscribe">
-                <div aria-hidden="true" class="SideMenu-Item-icon EmojiIcon">
+            <div class="Sidenav-Menu-Item" role="menuitem">
+              <a class="Sidenav-Menu-Item-Cell" href="#/subscribe">
+                <div aria-hidden="true" class="Sidenav-Menu-Item-icon EmojiIcon">
                   <span class="EmojiIcon-glyph">🛜</span>
                 </div>
-                <div class="SideMenu-item-label">Subscribe Feeds</div>
+                <div class="Sidenav-Menu-item-label">Subscribe Feeds</div>
               </a>
             </div>
           </div>
-          <div class="SideMenu-Group" role="group">
-            <div class="SideMenu-Header" type="button">
-              <div class="SideMenu-Header-label">
+          <div class="Sidenav-Menu-Group" role="group">
+            <div class="Sidenav-Menu-Header" type="button">
+              <div class="Sidenav-Menu-Header-label">
                 Subscriptions
               </div>
-              <button class="SideMenu-Header-action">
-                <div class="PathIcon solid horizontal-dots"></div>
+              <button class="Sidenav-Menu-Header-Action">
+                <div class="Sidenav-Menu-Header-Action-icon PathIcon solid horizontal-dots"></div>
               </button>
             </div>
             <${subscriptionTree}>
           </div>
-          <div class="SideMenu-Group" role="group">
-            <div class="SideMenu-Item" role="menuitem">
-              <a class="SideMenu-Item-Cell" href="#/settings">
-                <div aria-hidden=true" class="SideMenu-Item-icon EmojiIcon">
+          <div class="Sidenav-Menu-Group" role="group">
+            <div class="Sidenav-Menu-Item" role="menuitem">
+              <a class="Sidenav-Menu-Item-Cell" href="#/settings">
+                <div aria-hidden=true" class="Sidenav-Menu-Item-icon EmojiIcon">
                   <span class="EmojiIcon-glyph">⚙️</span>
                 </div>
-                <div class="SideMenu-Item-label">Settings</div>
+                <div class="Sidenav-Menu-Item-label">Settings</div>
               </a>
             </div>
-            <div class="SideMenu-Item" role="menuitem">
-              <a class="SideMenu-Item-Cell" href="#/about">
-                <div aria-hidden="true" class="SideMenu-Item-icon EmojiIcon">
+            <div class="Sidenav-Menu-Item" role="menuitem">
+              <a class="Sidenav-Menu-Item-Cell" href="#/about">
+                <div aria-hidden="true" class="Sidenav-Menu-Item-icon EmojiIcon">
                   <span class="EmojiIcon-glyph">ℹ️</span>
                 </div>
-                <div class="SideMenu-Item-label">About</div>
+                <div class="Sidenav-Menu-Item-label">About</div>
               </a>
             </div>
           </div>
