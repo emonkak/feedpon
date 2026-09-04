@@ -111,7 +111,7 @@ export const Sidenav = createComponent(function Sidenav({
           </div>
           <div class="Sidenav-Menu-Group" role="group">
             <div class="Sidenav-Menu-Header" type="button">
-              <div class="Sidenav-Menu-Header-label">
+              <div class="Sidenav-Menu-Header-Label">
                 Subscriptions
               </div>
               <button class="Sidenav-Menu-Header-Action">

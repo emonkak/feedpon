@@ -40,8 +40,9 @@ export const Dispatcher = createComponent(function Dispatcher({
     return navigationAdapter.listen((scene, interceptor) => {
       interceptor.intercept({
         async handler() {
-          const handle = await refetchPage(scene.url, interceptor.signal);
-          await Promise.all([handle.finished, setScene(scene).finished]);
+          const sceneHandle = setScene(scene);
+          const pageHandle = await refetchPage(scene.url, interceptor.signal);
+          await Promise.all([sceneHandle.finished, pageHandle.finished]);
         },
         scroll: 'manual',
       });

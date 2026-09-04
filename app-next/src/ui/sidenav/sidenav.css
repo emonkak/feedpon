@@ -88,7 +88,7 @@
   place-self: center;
 }
 
-.Sidenav-Menu-Header-label {
+.Sidenav-Menu-Header-Label {
   font-family: var(--font-display);
   font-weight: bold;
   grid-area: label;
