@@ -1,7 +1,5 @@
 import { createComponent, html } from 'barebind';
-import styleSheetContent from '../global-styles/reset.css' with {
-  type: 'text',
-};
+import styleSheet from '../global-styles/reset.css' with { type: 'css' };
 
 const ATTRIBUTE_HREF = 'href';
 const ATTRIBUTE_SRC = 'src';
@@ -123,8 +121,6 @@ const SRCSET_PATTERN = new RegExp(
   'g',
 );
 
-const STYLE_SHEET = createStyleSheet(styleSheetContent);
-
 export interface EmbeddedHTMLProps {
   html: string;
   origin: string;
@@ -138,7 +134,7 @@ export const EmbeddedHTML = createComponent(function EmbeddedHTML({
 
   this.useEffect(() => {
     const shadowRoot = containerRef.current!.attachShadow({ mode: 'open' });
-    shadowRoot!.adoptedStyleSheets = [STYLE_SHEET];
+    shadowRoot!.adoptedStyleSheets = [styleSheet];
   }, []);
 
   this.useEffect(() => {
@@ -156,12 +152,6 @@ function copyAttribute(source: Element, dest: Element, name: string): void {
   if (source.hasAttribute(name)) {
     dest.setAttribute(name, source.getAttribute(name)!);
   }
-}
-
-function createStyleSheet(content: string): CSSStyleSheet {
-  const styleSheet = new CSSStyleSheet();
-  styleSheet.replaceSync(content);
-  return styleSheet;
 }
 
 function embedSVG(el: Element): HTMLImageElement {

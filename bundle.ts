@@ -1,6 +1,7 @@
 import * as fs from 'node:fs/promises';
 import * as esbuild from 'esbuild';
 import { minifyTemplates } from 'esbuild-plugin-minify-templates';
+import nativeCSSModule from 'esbuild-plugin-native-css-module';
 
 const isProduction = process.env.NODE_ENV === 'production';
 const isWatch = process.argv.includes('--watch');
@@ -18,7 +19,7 @@ const configs: esbuild.BuildOptions[] = [
     logLevel: 'info',
     metafile: !isProduction,
     outfile: 'dist/js/app.js',
-    plugins: [minifyTemplates()],
+    plugins: [nativeCSSModule({}), minifyTemplates()],
   },
   {
     bundle: true,

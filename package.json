@@ -16,6 +16,7 @@
     "barebind": "catalog:",
     "esbuild": "^0.28.2",
     "esbuild-plugin-minify-templates": "github:emonkak/barebind#path:tools/esbuild-plugin-minify-templates",
+    "esbuild-plugin-native-css-module": "^1.4.0",
     "fast-check": "^4.9.0",
     "typescript": "^7.0.2",
     "vitest": "^4.1.11"
