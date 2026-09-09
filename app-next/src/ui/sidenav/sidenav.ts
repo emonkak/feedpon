@@ -45,8 +45,8 @@ export const Sidenav = createComponent(function Sidenav({
   return html`
     <div class="Sidenav" inert=${isSyncing}>
       <header class="Sidenav-Header">
-        <menu class="Sidenav-Toolbar" role="toolbar">
-          <li class="Sidenav-Toolbar-Item">
+        <div class="Sidenav-Toolbar" role="toolbar">
+          <div class="Sidenav-Toolbar-Item">
             <button
               aria-label="Reload subscriptions"
               class="Button solid default"
@@ -59,9 +59,9 @@ export const Sidenav = createComponent(function Sidenav({
                 <span class="EmojiIcon-glyph">🔄</span>
               </div>
             </button>
-          </li>
-          <li class="Sidenav-Toolbar-Spacer"></li>
-          <li class="Sidenav-Toolbar-Item">
+          </div>
+          <div class="Sidenav-Toolbar-Spacer"></div>
+          <div class="Sidenav-Toolbar-Item">
             <button
               aria-label="Search subscriptions"
               class="Button solid default"
@@ -72,8 +72,8 @@ export const Sidenav = createComponent(function Sidenav({
                 <span class="EmojiIcon-glyph">🔍︎</span>
               </div>
             </button>
-          </li>
-          <li class="Sidenav-Toolbar-Item">
+          </div>
+          <div class="Sidenav-Toolbar-Item">
             <button
               aria-label="Toggle sidebar"
               class="Button solid default"
@@ -84,8 +84,8 @@ export const Sidenav = createComponent(function Sidenav({
                 <span class="EmojiIcon-glyph">⬅️</span>
               </div>
             </button>
-          </li>
-        </menu>
+          </div>
+        </div>
       </header>
       <div class="Sidenav-Main">
         <div class="SideMenu" role="menu">

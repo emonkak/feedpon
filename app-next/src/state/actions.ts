@@ -92,6 +92,15 @@ export function getStream(
       { mode: 'readwrite' },
     );
 
+    state$.get('session').scope((currentSession) => {
+      if (
+        currentSession?.id === session.id &&
+        currentSession.version < version
+      ) {
+        currentSession.version = version;
+      }
+    });
+
     return stream;
   };
 }
@@ -109,11 +118,14 @@ export function reloadSubscriptions(): AppAction<Promise<void>> {
       feedlyClient.getSubscriptions(credential.accessToken),
       feedlyClient.getUnreadCounts(credential.accessToken),
     ]);
+    const shouldIncrementVersion = lastSynced$.value >= 0;
 
     subscriptions$.value = subscriptions;
     unreadCounts$.value = unreadCounts.unreadcounts;
     lastSynced$.value = Date.now();
-    version$.value++;
+    if (shouldIncrementVersion) {
+      version$.value++;
+    }
   };
 }
 
@@ -170,7 +182,7 @@ export function startSession(streamId: string): AppAction<Promise<Session>> {
       newSession = {
         id: streamId,
         scrollIndex: 0,
-        version: Math.max(1, version),
+        version: -1,
       };
     }
 
