@@ -15,6 +15,11 @@
     --Badge-backgroundColor: var(--default-2);
   }
 
+  &.invert {
+    --Badge-color: var(--default-2);
+    --Badge-backgroundColor: var(--default-6);
+  }
+
   &.primary {
     --Badge-color: var(--primary-6);
     --Badge-backgroundColor: var(--primary-2);
@@ -23,5 +28,6 @@
   &.small {
     font-size: calc(1rem * var(--text-scale-9));
     text-box: trim-both cap alphabetic;
+    padding: 4px;
   }
 }

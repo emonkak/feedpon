@@ -9,27 +9,32 @@
 .SideMenu-Header {
   background-color: var(--default-2);
   color: var(--default-6);
-  display: grid;
+  display: flex;
+  font-family: var(--font-display);
   font-size: calc(1rem * var(--text-scale-8));
-  grid-template-areas: "label action";
-  grid-template-columns: 1fr 32px;
+  gap: 8px;
   inline-size: stretch;
-
-  &::before {
-    background-color: var(--Sidenav-Menu-Header-backgroundColor);
-    border-radius: 4px;
-    content: "";
-    display: block;
-    grid-area: label-start / label / action / action-end;
-    margin-inline: 4px;
-  }
+  padding-inline-start: 24px;
 
   &:not(:first-child) {
     box-shadow: 0 -1px var(--default-border);
   }
 }
 
-.SideMenu-Header-Action {
+.SideMenu-Header-label {
+  flex: 1;
+  font-weight: bold;
+  grid-area: label;
+  min-inline-size: 0;
+}
+
+.SideMenu-Header-info {
+  grid-area: info;
+  place-self: center;
+}
+
+.SideMenu-Header-action {
+  flex: 0 0 32px;
   grid-area: action;
   place-self: stretch;
 
@@ -40,14 +45,6 @@
 
 .SideMenu-Header-Action-icon {
   place-self: center;
-}
-
-.SideMenu-Header-Label {
-  font-family: var(--font-display);
-  font-weight: bold;
-  grid-area: label;
-  min-inline-size: 0;
-  padding-inline: 24px 8px;
 }
 
 .SideMenu-Item {

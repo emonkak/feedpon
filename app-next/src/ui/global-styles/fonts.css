@@ -23,6 +23,18 @@
 }
 
 @font-face {
+  font-family: "Avenir Next";
+  font-weight: 400;
+  src: local("Avenir Next Medium");
+}
+
+@font-face {
+  font-family: "Avenir Next";
+  font-weight: 700;
+  src: local("Avenir Next Bold");
+}
+
+@font-face {
   font-family: "Toppan Bunkyu Gothic";
   font-weight: 400;
   src: local("Toppan Bunkyu Gothic Regular");

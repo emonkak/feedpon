@@ -2,6 +2,7 @@ import { createComponent, html } from 'barebind';
 import type { NavigationScene } from 'barebind/addons/router';
 import { reloadSubscriptions } from '../../state/actions.ts';
 import { AppStore } from '../../state/store.ts';
+import { RelativeTime } from '../primitives/relative-time.ts';
 import { SubscriptionTree } from './subscription-tree.ts';
 
 export interface SidenavProps {
@@ -89,8 +90,8 @@ export const Sidenav = createComponent(function Sidenav({
       <div class="Sidenav-Main">
         <div class="SideMenu" role="menu">
           <div class="SideMenu-Group" role="group">
-            <div class="SideMenu-Item" role="menuitem">
-              <a class="SideMenu-Item-Cell" href="#/all">
+            <div class="SideMenu-Item">
+              <a class="SideMenu-Item-Cell" href="#/all" role="menuitem">
                 <div aria-hidden="true" class="SideMenu-Item-icon EmojiIcon">
                   <span class="EmojiIcon-glyph">📚</span>
                 </div>
@@ -100,8 +101,8 @@ export const Sidenav = createComponent(function Sidenav({
                 </div>
               </a>
             </div>
-            <div class="SideMenu-Item" role="menuitem">
-              <a class="SideMenu-Item-Cell" href="#/subscribe">
+            <div class="SideMenu-Item">
+              <a class="SideMenu-Item-Cell" href="#/subscribe" role="menuitem">
                 <div aria-hidden="true" class="SideMenu-Item-icon EmojiIcon">
                   <span class="EmojiIcon-glyph">🛜</span>
                 </div>
@@ -110,10 +111,13 @@ export const Sidenav = createComponent(function Sidenav({
             </div>
           </div>
           <div class="SideMenu-Header">
-            <div class="SideMenu-Header-Label">
-              Subscriptions
+            <div class="SideMenu-Header-label">Feeds</div>
+            <div class="SideMenu-Header-info">
+              <div class="Badge invert small">
+                <${RelativeTime({ timeMillis: lastSynced })}>
+              </div>
             </div>
-            <button class="SideMenu-Header-Action">
+            <button class="SideMenu-Header-action">
               <div class="SideMenu-Header-Action-icon PathIcon solid horizontal-dots"></div>
             </button>
           </div>
