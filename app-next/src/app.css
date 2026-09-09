@@ -13,7 +13,9 @@
 @import "./ui/primitives/side-menu.css";
 @import "./ui/primitives/stack-scroller.css";
 @import "./ui/primitives/tree.css";
+@import "./ui/sidenav/profile.css";
 @import "./ui/sidenav/sidenav.css";
+@import "./ui/sidenav/subscription-nav.css";
 @import "./ui/sidetoc/sidetoc.css";
 @import "./ui/stream/stream-item.css";
 @import "./ui/stream/stream-nav.css";

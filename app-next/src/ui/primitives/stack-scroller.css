@@ -29,7 +29,6 @@
   &.previous,
   &.next {
     block-size: var(--item-height);
-    content-visibility: auto;
     margin-block-start: calc(var(--item-height) * -1);
     overflow: clip;
   }

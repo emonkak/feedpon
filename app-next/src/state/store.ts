@@ -1,5 +1,6 @@
 import type {
   FeedlyClient,
+  Profile,
   Subscription,
   UnreadCount,
 } from '@feedpon/feedly-client';
@@ -26,6 +27,7 @@ export interface AppContext {
 
 export class AppState {
   credential: Credential | null = null;
+  profile: Profile | null = null;
   serverState: ServerState = {
     lastSynced: -1,
     version: 0,

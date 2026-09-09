@@ -23,6 +23,9 @@
   --text-scale-10: pow(var(--text-scale-base), -4);
   --text-scale-base: 1.125;
 
+  --path-arrow-right: polygon(37.5% 75%, 37.5% 25%, 62.5% 50%);
+  --path-arrow-down: polygon(50% 62.5%, 25% 37.5%, 75% 37.5%);
+
   --default-bg: #fff;
   --default-fg: var(--default-10);
   --default-border: var(--default-4);

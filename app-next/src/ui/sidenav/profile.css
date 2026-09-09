@@ -1,0 +1,51 @@
+.Profile {
+  block-size: 2rlh;
+  column-gap: 8px;
+  display: grid;
+  font-family: var(--font-display);
+  grid-template-areas: ". icon name arrow" ". icon source arrow";
+  grid-template-columns: 0 32px 1fr 24px;
+  grid-template-rows: 1rlh 1rlh;
+  line-height: 1.375;
+
+  &::before,
+  &::after {
+    content: "";
+    grid-area: arrow;
+  }
+
+  &::before {
+    border-inline-start: 1px solid var(--default-border);
+    box-shadow: inset 1px 0 var(--default-light);
+  }
+
+  &::after {
+    background-color: currentColor;
+    block-size: 16px;
+    clip-path: var(--path-arrow-down);
+    inline-size: 16px;
+    place-self: center;
+  }
+}
+
+.Profile-icon {
+  border-radius: 50%;
+  border: 1px solid var(--default-border);
+  corner-shape: squircle;
+  grid-area: icon;
+  place-self: center;
+}
+
+.Profile-name {
+  align-self: end;
+  font-size: calc(1rem * var(--text-scale-7));
+  font-weight: bold;
+  grid-area: name;
+}
+
+.Profile-source {
+  align-self: start;
+  color: var(--default-6);
+  font-size: calc(1rem * var(--text-scale-8));
+  grid-area: source;
+}

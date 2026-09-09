@@ -1,0 +1,12 @@
+.SubscriptionNav {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  grid-area: header;
+  height: 2rlh;
+  padding-inline: 16px;
+}
+
+.SubscriptionNav-Spacer {
+  flex: 1;
+}

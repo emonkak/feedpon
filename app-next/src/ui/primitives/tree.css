@@ -29,12 +29,12 @@
 }
 
 .Tree-Item-Toggle {
-  --path: polygon(37.5% 75%, 37.5% 25%, 62.5% 50%);
+  --path: var(--path-arrow-right);
   grid-area: head;
   z-index: 1;
 
   &.expanded {
-    --path: polygon(50% 62.5%, 25% 37.5%, 75% 37.5%);
+    --path: var(--path-arrow-down);
   }
 
   &::before {

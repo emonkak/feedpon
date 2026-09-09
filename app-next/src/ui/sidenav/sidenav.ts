@@ -3,6 +3,8 @@ import type { NavigationScene } from 'barebind/addons/router';
 import { reloadSubscriptions } from '../../state/actions.ts';
 import { AppStore } from '../../state/store.ts';
 import { RelativeTime } from '../primitives/relative-time.ts';
+import { Profile } from './profile.ts';
+import { SubscriptionNav } from './subscription-nav.ts';
 import { SubscriptionTree } from './subscription-tree.ts';
 
 export interface SidenavProps {
@@ -12,13 +14,15 @@ export interface SidenavProps {
 export const Sidenav = createComponent(function Sidenav({
   scene,
 }: SidenavProps) {
-  const [isSyncing, setIsSyncing] = this.useState(false);
+  const [reloading, setReloading] = this.useState(false);
   const store = this.inject(AppStore);
+  const profile = this.use(store.state$.get('profile'));
+  const subscriptions = this.use(store.state$.get('subscriptions'));
+  const unreadCounts = this.use(store.state$.get('unreadCounts'));
   const lastSynced = this.use(
     store.state$.get('serverState').get('lastSynced'),
   );
-  const subscriptions = this.use(store.state$.get('subscriptions'));
-  const unreadCounts = this.use(store.state$.get('unreadCounts'));
+
   const totalUnreadCounts = this.useMemo(
     () => unreadCounts.reduce((totalCount, { count }) => totalCount + count, 0),
     [unreadCounts],
@@ -27,12 +31,13 @@ export const Sidenav = createComponent(function Sidenav({
     () => SubscriptionTree({ subscriptions, unreadCounts, url: scene.url }),
     [subscriptions, unreadCounts, scene.url],
   );
+
   const reload = async () => {
-    setIsSyncing(true);
+    setReloading(true);
     try {
       await store.dispatch(reloadSubscriptions());
     } finally {
-      setIsSyncing(false);
+      setReloading(false);
     }
   };
 
@@ -43,49 +48,12 @@ export const Sidenav = createComponent(function Sidenav({
   }, [lastSynced]);
 
   return html`
-    <div class="Sidenav" inert=${isSyncing}>
+    <div class="Sidenav" inert=${reloading}>
       <header class="Sidenav-Header">
-        <div class="Sidenav-Toolbar" role="toolbar">
-          <div class="Sidenav-Toolbar-Item">
-            <button
-              aria-label="Reload subscriptions"
-              class="Button solid default"
-              disabled=${isSyncing}
-              title="Reload subscriptions"
-              type="button"
-              @click=${reload}
-            >
-              <div aria-hidden="true" class="Button-icon EmojiIcon">
-                <span class="EmojiIcon-glyph">🔄</span>
-              </div>
-            </button>
-          </div>
-          <div class="Sidenav-Toolbar-Spacer"></div>
-          <div class="Sidenav-Toolbar-Item">
-            <button
-              aria-label="Search subscriptions"
-              class="Button solid default"
-              title="Search subscriptions"
-              type="button"
-            >
-              <div aria-hidden="true" class="Button-icon EmojiIcon">
-                <span class="EmojiIcon-glyph">🔍︎</span>
-              </div>
-            </button>
-          </div>
-          <div class="Sidenav-Toolbar-Item">
-            <button
-              aria-label="Toggle sidebar"
-              class="Button solid default"
-              title="Toggle sidebar"
-              type="button"
-            >
-              <div aria-hidden="true" class="Button-icon EmojiIcon">
-                <span class="EmojiIcon-glyph">⬅️</span>
-              </div>
-            </button>
-          </div>
-        </div>
+        <${SubscriptionNav({
+          onReload: reload,
+          reloading,
+        })}>
       </header>
       <div class="Sidenav-Main">
         <div class="SideMenu" role="menu">
@@ -117,7 +85,7 @@ export const Sidenav = createComponent(function Sidenav({
                 <${RelativeTime({ timeMillis: lastSynced })}>
               </div>
             </div>
-            <button class="SideMenu-Header-action">
+            <button class="SideMenu-Header-Action">
               <div class="SideMenu-Header-Action-icon PathIcon solid horizontal-dots"></div>
             </button>
           </div>
@@ -144,6 +112,9 @@ export const Sidenav = createComponent(function Sidenav({
           </div>
         </div>
       </div>
+      <footer class="Sidenav-Footer">
+        <${profile !== null ? Profile({ profile }) : undefined}>
+      </footer>
     </div>
   `;
 });

@@ -22,8 +22,8 @@ export const StreamNav = createComponent(function StreamNav({
           <div class="StreamNav-Button-icon PathIcon shape menu"></div>
         </button>
       </div>
-      <div class="StreamNav-Content">
-        <h1 class="StreamNav-feedTitle use-ellipsis">${item?.origin.title ?? stream.title}</h1>
+      <div class="StreamNav-Content" lang=${item?.language}>
+        <h1 class="StreamNav-feedTitle use-ellipsis" >${item?.origin.title ?? stream.title}</h1>
         <h2 class="StreamNav-articleTitle use-ellipsis">${item?.title}</h2>
       </div>
       <div class="StreamNav-Side">

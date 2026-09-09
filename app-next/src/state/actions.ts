@@ -45,6 +45,18 @@ export function acquireCredential(): AppAction<Promise<Credential>> {
   };
 }
 
+export function authenticate(): AppAction<Promise<void>> {
+  return async (state$, context, dispatch) => {
+    const { feedlyClient } = context;
+    const profile$ = state$.get('profile');
+
+    const credential = await dispatch(acquireCredential());
+    const profile = await feedlyClient.getProfile(credential.accessToken);
+
+    profile$.value = profile;
+  };
+}
+
 export function getStream(
   session: Session,
   signal: AbortSignal,
@@ -129,19 +141,6 @@ export function reloadSubscriptions(): AppAction<Promise<void>> {
   };
 }
 
-export function updateScrollIndex(
-  streamId: string,
-  scrollIndex: number,
-): AppAction<void> {
-  return (state$) => {
-    state$.get('session').scope((session) => {
-      if (session?.id === streamId) {
-        session.scrollIndex = scrollIndex;
-      }
-    });
-  };
-}
-
 export function revokeCredential(): AppAction<void> {
   return async (state$, context) => {
     const credential$ = state$.get('credential');
@@ -189,5 +188,18 @@ export function startSession(streamId: string): AppAction<Promise<Session>> {
     session$.value = newSession;
 
     return newSession;
+  };
+}
+
+export function updateScrollIndex(
+  streamId: string,
+  scrollIndex: number,
+): AppAction<void> {
+  return (state$) => {
+    state$.get('session').scope((session) => {
+      if (session?.id === streamId) {
+        session.scrollIndex = scrollIndex;
+      }
+    });
   };
 }

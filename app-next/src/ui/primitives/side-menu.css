@@ -24,22 +24,28 @@
 .SideMenu-Header-label {
   flex: 1;
   font-weight: bold;
-  grid-area: label;
   min-inline-size: 0;
 }
 
 .SideMenu-Header-info {
-  grid-area: info;
   place-self: center;
 }
 
-.SideMenu-Header-action {
+.SideMenu-Header-Action {
+  position: relative;
   flex: 0 0 32px;
-  grid-area: action;
   place-self: stretch;
 
   &:hover {
-    color: var(--primary-6);
+    --SideMenu-Header-Action-backgroundColor: var(--default-3);
+  }
+
+  &::before {
+    position: absolute;
+    content: "";
+    inset: 3px;
+    border-radius: 4px;
+    background-color: var(--SideMenu-Header-Action-backgroundColor);
   }
 }
 

@@ -1,8 +1,7 @@
 .Sidenav {
   border-inline-end: 1px solid var(--default-border);
   display: grid;
-  grid-template-areas: "header" "main";
-  grid-template-rows: auto 1fr;
+  grid-template-rows: auto 1fr auto;
   height: 100vh;
   opacity: 1;
   position: sticky;
@@ -29,19 +28,17 @@
 
 .Sidenav-Main {
   background-color: var(--default-1);
-  grid-area: main;
-  overflow-y: auto;
+  overflow: auto;
 }
 
-.Sidenav-Toolbar {
-  align-items: center;
-  display: flex;
-  gap: 8px;
-  grid-area: header;
-  height: 2rlh;
-  padding-inline: 16px;
-}
-
-.Sidenav-Toolbar-Spacer {
-  flex: 1;
+.Sidenav-Footer {
+  background-color: var(--default-2);
+  box-shadow:
+    inset 0 1px var(--default-light),
+    inset 1px 0 var(--default-light),
+    inset 0 -1px var(--default-light),
+    inset -1px 0 var(--default-light),
+    0 -1px var(--default-border),
+    0 -2px 1px var(--default-shadow);
+  z-index: 1;
 }
