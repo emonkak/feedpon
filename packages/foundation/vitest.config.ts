@@ -4,7 +4,7 @@ import { defineProject } from 'vitest/config';
 export default defineProject({
   resolve: {
     alias: {
-      '@': path.join(__dirname, '/src'),
+      '@': path.join(import.meta.dirname, '/src'),
     },
   },
   test: {

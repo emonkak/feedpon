@@ -10,7 +10,7 @@ allowBuilds:
 catalog:
   '@mozilla/readability': ^0.6.0
   barebind: github:emonkak/barebind
-  up-fetch: ^2.6.0
+  up-fetch: ^2.6.1
   valibot: ^1.4.2
 
 ignoredBuiltDependencies:
