@@ -2,11 +2,11 @@ import type { Authenticator } from './types.ts';
 
 export class ChromeAuthenticator implements Authenticator {
   async authenticate(
-    authenticationUrl: string,
-    redirectUrl: string,
+    authenticationURL: string,
+    redirectURL: string,
   ): Promise<string> {
     const window = await chrome.windows.create({
-      url: authenticationUrl,
+      url: authenticationURL,
       type: 'popup',
     });
 
@@ -15,8 +15,8 @@ export class ChromeAuthenticator implements Authenticator {
     }
 
     try {
-      for await (const tab of observeTabUpdates(window.id!)) {
-        if (tab.status === 'complete' && tab.url?.startsWith(redirectUrl)) {
+      for await (const tab of observeTabs(window.id!)) {
+        if (tab.status === 'complete' && tab.url?.startsWith(redirectURL)) {
           const url = new URL(tab.url);
           if (url.searchParams.has('error')) {
             throw new Error(
@@ -40,7 +40,7 @@ export class ChromeAuthenticator implements Authenticator {
   }
 }
 
-async function* observeTabUpdates(
+async function* observeTabs(
   targetWindowId: number,
 ): AsyncGenerator<chrome.tabs.Tab, never> {
   let controller = Promise.withResolvers<chrome.tabs.Tab>();
