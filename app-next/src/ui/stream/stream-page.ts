@@ -3,7 +3,7 @@ import { createComponent, html } from 'barebind';
 import { updateScrollIndex } from '../../state/actions.ts';
 import { AppStore, type Session } from '../../state/store.ts';
 import { StackScroller } from '../primitives/stack-scroller.ts';
-import { StreamItem } from './stream-item.ts';
+import { StackedArticleView } from './stacked-article-view.ts';
 import { StreamNav } from './stream-nav.ts';
 
 export interface StreamPageProps {
@@ -32,7 +32,7 @@ export const StreamPage = createComponent(function StreamPage({
 
   const nav = StreamNav({ session, stream });
   const scroller = StackScroller({
-    elementSelector: (entry) => StreamItem({ entry }),
+    elementSelector: (entry) => StackedArticleView({ entry }),
     initialIndex: session.scrollIndex,
     keySelector: (entry) => entry.id,
     onIndexChange: handleIndexChange,

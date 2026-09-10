@@ -4,7 +4,7 @@
   --TreeNode-level: calc(var(--TreeNode-parent-level, 0) + 1);
   display: grid;
   grid-template-areas: "head tail" "children children";
-  grid-template-columns: 24px 1fr;
+  grid-template-columns: 1.5rem 1fr;
 
   &:where(:not(:has(&:hover))):hover {
     --TreeNode-backgroundColor: var(--default-2);
@@ -21,10 +21,10 @@
 
   &::before {
     background-color: var(--TreeNode-backgroundColor);
-    border-radius: 4px;
+    border-radius: 0.25rem;
     content: "";
     grid-area: head-start / head / tail / tail-end;
-    margin-inline: 4px;
+    margin-inline: 0.25rem;
   }
 }
 
@@ -38,12 +38,12 @@
   }
 
   &::before {
-    block-size: 16px;
+    block-size: 1rem;
     clip-path: var(--path);
     color: var(--TreeNode-color);
     content: "";
     display: block;
-    inline-size: 16px;
+    inline-size: 1rem;
     margin-inline-start: auto;
   }
 
@@ -56,9 +56,9 @@
   position: relative;
   color: var(--TreeNode-color);
   display: flex;
-  gap: 8px;
+  gap: 0.5rem;
   grid-area: head-start / head / tail / tail-end;
-  padding-inline: calc(24px * var(--TreeNode-level)) 8px;
+  padding-inline: calc(1.5rem * var(--TreeNode-level)) 0.5rem;
 }
 
 .Tree-Item-Children {

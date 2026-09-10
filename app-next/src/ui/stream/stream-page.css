@@ -12,7 +12,14 @@
   grid-template-columns: minmax(auto, var(--text-width));
   height: 2rlh;
   justify-content: center;
+  padding-inline: 3rem;
   position: sticky;
   top: 0;
   z-index: 1;
+}
+
+@container style(--layout: small) {
+  .StreamPage-Header {
+    padding-inline: 1rem;
+  }
 }

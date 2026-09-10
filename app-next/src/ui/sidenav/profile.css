@@ -1,10 +1,10 @@
 .Profile {
   block-size: 2rlh;
-  column-gap: 8px;
+  column-gap: 0.5rem;
   display: grid;
   font-family: var(--font-display);
   grid-template-areas: ". icon name arrow" ". icon source arrow";
-  grid-template-columns: 0 32px 1fr 24px;
+  grid-template-columns: 0 2rem 1fr 1.5rem;
   grid-template-rows: 1rlh 1rlh;
   line-height: 1.375;
 
@@ -21,9 +21,9 @@
 
   &::after {
     background-color: currentColor;
-    block-size: 16px;
+    block-size: 1rem;
     clip-path: var(--path-arrow-down);
-    inline-size: 16px;
+    inline-size: 1rem;
     place-self: center;
   }
 }

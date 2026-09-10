@@ -12,9 +12,9 @@
   display: flex;
   font-family: var(--font-display);
   font-size: calc(1rem * var(--text-scale-8));
-  gap: 8px;
+  gap: 0.5rem;
   inline-size: stretch;
-  padding-inline-start: 24px;
+  padding-inline-start: 1.5rem;
 
   &:not(:first-child) {
     box-shadow: 0 -1px var(--default-border);
@@ -33,7 +33,7 @@
 
 .SideMenu-Header-Action {
   position: relative;
-  flex: 0 0 32px;
+  flex: 0 0 2rem;
   place-self: stretch;
 
   &:hover {
@@ -43,8 +43,8 @@
   &::before {
     position: absolute;
     content: "";
-    inset: 3px;
-    border-radius: 4px;
+    inset: 0.25rem;
+    border-radius: 0.25rem;
     background-color: var(--SideMenu-Header-Action-backgroundColor);
   }
 }
@@ -67,21 +67,21 @@
 
   &::before {
     background-color: var(--Sidenav-Menu-Item-backgroundColor);
-    border-radius: 4px;
+    border-radius: 0.25rem;
     content: "";
     display: block;
     grid-area: 1 / 1;
-    margin-inline: 4px;
+    margin-inline: 0.25rem;
   }
 }
 
 .SideMenu-Item-Cell {
   color: var(--Sidenav-Menu-Item-color);
   display: flex;
-  gap: 8px;
+  gap: 0.5rem;
   grid-area: 1 / 1;
   inline-size: stretch;
-  padding-inline: 24px 8px;
+  padding-inline: 1.5rem 0.5rem;
 }
 
 .SideMenu-Item-icon {

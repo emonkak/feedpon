@@ -1,8 +1,0 @@
-.StreamItem {
-  box-sizing: border-box;
-  margin-inline: auto;
-  max-inline-size: var(--text-width);
-  min-inline-size: 0;
-  padding-block: 1rlh max(1rlh, 50vh - 2rlh);
-  padding-inline: 1rlh;
-}

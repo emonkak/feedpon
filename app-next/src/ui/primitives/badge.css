@@ -1,10 +1,10 @@
 .Badge {
   background-color: var(--Badge-backgroundColor);
-  border-radius: 4px;
+  border-radius: 0.25rem;
   color: var(--Badge-color);
   font-family: var(--font-display);
   line-height: 1;
-  padding: 4px;
+  padding: 0.25rem;
 
   &:empty {
     display: none;
@@ -28,6 +28,6 @@
   &.small {
     font-size: calc(1rem * var(--text-scale-9));
     text-box: trim-both cap alphabetic;
-    padding: 4px;
+    padding: 0.25rem;
   }
 }

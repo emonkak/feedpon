@@ -1,5 +1,5 @@
 .PathIcon {
-  --size: attr(data-size px, 16px);
+  --size: attr(data-size px, max(1rem, 16px));
   box-sizing: border-box;
   height: var(--size);
   width: var(--size);

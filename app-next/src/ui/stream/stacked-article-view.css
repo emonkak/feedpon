@@ -1,0 +1,52 @@
+.StackedArticleView {
+  --gutter: 1rem;
+  box-sizing: border-box;
+  container-type: inline-size;
+  display: grid;
+  grid-template-columns:
+    [outer-start] minmax(var(--gutter), 1fr)
+    [inner-start] minmax(auto, var(--text-width)) [inner-end]
+    minmax(var(--gutter), 1fr) [outer-end];
+  grid-template-rows: repeat(2, auto);
+  min-inline-size: 0;
+}
+
+.StackedArticleView-Header {
+  align-self: start;
+  display: none;
+  grid-column: inner-end / outer-end;
+  grid-row: 1 / -1;
+  inset-block-start: calc(2rlh + 1rem);
+  justify-self: end;
+  margin-block-start: 1rem;
+  position: sticky;
+  z-index: 1;
+}
+
+.StackedArticleView-Content {
+  box-sizing: border-box;
+  grid-column: inner;
+  min-block-size: calc(100vh - 2rlh - 2rem);
+  min-inline-size: 0;
+  padding-block: 1rlh max(1rlh, 50vh - 2rlh);
+}
+
+.StackedArticleView-Footer {
+  block-size: 2rem;
+  grid-column: outer;
+  inline-size: fit-content;
+  inset-block-end: 0;
+  justify-self: center;
+  position: sticky;
+  z-index: 1;
+}
+
+@container (width >= 54rem) {
+  .StackedArticleView-Header {
+    display: block;
+  }
+
+  .StackedArticleView-Footer {
+    display: none;
+  }
+}

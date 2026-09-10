@@ -1,5 +1,5 @@
 .EmojiIcon {
-  --size: attr(data-size px, 16px);
+  --size: attr(data-size px, max(1rem, 16px));
   display: grid;
   font-family: emoji-neutral-offset, emoji, sans-serif;
   font-size: var(--size);
