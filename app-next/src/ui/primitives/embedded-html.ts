@@ -164,9 +164,7 @@ function embedSVG(el: Element): HTMLImageElement {
   copyAttribute(el, img, 'width');
   copyAttribute(el, img, 'height');
 
-  img.src = URL.createObjectURL(
-    new Blob([el.outerHTML], { type: 'image/svg+xml' }),
-  );
+  img.src = `data:image/svg+xml,${encodeURIComponent(el.outerHTML)}`;
 
   return img;
 }
