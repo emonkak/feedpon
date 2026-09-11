@@ -13,9 +13,6 @@ export const StackedArticleView = createComponent(function StackedArticleView({
 }: StreamItemProps) {
   return html`
     <article class="StackedArticleView" lang=${entry.language}>
-      <header class="StackedArticleView-Header">
-        <${StackedArticleNav({ direction: 'vertical' })}>
-      </header>
       <div
         class="StackedArticleView-Content"
         dir=${(entry.content ?? entry.summary)?.direction}
@@ -34,7 +31,7 @@ export const StackedArticleView = createComponent(function StackedArticleView({
         })}>
       </div>
       <footer class="StackedArticleView-Footer">
-        <${StackedArticleNav({ direction: 'horizontal' })}>
+        <${StackedArticleNav({})}>
       </footer>
     </article>
   `;

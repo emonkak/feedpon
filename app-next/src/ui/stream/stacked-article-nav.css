@@ -2,20 +2,6 @@
   --radius: 0.5rem;
   display: flex;
   box-shadow: 0 0 2px 1px var(--color-shadow);
-
-  &.vertical {
-    --direction: vertical;
-    border-end-start-radius: var(--radius);
-    border-start-start-radius: var(--radius);
-    flex-direction: column;
-  }
-
-  &.horizontal {
-    --direction: horizontal;
-    border-start-start-radius: var(--radius);
-    border-start-end-radius: var(--radius);
-    flex-direction: row;
-  }
 }
 
 .StackedArticleNav-Button {
@@ -28,13 +14,26 @@
     inset -1px 0 var(--color-highlight),
     inset 0 -1px var(--color-highlight);
 
-  @container style(--direction: horizontal) {
-    & {
-      block-size: 2rem;
-      border-block-start-width: 1px;
-      border-inline-start-width: 1px;
-      inline-size: 2.5rem;
-    }
+  &:hover {
+    background-color: var(--neutral-3);
+  }
+}
+
+.StackedArticleNav-Button-icon {
+  place-self: center;
+}
+
+@container style(--StackedArticleNav-direction: horizontal) {
+  .StackedArticleNav {
+    border-start-start-radius: var(--radius);
+    border-start-end-radius: var(--radius);
+  }
+
+  .StackedArticleNav-Button {
+    block-size: 2rem;
+    border-block-start-width: 1px;
+    border-inline-start-width: 1px;
+    inline-size: 2.5rem;
 
     &:first-child {
       border-start-start-radius: var(--radius);
@@ -45,14 +44,20 @@
       border-inline-end-width: 1px;
     }
   }
+}
 
-  @container style(--direction: vertical) {
-    & {
-      block-size: 2rem;
-      border-block-start-width: 1px;
-      border-inline-start-width: 1px;
-      inline-size: 2rem;
-    }
+@container style(--StackedArticleNav-direction: vertical) {
+  .StackedArticleNav {
+    border-end-start-radius: var(--radius);
+    border-start-start-radius: var(--radius);
+    flex-direction: column;
+  }
+
+  .StackedArticleNav-Button {
+    block-size: 2rem;
+    border-block-start-width: 1px;
+    border-inline-start-width: 1px;
+    inline-size: 2rem;
 
     &:first-child {
       border-start-start-radius: var(--radius);
@@ -63,12 +68,4 @@
       border-block-end-width: 1px;
     }
   }
-
-  &:hover {
-    background-color: var(--neutral-3);
-  }
-}
-
-.StackedArticleNav-Button-icon {
-  place-self: center;
 }

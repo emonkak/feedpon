@@ -7,20 +7,8 @@
     [outer-start] minmax(var(--gutter), 1fr)
     [inner-start] minmax(auto, var(--text-width)) [inner-end]
     minmax(var(--gutter), 1fr) [outer-end];
-  grid-template-rows: repeat(2, auto);
+  grid-template-rows: auto minmax(2rem, 50vh - 2rlh);
   min-inline-size: 0;
-}
-
-.StackedArticleView-Header {
-  align-self: start;
-  display: none;
-  grid-column: inner-end / outer-end;
-  grid-row: 1 / -1;
-  inset-block-start: calc(2rlh + 1rem);
-  justify-self: end;
-  margin-block-start: 1rem;
-  position: sticky;
-  z-index: 1;
 }
 
 .StackedArticleView-Content {
@@ -28,25 +16,31 @@
   grid-column: inner;
   min-block-size: calc(100vh - 2rlh - 2rem);
   min-inline-size: 0;
-  padding-block: 1rlh max(1rlh, 50vh - 2rlh);
+  padding-block: 1rlh;
 }
 
 .StackedArticleView-Footer {
-  block-size: 2rem;
-  grid-column: outer;
-  inline-size: fit-content;
-  inset-block-end: 0;
-  justify-self: center;
   position: sticky;
-  z-index: 1;
+}
+
+@container not (min-width: 54rem) {
+  .StackedArticleView-Footer {
+    --StackedArticleNav-direction: horizontal;
+    grid-column: outer;
+    grid-row: 2;
+    inline-size: fit-content;
+    inset-block-end: 0;
+    place-self: end center;
+  }
 }
 
 @container (min-width: 54rem) {
-  .StackedArticleView-Header {
-    display: block;
-  }
-
   .StackedArticleView-Footer {
-    display: none;
+    --StackedArticleNav-direction: vertical;
+    grid-column: inner-end / outer-end;
+    grid-row: 1 / -1;
+    inset-block-start: 3rlh;
+    margin-block-start: 1rlh;
+    place-self: start end;
   }
 }

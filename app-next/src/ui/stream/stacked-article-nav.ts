@@ -1,27 +1,24 @@
 import { createComponent, html } from 'barebind';
 
-export interface StackedArticleNavProps {
-  direction: 'vertical' | 'horizontal';
-}
+export interface StackedArticleNavProps {}
 
-export const StackedArticleNav = createComponent(function StackedArticleNav({
-  direction,
-}: StackedArticleNavProps) {
-  const scrollPrevious = () => {
-    window.scrollTo({
-      left: 0,
-      top: 0,
-    });
-  };
-  const scrollNext = () => {
-    window.scrollTo({
-      left: 0,
-      top: document.body.scrollHeight,
-    });
-  };
+export const StackedArticleNav = createComponent(
+  function StackedArticleNav({}: StackedArticleNavProps) {
+    const scrollPrevious = () => {
+      window.scrollTo({
+        left: 0,
+        top: 0,
+      });
+    };
+    const scrollNext = () => {
+      window.scrollTo({
+        left: 0,
+        top: document.body.scrollHeight,
+      });
+    };
 
-  return html`
-    <nav class=${['StackedArticleNav', direction]} role="toolbar">
+    return html`
+    <nav class="StackedArticleNav" role="toolbar">
       <button
         aria-title="Previous article"
         class="StackedArticleNav-Button"
@@ -96,4 +93,5 @@ export const StackedArticleNav = createComponent(function StackedArticleNav({
       </button>
     </nav>
   `;
-});
+  },
+);
