@@ -1,5 +1,6 @@
 import type { Stream } from '@feedpon/feedly-client';
 import { createComponent, html } from 'barebind';
+import { decodeHTMLEntities } from '../../foundation/decode-html-entities.ts';
 import type { Session } from '../../state/store.ts';
 import { CircleProgress } from '../primitives/cirlce-progress.ts';
 
@@ -23,8 +24,8 @@ export const StreamNav = createComponent(function StreamNav({
         </button>
       </div>
       <div class="StreamNav-Content" lang=${item?.language}>
-        <h1 class="StreamNav-feedTitle use-ellipsis" >${item?.origin.title ?? stream.title}</h1>
-        <h2 class="StreamNav-articleTitle use-ellipsis">${item?.title}</h2>
+        <h1 class="StreamNav-feedTitle use-ellipsis" >${decodeHTMLEntities(item?.origin.title ?? stream.title ?? '')}</h1>
+        <h2 class="StreamNav-articleTitle use-ellipsis">${decodeHTMLEntities(item?.title ?? '')}</h2>
       </div>
       <div class="StreamNav-Side">
         <button type="button" class="StreamNav-Button">

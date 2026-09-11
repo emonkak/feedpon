@@ -1,9 +1,8 @@
 import type { Entry, Link } from '@feedpon/feedly-client';
 import { createComponent, html } from 'barebind';
+import { decodeHTMLEntities } from '../../foundation/decode-html-entities.ts';
 import { EmbeddedHTML } from '../primitives/embedded-html.ts';
 import { StackedArticleNav } from './stacked-article-nav.ts';
-
-const HTNL_ENTITY_PATTERN = /&(#(?:x[0-9A-F]+|\d+)|[0-9A-Z]+)/i;
 
 export interface StreamItemProps {
   entry: Entry;
@@ -12,14 +11,6 @@ export interface StreamItemProps {
 export const StackedArticleView = createComponent(function StackedArticleView({
   entry,
 }: StreamItemProps) {
-  const title = this.useMemo(
-    () =>
-      entry.title !== undefined && !HTNL_ENTITY_PATTERN.test(entry.title)
-        ? decodeHTMLEntities(entry.title)
-        : entry.title,
-    [entry.title],
-  );
-
   return html`
     <article class="StackedArticleView" lang=${entry.language}>
       <header class="StackedArticleView-Header">
@@ -34,7 +25,7 @@ export const StackedArticleView = createComponent(function StackedArticleView({
             href=${entry.canonicalUrl ?? getAlternate(entry, 'text/html')?.href}
             target="_blank"
           >
-            ${title}
+            ${decodeHTMLEntities(entry.title ?? '')}
           </a>
         </h1>
         <${EmbeddedHTML({
@@ -51,10 +42,4 @@ export const StackedArticleView = createComponent(function StackedArticleView({
 
 function getAlternate(entry: Entry, type: string): Link | undefined {
   return entry.alternate?.find((link) => link.type === type);
-}
-
-function decodeHTMLEntities(html: string): string {
-  const template = document.createElement('template');
-  template.innerHTML = html;
-  return template.content.textContent;
 }
