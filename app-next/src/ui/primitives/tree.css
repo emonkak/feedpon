@@ -7,7 +7,7 @@
   grid-template-columns: 1.5rem 1fr;
 
   &:where(:not(:has(&:hover))):hover {
-    --TreeNode-backgroundColor: var(--default-2);
+    --TreeNode-backgroundColor: var(--neutral-2);
   }
 
   &.indirectly-selected {
@@ -16,7 +16,7 @@
 
   &.selected {
     --TreeNode-backgroundColor: var(--primary-6);
-    --TreeNode-color: var(--default-bg);
+    --TreeNode-color: var(--primary-1);
   }
 
   &::before {

@@ -29,7 +29,7 @@
   grid-area: sidetoc;
 }
 
-@media (min-width: 66rem) {
+@container (min-width: 72rem) {
   .ReaderLayout {
     --layout: medium;
     grid-template-columns: 18rem 1fr 0;
@@ -40,7 +40,7 @@
   }
 }
 
-@media (min-width: 84rem) {
+@container (min-width: 90rem) {
   .ReaderLayout {
     --layout: large;
     grid-template-columns: 18rem 1fr 18rem;

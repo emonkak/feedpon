@@ -1,14 +1,16 @@
 html {
   -webkit-text-size-adjust: 100%;
+  background-color: var(--neutral-1);
+  color: var(--neutral-10);
+  container-type: inline-size;
   font-family: var(--font-text);
   line-height: var(--text-leading);
   overscroll-behavior: none;
+  scrollbar-gutter: stable;
   touch-action: manipulation;
 }
 
 body {
-  background-color: var(--default-1);
-  color: var(--default-10);
   font: inherit;
   margin: 0;
 }

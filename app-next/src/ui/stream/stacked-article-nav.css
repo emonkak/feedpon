@@ -1,70 +1,71 @@
 .StackedArticleNav {
   --radius: 0.5rem;
-  box-shadow: 0 0 2px 1px var(--default-shadow);
   display: flex;
+  box-shadow: 0 0 2px 1px var(--color-shadow);
 
   &.vertical {
     --direction: vertical;
-    border-bottom-left-radius: var(--radius);
-    border-top-left-radius: var(--radius);
+    border-end-start-radius: var(--radius);
+    border-start-start-radius: var(--radius);
     flex-direction: column;
   }
 
   &.horizontal {
     --direction: horizontal;
-    border-top-left-radius: var(--radius);
-    border-top-right-radius: var(--radius);
+    border-start-start-radius: var(--radius);
+    border-start-end-radius: var(--radius);
     flex-direction: row;
   }
 }
 
 .StackedArticleNav-Button {
-  background-color: var(--default-2);
-  border-color: var(--default-border);
-  border-style: solid;
+  background-color: var(--neutral-2);
+  color: var(--neutral-10);
+  border: 0 solid var(--neutral-4);
   box-shadow:
-    inset 0 1px var(--default-light),
-    inset 1px 0 var(--default-light),
-    inset 0 -1px var(--default-light),
-    inset -1px 0 var(--default-light),
-    0 1px var(--default-shadow);
-  color: var(--default-10);
-  box-sizing: border-box;
+    inset 1px 0 var(--color-highlight),
+    inset 0 1px var(--color-highlight),
+    inset -1px 0 var(--color-highlight),
+    inset 0 -1px var(--color-highlight);
 
   @container style(--direction: horizontal) {
     & {
       block-size: 2rem;
+      border-block-start-width: 1px;
+      border-inline-start-width: 1px;
       inline-size: 2.5rem;
-      border-width: 1px 1px 0;
     }
 
     &:first-child {
-      border-top-left-radius: var(--radius);
+      border-start-start-radius: var(--radius);
     }
 
     &:last-child {
-      border-top-right-radius: var(--radius);
+      border-start-end-radius: var(--radius);
+      border-inline-end-width: 1px;
     }
   }
 
   @container style(--direction: vertical) {
     & {
       block-size: 2rem;
+      border-block-start-width: 1px;
+      border-inline-start-width: 1px;
       inline-size: 2rem;
-      border-width: 1px 0 1px 1px;
     }
 
     &:first-child {
-      border-top-left-radius: var(--radius);
+      border-start-start-radius: var(--radius);
     }
 
     &:last-child {
-      border-bottom-left-radius: var(--radius);
+      border-end-start-radius: var(--radius);
+      border-block-end-width: 1px;
     }
   }
 
   &:hover {
-    background-color: var(--default-3);
+    background-color: var(--neutral-3);
   }
 }
 

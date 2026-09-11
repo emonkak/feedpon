@@ -21,7 +21,7 @@
 }
 
 .StreamNav-articleTitle {
-  color: var(--default-6);
+  color: var(--neutral-6);
   font-size: calc(1rem * var(--text-scale-8));
 }
 
@@ -29,13 +29,13 @@
   block-size: 1.5rlh;
   border-radius: 0.25rem;
   box-sizing: border-box;
-  color: var(--default-6);
+  color: var(--neutral-6);
   display: flex;
   inline-size: 3rem;
   justify-content: center;
 
   &:hover {
-    background-color: var(--default-3);
+    background-color: var(--neutral-3);
   }
 }
 

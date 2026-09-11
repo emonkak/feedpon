@@ -41,7 +41,7 @@
   z-index: 1;
 }
 
-@container (width >= 54rem) {
+@container (min-width: 54rem) {
   .StackedArticleView-Header {
     display: block;
   }

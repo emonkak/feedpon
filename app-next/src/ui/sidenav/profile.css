@@ -15,8 +15,8 @@
   }
 
   &::before {
-    border-inline-start: 1px solid var(--default-border);
-    box-shadow: inset 1px 0 var(--default-light);
+    border-inline-start: 1px solid var(--neutral-4);
+    box-shadow: inset 1px 0 var(--color-highlight);
   }
 
   &::after {
@@ -30,7 +30,7 @@
 
 .Profile-icon {
   border-radius: 50%;
-  border: 1px solid var(--default-border);
+  border: 1px solid var(--neutral-4);
   corner-shape: squircle;
   grid-area: icon;
   place-self: center;
@@ -45,7 +45,7 @@
 
 .Profile-source {
   align-self: start;
-  color: var(--default-6);
+  color: var(--neutral-6);
   font-size: calc(1rem * var(--text-scale-8));
   grid-area: source;
 }

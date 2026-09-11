@@ -12,11 +12,11 @@
     border-color: var(--Button-solidBorderColor);
     background-color: var(--Button-solidBackgroundColor);
     box-shadow:
-      inset 0 1px var(--Button-solidLightColor),
-      inset 1px 0 var(--Button-solidLightColor),
-      inset 0 -1px var(--Button-solidLightColor),
-      inset -1px 0 var(--Button-solidLightColor),
-      0 1px var(--Button-solidShadowColor);
+      inset 0 1px var(--Button-solidHighlightColor),
+      inset 1px 0 var(--Button-solidHighlightColor),
+      inset 0 -1px var(--Button-solidHighlightColor),
+      inset -1px 0 var(--Button-solidHighlightColor),
+      0 1px 1px var(--Button-solidShadowColor);
     color: var(--Button-solidColor);
   }
 
@@ -25,13 +25,13 @@
   }
 
   &.default {
-    --Button-iconColor: var(--default-6);
-    --Button-solidActiveBackground-color: var(--default-2);
-    --Button-solidBackgroundColor: var(--default-1);
-    --Button-solidBorderColor: var(--default-border);
-    --Button-solidColor: var(--default-10);
-    --Button-solidLightColor: var(--default-light);
-    --Button-solidShadowColor: var(--default-shadow);
+    --Button-iconColor: var(--neutral-6);
+    --Button-solidActiveBackground-color: var(--neutral-2);
+    --Button-solidBackgroundColor: var(--neutral-1);
+    --Button-solidBorderColor: var(--neutral-4);
+    --Button-solidColor: var(--neutral-10);
+    --Button-solidHighlightColor: var(--color-highlight);
+    --Button-solidShadowColor: var(--color-shadow);
   }
 }
 

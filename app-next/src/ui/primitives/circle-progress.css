@@ -1,6 +1,6 @@
 .CircleProgress {
   --angle: calc(360deg * var(--progress));
-  --background-color: var(--default-4);
+  --background-color: var(--neutral-4);
   --fill-color: currentColor;
   --indicator-width: 2px;
   --inner-radius: calc(var(--outer-radius) - 1px);

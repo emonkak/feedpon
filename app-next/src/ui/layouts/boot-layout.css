@@ -16,7 +16,7 @@
 
 .BootLayout-message {
   animation: BootLayout-pulse 2s infinite ease-in-out;
-  color: var(--default-6);
+  color: var(--neutral-6);
   grid-area: message;
 }
 

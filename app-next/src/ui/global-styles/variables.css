@@ -26,35 +26,25 @@
   --path-arrow-right: polygon(37.5% 75%, 37.5% 25%, 62.5% 50%);
   --path-arrow-down: polygon(50% 62.5%, 25% 37.5%, 75% 37.5%);
 
-  --default-bg: #fff;
-  --default-fg: var(--default-10);
-  --default-border: var(--default-4);
-  --default-light: rgb(from var(--default-bg) r g b / 0.5);
-  --default-shadow: rgb(from var(--default-10) r g b / 0.1);
+  --color-light: #fff;
+  --color-highlight: rgb(255 255 255 / 0.5);
+  --color-shadow: rgb(0 0 0 / 0.125);
 
-  --primary-border: var(--primary-4);
-  --primary-light: rgb(from var(--default-bg) r g b / 0.5);
-  --primary-shadow: rgb(from var(--primary-10) r g b / 0.1);
-
-  --secondary-border: var(--secondary-4);
-  --secondary-light: rgb(from var(--default-bg) r g b / 0.5);
-  --secondary-shadow: rgb(from var(--secondary-10) r g b / 0.1);
-
-  --default-1: #f2f4f5;
-  --default-2: #dde3e7;
-  --default-3: #c8d3d9;
-  --default-4: #b2c4cd;
-  --default-5: #9cb4c1;
-  --default-6: #354f5b;
-  --default-7: #2e4049;
-  --default-8: #273238;
-  --default-9: #1e2528;
-  --default-10: #15181a;
+  --neutral-1: #f2f4f5;
+  --neutral-2: #dde3e7;
+  --neutral-3: #c3ced4;
+  --neutral-4: #a2b3bd;
+  --neutral-5: #7c94a1;
+  --neutral-6: #354f5b;
+  --neutral-7: #2e4049;
+  --neutral-8: #273238;
+  --neutral-9: #1e2528;
+  --neutral-10: #15181a;
   --primary-1: #f5f2fe;
   --primary-2: #e6defe;
-  --primary-3: #d6cbfd;
-  --primary-4: #c5b8fe;
-  --primary-5: #b4a5fe;
+  --primary-3: #d0c4fe;
+  --primary-4: #b4a5fe;
+  --primary-5: #8c80fe;
   --primary-6: #2639be;
   --primary-7: #293095;
   --primary-8: #29276a;
@@ -62,9 +52,9 @@
   --primary-10: #181529;
   --secondary-1: #fef0f4;
   --secondary-2: #fdd9e3;
-  --secondary-3: #fec2d2;
-  --secondary-4: #fea8c2;
-  --secondary-5: #fe8eb2;
+  --secondary-3: #fdbacd;
+  --secondary-4: #fb90b2;
+  --secondary-5: #f15a93;
   --secondary-6: #96024d;
   --secondary-7: #790f3f;
   --secondary-8: #5a1731;

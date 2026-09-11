@@ -1,5 +1,5 @@
 .Sidenav {
-  border-inline-end: 1px solid var(--default-border);
+  border-inline-end: 1px solid var(--neutral-4);
   display: grid;
   grid-template-rows: auto 1fr auto;
   height: 100vh;
@@ -15,30 +15,30 @@
 }
 
 .Sidenav-Header {
-  background-color: var(--default-2);
+  background-color: var(--neutral-2);
   box-shadow:
-    inset 0 1px var(--default-light),
-    inset 1px 0 var(--default-light),
-    inset 0 -1px var(--default-light),
-    inset -1px 0 var(--default-light),
-    0 1px var(--default-border),
-    0 2px 1px var(--default-shadow);
+    inset 0 1px var(--color-highlight),
+    inset 1px 0 var(--color-highlight),
+    inset 0 -1px var(--color-highlight),
+    inset -1px 0 var(--color-highlight),
+    0 1px var(--neutral-4),
+    0 2px 1px var(--color-shadow);
   z-index: 1;
 }
 
 .Sidenav-Main {
-  background-color: var(--default-1);
+  background-color: var(--neutral-1);
   overflow: auto;
 }
 
 .Sidenav-Footer {
-  background-color: var(--default-2);
+  background-color: var(--neutral-2);
   box-shadow:
-    inset 0 1px var(--default-light),
-    inset 1px 0 var(--default-light),
-    inset 0 -1px var(--default-light),
-    inset -1px 0 var(--default-light),
-    0 -1px var(--default-border),
-    0 -2px 1px var(--default-shadow);
+    inset 0 1px var(--color-highlight),
+    inset 1px 0 var(--color-highlight),
+    inset 0 -1px var(--color-highlight),
+    inset -1px 0 var(--color-highlight),
+    0 -1px var(--neutral-4),
+    0 -2px 1px var(--color-shadow);
   z-index: 1;
 }

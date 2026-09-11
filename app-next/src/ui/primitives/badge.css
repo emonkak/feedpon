@@ -11,13 +11,13 @@
   }
 
   &.default {
-    --Badge-color: var(--default-6);
-    --Badge-backgroundColor: var(--default-2);
+    --Badge-color: var(--neutral-6);
+    --Badge-backgroundColor: var(--neutral-2);
   }
 
   &.invert {
-    --Badge-color: var(--default-2);
-    --Badge-backgroundColor: var(--default-6);
+    --Badge-color: var(--neutral-2);
+    --Badge-backgroundColor: var(--neutral-6);
   }
 
   &.primary {

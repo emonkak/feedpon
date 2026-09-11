@@ -14,7 +14,7 @@
 }
 
 .StackScroller-Item {
-  background-color: var(--default-bg);
+  background-color: var(--color-light);
   contain: content;
   min-block-size: var(--StackScroller-itemHeight);
   scroll-margin-block-start: var(--StackScroller-headerHeight);
@@ -22,8 +22,8 @@
 
   & + & {
     box-shadow:
-      0 -1px var(--default-border),
-      0 -2px 1px var(--default-shadow);
+      0 -1px var(--neutral-4),
+      0 -2px 1px var(--color-shadow);
   }
 
   &.previous,
