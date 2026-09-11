@@ -8,14 +8,18 @@ export interface ProfileProps {
 export function Profile({ profile }: ProfileProps) {
   const icon =
     profile.picture !== undefined
-      ? html`<img class="Profile-icon" width="32" height="32" src=${profile.picture}>`
-      : html`<div class="Profile-icon EmojiIcon" data-size="32"><div class="EmojiIcon-glyph">👤</div></div>`;
+      ? html`<img class="Profile-Visual-icon" width="32" height="32" src=${profile.picture}>`
+      : html`<div class="Profile-Visual-icon EmojiIcon" data-size="32"><div class="EmojiIcon-glyph">👤</div></div>`;
 
   return html`
     <div class="Profile">
-      <${icon}>
-      <div class="Profile-name use-ellipsis">${profile.fullName}</div>
-      <div class="Profile-source use-ellipsis">${profile.source}</div>
-    <div>
+      <div aria-hidden="true" class="Profile-Visual">
+        <${icon}>
+      </div>
+      <div class="Profile-Content">
+        <div class="Profile-Content-name use-ellipsis">${profile.fullName}</div>
+        <div class="Profile-Content-source use-ellipsis">${profile.source}</div>
+      </div>
+    </div>
   `;
 }

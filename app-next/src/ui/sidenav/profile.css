@@ -1,12 +1,11 @@
 .Profile {
   block-size: 2rlh;
-  column-gap: 0.5rem;
   display: grid;
+  gap: 0.5rem;
   font-family: var(--font-display);
-  grid-template-areas: ". icon name arrow" ". icon source arrow";
-  grid-template-columns: 0 2rem 1fr 1.5rem;
-  grid-template-rows: 1rlh 1rlh;
-  line-height: 1.375;
+  grid-template-areas: ". visual content arrow";
+  grid-template-columns: 0 auto 1fr 1.5rem;
+  align-items: stretch;
 
   &::before,
   &::after {
@@ -28,24 +27,29 @@
   }
 }
 
-.Profile-icon {
+.Profile-Visual {
+  grid-area: visual;
+  place-content: center;
+}
+
+.Profile-Visual-icon {
   border-radius: 50%;
   border: 1px solid var(--neutral-4);
   corner-shape: squircle;
-  grid-area: icon;
-  place-self: center;
 }
 
-.Profile-name {
-  align-self: end;
+.Profile-Content {
+  place-content: center;
+  grid-area: content;
+  line-height: 1.375;
+}
+
+.Profile-Content-name {
   font-size: calc(1rem * var(--text-scale-7));
   font-weight: bold;
-  grid-area: name;
 }
 
-.Profile-source {
-  align-self: start;
+.Profile-Content-source {
   color: var(--neutral-6);
   font-size: calc(1rem * var(--text-scale-8));
-  grid-area: source;
 }
