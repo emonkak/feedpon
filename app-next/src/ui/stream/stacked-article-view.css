@@ -7,16 +7,25 @@
     [outer-start] minmax(var(--gutter), 1fr)
     [inner-start] minmax(auto, var(--text-width)) [inner-end]
     minmax(var(--gutter), 1fr) [outer-end];
-  grid-template-rows: auto minmax(2rem, 50vh - 2rlh);
+  grid-template-rows: auto minmax(auto, 1fr) minmax(2rem, calc(50vh - 3rlh));
+  min-block-size: calc(100vh - 2rlh);
   min-inline-size: 0;
+}
+
+.StackedArticleView-Header {
+  border-radius: 4px;
+  display: grid;
+  grid-column: inner;
+  grid-row: 1;
+  grid-template-columns: subgrid;
+  padding-block: 1rlh 0.5rlh;
 }
 
 .StackedArticleView-Content {
   box-sizing: border-box;
   grid-column: inner;
-  min-block-size: calc(100vh - 2rlh - 2rem);
+  grid-row: 2;
   min-inline-size: 0;
-  padding-block: 1rlh;
 }
 
 .StackedArticleView-Footer {
@@ -27,7 +36,7 @@
   .StackedArticleView-Footer {
     --StackedArticleNav-direction: horizontal;
     grid-column: outer;
-    grid-row: 2;
+    grid-row: 3;
     inline-size: fit-content;
     inset-block-end: 0;
     place-self: end center;

@@ -35,6 +35,11 @@ export const App = createComponent(function App({
   this.provide(new CentralClock(60 * 1000));
   this.provide(new Intl.DateTimeFormat());
   this.provide(
+    new Intl.NumberFormat(undefined, {
+      notation: 'compact',
+    }),
+  );
+  this.provide(
     new Intl.RelativeTimeFormat(undefined, {
       numeric: 'auto',
       style: 'narrow',

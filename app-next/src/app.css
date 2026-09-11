@@ -18,6 +18,7 @@
 @import "./ui/sidenav/sidenav.css";
 @import "./ui/sidenav/subscription-nav.css";
 @import "./ui/sidetoc/sidetoc.css";
+@import "./ui/stream/article-header.css";
 @import "./ui/stream/stacked-article-nav.css";
 @import "./ui/stream/stacked-article-view.css";
 @import "./ui/stream/stream-nav.css";

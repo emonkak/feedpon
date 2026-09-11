@@ -12,15 +12,17 @@
 
 .StreamNav-Content {
   flex: 1;
-  min-width: 0;
+  font-family: var(--font-display);
+  font-weight: bold;
   line-height: 1.375;
+  min-width: 0;
 }
 
-.StreamNav-feedTitle {
+.StreamNav-title {
   font-size: calc(1rem * var(--text-scale-7));
 }
 
-.StreamNav-articleTitle {
+.StreamNav-origin {
   color: var(--neutral-6);
   font-size: calc(1rem * var(--text-scale-8));
 }

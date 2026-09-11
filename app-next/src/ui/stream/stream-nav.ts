@@ -24,8 +24,8 @@ export const StreamNav = createComponent(function StreamNav({
         </button>
       </div>
       <div class="StreamNav-Content" lang=${item?.language}>
-        <h1 class="StreamNav-feedTitle use-ellipsis" >${decodeHTMLEntities(item?.origin.title ?? stream.title ?? '')}</h1>
-        <h2 class="StreamNav-articleTitle use-ellipsis">${decodeHTMLEntities(item?.title ?? '')}</h2>
+        <h1 class="StreamNav-title use-ellipsis">${decodeHTMLEntities(item?.title ?? '')}</h1>
+        <div class="StreamNav-origin use-ellipsis" >${decodeHTMLEntities(item?.origin.title ?? '')}</div>
       </div>
       <div class="StreamNav-Side">
         <button type="button" class="StreamNav-Button">

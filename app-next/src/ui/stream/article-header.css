@@ -1,0 +1,45 @@
+.ArticleHeader {
+  block-size: calc-size(auto, round(up, size, 1rlh));
+  display: flex;
+  gap: 0.5rem;
+}
+
+.ArticleHeader-Visual {
+  display: block;
+  flex: 0 0 2rem;
+  place-content: center;
+}
+
+.ArticleHeader-Content {
+  font-family: var(--font-display);
+  place-content: center;
+  line-height: 1.375;
+}
+
+.ArticleHeader-Title {
+  font-size: calc(1rem * var(--text-scale-6));
+}
+
+.ArticleHeader-Title-anchor {
+  &:hover {
+    color: var(--primary-6);
+  }
+}
+
+.ArticleHeader-Footer {
+  font-size: calc(1rem * var(--text-scale-7));
+  color: var(--neutral-6);
+}
+
+.ArticleHeader-Footer-origin {
+  font-weight: bold;
+
+  &:hover {
+    color: var(--primary-6);
+  }
+}
+
+.ArticleHeader-Footer-separator {
+  text-align: center;
+  margin-inline: 0.25rem;
+}

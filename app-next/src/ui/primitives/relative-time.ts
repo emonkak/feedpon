@@ -13,27 +13,33 @@ const UNITS = [
 
 export interface RelativeTimeProps {
   timeMillis: number;
+  class?: string;
 }
 
 export const RelativeTime = createComponent(function RelativeTime({
   timeMillis,
+  class: className,
 }: RelativeTimeProps) {
   const clock = this.inject(CentralClock);
   const currentTime = this.use(clock);
-  const timeZoneId = this.inject(Intl.DateTimeFormat).resolvedOptions()
-    .timeZone;
+  const dateTimeFormat = this.inject(Intl.DateTimeFormat);
   const relativeTimeFormat = this.inject(Intl.RelativeTimeFormat);
 
+  const timeZone = dateTimeFormat.resolvedOptions().timeZone;
   const currentDate =
     Temporal.Instant.fromEpochMilliseconds(currentTime).toZonedDateTimeISO(
-      timeZoneId,
+      timeZone,
     );
   const targetDate = Temporal.Instant.fromEpochMilliseconds(
     timeMillis - (timeMillis % clock.resolutionMillis),
-  ).toZonedDateTimeISO(timeZoneId);
+  ).toZonedDateTimeISO(timeZone);
 
   return html`
-    <time datetime=${targetDate.toString()}>
+    <time
+      class=${className}
+      datetime=${targetDate.toString()}
+      title=${dateTimeFormat.format(targetDate.toInstant())}
+    >
       ${getRelativeTimeString(currentDate, targetDate, relativeTimeFormat)}
     </time>
   `;
