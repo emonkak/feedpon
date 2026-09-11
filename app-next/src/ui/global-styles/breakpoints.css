@@ -1,0 +1,15 @@
+body {
+  --breakpoint: small;
+}
+
+@container (min-width: 72rem) {
+  body {
+    --breakpoint: medium;
+  }
+}
+
+@container (min-width: 90rem) {
+  body {
+    --breakpoint: large;
+  }
+}

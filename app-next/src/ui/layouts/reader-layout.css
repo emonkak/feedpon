@@ -1,5 +1,4 @@
 .ReaderLayout {
-  --layout: small;
   display: grid;
   grid-template-areas: "sidenav main sidetoc";
   grid-template-columns: 0 1fr 0;
@@ -29,9 +28,8 @@
   grid-area: sidetoc;
 }
 
-@container (min-width: 72rem) {
+@container not style(--breakpoint: small) {
   .ReaderLayout {
-    --layout: medium;
     grid-template-columns: 18rem 1fr 0;
   }
 
@@ -40,9 +38,8 @@
   }
 }
 
-@container (min-width: 90rem) {
+@container style(--breakpoint: large) {
   .ReaderLayout {
-    --layout: large;
     grid-template-columns: 18rem 1fr 18rem;
   }
 

@@ -4,19 +4,19 @@
   white-space: nowrap;
 }
 
-@container not style(--layout: small) {
+@container not style(--breakpoint: small) {
   .use-only-small {
     display: none;
   }
 }
 
-@container not style(--layout: medium) {
+@container not style(--breakpoint: medium) {
   .use-only-medium {
     display: none;
   }
 }
 
-@container not style(--layout: large) {
+@container not style(--breakpoint: large) {
   .use-only-large {
     display: none;
   }

@@ -1,5 +1,6 @@
 @import "./ui/global-styles/fonts.css";
 @import "./ui/global-styles/variables.css";
+@import "./ui/global-styles/breakpoints.css";
 @import "./ui/global-styles/reset.css";
 
 @import "./ui/layouts/boot-layout.css";
