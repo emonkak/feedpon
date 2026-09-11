@@ -1,13 +1,13 @@
 .StackScroller {
-  --header-height: 2rlh;
-  --item-height: calc(100vh - var(--header-height));
+  --StackScroller-headerHeight: 2rlh;
+  --StackScroller-itemHeight: calc(100vh - var(--StackScroller-headerHeight));
 }
 
 .StackScroller-List {
   position: relative;
 
   &::before {
-    block-size: var(--item-height);
+    block-size: var(--StackScroller-itemHeight);
     content: "";
     display: block;
   }
@@ -16,8 +16,8 @@
 .StackScroller-Item {
   background-color: var(--default-bg);
   contain: content;
-  min-block-size: var(--item-height);
-  scroll-margin-block-start: var(--header-height);
+  min-block-size: var(--StackScroller-itemHeight);
+  scroll-margin-block-start: var(--StackScroller-headerHeight);
   will-change: filter;
 
   & + & {
@@ -28,8 +28,8 @@
 
   &.previous,
   &.next {
-    block-size: var(--item-height);
-    margin-block-start: calc(var(--item-height) * -1);
+    block-size: var(--StackScroller-itemHeight);
+    margin-block-start: calc(var(--StackScroller-itemHeight) * -1);
     overflow: clip;
   }
 
@@ -43,7 +43,7 @@
   &.previous {
     animation-range: entry 0% entry 100%;
     animation-timeline: view(block 0 100%);
-    inset-block-start: var(--header-height);
+    inset-block-start: var(--StackScroller-headerHeight);
   }
 
   &.next {
@@ -56,11 +56,11 @@
   }
 
   &.current:only-child {
-    margin-block-start: calc(var(--item-height) * -1);
+    margin-block-start: calc(var(--StackScroller-itemHeight) * -1);
   }
 
   &.current:not(:first-child):not(:last-child) {
-    margin-block-start: var(--item-height);
+    margin-block-start: var(--StackScroller-itemHeight);
   }
 
   &.current:not(:last-child) {
@@ -76,12 +76,12 @@
   }
 
   &.middle {
-    inset-block-start: var(--item-height);
+    inset-block-start: var(--StackScroller-itemHeight);
   }
 }
 
 .StackScroller-Top {
-  transform: translateY(calc(var(--header-height) * -1));
+  transform: translateY(calc(var(--StackScroller-headerHeight) * -1));
 }
 
 @keyframes StackScroller-Item-dim {
