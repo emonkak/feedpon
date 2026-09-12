@@ -7,11 +7,12 @@ export const StackedArticleNav = createComponent(
     const scrollPrevious = () => {
       const anchor = document.querySelector('.StackScroller-Anchor');
       if (anchor !== null && anchor.getBoundingClientRect().top <= -1) {
-        anchor.scrollIntoView();
+        anchor.scrollIntoView({ behavior: 'smooth' });
       } else {
         window.scrollTo({
           left: 0,
           top: 0,
+          behavior: 'smooth',
         });
       }
     };
@@ -19,6 +20,7 @@ export const StackedArticleNav = createComponent(
       window.scrollTo({
         left: 0,
         top: document.body.scrollHeight,
+        behavior: 'smooth',
       });
     };
 

@@ -1,6 +1,7 @@
 .StackScroller {
   --StackScroller-headerHeight: 2rlh;
   --StackScroller-itemHeight: calc(100vh - var(--StackScroller-headerHeight));
+  overflow-anchor: none;
 }
 
 .StackScroller-List {
