@@ -1,5 +1,5 @@
 import { createComponent, html } from 'barebind';
-import styleSheet from '../global-styles/reset.css' with { type: 'css' };
+import styleSheet from './embedded-html.css' with { type: 'css' };
 
 const ATTRIBUTE_HREF = 'href';
 const ATTRIBUTE_SRC = 'src';

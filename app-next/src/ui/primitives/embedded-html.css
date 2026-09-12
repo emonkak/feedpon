@@ -1,5 +1,24 @@
-.EmbeddedHTML {
-  contain: content;
+@import "../global-styles/reset.css";
+
+:host {
+  --container-inline-size: 100cqi;
+  container-type: inline-size;
   overflow-wrap: anywhere;
   word-break: break-word;
+}
+
+iframe,
+img,
+video {
+  block-size: auto;
+  max-inline-size: var(--container-inline-size);
+  transform: translateX(min(0%, 50cqi - 50%));
+}
+
+iframe {
+  border: 0;
+
+  &[width][height] {
+    aspect-ratio: auto attr(width type(<number>)) / attr(height type(<number>));
+  }
 }

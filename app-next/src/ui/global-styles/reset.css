@@ -158,15 +158,5 @@ button {
 iframe,
 img,
 video {
-  block-size: auto;
-  max-inline-size: 100%;
   vertical-align: bottom;
-}
-
-iframe {
-  border: 0;
-
-  &[width][height] {
-    aspect-ratio: auto attr(width type(<number>)) / attr(height type(<number>));
-  }
 }
