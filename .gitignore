@@ -1,4 +1,5 @@
 *.tsbuildinfo
+*.wireit
 /app-next/dist/css
 /app-next/dist/js
 /app/dist/css

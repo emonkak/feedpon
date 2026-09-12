@@ -1,13 +1,13 @@
 {
   "type": "module",
   "scripts": {
-    "build": "pnpm run --recursive build",
+    "build": "wireit",
     "ci": "pnpm run clean && pnpm run lint && pnpm run build && pnpm run test --coverage",
     "clean": "pnpm run --recursive clean",
     "format": "biome check --fix",
     "lint": "biome ci",
     "test": "vitest run",
-    "watch": "pnpm run --recursive watch"
+    "watch": "wireit"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.12",
@@ -19,6 +19,21 @@
     "esbuild-plugin-native-css-module": "^1.4.0",
     "fast-check": "^4.9.0",
     "typescript": "^7.0.2",
-    "vitest": "^5.0.0"
+    "vitest": "^5.0.0",
+    "wireit": "^0.14.13"
+  },
+  "wireit": {
+    "build": {
+      "dependencies": [
+        "./app:build",
+        "./app-next:build"
+      ]
+    },
+    "watch": {
+      "dependencies": [
+        "./app:watch",
+        "./app-next:watch"
+      ]
+    }
   }
 }

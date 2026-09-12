@@ -51,5 +51,16 @@ async function buildSource(config: esbuild.BuildOptions) {
 
 async function watchSource(config: esbuild.BuildOptions): Promise<void> {
   const context = await esbuild.context(config);
+  const dispose = async () => {
+    try {
+      await context.dispose();
+    } finally {
+      process.exit(0);
+    }
+  };
+
+  process.on('SIGINT', dispose);
+  process.on('SIGTERM', dispose);
+
   await context.watch();
 }

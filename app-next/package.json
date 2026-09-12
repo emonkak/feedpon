@@ -2,17 +2,58 @@
   "name": "@feedpon/app-next",
   "type": "module",
   "scripts": {
-    "build": "pnpm run --aggregate-output --parallel '/^build:/'",
-    "build:bundle": "bun bundle.ts",
-    "build:typecheck": "tsc --build",
-    "watch": "pnpm run --parallel '/^watch:/'",
-    "watch:bundle": "bun bundle.ts --watch",
-    "watch:typecheck": "tsc --build --watch --preserveWatchOutput",
+    "build": "wireit",
+    "watch": "wireit",
     "clean": "rm --force --recursive dist/css dist/js"
   },
   "dependencies": {
     "@feedpon/feedly-client": "workspace:^",
     "@types/chrome": "^0.2.9",
     "barebind": "catalog:"
+  },
+  "wireit": {
+    "build": {
+      "dependencies": [
+        "build:bundle",
+        "build:typecheck"
+      ]
+    },
+    "build:bundle": {
+      "command": "bun bundle.ts",
+      "files": [
+        "../pnpm-lock.yaml",
+        "src/**/*.ts",
+        "src/**/*.css"
+      ],
+      "output": [
+        "dist/css/**",
+        "dist/js/**"
+      ]
+    },
+    "build:typecheck": {
+      "command": "tsc --build",
+      "files": [
+        "../pnpm-lock.yaml",
+        "src/**/*.ts",
+        "tsconfig.json"
+      ],
+      "output": [
+        "src/*.tsbuildinfo"
+      ]
+    },
+    "watch": {
+      "dependencies": [
+        "watch:bundle",
+        "watch:typecheck"
+      ]
+    },
+    "watch:bundle": {
+      "command": "bun bundle.ts --watch",
+      "service": true
+    },
+    "watch:typecheck": {
+      "command": "tsc --build --watch --preserveWatchOutput",
+      "service": true
+    }
   }
 }
