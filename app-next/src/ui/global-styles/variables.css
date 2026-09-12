@@ -10,7 +10,7 @@
     "Hiragino Mincho ProN", "Meiryo", "Noto Serif CJK JP", serif;
 
   --text-leading: 1.625rem;
-  --text-width: 48rem;
+  --text-width: 44rem;
   --text-scale-1: pow(var(--text-scale-base), 6);
   --text-scale-2: pow(var(--text-scale-base), 5);
   --text-scale-3: pow(var(--text-scale-base), 4);

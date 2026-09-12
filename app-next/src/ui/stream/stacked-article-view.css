@@ -32,7 +32,8 @@
   position: sticky;
 }
 
-@container not (min-width: 54rem) {
+/* min-width = text-width(44rem) + gutter(3rem) * 2 */
+@container not (min-width: 50rem) {
   .StackedArticleView-Footer {
     --StackedArticleNav-direction: horizontal;
     grid-column: outer;
@@ -43,7 +44,7 @@
   }
 }
 
-@container (min-width: 54rem) {
+@container (min-width: 50rem) {
   .StackedArticleView-Footer {
     --StackedArticleNav-direction: vertical;
     grid-column: inner-end / outer-end;

@@ -2,13 +2,15 @@ body {
   --breakpoint: small;
 }
 
-@container (min-width: 72rem) {
+/* min-width = text-width(44rem) + gutter(3rem) * 2 + sidenav-width(18rem) */
+@container (min-width: 68rem) {
   body {
     --breakpoint: medium;
   }
 }
 
-@container (min-width: 90rem) {
+/* min-width = text-width(44rem) + gutter(3rem) * 2 + sidenav-width(18rem) + sidetoc-width(18rem) */
+@container (min-width: 86rem) {
   body {
     --breakpoint: large;
   }
